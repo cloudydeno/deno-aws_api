@@ -33,7 +33,7 @@ export interface ApiMetadata {
 
 export interface ApiOperation {
   "name": string;
-  "http": {
+  "http"?: {
     "method": "POST" | "GET" | "HEAD" | "DELETE" | "PUT" | "PATCH";
     "requestUri": string;
     "responseCode"?: number;
@@ -44,6 +44,7 @@ export interface ApiOperation {
   };
   "errors": ShapeRef[];
   "deprecated"?: true;
+  "authtype"?: "none" | "v4-unsigned-body";
   "endpoint"?: {
     "hostPrefix": string;
   };
