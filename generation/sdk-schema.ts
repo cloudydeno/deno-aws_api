@@ -4,6 +4,8 @@ export interface Api {
   "operations": { [name: string]: ApiOperation };
   "shapes": { [name: string]: ApiShape & {
     "locationName"?: string; // e.g. SSES3, seems to be to alias things for network
+    "sensitive"?: boolean; // params that shouldn't be logged
+    "documentation"?: string;
   } };
   "authorizers": { [name: string]: ApiAuthorizer }; // only for mq
   "documentation"?: string;
@@ -41,32 +43,51 @@ export interface ApiOperation {
     "resultWrapper"?: string;
   };
   "errors": ShapeRef[];
+  "deprecated"?: true;
+  "endpoint"?: {
+    "hostPrefix": string;
+  };
+  "endpointdiscovery"?: { // only in dynamodb
+    "required"?: true;
+  };
   "documentationUrl"?: string;
   "documentation": string;
-  "deprecated"?: true,
 }
 
 export interface ShapeRef {
-  shape: string; // id for the shape in the api file
-  documentation?: string;
+  "shape": string; // id for the shape in the api file
+  "documentation"?: string;
 }
 
 export type ApiShape =
-  | ShapeBasic
+  | ShapeBoolean
+  | ShapeTimestamp
   | ShapePrimitive
+  | ShapeBlob
   | ShapeList
   | ShapeMap
   | ShapeString
   | ShapeStructure;
 
-export interface ShapeBasic {
-  "type": "boolean" | "timestamp";
+export interface ShapeBoolean {
+  "type": "boolean";
+}
+
+export interface ShapeTimestamp {
+  "type": "timestamp";
+  // json and rest-json default to unixTimestamp, else iso8601
+  "timestampFormat"?: "iso8601" | "unixTimestamp";
 }
 
 export interface ShapePrimitive {
-  "type": "integer" | "blob" | "long" | "double" | "float";
+  "type": "integer" | "long" | "double" | "float";
   "min"?: number;
   "max"?: number;
+}
+
+export interface ShapeBlob {
+  "type": "blob";
+  "streaming"?: true;
 }
 
 export interface ShapeList {
@@ -87,6 +108,7 @@ export interface ShapeMap {
   "max"?: number;
 }
 
+// 'rest-xml', 'query', 'ec2' should have empty strings instead of nulls
 export interface ShapeString {
   "type": "string";
   "min"?: number;
@@ -102,9 +124,13 @@ export interface ShapeStructure {
     [name: string]: ShapeRef & {
       "location"?: "uri" | "querystring" | "header" | "headers" | "statusCode";
       "locationName"?: string;
+      "queryName"?: string; // only in ec2
+      "streaming"?: true;
       "deprecated"?: true;
+      "idempotencyToken"?: true; // shuold be auto filled with guid if not given
     }
   };
+  "endpointoperation"?: true, // only in dynamodb
   "deprecated"?: true,
 }
 

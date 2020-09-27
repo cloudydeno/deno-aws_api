@@ -94,7 +94,7 @@ export class QueryServiceClient implements ServiceClient {
     const body = new TextEncoder().encode(params.toString());
     const request = inQuery
       // GET, HEAD
-      ? new Request(this.#serviceUrl + config.requestUri + '?' + params, {
+      ? new Request(this.#serviceUrl + config.requestUri + (config.requestUri.includes('?') ? '&' : '?') + params, {
         method: config.method,
         headers: {
           "accept": 'application/json',

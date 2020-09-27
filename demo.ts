@@ -13,6 +13,7 @@ console.log(await sqs.listQueues());
 
 const s3 = new S3(factory);
 console.log(await s3.listBuckets());
+s3.waitFor.
 
 
 // import {SNS} from 'https://deno.land/x/aws_sdk@v0.0.1/client-sns/SNS.ts';
