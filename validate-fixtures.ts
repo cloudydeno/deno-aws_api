@@ -67,7 +67,7 @@ async function *readTestFixtures(filePath: string): AsyncGenerator<TestRun> {
           },
         },
       };
-      if (Deno.args.includes('--one')) return;
+      if (Deno.args.includes('--one-test')) return;
     }
   }
 }
@@ -128,6 +128,7 @@ for await (const result of results) {
     console.log('-----------------------------------------------------------');
     console.log(decoder.decode(result.stderr).split('  throw new AssertionError')[0] || decoder.decode(result.stdout));
     failed++;
+    if (Deno.args.includes('--one-fail')) break;
   }
 }
 

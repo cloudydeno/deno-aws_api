@@ -2,11 +2,7 @@ export interface Api {
   "version": "2.0";
   "metadata": ApiMetadata;
   "operations": { [name: string]: ApiOperation };
-  "shapes": { [name: string]: ApiShape & {
-    "locationName"?: string; // e.g. SSES3, seems to be to alias things for network
-    "sensitive"?: boolean; // params that shouldn't be logged
-    "documentation"?: string;
-  } };
+  "shapes": { [name: string]: ApiShape };
   "authorizers": { [name: string]: ApiAuthorizer }; // only for mq
   "documentation"?: string;
 }
@@ -60,7 +56,13 @@ export interface ShapeRef {
   "documentation"?: string;
 }
 
-export type ApiShape =
+export type ApiShape = ApiShapes & ApiShapeMetadata;
+export interface ApiShapeMetadata {
+  "locationName"?: string; // e.g. SSES3, seems to be to alias things for network
+  "sensitive"?: boolean; // params that shouldn't be logged
+  "documentation"?: string;
+};
+export type ApiShapes =
   | ShapeBoolean
   | ShapeTimestamp
   | ShapePrimitive
