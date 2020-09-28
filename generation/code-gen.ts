@@ -1,5 +1,6 @@
 import * as path from "https://deno.land/std@0.70.0/path/mod.ts";
 import type * as Schema from './sdk-schema.ts';
+// import type { ApiParamSpecMap, ApiParamSpec } from './../deno-client/common.ts';
 
 export default class ServiceCodeGen {
   apiSpec: Schema.Api;
@@ -16,9 +17,11 @@ export default class ServiceCodeGen {
   }
 
   #namedShapes = new Set<string>();
+  #singleRefShapes = new Set<string>();
 
   generateTypescript(): string {
     this.#namedShapes.clear();
+    this.#singleRefShapes.clear();
 
     // console.log(wholeSpec.metadata)
     const apiCamelName = this.apiSpec.metadata.serviceId.split(' ').map(x => x[0].toUpperCase()+x.slice(1)).join('');
@@ -38,24 +41,60 @@ export default class ServiceCodeGen {
 interface ApiRequestConfig {
   // fixed per operation
   action: string;
-  method: ${Array.from(allMethods).map(x => JSON.stringify(x)).join(' | ')};
-  requestUri: string;
+  method?: ${Array.from(allMethods).map(x => JSON.stringify(x)).join(' | ')};
+  requestUri?: string;
   responseCode?: number;
-  locationsIn?: ApiParamLocationMap;
-  locationsOut?: ApiParamLocationMap;
+  //inputSpec?: ApiParamSpec;
+  //outputSpec?: ApiParamSpec;
+  //resultWrapper?: string;
   // dynamic per call
-  input: { [param: string]: any; };
+  headers?: Headers;
+  query?: URLSearchParams;
+  body?: URLSearchParams | ApiWireStructure | Uint8Array;
   abortSignal?: AbortSignal;
 }
-type ApiParamLocationMap = { [param: string]: {
-  location: "uri" | "querystring" | "header" | "headers" | "statusCode";
-  name?: string;
-}}
+export type ApiResponse = Response | {
+  xml(): Promise<ApiWireStructure>;
+}
+// Things that JSON can handle directly
+export type ApiWireStructure = {
+  [param: string]: string | number | boolean | null | ApiWireStructure;
+};
+// export type ApiParamSpecMap = { [param: string]: ApiParamSpec }
+// export type ApiParamSpec = {
+//   type: "integer" | "long" | "double" | "float" | "boolean" | "timestamp" | "blob" | "list" | "map" | "string" | "structure";
+//   children?: ApiParamSpecMap,
+//   location?: "uri" | "querystring" | "header" | "headers" | "statusCode";
+//   locationName?: string;
+//   queryName?: string;
+//   streaming?: true;
+//   sensitive?: boolean;
+//   idempotencyToken?: true; // shuold be auto filled with guid if not given
+//   timestampFormat?: "iso8601" | "unixTimestamp";
+//   min?: number;
+//   max?: number;
+//   flattened?: true;
+//   pattern?: string;
+//   enum?: string[];
+// }
 interface ApiFactory {
   buildServiceClient(apiMetadata: Object): ServiceClient;
 }
 interface ServiceClient {
-  performRequest(request: ApiRequestConfig): Promise<any>;
+  performRequest(request: ApiRequestConfig): Promise<ApiResponse>;
+  // TODO: runWaiter(, abortSignal: AbortSignal?)
+}
+interface RequestConfig {
+  abortSignal?: AbortSignal;
+}
+
+// Helpers, maybe these should be in a central place
+function encodePath(strings: TemplateStringsArray, ...names: string[]): string {
+  return String.raw(strings, ...names.map(encodeURIComponent));
+}
+function fmtDateHeader(input: Date | number): string {
+  const date = (typeof input === 'number') ? new Date(input*1000) : input;
+  return date.toUTCString();
 }
 
 `);
@@ -72,36 +111,30 @@ interface ServiceClient {
       const inputShape = operation.input ? this.apiSpec.shapes[operation.input.shape] : null;
       const outputShape = operation.output ? this.apiSpec.shapes[operation.output.shape] : null;
 
-      let signature = `(`;
-      let hasInputLocations = false;
-      const inputLocations: LocationMap = {};
-      if (inputShape?.type === 'structure') {
-        signature += 'input: '+this.formatStructureType(inputShape);
+      let signature = `(\n    {abortSignal, ...params}: RequestConfig`;
+      // let hasInputLocations = false;
+      // const inputLocations: LocationMap = {};
+      if (inputShape?.type === 'structure' && operation.input) {
+        signature += ' & ' + this.specifyShapeType(operation.input);
+        // signature += 'input: '+this.formatStructureType(inputShape);
         if (!inputShape.required?.length) {
           signature += ' = {}';
         }
 
-        for (const [field, spec] of Object.entries(inputShape.members)) {
-          if (!spec.location) continue;
-          hasInputLocations = true;
-          inputLocations[field] = {location: spec.location, name: spec.locationName};
-        }
+        // for (const [field, spec] of Object.entries(inputShape.members)) {
+        //   if (!spec.location) continue;
+        //   hasInputLocations = true;
+        //   inputLocations[field] = {location: spec.location, name: spec.locationName};
+        // }
       } else if (inputShape) {
         throw new Error(`TODO: ${inputShape.type} input`);
+      } else {
+        signature += ' = {}';
       }
 
-      signature += `): Promise<`;
-      let hasOutputLocations = false;
-      const outputLocations: LocationMap = {};
+      signature += `,\n  ): Promise<`;
       if (outputShape?.type === 'structure' && operation.output) {
         signature += this.specifyShapeType(operation.output);
-        // signature += this.formatStructureType(outputShape);
-
-        for (const [field, spec] of Object.entries(outputShape.members)) {
-          if (!spec.location) continue;
-          hasOutputLocations = true;
-          outputLocations[field] = {location: spec.location, name: spec.locationName};
-        }
       } else if (outputShape) {
         throw new Error(`TODO: ${outputShape.type} output`);
       } else {
@@ -111,31 +144,107 @@ interface ServiceClient {
 
       const lowerCamelName = operation.name[0].toLowerCase() + operation.name.slice(1);
       chunks.push(`  async ${lowerCamelName}${signature} {`);
+      const pathParts = new Map;
+      const referencedInputs = new Set(['abortSignal']);
+      if (inputShape?.type === 'structure') {
+        const locationTypes = new Set(Object.values(inputShape.members).map(x => x.location));
+        // console.log(locationTypes);
+
+        if (locationTypes.has('header') || locationTypes.has('headers')) {
+          chunks.push(`    const headers = new Headers;`);
+        }
+        if (locationTypes.has('querystring')) {
+          chunks.push(`    const query = new URLSearchParams;`);
+        }
+        chunks.push(`    const body = new URLSearchParams;`);
+
+        for (const [field, spec] of Object.entries(inputShape.members)) {
+          const shape = this.apiSpec.shapes[spec.shape];
+          const defaultName = this.apiSpec.metadata.protocol === 'ec2' ? field : (field[0].toUpperCase()+field.slice(1));
+          const locationName = spec.locationName ?? shape.locationName ?? defaultName;
+          const isRequired = (inputShape.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
+          const paramRef = `params[${JSON.stringify(field)}]`;
+          switch (spec.location) {
+            case 'uri':
+              // Store two copies to support toggling the url encoding
+              pathParts.set(`{${locationName}}`, `\${${paramRef}}`);
+              // TODO: i think this really means "include slashes" not fuckin' full-raw
+              pathParts.set(`{${locationName}+}`, `\`+${paramRef}+encodePath\``);
+              break;
+            case 'header':
+              let formattedRef = paramRef + ' ?? null';
+              switch (shape.type) {
+                case 'timestamp':
+                  formattedRef = `fmtDateHeader(${formattedRef})`;
+                  break;
+              }
+              chunks.push(`    ${isRequired ? '' : `if (${paramRef} !== undefined) `}headers.append(${JSON.stringify(spec.queryName ?? locationName)}, ${formattedRef});`);
+              referencedInputs.add('headers');
+              break;
+            case 'headers':
+              chunks.push(`    for (const [key, val] of Object.entries(${paramRef} || {})) {`);
+              chunks.push(`      headers.append(${JSON.stringify(locationName)}+key, val);`);
+              chunks.push(`    }`);
+              referencedInputs.add('headers');
+              break;
+            case 'querystring':
+              chunks.push(`    ${isRequired ? '' : `if (${paramRef} !== undefined) `}query.set(${JSON.stringify(spec.queryName ?? locationName)}, ${paramRef});`);
+              referencedInputs.add('query');
+              break;
+            default:
+              // console.log([spec.queryName, spec.locationName, shape.locationName]);
+              // TODO: only queryName in a query api
+              // chunks.push(`    ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body[${JSON.stringify(spec.queryName ?? locationName)}] = ${paramRef};`);
+              switch (shape.type) {
+                // case 'boolean':
+                //   chunks.push(`    ${isRequired ? '' : `if (${paramRef} !== undefined) `}body.append(${JSON.stringify(spec.queryName ?? locationName)}, ${paramRef});`);
+                case 'list':
+                  const flattened = shape.flattened ?? this.apiSpec.metadata.protocol !== 'ec2';
+                  const childPrefix = flattened ? '' : '.entry';
+                  chunks.push(`    (${paramRef} ?? []).forEach((item, idx) => {`)
+                    chunks.push(`    body.append(${JSON.stringify(spec.queryName ?? locationName)}+'.'+String(idx+1)+'${childPrefix}', String(item));`);
+                  chunks.push(`    });`);
+                  break;
+                default:
+                  chunks.push(`    ${isRequired ? '' : `if (${paramRef} !== undefined) `}body.append(${JSON.stringify(spec.queryName ?? locationName)}, String(${paramRef}));`);
+              }
+              referencedInputs.add('body');
+          }
+        }
+      }
       chunks.push(`    const resp = await this.#client.performRequest({`);
+      chunks.push(`      ${Array.from(referencedInputs).join(', ')},`);
       chunks.push(`      action: ${JSON.stringify(operation.name)},`);
-      chunks.push(`      method: ${JSON.stringify(operation.http?.method || 'POST')},`);
-      chunks.push(`      requestUri: ${JSON.stringify(operation.http?.requestUri || '/')},`);
+      // chunks.push(`      action: ${JSON.stringify(operation.name)},`);
+      if (operation.http?.method && operation.http.method !== 'POST') {
+        chunks.push(`      method: ${JSON.stringify(operation.http.method)},`);
+      }
+      if (operation.http?.requestUri && operation.http.requestUri !== '/') {
+        const formattedPath = operation.http?.requestUri?.includes('{')
+          ? ('encodePath`'+operation.http.requestUri
+              .replace(/{[^}]+}/g, x => pathParts.get(x)||x)
+            +'`').replace(/\+encodePath``/g, '')
+          : JSON.stringify(operation.http?.requestUri || '/');
+        chunks.push(`      requestUri: ${formattedPath},`);
+      }
       if (operation.http?.responseCode) {
         chunks.push(`      responseCode: ${JSON.stringify(operation.http.responseCode)},`);
       }
-      if (hasInputLocations) {
-        chunks.push(`      locationsIn: ${JSON.stringify(inputLocations)},`);
-      }
-      if (hasOutputLocations) {
-        chunks.push(`      locationsOut: ${JSON.stringify(outputLocations)},`);
-      }
-      chunks.push(`      input: ${inputShape ? 'input' : '{}'},`);
+      // if (operation.input) {
+      //   chunks.push(`      inputSpec: ${censorShapeName(operation.input.shape)}_Shape,`);
+      // }
+      // if (operation.output) {
+      //   chunks.push(`      outputSpec: ${censorShapeName(operation.output.shape)}_Shape,`);
+      // }
+      // if (this.apiSpec.metadata.protocol === 'query' && operation.output?.resultWrapper) {
+      //   chunks.push(`      resultWrapper: ${JSON.stringify(operation.output.resultWrapper)},`);
+      // }
       chunks.push(`    });`);
-      if (this.apiSpec.metadata.protocol === 'query' && operation.output?.resultWrapper) {
-        chunks.push(`    const data = await resp.json();`);
-        chunks.push(`    return data["${operation.name}Response"][${JSON.stringify(operation.output.resultWrapper)}];`);
-      } else {
-        chunks.push(`    return resp; // TODO`);
+      // TODO: all kinds of shit!
+      if (outputShape) {
+        chunks.push(`    return {};`);
       }
       chunks.push(`  }\n`);
-
-      // return Promise.reject("TODO");
-      // console.log(operation.name, operation.input?.shape, operation.output?.shape);
     }
 
     if (this.waitersSpec) {
@@ -152,36 +261,126 @@ interface ServiceClient {
     }
 
     chunks.push(`}\n`);
+    this.#singleRefShapes = this.findSingleRefShapes(this.#namedShapes);
 
+    // const allShapes = new Array<[string, Schema.ApiShape]>();
     for (const shapeName of this.#namedShapes) {
+      if (this.#singleRefShapes.has(shapeName)) continue;
+
       const shape = this.apiSpec.shapes[shapeName];
       if (!shape) {
         chunks.push(`// TODO: missing shape ${shapeName}\n`);
         continue;
       } else if (shape.type === 'structure') {
-        chunks.push(`interface ${censorShapeName(shapeName)} ${this.formatStructureType(shape)}\n`);
+        if (this.#singleRefShapes.has(shapeName)) {
+          chunks.push(`// TODO: can be inlined (only used once)`);
+        }
+        // allShapes.push([shapeName, shape]);
+        chunks.push(`interface ${censorShapeName(shapeName)} ${
+          this.formatStructureType(shape)}\n`);
       } else {
         chunks.push(`// TODO: forgotten shape ${shapeName} of type ${shape.type}\n`);
       }
     }
 
+    // allShapes.reverse();
+    // for (const [shapeName, shape] of allShapes) {
+    //   chunks.push(`const ${censorShapeName(shapeName)}_Shape: ApiParamSpec = ${
+    //     JSON.stringify(this.describeShape(shape, shapeName, true)).replace(/{"~~([^~]+)~~":{"type":"structure"}}/g, x => x.split('~')[2])};`);
+    // }
+
     return chunks.join('\n');
   }
 
+  // describeShape(shape: Schema.ApiShape & {
+  //   locationName?: string;
+  //   sensitive?: boolean;
+  //   documentation?: string;
+  // }, shapeName: string, isTopLevel = false): ApiParamSpec {
+  //   const spec: ApiParamSpec = {type: shape.type};
+  //   if (shape.locationName) spec.locationName = shape.locationName;
+  //   if (shape.sensitive) spec.sensitive = shape.sensitive;
+  //   /// TODO TODO TODO
+  //   switch (shape.type) {
+  //     case 'structure':
+  //       spec.children = {};
+  //       if (!this.#singleRefShapes.has(shapeName) && !isTopLevel) {
+  //         spec.children[`~~${censorShapeName(shapeName)}_Shape.children~~`] = {type: "structure"};
+  //         break;
+  //       }
+  //       for (const [key, ref] of Object.entries(shape.members)) {
+  //         const innerShape = this.apiSpec.shapes[ref.shape];
+  //         const innerSpec = this.describeShape(innerShape, ref.shape);
+  //         if (ref.idempotencyToken) innerSpec.idempotencyToken = ref.idempotencyToken;
+  //         if (ref.location) innerSpec.location = ref.location;
+  //         if (ref.locationName) innerSpec.locationName = ref.locationName;
+  //         if (ref.queryName) innerSpec.queryName = ref.queryName;
+  //         if (ref.streaming) innerSpec.streaming = ref.streaming;
+  //         spec.children[key] = innerSpec;
+  //       }
+  //       break;
+  //     case 'boolean':
+  //       break;
+  //     case 'string':
+  //       if (shape.min) spec.min = shape.min;
+  //       if (shape.max) spec.max = shape.max;
+  //       break;
+  //     default:
+  //       console.log(`TODO: describe shape spec ${shape.type}`);
+  //   }
+  //   return spec;
+  // }
+
+  findSingleRefShapes(originalShapeList: Iterable<string>) {
+    const multiRefShapes = new Set<string>(originalShapeList);
+    const singleRefShapes = new Set<string>();
+    const namedShapes = new Set(originalShapeList);
+    function countRef(ref: Schema.ShapeRef) {
+      if (multiRefShapes.has(ref.shape)) return;
+      if (singleRefShapes.has(ref.shape)) {
+        multiRefShapes.add(ref.shape);
+        singleRefShapes.delete(ref.shape);
+      } else {
+        namedShapes.add(ref.shape);
+        singleRefShapes.add(ref.shape);
+      }
+    }
+
+    for (const shapeName of namedShapes) {
+      const shape = this.apiSpec.shapes[shapeName];
+      switch (shape.type) {
+        case 'structure':
+          Object.values(shape.members).forEach(countRef);
+          break;
+        case 'map':
+          countRef(shape.key);
+          countRef(shape.value);
+          break;
+        case 'list':
+          countRef(shape.member);
+          break;
+      }
+    }
+
+    return singleRefShapes;
+  }
 
   formatStructureType(shape: Schema.ShapeStructure): string {
     const required = new Set(shape.required?.map(x => x.toLowerCase()) || []);
     return ['{',
       ...Object.entries(shape.members).map(([key, spec]) =>
-        `    ${key}${required.has(key.toLowerCase()) ? '' : '?'}: ${this.specifyShapeType(spec)};`),
-    '  }'].join('\n');
+        `  ${key}${required.has(key.toLowerCase()) ? '' : '?'}: ${this.specifyShapeType(spec)};`),
+    '}'].join('\n');
   }
 
-  specifyShapeType(spec: Schema.ShapeRef): string {
+  specifyShapeType(spec: Schema.ShapeRef, isDictKey = false): string {
     const shape = this.apiSpec.shapes[spec.shape];
     if (!shape) return 'any';
     switch (shape.type) {
       case 'string':
+        if (shape.enum && !isDictKey) {
+          return shape.enum.map(x => JSON.stringify(x)).join(' | ');
+        }
       case 'boolean':
         return shape.type;
       case 'double':
@@ -192,14 +391,18 @@ interface ServiceClient {
       case 'list':
         return `Array<${this.specifyShapeType(shape.member)}>`;
       case 'map':
-        return `{ [key: ${this.specifyShapeType(shape.key)}]: ${this.specifyShapeType(shape.value)} }`;
+        return `{ [key: ${this.specifyShapeType(shape.key, true)}]: ${this.specifyShapeType(shape.value)} }`;
       case 'structure':
         this.#namedShapes.add(spec.shape);
-        return censorShapeName(spec.shape); // TODO?
+        if (this.#singleRefShapes.has(spec.shape)) {
+          return this.formatStructureType(shape).replace(/\n/g, '\n  ');
+        } else {
+          return censorShapeName(spec.shape); // TODO?
+        }
       case 'timestamp':
-        return 'Date';
+        return 'Date | number';
       case 'blob':
-        return 'Uint8Array'; // TODO
+        return 'Uint8Array | string'; // TODO
       default:
         throw new Error(`TODO: unimpl shape type ${(shape as any).type}`);
     }

@@ -8,12 +8,18 @@ import S3 from './generated/s3@2006-03-01.ts';
 const sts = new STS(factory);
 console.log(await sts.getCallerIdentity());
 
+const credential = await sts.assumeRole({
+  RoleArn: '',
+  RoleSessionName: '',
+});
+console.log(credential.Credentials);
+
 const sqs = new SQS(factory);
 console.log(await sqs.listQueues());
 
 const s3 = new S3(factory);
 console.log(await s3.listBuckets());
-s3.waitFor.
+// s3.waitForBucketExists({Bucket: 'stardust-blobs'})
 
 
 // import {SNS} from 'https://deno.land/x/aws_sdk@v0.0.1/client-sns/SNS.ts';

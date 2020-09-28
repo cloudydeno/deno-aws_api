@@ -129,7 +129,10 @@ export interface ShapeStructure {
       "streaming"?: true;
       "deprecated"?: true;
       "idempotencyToken"?: true; // shuold be auto filled with guid if not given
-    }
+      "xmlNamespace"?: { // used by s3
+        "uri": string;
+      };
+    };
   };
   "endpointoperation"?: true, // only in dynamodb
   "deprecated"?: true,
@@ -184,6 +187,8 @@ export interface WaiterSpec {
     | WaiterStatusMatcher;
 }
 
+export type WaiterMatchResult = "success" | "retry" | "failure";
+
 export interface WaiterPathMatcher {
   "matcher":
     | "pathAll" // pathmatches.all(eq argument)
@@ -191,17 +196,17 @@ export interface WaiterPathMatcher {
     | "path"; // pathmatch eq argument
   "expected": any; // TODO: string?
   "argument": string; // eg "Certificate.DomainValidationOptions[].ValidationStatus"
-  "state": "success" | "retry" | "failure";
+  "state": WaiterMatchResult;
 }
 
 export interface WaiterErrorMatcher {
   "matcher": "error";
   "expected": string;
-  "state": "success" | "retry" | "failure";
+  "state": WaiterMatchResult;
 }
 
 export interface WaiterStatusMatcher {
   "matcher": "status";
   "expected": number;
-  "state": "success" | "retry" | "failure";
+  "state": WaiterMatchResult;
 }

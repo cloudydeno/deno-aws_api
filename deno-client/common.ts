@@ -3,26 +3,59 @@
 export interface ApiRequestConfig {
   // fixed per operation
   action: string;
-  method: "POST" | "GET" | "HEAD" | "DELETE" | "PUT" | "PATCH";
-  requestUri: string;
+  method?: "POST" | "GET" | "HEAD" | "DELETE" | "PUT" | "PATCH";
+  requestUri?: string;
   responseCode?: number;
-  locationsIn?: ApiParamLocationMap;
-  locationsOut?: ApiParamLocationMap;
+  //inputSpec?: ApiParamSpec;
+  //outputSpec?: ApiParamSpec;
   // dynamic per call
-  input: { [param: string]: any; };
+  headers?: Headers;
+  query?: URLSearchParams;
+  body?: URLSearchParams | ApiWireStructure | Uint8Array;
   abortSignal?: AbortSignal;
 }
-type ApiParamLocationMap = { [param: string]: {
-  location: "uri" | "querystring" | "header" | "headers" | "statusCode";
-  name?: string;
-}}
+export interface ApiResponse extends Response {
+  xml(): Promise<ApiWireStructure>;
+};
+// Things that JSON can handle directly
+export type ApiWireStructure = {
+  [param: string]: string | number | boolean | null | ApiWireStructure;
+};
+// export type ApiParamSpecMap = { [param: string]: ApiParamSpec }
+// export type ApiParamSpec = {
+//   type: "integer" | "long" | "double" | "float" | "boolean" | "timestamp" | "blob" | "list" | "map" | "string" | "structure";
+//   children?: ApiParamSpecMap,
+//   location?: "uri" | "querystring" | "header" | "headers" | "statusCode";
+//   locationName?: string;
+//   queryName?: string;
+//   streaming?: true;
+//   sensitive?: boolean;
+//   idempotencyToken?: true; // shuold be auto filled with guid if not given
+//   timestampFormat?: "iso8601" | "unixTimestamp";
+//   min?: number;
+//   max?: number;
+//   flattened?: true;
+//   pattern?: string;
+//   enum?: string[];
+// }
 export interface ApiFactory {
   buildServiceClient(apiMetadata: Object): ServiceClient;
 }
 export interface ServiceClient {
-  performRequest(request: ApiRequestConfig): Promise<any>;
+  performRequest(request: ApiRequestConfig): Promise<ApiResponse>;
+  // TODO: does this even belong here?
+  // runWaiter<T,U>(config: ApiWaiterConfig<T,U>): Promise<U>;
 }
-
+export interface ApiWaiterConfig<T,U> {
+  // wiring
+  operation: (input: T) => Promise<U>;
+  baseInput: T;
+  abortSignal?: AbortSignal;
+  // behavior
+  delay: number;
+  maxAttempts: number;
+  acceptors: any[]; // TODO
+}
 
 // our understanding of how APIs can describe themselves
 export interface ApiMetadata {
@@ -70,5 +103,13 @@ export class AwsServiceError extends Error {
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, new.target);
     }
+  }
+}
+
+export class ApiResponse extends Response {
+  async xml(): Promise<ApiWireStructure> {
+    const text = await this.text();
+    throw new Error(`TODO: ApiResponse.xml() in`);
+    return {};
   }
 }

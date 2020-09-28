@@ -45,6 +45,10 @@ async function *readTestFixtures(filePath: string): AsyncGenerator<TestRun> {
 
   for (const fixture of fixtures) {
     const {cases, description, ...apiSpec} = fixture;
+    if (apiSpec.shapes.EnumType?.type === 'string') {
+      // patch up enum to allow an empty string
+      apiSpec.shapes.EnumType.enum?.push('')
+    }
     for (const testCase of cases) {
       yield {
         testCase,
@@ -63,6 +67,7 @@ async function *readTestFixtures(filePath: string): AsyncGenerator<TestRun> {
           },
         },
       };
+      if (Deno.args.includes('--one')) return;
     }
   }
 }
