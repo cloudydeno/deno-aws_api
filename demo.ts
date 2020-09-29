@@ -8,11 +8,15 @@ import STS from './generated/sts@2011-06-15.ts';
 const sts = new STS(factory);
 console.log(await sts.getCallerIdentity());
 
-const credential = await sts.assumeRole({
-  RoleArn: '',
-  RoleSessionName: '',
-});
-console.log(credential);
+// const credential = await sts.assumeRole({
+//   RoleArn: '',
+//   RoleSessionName: '',
+// });
+// console.log(credential);
+
+import EC2 from './generated/ec2@2016-11-15.ts';
+const ec2 = new EC2(factory);
+console.log(await ec2.describeInstances());
 
 // const sqs = new SQS(factory);
 // console.log(await sqs.listQueues());

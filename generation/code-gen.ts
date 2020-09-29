@@ -84,12 +84,12 @@ interface ApiRequestConfig {
   abortSignal?: AbortSignal;
 }
 export type ApiResponse = Response & {
-  xml(): Promise<ApiWireStructure>;
+  xml(resultWrapper?: string): Promise<XmlNode>;
 }
 // Things that JSON can handle directly
-export type ApiWireStructure = {
-  [param: string]: string | number | boolean | null | ApiWireStructure;
-};
+// export type ApiWireStructure = {
+//   [param: string]: string | number | boolean | null | ApiWireStructure;
+// };
 interface ApiFactory {
   buildServiceClient(apiMetadata: Object): ServiceClient;
 }
@@ -99,6 +99,17 @@ interface ServiceClient {
 }
 interface RequestConfig {
   abortSignal?: AbortSignal;
+}
+export interface XmlNode {
+  name: string;
+  attributes: {[key: string]: string};
+  content?: string;
+  children: XmlNode[];
+  getChild(name: string): XmlNode | undefined;
+  mapChildren(opts: {lists?: string[]}): [
+    {[key: string]: XmlNode},
+    {[key: string]: XmlNode[]},
+  ];
 }
 
 `);
@@ -129,11 +140,13 @@ interface RequestConfig {
 
       signature += `,\n  ): Promise<`;
       if (outputShape?.type === 'structure' && operation.output) {
-        signature += 'string'; // TODO: this.specifyShapeType(operation.output);
+        // signature += 'string';
+        signature += this.specifyShapeType(operation.output);
       } else if (outputShape) {
         throw new Error(`TODO: ${outputShape.type} output`);
       } else {
-        signature += 'string'; // TODO: 'void';
+        // signature += 'string';
+        signature += 'void';
       }
       signature += '>';
 
@@ -170,12 +183,30 @@ interface RequestConfig {
         chunks.push(`      hostPrefix: \`${templatedPrefix}\`,`);
       }
       chunks.push(`    });`);
-      // TODO: all kinds of shit!
 
-      // if (outputShape) {
-      //   chunks.push(`    return {};`);
-      // }
-      chunks.push(`    return await resp.text();`);
+      if (outputShape) {
+        chunks.push(`    const xml = await resp.xml(${JSON.stringify(operation.output?.resultWrapper ?? undefined)});`);
+        chunks.push(`    const [fields] = xml.mapChildren({});`);
+        chunks.push(`    return {`);
+        for (const [field, spec] of Object.entries(outputShape?.members)) {
+          const fieldShape = this.shapes.get(spec);
+          const locationName = fieldShape.spec.locationName ?? spec.locationName ?? field;
+          switch (fieldShape.spec.type) {
+            case 'string':
+              if (fieldShape.spec.enum) {
+                // TODO: is there a better way of mapping freetext into enums?
+                chunks.push(`      ${field}: fields[${JSON.stringify(locationName)}]?.content as ${fieldShape.spec.enum.map(x => JSON.stringify(x)).join(' | ')},`);
+              } else {
+                chunks.push(`      ${field}: fields[${JSON.stringify(locationName)}]?.content,`);
+              }
+              break;
+            default:
+              chunks.push(`      // TODO: ${field} (${fieldShape.spec.type})`);
+          }
+        }
+        chunks.push(`    };`);
+      }
+
       chunks.push(`  }\n`);
     }
 

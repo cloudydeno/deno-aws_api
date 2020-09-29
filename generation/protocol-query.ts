@@ -85,10 +85,10 @@ function encodeDate_unixTimestamp(input?: Date | number): string {
 }
 // also rfc822 (toUTCString)
 
-import * as uuid from "https://deno.land/std/uuid/mod.ts";
+import * as uuidv4 from "https://deno.land/std@0.70.0/uuid/v4.ts";
 let fixedIdemptToken: string | undefined;
 function generateIdemptToken() {
-  return fixedIdemptToken ?? uuid.v4.generate();
+  return fixedIdemptToken ?? uuidv4.generate();
 }
 
 `;
@@ -177,6 +177,7 @@ function generateIdemptToken() {
         case 'integer':
         case 'float':
         case 'double':
+        case 'long':
           chunks.push(`    ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body.append(prefix+${JSON.stringify(prefix+locationName)}, (${paramRef} ?? '').toString());`);
           break;
         case 'blob':
@@ -196,8 +197,7 @@ function generateIdemptToken() {
           }
           break;
         default:
-          console.log('TODO:', shape.spec.type)
-          chunks.push(`    ${isRequired ? '' : `if (${paramRef} !== undefined) `}body.append(prefix+${JSON.stringify(prefix+locationName)}, /*TODO: ${shape.spec.type}*/String(${paramRef}));`);
+          chunks.push(`    // TODO: appending for ${(shape as KnownShape).spec.type}`);
       }
     }
 

@@ -1,4 +1,3 @@
-
 // The HTTP contract expected by all service API implementations
 export interface ApiRequestConfig {
   // fixed per operation
@@ -14,8 +13,20 @@ export interface ApiRequestConfig {
   abortSignal?: AbortSignal;
 }
 export interface ApiResponse extends Response {
-  xml(): Promise<ApiWireStructure>;
+  xml(resultWrapper?: string): Promise<XmlNode>;
 };
+export interface XmlNode {
+  name: string;
+  attributes: {[key: string]: string};
+  content?: string;
+  children: XmlNode[];
+  getChild(name: string): XmlNode | undefined;
+  mapChildren(opts: {lists?: string[]}): [
+    {[key: string]: XmlNode},
+    {[key: string]: XmlNode[]},
+  ];
+}
+
 // Things that JSON can handle directly
 export type ApiWireStructure = {
   [param: string]: string | number | boolean | null | ApiWireStructure;
@@ -102,13 +113,5 @@ export class AwsServiceError extends Error {
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, new.target);
     }
-  }
-}
-
-export class ApiResponse extends Response {
-  async xml(): Promise<ApiWireStructure> {
-    const text = await this.text();
-    throw new Error(`TODO: ApiResponse.xml() in`);
-    return {};
   }
 }

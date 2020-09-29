@@ -87,7 +87,7 @@ const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunR
   const chunks = new Array<string>();
   chunks.push('\n/////////\n');
   chunks.push(`import { assertEquals } from "https://deno.land/std@0.70.0/testing/asserts.ts";`);
-  chunks.push(`import QueryServiceClient from './deno-client/protocol-query.ts';\n`);
+  chunks.push(`import { DefaultServiceClient } from './deno-client/mod.ts';\n`);
 
   // TODO: better way of mocking this
   chunks.push(`fixedIdemptToken = "00000000-0000-4000-8000-000000000000";\n`);
@@ -108,7 +108,7 @@ const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunR
 
   chunks.push(`const testService = new Fixture({`);
   chunks.push(`  buildServiceClient(metadata: any) {`);
-  chunks.push(`    return new QueryServiceClient(${JSON.stringify(run.clientEndpoint)}, metadata.apiVersion, checkRequest);`);
+  chunks.push(`    return new DefaultServiceClient(${JSON.stringify(run.clientEndpoint)}, metadata.apiVersion, checkRequest);`);
   chunks.push(`  },`);
   chunks.push(`});\n`);
 
