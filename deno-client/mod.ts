@@ -84,13 +84,7 @@ export class DefaultServiceClient implements ServiceClient {
       body: reqBody,
     });
     const rawResp = await this.#signedFetcher(request, config.abortSignal);
-    console.log(rawResp);
     const response = new ApiResponse(rawResp.body, rawResp);
-
-    // if (!response.headers.get('content-type')?.startsWith('application/json')) {
-    //   // console.log(await response.text());
-    //   throw new Error(`TODO: ${this.#serviceUrl} offered us '${response.headers.get('content-type')}' :()`);
-    // }
 
     if (response.status == (config.responseCode ?? 200)) {
       return response;
@@ -130,6 +124,7 @@ export class DefaultServiceClient implements ServiceClient {
 export class ApiResponse extends Response {
   async xml(resultWrapper?: string): Promise<XmlNode> {
     const text = await this.text();
+    console.log(text)
     const doc = parseXml(text);
     if (!doc.root) throw new Error(`ApiResponse lacking XML root`);
 

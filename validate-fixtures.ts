@@ -76,7 +76,11 @@ async function *readTestFixtures(filePath: string): AsyncGenerator<TestRun> {
   }
 }
 
-const allTestRuns = readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/query.json');
+async function* readAllTestFixtures() {
+  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/query.json');
+  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/ec2.json');
+}
+const allTestRuns = readAllTestFixtures();
 
 const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunResult> {
   const codeGen = new ServiceCodeGen({api: run.apiSpec});

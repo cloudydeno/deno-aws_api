@@ -2,6 +2,7 @@ import type * as Schema from './sdk-schema.ts';
 import type ShapeLibrary from './shape-library.ts';
 import type { KnownShape } from './shape-library.ts';
 
+// "query" and also "ec2" which is based on "query"
 export default class ProtocolQueryCodegen {
   shapes: ShapeLibrary;
   ec2Mode: boolean;
@@ -132,8 +133,8 @@ function generateIdemptToken() {
 
     for (const [field, spec] of Object.entries(inputStruct.members)) {
       const shape = this.shapes.get(spec);
-      const defaultName = this.ec2Mode ? field : (field[0].toUpperCase()+field.slice(1));
-      const locationName = spec.queryName ?? spec.locationName ?? shape.spec.locationName ?? defaultName;
+      const defaultName = this.ucfirst(field, false);
+      const locationName = this.ucfirst(spec.queryName, true) ?? this.ucfirst(spec.locationName, false) ?? shape.spec.locationName ?? defaultName;
       const isRequired = (inputStruct.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
       const paramRef = `${paramsRef}[${JSON.stringify(field)}]`;
 
@@ -202,6 +203,15 @@ function generateIdemptToken() {
     }
 
     return chunks.join('\n');
+  }
+
+  ucfirst(name: string | undefined, isQueryName = false): string | undefined {
+    if (!name) return name;
+    if (isQueryName || !this.ec2Mode) {
+      return name;
+    } else {
+      return name[0].toUpperCase() + name.slice(1);
+    }
   }
 
 };
