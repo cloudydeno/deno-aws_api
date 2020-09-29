@@ -75,10 +75,9 @@ interface ApiRequestConfig {
   method?: ${Array.from(allMethods).map(x => JSON.stringify(x)).join(' | ')};
   requestUri?: string;
   responseCode?: number;
-  //inputSpec?: ApiParamSpec;
-  //outputSpec?: ApiParamSpec;
-  //resultWrapper?: string;
-  // dynamic per call
+  hostPrefix?: string;
+  // "endpointdiscovery"?: {} // only in dynamodb
+// dynamic per call
   headers?: Headers;
   query?: URLSearchParams;
   body?: ${this.protocol.requestBodyTypeName};
@@ -91,23 +90,6 @@ export type ApiResponse = Response & {
 export type ApiWireStructure = {
   [param: string]: string | number | boolean | null | ApiWireStructure;
 };
-// export type ApiParamSpecMap = { [param: string]: ApiParamSpec }
-// export type ApiParamSpec = {
-//   type: "integer" | "long" | "double" | "float" | "boolean" | "timestamp" | "blob" | "list" | "map" | "string" | "structure";
-//   children?: ApiParamSpecMap,
-//   location?: "uri" | "querystring" | "header" | "headers" | "statusCode";
-//   locationName?: string;
-//   queryName?: string;
-//   streaming?: true;
-//   sensitive?: boolean;
-//   idempotencyToken?: true; // shuold be auto filled with guid if not given
-//   timestampFormat?: "iso8601" | "unixTimestamp";
-//   min?: number;
-//   max?: number;
-//   flattened?: true;
-//   pattern?: string;
-//   enum?: string[];
-// }
 interface ApiFactory {
   buildServiceClient(apiMetadata: Object): ServiceClient;
 }
@@ -129,29 +111,16 @@ interface RequestConfig {
     chunks.push(`  }\n`);
     chunks.push(`  static ApiMetadata: Object = ${JSON.stringify(this.apiSpec.metadata, null, 2).replace(/\n/g, `\n  `)};\n`);
 
-    // const allInputShapes = new Set<string>();
-
     for (const operation of Object.values(this.apiSpec.operations)) {
       const inputShape = operation.input ? this.apiSpec.shapes[operation.input.shape] : null;
       const outputShape = operation.output ? this.apiSpec.shapes[operation.output.shape] : null;
 
       let signature = `(\n    {abortSignal, ...params}: RequestConfig`;
-      // let hasInputLocations = false;
-      // const inputLocations: LocationMap = {};
       if (inputShape?.type === 'structure' && operation.input) {
         signature += ' & ' + this.specifyShapeType(operation.input);
-        // signature += 'input: '+this.formatStructureType(inputShape);
         if (!inputShape.required?.length) {
           signature += ' = {}';
         }
-
-        // this.visitAllShapesDeep(inputShape, x => allInputShapes.add(x.shape));
-
-        // for (const [field, spec] of Object.entries(inputShape.members)) {
-        //   if (!spec.location) continue;
-        //   hasInputLocations = true;
-        //   inputLocations[field] = {location: spec.location, name: spec.locationName};
-        // }
       } else if (inputShape) {
         throw new Error(`TODO: ${inputShape.type} input`);
       } else {
@@ -178,10 +147,10 @@ interface RequestConfig {
         chunks.push(inputParsingCode);
         inputVariables.forEach(x => referencedInputs.add(x));
       }
+
       chunks.push(`    const resp = await this.#client.performRequest({`);
       chunks.push(`      ${Array.from(referencedInputs).join(', ')},`);
       chunks.push(`      action: ${JSON.stringify(operation.name)},`);
-      // chunks.push(`      action: ${JSON.stringify(operation.name)},`);
       if (operation.http?.method && operation.http.method !== 'POST') {
         chunks.push(`      method: ${JSON.stringify(operation.http.method)},`);
       }
@@ -196,15 +165,10 @@ interface RequestConfig {
       if (operation.http?.responseCode) {
         chunks.push(`      responseCode: ${JSON.stringify(operation.http.responseCode)},`);
       }
-      // if (operation.input) {
-      //   chunks.push(`      inputSpec: ${censorShapeName(operation.input.shape)}_Shape,`);
-      // }
-      // if (operation.output) {
-      //   chunks.push(`      outputSpec: ${censorShapeName(operation.output.shape)}_Shape,`);
-      // }
-      // if (this.apiSpec.metadata.protocol === 'query' && operation.output?.resultWrapper) {
-      //   chunks.push(`      resultWrapper: ${JSON.stringify(operation.output.resultWrapper)},`);
-      // }
+      if (operation.endpoint?.hostPrefix) {
+        const templatedPrefix = operation.endpoint.hostPrefix.replace(/{/g, '${params.');
+        chunks.push(`      hostPrefix: \`${templatedPrefix}\`,`);
+      }
       chunks.push(`    });`);
       // TODO: all kinds of shit!
 
@@ -229,18 +193,14 @@ interface RequestConfig {
     }
 
     chunks.push(`}\n`);
-    // this.#singleRefShapes = this.findSingleRefShapes(this.#namedShapes);
 
-    // const allShapes = new Array<[string, Schema.ApiShape]>();
     for (const shape of this.shapes.allNamedShapes) {
-      // if (this.#singleRefShapes.has(shapeName)) continue;
       if (!shape.tags.has('named')) continue;
 
       if (shape.spec.type === 'structure') {
         // if (this.#singleRefShapes.has(shape.name)) {
         //   chunks.push(`// TODO: can be inlined (only used once)`);
         // }
-        // allShapes.push([shapeTodo.name, shape]);
         chunks.push(`interface ${shape.censoredName} ${
           this.formatStructureType(shape.spec)}`);
         if (!this.shapes.inputShapes.includes(shape) && shape.tags.has('input')) {
@@ -262,53 +222,8 @@ interface RequestConfig {
       }
     }
 
-    // allShapes.reverse();
-    // for (const [shapeName, shape] of allShapes) {
-    //   chunks.push(`const ${censorShapeName(shapeName)}_Shape: ApiParamSpec = ${
-    //     JSON.stringify(this.describeShape(shape, shapeName, true)).replace(/{"~~([^~]+)~~":{"type":"structure"}}/g, x => x.split('~')[2])};`);
-    // }
-
     return chunks.join('\n');
   }
-
-  // describeShape(shape: Schema.ApiShape & {
-  //   locationName?: string;
-  //   sensitive?: boolean;
-  //   documentation?: string;
-  // }, shapeName: string, isTopLevel = false): ApiParamSpec {
-  //   const spec: ApiParamSpec = {type: shape.type};
-  //   if (shape.locationName) spec.locationName = shape.locationName;
-  //   if (shape.sensitive) spec.sensitive = shape.sensitive;
-  //   /// TODO TODO TODO
-  //   switch (shape.type) {
-  //     case 'structure':
-  //       spec.children = {};
-  //       if (!this.#singleRefShapes.has(shapeName) && !isTopLevel) {
-  //         spec.children[`~~${censorShapeName(shapeName)}_Shape.children~~`] = {type: "structure"};
-  //         break;
-  //       }
-  //       for (const [key, ref] of Object.entries(shape.members)) {
-  //         const innerShape = this.apiSpec.shapes[ref.shape];
-  //         const innerSpec = this.describeShape(innerShape, ref.shape);
-  //         if (ref.idempotencyToken) innerSpec.idempotencyToken = ref.idempotencyToken;
-  //         if (ref.location) innerSpec.location = ref.location;
-  //         if (ref.locationName) innerSpec.locationName = ref.locationName;
-  //         if (ref.queryName) innerSpec.queryName = ref.queryName;
-  //         if (ref.streaming) innerSpec.streaming = ref.streaming;
-  //         spec.children[key] = innerSpec;
-  //       }
-  //       break;
-  //     case 'boolean':
-  //       break;
-  //     case 'string':
-  //       if (shape.min) spec.min = shape.min;
-  //       if (shape.max) spec.max = shape.max;
-  //       break;
-  //     default:
-  //       console.log(`TODO: describe shape spec ${shape.type}`);
-  //   }
-  //   return spec;
-  // }
 
   formatStructureType(shape: Schema.ShapeStructure): string {
     const required = new Set(shape.required?.map(x => x.toLowerCase()) || []);
@@ -338,7 +253,6 @@ interface RequestConfig {
       case 'map':
         return `{ [key: ${this.specifyShapeType(shape.key, true)}]: ${this.specifyShapeType(shape.value)} }`;
       case 'structure':
-        // this.#namedShapes.add(spec.shape);
         if (this.shapes.get(spec).tags.has('named')) {
           return censorShapeName(spec.shape); // TODO?
         } else {

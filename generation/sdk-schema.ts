@@ -105,8 +105,13 @@ export interface ShapeList {
 
 export interface ShapeMap {
   "type": "map";
-  "key": ShapeRef;
-  "value": ShapeRef;
+  "key": ShapeRef & {
+    "locationName": string;
+  };
+  "value": ShapeRef & {
+    "locationName": string;
+  };
+  "flattened"?: true;
   "min"?: number;
   "max"?: number;
 }
@@ -130,6 +135,7 @@ export interface ShapeStructure {
       "queryName"?: string; // only in ec2
       "streaming"?: true;
       "deprecated"?: true;
+      "timestampFormat"?: "iso8601" | "unixTimestamp"; // default varies
       "idempotencyToken"?: true; // shuold be auto filled with guid if not given
       "xmlNamespace"?: { // used by s3
         "uri": string;

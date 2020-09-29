@@ -6,8 +6,7 @@ export interface ApiRequestConfig {
   method?: "POST" | "GET" | "HEAD" | "DELETE" | "PUT" | "PATCH";
   requestUri?: string;
   responseCode?: number;
-  //inputSpec?: ApiParamSpec;
-  //outputSpec?: ApiParamSpec;
+  hostPrefix?: string;
   // dynamic per call
   headers?: Headers;
   query?: URLSearchParams;

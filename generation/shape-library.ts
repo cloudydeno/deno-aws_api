@@ -92,24 +92,44 @@ export default class ShapeLibrary {
 
 
 
-  visitAllShapesDeep(shape: KnownShape, visit: (ref: Schema.ShapeRef) => void) {
+  visitAllShapesDeep(shape: KnownShape, visit: (ref: Schema.ShapeRef) => void, stack: KnownShape[]=[]) {
+    const consider = (ref: Schema.ShapeRef) => {
+      const child = this.get(ref);
+      // if (child === shape) {
+      //   shape.tags.add('recursive');
+      //   return;
+      // } else
+      if (stack.includes(child)) {
+        child.refCount++; // keep it named
+        child.tags.add('recursed');
+        shape.tags.add('recursive');
+        return;
+        // console.log(stack, child);
+        // throw new Error(`Tried recursing`);
+      }
+      stack.push(child);
+      visit(ref);
+      this.visitAllShapesDeep(child, visit, stack);
+      stack.pop();
+    }
+
     switch (shape.spec.type) {
       case 'structure':
         for (const member of Object.values(shape.spec.members)) {
-          visit(member);
-          this.visitAllShapesDeep(this.get(member), visit);
+          consider(member);
+          // this.visitAllShapesDeep(this.get(member), visit);
         }
         break;
       case 'map':
         const {key, value} = shape.spec;
-        visit(key); visit(value);
-        this.visitAllShapesDeep(this.get(key), visit);
-        this.visitAllShapesDeep(this.get(value), visit);
+        consider(key); consider(value);
+        // this.visitAllShapesDeep(this.get(key), visit);
+        // this.visitAllShapesDeep(this.get(value), visit);
         break;
       case 'list':
         const {member} = shape.spec;
-        visit(member);
-        this.visitAllShapesDeep(this.get(member), visit);
+        consider(member);
+        // this.visitAllShapesDeep(this.get(member), visit);
         break;
     }
   }

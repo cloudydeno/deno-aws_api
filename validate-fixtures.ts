@@ -9,8 +9,9 @@ import ServiceCodeGen from './generation/code-gen.ts';
   // test/fixtures/protocol/output
 
 type ProtocolFixture = Schema.Api & {
-  "cases": ProtocolTestCase[];
   "description": string;
+  "cases": ProtocolTestCase[];
+  "clientEndpoint"?: string;
 }
 interface ProtocolTestCase {
   "given": Schema.ApiOperation;
@@ -28,15 +29,17 @@ function lowerCamel(str: string): string {
 }
 
 interface TestRun {
-  description: string;
-  apiSpec: Schema.Api;
   testCase: ProtocolTestCase;
+  description: string;
+  clientEndpoint: string;
+  apiSpec: Schema.Api;
 }
 interface TestRunResult {
   run: TestRun;
   status: Deno.ProcessStatus;
   stdout: Uint8Array;
   stderr: Uint8Array;
+  source: string;
 };
 
 async function *readTestFixtures(filePath: string): AsyncGenerator<TestRun> {
@@ -44,7 +47,7 @@ async function *readTestFixtures(filePath: string): AsyncGenerator<TestRun> {
     .readTextFile(filePath)) as ProtocolFixture[];
 
   for (const fixture of fixtures) {
-    const {cases, description, ...apiSpec} = fixture;
+    const {cases, description, clientEndpoint, ...apiSpec} = fixture;
     if (apiSpec.shapes.EnumType?.type === 'string') {
       // patch up enum to allow an empty string
       apiSpec.shapes.EnumType.enum?.push('')
@@ -55,6 +58,7 @@ async function *readTestFixtures(filePath: string): AsyncGenerator<TestRun> {
         description: (description ?? "Test case")
           + ' with params '
           + JSON.stringify(testCase.params),
+        clientEndpoint: fixture.clientEndpoint ?? "https://example.com",
         apiSpec: {
           ...apiSpec,
           metadata: {
@@ -76,12 +80,17 @@ const allTestRuns = readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/qu
 
 const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunResult> {
   const codeGen = new ServiceCodeGen({api: run.apiSpec});
+  const apiSource = codeGen.generateTypescript();
+
   const { given, params, serialized } = run.testCase;
 
   const chunks = new Array<string>();
   chunks.push('\n/////////\n');
   chunks.push(`import { assertEquals } from "https://deno.land/std@0.70.0/testing/asserts.ts";`);
   chunks.push(`import QueryServiceClient from './deno-client/protocol-query.ts';\n`);
+
+  // TODO: better way of mocking this
+  chunks.push(`fixedIdemptToken = "00000000-0000-4000-8000-000000000000";\n`);
 
   chunks.push(`async function checkRequest(request: Request): Promise<Response> {`);
   chunks.push(`  const [_, host, path] = request.url.match(/^https:\\/\\/([^\\/]+)(\\/.*)$/) ?? [null, '', ''];`);
@@ -99,20 +108,20 @@ const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunR
 
   chunks.push(`const testService = new Fixture({`);
   chunks.push(`  buildServiceClient(metadata: any) {`);
-  chunks.push(`    return new QueryServiceClient('https://example.com', metadata.apiVersion, checkRequest);`);
+  chunks.push(`    return new QueryServiceClient(${JSON.stringify(run.clientEndpoint)}, metadata.apiVersion, checkRequest);`);
   chunks.push(`  },`);
   chunks.push(`});\n`);
 
   chunks.push(`await testService.${lowerCamel(given.name)}(${JSON.stringify(params)});\n`);
 
   const child = Deno.run({cmd: ["deno", "run", "-"], stdin: 'piped', stdout: 'piped', stderr: 'piped'});
-  await child.stdin.write(new TextEncoder().encode(codeGen.generateTypescript()));
+  await child.stdin.write(new TextEncoder().encode(apiSource));
   await child.stdin.write(new TextEncoder().encode(chunks.join('\n')));
   child.stdin.close();
 
   return Promise
     .all([child.output(), child.stderrOutput(), child.status()])
-    .then(([stdout, stderr, status]) => ({run, stdout, stderr, status}));
+    .then(([stdout, stderr, status]) => ({run, stdout, stderr, status, source: apiSource+chunks.join('\n')}));
 });
 
 let passed = 0;
@@ -128,7 +137,11 @@ for await (const result of results) {
     console.log('-----------------------------------------------------------');
     console.log(decoder.decode(result.stderr).split('  throw new AssertionError')[0] || decoder.decode(result.stdout));
     failed++;
-    if (Deno.args.includes('--one-fail')) break;
+    if (Deno.args.includes('--one-fail')) {
+      console.log('-----------------------------------------------------------');
+      console.log(result.source);
+      break;
+    }
   }
 }
 

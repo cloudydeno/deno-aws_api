@@ -13,9 +13,9 @@ export class ApiFactory {
       ?? `${apiMetadata.endpointPrefix}.${Deno.env.get('AWS_REGION')}.amazonaws.com`);
 
     const signingName = apiMetadata.signingName ?? apiMetadata.endpointPrefix;
-    const signingFetcher = async (request: Request): Promise<Response> => {
+    const signingFetcher = async (request: Request, signal?: AbortSignal): Promise<Response> => {
       const req = await signer.sign(signingName, request);
-      return fetch(req);
+      return fetch(req, { signal });
     }
 
     switch (apiMetadata.protocol) {
