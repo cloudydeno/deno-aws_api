@@ -86,7 +86,7 @@ function encodeDate_unixTimestamp(input?: Date | number): string {
 }
 // also rfc822 (toUTCString)
 
-import * as uuidv4 from "https://deno.land/std@0.70.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
 let fixedIdemptToken: string | undefined;
 function generateIdemptToken() {
   return fixedIdemptToken ?? uuidv4.generate();
