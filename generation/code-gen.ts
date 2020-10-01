@@ -119,8 +119,8 @@ interface XmlNode {
       const outputShape = operation.output ? this.shapes.get(operation.output) : null;
 
       let signature = `(\n    {abortSignal, ...params}: RequestConfig`;
-      if (inputShape?.spec.type === 'structure' && operation.input) {
-        signature += ' & ' + this.specifyShapeType(operation.input);
+      if (inputShape?.spec.type === 'structure') {
+        signature += ' & ' + this.specifyShapeType(inputShape);
         if (!inputShape.spec.required?.length) {
           signature += ' = {}';
         }
@@ -131,13 +131,11 @@ interface XmlNode {
       }
 
       signature += `,\n  ): Promise<`;
-      if (outputShape?.spec.type === 'structure' && operation.output) {
-        // signature += 'string';
-        signature += this.specifyShapeType(operation.output);
+      if (outputShape?.spec.type === 'structure') {
+        signature += this.specifyShapeType(outputShape);
       } else if (outputShape) {
         throw new Error(`TODO: ${outputShape.spec.type} output`);
       } else {
-        // signature += 'string';
         signature += 'void';
       }
       signature += '>';
@@ -221,7 +219,7 @@ interface XmlNode {
       //   chunks.push(`// TODO: can be inlined (only used once)`);
       // }
       chunks.push(`${
-        this.formatStructureType(shape)}`);
+        this.writeStructureType(shape)}`);
 
       // TODO: other types might want a helper func... enums??
       if (shape.tags.has('interface')) {
@@ -240,19 +238,24 @@ interface XmlNode {
     return chunks.join('\n');
   }
 
-  formatStructureType(shape: KnownShape): string {
+  writeStructureType(shape: KnownShape): string {
     switch (shape.spec.type) {
 
       case 'structure':
         const required = new Set(shape.spec.required?.map(x => x.toLowerCase()) || []);
-        return [`interface ${shape.censoredName} {`,
-          ...Object.entries(shape.spec.members).map(([key, spec]) =>
-            `  ${key}${required.has(key.toLowerCase()) ? '' : '?'}: ${this.specifyShapeType(spec)};`),
+        const reqLists = shape.tags.has('output') && !this.apiSpec.metadata.protocol.includes('json');
+        return [`export interface ${shape.censoredName} {`,
+          ...Object.entries(shape.spec.members).map(([key, spec]) => {
+            const shape = this.shapes.get(spec);
+            const isRequired = required.has(key.toLowerCase())
+              || (reqLists && shape.spec.type === 'list');
+            return `  ${key}${isRequired ? '' : '?'}: ${this.specifyShapeType(shape)};`;
+          }),
         '}'].join('\n');
 
       case 'string':
         if (shape.spec.enum) {
-          return [`type ${shape.censoredName} =`,
+          return [`export type ${shape.censoredName} =`,
             ...shape.spec.enum.map(value => `| ${JSON.stringify(value)}`),
           ';'].join('\n');
         }
@@ -263,10 +266,9 @@ interface XmlNode {
   }
 
   // TODO: enums as a map key type should become an object instead
-  specifyShapeType(spec: Schema.ShapeRef, isDictKey = false): string {
-    const shape = this.shapes.get(spec);
+  specifyShapeType(shape: KnownShape, isDictKey = false): string {
     if (shape.tags.has('named') && !isDictKey) {
-      return censorShapeName(spec.shape);
+      return shape.censoredName;
     }
 
     switch (shape.spec.type) {
@@ -284,11 +286,15 @@ interface XmlNode {
       case 'integer':
         return 'number';
       case 'list':
-        return `Array<${this.specifyShapeType(shape.spec.member)}>`;
+        const memberShape = this.shapes.get(shape.spec.member);
+        return `${this.specifyShapeType(memberShape)}[]`;
       case 'map':
-        return `{ [key: ${this.specifyShapeType(shape.spec.key, true)}]: ${this.specifyShapeType(shape.spec.value)} }`;
+        // TODO: if keyShape is an enum, probably just write a whole friggen structure out
+        const keyShape = this.shapes.get(shape.spec.key);
+        const valueShape = this.shapes.get(shape.spec.value);
+        return `{ [key: ${this.specifyShapeType(keyShape, true)}]: ${this.specifyShapeType(valueShape)} }`;
       case 'structure':
-        return this.formatStructureType(shape).replace(/\n/g, '\n  ');
+        return this.writeStructureType(shape).replace(/\n/g, '\n  ');
       case 'timestamp':
         return 'Date | number';
       case 'blob':
