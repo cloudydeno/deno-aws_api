@@ -31,4 +31,4 @@ const codeGen = new ServiceCodeGen({
 const svcMetadata = codeGen.apiSpec.metadata;
 const modName = `${svcMetadata.endpointPrefix}@${svcMetadata.apiVersion}.ts`;
 console.log('Writing', modName);
-await Deno.writeTextFile(path.join('generated', modName), codeGen.generateTypescript());
+await Deno.writeTextFile(path.join('lib', 'services', modName), codeGen.generateTypescript());

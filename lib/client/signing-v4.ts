@@ -130,6 +130,7 @@ export class AWSSignerV4 implements Signer {
 
     const urlObj = new URL(request.url);
     const { host, pathname, searchParams } = urlObj;
+    searchParams.sort();
     const canonicalQuerystring = searchParams.toString();
 
     const headers = new Headers(request.headers);

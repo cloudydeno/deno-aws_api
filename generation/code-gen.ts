@@ -1,4 +1,3 @@
-import * as path from "https://deno.land/std@0.70.0/path/mod.ts";
 import type * as Schema from './sdk-schema.ts';
 import ProtocolQueryCodegen from './protocol-query.ts';
 import ShapeLibrary, { KnownShape } from './shape-library.ts';
