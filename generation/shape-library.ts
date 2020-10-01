@@ -73,15 +73,6 @@ export default class ShapeLibrary {
 
     this.allNamedShapes = allNamedShapes;
 
-    // for (const shape of this.knownShapes.values()) {
-    //   if (shape.tags.has('named') && shape.refCount < 2) {
-    //     if (shape.tags.has('input')) continue;
-    //     if (shape.tags.has('output')) continue;
-    //     shape.tags.add('inlined');
-    //     shape.tags.delete('named');
-    //   }
-    // }
-
     // console.log('All Named Shapes:', Array.from(allNamedShapes).map(x => [x.name, x.tags, x.refCount]));
     // console.log('All Shapes:', Array.from(this.knownShapes.values()).map(x => [x.name, x.tags, x.refCount]));
     // Deno.exit(5);
@@ -98,17 +89,11 @@ export default class ShapeLibrary {
   visitAllShapesDeep(shape: KnownShape, visit: (ref: Schema.ShapeRef) => void, stack: KnownShape[]=[]) {
     const consider = (ref: Schema.ShapeRef) => {
       const child = this.get(ref);
-      // if (child === shape) {
-      //   shape.tags.add('recursive');
-      //   return;
-      // } else
       if (stack.includes(child)) {
         child.refCount++; // keep it named
         child.tags.add('recursed');
         shape.tags.add('recursive');
         return;
-        // console.log(stack, child);
-        // throw new Error(`Tried recursing`);
       }
       stack.push(child);
       visit(ref);
@@ -118,47 +103,17 @@ export default class ShapeLibrary {
 
     switch (shape.spec.type) {
       case 'structure':
-        for (const member of Object.values(shape.spec.members)) {
-          consider(member);
-          // this.visitAllShapesDeep(this.get(member), visit);
-        }
+        Object.values(shape.spec.members).forEach(consider);
         break;
       case 'map':
-        const {key, value} = shape.spec;
-        consider(key); consider(value);
-        // this.visitAllShapesDeep(this.get(key), visit);
-        // this.visitAllShapesDeep(this.get(value), visit);
+        consider(shape.spec.key);
+        consider(shape.spec.value);
         break;
       case 'list':
-        const {member} = shape.spec;
-        consider(member);
-        // this.visitAllShapesDeep(this.get(member), visit);
+        consider(shape.spec.member);
         break;
     }
   }
-
-  // findSingleRefShapes(): Set<KnownShape> {
-    // return Array.from(this.allNamedShapes
-  //   const multiRefShapes = new Set(this.allNamedShapes);
-  //   const singleRefShapes = new Set<KnownShape>();
-  //   const namedShapes = new Set(this.allNamedShapes);
-  //   function countRef(ref: Schema.ShapeRef) {
-  //     if (multiRefShapes.has(ref.shape)) return;
-  //     if (singleRefShapes.has(ref.shape)) {
-  //       multiRefShapes.add(ref.shape);
-  //       singleRefShapes.delete(ref.shape);
-  //     } else {
-  //       singleRefShapes.add(ref.shape);
-  //     }
-  //   }
-
-  //   for (const shapeName of namedShapes) {
-  //     const shape = this.apiSpec.shapes[shapeName];
-  //     this.visitAllShapesDeep(shape, countRef);
-  //   }
-
-  //   return singleRefShapes;
-  // }
 
 };
 

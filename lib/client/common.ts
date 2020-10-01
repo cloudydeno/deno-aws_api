@@ -20,15 +20,7 @@ export interface XmlNode {
   attributes: {[key: string]: string};
   content?: string;
   children: XmlNode[];
-  // getChild(name: string): XmlNode | undefined;
-  // mapChildren(opts: {lists?: string[]}): [
-  //   {[key: string]: XmlNode},
-  //   {[key: string]: XmlNode[]},
-  // ];
 
-  // getChild(name: string): XmlNode | undefined;
-  // first(name: string, required?: boolean): XmlNode | undefined;
-  // first<T>(name: string, required: boolean, accessor: (node: XmlNode) => T): T | undefined;
   first(name: string, required: true): XmlNode;
   first<T>(name: string, required: true, accessor: (node: XmlNode) => T): T;
   first(name: string, required?: false): XmlNode | undefined;
@@ -49,23 +41,6 @@ export interface XmlNode {
 export type ApiWireStructure = {
   [param: string]: string | number | boolean | null | ApiWireStructure;
 };
-// export type ApiParamSpecMap = { [param: string]: ApiParamSpec }
-// export type ApiParamSpec = {
-//   type: "integer" | "long" | "double" | "float" | "boolean" | "timestamp" | "blob" | "list" | "map" | "string" | "structure";
-//   children?: ApiParamSpecMap,
-//   location?: "uri" | "querystring" | "header" | "headers" | "statusCode";
-//   locationName?: string;
-//   queryName?: string;
-//   streaming?: true;
-//   sensitive?: boolean;
-//   idempotencyToken?: true; // shuold be auto filled with guid if not given
-//   timestampFormat?: "iso8601" | "unixTimestamp";
-//   min?: number;
-//   max?: number;
-//   flattened?: true;
-//   pattern?: string;
-//   enum?: string[];
-// }
 export interface ApiFactory {
   buildServiceClient(apiMetadata: Object): ServiceClient;
 }

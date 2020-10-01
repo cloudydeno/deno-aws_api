@@ -110,16 +110,16 @@ function generateIdemptToken() {
     };
   }
 
-  generateShapeInputParsingTypescript(baseIdentifier: string, inputShape: Schema.ApiShape): { inputParsingFunction: string; } {
+  generateShapeInputParsingTypescript(shape: KnownShape): { inputParsingFunction: string; } {
     const chunks = new Array<string>();
-    chunks.push(`function ${baseIdentifier}_Serialize(body: URLSearchParams, prefix: string, params: ${baseIdentifier}) {`);
+    chunks.push(`function ${shape.censoredName}_Serialize(body: URLSearchParams, prefix: string, params: ${shape.censoredName}) {`);
 
-    switch (inputShape.type) {
+    switch (shape.spec.type) {
       case 'structure':
-        chunks.push(this.generateStructureInputTypescript(inputShape, "params", '.'));
+        chunks.push(this.generateStructureInputTypescript(shape.spec, "params", '.'));
         break;
       default:
-        throw new Error(`TODO: protocol-query.ts lacks shape generator for ${inputShape.type}`);
+        throw new Error(`TODO: protocol-query.ts lacks shape generator for ${shape.spec.type}`);
     }
 
     chunks.push(`}`);
@@ -226,16 +226,16 @@ function generateIdemptToken() {
     };
   }
 
-  generateShapeOutputParsingTypescript(baseIdentifier: string, outputShape: Schema.ApiShape): { outputParsingFunction: string; } {
+  generateShapeOutputParsingTypescript(shape: KnownShape): { outputParsingFunction: string; } {
     const chunks = new Array<string>();
-    chunks.push(`function ${baseIdentifier}_Parse(node: XmlNode): ${baseIdentifier} {`);
+    chunks.push(`function ${shape.censoredName}_Parse(node: XmlNode): ${shape.censoredName} {`);
 
-    switch (outputShape.type) {
+    switch (shape.spec.type) {
       case 'structure':
-        chunks.push(this.generateStructureOutputTypescript(outputShape, 'node'));
+        chunks.push(this.generateStructureOutputTypescript(shape.spec, 'node'));
         break;
       default:
-        throw new Error(`TODO: protocol-query.ts lacks shape output generator for ${outputShape.type}`);
+        throw new Error(`TODO: protocol-query.ts lacks shape output generator for ${shape.spec.type}`);
     }
 
     chunks.push(`}`);

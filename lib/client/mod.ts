@@ -25,12 +25,7 @@ export class ApiFactory {
       return fetch(req, { signal });
     }
 
-    // switch (apiMetadata.protocol) {
-    //   case 'query':
     return new DefaultServiceClient(serviceUrl, apiMetadata.apiVersion, signingFetcher);
-    //   default:
-    //     throw new Error(`TODO!!! service protocol ${apiMetadata.protocol}`);
-    // }
   }
 
 }
@@ -47,8 +42,9 @@ export class DefaultServiceClient implements ServiceClient {
 
   async performRequest(config: ApiRequestConfig): Promise<ApiResponse> {
     const headers = config.headers ?? new Headers;
+    // TODO: we should probably have the api metadata so we can pick one of these
     // headers.append('accept', 'application/json'); // TODO
-    headers.append('accept', 'text/xml');
+    // headers.append('accept', 'text/xml');
 
     const [scheme, host] = this.#serviceUrl.split('//');
     const serviceUrl = `${scheme}//${config.hostPrefix ?? ''}${host}${config.requestUri ?? '/'}`;
