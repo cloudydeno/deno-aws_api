@@ -50,6 +50,7 @@ export default class ShapeLibrary {
         shape.tags.add('enum');
       }
     };
+
     for (const shape of this.inputShapes) {
       shape.refCount++;
       shape.tags.add('named');
@@ -59,6 +60,7 @@ export default class ShapeLibrary {
     for (const shape of this.inputInnerShapes) {
       shape.tags.add('input');
     }
+
     for (const shape of this.outputShapes) {
       shape.refCount++;
       shape.tags.add('named');
@@ -68,6 +70,7 @@ export default class ShapeLibrary {
     for (const shape of this.outputInnerShapes) {
       shape.tags.add('output');
     }
+
     this.allNamedShapes = allNamedShapes;
 
     // for (const shape of this.knownShapes.values()) {

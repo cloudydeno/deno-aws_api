@@ -91,16 +91,39 @@ export class DefaultServiceClient implements ServiceClient {
 
     } else if (response.status >= 400) {
       const contentType = response.headers.get('content-type');
-      if (contentType?.startsWith('text/xml')) {
+      if (contentType?.startsWith('text/xml') || !contentType) {
         const xml = await response.xml();
-        const [{Error, RequestId}] = xml.mapChildren({});
-        if (Error)  {
-          const [{Code, Message, Type}] = Error.mapChildren({});
-          throw new AwsServiceError({
-            Code: Code.content ?? '',
-            Message: Message.content ?? '',
-            Type: Type.content ?? '',
-          }, RequestId.content ?? '');
+        switch (xml.name) {
+
+          case 'ErrorResponse': // e.g. sts
+            // <ErrorResponse xmlns="https://sts.amazonaws.com/doc/2011-06-15/">
+            //   <Error>
+            //     <Type>Sender</Type>
+            //     <Code>ExpiredToken</Code>
+            //     <Message>The security token included in the request is expired</Message>
+            //   </Error>
+            //   <RequestId>90caa9d3-e248-4a7f-8fcf-c2a5d54c12b9</RequestId>
+            // </ErrorResponse>
+            const errNode = xml.first('Error');
+            if (errNode) {
+              throw new AwsServiceError(errNode.strings({
+                required: { Code: true, Message: true, Type: true },
+              }), xml.first('RequestId', false, x => x.content));
+            }
+            break;
+
+          case 'Response': // e.g. ec2
+            // <?xml version="1.0" encoding="UTF-8"?>
+            // <Response><Errors><Error><Code>RequestExpired</Code><Message>Request has expired.</Message></Error></Errors><RequestID>433741ec-94c9-49bc-a9c8-ba59ab8972c2</RequestID></Response>
+            const errors: ServiceError[] = xml.getList('Errors', 'Error')
+              .map(errNode => errNode.strings({
+                required: { Code: true, Message: true },
+                optional: { Type: true },
+              }));
+            if (errors.length > 0) {
+              throw new AwsServiceError(errors[0], xml.first('RequestID', false, x => x.content));
+            }
+            break;
         }
 
       } else if (contentType?.startsWith('application/json')) {
@@ -115,21 +138,20 @@ export class DefaultServiceClient implements ServiceClient {
       }
       throw new Error(`Unrecognizable error response of type ${contentType}`);
 
-    } else {
-      throw new Error(`BUG: Unexpected HTTP response status ${response.status}`);
     }
+    throw new Error(`BUG: Unexpected HTTP response status ${response.status}`);
   }
 }
 
 export class ApiResponse extends Response {
   async xml(resultWrapper?: string): Promise<XmlNode> {
     const text = await this.text();
-    console.log(text)
+    // console.log(text)
     const doc = parseXml(text);
     if (!doc.root) throw new Error(`ApiResponse lacking XML root`);
 
     if (resultWrapper) {
-      const result = doc.root.getChild(resultWrapper);
+      const result = doc.root.first(resultWrapper);
       if (!result) throw new Error(`Result Wrapper ${JSON.stringify(resultWrapper)} is missing`);
       return result;
     }

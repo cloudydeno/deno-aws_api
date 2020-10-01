@@ -102,7 +102,7 @@ function generateIdemptToken() {
     chunks.push(`    const body = new URLSearchParams;`);
     chunks.push(`    const prefix = '';`);
 
-    chunks.push(this.generateStructureTypescript(inputShape, "params", ''));
+    chunks.push(this.generateStructureInputTypescript(inputShape, "params", ''));
 
     return {
       inputParsingCode: chunks.join('\n'),
@@ -116,7 +116,7 @@ function generateIdemptToken() {
 
     switch (inputShape.type) {
       case 'structure':
-        chunks.push(this.generateStructureTypescript(inputShape, "params", '.'));
+        chunks.push(this.generateStructureInputTypescript(inputShape, "params", '.'));
         break;
       default:
         throw new Error(`TODO: protocol-query.ts lacks shape generator for ${inputShape.type}`);
@@ -128,7 +128,7 @@ function generateIdemptToken() {
     };
   }
 
-  generateStructureTypescript(inputStruct: Schema.ShapeStructure, paramsRef = "params", prefix = ""): string {
+  generateStructureInputTypescript(inputStruct: Schema.ShapeStructure, paramsRef = "params", prefix = ""): string {
     const chunks = new Array<string>();
 
     for (const [field, spec] of Object.entries(inputStruct.members)) {
@@ -193,7 +193,7 @@ function generateIdemptToken() {
             chunks.push(`    ${isRequired ? '' : `if (${paramRef} !== undefined) `}${shape.censoredName}_Serialize(body, prefix+${JSON.stringify(prefix+locationName)}, ${paramRef});`);
           } else {
             if (isRequired) chunks.push(`    if (${paramRef}) {`);
-            chunks.push(this.generateStructureTypescript(shape.spec, paramRef, prefix+locationName+'.'));
+            chunks.push(this.generateStructureInputTypescript(shape.spec, paramRef, prefix+locationName+'.'));
             if (isRequired) chunks.push(`    }`);
           }
           break;
@@ -204,6 +204,134 @@ function generateIdemptToken() {
 
     return chunks.join('\n');
   }
+
+
+
+
+
+
+  generateOperationOutputParsingTypescript(outputShape: Schema.ApiShape): { outputParsingCode: string; outputVariables: string[]; } {
+    if (outputShape.type !== 'structure') throw new Error(
+      `Can only generate top level structures`);
+
+    const chunks = new Array<string>();
+    // chunks.push(`    const body = new URLSearchParams;`);
+    // chunks.push(`    const prefix = '';`);
+
+    chunks.push('  '+this.generateStructureOutputTypescript(outputShape, 'xml').replace(/\n/g, '\n  '));
+
+    return {
+      outputParsingCode: chunks.join('\n'),
+      outputVariables: ['body'],
+    };
+  }
+
+  generateShapeOutputParsingTypescript(baseIdentifier: string, outputShape: Schema.ApiShape): { outputParsingFunction: string; } {
+    const chunks = new Array<string>();
+    chunks.push(`function ${baseIdentifier}_Parse(node: XmlNode): ${baseIdentifier} {`);
+
+    switch (outputShape.type) {
+      case 'structure':
+        chunks.push(this.generateStructureOutputTypescript(outputShape, 'node'));
+        break;
+      default:
+        throw new Error(`TODO: protocol-query.ts lacks shape output generator for ${outputShape.type}`);
+    }
+
+    chunks.push(`}`);
+    return {
+      outputParsingFunction: chunks.join('\n'),
+    };
+  }
+
+  generateStructureOutputTypescript(outputStruct: Schema.ShapeStructure, nodeRef: string): string {
+    // Organize fields into basic strings and 'special' others
+    // Basic strings can be passed directly from the xml module
+    // TODO: support for locationName and maybe even enums, as further strings() arguments
+    const reqStrings: {[key: string]: true} = {};
+    let hasRequiredStrs = false;
+    const optStrings: {[key: string]: true} = {};
+    let hasOptionalStrs = false;
+    const specials: Array<[string, Schema.StructureFieldDetails, KnownShape]> = [];
+    for (const [field, spec] of Object.entries(outputStruct.members)) {
+      const fieldShape = this.shapes.get(spec);
+      const defaultName = this.ucfirst(field, false);
+      const locationName = this.ucfirst(spec.queryName, true) ?? spec.locationName ?? fieldShape.spec.locationName ?? defaultName;
+      if (fieldShape.spec.type == 'string' && !fieldShape.spec.enum && (!locationName || locationName === field)) {
+        if (outputStruct.required?.includes(field)) {
+          reqStrings[field] = true;
+          hasRequiredStrs = true;
+        } else {
+          optStrings[field] = true;
+          hasOptionalStrs = true;
+        }
+        continue;
+      } else {
+        specials.push([field, spec, fieldShape]);
+      }
+    }
+
+    const chunks = new Array<string>();
+
+    // Simplified statement if no fields need individual treatment
+    if (specials.length === 0) {
+      if (hasOptionalStrs || hasRequiredStrs) {
+        chunks.push(`  return ${nodeRef}.strings({`);
+        if (hasRequiredStrs) chunks.push(`    required: ${JSON.stringify(reqStrings)},`);
+        if (hasOptionalStrs) chunks.push(`    optional: ${JSON.stringify(optStrings)},`);
+        chunks.push(`  });`);
+        return chunks.join('\n');
+      } else {
+        return `  return {};`;
+      }
+    }
+
+    // Full construction :) start an object
+    chunks.push('  return {');
+
+    if (hasOptionalStrs || hasRequiredStrs) {
+      chunks.push(`    ...${nodeRef}.strings({`);
+      if (hasRequiredStrs) chunks.push(`      required: ${JSON.stringify(reqStrings)},`);
+      if (hasOptionalStrs) chunks.push(`      optional: ${JSON.stringify(optStrings)},`);
+      chunks.push(`    }),`);
+    }
+
+    for (const [field, spec, shape] of specials) {
+      const defaultName = this.ucfirst(field, false);
+      const locationName = this.ucfirst(spec.queryName, true) ?? spec.locationName ?? shape.spec.locationName ?? defaultName;
+      const isRequired = (outputStruct.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
+      // const paramRef = `${paramsRef}[${JSON.stringify(field)}]`;
+
+      switch (shape.spec.type) {
+
+        case 'list':
+          const flattenedlist = shape.spec.flattened;
+          // console.log(shape.name, [spec.queryName, spec.locationName, shape.spec.locationName, defaultName])
+          const listPrefix = flattenedlist
+            ? spec.queryName ?? spec.locationName ?? shape.spec.locationName ?? shape.spec.member.locationName ?? defaultName
+            : spec.queryName ?? spec.locationName ?? defaultName;
+          const entryPath = [listPrefix];
+          if (!flattenedlist)
+            entryPath.push(shape.spec.locationName ?? shape.spec.member.locationName ?? 'member');
+
+          const innerShape = this.shapes.get(shape.spec.member);
+          // console.log([listPrefix, entryPrefix, innerShape.spec.type, innerShape.spec.locationName]);
+
+          chunks.push(`    ${field}: ${nodeRef}.getList(${entryPath.map(x => JSON.stringify(x)).join(', ')}).map(${configureInnerShapeReading(innerShape)}),`);
+          break;
+
+        default:
+          chunks.push(`    ${field}: ${nodeRef}.first(${JSON.stringify(locationName)}, ${isRequired}, ${configureInnerShapeReading(shape)}),`);
+          // chunks.push(`    // TODO: reading for ${(shape as KnownShape).spec.type}`);
+      }
+    }
+
+    chunks.push('  };');
+    return chunks.join('\n');
+  }
+
+
+
 
   ucfirst(name: string | undefined, isQueryName = false): string | undefined {
     if (!name) return name;
@@ -236,4 +364,44 @@ function configureInnerShapeEncoding(innerShape: KnownShape, extraConfig: any) {
   }
   // sue me
   return '{' + confExtras + JSON.stringify(extraConfig).slice(1);
+}
+
+function configureInnerShapeReading(innerShape: KnownShape) {
+  switch (innerShape.spec.type) {
+    case 'string':
+      if (innerShape.spec.enum) {
+        // TODO: is there a better way of mapping freetext into enums?
+        if (innerShape.tags.has('named')) {
+          return `x => (x.content ?? '') as ${innerShape.censoredName}`;
+        } else {
+          return `x => (x.content ?? '') as ${innerShape.spec.enum.map(x => JSON.stringify(x)).join(' | ')}`;
+        }
+      }
+      return `x => x.content ?? ''`;
+    case 'character':
+      return `x => x.content ?? ''`;
+    case 'boolean':
+      return `x => x.content === 'true'`;
+    case 'integer':
+    case 'long':
+      return `x => parseInt(x.content ?? '0')`;
+    case 'float':
+    case 'double':
+      return `x => parseFloat(x.content ?? '0')`;
+    case 'blob':
+      return `x => Base64.toUint8Array(x.content ?? '')`;
+    case 'timestamp':
+      return `() => (0) /* TODO: timestamp output */`; // TODO
+    case 'map':
+      return `() => ({}) /* TODO: map output */`; // TODO
+    case 'structure':
+      if (innerShape.tags.has('named')) {
+        return `${innerShape.censoredName}_Parse`;
+      } else {
+        throw new Error(`Structure ${innerShape.name} is used in an output list but wasn't named`);
+      }
+  }
+  // sue me
+  return `x => x /* TODO: ${innerShape.spec.type} output*/`;
+  // return '{' + confExtras + JSON.stringify(extraConfig).slice(1);
 }

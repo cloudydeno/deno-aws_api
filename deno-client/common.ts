@@ -20,11 +20,29 @@ export interface XmlNode {
   attributes: {[key: string]: string};
   content?: string;
   children: XmlNode[];
-  getChild(name: string): XmlNode | undefined;
-  mapChildren(opts: {lists?: string[]}): [
-    {[key: string]: XmlNode},
-    {[key: string]: XmlNode[]},
-  ];
+  // getChild(name: string): XmlNode | undefined;
+  // mapChildren(opts: {lists?: string[]}): [
+  //   {[key: string]: XmlNode},
+  //   {[key: string]: XmlNode[]},
+  // ];
+
+  // getChild(name: string): XmlNode | undefined;
+  // first(name: string, required?: boolean): XmlNode | undefined;
+  // first<T>(name: string, required: boolean, accessor: (node: XmlNode) => T): T | undefined;
+  first(name: string, required: true): XmlNode;
+  first<T>(name: string, required: true, accessor: (node: XmlNode) => T): T;
+  first(name: string, required?: false): XmlNode | undefined;
+  first<T>(name: string, required: false, accessor: (node: XmlNode) => T): T | undefined;
+
+  getList(...namePath: string[]): XmlNode[]; // you can just map this
+  strings<
+    R extends {[key: string]: true},
+    O extends {[key: string]: true},
+  >(opts: {
+    required?: R,
+    optional?: O,
+  }): { [key in keyof R]: string }
+    & { [key in keyof O]: string | undefined };
 }
 
 // Things that JSON can handle directly
@@ -93,7 +111,7 @@ export interface ApiMetadata {
 export interface ServiceError {
   "Code": string;
   "Message": string;
-  "Type": "Sender" | string; // TODO
+  "Type"?: "Sender" | string; // TODO
 }
 
 export class AwsServiceError extends Error {
@@ -101,13 +119,14 @@ export class AwsServiceError extends Error {
   originalMessage: string;
   errorType: string;
   requestId: string;
-  constructor(error: ServiceError, requestId: string) {
+  constructor(error: ServiceError, requestId?: string) {
+    requestId = requestId ?? "MISSING REQUEST ID";
     super(`${error.Code}: ${error.Message} [Type: ${error.Type}, Request ID: ${requestId}]`);
 
     this.name = new.target.name;
     this.code = error.Code;
     this.originalMessage = error.Message;
-    this.errorType = error.Type;
+    this.errorType = error.Type ?? 'Unknown';
     this.requestId = requestId;
 
     if (Error.captureStackTrace) {

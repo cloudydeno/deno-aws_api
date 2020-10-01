@@ -1,7 +1,7 @@
 import * as path from "https://deno.land/std@0.70.0/path/mod.ts";
 import type * as Schema from './sdk-schema.ts';
 import ProtocolQueryCodegen from './protocol-query.ts';
-import ShapeLibrary from './shape-library.ts';
+import ShapeLibrary, { KnownShape } from './shape-library.ts';
 // import type { ApiParamSpecMap, ApiParamSpec } from './../deno-client/common.ts';
 
 export default class ServiceCodeGen {
@@ -105,11 +105,15 @@ export interface XmlNode {
   attributes: {[key: string]: string};
   content?: string;
   children: XmlNode[];
-  getChild(name: string): XmlNode | undefined;
-  mapChildren(opts: {lists?: string[]}): [
-    {[key: string]: XmlNode},
-    {[key: string]: XmlNode[]},
-  ];
+
+  first(name: string, required: true): XmlNode;
+  first<T>(name: string, required: true, accessor: (node: XmlNode) => T): T;
+  first(name: string, required?: false): XmlNode | undefined;
+  first<T>(name: string, required: false, accessor: (node: XmlNode) => T): T | undefined;
+  getList(...namePath: string[]): XmlNode[]; // you can just map this
+  strings<R extends {[key: string]: true}, O extends {[key: string]: true}>(
+    opts: { required?: R, optional?: O }
+  ): { [key in keyof R]: string } & { [key in keyof O]: string | undefined };
 }
 
 `);
@@ -123,27 +127,27 @@ export interface XmlNode {
     chunks.push(`  static ApiMetadata: Object = ${JSON.stringify(this.apiSpec.metadata, null, 2).replace(/\n/g, `\n  `)};\n`);
 
     for (const operation of Object.values(this.apiSpec.operations)) {
-      const inputShape = operation.input ? this.apiSpec.shapes[operation.input.shape] : null;
-      const outputShape = operation.output ? this.apiSpec.shapes[operation.output.shape] : null;
+      const inputShape =  operation.input ? this.shapes.get(operation.input) : null;
+      const outputShape = operation.output ? this.shapes.get(operation.output) : null;
 
       let signature = `(\n    {abortSignal, ...params}: RequestConfig`;
-      if (inputShape?.type === 'structure' && operation.input) {
+      if (inputShape?.spec.type === 'structure' && operation.input) {
         signature += ' & ' + this.specifyShapeType(operation.input);
-        if (!inputShape.required?.length) {
+        if (!inputShape.spec.required?.length) {
           signature += ' = {}';
         }
       } else if (inputShape) {
-        throw new Error(`TODO: ${inputShape.type} input`);
+        throw new Error(`TODO: ${inputShape.spec.type} input`);
       } else {
         signature += ' = {}';
       }
 
       signature += `,\n  ): Promise<`;
-      if (outputShape?.type === 'structure' && operation.output) {
+      if (outputShape?.spec.type === 'structure' && operation.output) {
         // signature += 'string';
         signature += this.specifyShapeType(operation.output);
       } else if (outputShape) {
-        throw new Error(`TODO: ${outputShape.type} output`);
+        throw new Error(`TODO: ${outputShape.spec.type} output`);
       } else {
         // signature += 'string';
         signature += 'void';
@@ -154,11 +158,13 @@ export interface XmlNode {
       chunks.push(`  async ${lowerCamelName}${signature} {`);
       const pathParts = new Map;
       const referencedInputs = new Set(['abortSignal']);
-      if (inputShape?.type === 'structure') {
+      if (inputShape?.spec.type === 'structure') {
         const {inputParsingCode, inputVariables} = this.protocol
-          .generateOperationInputParsingTypescript(inputShape);
+          .generateOperationInputParsingTypescript(inputShape.spec);
         chunks.push(inputParsingCode);
         inputVariables.forEach(x => referencedInputs.add(x));
+      } else {
+        referencedInputs.add(`body: new URLSearchParams()`);
       }
 
       chunks.push(`    const resp = await this.#client.performRequest({`);
@@ -184,28 +190,78 @@ export interface XmlNode {
       }
       chunks.push(`    });`);
 
-      if (outputShape) {
+      /////
+      // OVERALL TODO: Detect 'framing' shapes (e.g. for s3 headers) and treat them specially
+
+      if (outputShape?.spec.type === 'structure') {
         chunks.push(`    const xml = await resp.xml(${JSON.stringify(operation.output?.resultWrapper ?? undefined)});`);
-        chunks.push(`    const [fields] = xml.mapChildren({});`);
-        chunks.push(`    return {`);
-        for (const [field, spec] of Object.entries(outputShape?.members)) {
-          const fieldShape = this.shapes.get(spec);
-          const locationName = fieldShape.spec.locationName ?? spec.locationName ?? field;
-          switch (fieldShape.spec.type) {
-            case 'string':
-              if (fieldShape.spec.enum) {
-                // TODO: is there a better way of mapping freetext into enums?
-                chunks.push(`      ${field}: fields[${JSON.stringify(locationName)}]?.content as ${fieldShape.spec.enum.map(x => JSON.stringify(x)).join(' | ')},`);
-              } else {
-                chunks.push(`      ${field}: fields[${JSON.stringify(locationName)}]?.content,`);
-              }
-              break;
-            default:
-              chunks.push(`      // TODO: ${field} (${fieldShape.spec.type})`);
-          }
+        if (outputShape.refCount > 1) {
+          chunks.push(`    return ${outputShape.censoredName}_Parse(xml);`);
+        } else {
+          const {outputParsingCode, outputVariables} = this.protocol
+            .generateOperationOutputParsingTypescript(outputShape.spec);
+          chunks.push(outputParsingCode);
         }
-        chunks.push(`    };`);
+
+        // // chunks.push(`    const [fields] = xml.mapChildren({});`);
+        // chunks.push(`    return {`);
+
+        // // Basic strings can be passed directly from the xml module
+        // // TODO: support for locationName and maybe even enums, as further strings() arguments
+        // const reqStrings: {[key: string]: true} = {};
+        // let hasRequiredStrs = false;
+        // const optStrings: {[key: string]: true} = {};
+        // let hasOptionalStrs = false;
+        // const specials: Array<[string, Schema.StructureFieldDetails, KnownShape]> = [];
+        // for (const [field, spec] of Object.entries(outputShape?.members)) {
+        //   const fieldShape = this.shapes.get(spec);
+        //   if (fieldShape.spec.type == 'string' && !fieldShape.spec.enum && !spec.locationName && !fieldShape.spec.locationName) {
+        //     if (outputShape.required?.includes(field)) {
+        //       reqStrings[field] = true;
+        //       hasRequiredStrs = true;
+        //     } else {
+        //       optStrings[field] = true;
+        //       hasOptionalStrs = true;
+        //     }
+        //   } else {
+        //     specials.push([field, spec, fieldShape]);
+        //   }
+        // }
+        // if (hasOptionalStrs || hasRequiredStrs) {
+        //   chunks.push(`      ...xml.strings({`);
+        //   if (hasRequiredStrs) chunks.push(`        required: ${JSON.stringify(reqStrings)},`);
+        //   if (hasOptionalStrs) chunks.push(`        optional: ${JSON.stringify(optStrings)},`);
+        //   chunks.push(`      }),`);
+        // }
+
+        // for (const [field, spec, fieldShape] of specials) {
+        //   const locationName = spec.locationName ?? fieldShape.spec.locationName ?? field;
+        //   switch (fieldShape.spec.type) {
+        //     // case 'string':
+        //     //   if (fieldShape.spec.enum) {
+        //     //     // TODO: is there a better way of mapping freetext into enums?
+        //     //     chunks.push(`      ${field}: fields[${JSON.stringify(locationName)}]?.content as ${fieldShape.spec.enum.map(x => JSON.stringify(x)).join(' | ')},`);
+        //     //   } else {
+        //     //     chunks.push(`      ${field}: fields[${JSON.stringify(locationName)}]?.content,`);
+        //     //   }
+        //     //   break;
+        //     default:
+        //       chunks.push(`      // TODO: ${field} (${fieldShape.spec.type})`);
+        //   }
+        // }
+        // chunks.push(`    };`);
       }
+
+      // const xml = await resp.xml("GetCallerIdentityResult");
+      // return {
+      //   ...xml.strings({
+      //     required: {
+      //       "UserId": true,
+      //       "Account": true,
+      //       "Arn": true,
+      //     },
+      //   }),
+      // };
 
       chunks.push(`  }\n`);
     }
@@ -219,6 +275,7 @@ export interface XmlNode {
         }
         chunks.push(`  waitFor${waiter}(): Promise<any> {`);
         chunks.push(`    return Promise.reject("TODO");`);
+        // chunks.push(`    // ${JSON.stringify(spec)}`);
         chunks.push(`  }\n`);
       }
     }
@@ -228,16 +285,26 @@ export interface XmlNode {
     for (const shape of this.shapes.allNamedShapes) {
       if (!shape.tags.has('named')) continue;
 
+      chunks.push(`// refs: ${shape.refCount
+        } - tags: ${Array.from(shape.tags).join(', ')}`);
+
       if (shape.spec.type === 'structure') {
         // if (this.#singleRefShapes.has(shape.name)) {
         //   chunks.push(`// TODO: can be inlined (only used once)`);
         // }
         chunks.push(`interface ${shape.censoredName} ${
           this.formatStructureType(shape.spec)}`);
-        if (!this.shapes.inputShapes.includes(shape) && shape.tags.has('input')) {
+        // Maybe include input reading (prep for wire)
+        if (!(this.shapes.inputShapes.includes(shape) && shape.refCount === 1) && shape.tags.has('input')) {
           chunks.push(this.protocol.generateShapeInputParsingTypescript(
             shape.censoredName, shape.spec,
           ).inputParsingFunction);
+        }
+        // Maybe include output reading (post-wire enriching)
+        if (!(this.shapes.outputShapes.includes(shape) && shape.refCount === 1) && shape.tags.has('output')) {
+          chunks.push(this.protocol.generateShapeOutputParsingTypescript(
+            shape.censoredName, shape.spec,
+          ).outputParsingFunction);
         }
         chunks.push('');
 
@@ -264,37 +331,40 @@ export interface XmlNode {
     '}'].join('\n');
   }
 
+  // TODO: enums as a map key type should become an object instead
   specifyShapeType(spec: Schema.ShapeRef, isDictKey = false): string {
-    const shape = this.apiSpec.shapes[spec.shape];
-    if (!shape) return 'any';
-    switch (shape.type) {
+    const shape = this.shapes.get(spec);
+    if (shape.tags.has('named') && !isDictKey) {
+      return censorShapeName(spec.shape);
+    }
+
+    switch (shape.spec.type) {
       case 'string':
-        if (shape.enum && !isDictKey) {
-          return shape.enum.map(x => JSON.stringify(x)).join(' | ');
+        if (shape.spec.enum && !isDictKey) {
+          return shape.spec.enum.map(x => JSON.stringify(x)).join(' | ');
         }
       case 'boolean':
-        return shape.type;
+        return shape.spec.type;
+      case 'character':
+        return 'string';
       case 'double':
       case 'float':
       case 'long':
       case 'integer':
         return 'number';
       case 'list':
-        return `Array<${this.specifyShapeType(shape.member)}>`;
+        return `Array<${this.specifyShapeType(shape.spec.member)}>`;
       case 'map':
-        return `{ [key: ${this.specifyShapeType(shape.key, true)}]: ${this.specifyShapeType(shape.value)} }`;
+        return `{ [key: ${this.specifyShapeType(shape.spec.key, true)}]: ${this.specifyShapeType(shape.spec.value)} }`;
       case 'structure':
-        if (this.shapes.get(spec).tags.has('named')) {
-          return censorShapeName(spec.shape); // TODO?
-        } else {
-          return this.formatStructureType(shape).replace(/\n/g, '\n  ');
-        }
+        return this.formatStructureType(shape.spec).replace(/\n/g, '\n  ');
       case 'timestamp':
         return 'Date | number';
       case 'blob':
         return 'Uint8Array | string'; // TODO
       default:
-        throw new Error(`TODO: unimpl shape type ${(shape as any).type}`);
+        console.log(shape);
+        throw new Error(`TODO: unimpl shape type ${(shape as any).spec.type}`);
     }
   }
 

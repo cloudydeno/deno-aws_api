@@ -64,6 +64,7 @@ export interface ApiShapeMetadata {
 };
 export type ApiShapes =
   | ShapeBoolean
+  | ShapeCharacter
   | ShapeTimestamp
   | ShapePrimitive
   | ShapeBlob
@@ -74,6 +75,11 @@ export type ApiShapes =
 
 export interface ShapeBoolean {
   "type": "boolean";
+}
+
+// this is literally only used in the test fixtures as far as I can tell
+export interface ShapeCharacter {
+  "type": "character";
 }
 
 export interface ShapeTimestamp {
@@ -129,22 +135,24 @@ export interface ShapeStructure {
   "type": "structure";
   "required"?: string[];
   "members": {
-    [name: string]: ShapeRef & {
-      "location"?: "uri" | "querystring" | "header" | "headers" | "statusCode";
-      "locationName"?: string;
-      "queryName"?: string; // only in ec2
-      "streaming"?: true;
-      "deprecated"?: true;
-      "timestampFormat"?: "iso8601" | "unixTimestamp"; // default varies
-      "idempotencyToken"?: true; // shuold be auto filled with guid if not given
-      "xmlNamespace"?: { // used by s3
-        "uri": string;
-      };
-    };
+    [name: string]: ShapeRef & StructureFieldDetails;
   };
   "endpointoperation"?: true, // only in dynamodb
   "deprecated"?: true,
 }
+
+export interface StructureFieldDetails {
+  "location"?: "uri" | "querystring" | "header" | "headers" | "statusCode";
+  "locationName"?: string;
+  "queryName"?: string; // only in ec2
+  "streaming"?: true;
+  "deprecated"?: true;
+  "timestampFormat"?: "iso8601" | "unixTimestamp"; // default varies
+  "idempotencyToken"?: true; // shuold be auto filled with guid if not given
+  "xmlNamespace"?: { // used by s3
+    "uri": string;
+  };
+};
 
 // elastictranscoder does this string bs instead of an enum:
 // "pattern": "(^Left$)|(^Right$)|(^Center$)"

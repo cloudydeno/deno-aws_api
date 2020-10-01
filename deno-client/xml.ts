@@ -19,28 +19,109 @@ export class XmlNode implements common.XmlNode {
   constructor(name: string) {
     this.name = name;
   }
-  getChild(name: string): XmlNode | undefined {
-    return this.children.find(x => x.name = name);
-  }
-  mapChildren({lists=[]}: {lists?: string[]}): [
-    {[key: string]: XmlNode},
-    {[key: string]: XmlNode[]},
-  ] {
-    const nMap: {[key: string]: XmlNode} = Object.create(null);
-    const lMap: {[key: string]: XmlNode[]} = Object.create(null);
-    for (const list of lists) {
-      lMap[list] = new Array<XmlNode>();
+
+  first(name: string, required: true): XmlNode;
+  first<T>(name: string, required: true, accessor: (node: XmlNode) => T): T;
+  first(name: string, required?: false): XmlNode | undefined;
+  first<T>(name: string, required: false, accessor: (node: XmlNode) => T): T | undefined;
+
+  first<T>(name: string, required = false, accessor?: (node: XmlNode) => T): XmlNode | T | undefined {
+    const node = this.children.find(x => x.name === name);
+    if (!node && required) {
+      this.throwMissingKeys([name]);
+    } else if (accessor) {
+      if (node) return accessor(node);
+    } else {
+      return node;
     }
-    for (const node of this.children) {
-      if (lists.includes(node.name)) {
-        lMap[node.name].push(node);
-      } else {
-        nMap[node.name] = node;
+  }
+
+  getList(...names: string[]): XmlNode[] { // you can just map this
+    let listParent: XmlNode | undefined = this;
+    while (names.length > 1) {
+      listParent = listParent?.first(names.shift() ?? '');
+    }
+    return listParent?.children.filter(x => x.name === names[0]) ?? [];
+  }
+
+  strings<
+    R extends {[key: string]: true},
+    O extends {[key: string]: true},
+  >(opts: {
+    required?: R,
+    optional?: O,
+  }): { [key in keyof R]: string }
+    & { [key in keyof O]: string | undefined }
+  {
+    const required: Array<keyof R> = Object.keys(opts.required ?? {});
+    const optional: Array<keyof O> = Object.keys(opts.optional ?? {});
+    type T = keyof R | keyof O;
+
+    const obj = Object.create(null);
+    const missing = new Set(required);
+    const strings: Set<T> = new Set(new Array<keyof O|keyof R>().concat(required, optional));
+    for (const child of this.children) {
+      if (child.content != undefined) {
+        if (strings.has(child.name)) {
+          obj[child.name as T] = child.content;
+          missing.delete(child.name);
+        }
       }
     }
-    return [nMap, lMap];
+    if (missing.size > 0) this.throwMissingKeys(missing);
+    return obj;
+  }
+
+  throwMissingKeys(missingKeys: Iterable<string|number|symbol>): never {
+    throw new Error(`BUG: XmlNode ${JSON.stringify(this.name)
+      } missing required keys ${JSON.stringify(Array.from(missingKeys))
+      } - had keys ${JSON.stringify(Array.from(new Set(this.children.map(x => x.name))))}`);
   }
 }
+
+// interface Tag {
+//   Key?: string;
+//   Value?: string;
+// }
+// interface Error {
+//   Code: string;
+//   Message: string;
+//   Sender?: string;
+//   Tags: Array<Tag>;
+// }
+// interface Errors {
+//   Error: Error[];
+// }
+// interface Response {
+//   Errors: Errors;
+//   RequestID: string;
+// }
+
+// const err = parseXml(`<?xml version="1.0" encoding="UTF-8"?>
+// <Response><Errors><Error><Code>RequestExpired</Code><Message>Request has expired.</Message></Error></Errors><RequestID>433741ec-94c9-49bc-a9c8-ba59ab8972c2</RequestID></Response>`);
+// if (!err.root) throw new Error(`TODO`);
+
+// const vals: Error = {
+//   Tags: err.root.getList('Errors', 'Error').map(x => x.strings({
+//     optional: {
+//       Key: true,
+//       Value: true,
+//     },
+//   })),
+//   ...err.root.strings({
+//     required: {
+//       "Code": true,
+//       "Message": true,
+//     },
+//     optional: {
+//       "Sender": true,
+//     },
+//   }),
+// };
+
+
+// console.log(vals);
+
 
 /**
  * Parse the given string of `xml`.
