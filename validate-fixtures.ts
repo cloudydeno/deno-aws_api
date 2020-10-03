@@ -105,7 +105,8 @@ async function *readTestFixtures(filePath: string): AsyncGenerator<TestRun> {
 }
 
 async function* readAllTestFixtures() {
-  // yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/output/query.json');
+  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/output/query.json');
+  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/output/ec2.json');
   yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/query.json');
   yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/ec2.json');
 }
@@ -133,7 +134,7 @@ const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunR
   const chunks = new Array<string>();
   chunks.push('\n/////////\n');
   chunks.push(`import { assertEquals } from "https://deno.land/std@0.71.0/testing/asserts.ts";`);
-  chunks.push(`import { DefaultServiceClient } from './deno-client/mod.ts';\n`);
+  chunks.push(`import { DefaultServiceClient } from './lib/client/mod.ts';\n`);
 
   // TODO: better way of mocking this
   chunks.push(`fixedIdemptToken = "00000000-0000-4000-8000-000000000000";\n`);
@@ -176,8 +177,30 @@ const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunR
   } else {
     const { given, result, response } = run.testCase;
     chunks.push(`const result = await testService.${lowerCamel(given.name)}();\n`);
-    chunks.push(`assertEquals(JSON.stringify(result),`);
+    chunks.push(`const resultJson = JSON.stringify(transformJsObj(result));`);
+    chunks.push(`assertEquals(resultJson,`);
     chunks.push(`  ${JSON.stringify(JSON.stringify(result))});`);
+    chunks.push('');
+    chunks.push(`function transformJsObj(obj: {[key: string]: any}) {`);
+    chunks.push(`  const res: {[key: string]: any} = Object.create(null);`);
+    chunks.push(`  for (const [key, val] of Object.entries(obj)) {`);
+    chunks.push(`    res[key] = transformJsVal(val);`);
+    chunks.push(`  }`);
+    chunks.push(`  return res;`);
+    chunks.push(`}`);
+    chunks.push(`function transformJsVal(val: any): any {`);
+    chunks.push(`  if (val?.constructor === Object) {`);
+    chunks.push(`    return transformJsObj(val);`);
+    chunks.push(`  } else if (val?.constructor === Date) {`);
+    chunks.push(`    return Math.floor(val.valueOf() / 1000);`);
+    chunks.push(`  } else if (val?.constructor === Uint8Array) {`);
+    chunks.push(`    return new TextDecoder('utf-8').decode(val);`);
+    chunks.push(`  } else if (val?.constructor === Array) {`);
+    chunks.push(`    return val.map(transformJsVal);`);
+    chunks.push(`  } else {`);
+    chunks.push(`    return val;`);
+    chunks.push(`  }`);
+    chunks.push(`}`);
   }
 
   const child = Deno.run({cmd: ["deno", "run", "-"], stdin: 'piped', stdout: 'piped', stderr: 'piped'});

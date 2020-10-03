@@ -61,6 +61,7 @@ export interface ApiShapeMetadata {
   "locationName"?: string; // e.g. SSES3, seems to be to alias things for network
   "sensitive"?: boolean; // params that shouldn't be logged
   "documentation"?: string;
+  "resultWrapper"?: string; // only used for test fixturesI guess
 };
 export type ApiShapes =
   | ShapeBoolean
@@ -145,6 +146,7 @@ export interface StructureFieldDetails {
   "location"?: "uri" | "querystring" | "header" | "headers" | "statusCode";
   "locationName"?: string;
   "queryName"?: string; // only in ec2
+  "flattened"?: true;
   "streaming"?: true;
   "deprecated"?: true;
   "timestampFormat"?: "iso8601" | "unixTimestamp"; // default varies

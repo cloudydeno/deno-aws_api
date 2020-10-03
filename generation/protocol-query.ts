@@ -92,6 +92,14 @@ function generateIdemptToken() {
   return fixedIdemptToken ?? uuidv4.generate();
 }
 
+function readXmlMap<T>(entries: XmlNode[], valMapper: (node: XmlNode) => T, {keyName='key', valName='value'}: {keyName?: string, valName?: string}): {[key: string]: T} {
+  const obj: {[key: string]: T} = Object.create(null);
+  for (const entry of entries) {
+    obj[entry.first(keyName, true, x => x.content ?? '')] = entry.first(valName, true, valMapper);
+  }
+  return obj;
+}
+
 `;
 
   generateOperationInputParsingTypescript(inputShape: Schema.ApiShape): { inputParsingCode: string; inputVariables: string[]; } {
@@ -141,34 +149,36 @@ function generateIdemptToken() {
       switch (shape.spec.type) {
         // case 'boolean':
         //   chunks.push(`    ${isRequired ? '' : `if (${paramRef} !== undefined) `}body.append(${JSON.stringify(locationName)}, ${paramRef});`);
-        case 'list':
+        case 'list': {
+          const isFlattened = spec.flattened || shape.spec.flattened || this.ec2Mode;
           const listConfig: any = {};
           // if (shape.spec.member.locationName) listConfig.entName = '.'+shape.spec.member.locationName;
-          const flattenedlist = shape.spec.flattened ?? this.ec2Mode;
           // console.log(shape.name, [spec.queryName, spec.locationName, shape.spec.locationName, defaultName])
-          const listPrefix = flattenedlist
+          const listPrefix = isFlattened
             ? spec.queryName ?? spec.locationName ?? shape.spec.locationName ?? shape.spec.member.locationName ?? defaultName
             : spec.queryName ?? spec.locationName ?? defaultName;
-          listConfig.entryPrefix = flattenedlist
+          listConfig.entryPrefix = isFlattened
             ? '.'
             : `.${shape.spec.locationName ?? shape.spec.member.locationName ?? 'member'}.`;
           const innerShape = this.shapes.get(shape.spec.member);
           chunks.push(`    if (${paramRef}) appendList(body, prefix+${JSON.stringify(prefix+listPrefix)}, ${paramRef}, ${configureInnerShapeEncoding(innerShape, listConfig)})`);
           break;
-        case 'map':
+        }
+        case 'map': {
+          const isFlattened = spec.flattened || shape.spec.flattened || this.ec2Mode;
           const mapConfig: any = {};
           if (shape.spec.key.locationName) mapConfig.keyName = '.'+shape.spec.key.locationName;
           if (shape.spec.value.locationName) mapConfig.valName = '.'+shape.spec.value.locationName;
-          const flattenedMap = shape.spec.flattened ?? this.ec2Mode;
-          const mapPrefix = flattenedMap
+          const mapPrefix = isFlattened
             ? spec.queryName ?? spec.locationName ?? shape.spec.locationName ?? defaultName
             : spec.queryName ?? spec.locationName ?? defaultName;
-          mapConfig.entryPrefix = flattenedMap
+          mapConfig.entryPrefix = isFlattened
             ? '.'
             : `.${shape.spec.locationName ?? 'entry'}.`;
           const valueShape = this.shapes.get(shape.spec.value);
           chunks.push(`    if (${paramRef}) appendMap(body, prefix+${JSON.stringify(prefix+mapPrefix)}, ${paramRef}, ${configureInnerShapeEncoding(valueShape, mapConfig)})`);
           break;
+        }
         case 'string':
           if (spec.idempotencyToken) {
             chunks.push(`    body.append(prefix+${JSON.stringify(prefix+locationName)}, (${paramRef} ?? generateIdemptToken()).toString());`);
@@ -297,28 +307,50 @@ function generateIdemptToken() {
     }
 
     for (const [field, spec, shape] of specials) {
-      const defaultName = this.ucfirst(field, false);
+      const defaultName = field;
       const locationName = this.ucfirst(spec.queryName, true) ?? spec.locationName ?? shape.spec.locationName ?? defaultName;
       const isRequired = (outputStruct.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
       // const paramRef = `${paramsRef}[${JSON.stringify(field)}]`;
 
       switch (shape.spec.type) {
 
-        case 'list':
-          const flattenedlist = shape.spec.flattened;
+        case 'list': {
+          const isFlattened = spec.flattened || shape.spec.flattened;
           // console.log(shape.name, [spec.queryName, spec.locationName, shape.spec.locationName, defaultName])
-          const listPrefix = flattenedlist
+          const listPrefix = isFlattened
             ? spec.queryName ?? spec.locationName ?? shape.spec.locationName ?? shape.spec.member.locationName ?? defaultName
             : spec.queryName ?? spec.locationName ?? defaultName;
-          const entryPath = [listPrefix];
-          if (!flattenedlist)
-            entryPath.push(shape.spec.locationName ?? shape.spec.member.locationName ?? 'member');
+          const memberPath = [listPrefix];
+          if (!isFlattened)
+            memberPath.push(shape.spec.locationName ?? shape.spec.member.locationName ?? 'member');
 
           const innerShape = this.shapes.get(shape.spec.member);
-          // console.log([listPrefix, entryPrefix, innerShape.spec.type, innerShape.spec.locationName]);
+          // console.log([listPrefix, memberPrefix, innerShape.spec.type, innerShape.spec.locationName]);
 
-          chunks.push(`    ${field}: ${nodeRef}.getList(${entryPath.map(x => JSON.stringify(x)).join(', ')}).map(${configureInnerShapeReading(innerShape)}),`);
+          chunks.push(`    ${field}: ${nodeRef}.getList(${memberPath.map(x => JSON.stringify(x)).join(', ')}).map(${configureInnerShapeReading(innerShape)}),`);
           break;
+        }
+
+        case 'map': {
+          const isFlattened = spec.flattened || shape.spec.flattened;
+          const mapConfig: any = {};
+          if (shape.spec.key.locationName) mapConfig.keyName = shape.spec.key.locationName;
+          if (shape.spec.value.locationName) mapConfig.valName = shape.spec.value.locationName;
+
+          // console.log(shape.name, [spec.queryName, spec.locationName, shape.spec.locationName, defaultName])
+          const mapPrefix = isFlattened
+            ? spec.queryName ?? spec.locationName ?? shape.spec.locationName ?? defaultName
+            : spec.queryName ?? spec.locationName ?? defaultName;
+          const entryPath = [mapPrefix];
+          if (!isFlattened)
+            entryPath.push(shape.spec.locationName ?? 'entry');
+
+          const keyShape = this.shapes.get(shape.spec.key);
+          const valueShape = this.shapes.get(shape.spec.value);
+          // console.log([mapPrefix, entryPrefix, innerShape.spec.type, innerShape.spec.locationName]);
+          chunks.push(`    ${field}: readXmlMap(${nodeRef}.getList(${entryPath.map(x => JSON.stringify(x)).join(', ')}), ${configureInnerShapeReading(valueShape)}, ${JSON.stringify(mapConfig)}),`);
+          break;
+        }
 
         default:
           chunks.push(`    ${field}: ${nodeRef}.first(${JSON.stringify(locationName)}, ${isRequired}, ${configureInnerShapeReading(shape)}),`);
@@ -391,7 +423,7 @@ function configureInnerShapeReading(innerShape: KnownShape) {
     case 'blob':
       return `x => Base64.toUint8Array(x.content ?? '')`;
     case 'timestamp':
-      return `() => (0) /* TODO: timestamp output */`; // TODO
+      return `x => x.content?.includes('T') ? new Date(x.content) : x.content?.length === 10 ? new Date(parseInt(x.content) * 1000) : undefined`;
     case 'map':
       return `() => ({}) /* TODO: map output */`; // TODO
     case 'structure':

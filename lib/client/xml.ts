@@ -61,11 +61,9 @@ export class XmlNode implements common.XmlNode {
     const missing = new Set(required);
     const strings: Set<T> = new Set(new Array<keyof O|keyof R>().concat(required, optional));
     for (const child of this.children) {
-      if (child.content != undefined) {
-        if (strings.has(child.name)) {
-          obj[child.name as T] = child.content;
-          missing.delete(child.name);
-        }
+      if (strings.has(child.name)) {
+        obj[child.name as T] = child.content ?? '';
+        missing.delete(child.name);
       }
     }
     if (missing.size > 0) this.throwMissingKeys(missing);

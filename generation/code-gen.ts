@@ -187,7 +187,7 @@ interface XmlNode {
       // OVERALL TODO: Detect 'framing' shapes (e.g. for s3 headers) and treat them specially
 
       if (outputShape?.spec.type === 'structure') {
-        chunks.push(`    const xml = await resp.xml(${JSON.stringify(operation.output?.resultWrapper ?? undefined)});`);
+        chunks.push(`    const xml = await resp.xml(${JSON.stringify(operation.output?.resultWrapper ?? outputShape?.spec.resultWrapper ?? undefined)});`);
         if (outputShape.refCount > 1) {
           chunks.push(`    return ${outputShape.censoredName}_Parse(xml);`);
         } else {
@@ -380,7 +380,7 @@ interface XmlNode {
           ...Object.entries(shape.spec.members).map(([key, spec]) => {
             const shape = this.shapes.get(spec);
             const isRequired = required.has(key.toLowerCase())
-              || (reqLists && shape.spec.type === 'list');
+              || (reqLists && (shape.spec.type === 'list' || shape.spec.type === 'map'));
             return `  ${key}${isRequired ? '' : '?'}: ${this.specifyShapeType(shape)};`;
           }),
         '}'].join('\n');
