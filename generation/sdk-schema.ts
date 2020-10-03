@@ -197,10 +197,11 @@ export interface WaiterSpec {
   "description"?: string;
   "delay": number;
   "maxAttempts": number;
-  "acceptors":
+  "acceptors": Array<
     | WaiterPathMatcher
     | WaiterErrorMatcher
-    | WaiterStatusMatcher;
+    | WaiterStatusMatcher
+  >;
 }
 
 export type WaiterMatchResult = "success" | "retry" | "failure";
