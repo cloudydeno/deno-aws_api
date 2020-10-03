@@ -100,6 +100,12 @@ function readXmlMap<T>(entries: XmlNode[], valMapper: (node: XmlNode) => T, {key
   return obj;
 }
 
+function parseTimestamp(str: string | undefined): Date | undefined {
+  if (str?.includes('T')) return new Date(str);
+  if (str?.length === 10) return new Date(parseInt(str) * 1000)
+  return undefined;
+}
+
 `;
 
   generateOperationInputParsingTypescript(inputShape: Schema.ApiShape): { inputParsingCode: string; inputVariables: string[]; } {
@@ -423,7 +429,7 @@ function configureInnerShapeReading(innerShape: KnownShape) {
     case 'blob':
       return `x => Base64.toUint8Array(x.content ?? '')`;
     case 'timestamp':
-      return `x => x.content?.includes('T') ? new Date(x.content) : x.content?.length === 10 ? new Date(parseInt(x.content) * 1000) : undefined`;
+      return `x => parseTimestamp(x.content)`;
     case 'map':
       return `() => ({}) /* TODO: map output */`; // TODO
     case 'structure':
