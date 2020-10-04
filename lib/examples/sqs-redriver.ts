@@ -91,7 +91,7 @@ while (true) {
     QueueUrl: dlqUrl,
     MaxNumberOfMessages: 1,
     VisibilityTimeout: 15,
-    AttributeNames: ['All']
+    AttributeNames: ['SentTimestamp', 'MessageDeduplicationId', 'MessageGroupId'],
   });
   console.log('==> Received dead letter', message);
 

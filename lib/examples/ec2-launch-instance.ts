@@ -2,13 +2,13 @@
 // It also terminates EC2 instances from your region!!
 //     (Hopefully only instances that it launched :)
 // Please check that all instances are cleaned up after you're done
+const ThiScriptUrl = `https://deno.land/x/aws_api/examples/ec2-launch-instance.ts`;
 
 import { ApiFactory } from '../client/mod.ts';
 import EC2, { Instance } from '../services/ec2@2016-11-15.ts';
 
 const factory = new ApiFactory();
 const ec2 = new EC2(factory);
-const ExampleUrl = `https://deno.land/x/aws_api/examples/ec2-launch-instance.ts`;
 
 // List at most 25 running EC2 instances in the region
 // This uses a .then() pattern to process the results before assigning any variable
@@ -80,7 +80,7 @@ console.log('Using AMI', amznImage.ImageId, '-', amznImage.Name);
 
 
 // LAUNCH an ec2 instance
-const {Instances/*: [Instance]*/} = await ec2.runInstances({
+const {Instances: [instance]} = await ec2.runInstances({
   InstanceType: "t4g.nano",
   ImageId: amznImage.ImageId,
   SubnetId: defaultSubnet.SubnetId,
@@ -89,77 +89,69 @@ const {Instances/*: [Instance]*/} = await ec2.runInstances({
       ResourceType: "instance",
       Tags: [
         {Key: "Name", Value: "deno aws_api example"},
-        {Key: "DenoExample", Value: ExampleUrl},
+        {Key: "DenoExample", Value: ThiScriptUrl},
       ],
     },
   ],
   MinCount: 1,
   MaxCount: 1,
   UserData: btoa(`#!/bin/bash -eux
-    curl 'https://da.gd/ip?cow'
+    curl -s 'https://da.gd/ip?cow'|sed 's/^/-   /'
   `),
 });
-const instance = Instances[0];
 if (!instance.InstanceId) throw new Error(
   `I couldn't launch an EC2 instance. Weird.`);
 console.log('Launched instance:', instance.InstanceId);
 
 
-// Wait for 'Ready'
-// TODO: ec2.waitForInstanceReady();
-while (true) {
-  const info = await ec2.describeInstances({
+// From here we are done accumulating data and can just run through steps
+// so below here is just a series of blocks
+
+{ // Wait for 'Ready'
+  const {Reservations: [res]} = await ec2.waitForInstanceRunning({
     InstanceIds: [instance.InstanceId],
   });
-  const state = info.Reservations[0]?.Instances[0]?.State;
-  console.log('Instance state:', state);
-  if (state?.Name !== 'pending') break;
-  await new Promise(r => setTimeout(r, 5000));
+  console.log('Instance state is now', res?.Instances[0]?.State);
 }
 
-// Wait for console output (takes multiple minute to show up)
-console.log('Waiting for system log to appear... this can take a while');
-while (true) {
-  const {Output} = await ec2.getConsoleOutput({
+{ // Wait ages for console output
+  console.log('Waiting for system log to appear... this takes 10 minutes');
+  const {Output} = await ec2.waitForConsoleOutputAvailable({
     InstanceId: instance.InstanceId,
   });
-  if (Output != null) {
-    const outputLines = atob(Output ?? '').split('\n');
-    const firstRelevantLine = outputLines.findIndex(x => x.includes(`running 'modules:final'`));
-    console.log('Console output:');
-    for (const line of outputLines.slice(firstRelevantLine)) {
-      if (line.includes('cloud-init')) console.log('  |', line);
-    }
-    break;
+  // Look for and print our specific part of cloud-init
+  const outputLines = atob(Output ?? '').split('\n');
+  const firstRelevantLine = outputLines.findIndex(x => x.includes(`running 'modules:final'`));
+  console.log('Console output:');
+  for (const line of outputLines.slice(firstRelevantLine)) {
+    if (line.includes('cloud-init')) console.log('  |', line);
   }
-  console.log('Waiting...');
-  await new Promise(r => setTimeout(r, 30000));
 }
 
 
-// Terminate the instance
-const {TerminatingInstances} = await ec2.terminateInstances({
-  InstanceIds: [instance.InstanceId],
-});
-console.log('Terminated:', TerminatingInstances![0]);
-
-// Wait for 'Terminated'
-// TODO: ec2.waitForInstanceTerminated();
-while (true) {
-  const info = await ec2.describeInstances({
+{ // Terminate the instance
+  const {TerminatingInstances} = await ec2.terminateInstances({
     InstanceIds: [instance.InstanceId],
   });
-  const state = info.Reservations[0]?.Instances[0]?.State;
-  console.log('Instance state:', state);
-  if (state?.Name !== 'shutting-down') break;
-  await new Promise(r => setTimeout(r, 5000));
+  console.log('Terminated:', TerminatingInstances[0]);
+}
+
+{ // Wait for 'Terminated'
+  const {Reservations: [res]} = await ec2.waitForInstanceTerminated({
+    InstanceIds: [instance.InstanceId],
+  });
+  console.log('Instance state is now', res?.Instances[0]?.State);
 }
 
 console.log('All done! Bye');
 
+
+
+// Helper function to clean up existing instances
+
 async function performCleanup(activeInstances: Instance[]) {
   const ourInstances = activeInstances.filter(x => x.Tags
-    .some(y => y.Key === 'DenoExample' && y.Value === ExampleUrl));
+    .some(y => y.Key === 'DenoExample' && y.Value === ThiScriptUrl));
   if (ourInstances.length == 0) {
     console.log(`I didn't find any instances to clean up.`);
     return;

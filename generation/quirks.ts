@@ -64,7 +64,20 @@ export function fixupWaitersSpec(spec: Schema.Waiters, apiSpec: Schema.Api) {
     }
 
     case "EC2": {
+      // is deleting these even a thing? cancelling is a separete operation
       delete spec.waiters["ConversionTaskDeleted"];
+      // add in a custom waiter to make our example easier
+      spec.waiters["ConsoleOutputAvailable"] = {
+        "operation": "GetConsoleOutput",
+        "maxAttempts": 15,
+        "delay": 60,
+        "acceptors": [{
+          "state": "success",
+          "matcher": "path",
+          "argument": "length(Output) > `0`",
+          "expected": true,
+        }],
+      };
       break;
     }
 
@@ -76,5 +89,6 @@ export function fixupJmesCode(code: string): string {
   return code
     // TODO: compile paths alongside the api shapes to avoid this situation
     .replace(`resp["PasswordData"].length`, `(resp["PasswordData"] ?? '').length`) // ec2
+    .replace(`resp["Output"].length`, `(resp["Output"] ?? '').length`) // our ec2 hack above ^^
   ;
 }
