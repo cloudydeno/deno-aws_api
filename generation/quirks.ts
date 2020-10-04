@@ -46,14 +46,35 @@ export function fixupApiSpec(spec: Schema.Api) {
 
 ////////////////////////////////
 // Waiter problems
-// TODO: these should be auto detected by comparing the jmespath to the api's shapes
+// TODO: many of these should be auto detected by comparing the jmespath to the api's shapes
 
-/** waiters which simply aren't compilable, likely due to outdated waiterspecs */
-export const brokenWaiters = new Set([
-  'ConversionTaskDeleted', // ec2 - seems like Cancelled is the actual operation?
-]);
+export function fixupWaitersSpec(spec: Schema.Waiters, apiSpec: Schema.Api) {
+  switch (apiSpec.metadata.serviceId) {
 
-/** watier conditions that  */
-export const brokenWaiterConditions = new Set([
-  'resp["Stacks"].flatMap(x => x["StackStatus"]).some(x => x === "UPDATE_FAILED")', // cloudformation
-]);
+    case "CloudFormation": {
+      for (const waiter of Object.values(spec.waiters)) {
+        for (const acceptor of waiter.acceptors) {
+          if ((acceptor as Schema.WaiterPathMatcher).argument === 'Stacks[].StackStatus'
+              && acceptor.expected === 'UPDATE_FAILED') {
+            acceptor.knownBroken = true;
+          }
+        }
+      }
+      break;
+    }
+
+    case "EC2": {
+      delete spec.waiters["ConversionTaskDeleted"];
+      break;
+    }
+
+  }
+}
+
+/** replace parts of a compiled JMESPath that need to be tweaked to pass typecheck */
+export function fixupJmesCode(code: string): string {
+  return code
+    // TODO: compile paths alongside the api shapes to avoid this situation
+    .replace(`resp["PasswordData"].length`, `(resp["PasswordData"] ?? '').length`) // ec2
+  ;
+}

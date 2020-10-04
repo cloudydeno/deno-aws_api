@@ -199,11 +199,14 @@ export interface WaiterSpec {
   "description"?: string;
   "delay": number;
   "maxAttempts": number;
-  "acceptors": Array<
+  "acceptors": Array<(
     | WaiterPathMatcher
     | WaiterErrorMatcher
     | WaiterStatusMatcher
-  >;
+  ) & {
+    "state": WaiterMatchResult;
+    "knownBroken"?: true; // added by our quirks
+  }>;
 }
 
 export type WaiterMatchResult = "success" | "retry" | "failure";
@@ -215,17 +218,14 @@ export interface WaiterPathMatcher {
     | "path"; // pathmatch eq argument
   "expected": any; // TODO: string?
   "argument": string; // eg "Certificate.DomainValidationOptions[].ValidationStatus"
-  "state": WaiterMatchResult;
 }
 
 export interface WaiterErrorMatcher {
   "matcher": "error";
   "expected": string;
-  "state": WaiterMatchResult;
 }
 
 export interface WaiterStatusMatcher {
   "matcher": "status";
   "expected": number;
-  "state": WaiterMatchResult;
 }

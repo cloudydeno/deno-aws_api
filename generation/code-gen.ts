@@ -1,8 +1,8 @@
 import type * as Schema from './sdk-schema.ts';
 import ProtocolQueryCodegen from './protocol-query.ts';
 import ShapeLibrary, { KnownShape } from './shape-library.ts';
-import { compileJMESPath } from "./jmespath.ts";
-import { fixupApiSpec, brokenWaiters, brokenWaiterConditions } from './quirks.ts';
+import { fixupApiSpec, fixupWaitersSpec } from './quirks.ts';
+import GenWaiter from "./gen-waiter.ts";
 
 export default class ServiceCodeGen {
   apiSpec: Schema.Api;
@@ -23,6 +23,9 @@ export default class ServiceCodeGen {
 
     // mutate the specs to fix inaccuracies
     fixupApiSpec(this.apiSpec);
+    if (this.waitersSpec) {
+      fixupWaitersSpec(this.waitersSpec, this.apiSpec);
+    }
 
     const inputShapes = new Set<string>();
     const outputShapes = new Set<string>();
@@ -196,13 +199,12 @@ interface XmlNode {
       chunks.push(`  }\n`);
     }
 
-    if (this.waitersSpec) {
+    if (this.waitersSpec && Object.keys(this.waitersSpec.waiters).length > 0) {
       chunks.push(`  // Resource State Waiters\n`);
-      for (const [waiter, spec] of Object.entries(this.waitersSpec.waiters)) {
-        if (brokenWaiters.has(waiter)) continue;
-
+      for (const [name, spec] of Object.entries(this.waitersSpec.waiters)) {
         const operation = this.apiSpec.operations[spec.operation];
-        chunks.push(this.writeWaiter(waiter, spec, operation));
+        const waiter = new GenWaiter(name, spec, operation, this.shapes);
+        chunks.push(waiter.generateTypescript());
       }
     }
 
@@ -234,153 +236,6 @@ interface XmlNode {
       chunks.push('');
     }
 
-    return chunks.join('\n');
-  }
-
-  compilePathWaiter(spec: Schema.WaiterPathMatcher): [string, string] {
-    return [
-      compileJMESPath(spec.argument, 'resp')
-        // QUIRKS: Waiter paths which need tweaking to pass typecheck
-        // TODO: compile paths alongside the api shapes to avoid this situation
-        .replace(`resp["PasswordData"].length`, `(resp["PasswordData"] ?? '').length`) // ec2
-      , spec.expected === true ? '' : ` === ${JSON.stringify(spec.expected)}`
-    ];
-  }
-
-  writeWaiter(name: string, waiter: Schema.WaiterSpec, operation: Schema.ApiOperation): string {
-
-    const docLines = new Array<string>();
-    if (waiter.description) {
-      docLines.push(waiter.description);
-    }
-    const totalMinutes = Math.ceil((waiter.maxAttempts * waiter.delay) / 60);
-    docLines.push(`Checks state up to ${waiter.maxAttempts} times, ${waiter.delay} seconds apart (about ${totalMinutes} minutes max wait time).`);
-
-    const goodErrs = new Array<string>();
-    const badErrs = new Array<string>();
-    const retryErrs = new Array<string>();
-    for (const acceptor of waiter.acceptors) {
-      if (acceptor.matcher !== 'error') continue;
-      switch (acceptor.state) {
-        case 'success': goodErrs.push(acceptor.expected); break;
-        case 'failure': badErrs.push(acceptor.expected); break;
-        case 'retry': retryErrs.push(acceptor.expected); break;
-      }
-    }
-    const handlesAnyErr = waiter.acceptors.some(x => x.matcher === 'error');
-
-    const inputShape = this.shapes.get(operation.input ?? {shape: 'missing'});
-    const outputShape = this.shapes.get(operation.output ?? {shape: 'missing'});
-
-    let signature = `(\n    params: RequestConfig`;
-    if (inputShape?.spec.type === 'structure') {
-      signature += ' & ' + this.specifyShapeType(inputShape);
-    } else {
-      throw new Error(`TODO: ${inputShape.spec.type} input`);
-    }
-    signature += `,\n  ): Promise<`;
-    if (goodErrs.length > 0) {
-      signature += `Error | `;
-    }
-    if (outputShape?.spec.type === 'structure') {
-      signature += this.specifyShapeType(outputShape);
-    } else {
-      throw new Error(`TODO: ${outputShape.spec.type} output`);
-    }
-    signature += '>';
-
-    const innerChunks: string[] = [];
-    const lowerCamelName = operation.name[0].toLowerCase() + operation.name.slice(1);
-    innerChunks.push(`      const resp = await this.${lowerCamelName}(params);`);
-
-    for (const acceptor of waiter.acceptors) {
-      const statements: {[key: string]: string} = {
-        'retry': 'continue;',
-        'failure': 'throw new Error(errMessage);',
-        'success': 'return resp;',
-      };
-      const statement = statements[acceptor.state];
-
-      switch (acceptor.matcher) {
-        case 'error': continue; // handled in catch block
-
-        case 'path': {
-          const [evaluator, comparision] = this.compilePathWaiter(acceptor);
-          const condition = `${evaluator}${comparision}`;
-          const commented = brokenWaiterConditions.has(condition) ? '// BROKEN: ' : '';
-          innerChunks.push(`      ${commented}if (${condition}) ${statement}`);
-          break;
-        }
-        case 'pathAny': {
-          const [evaluator, comparision] = this.compilePathWaiter(acceptor);
-          const condition = `${evaluator}.some(x => x${comparision})`;
-          const commented = brokenWaiterConditions.has(condition) ? '// BROKEN: ' : '';
-          innerChunks.push(`      ${commented}if (${condition}) ${statement}`);
-          break;
-        }
-        case 'pathAll': {
-          const [evaluator, comparision] = this.compilePathWaiter(acceptor);
-          const condition = `${evaluator}.every(x => x${comparision})`;
-          const commented = brokenWaiterConditions.has(condition) ? '// BROKEN: ' : '';
-          innerChunks.push(`      ${commented}if (${condition}) ${statement}`);
-          break;
-        }
-
-        case 'status': {
-          if (acceptor.expected < 300) {
-            innerChunks.push(`      ${statement} // for status ${acceptor.expected}`);
-          } else {
-            // TODO: 400s and 500s should throw, so can't be handled here.
-            // But how are they handled...
-            innerChunks.push(`      // TODO: if (statusCode == ${acceptor.expected}) ${statement}`);
-          }
-          break;
-        }
-
-      }
-    }
-
-    const chunks: string[] = [];
-
-    if (docLines.length > 1) {
-      chunks.push(`  /**`);
-      for (const docLine of docLines) {
-        chunks.push(`   * ${docLine}`);
-      }
-      chunks.push(`   */`);
-    } else {
-      chunks.push(`  /** ${docLines[0]} */`);
-    }
-
-    chunks.push(`  async waitFor${name}${signature} {`);
-    chunks.push(`    const errMessage = 'ResourceNotReady: Resource is not in the state ${name}';`);
-    chunks.push(`    for (let i = 0; i < ${waiter.maxAttempts}; i++) {`);
-    if (handlesAnyErr) {
-      chunks.push(`      try {`);
-      chunks.push(...innerChunks.map(x => '  '+x));
-      chunks.push(`      } catch (err) {`);
-      if (goodErrs.length > 0) {
-        chunks.push(`        if (${JSON.stringify(goodErrs)}.includes(err.code)) return err;`);
-      }
-      if (badErrs.length > 0) {
-        chunks.push(`        if (${JSON.stringify(badErrs)}.includes(err.code)) throw err;`);
-      }
-      if (retryErrs.length > 0) {
-        chunks.push(`        if (!${JSON.stringify(retryErrs)}.includes(err.code)) throw err;`);
-      } else {
-        chunks.push(`        throw err;`);
-      }
-      chunks.push(`      }`);
-    } else {
-      chunks.push(...innerChunks);
-    }
-    chunks.push(`      await new Promise(r => setTimeout(r, ${waiter.delay}000));`);
-    chunks.push(`    }`);
-    // spec: {"delay":5,"maxAttempts":40,"operation":"DescribeInstances"}
-    // acceptor: {"matcher":"path","expected":true,"argument":"length(Reservations[]) > `0`","state":"success"}
-    // acceptor: {"matcher":"error","expected":"InvalidInstanceID.NotFound","state":"retry"}
-    chunks.push(`    throw new Error(errMessage);`);
-    chunks.push(`  }\n`);
     return chunks.join('\n');
   }
 
