@@ -2,16 +2,7 @@ import type * as Schema from './sdk-schema.ts';
 import ProtocolQueryCodegen from './protocol-query.ts';
 import ShapeLibrary, { KnownShape } from './shape-library.ts';
 import { compileJMESPath } from "./jmespath.ts";
-// import type { ApiParamSpecMap, ApiParamSpec } from './../deno-client/common.ts';
-
-const brokenWaiters = new Set([
-  // QUIRKS: waiters which simply aren't compilable, likely due to outdated waiterspecs
-  // TODO: auto detect brokenness based on comparing to the shape?
-  'ConversionTaskDeleted', // ec2
-]);
-const brokenWaiterConditions = new Set([
-  'resp["Stacks"].flatMap(x => x["StackStatus"]).some(x => x === "UPDATE_FAILED")', // cloudformation
-]);
+import { fixupApiSpec, brokenWaiters, brokenWaiterConditions } from './quirks.ts';
 
 export default class ServiceCodeGen {
   apiSpec: Schema.Api;
@@ -29,6 +20,9 @@ export default class ServiceCodeGen {
     this.apiSpec = specs.api;
     this.pagersSpec = specs.pagers;
     this.waitersSpec = specs.waiters;
+
+    // mutate the specs to fix inaccuracies
+    fixupApiSpec(this.apiSpec);
 
     const inputShapes = new Set<string>();
     const outputShapes = new Set<string>();
@@ -93,7 +87,6 @@ interface ApiFactory {
 }
 interface ServiceClient {
   performRequest(request: ApiRequestConfig): Promise<ApiResponse>;
-  // TODO: runWaiter(, abortSignal: AbortSignal?)
 }
 interface RequestConfig {
   abortSignal?: AbortSignal;
@@ -208,9 +201,6 @@ interface XmlNode {
       for (const [waiter, spec] of Object.entries(this.waitersSpec.waiters)) {
         if (brokenWaiters.has(waiter)) continue;
 
-        if (spec.description) {
-          chunks.push(`  /**\n ${spec.description} */`);
-        }
         const operation = this.apiSpec.operations[spec.operation];
         chunks.push(this.writeWaiter(waiter, spec, operation));
       }
@@ -259,6 +249,13 @@ interface XmlNode {
 
   writeWaiter(name: string, waiter: Schema.WaiterSpec, operation: Schema.ApiOperation): string {
 
+    const docLines = new Array<string>();
+    if (waiter.description) {
+      docLines.push(waiter.description);
+    }
+    const totalMinutes = Math.ceil((waiter.maxAttempts * waiter.delay) / 60);
+    docLines.push(`Checks state up to ${waiter.maxAttempts} times, ${waiter.delay} seconds apart (about ${totalMinutes} minutes max wait time).`);
+
     const goodErrs = new Array<string>();
     const badErrs = new Array<string>();
     const retryErrs = new Array<string>();
@@ -275,18 +272,15 @@ interface XmlNode {
     const inputShape = this.shapes.get(operation.input ?? {shape: 'missing'});
     const outputShape = this.shapes.get(operation.output ?? {shape: 'missing'});
 
-    let signature = `(\n    {abortSignal, ...params}: RequestConfig`;
+    let signature = `(\n    params: RequestConfig`;
     if (inputShape?.spec.type === 'structure') {
       signature += ' & ' + this.specifyShapeType(inputShape);
-      if (!inputShape.spec.required?.length) {
-        signature += ' = {}';
-      }
     } else {
       throw new Error(`TODO: ${inputShape.spec.type} input`);
     }
     signature += `,\n  ): Promise<`;
     if (goodErrs.length > 0) {
-      signature += `Error |`;
+      signature += `Error | `;
     }
     if (outputShape?.spec.type === 'structure') {
       signature += this.specifyShapeType(outputShape);
@@ -347,6 +341,17 @@ interface XmlNode {
     }
 
     const chunks: string[] = [];
+
+    if (docLines.length > 1) {
+      chunks.push(`  /**`);
+      for (const docLine of docLines) {
+        chunks.push(`   * ${docLine}`);
+      }
+      chunks.push(`   */`);
+    } else {
+      chunks.push(`  /** ${docLines[0]} */`);
+    }
+
     chunks.push(`  async waitFor${name}${signature} {`);
     chunks.push(`    const errMessage = 'ResourceNotReady: Resource is not in the state ${name}';`);
     chunks.push(`    for (let i = 0; i < ${waiter.maxAttempts}; i++) {`);
