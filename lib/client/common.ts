@@ -22,7 +22,7 @@ export interface XmlNode {
   children: XmlNode[];
 
   first(name: string, required: true): XmlNode;
-  first<T>(name: string, required: true, accessor: (node: XmlNode) => T): T;
+  first<T>(name: string, required: true, accessor: (node: XmlNode) => T | undefined): T;
   first(name: string, required?: false): XmlNode | undefined;
   first<T>(name: string, required: false, accessor: (node: XmlNode) => T): T | undefined;
 

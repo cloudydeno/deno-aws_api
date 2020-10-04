@@ -16,3 +16,5 @@ find "$ApisRoot" \
     ./generation/mod.ts "$ApisRoot"
 
 du -sh lib/services/*
+
+deno cache lib/services/*

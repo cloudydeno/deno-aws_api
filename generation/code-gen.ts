@@ -9,6 +9,9 @@ const brokenWaiters = new Set([
   // TODO: auto detect brokenness based on comparing to the shape?
   'ConversionTaskDeleted', // ec2
 ]);
+const brokenWaiterConditions = new Set([
+  'resp["Stacks"].flatMap(x => x["StackStatus"]).some(x => x === "UPDATE_FAILED")', // cloudformation
+]);
 
 export default class ServiceCodeGen {
   apiSpec: Schema.Api;
@@ -102,7 +105,7 @@ interface XmlNode {
   children: XmlNode[];
 
   first(name: string, required: true): XmlNode;
-  first<T>(name: string, required: true, accessor: (node: XmlNode) => T): T;
+  first<T>(name: string, required: true, accessor: (node: XmlNode) => T | undefined): T;
   first(name: string, required?: false): XmlNode | undefined;
   first<T>(name: string, required: false, accessor: (node: XmlNode) => T): T | undefined;
   getList(...namePath: string[]): XmlNode[]; // you can just map this
@@ -309,17 +312,23 @@ interface XmlNode {
 
         case 'path': {
           const [evaluator, comparision] = this.compilePathWaiter(acceptor);
-          innerChunks.push(`      if (${evaluator}${comparision}) ${statement}`);
+          const condition = `${evaluator}${comparision}`;
+          const commented = brokenWaiterConditions.has(condition) ? '// BROKEN: ' : '';
+          innerChunks.push(`      ${commented}if (${condition}) ${statement}`);
           break;
         }
         case 'pathAny': {
           const [evaluator, comparision] = this.compilePathWaiter(acceptor);
-          innerChunks.push(`      if (${evaluator}.some(x => x${comparision})) ${statement}`);
+          const condition = `${evaluator}.some(x => x${comparision})`;
+          const commented = brokenWaiterConditions.has(condition) ? '// BROKEN: ' : '';
+          innerChunks.push(`      ${commented}if (${condition}) ${statement}`);
           break;
         }
         case 'pathAll': {
           const [evaluator, comparision] = this.compilePathWaiter(acceptor);
-          innerChunks.push(`      if (${evaluator}.every(x => x${comparision})) ${statement}`);
+          const condition = `${evaluator}.every(x => x${comparision})`;
+          const commented = brokenWaiterConditions.has(condition) ? '// BROKEN: ' : '';
+          innerChunks.push(`      ${commented}if (${condition}) ${statement}`);
           break;
         }
 
@@ -423,10 +432,12 @@ interface XmlNode {
         if (memberType.includes(' ')) memberType = `(${memberType})`;
         return `${memberType}[]`;
       case 'map':
-        // TODO: if keyShape is an enum, probably just write a whole friggen structure out
         const keyShape = this.shapes.get(shape.spec.key);
         const valueShape = this.shapes.get(shape.spec.value);
-        return `{ [key: ${this.specifyShapeType(keyShape, true)}]: ${this.specifyShapeType(valueShape)} }`;
+        const keyType = (keyShape.spec.type === 'string' && keyShape.spec.enum)
+          ? `key in ${keyShape.censoredName}`
+          : `key: ${this.specifyShapeType(keyShape, true)}`;
+        return `{ [${keyType}]: ${this.specifyShapeType(valueShape)} }`;
       case 'structure':
         return this.writeStructureType(shape).replace(/\n/g, '\n  ');
       case 'timestamp':

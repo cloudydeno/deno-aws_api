@@ -14,7 +14,7 @@ function sqsSendMessageBatch(raw: string) {
       ...x.strings({
         required: {Id: true, Code: true, Message: true},
       }),
-      SenderFault: x.first('SenderFault', x => x.content === 'true'),
+      SenderFault: x.first('SenderFault', false, x => x.content === 'true'),
     })),
   };
 }

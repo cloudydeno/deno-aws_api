@@ -92,10 +92,10 @@ function generateIdemptToken() {
   return fixedIdemptToken ?? uuidv4.generate();
 }
 
-function readXmlMap<T>(entries: XmlNode[], valMapper: (node: XmlNode) => T, {keyName='key', valName='value'}: {keyName?: string, valName?: string}): {[key: string]: T} {
-  const obj: {[key: string]: T} = Object.create(null);
+function readXmlMap<K extends string,T>(entries: XmlNode[], valMapper: (node: XmlNode) => T, {keyName='key', valName='value'}: {keyName?: string, valName?: string}): Record<K, T> {
+  const obj: Record<K, T> = Object.create(null);
   for (const entry of entries) {
-    obj[entry.first(keyName, true, x => x.content ?? '')] = entry.first(valName, true, valMapper);
+    obj[entry.first(keyName, true, x => (x.content ?? '') as K)] = entry.first(valName, true, valMapper);
   }
   return obj;
 }

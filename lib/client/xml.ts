@@ -21,7 +21,7 @@ export class XmlNode implements common.XmlNode {
   }
 
   first(name: string, required: true): XmlNode;
-  first<T>(name: string, required: true, accessor: (node: XmlNode) => T): T;
+  first<T>(name: string, required: true, accessor: (node: XmlNode) => T | undefined): T;
   first(name: string, required?: false): XmlNode | undefined;
   first<T>(name: string, required: false, accessor: (node: XmlNode) => T): T | undefined;
 
@@ -30,7 +30,11 @@ export class XmlNode implements common.XmlNode {
     if (!node && required) {
       this.throwMissingKeys([name]);
     } else if (accessor) {
-      if (node) return accessor(node);
+      if (node) {
+        const value = accessor(node);
+        if (value != undefined) return value;
+      }
+      if (required) this.throwMissingKeys([name]);
     } else {
       return node;
     }
