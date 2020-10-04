@@ -81,50 +81,6 @@ export class XmlNode implements common.XmlNode {
   }
 }
 
-// interface Tag {
-//   Key?: string;
-//   Value?: string;
-// }
-// interface Error {
-//   Code: string;
-//   Message: string;
-//   Sender?: string;
-//   Tags: Array<Tag>;
-// }
-// interface Errors {
-//   Error: Error[];
-// }
-// interface Response {
-//   Errors: Errors;
-//   RequestID: string;
-// }
-
-// const err = parseXml(`<?xml version="1.0" encoding="UTF-8"?>
-// <Response><Errors><Error><Code>RequestExpired</Code><Message>Request has expired.</Message></Error></Errors><RequestID>433741ec-94c9-49bc-a9c8-ba59ab8972c2</RequestID></Response>`);
-// if (!err.root) throw new Error(`TODO`);
-
-// const vals: Error = {
-//   Tags: err.root.getList('Errors', 'Error').map(x => x.strings({
-//     optional: {
-//       Key: true,
-//       Value: true,
-//     },
-//   })),
-//   ...err.root.strings({
-//     required: {
-//       "Code": true,
-//       "Message": true,
-//     },
-//     optional: {
-//       "Sender": true,
-//     },
-//   }),
-// };
-
-
-// console.log(vals);
-
-
 /**
  * Parse the given string of `xml`.
  *
@@ -206,7 +162,7 @@ export function parseXml(xml: string): Document {
   /** Text content. */
   function content() {
     var m = match(/^([^<]*)/);
-    if (m) return m[1];
+    if (m) return decodeXmlEntities(m[1]);
     return '';
   }
 
@@ -239,4 +195,41 @@ export function parseXml(xml: string): Document {
   function is(prefix: string) {
     return xml.startsWith(prefix);
   }
+}
+
+
+// XML entity code is based on /x/html_entities:
+// https://deno.land/x/html_entities@v1.0/lib/xml-entities.js
+
+const ALPHA_INDEX: Record<string,string> = {
+  "&lt;":   "<",     "&gt;":   ">",
+  "&quot;": '"',     "&apos;": "'",
+  "&amp;": "&",
+};
+const CHAR_S_INDEX: Record<string,string> = {
+  "<": "&lt;",       ">": "&gt;",
+  '"': "&quot;",     "'": "&apos;",
+  "&": "&amp;",
+};
+
+export function encodeXmlEntities(str: string) {
+  return str.replace(/<|>|"|'|&/g, function(s) {
+    return CHAR_S_INDEX[s];
+  });
+}
+
+export function decodeXmlEntities(str: string) {
+  return str.replace(/&#?[0-9a-zA-Z]+;?/g, function(s) {
+    if (s.charAt(1) === "#") {
+      const code = s.charAt(2).toLowerCase() === "x"
+        ? parseInt(s.substr(3), 16)
+        : parseInt(s.substr(2));
+
+      if (isNaN(code) || code < -32768 || code > 65535) {
+        return "";
+      }
+      return String.fromCharCode(code);
+    }
+    return ALPHA_INDEX[s] || s;
+  });
 }
