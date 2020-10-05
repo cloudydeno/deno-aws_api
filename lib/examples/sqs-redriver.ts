@@ -7,6 +7,7 @@ const sqs = new SQS(factory);
 // we'll be taking input
 import { parse as parseFlags } from "https://deno.land/std@0.71.0/flags/mod.ts";
 import Ask from 'https://deno.land/x/ask@1.0.5/mod.ts';
+import { stringToBytes } from "https://deno.land/std@0.71.0/uuid/_common.ts";
 
 let { dlq, target, automatic } = parseFlags(Deno.args, {
   string: ['dlq', 'target'],
@@ -31,18 +32,18 @@ async function selectFromList(list: string[]): Promise<string | undefined> {
   }
 }
 
-function die(message: string): never {
+function die(message: string, exitCode = 0): never {
   console.log();
   console.log('-->', message);
   console.log();
-  Deno.exit(5);
+  Deno.exit(exitCode);
 }
 
 // SQS API helper functions
 
 async function getQueueUrl(QueueName: string) {
   const {QueueUrl} = await sqs.getQueueUrl({ QueueName });
-  if (!QueueUrl) die(`queue "${QueueName}" could not be resolved to URL`);
+  if (!QueueUrl) die(`queue "${QueueName}" could not be resolved to URL`, 5);
   return QueueUrl;
 }
 
@@ -59,7 +60,7 @@ async function getQueueMessageCounts(QueueUrl: string) {
 
 // Start business logic
 
-if (typeof dlq !== 'string') die(`--dlq <queuename> is always required`);
+if (typeof dlq !== 'string') die(`--dlq <queuename> is always required`, 6);
 const dlqUrl = dlq.startsWith('https://') ? dlq : await getQueueUrl(dlq);
 console.log('    Using DLQ', dlqUrl);
 
@@ -78,7 +79,7 @@ if (!target) {
   }
 }
 
-if (typeof target !== 'string') die(`Failed to discover target; supply --target <queuename>`);
+if (typeof target !== 'string') die(`Failed to discover target; supply --target <queuename>`, 7);
 const targetUrl = target.startsWith('https://') ? target : await getQueueUrl(target);
 console.log('    Using target queue', targetUrl);
 
@@ -87,14 +88,77 @@ console.log('--> There are approx.', visibleMsgs, 'visible and',
     notVisibleMsgs, 'invisible messages in the DLQ.');
 
 while (true) {
+  console.log();
+  console.log('    Fetching another letter...');
+
   const {Messages: [message]} = await sqs.receiveMessage({
     QueueUrl: dlqUrl,
     MaxNumberOfMessages: 1,
     VisibilityTimeout: 15,
-    AttributeNames: ['SentTimestamp', 'MessageDeduplicationId', 'MessageGroupId'],
+    AttributeNames: ['SentTimestamp', 'MessageDeduplicationId', 'MessageGroupId', 'ApproximateReceiveCount'],
   });
-  console.log('==> Received dead letter', message);
 
+  if (!message) {
+    die(`Received no further messages from queue. Maybe it's empty?`, 0)
+  }
 
-  Deno.exit(0);
+  const sentTime = new Date(parseInt(message.Attributes.SentTimestamp));
+  console.log('==> Received dead letter from', Math.floor((new Date().valueOf() - sentTime.valueOf()) / 1000 / 60 / 60), 'hours ago -', sentTime.toISOString(), '- receive #', parseInt(message.Attributes.ApproximateReceiveCount));
+  const { MessageGroupId, MessageDeduplicationId } = message.Attributes;
+
+  console.log({ MessageGroupId, MessageDeduplicationId });
+  const hasAttributes = Object.keys(message.MessageAttributes).length > 0;
+  if (hasAttributes) {
+    console.log('Mesage attributes:', message.MessageAttributes);
+  }
+  console.log(message.Body);
+
+  let actioned = false;
+  while (!actioned) {
+    const { action } = await ask.input({
+      name: 'action',
+      type: 'string',
+      message: 'Select action: [j]son / [d]elete / [r]edeliver / [s]kip / [q]uit',
+    });
+    switch (action.toString().toLowerCase()[0]) {
+
+      case 'j':
+        console.log(JSON.stringify(JSON.parse(message.Body ?? '{}'), null, 2));
+        break;
+
+      case 'd':
+        await sqs.deleteMessage({
+          QueueUrl: dlqUrl,
+          ReceiptHandle: message.ReceiptHandle ?? '',
+        });
+        console.log('--> Dead letter deleted.');
+        actioned = true;
+        break;
+
+      case 'r':
+        await sqs.sendMessage({
+          QueueUrl: targetUrl,
+          MessageBody: message.Body ?? '',
+          MessageAttributes: hasAttributes ? message.MessageAttributes : undefined,
+          MessageGroupId, MessageDeduplicationId,
+        });
+        console.log('--> Message retransmitted to target queue.');
+        await sqs.deleteMessage({
+          QueueUrl: dlqUrl,
+          ReceiptHandle: message.ReceiptHandle ?? '',
+        });
+        console.log('    Dead letter deleted.');
+        actioned = true;
+        break;
+
+      case 's':
+        actioned = true;
+        break;
+
+      case 'q':
+        die('Bye!', 0);
+
+    }
+  }
+
 }
