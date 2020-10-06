@@ -72,7 +72,7 @@ directconnect,2012-10-25,AWS Direct Connect,Direct Connect,DirectConnect,json,,,
 discovery,2015-11-01,AWS Application Discovery Service,Application Discovery Service,Discovery,json,,,,
 dlm,2018-01-12,Amazon Data Lifecycle Manager,DLM,DLM,rest-json,,,,
 dms,2016-01-01,AWS Database Migration Service,Database Migration Service,DMS,json,,,,
-docdb,2014-10-31,Amazon DocumentDB with MongoDB compatibility,DocDB,DocDB,query,ok,ok,88870,2287
+docdb,2014-10-31,Amazon DocumentDB with MongoDB compatibility,DocDB,DocDB,query,ok,ok,88870,1715
 ds,2015-04-16,AWS Directory Service,Directory Service,DirectoryService,json,,,,
 dynamodb,2011-12-05,Amazon DynamoDB,DynamoDB,DynamoDB,json,,,,
 dynamodb,2012-08-10,Amazon DynamoDB,DynamoDB,DynamoDB,json,,,,
@@ -87,7 +87,7 @@ elasticache,2015-02-02,Amazon ElastiCache,ElastiCache,ElastiCache,query,ok,ok,13
 elasticbeanstalk,2010-12-01,AWS Elastic Beanstalk,Elastic Beanstalk,ElasticBeanstalk,query,ok,ok,102367,2519
 elasticfilesystem,2015-02-01,Amazon Elastic File System,EFS,EFS,rest-json,,,,
 elasticloadbalancing,2012-06-01,Elastic Load Balancing,Elastic Load Balancing,ELB,query,ok,ok,52224,2021
-elasticloadbalancingv2,2015-12-01,Elastic Load Balancing,Elastic Load Balancing v2,ELBv2,query,ok,ok,79753,2163
+elasticloadbalancingv2,2015-12-01,Elastic Load Balancing,Elastic Load Balancing v2,ELBv2,query,ok,ok,79753,1739
 elasticmapreduce,2009-03-31,Amazon Elastic MapReduce,EMR,EMR,json,,,,
 elastictranscoder,2012-09-25,Amazon Elastic Transcoder,Elastic Transcoder,ElasticTranscoder,rest-json,,,,
 email,2010-12-01,Amazon Simple Email Service,SES,SES,query,ok,fail,101597,
@@ -165,7 +165,7 @@ mobileanalytics,2014-06-05,Amazon Mobile Analytics,Mobile Analytics,MobileAnalyt
 monitoring,2010-08-01,Amazon CloudWatch,CloudWatch,CloudWatch,query,ok,fail,62523,
 mq,2017-11-27,AmazonMQ,mq,MQ,rest-json,,,,
 mturk-requester,2017-01-17,Amazon Mechanical Turk,MTurk,MTurk,json,,,,
-neptune,2014-10-31,Amazon Neptune,Neptune,Neptune,query,ok,ok,131369,2210
+neptune,2014-10-31,Amazon Neptune,Neptune,Neptune,query,ok,ok,131369,2164
 networkmanager,2019-07-05,AWS Network Manager,NetworkManager,NetworkManager,rest-json,,,,
 opsworks,2013-02-18,AWS OpsWorks,OpsWorks,OpsWorks,json,,,,
 opsworkscm,2016-11-01,AWS OpsWorks CM,OpsWorksCM,OpsWorksCM,json,,,,
@@ -187,7 +187,7 @@ rds,2013-01-10,Amazon Relational Database Service,RDS,RDS,query,ok,ok,95944,2197
 rds,2013-02-12,Amazon Relational Database Service,RDS,RDS,query,ok,ok,102557,2338
 rds,2013-09-09,Amazon Relational Database Service,RDS,RDS,query,ok,ok,110708,2493
 rds,2014-09-01,Amazon Relational Database Service,RDS,RDS,query,ok,ok,113337,2644
-rds,2014-10-31,Amazon Relational Database Service,RDS,RDS,query,ok,ok,300504,3696
+rds,2014-10-31,Amazon Relational Database Service,RDS,RDS,query,ok,ok,300504,3215
 rds-data,2018-08-01,AWS RDS DataService,RDS Data,RDSDataService,rest-json,,,,
 redshift,2012-12-01,Amazon Redshift,Redshift,Redshift,query,ok,fail,178334,
 redshift-data,2019-12-20,Redshift Data API Service,Redshift Data,RedshiftData,json,,,,

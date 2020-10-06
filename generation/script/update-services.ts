@@ -42,7 +42,7 @@ for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
   const service = uid.slice(0, -11);
   const version = uid.slice(-10);
 
-  if (!(uid in services)) {
+  if (!(`${service}@${version}` in services)) {
     const apiSpec = JSON.parse(await Deno.readTextFile('./aws-sdk-js/apis/'+entry.name)) as Schema.Api;
 
     services[`${service}@${version}`] = {
@@ -116,15 +116,15 @@ async function generateApi(apisPath: string, apiUid: string, namespace: string):
       return Promise.reject(err);
     });
 
-  console.log('Reading', apiUid, 'specs...');
   const codeGen = new ServiceCodeGen({
     api: JSON.parse(await Deno.readTextFile(jsonPath('normal'))) as Schema.Api,
     pagers: JSON.parse(await maybeReadFile(jsonPath('paginators'))) as Schema.Pagination,
     waiters: JSON.parse(await maybeReadFile(jsonPath('waiters2'))) as Schema.Waiters,
   });
 
-  const svcMetadata = codeGen.apiSpec.metadata;
-  const modName = `${svcMetadata.endpointPrefix}@${svcMetadata.apiVersion}.ts`;
+  const service = apiUid.slice(0, -11);
+  const version = apiUid.slice(-10);
+  const modName = `${service}@${version}.ts`;
 
   console.log('Writing', modName);
   const modPath = path.join('lib', 'services', modName);

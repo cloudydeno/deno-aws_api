@@ -58,16 +58,21 @@ async function updateMainReadme() {
 async function updateServicesReadme() {
   const chunks = new Array<string>();
 
-  chunks.push(`| Class | Module | Protocol | Generates | File size | Typechecks | Approx check time |`);
-  chunks.push(`| --- | --- | --- | --- | --- | --- | --- |`);
+  const icons: Record<string, string> = {
+    '': '',
+    'ok': '✔️',
+    'fail': '🚫',
+  };
+
+  chunks.push(`| Module | Protocol | Generates | File size | Typechecks | Approx check time |`);
+  chunks.push(`| --- | --- | --- | --- | --- | --- |`);
   for (const svc of services) {
     chunks.push(`| `+[
-      svc.namespace,
       `\`${svc.service}@${svc.version}.ts\``,
       svc.protocol,
-      svc.generated,
+      icons[svc.generated],
       svc.generated === 'ok' ? `${Math.floor(parseInt(svc.bytecount) / 1024)} KiB` : '',
-      svc.typechecked,
+      icons[svc.typechecked],
       svc.typechecked === 'ok' ? `${parseInt(svc.cachetime) / 1000} sec` : '',
     ].join(' | ')+` |`);
   }
