@@ -8,6 +8,7 @@ Package layout:
 * `services/`: Generated Typescript classes and interfaces for all supported AWS services
 * `demo.ts`: A trivial example of using this library
 * `examples/`: Several full examples of using individual services
+* `SERVICES.md`: A full list of all AWS APIs and their build status
 
 Only some services have completed clients at this time. Please reach out on Github Issues about missing clients or API issues, or ping `dantheman#8546` in the Deno Discord if you just wanna chat about this effort.
 
@@ -42,4 +43,4 @@ Only some services have completed clients at this time. Please reach out on Gith
 
 [//]: # (Generated Content Barrier)
 
-For a full list of all AWS APIs and their build status, see README.md inside the `services/` folder.
+The check time column is a measurement of how long `deno check` on the file ran for on my laptop, with a sample size of 1.

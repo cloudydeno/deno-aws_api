@@ -30,10 +30,10 @@ f.close();
 
 const workingSvc = services.filter(x => x.typechecked === 'ok');
 
-await updateMainReadme();
-await updateServicesReadme();
+await updateReadme();
+await updateServices();
 
-async function updateMainReadme() {
+async function updateReadme() {
   const chunks = new Array<string>();
 
   chunks.push(`| Class | Module | Protocol | File size | Approx check time |`);
@@ -55,7 +55,7 @@ async function updateMainReadme() {
   ].join(genBarrier));
 }
 
-async function updateServicesReadme() {
+async function updateServices() {
   const chunks = new Array<string>();
 
   const icons: Record<string, string> = {
@@ -77,9 +77,9 @@ async function updateServicesReadme() {
     ].join(' | ')+` |`);
   }
 
-  const [intro, _, outro] = (await Deno.readTextFile('lib/services/README.md'))
+  const [intro, _, outro] = (await Deno.readTextFile('lib/SERVICES.md'))
     .split(genBarrier);
-  await Deno.writeTextFile('lib/services/README.md', [
+  await Deno.writeTextFile('lib/SERVICES.md', [
     intro, chunks.join('\n'), outro,
   ].join(genBarrier));
 }
