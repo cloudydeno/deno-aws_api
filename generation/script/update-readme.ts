@@ -31,6 +31,9 @@ for await (const obj of readCSVObjects(f)) {
 }
 f.close();
 
+services.sort((a, b) =>
+  `${a.service}!${a.version}`.localeCompare(`${b.service}!${b.version}`));
+
 const workingSvc = services.filter(x => x.typechecked === 'ok');
 
 await updateReadme(header);

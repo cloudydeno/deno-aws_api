@@ -16,7 +16,7 @@ Only some services have completed clients at this time. Please reach out on Gith
 
 [//]: # (Generated Content Barrier)
 
-All API definitions are current as of aws-sdk-js `v2.761.0`.
+All API definitions are current as of aws-sdk-js `v2.768.0`.
 
 | Class | Module | Protocol | File size | Approx check time |
 | --- | --- | --- | ---: | ---: |
@@ -25,11 +25,11 @@ All API definitions are current as of aws-sdk-js `v2.761.0`.
 | CloudSearch | `cloudsearch@2011-02-01.ts` | query | 37 KiB | 0.8 sec |
 | CloudSearch | `cloudsearch@2013-01-01.ts` | query | 60 KiB | 1.0 sec |
 | DocDB | `docdb@2014-10-31.ts` | query | 87 KiB | 1.3 sec |
-| EC2 | `ec2@2016-11-15.ts` | ec2 | 998 KiB | 6.1 sec |
+| EC2 | `ec2@2016-11-15.ts` | ec2 | 998 KiB | 5.6 sec |
 | ElastiCache | `elasticache@2015-02-02.ts` | query | 131 KiB | 1.8 sec |
 | ElasticBeanstalk | `elasticbeanstalk@2010-12-01.ts` | query | 100 KiB | 1.5 sec |
 | ELB | `elasticloadbalancing@2012-06-01.ts` | query | 51 KiB | 1.1 sec |
-| ELBv2 | `elasticloadbalancingv2@2015-12-01.ts` | query | 78 KiB | 1.3 sec |
+| ELBv2 | `elasticloadbalancingv2@2015-12-01.ts` | query | 78 KiB | 1.1 sec |
 | SES | `email@2010-12-01.ts` | query | 99 KiB | 1.4 sec |
 | IAM | `iam@2010-05-08.ts` | query | 166 KiB | 3.1 sec |
 | ImportExport | `importexport@2010-06-01.ts` | query | 14 KiB | 1.2 sec |
@@ -39,7 +39,7 @@ All API definitions are current as of aws-sdk-js `v2.761.0`.
 | RDS | `rds@2013-02-12.ts` | query | 100 KiB | 1.9 sec |
 | RDS | `rds@2013-09-09.ts` | query | 108 KiB | 2.0 sec |
 | RDS | `rds@2014-09-01.ts` | query | 111 KiB | 2.0 sec |
-| RDS | `rds@2014-10-31.ts` | query | 293 KiB | 3.9 sec |
+| RDS | `rds@2014-10-31.ts` | query | 294 KiB | 2.9 sec |
 | Redshift | `redshift@2012-12-01.ts` | query | 174 KiB | 2.8 sec |
 | SimpleDB | `sdb@2009-04-15.ts` | query | 16 KiB | 0.8 sec |
 | SNS | `sns@2010-03-31.ts` | query | 35 KiB | 0.9 sec |

@@ -2,7 +2,7 @@
 
 [//]: # (Generated Content Barrier)
 
-All API definitions are current as of aws-sdk-js `v2.761.0`.
+All API definitions are current as of aws-sdk-js `v2.768.0`.
 
 | Module | Protocol | Generates | File size | Typechecks | Approx check time |
 | --- | --- | :---: | ---: | :---: | ---: |
@@ -84,7 +84,7 @@ All API definitions are current as of aws-sdk-js `v2.761.0`.
 | `dynamodb@2011-12-05.ts` | json |  |  |  |  |
 | `dynamodb@2012-08-10.ts` | json |  |  |  |  |
 | `ebs@2019-11-02.ts` | rest-json |  |  |  |  |
-| `ec2@2016-11-15.ts` | ec2 | ✔️ | 998 KiB | ✔️ | 6.1 sec |
+| `ec2@2016-11-15.ts` | ec2 | ✔️ | 998 KiB | ✔️ | 5.6 sec |
 | `ec2-instance-connect@2018-04-02.ts` | json |  |  |  |  |
 | `ecr@2015-09-21.ts` | json |  |  |  |  |
 | `ecs@2014-11-13.ts` | json |  |  |  |  |
@@ -94,7 +94,7 @@ All API definitions are current as of aws-sdk-js `v2.761.0`.
 | `elasticbeanstalk@2010-12-01.ts` | query | ✔️ | 100 KiB | ✔️ | 1.5 sec |
 | `elasticfilesystem@2015-02-01.ts` | rest-json |  |  |  |  |
 | `elasticloadbalancing@2012-06-01.ts` | query | ✔️ | 51 KiB | ✔️ | 1.1 sec |
-| `elasticloadbalancingv2@2015-12-01.ts` | query | ✔️ | 78 KiB | ✔️ | 1.3 sec |
+| `elasticloadbalancingv2@2015-12-01.ts` | query | ✔️ | 78 KiB | ✔️ | 1.1 sec |
 | `elasticmapreduce@2009-03-31.ts` | json |  |  |  |  |
 | `elastictranscoder@2012-09-25.ts` | rest-json |  |  |  |  |
 | `email@2010-12-01.ts` | query | ✔️ | 99 KiB | ✔️ | 1.4 sec |
@@ -194,7 +194,7 @@ All API definitions are current as of aws-sdk-js `v2.761.0`.
 | `rds@2013-02-12.ts` | query | ✔️ | 100 KiB | ✔️ | 1.9 sec |
 | `rds@2013-09-09.ts` | query | ✔️ | 108 KiB | ✔️ | 2.0 sec |
 | `rds@2014-09-01.ts` | query | ✔️ | 111 KiB | ✔️ | 2.0 sec |
-| `rds@2014-10-31.ts` | query | ✔️ | 293 KiB | ✔️ | 3.9 sec |
+| `rds@2014-10-31.ts` | query | ✔️ | 294 KiB | ✔️ | 2.9 sec |
 | `rds-data@2018-08-01.ts` | rest-json |  |  |  |  |
 | `redshift@2012-12-01.ts` | query | ✔️ | 174 KiB | ✔️ | 2.8 sec |
 | `redshift-data@2019-12-20.ts` | json |  |  |  |  |
@@ -209,6 +209,7 @@ All API definitions are current as of aws-sdk-js `v2.761.0`.
 | `runtime.sagemaker@2017-05-13.ts` | rest-json |  |  |  |  |
 | `s3@2006-03-01.ts` | rest-xml |  |  |  |  |
 | `s3control@2018-08-20.ts` | rest-xml |  |  |  |  |
+| `s3outposts@2017-07-25.ts` | rest-json |  |  |  |  |
 | `sagemaker@2017-07-24.ts` | json |  |  |  |  |
 | `sagemaker-a2i-runtime@2019-11-07.ts` | rest-json |  |  |  |  |
 | `savingsplans@2019-06-28.ts` | rest-json |  |  |  |  |
@@ -240,6 +241,8 @@ All API definitions are current as of aws-sdk-js `v2.761.0`.
 | `swf@2012-01-25.ts` | json |  |  |  |  |
 | `synthetics@2017-10-11.ts` | rest-json |  |  |  |  |
 | `textract@2018-06-27.ts` | json |  |  |  |  |
+| `timestream-query@2018-11-01.ts` | json |  |  |  |  |
+| `timestream-write@2018-11-01.ts` | json |  |  |  |  |
 | `transcribe@2017-10-26.ts` | json |  |  |  |  |
 | `transfer@2018-11-05.ts` | json |  |  |  |  |
 | `translate@2017-07-01.ts` | json |  |  |  |  |
