@@ -47,15 +47,15 @@ async function updateFile(path: string, contents: string) {
 async function updateReadme(header: string) {
   const chunks = new Array<string>();
   chunks.push(`| Class | Module | Protocol | File size | Approx check time |`);
-  chunks.push(`| --- | --- | --- | --- | --- |`);
+  chunks.push(`| --- | --- | --- | ---: | ---: |`);
 
   for (const svc of workingSvc) {
     chunks.push(`| `+[
       svc.namespace,
       `\`${svc.service}@${svc.version}.ts\``,
       svc.protocol,
-      `${Math.floor(parseInt(svc.bytecount) / 1024)} KiB`,
-      `${parseInt(svc.cachetime) / 1000} sec`,
+      formatFileSize(parseInt(svc.bytecount)),
+      formatDuration(parseInt(svc.cachetime)),
     ].join(' | ')+` |`);
   }
 
@@ -72,17 +72,26 @@ async function updateServices(header: string) {
   };
 
   chunks.push(`| Module | Protocol | Generates | File size | Typechecks | Approx check time |`);
-  chunks.push(`| --- | --- | --- | --- | --- | --- |`);
+  chunks.push(`| --- | --- | :---: | ---: | :---: | ---: |`);
   for (const svc of services) {
     chunks.push(`| `+[
       `\`${svc.service}@${svc.version}.ts\``,
       svc.protocol,
       icons[svc.generated],
-      svc.generated === 'ok' ? `${Math.floor(parseInt(svc.bytecount) / 1024)} KiB` : '',
+      svc.generated === 'ok' ? formatFileSize(parseInt(svc.bytecount)) : '',
       icons[svc.typechecked],
-      svc.typechecked === 'ok' ? `${parseInt(svc.cachetime) / 1000} sec` : '',
+      svc.typechecked === 'ok' ? formatDuration(parseInt(svc.cachetime)) : '',
     ].join(' | ')+` |`);
   }
 
   return updateFile('lib/SERVICES.md', chunks.join('\n'));
+}
+
+function formatFileSize(bytes: number): string {
+  return `${Math.round(bytes / 1024)} KiB`;
+}
+
+function formatDuration(millis: number): string {
+  const deciseconds = Math.round(millis / 100).toString();
+  return `${deciseconds.slice(0, -1) || '0'}.${deciseconds.slice(-1)} sec`;
 }

@@ -5,7 +5,7 @@
 All API definitions are current as of aws-sdk-js `v2.761.0`.
 
 | Module | Protocol | Generates | File size | Typechecks | Approx check time |
-| --- | --- | --- | --- | --- | --- |
+| --- | --- | :---: | ---: | :---: | ---: |
 | `AWSMigrationHub@2017-05-31.ts` | json |  |  |  |  |
 | `accessanalyzer@2019-11-01.ts` | rest-json |  |  |  |  |
 | `acm@2015-12-08.ts` | json |  |  |  |  |
@@ -24,7 +24,7 @@ All API definitions are current as of aws-sdk-js `v2.761.0`.
 | `appstream@2016-12-01.ts` | json |  |  |  |  |
 | `appsync@2017-07-25.ts` | rest-json |  |  |  |  |
 | `athena@2017-05-18.ts` | json |  |  |  |  |
-| `autoscaling@2011-01-01.ts` | query | ✔️ | 102 KiB | ✔️ | 1.231 sec |
+| `autoscaling@2011-01-01.ts` | query | ✔️ | 103 KiB | ✔️ | 1.2 sec |
 | `autoscaling-plans@2018-01-06.ts` | json |  |  |  |  |
 | `backup@2018-11-15.ts` | rest-json |  |  |  |  |
 | `batch@2016-08-10.ts` | rest-json |  |  |  |  |
@@ -35,7 +35,7 @@ All API definitions are current as of aws-sdk-js `v2.761.0`.
 | `cloud9@2017-09-23.ts` | json |  |  |  |  |
 | `clouddirectory@2016-05-10.ts` | rest-json |  |  |  |  |
 | `clouddirectory@2017-01-11.ts` | rest-json |  |  |  |  |
-| `cloudformation@2010-05-15.ts` | query | ✔️ | 126 KiB | ✔️ | 1.568 sec |
+| `cloudformation@2010-05-15.ts` | query | ✔️ | 126 KiB | ✔️ | 1.6 sec |
 | `cloudfront@2016-11-25.ts` | rest-xml |  |  |  |  |
 | `cloudfront@2017-03-25.ts` | rest-xml |  |  |  |  |
 | `cloudfront@2017-10-30.ts` | rest-xml |  |  |  |  |
@@ -45,8 +45,8 @@ All API definitions are current as of aws-sdk-js `v2.761.0`.
 | `cloudfront@2020-05-31.ts` | rest-xml |  |  |  |  |
 | `cloudhsm@2014-05-30.ts` | json |  |  |  |  |
 | `cloudhsmv2@2017-04-28.ts` | json |  |  |  |  |
-| `cloudsearch@2011-02-01.ts` | query | ✔️ | 37 KiB | ✔️ | 0.788 sec |
-| `cloudsearch@2013-01-01.ts` | query | ✔️ | 60 KiB | ✔️ | 1.014 sec |
+| `cloudsearch@2011-02-01.ts` | query | ✔️ | 37 KiB | ✔️ | 0.8 sec |
+| `cloudsearch@2013-01-01.ts` | query | ✔️ | 60 KiB | ✔️ | 1.0 sec |
 | `cloudsearchdomain@2013-01-01.ts` | rest-json |  |  |  |  |
 | `cloudtrail@2013-11-01.ts` | json |  |  |  |  |
 | `codeartifact@2018-09-22.ts` | rest-json |  |  |  |  |
@@ -79,25 +79,25 @@ All API definitions are current as of aws-sdk-js `v2.761.0`.
 | `discovery@2015-11-01.ts` | json |  |  |  |  |
 | `dlm@2018-01-12.ts` | rest-json |  |  |  |  |
 | `dms@2016-01-01.ts` | json |  |  |  |  |
-| `docdb@2014-10-31.ts` | query | ✔️ | 86 KiB | ✔️ | 1.34 sec |
+| `docdb@2014-10-31.ts` | query | ✔️ | 87 KiB | ✔️ | 1.3 sec |
 | `ds@2015-04-16.ts` | json |  |  |  |  |
 | `dynamodb@2011-12-05.ts` | json |  |  |  |  |
 | `dynamodb@2012-08-10.ts` | json |  |  |  |  |
 | `ebs@2019-11-02.ts` | rest-json |  |  |  |  |
-| `ec2@2016-11-15.ts` | ec2 | ✔️ | 997 KiB | ✔️ | 6.079 sec |
+| `ec2@2016-11-15.ts` | ec2 | ✔️ | 998 KiB | ✔️ | 6.1 sec |
 | `ec2-instance-connect@2018-04-02.ts` | json |  |  |  |  |
 | `ecr@2015-09-21.ts` | json |  |  |  |  |
 | `ecs@2014-11-13.ts` | json |  |  |  |  |
 | `eks@2017-11-01.ts` | rest-json |  |  |  |  |
 | `elastic-inference@2017-07-25.ts` | rest-json |  |  |  |  |
-| `elasticache@2015-02-02.ts` | query | ✔️ | 131 KiB | ✔️ | 1.781 sec |
-| `elasticbeanstalk@2010-12-01.ts` | query | ✔️ | 100 KiB | ✔️ | 1.502 sec |
+| `elasticache@2015-02-02.ts` | query | ✔️ | 131 KiB | ✔️ | 1.8 sec |
+| `elasticbeanstalk@2010-12-01.ts` | query | ✔️ | 100 KiB | ✔️ | 1.5 sec |
 | `elasticfilesystem@2015-02-01.ts` | rest-json |  |  |  |  |
-| `elasticloadbalancing@2012-06-01.ts` | query | ✔️ | 51 KiB | ✔️ | 1.109 sec |
-| `elasticloadbalancingv2@2015-12-01.ts` | query | ✔️ | 77 KiB | ✔️ | 1.26 sec |
+| `elasticloadbalancing@2012-06-01.ts` | query | ✔️ | 51 KiB | ✔️ | 1.1 sec |
+| `elasticloadbalancingv2@2015-12-01.ts` | query | ✔️ | 78 KiB | ✔️ | 1.3 sec |
 | `elasticmapreduce@2009-03-31.ts` | json |  |  |  |  |
 | `elastictranscoder@2012-09-25.ts` | rest-json |  |  |  |  |
-| `email@2010-12-01.ts` | query | ✔️ | 99 KiB | ✔️ | 1.403 sec |
+| `email@2010-12-01.ts` | query | ✔️ | 99 KiB | ✔️ | 1.4 sec |
 | `entitlement.marketplace@2017-01-11.ts` | json |  |  |  |  |
 | `es@2015-01-01.ts` | rest-json |  |  |  |  |
 | `eventbridge@2015-10-07.ts` | json |  |  |  |  |
@@ -117,10 +117,10 @@ All API definitions are current as of aws-sdk-js `v2.761.0`.
 | `guardduty@2017-11-28.ts` | rest-json |  |  |  |  |
 | `health@2016-08-04.ts` | json |  |  |  |  |
 | `honeycode@2020-03-01.ts` | rest-json |  |  |  |  |
-| `iam@2010-05-08.ts` | query | ✔️ | 165 KiB | ✔️ | 3.063 sec |
+| `iam@2010-05-08.ts` | query | ✔️ | 166 KiB | ✔️ | 3.1 sec |
 | `identitystore@2020-06-15.ts` | json |  |  |  |  |
 | `imagebuilder@2019-12-02.ts` | rest-json |  |  |  |  |
-| `importexport@2010-06-01.ts` | query | ✔️ | 14 KiB | ✔️ | 1.241 sec |
+| `importexport@2010-06-01.ts` | query | ✔️ | 14 KiB | ✔️ | 1.2 sec |
 | `inspector@2016-02-16.ts` | json |  |  |  |  |
 | `iot@2015-05-28.ts` | rest-json |  |  |  |  |
 | `iot-data@2015-05-28.ts` | rest-json |  |  |  |  |
@@ -169,10 +169,10 @@ All API definitions are current as of aws-sdk-js `v2.761.0`.
 | `migrationhub-config@2019-06-30.ts` | json |  |  |  |  |
 | `mobile@2017-07-01.ts` | rest-json |  |  |  |  |
 | `mobileanalytics@2014-06-05.ts` | rest-json |  |  |  |  |
-| `monitoring@2010-08-01.ts` | query | ✔️ | 61 KiB | ✔️ | 3.355 sec |
+| `monitoring@2010-08-01.ts` | query | ✔️ | 61 KiB | ✔️ | 3.4 sec |
 | `mq@2017-11-27.ts` | rest-json |  |  |  |  |
 | `mturk-requester@2017-01-17.ts` | json |  |  |  |  |
-| `neptune@2014-10-31.ts` | query | ✔️ | 128 KiB | ✔️ | 2.721 sec |
+| `neptune@2014-10-31.ts` | query | ✔️ | 128 KiB | ✔️ | 2.7 sec |
 | `networkmanager@2019-07-05.ts` | rest-json |  |  |  |  |
 | `opsworks@2013-02-18.ts` | json |  |  |  |  |
 | `opsworkscm@2016-11-01.ts` | json |  |  |  |  |
@@ -190,13 +190,13 @@ All API definitions are current as of aws-sdk-js `v2.761.0`.
 | `qldb-session@2019-07-11.ts` | json |  |  |  |  |
 | `quicksight@2018-04-01.ts` | rest-json |  |  |  |  |
 | `ram@2018-01-04.ts` | rest-json |  |  |  |  |
-| `rds@2013-01-10.ts` | query | ✔️ | 93 KiB | ✔️ | 2.036 sec |
-| `rds@2013-02-12.ts` | query | ✔️ | 100 KiB | ✔️ | 1.856 sec |
-| `rds@2013-09-09.ts` | query | ✔️ | 108 KiB | ✔️ | 1.953 sec |
-| `rds@2014-09-01.ts` | query | ✔️ | 110 KiB | ✔️ | 1.989 sec |
-| `rds@2014-10-31.ts` | query | ✔️ | 293 KiB | ✔️ | 3.902 sec |
+| `rds@2013-01-10.ts` | query | ✔️ | 94 KiB | ✔️ | 2.0 sec |
+| `rds@2013-02-12.ts` | query | ✔️ | 100 KiB | ✔️ | 1.9 sec |
+| `rds@2013-09-09.ts` | query | ✔️ | 108 KiB | ✔️ | 2.0 sec |
+| `rds@2014-09-01.ts` | query | ✔️ | 111 KiB | ✔️ | 2.0 sec |
+| `rds@2014-10-31.ts` | query | ✔️ | 293 KiB | ✔️ | 3.9 sec |
 | `rds-data@2018-08-01.ts` | rest-json |  |  |  |  |
-| `redshift@2012-12-01.ts` | query | ✔️ | 174 KiB | ✔️ | 2.829 sec |
+| `redshift@2012-12-01.ts` | query | ✔️ | 174 KiB | ✔️ | 2.8 sec |
 | `redshift-data@2019-12-20.ts` | json |  |  |  |  |
 | `rekognition@2016-06-27.ts` | json |  |  |  |  |
 | `resource-groups@2017-11-27.ts` | rest-json |  |  |  |  |
@@ -213,7 +213,7 @@ All API definitions are current as of aws-sdk-js `v2.761.0`.
 | `sagemaker-a2i-runtime@2019-11-07.ts` | rest-json |  |  |  |  |
 | `savingsplans@2019-06-28.ts` | rest-json |  |  |  |  |
 | `schemas@2019-12-02.ts` | rest-json |  |  |  |  |
-| `sdb@2009-04-15.ts` | query | ✔️ | 16 KiB | ✔️ | 0.764 sec |
+| `sdb@2009-04-15.ts` | query | ✔️ | 16 KiB | ✔️ | 0.8 sec |
 | `secretsmanager@2017-10-17.ts` | json |  |  |  |  |
 | `securityhub@2018-10-26.ts` | rest-json |  |  |  |  |
 | `serverlessrepo@2017-09-08.ts` | rest-json |  |  |  |  |
@@ -226,8 +226,8 @@ All API definitions are current as of aws-sdk-js `v2.761.0`.
 | `sms@2016-10-24.ts` | json |  |  |  |  |
 | `sms-voice@2018-09-05.ts` | rest-json |  |  |  |  |
 | `snowball@2016-06-30.ts` | json |  |  |  |  |
-| `sns@2010-03-31.ts` | query | ✔️ | 34 KiB | ✔️ | 0.911 sec |
-| `sqs@2012-11-05.ts` | query | ✔️ | 31 KiB | ✔️ | 0.908 sec |
+| `sns@2010-03-31.ts` | query | ✔️ | 35 KiB | ✔️ | 0.9 sec |
+| `sqs@2012-11-05.ts` | query | ✔️ | 31 KiB | ✔️ | 0.9 sec |
 | `ssm@2014-11-06.ts` | json |  |  |  |  |
 | `sso@2019-06-10.ts` | rest-json |  |  |  |  |
 | `sso-admin@2020-07-20.ts` | json |  |  |  |  |
@@ -235,7 +235,7 @@ All API definitions are current as of aws-sdk-js `v2.761.0`.
 | `states@2016-11-23.ts` | json |  |  |  |  |
 | `storagegateway@2013-06-30.ts` | json |  |  |  |  |
 | `streams.dynamodb@2012-08-10.ts` | json |  |  |  |  |
-| `sts@2011-06-15.ts` | query | ✔️ | 17 KiB | ✔️ | 0.778 sec |
+| `sts@2011-06-15.ts` | query | ✔️ | 18 KiB | ✔️ | 0.8 sec |
 | `support@2013-04-15.ts` | json |  |  |  |  |
 | `swf@2012-01-25.ts` | json |  |  |  |  |
 | `synthetics@2017-10-11.ts` | rest-json |  |  |  |  |
