@@ -100,10 +100,10 @@ function readXmlMap<K extends string,T>(entries: XmlNode[], valMapper: (node: Xm
   return obj;
 }
 
-function parseTimestamp(str: string | undefined): Date | undefined {
+function parseTimestamp(str: string | undefined): Date {
   if (str?.includes('T')) return new Date(str);
   if (str?.length === 10) return new Date(parseInt(str) * 1000)
-  return undefined;
+  throw new Error(\`Timestamp from server is unparsable: '\${str}'\`);
 }
 
 `;
