@@ -2,6 +2,8 @@
 
 [//]: # (Generated Content Barrier)
 
+All API definitions are current as of aws-sdk-js `v2.761.0`.
+
 | Module | Protocol | Generates | File size | Typechecks | Approx check time |
 | --- | --- | --- | --- | --- | --- |
 | `AWSMigrationHub@2017-05-31.ts` | json |  |  |  |  |
@@ -253,6 +255,4 @@
 
 [//]: # (Generated Content Barrier)
 
-## License
-
-TODO
+If you want a client that isn't listed, please open a Github Issue.

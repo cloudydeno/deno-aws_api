@@ -1,6 +1,9 @@
 import { readCSVObjects, writeCSVObjects } from "https://deno.land/x/csv@v0.4.0/mod.ts";
 import * as path from "https://deno.land/std@0.71.0/path/mod.ts";
 
+const sdk = JSON.parse(await Deno.readTextFile('aws-sdk-js/package.json'));
+const header = `All API definitions are current as of aws-sdk-js \`v${sdk.version}\`.`;
+
 const genBarrier = `
 
 [//]: # (Generated Content Barrier)
@@ -30,14 +33,22 @@ f.close();
 
 const workingSvc = services.filter(x => x.typechecked === 'ok');
 
-await updateReadme();
-await updateServices();
+await updateReadme(header);
+await updateServices(header);
 
-async function updateReadme() {
+async function updateFile(path: string, contents: string) {
+  const original = await Deno.readTextFile(path);
+  const [intro, _, outro] = original.split(genBarrier);
+  await Deno.writeTextFile(path, [
+    intro, header+`\n\n`+contents, outro,
+  ].join(genBarrier));
+}
+
+async function updateReadme(header: string) {
   const chunks = new Array<string>();
-
   chunks.push(`| Class | Module | Protocol | File size | Approx check time |`);
   chunks.push(`| --- | --- | --- | --- | --- |`);
+
   for (const svc of workingSvc) {
     chunks.push(`| `+[
       svc.namespace,
@@ -48,14 +59,10 @@ async function updateReadme() {
     ].join(' | ')+` |`);
   }
 
-  const [intro, _, outro] = (await Deno.readTextFile('lib/README.md'))
-    .split(genBarrier);
-  await Deno.writeTextFile('lib/README.md', [
-    intro, chunks.join('\n'), outro,
-  ].join(genBarrier));
+  return updateFile('lib/README.md', chunks.join('\n'));
 }
 
-async function updateServices() {
+async function updateServices(header: string) {
   const chunks = new Array<string>();
 
   const icons: Record<string, string> = {
@@ -77,9 +84,5 @@ async function updateServices() {
     ].join(' | ')+` |`);
   }
 
-  const [intro, _, outro] = (await Deno.readTextFile('lib/SERVICES.md'))
-    .split(genBarrier);
-  await Deno.writeTextFile('lib/SERVICES.md', [
-    intro, chunks.join('\n'), outro,
-  ].join(genBarrier));
+  return updateFile('lib/SERVICES.md', chunks.join('\n'));
 }

@@ -16,6 +16,8 @@ Only some services have completed clients at this time. Please reach out on Gith
 
 [//]: # (Generated Content Barrier)
 
+All API definitions are current as of aws-sdk-js `v2.761.0`.
+
 | Class | Module | Protocol | File size | Approx check time |
 | --- | --- | --- | --- | --- |
 | AutoScaling | `autoscaling@2011-01-01.ts` | query | 102 KiB | 1.231 sec |
