@@ -4,12 +4,12 @@ import ServiceCodeGen from '../code-gen.ts';
 import type * as Schema from '../sdk-schema.ts';
 
 const header = [
-  "service", "uid", "fullname", "id", "namespace", "protocol",
+  "service", "version", "fullname", "id", "namespace", "protocol",
   "generated", "typechecked", "bytecount", "cachetime",
 ];
 interface ServiceEntry {
   service: string;
-  uid: string;
+  version: string;
   fullname: string;
   id: string;
   namespace: string;
@@ -24,7 +24,7 @@ const services: Record<string, ServiceEntry> = {};
 
 const f = await Deno.open("./grid-services.csv");
 for await (const obj of readCSVObjects(f)) {
-  services[obj.uid] = obj as unknown as ServiceEntry;
+  services[`${obj.service}@${obj.version}`] = obj as unknown as ServiceEntry;
 }
 f.close();
 
@@ -39,12 +39,14 @@ const specSuffix = `.normal.json`;
 for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
   if (!entry.name.endsWith(specSuffix)) continue;
   const uid = entry.name.slice(0, -specSuffix.length);
+  const service = uid.slice(0, -11);
+  const version = uid.slice(-10);
+
   if (!(uid in services)) {
-    const service = uid.slice(0, -11);
     const apiSpec = JSON.parse(await Deno.readTextFile('./aws-sdk-js/apis/'+entry.name)) as Schema.Api;
 
-    services[uid] = {
-      service, uid,
+    services[`${service}@${version}`] = {
+      service, version,
       fullname: apiSpec.metadata.serviceFullName,
       id: apiSpec.metadata.serviceId,
       namespace: serviceList[service].name,
@@ -57,18 +59,18 @@ for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
     };
   }
 
-  const service = services[uid];
-  if (!['ec2', 'query'].includes(service.protocol)) continue;
+  const svc = services[`${service}@${version}`];
+  if (!['ec2', 'query'].includes(svc.protocol)) continue;
 
   let modPath: string;
   let byteCount: number;
   try {
-    [modPath, byteCount] = await generateApi('aws-sdk-js/apis', uid, service.namespace);
-    service.bytecount = byteCount.toString();
-    service.generated = 'ok';
+    [modPath, byteCount] = await generateApi('aws-sdk-js/apis', uid, svc.namespace);
+    svc.bytecount = byteCount.toString();
+    svc.generated = 'ok';
   } catch (err) {
-    console.log(uid, 'build fail:', err.message);
-    service.generated = 'fail';
+    console.log(`${service}@${version}`, 'build fail:', err.message);
+    svc.generated = 'fail';
     continue;
   }
 
@@ -81,16 +83,16 @@ for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
   const cacheEnd = new Date;
 
   if (code !== 0) {
-    console.log(uid, 'cache fail code', code);
-    service.typechecked = 'fail';
+    console.log(`${service}@${version}`, 'cache fail code', code);
+    svc.typechecked = 'fail';
     continue;
   }
   const checkOutput = new TextDecoder().decode(await cache.stderrOutput())
   if (!checkOutput) continue;
   console.log(checkOutput.trimEnd());
 
-  service.typechecked = 'ok';
-  service.cachetime = (cacheEnd.valueOf() - cacheStart.valueOf()).toString();
+  svc.typechecked = 'ok';
+  svc.cachetime = (cacheEnd.valueOf() - cacheStart.valueOf()).toString();
 }
 
 
