@@ -1,8 +1,8 @@
 import * as path from "https://deno.land/std@0.71.0/path/mod.ts";
 import { pooledMap } from "https://deno.land/std@0.71.0/async/pool.ts";
 
-import type * as Schema from './generation/sdk-schema.ts';
-import ServiceCodeGen from './generation/code-gen.ts';
+import type * as Schema from '../sdk-schema.ts';
+import ServiceCodeGen from '../code-gen.ts';
 
 type ProtocolFixture = Schema.Api & {
   "description": string;
@@ -114,7 +114,7 @@ const allTestRuns = readAllTestFixtures();
 
 const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunResult> {
   const codeGen = new ServiceCodeGen({api: run.apiSpec});
-  const apiSource = codeGen.generateTypescript();
+  const apiSource = codeGen.generateTypescript('Fixture');
 
 // "given": {
 //   "output": {

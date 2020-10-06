@@ -1,3 +1,16 @@
+export type MetadataListing = Record<string, ServiceMetadata>;
+export interface ServiceMetadata {
+  "name": string;
+  "prefix"?: string;
+  "versions"?: string[];
+  "dualstackAvailable"?: true;
+  "xmlNoDefaultLists"?: true;
+  "cors"?: true;
+};
+
+const list: MetadataListing = {};
+list['hi'].name
+
 export interface Api {
   "version": "2.0";
   "metadata": ApiMetadata;
@@ -5,7 +18,7 @@ export interface Api {
   "shapes": { [name: string]: ApiShape };
   "authorizers": { [name: string]: ApiAuthorizer }; // only for mq
   "documentation"?: string;
-}
+};
 
 export interface ApiMetadata {
   "apiVersion": string;

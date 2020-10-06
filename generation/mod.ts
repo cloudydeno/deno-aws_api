@@ -28,7 +28,10 @@ const codeGen = new ServiceCodeGen({
   waiters: JSON.parse(await maybeReadFile(jsonPath('waiters2'))) as Schema.Waiters,
 });
 
+// TODO: use metadata.json's "name" probably
+const apiCamelName = codeGen.apiSpec.metadata.serviceId.split(' ').map(x => x[0].toUpperCase()+x.slice(1)).join('');
+
 const svcMetadata = codeGen.apiSpec.metadata;
 const modName = `${svcMetadata.endpointPrefix}@${svcMetadata.apiVersion}.ts`;
 console.log('Writing', modName);
-await Deno.writeTextFile(path.join('lib', 'services', modName), codeGen.generateTypescript());
+await Deno.writeTextFile(path.join('lib', 'services', modName), codeGen.generateTypescript(apiCamelName));

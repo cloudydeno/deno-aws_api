@@ -53,10 +53,7 @@ export default class ServiceCodeGen {
 
   }
 
-  generateTypescript(): string {
-    // console.log(wholeSpec.metadata)
-    const apiCamelName = this.apiSpec.metadata.serviceId.split(' ').map(x => x[0].toUpperCase()+x.slice(1)).join('');
-
+  generateTypescript(namespace: string): string {
     const allMethods = new Set(Object.values(this.apiSpec.operations).map(x => x.http?.method ?? 'POST'));
 
     const chunks = new Array<string>();
@@ -113,10 +110,10 @@ interface XmlNode {
 `);
     chunks.push(this.protocol.globalHelpers);
 
-    chunks.push(`export default class ${apiCamelName} {`);
+    chunks.push(`export default class ${namespace} {`);
     chunks.push(`  #client: ServiceClient;`);
     chunks.push(`  constructor(apiFactory: ApiFactory) {`);
-    chunks.push(`    this.#client = apiFactory.buildServiceClient(${apiCamelName}.ApiMetadata);`);
+    chunks.push(`    this.#client = apiFactory.buildServiceClient(${namespace}.ApiMetadata);`);
     chunks.push(`  }\n`);
     chunks.push(`  static ApiMetadata: Object = ${JSON.stringify(this.apiSpec.metadata, null, 2).replace(/\n/g, `\n  `)};\n`);
 
@@ -195,6 +192,18 @@ interface XmlNode {
           chunks.push(outputParsingCode);
         }
       }
+
+      // TODO: is this a sane way of doing pagination?
+      // type PaginatedResult<T> = T & {
+      //   hasNextPage(this: T): boolean;
+      //   nextPage(this: T, config?: RequestConfig): Promise<PaginatedResult<T>>;
+      // }
+      // hasNextPage() { return !!(this.NextToken); },
+      // nextPage(config: RequestConfig = {}) {
+      //   return self.describeInstances({ ...params, ...config,
+      //     NextToken: this.NextToken,
+      //   });
+      // },
 
       chunks.push(`  }\n`);
     }
