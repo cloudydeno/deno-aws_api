@@ -8,10 +8,12 @@ import { compile } from 'https://deno.land/x/jmespath@v0.2.0/index.ts';
 //   'length(KeyPairs[].KeyName) > `0`',
 //   'length(DBClusterSnapshots) == `0`',
 //   'length(services[?!(length(deployments) == `1` && runningCount == desiredCount)]) == `0`',
+//   'VerificationAttributes.*.VerificationStatus',
 // ];
 // for (const path of cases) {
-//   console.log(path, ' -|- ', compileJMESPath('resp'));
+//   console.log(path, ' -|- ', compileJMESPath(path, 'resp'));
 // }
+
 
 export function compileJMESPath(pathstr: string, rootRef: string): string {
   return postProcess(compilePath(compile(pathstr), 'resp'));
@@ -118,6 +120,28 @@ function compilePath(root: ASTNode, rootRef: string): string {
         case 'Subexpression':
         case 'Field':
           return `${compilePath(base, rootRef)}.map(x => ${compilePath(mapper, 'x')})`;
+
+      }
+      break;
+    }
+
+    case 'ValueProjection': {
+      assertChildCount(root.children, 2);
+      const [base, mapper] = root.children;
+      if (!base || typeof base !== 'object') throw new Error(
+        `BUG: ValueProjection base wasn't an ASTNode`);
+      if (!mapper || typeof mapper !== 'object') throw new Error(
+        `BUG: ValueProjection mapper wasn't an ASTNode`);
+
+      const valuesExpr = `Object.values(${compilePath(base, rootRef)})`;
+      switch (mapper.type) {
+
+        case 'Identity':
+          return valuesExpr;
+
+        case 'Subexpression':
+        case 'Field':
+          return `${valuesExpr}.map(x => ${compilePath(mapper, 'x')})`;
 
       }
       break;
