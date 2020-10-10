@@ -4,13 +4,22 @@ import ShapeLibrary, { KnownShape } from './shape-library.ts';
 import { fixupApiSpec, fixupWaitersSpec } from './quirks.ts';
 import GenWaiter from "./gen-waiter.ts";
 
+interface ProtocolCodegen {
+  requestBodyTypeName: string;
+  globalHelpers: string;
+  generateOperationInputParsingTypescript(inputShape: Schema.ApiShape): { inputParsingCode: string; inputVariables: string[]; };
+  generateOperationOutputParsingTypescript(shape: KnownShape, resultWrapper?: string): { outputParsingCode: string; outputVariables: string[]; };
+  generateShapeInputParsingTypescript(shape: KnownShape): { inputParsingFunction: string; };
+  generateShapeOutputParsingTypescript(shape: KnownShape): { outputParsingFunction: string; };
+}
+
 export default class ServiceCodeGen {
   apiSpec: Schema.Api;
   pagersSpec?: Schema.Pagination;
   waitersSpec?: Schema.Waiters;
 
   shapes: ShapeLibrary;
-  protocol: ProtocolQueryCodegen; // TODO: others too
+  protocol: ProtocolCodegen;
 
   constructor(specs: {
     api: Schema.Api,
@@ -152,8 +161,8 @@ interface XmlNode {
           .generateOperationInputParsingTypescript(inputShape.spec);
         chunks.push(inputParsingCode);
         inputVariables.forEach(x => referencedInputs.add(x));
-      } else {
-        referencedInputs.add(`body: new URLSearchParams()`);
+      // } else {
+      //   referencedInputs.add(`body: new URLSearchParams()`);
       }
 
       chunks.push(`    const resp = await this.#client.performRequest({`);
@@ -181,16 +190,12 @@ interface XmlNode {
 
       /////
       // OVERALL TODO: Detect 'framing' shapes (e.g. for s3 headers) and treat them specially
+      // These are only in 'rest-xml' and 'rest-json'
 
       if (outputShape?.spec.type === 'structure') {
-        chunks.push(`    const xml = await resp.xml(${JSON.stringify(operation.output?.resultWrapper ?? outputShape?.spec.resultWrapper ?? undefined)});`);
-        if (outputShape.refCount > 1) {
-          chunks.push(`    return ${outputShape.censoredName}_Parse(xml);`);
-        } else {
-          const {outputParsingCode, outputVariables} = this.protocol
-            .generateOperationOutputParsingTypescript(outputShape.spec);
-          chunks.push(outputParsingCode);
-        }
+        const {outputParsingCode, outputVariables} = this.protocol
+          .generateOperationOutputParsingTypescript(outputShape, operation.output?.resultWrapper ?? outputShape?.spec.resultWrapper);
+        chunks.push(outputParsingCode);
       }
 
       // TODO: is this a sane way of doing pagination?
@@ -241,6 +246,15 @@ interface XmlNode {
         if (!(this.shapes.outputShapes.includes(shape) && shape.refCount === 1) && shape.tags.has('output')) {
           chunks.push(this.protocol.generateShapeOutputParsingTypescript(shape).outputParsingFunction);
         }
+      } else if (shape.tags.has('enum')) {
+        // Maybe include input reading (prep for wire)
+        if (shape.tags.has('input')) {
+          chunks.push(this.protocol.generateShapeInputParsingTypescript(shape).inputParsingFunction);
+        }
+        // Maybe include output reading (post-wire enriching)
+        if (shape.tags.has('output')) {
+          chunks.push(this.protocol.generateShapeOutputParsingTypescript(shape).outputParsingFunction);
+        }
       }
       chunks.push('');
     }
@@ -259,7 +273,7 @@ interface XmlNode {
             const shape = this.shapes.get(spec);
             const isRequired = required.has(key.toLowerCase())
               || (reqLists && (shape.spec.type === 'list' || shape.spec.type === 'map'));
-            return `  ${key}${isRequired ? '' : '?'}: ${this.specifyShapeType(shape)};`;
+            return `  ${key}${isRequired ? '' : '?'}: ${this.specifyShapeType(shape)}${isRequired ? '' : ' | null'};`;
           }),
         '}'].join('\n');
 
@@ -319,11 +333,4 @@ interface XmlNode {
     }
   }
 
-}
-
-function censorShapeName(name: string): string {
-  if (['Object', 'Date', 'String'].includes(name)) {
-    return '_'+name;
-  }
-  return name;
 }

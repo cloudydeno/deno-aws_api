@@ -9,12 +9,14 @@ export interface ApiRequestConfig {
   // dynamic per call
   headers?: Headers;
   query?: URLSearchParams;
-  body?: URLSearchParams | ApiWireStructure | Uint8Array;
+  body?: URLSearchParams | JSONObject | Uint8Array;
   abortSignal?: AbortSignal;
 }
 export interface ApiResponse extends Response {
   xml(resultWrapper?: string): Promise<XmlNode>;
+  // json(): Promise<JSONValue>;
 };
+
 export interface XmlNode {
   name: string;
   attributes: {[key: string]: string};
@@ -38,26 +40,17 @@ export interface XmlNode {
 }
 
 // Things that JSON can handle directly
-export type ApiWireStructure = {
-  [param: string]: string | number | boolean | null | ApiWireStructure;
-};
+// TODO: duplicated with json.ts
+export type JSONPrimitive = string | number | boolean | null | undefined;
+export type JSONValue = JSONPrimitive | JSONObject | JSONArray;
+export type JSONObject = { [member: string]: JSONValue };
+export type JSONArray = JSONValue[];
+
 export interface ApiFactory {
   buildServiceClient(apiMetadata: Object): ServiceClient;
 }
 export interface ServiceClient {
   performRequest(request: ApiRequestConfig): Promise<ApiResponse>;
-  // TODO: does this even belong here?
-  // runWaiter<T,U>(config: ApiWaiterConfig<T,U>): Promise<U>;
-}
-export interface ApiWaiterConfig<T,U> {
-  // wiring
-  operation: (input: T) => Promise<U>;
-  baseInput: T;
-  abortSignal?: AbortSignal;
-  // behavior
-  delay: number;
-  maxAttempts: number;
-  acceptors: any[]; // TODO
 }
 
 // our understanding of how APIs can describe themselves

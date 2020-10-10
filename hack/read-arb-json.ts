@@ -1,4 +1,3 @@
-
 // Things that JSON can encode directly
 export type JSONPrimitive = string | number | boolean | null;
 export type JSONValue = JSONPrimitive | JSONObject | JSONArray;
@@ -110,9 +109,35 @@ function throwMissingKeys(missingKeys: Iterable<string>, hadKeys: Iterable<strin
 
 
 
+export type User = ReturnType<typeof User>;
+function User(root: JSONValue) { return readFields(root, {
+  required: {
+    /** hi */
+    name: 's',
+    address: 's',
+    prefs: UserPreferences,
+  },
+  optional: {
+    age: 'n',
+    photoThumb: 'a',
+  },
+}); }
 
+export type UserPreferences = ReturnType<typeof UserPreferences>;
+function UserPreferences(root: JSONValue) { return readFields(root, {
+  required: {
+    isSubscribed: 'b',
+    siteTheme: 's',
+  },
+  optional: {
+    timeZone: 's',
+  },
+}); }
 
-
+export interface UserIface extends ReturnType<typeof User> {
+  /** Hello there. */
+  name: string;
+}
 
 
 function DescribeStreamOutput(root: JSONValue) { return readFields(root, {

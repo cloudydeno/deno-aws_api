@@ -36,7 +36,7 @@ export default class ShapeLibrary {
       ...this.inputShapes, ...this.inputInnerShapes,
       ...this.outputShapes, ...this.outputInnerShapes,
     ]);
-    const visitShape = (ref: Schema.ShapeRef, tagWith: string) => {
+    const visitShape = (ref: Schema.ShapeRef, tagWith: ShapeTag) => {
       const shape = this.get(ref);
       shape.refCount++;
       shape.tags.add(tagWith);
@@ -117,10 +117,17 @@ export default class ShapeLibrary {
 
 };
 
+export type ShapeTag =
+| 'named'
+| 'interface' | 'enum'
+| 'input' | 'output'
+| 'recursed' | 'recursive'
+;
+
 export class KnownShape {
   name: string;
   spec: Schema.ApiShape;
-  tags = new Set<string>();
+  tags = new Set<ShapeTag>();
   refCount = 0;
   constructor(name: string, spec: Schema.ApiShape) {
     this.name = name;
@@ -131,6 +138,10 @@ export class KnownShape {
     if (['Object', 'Date', 'String'].includes(this.name))
       return '_'+this.name;
     return this.name;
+  }
+
+  get isNumberType() {
+    return ['integer', 'float', 'double', 'long'].includes(this.spec.type);
   }
 
 }

@@ -105,10 +105,12 @@ async function *readTestFixtures(filePath: string): AsyncGenerator<TestRun> {
 }
 
 async function* readAllTestFixtures() {
-  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/output/query.json');
-  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/output/ec2.json');
+  // yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/json.json');
+  // yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/output/json.json');
   yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/query.json');
+  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/output/query.json');
   yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/ec2.json');
+  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/output/ec2.json');
 }
 const allTestRuns = readAllTestFixtures();
 
@@ -134,7 +136,7 @@ const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunR
   const chunks = new Array<string>();
   chunks.push('\n/////////\n');
   chunks.push(`import { assertEquals } from "https://deno.land/std@0.71.0/testing/asserts.ts";`);
-  chunks.push(`import { DefaultServiceClient } from './lib/client/mod.ts';\n`);
+  chunks.push(`import { wrapServiceClient } from '../client/mod.ts';\n`);
 
   // TODO: better way of mocking this
   chunks.push(`fixedIdemptToken = "00000000-0000-4000-8000-000000000000";\n`);
@@ -143,13 +145,19 @@ const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunR
   if (run.category === 'input') {
     const { given, params, serialized } = run.testCase;
 
+    const expectedBody = serialized.body?.[0] === '{'
+      ? JSON.stringify(JSON.parse(serialized.body))
+      : serialized.body;
+
     chunks.push(`  const [_, host, path] = request.url.match(/^https:\\/\\/([^\\/]+)(\\/.*)$/) ?? [null, '', ''];`);
     if (serialized.host) chunks.push(`  assertEquals(host, ${JSON.stringify(serialized.host)});`);
     chunks.push(`  assertEquals(path, ${JSON.stringify(serialized.uri)});`);
-    chunks.push(`  assertEquals(await request.text(),`);
-    chunks.push(`    ${JSON.stringify(serialized.body)});`);
+    if (expectedBody) {
+      chunks.push(`  assertEquals(await request.text(),`);
+      chunks.push(`    ${JSON.stringify(expectedBody)});`);
+    }
     for (const [name, val] of Object.entries(serialized.headers ?? {})) {
-      chunks.push(`  assertEquals(request.headers.get(${JSON.stringify(name)}), ${JSON.stringify(val)}`);
+      chunks.push(`  assertEquals(request.headers.get(${JSON.stringify(name)}), ${JSON.stringify(val)});`);
     }
     chunks.push(`  console.log("Assertions passed");`);
     chunks.push(`  Deno.exit(0); // TODO`);
@@ -167,7 +175,7 @@ const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunR
 
   chunks.push(`const testService = new Fixture({`);
   chunks.push(`  buildServiceClient(metadata: any) {`);
-  chunks.push(`    return new DefaultServiceClient(${JSON.stringify(run.clientEndpoint)}, metadata.apiVersion, checkRequest);`);
+  chunks.push(`    return wrapServiceClient(metadata, ${JSON.stringify(run.clientEndpoint)}, checkRequest);`);
   chunks.push(`  },`);
   chunks.push(`});\n`);
 
@@ -191,6 +199,8 @@ const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunR
     chunks.push(`function transformJsVal(val: any): any {`);
     chunks.push(`  if (val?.constructor === Object) {`);
     chunks.push(`    return transformJsObj(val);`);
+    chunks.push(`  } else if (val && typeof val.constructor !== 'function') {`);
+    chunks.push(`    return transformJsObj(val);`);
     chunks.push(`  } else if (val?.constructor === Date) {`);
     chunks.push(`    return Math.floor(val.valueOf() / 1000);`);
     chunks.push(`  } else if (val?.constructor === Uint8Array) {`);
@@ -203,7 +213,13 @@ const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunR
     chunks.push(`}`);
   }
 
-  const child = Deno.run({cmd: ["deno", "run", "-"], stdin: 'piped', stdout: 'piped', stderr: 'piped'});
+  const child = Deno.run({
+    cmd: ["deno", "run", "-"],
+    cwd: path.join('lib', 'services'),
+    stdin: 'piped',
+    stdout: 'piped',
+    stderr: 'piped',
+  });
   await child.stdin.write(new TextEncoder().encode(apiSource));
   await child.stdin.write(new TextEncoder().encode(chunks.join('\n')));
   child.stdin.close();

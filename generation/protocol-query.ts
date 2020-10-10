@@ -65,7 +65,7 @@ function appendList<T>(body: URLSearchParams, prefix: string, raw: T[], {
 }
 
 import * as Base64 from 'https://deno.land/x/base64@v0.2.1/mod.ts';
-function encodeBlob(input?: string | Uint8Array): string {
+function encodeBlob(input?: string | Uint8Array | null): string {
   if (!input) return '';
   if (typeof input === 'string') {
     input = new TextEncoder().encode(input);
@@ -74,12 +74,12 @@ function encodeBlob(input?: string | Uint8Array): string {
 }
 
 // TODO?: check/warn for accidental millisecond input
-function encodeDate_iso8601(input?: Date | number): string {
+function encodeDate_iso8601(input?: Date | number | null): string {
   if (!input) return '';
   const date = (typeof input === 'number') ? new Date(input*1000) : input;
   return date.toISOString().replace(/\.000Z$/, 'Z');
 }
-function encodeDate_unixTimestamp(input?: Date | number): string {
+function encodeDate_unixTimestamp(input?: Date | number | null): string {
   if (!input) return '';
   if (typeof input === 'number') return input.toString();
   return (input.valueOf() / 1000).toString();
@@ -125,6 +125,10 @@ function parseTimestamp(str: string | undefined): Date {
   }
 
   generateShapeInputParsingTypescript(shape: KnownShape): { inputParsingFunction: string; } {
+    if (shape.spec.type === 'string') return {
+      inputParsingFunction: '',
+    };
+
     const chunks = new Array<string>();
     chunks.push(`function ${shape.censoredName}_Serialize(body: URLSearchParams, prefix: string, params: ${shape.censoredName}) {`);
 
@@ -154,7 +158,7 @@ function parseTimestamp(str: string | undefined): Date {
 
       switch (shape.spec.type) {
         // case 'boolean':
-        //   chunks.push(`    ${isRequired ? '' : `if (${paramRef} !== undefined) `}body.append(${JSON.stringify(locationName)}, ${paramRef});`);
+        //   chunks.push(`    ${isRequired ? '' : `if (${paramRef} != null) `}body.append(${JSON.stringify(locationName)}, ${paramRef});`);
         case 'list': {
           const isFlattened = spec.flattened || shape.spec.flattened || this.ec2Mode;
           const listConfig: any = {};
@@ -206,7 +210,7 @@ function parseTimestamp(str: string | undefined): Date {
           break;
         case 'structure':
           if (shape.tags.has('named')) {
-            chunks.push(`    ${isRequired ? '' : `if (${paramRef} !== undefined) `}${shape.censoredName}_Serialize(body, prefix+${JSON.stringify(prefix+locationName)}, ${paramRef});`);
+            chunks.push(`    ${isRequired ? '' : `if (${paramRef} != null) `}${shape.censoredName}_Serialize(body, prefix+${JSON.stringify(prefix+locationName)}, ${paramRef});`);
           } else {
             if (isRequired) chunks.push(`    if (${paramRef}) {`);
             chunks.push(this.generateStructureInputTypescript(shape.spec, paramRef, prefix+locationName+'.'));
@@ -226,15 +230,18 @@ function parseTimestamp(str: string | undefined): Date {
 
 
 
-  generateOperationOutputParsingTypescript(outputShape: Schema.ApiShape): { outputParsingCode: string; outputVariables: string[]; } {
-    if (outputShape.type !== 'structure') throw new Error(
-      `Can only generate top level structures`);
+  generateOperationOutputParsingTypescript(shape: KnownShape, resultWrapper?: string): { outputParsingCode: string; outputVariables: string[]; } {
+    if (shape.spec.type !== 'structure') throw new Error(
+      `Can only generate top level output structures`);
 
     const chunks = new Array<string>();
-    // chunks.push(`    const body = new URLSearchParams;`);
-    // chunks.push(`    const prefix = '';`);
-
-    chunks.push('  '+this.generateStructureOutputTypescript(outputShape, 'xml').replace(/\n/g, '\n  '));
+    chunks.push(`    const xml = await resp.xml(${resultWrapper ? JSON.stringify(resultWrapper) : ''});`);
+    if (shape.refCount > 1) {
+      chunks.push(`    return ${shape.censoredName}_Parse(xml);`);
+    } else {
+      chunks.push('  '+this.generateStructureOutputTypescript(shape.spec, 'xml')
+        .replace(/\n/g, '\n  '));
+    }
 
     return {
       outputParsingCode: chunks.join('\n'),
@@ -243,6 +250,11 @@ function parseTimestamp(str: string | undefined): Date {
   }
 
   generateShapeOutputParsingTypescript(shape: KnownShape): { outputParsingFunction: string; } {
+    // TODO: we probably want these instead of casting
+    if (shape.spec.type === 'string') return {
+      outputParsingFunction: '',
+    };
+
     const chunks = new Array<string>();
     chunks.push(`function ${shape.censoredName}_Parse(node: XmlNode): ${shape.censoredName} {`);
 
