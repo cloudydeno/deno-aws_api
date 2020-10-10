@@ -20,31 +20,31 @@ All API definitions are current as of aws-sdk-js `v2.768.0`.
 
 | Class | Module | Protocol | File size | Approx check time |
 | --- | --- | --- | ---: | ---: |
-| AutoScaling | `autoscaling@2011-01-01.ts` | query | 105 KiB | 1.3 sec |
-| CloudFormation | `cloudformation@2010-05-15.ts` | query | 129 KiB | 1.6 sec |
-| CloudSearch | `cloudsearch@2011-02-01.ts` | query | 38 KiB | 0.8 sec |
-| CloudSearch | `cloudsearch@2013-01-01.ts` | query | 61 KiB | 1.0 sec |
-| DocDB | `docdb@2014-10-31.ts` | query | 89 KiB | 1.4 sec |
-| EC2 | `ec2@2016-11-15.ts` | ec2 | 1021 KiB | 6.7 sec |
-| ElastiCache | `elasticache@2015-02-02.ts` | query | 135 KiB | 1.6 sec |
-| ElasticBeanstalk | `elasticbeanstalk@2010-12-01.ts` | query | 103 KiB | 1.5 sec |
-| ELB | `elasticloadbalancing@2012-06-01.ts` | query | 52 KiB | 1.0 sec |
-| ELBv2 | `elasticloadbalancingv2@2015-12-01.ts` | query | 80 KiB | 1.5 sec |
-| SES | `email@2010-12-01.ts` | query | 100 KiB | 1.3 sec |
-| IAM | `iam@2010-05-08.ts` | query | 168 KiB | 2.5 sec |
-| ImportExport | `importexport@2010-06-01.ts` | query | 15 KiB | 0.6 sec |
-| CloudWatch | `monitoring@2010-08-01.ts` | query | 62 KiB | 1.4 sec |
-| Neptune | `neptune@2014-10-31.ts` | query | 132 KiB | 1.8 sec |
-| RDS | `rds@2013-01-10.ts` | query | 96 KiB | 4.7 sec |
-| RDS | `rds@2013-02-12.ts` | query | 103 KiB | 7.1 sec |
-| RDS | `rds@2013-09-09.ts` | query | 111 KiB | 2.4 sec |
-| RDS | `rds@2014-09-01.ts` | query | 114 KiB | 2.0 sec |
-| RDS | `rds@2014-10-31.ts` | query | 303 KiB | 3.1 sec |
-| Redshift | `redshift@2012-12-01.ts` | query | 179 KiB | 2.5 sec |
-| SimpleDB | `sdb@2009-04-15.ts` | query | 17 KiB | 0.7 sec |
-| SNS | `sns@2010-03-31.ts` | query | 35 KiB | 0.9 sec |
-| SQS | `sqs@2012-11-05.ts` | query | 32 KiB | 0.9 sec |
-| STS | `sts@2011-06-15.ts` | query | 18 KiB | 0.7 sec |
+| AutoScaling | `autoscaling@2011-01-01.ts` | query | 101 KiB | 1.2 sec |
+| CloudFormation | `cloudformation@2010-05-15.ts` | query | 126 KiB | 1.6 sec |
+| CloudSearch | `cloudsearch@2011-02-01.ts` | query | 34 KiB | 0.7 sec |
+| CloudSearch | `cloudsearch@2013-01-01.ts` | query | 57 KiB | 0.9 sec |
+| DocDB | `docdb@2014-10-31.ts` | query | 85 KiB | 1.2 sec |
+| EC2 | `ec2@2016-11-15.ts` | ec2 | 1019 KiB | 6.7 sec |
+| ElastiCache | `elasticache@2015-02-02.ts` | query | 131 KiB | 1.6 sec |
+| ElasticBeanstalk | `elasticbeanstalk@2010-12-01.ts` | query | 99 KiB | 1.4 sec |
+| ELB | `elasticloadbalancing@2012-06-01.ts` | query | 47 KiB | 0.9 sec |
+| ELBv2 | `elasticloadbalancingv2@2015-12-01.ts` | query | 76 KiB | 1.3 sec |
+| SES | `email@2010-12-01.ts` | query | 96 KiB | 1.3 sec |
+| IAM | `iam@2010-05-08.ts` | query | 164 KiB | 2.5 sec |
+| ImportExport | `importexport@2010-06-01.ts` | query | 11 KiB | 0.6 sec |
+| CloudWatch | `monitoring@2010-08-01.ts` | query | 59 KiB | 1.1 sec |
+| Neptune | `neptune@2014-10-31.ts` | query | 128 KiB | 1.6 sec |
+| RDS | `rds@2013-01-10.ts` | query | 92 KiB | 1.4 sec |
+| RDS | `rds@2013-02-12.ts` | query | 99 KiB | 2.1 sec |
+| RDS | `rds@2013-09-09.ts` | query | 107 KiB | 3.6 sec |
+| RDS | `rds@2014-09-01.ts` | query | 110 KiB | 4.5 sec |
+| RDS | `rds@2014-10-31.ts` | query | 299 KiB | 3.7 sec |
+| Redshift | `redshift@2012-12-01.ts` | query | 175 KiB | 4.5 sec |
+| SimpleDB | `sdb@2009-04-15.ts` | query | 13 KiB | 0.5 sec |
+| SNS | `sns@2010-03-31.ts` | query | 31 KiB | 0.9 sec |
+| SQS | `sqs@2012-11-05.ts` | query | 28 KiB | 0.8 sec |
+| STS | `sts@2011-06-15.ts` | query | 14 KiB | 0.6 sec |
 
 [//]: # (Generated Content Barrier)
 

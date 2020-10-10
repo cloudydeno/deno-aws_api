@@ -1,111 +1,24 @@
 import type * as Schema from './sdk-schema.ts';
 import type ShapeLibrary from './shape-library.ts';
 import type { KnownShape } from './shape-library.ts';
+import type HelperLibrary from "./helper-library.ts";
 
 // "query" and also "ec2" which is based on "query"
 export default class ProtocolQueryCodegen {
   shapes: ShapeLibrary;
+  helpers: HelperLibrary;
   ec2Mode: boolean;
-  constructor(shapes: ShapeLibrary, {ec2}: {ec2?: boolean}={}) {
+  constructor(shapes: ShapeLibrary, helpers: HelperLibrary, {ec2}: {ec2?: boolean}={}) {
     this.shapes = shapes;
+    this.helpers = helpers;
     this.ec2Mode = ec2 ?? false;
+
   }
 
   requestBodyTypeName = 'URLSearchParams';
-  // availableHelpers = new Map([]);
   globalHelpers = `
-
-function appendMap<T>(body: URLSearchParams, prefix: string, raw: {[k:string]:T}, {
-  keyName = '.key',
-  valName = '.value',
-  entryPrefix,
-  appender,
-  encoder = String,
-}: {
-  keyName?: string;
-  valName?: string;
-  entryPrefix: string;
-  appender?: (body: URLSearchParams, prefix: string, val: T) => void;
-  encoder?: (val: T) => string;
-}) {
-  const entries = Object.entries(raw ?? {});
-  if (entries.length === 0) {
-    return body.append(prefix, '');
-  }
-  entries.forEach(([key, val], idx) => {
-    body.append(prefix+entryPrefix+String(idx+1)+keyName, key);
-    if (appender) {
-      appender(body, prefix+entryPrefix+String(idx+1)+valName, val);
-    } else {
-      body.append(prefix+entryPrefix+String(idx+1)+valName, encoder(val));
-    }
-  });
-}
-
-function appendList<T>(body: URLSearchParams, prefix: string, raw: T[], {
-  entryPrefix,
-  appender,
-  encoder = String,
-}: {
-  entryPrefix: string;
-  appender?: (body: URLSearchParams, prefix: string, val: T) => void;
-  encoder?: (val: T) => string;
-}) {
-  const entries = raw ?? [];
-  if (entries.length === 0) {
-    return body.append(prefix, '');
-  }
-  entries.forEach(appender
-    ? (member, idx) => {
-        appender(body, prefix+entryPrefix+String(idx+1), member);
-      }
-    : (member, idx) => {
-        body.append(prefix+entryPrefix+String(idx+1), encoder(member));
-      });
-}
-
-import * as Base64 from 'https://deno.land/x/base64@v0.2.1/mod.ts';
-function encodeBlob(input?: string | Uint8Array | null): string {
-  if (!input) return '';
-  if (typeof input === 'string') {
-    input = new TextEncoder().encode(input);
-  }
-  return Base64.fromUint8Array(input);
-}
-
-// TODO?: check/warn for accidental millisecond input
-function encodeDate_iso8601(input?: Date | number | null): string {
-  if (!input) return '';
-  const date = (typeof input === 'number') ? new Date(input*1000) : input;
-  return date.toISOString().replace(/\.000Z$/, 'Z');
-}
-function encodeDate_unixTimestamp(input?: Date | number | null): string {
-  if (!input) return '';
-  if (typeof input === 'number') return input.toString();
-  return (input.valueOf() / 1000).toString();
-}
-// also rfc822 (toUTCString)
-
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
-let fixedIdemptToken: string | undefined;
-function generateIdemptToken() {
-  return fixedIdemptToken ?? uuidv4.generate();
-}
-
-function readXmlMap<K extends string,T>(entries: XmlNode[], valMapper: (node: XmlNode) => T, {keyName='key', valName='value'}: {keyName?: string, valName?: string}): Record<K, T> {
-  const obj: Record<K, T> = Object.create(null);
-  for (const entry of entries) {
-    obj[entry.first(keyName, true, x => (x.content ?? '') as K)] = entry.first(valName, true, valMapper);
-  }
-  return obj;
-}
-
-function parseTimestamp(str: string | undefined): Date {
-  if (str?.includes('T')) return new Date(str);
-  if (str?.length === 10) return new Date(parseInt(str) * 1000)
-  throw new Error(\`Timestamp from server is unparsable: '\${str}'\`);
-}
-
+import type { XmlNode } from '../client/common.ts';
+import * as prt from "../client/proto-query.ts";
 `;
 
   generateOperationInputParsingTypescript(inputShape: Schema.ApiShape): { inputParsingCode: string; inputVariables: string[]; } {
@@ -171,7 +84,7 @@ function parseTimestamp(str: string | undefined): Date {
             ? '.'
             : `.${shape.spec.locationName ?? shape.spec.member.locationName ?? 'member'}.`;
           const innerShape = this.shapes.get(shape.spec.member);
-          chunks.push(`    if (${paramRef}) appendList(body, prefix+${JSON.stringify(prefix+listPrefix)}, ${paramRef}, ${configureInnerShapeEncoding(innerShape, listConfig)})`);
+          chunks.push(`    if (${paramRef}) prt.appendList(body, prefix+${JSON.stringify(prefix+listPrefix)}, ${paramRef}, ${this.configureInnerShapeEncoding(innerShape, listConfig)})`);
           break;
         }
         case 'map': {
@@ -186,11 +99,12 @@ function parseTimestamp(str: string | undefined): Date {
             ? '.'
             : `.${shape.spec.locationName ?? 'entry'}.`;
           const valueShape = this.shapes.get(shape.spec.value);
-          chunks.push(`    if (${paramRef}) appendMap(body, prefix+${JSON.stringify(prefix+mapPrefix)}, ${paramRef}, ${configureInnerShapeEncoding(valueShape, mapConfig)})`);
+          chunks.push(`    if (${paramRef}) prt.appendMap(body, prefix+${JSON.stringify(prefix+mapPrefix)}, ${paramRef}, ${this.configureInnerShapeEncoding(valueShape, mapConfig)})`);
           break;
         }
         case 'string':
           if (spec.idempotencyToken) {
+            this.helpers.useHelper('generateIdemptToken');
             chunks.push(`    body.append(prefix+${JSON.stringify(prefix+locationName)}, (${paramRef} ?? generateIdemptToken()).toString());`);
             break;
           } // fallthrough
@@ -202,11 +116,11 @@ function parseTimestamp(str: string | undefined): Date {
           chunks.push(`    ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body.append(prefix+${JSON.stringify(prefix+locationName)}, (${paramRef} ?? '').toString());`);
           break;
         case 'blob':
-          chunks.push(`    ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body.append(prefix+${JSON.stringify(prefix+locationName)}, encodeBlob(${paramRef}));`);
+          chunks.push(`    ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body.append(prefix+${JSON.stringify(prefix+locationName)}, prt.encodeBlob(${paramRef}));`);
           break;
         case 'timestamp':
           const dateFmt = spec.timestampFormat ?? shape.spec.timestampFormat ?? 'iso8601';
-          chunks.push(`    ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body.append(prefix+${JSON.stringify(prefix+locationName)}, encodeDate_${dateFmt}(${paramRef}));`);
+          chunks.push(`    ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body.append(prefix+${JSON.stringify(prefix+locationName)}, prt.encodeDate_${dateFmt}(${paramRef}));`);
           break;
         case 'structure':
           if (shape.tags.has('named')) {
@@ -345,7 +259,7 @@ function parseTimestamp(str: string | undefined): Date {
           const innerShape = this.shapes.get(shape.spec.member);
           // console.log([listPrefix, memberPrefix, innerShape.spec.type, innerShape.spec.locationName]);
 
-          chunks.push(`    ${field}: ${nodeRef}.getList(${memberPath.map(x => JSON.stringify(x)).join(', ')}).map(${configureInnerShapeReading(innerShape)}),`);
+          chunks.push(`    ${field}: ${nodeRef}.getList(${memberPath.map(x => JSON.stringify(x)).join(', ')}).map(${this.configureInnerShapeReading(innerShape)}),`);
           break;
         }
 
@@ -366,12 +280,12 @@ function parseTimestamp(str: string | undefined): Date {
           const keyShape = this.shapes.get(shape.spec.key);
           const valueShape = this.shapes.get(shape.spec.value);
           // console.log([mapPrefix, entryPrefix, innerShape.spec.type, innerShape.spec.locationName]);
-          chunks.push(`    ${field}: readXmlMap(${nodeRef}.getList(${entryPath.map(x => JSON.stringify(x)).join(', ')}), ${configureInnerShapeReading(valueShape)}, ${JSON.stringify(mapConfig)}),`);
+          chunks.push(`    ${field}: prt.readXmlMap(${nodeRef}.getList(${entryPath.map(x => JSON.stringify(x)).join(', ')}), ${this.configureInnerShapeReading(valueShape)}, ${JSON.stringify(mapConfig)}),`);
           break;
         }
 
         default:
-          chunks.push(`    ${field}: ${nodeRef}.first(${JSON.stringify(locationName)}, ${isRequired}, ${configureInnerShapeReading(shape)}),`);
+          chunks.push(`    ${field}: ${nodeRef}.first(${JSON.stringify(locationName)}, ${isRequired}, ${this.configureInnerShapeReading(shape)}),`);
           // chunks.push(`    // TODO: reading for ${(shape as KnownShape).spec.type}`);
       }
     }
@@ -392,66 +306,67 @@ function parseTimestamp(str: string | undefined): Date {
     }
   }
 
-};
-
-function configureInnerShapeEncoding(innerShape: KnownShape, extraConfig: any) {
-  let confExtras = '';
-  switch (innerShape.spec.type) {
-    case 'blob':
-      confExtras += `"encoder":encodeBlob,`;
-      break;
-    case 'timestamp':
-      const dateFmt = innerShape.spec.timestampFormat ?? 'iso8601';
-      confExtras += `"encoder":encodeDate_${dateFmt},`;
-      break;
-    case 'structure':
-      if (innerShape.tags.has('named')) {
-        confExtras += `"appender":${innerShape.censoredName}_Serialize,`;
+  configureInnerShapeEncoding(innerShape: KnownShape, extraConfig: any) {
+    let confExtras = '';
+    switch (innerShape.spec.type) {
+      case 'blob':
+        confExtras += `"encoder":prt.encodeBlob,`;
         break;
-      } else {
-        throw new Error(`Structure ${innerShape.name} is used in a list but wasn't named`);
-      }
-  }
-  // sue me
-  return '{' + confExtras + JSON.stringify(extraConfig).slice(1);
-}
-
-function configureInnerShapeReading(innerShape: KnownShape) {
-  switch (innerShape.spec.type) {
-    case 'string':
-      if (innerShape.spec.enum) {
-        // TODO: is there a better way of mapping freetext into enums?
+      case 'timestamp':
+        const dateFmt = innerShape.spec.timestampFormat ?? 'iso8601';
+        confExtras += `"encoder":prt.encodeDate_${dateFmt},`;
+        break;
+      case 'structure':
         if (innerShape.tags.has('named')) {
-          return `x => (x.content ?? '') as ${innerShape.censoredName}`;
+          confExtras += `"appender":${innerShape.censoredName}_Serialize,`;
+          break;
         } else {
-          return `x => (x.content ?? '') as ${innerShape.spec.enum.map(x => JSON.stringify(x)).join(' | ')}`;
+          throw new Error(`Structure ${innerShape.name} is used in a list but wasn't named`);
         }
-      }
-      return `x => x.content ?? ''`;
-    case 'character':
-      return `x => x.content ?? ''`;
-    case 'boolean':
-      return `x => x.content === 'true'`;
-    case 'integer':
-    case 'long':
-      return `x => parseInt(x.content ?? '0')`;
-    case 'float':
-    case 'double':
-      return `x => parseFloat(x.content ?? '0')`;
-    case 'blob':
-      return `x => Base64.toUint8Array(x.content ?? '')`;
-    case 'timestamp':
-      return `x => parseTimestamp(x.content)`;
-    case 'map':
-      return `() => ({}) /* TODO: map output */`; // TODO
-    case 'structure':
-      if (innerShape.tags.has('named')) {
-        return `${innerShape.censoredName}_Parse`;
-      } else {
-        throw new Error(`Structure ${innerShape.name} is used in an output list but wasn't named`);
-      }
+    }
+    // sue me
+    return '{' + confExtras + JSON.stringify(extraConfig).slice(1);
   }
-  // sue me
-  return `x => x /* TODO: ${innerShape.spec.type} output*/`;
-  // return '{' + confExtras + JSON.stringify(extraConfig).slice(1);
+
+  configureInnerShapeReading(innerShape: KnownShape) {
+    switch (innerShape.spec.type) {
+      case 'string':
+        if (innerShape.spec.enum) {
+          // TODO: is there a better way of mapping freetext into enums?
+          if (innerShape.tags.has('named')) {
+            return `x => (x.content ?? '') as ${innerShape.censoredName}`;
+          } else {
+            return `x => (x.content ?? '') as ${innerShape.spec.enum.map(x => JSON.stringify(x)).join(' | ')}`;
+          }
+        }
+        return `x => x.content ?? ''`;
+      case 'character':
+        return `x => x.content ?? ''`;
+      case 'boolean':
+        return `x => x.content === 'true'`;
+      case 'integer':
+      case 'long':
+        return `x => parseInt(x.content ?? '0')`;
+      case 'float':
+      case 'double':
+        return `x => parseFloat(x.content ?? '0')`;
+      case 'blob':
+        this.helpers.addDep('Base64', 'https://deno.land/x/base64@v0.2.1/mod.ts');
+        return `x => Base64.toUint8Array(x.content ?? '')`;
+      case 'timestamp':
+        return `x => prt.parseTimestamp(x.content)`;
+      case 'map':
+        return `() => ({}) /* TODO: map output */`; // TODO
+      case 'structure':
+        if (innerShape.tags.has('named')) {
+          return `${innerShape.censoredName}_Parse`;
+        } else {
+          throw new Error(`Structure ${innerShape.name} is used in an output list but wasn't named`);
+        }
+    }
+    // sue me
+    return `x => x /* TODO: ${innerShape.spec.type} output*/`;
+    // return '{' + confExtras + JSON.stringify(extraConfig).slice(1);
+  }
+
 }

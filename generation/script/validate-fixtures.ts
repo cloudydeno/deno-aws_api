@@ -63,12 +63,15 @@ async function *readTestFixtures(filePath: string): AsyncGenerator<TestRun> {
 
   for (const fixture of fixtures) {
     const {cases, description, clientEndpoint, ...extras} = fixture;
-    const apiSpec = {
+    const apiSpec: Schema.Api = {
       ...extras,
       metadata: {
         ...extras.metadata,
         serviceId: 'fixture',
         serviceFullName: 'AWS SDK Test Fixture',
+        endpointPrefix: 'fixture',
+        signatureVersion: 'v4',
+        apiVersion: extras.metadata.apiVersion ?? 'fixture',
       },
     };
 
@@ -115,7 +118,11 @@ async function* readAllTestFixtures() {
 const allTestRuns = readAllTestFixtures();
 
 const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunResult> {
-  const codeGen = new ServiceCodeGen({api: run.apiSpec});
+  const codeGen = new ServiceCodeGen({
+    api: run.apiSpec,
+    isTest: true,
+    uid: 'test-fixture',
+  });
   const apiSource = codeGen.generateTypescript('Fixture');
 
 // "given": {
@@ -137,9 +144,6 @@ const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunR
   chunks.push('\n/////////\n');
   chunks.push(`import { assertEquals } from "https://deno.land/std@0.71.0/testing/asserts.ts";`);
   chunks.push(`import { wrapServiceClient } from '../client/mod.ts';\n`);
-
-  // TODO: better way of mocking this
-  chunks.push(`fixedIdemptToken = "00000000-0000-4000-8000-000000000000";\n`);
 
   chunks.push(`async function checkRequest(request: Request): Promise<Response> {`);
   if (run.category === 'input') {
