@@ -1,5 +1,6 @@
 import type * as Schema from './sdk-schema.ts';
 import ProtocolQueryCodegen from './protocol-query.ts';
+import ProtocolJsonCodegen from './protocol-json.ts';
 import ShapeLibrary, { KnownShape } from './shape-library.ts';
 import { fixupApiSpec, fixupWaitersSpec } from './quirks.ts';
 import GenWaiter from "./gen-waiter.ts";
@@ -63,6 +64,9 @@ export default class ServiceCodeGen {
         break;
       case 'query':
         this.protocol = new ProtocolQueryCodegen(this.shapes, this.helpers);
+        break;
+      case 'json':
+        this.protocol = new ProtocolJsonCodegen(this.shapes, this.helpers);
         break;
       default: throw new Error(
         `TODO: unimpl protocol ${specs.api.metadata.protocol}`);

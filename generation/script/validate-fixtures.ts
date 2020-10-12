@@ -108,8 +108,8 @@ async function *readTestFixtures(filePath: string): AsyncGenerator<TestRun> {
 }
 
 async function* readAllTestFixtures() {
-  // yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/json.json');
-  // yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/output/json.json');
+  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/json.json');
+  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/output/json.json');
   yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/query.json');
   yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/output/query.json');
   yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/ec2.json');

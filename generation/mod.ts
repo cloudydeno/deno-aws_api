@@ -23,6 +23,7 @@ const maybeReadFile = (path: string): Promise<any> =>
 
 console.log('Reading', apiUid, 'specs...');
 const codeGen = new ServiceCodeGen({
+  uid: apiUid,
   api: JSON.parse(await Deno.readTextFile(jsonPath('normal'))) as Schema.Api,
   pagers: JSON.parse(await maybeReadFile(jsonPath('paginators'))) as Schema.Pagination,
   waiters: JSON.parse(await maybeReadFile(jsonPath('waiters2'))) as Schema.Waiters,
