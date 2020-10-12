@@ -28,9 +28,10 @@ function canBuild(svc: ServiceEntry) {
   if (svc.protocol === 'query') return true;
   if (svc.protocol === 'ec2') return true;
 
-  // trialing 'json' - post/receive plain JSON
-  if (svc.service === 'dynamodb') return true;
-  if (svc.service === 'kinesis') return true;
+  // post/receive plain JSON
+  if (svc.protocol === 'json') return true;
+  // if (svc.service === 'dynamodb') return true;
+  // if (svc.service === 'kinesis') return true;
 
   return false;
 }
