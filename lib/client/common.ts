@@ -1,3 +1,19 @@
+/** The AWS credentials to use for signing. */
+export interface Credentials {
+  awsAccessKeyId: string;
+  awsSecretKey: string;
+  sessionToken?: string;
+  // expiresAt?: Date;
+}
+export interface CredentialsProvider {
+  getCredentials(): Promise<Credentials>;
+}
+
+/** Generic AWS Signer interface */
+export interface Signer {
+  sign: (service: string, request: Request) => Promise<Request>;
+}
+
 // The HTTP contract expected by all service API implementations
 export interface ApiRequestConfig {
   // fixed per operation

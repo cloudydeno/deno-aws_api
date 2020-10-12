@@ -2,6 +2,7 @@
 // because that repo (as of press time) unnecesarily brings in 25 source files
 
 import { Message, Sha256, HmacSha256 } from "https://deno.land/std@0.71.0/hash/sha256.ts";
+import type { Signer, CredentialsProvider } from "./common.ts";
 
 function sha256(data: Message): Sha256 {
   const hasher = new Sha256();
@@ -56,22 +57,6 @@ export const getSignatureKey = (
 };
 
 /**
- * Generic AWS Signer interface
- */
-export interface Signer {
-  sign: (service: string, request: Request) => Promise<Request>;
-}
-
-/**
- * The AWS credentials to use for signing.
- */
-export interface Credentials {
-  awsAccessKeyId: string;
-  awsSecretKey: string;
-  sessionToken?: string;
-}
-
-/**
  * This class can be used to create AWS Signature V4
  * for low-level AWS REST APIs. You can either provide
  * credentials for this API using the options in the
@@ -94,19 +79,11 @@ export interface Credentials {
  */
 export class AWSSignerV4 implements Signer {
   private region: string;
-  private credentials: Credentials;
+  private credentials: CredentialsProvider;
 
-  /**
-   * If no region or credentials are specified, they will
-   * automatically be aquired from environment variables.
-   *
-   * Region is aquired from `AWS_REGION`. The credentials
-   * are acquired from `AWS_ACCESS_KEY_ID`,
-   * `AWS_SECRET_ACCESS_KEY` and `AWS_SESSION_TOKEN`.
-   */
-  constructor(region?: string, credentials?: Credentials) {
-    this.region = region || this.#getDefaultRegion();
-    this.credentials = credentials || this.#getDefaultCredentials();
+  constructor(region: string, credentials: CredentialsProvider) {
+    this.region = region;
+    this.credentials = credentials;
   }
 
   /**
@@ -127,6 +104,7 @@ export class AWSSignerV4 implements Signer {
     const date = new Date();
     const amzdate = toAmz(date);
     const datestamp = toDateStamp(date);
+    const credentials = await this.credentials.getCredentials();
 
     const urlObj = new URL(request.url);
     const { host, pathname, searchParams } = urlObj;
@@ -136,8 +114,8 @@ export class AWSSignerV4 implements Signer {
     const headers = new Headers(request.headers);
 
     headers.set("x-amz-date", amzdate);
-    if (this.credentials.sessionToken) {
-      headers.set("x-amz-security-token", this.credentials.sessionToken);
+    if (credentials.sessionToken) {
+      headers.set("x-amz-security-token", credentials.sessionToken);
     }
     headers.set("host", host);
 
@@ -153,8 +131,6 @@ export class AWSSignerV4 implements Signer {
       : new Uint8Array();
     const payloadHash = sha256(body).hex();
 
-    const { awsAccessKeyId, awsSecretKey } = this.credentials;
-
     const canonicalRequest =
       `${request.method}\n${pathname}\n${canonicalQuerystring}\n${canonicalHeaders}\n${signedHeaders}\n${payloadHash}`;
     const canonicalRequestDigest = sha256(canonicalRequest).hex();
@@ -166,7 +142,7 @@ export class AWSSignerV4 implements Signer {
       `${algorithm}\n${amzdate}\n${credentialScope}\n${canonicalRequestDigest}`;
 
     const signingKey = getSignatureKey(
-      awsSecretKey,
+      credentials.awsSecretKey,
       datestamp,
       this.region,
       service,
@@ -175,7 +151,7 @@ export class AWSSignerV4 implements Signer {
     const signature = hmacSha256(signingKey, stringToSign).hex();
 
     const authHeader =
-      `${algorithm} Credential=${awsAccessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+      `${algorithm} Credential=${credentials.awsAccessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
 
     headers.set("Authorization", authHeader);
 
@@ -197,29 +173,4 @@ export class AWSSignerV4 implements Signer {
       },
     );
   }
-
-  #getDefaultCredentials = (): Credentials => {
-    const AWS_ACCESS_KEY_ID = Deno.env.get("AWS_ACCESS_KEY_ID");
-    const AWS_SECRET_ACCESS_KEY = Deno.env.get("AWS_SECRET_ACCESS_KEY");
-    const AWS_SESSION_TOKEN = Deno.env.get("AWS_SESSION_TOKEN");
-
-    if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY) {
-      throw new Error("Invalid Credentials");
-    }
-
-    return {
-      awsAccessKeyId: AWS_ACCESS_KEY_ID,
-      awsSecretKey: AWS_SECRET_ACCESS_KEY,
-      sessionToken: AWS_SESSION_TOKEN,
-    };
-  };
-
-  #getDefaultRegion = (): string => {
-    const AWS_REGION = Deno.env.get("AWS_REGION");
-    if (!AWS_REGION) {
-      throw new Error("Invalid Region");
-    }
-
-    return AWS_REGION;
-  };
 }

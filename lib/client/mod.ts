@@ -5,18 +5,36 @@ import {
   ApiMetadata,
   XmlNode,
   AwsServiceError, ServiceError,
+  Credentials, CredentialsProvider,
 } from './common.ts';
 import { parseXml } from './xml.ts';
+import { DefaultCredentialsProvider, getDefaultRegion, CredentialsProviderChain } from "./credentials.ts";
 
 export class ApiFactory {
+  #credentials: CredentialsProvider;
+  #region: string;
+  constructor(opts: {
+    credentialProvider?: CredentialsProvider,
+    credentials?: Credentials,
+    region?: string;
+  }={}) {
+    if (opts.credentials != null) {
+      const {credentials} = opts;
+      this.#credentials = { getCredentials: () => Promise.resolve(credentials) };
+    } else {
+      this.#credentials = opts.credentialProvider ?? DefaultCredentialsProvider;
+    }
+    this.#region = opts.region ?? getDefaultRegion();
+  }
+
   buildServiceClient(apiMetadata: ApiMetadata): ServiceClient {
     if (apiMetadata.signatureVersion === 'v2') {
       throw new Error(`TODO: signature version ${apiMetadata.signatureVersion}`);
     }
 
-    const signer = new AWSSignerV4(apiMetadata.globalEndpoint ? 'us-east-1' : undefined);
+    const signer = new AWSSignerV4(apiMetadata.globalEndpoint ? 'us-east-1' : this.#region, this.#credentials);
     const serviceUrl = 'https://' + (apiMetadata.globalEndpoint
-      ?? `${apiMetadata.endpointPrefix}.${Deno.env.get('AWS_REGION')}.amazonaws.com`);
+      ?? `${apiMetadata.endpointPrefix}.${this.#region}.amazonaws.com`);
 
     const signingName = apiMetadata.signingName ?? apiMetadata.endpointPrefix;
     const signingFetcher = async (request: Request, signal?: AbortSignal): Promise<Response> => {
@@ -206,6 +224,16 @@ async function handleErrorResponse(response: ApiResponse): Promise<never> {
     const data = await response.json();
     if (data.Error?.Code) {
       throw new AwsServiceError(data.Error as ServiceError, data.RequestId);
+    }
+    console.log('Error from server:', response, data);
+
+  } else if (contentType?.startsWith('application/x-amz-json-1.')) {
+    const data = await response.json();
+    if (data.__type && data.message) {
+      throw new AwsServiceError({
+        Code: data.__type,
+        Message: data.message,
+      }, response.requestId ?? 'unknown');
     }
     console.log('Error from server:', response, data);
 
