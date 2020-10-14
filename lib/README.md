@@ -55,6 +55,11 @@ If you just want the real, full-fat AWS SDK,
 a port of it has been uploaded at
 [/x/aws_sdk](https://deno.land/x/aws_sdk).
 
+Finally, the APIs within `client/` and `encoding/` are liable to change.
+For best upgradability, stick to making an `ApiFactory` object
+and passing it to the services.
+At some point (around 1.0.0?) the APIs should be ready to lock in.
+
 ## Methodology
 
 All of the clients are compiled from `aws-sdk-js`'s JSON data files.
