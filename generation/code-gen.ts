@@ -2,7 +2,7 @@ import type * as Schema from './sdk-schema.ts';
 import ProtocolQueryCodegen from './protocol-query.ts';
 import ProtocolJsonCodegen from './protocol-json.ts';
 import ShapeLibrary, { KnownShape } from './shape-library.ts';
-import { fixupApiSpec, fixupWaitersSpec } from './quirks.ts';
+import { fixupApiSpec, fixupWaitersSpec, unauthenticatedApis } from './quirks.ts';
 import GenWaiter from "./gen-waiter.ts";
 import HelperLibrary from "./helper-library.ts";
 
@@ -153,6 +153,9 @@ interface RequestConfig {
       }
 
       chunks.push(`    const resp = await this.#client.performRequest({`);
+      if (unauthenticatedApis.has(namespace+'.'+operation.name)) {
+        chunks.push(`      skipSigning: true,`);
+      }
       chunks.push(`      ${Array.from(referencedInputs).join(', ')},`);
       chunks.push(`      action: ${JSON.stringify(operation.name)},`);
       if (operation.http?.method && operation.http.method !== 'POST') {

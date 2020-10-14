@@ -13,6 +13,7 @@ import { DefaultCredentialsProvider, CredentialsProviderChain } from "./credenti
 type FetchOpts = {
   signal?: AbortSignal,
   hostPrefix?: string,
+  skipSigning?: true,
 };
 type SigningFetcher = (request: Request, opts: FetchOpts) => Promise<Response>;
 
@@ -39,6 +40,22 @@ export class ApiFactory {
     }
 
     const signingFetcher: SigningFetcher = async (request: Request, opts: FetchOpts): Promise<Response> => {
+      if (opts.skipSigning) {
+        const endpoint =
+          apiMetadata.globalEndpoint
+          // Try try to find the region if the service doesn't have a global endpoint
+          ?? [
+            apiMetadata.endpointPrefix,
+            this.#region
+              ?? (await this.#credentials.getCredentials().then(x => x.region, x => null))
+              ?? throwMissingRegion(),
+            'amazonaws.com',
+          ].join('.');
+
+        const fullUrl = `https://${opts.hostPrefix ?? ''}${endpoint}${request.url}`;
+        return fetch(new Request(fullUrl, request), { signal: opts.signal });
+      }
+
       // Resolve credentials and AWS region
       const credentials = await this.#credentials.getCredentials();
       const region = apiMetadata.globalEndpoint ? 'us-east-1' : (this.#region ?? credentials.region);
@@ -61,6 +78,10 @@ export class ApiFactory {
     return wrapServiceClient(apiMetadata, signingFetcher);
   }
 
+}
+
+function throwMissingRegion(): never {
+  throw new Error(`No region provided, try setting AWS_REGION or passing a region when constructing your client`);
 }
 
 export function wrapServiceClient(
@@ -105,6 +126,7 @@ export class JsonServiceClient implements ServiceClient {
       body: reqBody,
     });
     const rawResp = await this.#signedFetcher(request, {
+      skipSigning: config.skipSigning,
       hostPrefix: config.hostPrefix,
       signal: config.abortSignal,
     });
@@ -164,6 +186,7 @@ export class QueryServiceClient implements ServiceClient {
       body: reqBody,
     });
     const rawResp = await this.#signedFetcher(request, {
+      skipSigning: config.skipSigning,
       hostPrefix: config.hostPrefix,
       signal: config.abortSignal,
     });

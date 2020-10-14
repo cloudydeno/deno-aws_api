@@ -3,7 +3,7 @@ export interface Credentials {
   awsAccessKeyId: string;
   awsSecretKey: string;
   sessionToken?: string;
-  // expiresAt?: Date;
+  expiresAt?: Date;
   region?: string;
 }
 export interface CredentialsProvider {
@@ -28,6 +28,7 @@ export interface ApiRequestConfig {
   query?: URLSearchParams;
   body?: URLSearchParams | JSONObject | Uint8Array;
   abortSignal?: AbortSignal;
+  skipSigning?: true; // for unauthenticated APIs (STS, cognito)
 }
 export interface ApiResponse extends Response {
   xml(resultWrapper?: string): Promise<XmlNode>;

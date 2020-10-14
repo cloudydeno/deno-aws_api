@@ -6,6 +6,14 @@
 
 import type * as Schema from './sdk-schema.ts';
 
+export const unauthenticatedApis = new Set<string>([
+  'CognitoIdentity.GetCredentialsForIdentity',
+  'CognitoIdentity.GetId',
+  'CognitoIdentity.GetOpenIdToken',
+  'STS.AssumeRoleWithSAML',
+  'STS.AssumeRoleWithWebIdentity',
+]);
+
 ////////////////////////////////
 // Operation/Shape problems
 
