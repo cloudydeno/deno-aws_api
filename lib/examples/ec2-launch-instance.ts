@@ -5,7 +5,7 @@
 const ThiScriptUrl = `https://deno.land/x/aws_api/examples/ec2-launch-instance.ts`;
 
 import { ApiFactory } from '../client/mod.ts';
-import EC2, { Instance } from '../services/ec2@2016-11-15.ts';
+import EC2, { Instance } from '../services/ec2@2016-11-15/mod.ts';
 
 const factory = new ApiFactory();
 const ec2 = new EC2(factory);

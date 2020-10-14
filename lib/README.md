@@ -28,7 +28,7 @@ Basic example: (see `demo.ts` for several more services)
 import {ApiFactory} from 'https://deno.land/x/aws_api/client/mod.ts';
 const factory = new ApiFactory();
 
-import STS from 'https://deno.land/x/aws_api/services/sts@2011-06-15.ts';
+import STS from 'https://deno.land/x/aws_api/services/sts@2011-06-15/mod.ts';
 const sts = new STS(factory);
 
 const identity = await sts.getCallerIdentity();

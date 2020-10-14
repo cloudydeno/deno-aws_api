@@ -1,5 +1,5 @@
 import { ApiFactory } from '../client/mod.ts';
-import Kinesis from '../services/kinesis@2013-12-02.ts';
+import Kinesis from '../services/kinesis@2013-12-02/mod.ts';
 
 const factory = new ApiFactory();
 const kinesis = new Kinesis(factory);

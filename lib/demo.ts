@@ -3,7 +3,7 @@ const factory = new ApiFactory();
 
 // various "query" services (20 in total)
 
-import STS from './services/sts@2011-06-15.ts';
+import STS from './services/sts@2011-06-15/mod.ts';
 const sts = new STS(factory);
 
 await sts.getCallerIdentity().then(identity => {
@@ -12,17 +12,17 @@ await sts.getCallerIdentity().then(identity => {
 }).catch(console.log);
 
 
-import EC2 from './services/ec2@2016-11-15.ts';
+import EC2 from './services/ec2@2016-11-15/mod.ts';
 const ec2 = new EC2(factory);
 console.log(await ec2.describeInstances().then(x => x.Reservations).catch(err => err));
 
 
-import SQS from './services/sqs@2012-11-05.ts';
+import SQS from './services/sqs@2012-11-05/mod.ts';
 const sqs = new SQS(factory);
 console.log(await sqs.listQueues().catch(err => err));
 
 
-import SNS from './services/sns@2010-03-31.ts';
+import SNS from './services/sns@2010-03-31/mod.ts';
 const sns = new SNS(factory);
 console.log(await sns.listTopics().catch(err => err));
 

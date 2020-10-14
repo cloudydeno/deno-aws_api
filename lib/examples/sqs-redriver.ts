@@ -1,5 +1,5 @@
 import { ApiFactory } from '../client/mod.ts';
-import SQS from '../services/sqs@2012-11-05.ts';
+import SQS from '../services/sqs@2012-11-05/mod.ts';
 
 const factory = new ApiFactory();
 const sqs = new SQS(factory);
@@ -7,7 +7,6 @@ const sqs = new SQS(factory);
 // we'll be taking input
 import { parse as parseFlags } from "https://deno.land/std@0.71.0/flags/mod.ts";
 import Ask from 'https://deno.land/x/ask@1.0.5/mod.ts';
-import { stringToBytes } from "https://deno.land/std@0.71.0/uuid/_common.ts";
 
 let { dlq, target, automatic } = parseFlags(Deno.args, {
   string: ['dlq', 'target'],
