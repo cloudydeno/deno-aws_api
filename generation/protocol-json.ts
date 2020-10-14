@@ -13,8 +13,8 @@ export default class ProtocolJsonCodegen {
   }
 
   globalHelpers = [
-    `import { JSONObject, JSONValue } from '../encoding/json.ts';`,
-    `import * as prt from "../encoding/json.ts";`,
+    `import { JSONObject, JSONValue } from '../../encoding/json.ts';`,
+    `import * as prt from "../../encoding/json.ts";`,
   ].join('\n');
 
   generateOperationInputParsingTypescript(inputShape: Schema.ApiShape): { inputParsingCode: string; inputVariables: string[]; } {

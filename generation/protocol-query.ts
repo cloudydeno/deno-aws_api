@@ -15,8 +15,8 @@ export default class ProtocolQueryCodegen {
   }
 
   globalHelpers = [
-    `import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../encoding/xml.ts';`,
-    `import * as prt from "../encoding/query.ts";`,
+    `import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';`,
+    `import * as prt from "../../encoding/querystring.ts";`,
   ].join('\n');
 
   generateOperationInputParsingTypescript(inputShape: Schema.ApiShape): { inputParsingCode: string; inputVariables: string[]; } {

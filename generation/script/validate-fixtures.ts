@@ -4,6 +4,8 @@ import { pooledMap } from "https://deno.land/std@0.71.0/async/pool.ts";
 import type * as Schema from '../sdk-schema.ts';
 import ServiceCodeGen from '../code-gen.ts';
 
+await Deno.run({cmd: ['mkdir', '-p', 'lib/services/fixture']}).status();
+
 type ProtocolFixture = Schema.Api & {
   "description": string;
   "cases": Array<ProtocolTestCase>;
@@ -143,9 +145,9 @@ const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunR
   const chunks = new Array<string>();
   chunks.push('\n/////////\n');
   chunks.push(`import { assertEquals } from "https://deno.land/std@0.71.0/testing/asserts.ts";`);
-  chunks.push(`import { wrapServiceClient } from '../client/mod.ts';\n`);
+  chunks.push(`import { wrapServiceClient } from '../../client/mod.ts';\n`);
 
-  chunks.push(`async function checkRequest(request: Request): Promise<Response> {`);
+  chunks.push(`async function checkRequest(request: Request, opts: {hostPrefix?: string}): Promise<Response> {`);
   if (run.category === 'input') {
     const { given, params, serialized } = run.testCase;
 
@@ -153,9 +155,9 @@ const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunR
       ? JSON.stringify(JSON.parse(serialized.body))
       : serialized.body;
 
-    chunks.push(`  const [_, host, path] = request.url.match(/^https:\\/\\/([^\\/]+)(\\/.*)$/) ?? [null, '', ''];`);
-    if (serialized.host) chunks.push(`  assertEquals(host, ${JSON.stringify(serialized.host)});`);
-    chunks.push(`  assertEquals(path, ${JSON.stringify(serialized.uri)});`);
+    chunks.push(`  const [_, host] = ${JSON.stringify(run.clientEndpoint)}.match(/^https:\\/\\/([^\\/]+)$/) ?? [null, ''];`);
+    if (serialized.host) chunks.push(`  assertEquals((opts.hostPrefix ?? '')+host, ${JSON.stringify(serialized.host)});`);
+    chunks.push(`  assertEquals(request.url, ${JSON.stringify(serialized.uri)});`);
     if (expectedBody) {
       chunks.push(`  assertEquals(await request.text(),`);
       chunks.push(`    ${JSON.stringify(expectedBody)});`);
@@ -179,7 +181,7 @@ const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunR
 
   chunks.push(`const testService = new Fixture({`);
   chunks.push(`  buildServiceClient(metadata: any) {`);
-  chunks.push(`    return wrapServiceClient(metadata, ${JSON.stringify(run.clientEndpoint)}, checkRequest);`);
+  chunks.push(`    return wrapServiceClient(metadata, checkRequest);`);
   chunks.push(`  },`);
   chunks.push(`});\n`);
 
@@ -219,7 +221,7 @@ const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunR
 
   const child = Deno.run({
     cmd: ["deno", "run", "-"],
-    cwd: path.join('lib', 'services'),
+    cwd: path.join('lib', 'services', 'fixture'),
     stdin: 'piped',
     stdout: 'piped',
     stderr: 'piped',

@@ -107,12 +107,14 @@ for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
 
   svc.typechecked = 'ok';
   svc.cachetime = (cacheEnd.valueOf() - cacheStart.valueOf()).toString();
+
+  await Deno.run({cmd: ['git', 'add', modPath]}).status();
 }
 
 
 const fOut = await Deno.open("./grid-services.csv", { write: true, create: true, truncate: true });
 const asyncObjectsGenerator = async function*() {
-  for (const service of Object.values(services)) {
+  for (const service of Object.values(services).sort((a,b) => `${a.service}@${a.version}`.localeCompare(`${b.service}@${b.version}`))) {
     yield service as unknown as {[key: string]: string};
   }
 }
@@ -139,13 +141,12 @@ async function generateApi(apisPath: string, apiUid: string, namespace: string):
 
   const service = apiUid.slice(0, -11);
   const version = apiUid.slice(-10);
-  const modName = `${service}@${version}.ts`;
+  const modName = `${service}@${version}`;
 
   console.log('Writing', modName);
   const modPath = path.join('lib', 'services', modName);
   const modCode = codeGen.generateTypescript(namespace);
-  await Deno.writeTextFile(modPath, modCode);
-  return [modPath, modCode.length];
+  await Deno.run({cmd: ['mkdir', '-p', modPath]}).status();
+  await Deno.writeTextFile(modPath+'/mod.ts', modCode);
+  return [modPath+'/mod.ts', modCode.length];
 }
-
-// async function cacheApi()
