@@ -2,7 +2,7 @@
 // because that repo (as of press time) unnecesarily brings in 25 source files
 
 import { Message, Sha256, HmacSha256 } from "https://deno.land/std@0.71.0/hash/sha256.ts";
-import type { Signer, CredentialsProvider } from "./common.ts";
+import type { Signer, Credentials } from "./common.ts";
 
 function sha256(data: Message): Sha256 {
   const hasher = new Sha256();
@@ -79,9 +79,9 @@ export const getSignatureKey = (
  */
 export class AWSSignerV4 implements Signer {
   private region: string;
-  private credentials: CredentialsProvider;
+  private credentials: Credentials;
 
-  constructor(region: string, credentials: CredentialsProvider) {
+  constructor(region: string, credentials: Credentials) {
     this.region = region;
     this.credentials = credentials;
   }
@@ -99,14 +99,14 @@ export class AWSSignerV4 implements Signer {
    */
   public async sign(
     service: string,
+    url: string,
     request: Request,
   ): Promise<Request> {
     const date = new Date();
     const amzdate = toAmz(date);
     const datestamp = toDateStamp(date);
-    const credentials = await this.credentials.getCredentials();
 
-    const urlObj = new URL(request.url);
+    const urlObj = new URL(url);
     const { host, pathname, searchParams } = urlObj;
     searchParams.sort();
     const canonicalQuerystring = searchParams.toString();
@@ -114,8 +114,8 @@ export class AWSSignerV4 implements Signer {
     const headers = new Headers(request.headers);
 
     headers.set("x-amz-date", amzdate);
-    if (credentials.sessionToken) {
-      headers.set("x-amz-security-token", credentials.sessionToken);
+    if (this.credentials.sessionToken) {
+      headers.set("x-amz-security-token", this.credentials.sessionToken);
     }
     headers.set("host", host);
 
@@ -142,7 +142,7 @@ export class AWSSignerV4 implements Signer {
       `${algorithm}\n${amzdate}\n${credentialScope}\n${canonicalRequestDigest}`;
 
     const signingKey = getSignatureKey(
-      credentials.awsSecretKey,
+      this.credentials.awsSecretKey,
       datestamp,
       this.region,
       service,
@@ -151,12 +151,12 @@ export class AWSSignerV4 implements Signer {
     const signature = hmacSha256(signingKey, stringToSign).hex();
 
     const authHeader =
-      `${algorithm} Credential=${credentials.awsAccessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+      `${algorithm} Credential=${this.credentials.awsAccessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
 
     headers.set("Authorization", authHeader);
 
     return new Request(
-      request.url,
+      url,
       {
         headers,
         method: request.method,

@@ -66,6 +66,7 @@ export class SharedIniFileCredentials implements CredentialsProvider {
       filename = Deno.env.get('AWS_SHARED_CREDENTIALS_FILE');
     }
     if (!filename) {
+      // TODO: this will probably go wrong on windows
       const HOME = Deno.env.get('HOME');
       filename = HOME+'/.aws/credentials';
     }
@@ -89,6 +90,10 @@ export class SharedIniFileCredentials implements CredentialsProvider {
       aws_secret_access_key?: string;
       aws_session_token?: string;
       credential_process?: string;
+      region?: string;
+      // from saml2aws
+      x_principal_arn?: string;
+      x_security_token_expires?: string;
     } | undefined } = ini.decode(text);
     const config = data[`profile ${this.#profile}`] ?? data[this.#profile];
     if (!config) throw new Error(`Profile ${this.#profile} not found in credentials file`);
@@ -99,6 +104,7 @@ export class SharedIniFileCredentials implements CredentialsProvider {
       awsAccessKeyId: config.aws_access_key_id,
       awsSecretKey: config.aws_secret_access_key,
       sessionToken: config.aws_session_token,
+      region: config.region,
     };
   }
 }

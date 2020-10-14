@@ -8,11 +8,17 @@ import {
   Credentials, CredentialsProvider,
 } from './common.ts';
 import { parseXml } from './xml.ts';
-import { DefaultCredentialsProvider, getDefaultRegion, CredentialsProviderChain } from "./credentials.ts";
+import { DefaultCredentialsProvider, CredentialsProviderChain } from "./credentials.ts";
+
+type FetchOpts = {
+  signal?: AbortSignal,
+  hostPrefix?: string,
+};
+type SigningFetcher = (request: Request, opts: FetchOpts) => Promise<Response>;
 
 export class ApiFactory {
   #credentials: CredentialsProvider;
-  #region: string;
+  #region?: string;
   constructor(opts: {
     credentialProvider?: CredentialsProvider,
     credentials?: Credentials,
@@ -24,7 +30,7 @@ export class ApiFactory {
     } else {
       this.#credentials = opts.credentialProvider ?? DefaultCredentialsProvider;
     }
-    this.#region = opts.region ?? getDefaultRegion();
+    this.#region = opts.region ?? Deno.env.get("AWS_REGION");
   }
 
   buildServiceClient(apiMetadata: ApiMetadata): ServiceClient {
@@ -32,44 +38,51 @@ export class ApiFactory {
       throw new Error(`TODO: signature version ${apiMetadata.signatureVersion}`);
     }
 
-    const signer = new AWSSignerV4(apiMetadata.globalEndpoint ? 'us-east-1' : this.#region, this.#credentials);
-    const serviceUrl = 'https://' + (apiMetadata.globalEndpoint
-      ?? `${apiMetadata.endpointPrefix}.${this.#region}.amazonaws.com`);
+    const signingFetcher: SigningFetcher = async (request: Request, opts: FetchOpts): Promise<Response> => {
+      // Resolve credentials and AWS region
+      const credentials = await this.#credentials.getCredentials();
+      const region = apiMetadata.globalEndpoint ? 'us-east-1' : (this.#region ?? credentials.region);
+      if (!region) throw new Error(`No region provided, try setting AWS_REGION`);
 
-    const signingName = apiMetadata.signingName ?? apiMetadata.endpointPrefix;
-    const signingFetcher = async (request: Request, signal?: AbortSignal): Promise<Response> => {
-      const req = await signer.sign(signingName, request);
-      return fetch(req, { signal });
+      const signer = new AWSSignerV4(region, credentials);
+      const serviceUrl = 'https://' + (apiMetadata.globalEndpoint
+        ?? `${apiMetadata.endpointPrefix}.${region}.amazonaws.com`);
+
+      const signingName = apiMetadata.signingName ?? apiMetadata.endpointPrefix;
+
+      // Assemble full URL
+      const [scheme, host] = serviceUrl.split('//');
+      const url = `${scheme}//${opts.hostPrefix ?? ''}${host}${request.url}`;
+
+      const req = await signer.sign(signingName, url, request);
+      return fetch(req, { signal: opts.signal });
     }
 
-    return wrapServiceClient(apiMetadata, serviceUrl, signingFetcher);
+    return wrapServiceClient(apiMetadata, signingFetcher);
   }
 
 }
 
 export function wrapServiceClient(
   apiMetadata: ApiMetadata,
-  serviceUrl: string,
-  signingFetcher: (request: Request, signal?: AbortSignal) => Promise<Response>,
+  signingFetcher: SigningFetcher,
 ): ServiceClient {
   switch (apiMetadata.protocol) {
     case 'query':
     case 'ec2':
-      return new QueryServiceClient(serviceUrl, apiMetadata.apiVersion, signingFetcher);
+      return new QueryServiceClient(apiMetadata.apiVersion, signingFetcher);
     case 'json':
-      return new JsonServiceClient(serviceUrl, apiMetadata.targetPrefix ?? 'TODO', apiMetadata.jsonVersion ?? '1.0', signingFetcher);
+      return new JsonServiceClient(apiMetadata.targetPrefix ?? 'TODO', apiMetadata.jsonVersion ?? '1.0', signingFetcher);
     default: throw new Error(`TODO: protocol ${apiMetadata.protocol}`);
   }
 }
 
 
 export class JsonServiceClient implements ServiceClient {
-  #serviceUrl: string;
   #serviceTarget: string;
   #jsonVersion: string;
-  #signedFetcher: (request: Request, signal?: AbortSignal) => Promise<Response>;
-  constructor(serviceUrl: string, serviceTarget: string, jsonVersion: string, signedFetcher: (request: Request, signal?: AbortSignal) => Promise<Response>) {
-    this.#serviceUrl = serviceUrl;
+  #signedFetcher: SigningFetcher;
+  constructor(serviceTarget: string, jsonVersion: string, signedFetcher: SigningFetcher) {
     this.#serviceTarget = serviceTarget;
     this.#jsonVersion = jsonVersion;
     this.#signedFetcher = signedFetcher;
@@ -79,8 +92,7 @@ export class JsonServiceClient implements ServiceClient {
     const headers = config.headers ?? new Headers;
     headers.append('x-amz-target', `${this.#serviceTarget}.${config.action}`);
 
-    const [scheme, host] = this.#serviceUrl.split('//');
-    const serviceUrl = `${scheme}//${config.hostPrefix ?? ''}${host}${config.requestUri ?? '/'}`;
+    const serviceUrl = config.requestUri ?? '/';
     const method = config.method ?? 'POST';
 
     let reqBody = new TextEncoder().encode(JSON.stringify(config.body));
@@ -92,7 +104,10 @@ export class JsonServiceClient implements ServiceClient {
       headers: headers,
       body: reqBody,
     });
-    const rawResp = await this.#signedFetcher(request, config.abortSignal);
+    const rawResp = await this.#signedFetcher(request, {
+      hostPrefix: config.hostPrefix,
+      signal: config.abortSignal,
+    });
     const response = new ApiResponse(rawResp.body, rawResp);
 
     if (response.status == (config.responseCode ?? 200)) {
@@ -105,11 +120,9 @@ export class JsonServiceClient implements ServiceClient {
 }
 
 export class QueryServiceClient implements ServiceClient {
-  #serviceUrl: string;
   #serviceVersion: string;
-  #signedFetcher: (request: Request, signal?: AbortSignal) => Promise<Response>;
-  constructor(serviceUrl: string, serviceVersion: string, signedFetcher: (request: Request, signal?: AbortSignal) => Promise<Response>) {
-    this.#serviceUrl = serviceUrl;
+  #signedFetcher: SigningFetcher;
+  constructor(serviceVersion: string, signedFetcher: SigningFetcher) {
     this.#serviceVersion = serviceVersion;
     this.#signedFetcher = signedFetcher;
   }
@@ -120,8 +133,7 @@ export class QueryServiceClient implements ServiceClient {
     // headers.append('accept', 'application/json'); // TODO
     // headers.append('accept', 'text/xml');
 
-    const [scheme, host] = this.#serviceUrl.split('//');
-    const serviceUrl = `${scheme}//${config.hostPrefix ?? ''}${host}${config.requestUri ?? '/'}`;
+    const serviceUrl = config.requestUri ?? '/';
     const method = config.method ?? 'POST';
 
     let reqBody: Uint8Array | null = null;
@@ -151,7 +163,10 @@ export class QueryServiceClient implements ServiceClient {
       headers: headers,
       body: reqBody,
     });
-    const rawResp = await this.#signedFetcher(request, config.abortSignal);
+    const rawResp = await this.#signedFetcher(request, {
+      hostPrefix: config.hostPrefix,
+      signal: config.abortSignal,
+    });
     const response = new ApiResponse(rawResp.body, rawResp);
 
     if (response.status == (config.responseCode ?? 200)) {

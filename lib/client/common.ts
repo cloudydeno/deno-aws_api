@@ -4,6 +4,7 @@ export interface Credentials {
   awsSecretKey: string;
   sessionToken?: string;
   // expiresAt?: Date;
+  region?: string;
 }
 export interface CredentialsProvider {
   getCredentials(): Promise<Credentials>;
@@ -11,7 +12,7 @@ export interface CredentialsProvider {
 
 /** Generic AWS Signer interface */
 export interface Signer {
-  sign: (service: string, request: Request) => Promise<Request>;
+  sign: (service: string, url: string, request: Request) => Promise<Request>;
 }
 
 // The HTTP contract expected by all service API implementations
