@@ -147,7 +147,7 @@ export default class ProtocolQueryCodegen {
       `Can only generate top level output structures`);
 
     const chunks = new Array<string>();
-    chunks.push(`    const xml = readXmlResult(await resp.text(), ${JSON.stringify(resultWrapper)});`);
+    chunks.push(`    const xml = readXmlResult(await resp.text()${resultWrapper ? `, ${JSON.stringify(resultWrapper)}` : ''});`);
     if (shape.refCount > 1) {
       chunks.push(`    return ${shape.censoredName}_Parse(xml);`);
     } else {
