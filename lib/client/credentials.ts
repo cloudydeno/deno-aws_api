@@ -1,4 +1,4 @@
-import type { Credentials, CredentialsProvider } from "./common.ts";
+import type { ApiMetadata, Credentials, CredentialsProvider } from "./common.ts";
 
 // If more than one credential source is available to the SDK, the default precedence of selection is as follows:
 //  1. Credentials that are explicitly set through the service-client constructor
@@ -11,15 +11,20 @@ import type { Credentials, CredentialsProvider } from "./common.ts";
 
 export class CredentialsProviderChain implements CredentialsProvider {
   #chain: (() => CredentialsProvider)[];
+  #supplier?: CredentialsProvider;
   constructor(chain: Array<() => CredentialsProvider>) {
     this.#chain = chain;
   }
   async getCredentials(): Promise<Credentials> {
+    if (this.#supplier) return this.#supplier.getCredentials();
+
     const errors: Array<string> = [];
     for (const providerFunc of this.#chain) {
       const provider = providerFunc();
       try {
-        return await provider.getCredentials();
+        const creds = await provider.getCredentials();
+        this.#supplier = provider;
+        return creds;
       } catch (err) {
         const srcName = `    - ${provider.constructor.name} `;
         if (err instanceof Error) {
@@ -44,7 +49,7 @@ export const DefaultCredentialsProvider
     () => new SharedIniFileCredentials(),
     // () => new ECSCredentials(),
     // () => new ProcessCredentials(),
-    // () => new TokenFileWebIdentityCredentials(),
+    () => new TokenFileWebIdentityCredentials(),
     // () => new EC2MetadataCredentials(),
   ]);
 
@@ -138,6 +143,71 @@ export class EnvironmentCredentials implements CredentialsProvider {
   }
 }
 
+export class TokenFileWebIdentityCredentials implements CredentialsProvider {
+  #roleArn?: string;
+  #tokenPath?: string;
+  #sessionName: string;
+  #promise: Promise<Credentials> | null = null;
+  #expireAfter: Date | null = null;
+
+  constructor(opts: {
+    roleArn?: string;
+    tokenPath?: string;
+    sessionName?: string;
+  }={}) {
+    this.#roleArn = opts.roleArn
+      || Deno.env.get('AWS_ROLE_ARN');
+    this.#tokenPath = opts.tokenPath
+      || Deno.env.get('AWS_WEB_IDENTITY_TOKEN_FILE');
+    this.#sessionName = opts.sessionName
+      || Deno.env.get('AWS_ROLE_SESSION_NAME')
+      || 'token-file-web-identity';
+  }
+
+  // We can't expire using setTimeout because that hangs Deno
+  // https://github.com/denoland/deno/issues/6141
+  getCredentials(): Promise<Credentials> {
+    if (this.#expireAfter && this.#expireAfter < new Date()) {
+      this.#expireAfter = null;
+      this.#promise = null;
+    }
+
+    if (!this.#promise) {
+      const promise = this.load();
+      this.#promise = promise.then(x => {
+        if (x.expiresAt && x.expiresAt > new Date()) {
+          this.#expireAfter = new Date(x.expiresAt.valueOf() - 60*1000);
+        }
+        return x;
+      }, err => {
+        this.#expireAfter = new Date(Date.now() + 30*1000);
+        return Promise.reject(err);
+      });
+    }
+
+    return this.#promise;
+  }
+
+  async load(): Promise<Credentials> {
+    if (!this.#tokenPath) throw new Error(`No WebIdentityToken file path is set`);
+    if (!this.#roleArn) throw new Error(`No Role ARN is set`);
+
+    const client = new ApiFactory().buildServiceClient(StsApiMetadata);
+    const resp = await assumeRoleWithWebIdentity(client, {
+      RoleArn: this.#roleArn,
+      RoleSessionName: this.#sessionName,
+      WebIdentityToken: await Deno.readTextFile(this.#tokenPath),
+    });
+
+    return Promise.resolve({
+      awsAccessKeyId: resp.AccessKeyId,
+      awsSecretKey: resp.SecretAccessKey,
+      sessionToken: resp.SessionToken,
+      expiresAt: resp.Expiration,
+    });
+  }
+}
+
 export function getDefaultCredentials(): Promise<Credentials> {
   return DefaultCredentialsProvider.getCredentials();
 }
@@ -149,3 +219,63 @@ export function getDefaultRegion(): string {
   }
   return AWS_REGION;
 };
+
+
+//--------------------------------------------
+// Embedded subset of STS for assuming roles
+// Is it even worth saving the one STS file? idk
+
+import { ApiFactory } from '../client/mod.ts';
+import { ServiceClient, XmlNode } from "../client/common.ts";
+
+const StsApiMetadata: ApiMetadata = {
+  apiVersion: "2011-06-15",
+  endpointPrefix: "sts",
+  globalEndpoint: "sts.amazonaws.com",
+  protocol: "query",
+  serviceAbbreviation: "AWS STS",
+  serviceFullName: "AWS Security Token Service",
+  serviceId: "STS",
+  signatureVersion: "v4",
+  uid: "sts-2011-06-15",
+  xmlNamespace: "https://sts.amazonaws.com/doc/2011-06-15/"
+};
+
+async function assumeRoleWithWebIdentity(sts: ServiceClient, params: {
+  RoleArn: string;
+  RoleSessionName: string;
+  WebIdentityToken: string;
+}): Promise<AssumedCredentials> {
+  const body = new URLSearchParams([
+    ["RoleArn", params["RoleArn"] ?? ''],
+    ["RoleSessionName", params["RoleSessionName"] ?? ''],
+    ["WebIdentityToken", params["WebIdentityToken"] ?? ''],
+  ]);
+  const resp = await sts.performRequest({
+    action: "AssumeRoleWithWebIdentity",
+    skipSigning: true,
+    body,
+  });
+  const xml = await resp.xml("AssumeRoleWithWebIdentityResult");
+  return xml.first("Credentials", true, parseAssumedCredentials);
+}
+
+interface AssumedCredentials {
+  AccessKeyId: string;
+  SecretAccessKey: string;
+  SessionToken: string;
+  Expiration: Date;
+}
+function parseAssumedCredentials(node: XmlNode): AssumedCredentials {
+  return {
+    ...node.strings({
+      required: {"AccessKeyId":true,"SecretAccessKey":true,"SessionToken":true},
+    }),
+    Expiration: node.first("Expiration", true, x => parseXmlTimestamp(x.content)),
+  };
+}
+function parseXmlTimestamp(str: string | undefined): Date {
+  if (str?.includes('T')) return new Date(str);
+  if (str?.length === 10) return new Date(parseInt(str) * 1000)
+  throw new Error(`Timestamp from STS is unparsable: '${str}'`);
+}
