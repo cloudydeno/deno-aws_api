@@ -30,35 +30,8 @@ export interface ApiRequestConfig {
   abortSignal?: AbortSignal;
   skipSigning?: true; // for unauthenticated APIs (STS, cognito)
 }
-export interface ApiResponse extends Response {
-  xml(resultWrapper?: string): Promise<XmlNode>;
-  // json(): Promise<JSONValue>;
-};
-
-export interface XmlNode {
-  name: string;
-  attributes: {[key: string]: string};
-  content?: string;
-  children: XmlNode[];
-
-  first(name: string, required: true): XmlNode;
-  first<T>(name: string, required: true, accessor: (node: XmlNode) => T | undefined): T;
-  first(name: string, required?: false): XmlNode | undefined;
-  first<T>(name: string, required: false, accessor: (node: XmlNode) => T): T | undefined;
-
-  getList(...namePath: string[]): XmlNode[]; // you can just map this
-  strings<
-    R extends {[key: string]: true},
-    O extends {[key: string]: true},
-  >(opts: {
-    required?: R,
-    optional?: O,
-  }): { [key in keyof R]: string }
-    & { [key in keyof O]: string | undefined };
-}
 
 // Things that JSON can handle directly
-// TODO: duplicated with json.ts
 export type JSONPrimitive = string | number | boolean | null | undefined;
 export type JSONValue = JSONPrimitive | JSONObject | JSONArray;
 export type JSONObject = { [member: string]: JSONValue };
@@ -68,7 +41,7 @@ export interface ApiFactory {
   buildServiceClient(apiMetadata: Object): ServiceClient;
 }
 export interface ServiceClient {
-  performRequest(request: ApiRequestConfig): Promise<ApiResponse>;
+  performRequest(request: ApiRequestConfig): Promise<Response>;
 }
 
 // our understanding of how APIs can describe themselves

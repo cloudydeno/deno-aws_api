@@ -12,11 +12,10 @@ export default class ProtocolJsonCodegen {
     this.helpers = helpers;
   }
 
-  requestBodyTypeName = 'JSONObject';
-  globalHelpers = `
-import {JSONObject, JSONValue, readObj} from '../client/json.ts';
-import * as prt from "../client/proto-json.ts";
-`;
+  globalHelpers = [
+    `import { JSONObject, JSONValue } from '../encoding/json.ts';`,
+    `import * as prt from "../encoding/json.ts";`,
+  ].join('\n');
 
   generateOperationInputParsingTypescript(inputShape: Schema.ApiShape): { inputParsingCode: string; inputVariables: string[]; } {
     if (inputShape.type !== 'structure') throw new Error(`BUG`);
@@ -220,7 +219,7 @@ import * as prt from "../client/proto-json.ts";
     }
 
     const chunks = new Array<string>();
-    chunks.push(`  return readObj({`);
+    chunks.push(`  return prt.readObj({`);
 
     if (hasRequired) {
       chunks.push(`    required: {`);

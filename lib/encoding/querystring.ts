@@ -1,5 +1,3 @@
-import type { XmlNode } from "./common.ts";
-
 export function appendMap<T>(body: URLSearchParams, prefix: string, raw: {[k:string]:T}, {
   keyName = '.key',
   valName = '.value',
@@ -70,17 +68,3 @@ export function encodeDate_unixTimestamp(input?: Date | number | null): string {
   return (input.valueOf() / 1000).toString();
 }
 // also rfc822 (toUTCString)
-
-export function readXmlMap<K extends string,T>(entries: XmlNode[], valMapper: (node: XmlNode) => T, {keyName='key', valName='value'}: {keyName?: string, valName?: string}): Record<K, T> {
-  const obj: Record<K, T> = Object.create(null);
-  for (const entry of entries) {
-    obj[entry.first(keyName, true, x => (x.content ?? '') as K)] = entry.first(valName, true, valMapper);
-  }
-  return obj;
-}
-
-export function parseTimestamp(str: string | undefined): Date {
-  if (str?.includes('T')) return new Date(str);
-  if (str?.length === 10) return new Date(parseInt(str) * 1000)
-  throw new Error(`Timestamp from server is unparsable: '${str}'`);
-}

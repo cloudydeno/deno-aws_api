@@ -226,7 +226,8 @@ export function getDefaultRegion(): string {
 // Is it even worth saving the one STS file? idk
 
 import { ApiFactory } from '../client/mod.ts';
-import { ServiceClient, XmlNode } from "../client/common.ts";
+import { ServiceClient } from "../client/common.ts";
+import { readXmlResult, XmlNode } from "../encoding/xml.ts";
 
 const StsApiMetadata: ApiMetadata = {
   apiVersion: "2011-06-15",
@@ -256,7 +257,7 @@ async function assumeRoleWithWebIdentity(sts: ServiceClient, params: {
     skipSigning: true,
     body,
   });
-  const xml = await resp.xml("AssumeRoleWithWebIdentityResult");
+  const xml = readXmlResult(await resp.text(), "AssumeRoleWithWebIdentityResult");
   return xml.first("Credentials", true, parseAssumedCredentials);
 }
 

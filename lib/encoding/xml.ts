@@ -1,8 +1,19 @@
-import type * as common from './common.ts';
 
 // apparently based on segmentio xml parser
 // https://github.com/nekobato/deno-xml-parser
 // this is a really bad parser though, TBH
+
+export function readXmlResult(text: string, resultWrapper?: string): XmlNode {
+  const doc = parseXml(text);
+  if (!doc.root) throw new Error(`Response lacking XML root`);
+
+  if (resultWrapper) {
+    const result = doc.root.first(resultWrapper);
+    if (!result) throw new Error(`Result Wrapper ${JSON.stringify(resultWrapper)} is missing`);
+    return result;
+  }
+  return doc.root;
+}
 
 export interface Document {
   declaration: XmlDeclaration | null;
@@ -11,7 +22,7 @@ export interface Document {
 export interface XmlDeclaration {
   attributes: {[key: string]: string};
 }
-export class XmlNode implements common.XmlNode {
+export class XmlNode {
   name: string;
   attributes: {[key: string]: string} = {};
   content?: string;
@@ -232,4 +243,18 @@ export function decodeXmlEntities(str: string) {
     }
     return ALPHA_INDEX[s] || s;
   });
+}
+
+export function readXmlMap<K extends string,T>(entries: XmlNode[], valMapper: (node: XmlNode) => T, {keyName='key', valName='value'}: {keyName?: string, valName?: string}): Record<K, T> {
+  const obj: Record<K, T> = Object.create(null);
+  for (const entry of entries) {
+    obj[entry.first(keyName, true, x => (x.content ?? '') as K)] = entry.first(valName, true, valMapper);
+  }
+  return obj;
+}
+
+export function parseTimestamp(str: string | undefined): Date {
+  if (str?.includes('T')) return new Date(str);
+  if (str?.length === 10) return new Date(parseInt(str) * 1000)
+  throw new Error(`Timestamp from server is unparsable: '${str}'`);
 }

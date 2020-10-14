@@ -7,7 +7,6 @@ import GenWaiter from "./gen-waiter.ts";
 import HelperLibrary from "./helper-library.ts";
 
 interface ProtocolCodegen {
-  requestBodyTypeName: string;
   globalHelpers: string;
   generateOperationInputParsingTypescript(inputShape: Schema.ApiShape): { inputParsingCode: string; inputVariables: string[]; };
   generateOperationOutputParsingTypescript(shape: KnownShape, resultWrapper?: string): { outputParsingCode: string; outputVariables: string[]; };
@@ -95,16 +94,14 @@ export default class ServiceCodeGen {
   }
 
   generateTypescript(namespace: string): string {
-    const allMethods = new Set(Object.values(this.apiSpec.operations).map(x => x.http?.method ?? 'POST'));
-
     const chunks = new Array<string>();
+    chunks.push(this.protocol.globalHelpers);
     chunks.push(`
 import type { ServiceClient, ApiFactory, ApiMetadata } from '../client/common.ts';
 interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 `);
-    chunks.push(this.protocol.globalHelpers);
 
     chunks.push(`export default class ${namespace} {`);
     chunks.push(`  #client: ServiceClient;`);

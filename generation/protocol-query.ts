@@ -12,14 +12,12 @@ export default class ProtocolQueryCodegen {
     this.shapes = shapes;
     this.helpers = helpers;
     this.ec2Mode = ec2 ?? false;
-
   }
 
-  requestBodyTypeName = 'URLSearchParams';
-  globalHelpers = `
-import type { XmlNode } from '../client/common.ts';
-import * as prt from "../client/proto-query.ts";
-`;
+  globalHelpers = [
+    `import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../encoding/xml.ts';`,
+    `import * as prt from "../encoding/query.ts";`,
+  ].join('\n');
 
   generateOperationInputParsingTypescript(inputShape: Schema.ApiShape): { inputParsingCode: string; inputVariables: string[]; } {
     if (inputShape.type !== 'structure') throw new Error(
@@ -149,7 +147,7 @@ import * as prt from "../client/proto-query.ts";
       `Can only generate top level output structures`);
 
     const chunks = new Array<string>();
-    chunks.push(`    const xml = await resp.xml(${resultWrapper ? JSON.stringify(resultWrapper) : ''});`);
+    chunks.push(`    const xml = readXmlResult(await resp.text(), ${JSON.stringify(resultWrapper)});`);
     if (shape.refCount > 1) {
       chunks.push(`    return ${shape.censoredName}_Parse(xml);`);
     } else {
@@ -280,7 +278,7 @@ import * as prt from "../client/proto-query.ts";
           const keyShape = this.shapes.get(shape.spec.key);
           const valueShape = this.shapes.get(shape.spec.value);
           // console.log([mapPrefix, entryPrefix, innerShape.spec.type, innerShape.spec.locationName]);
-          chunks.push(`    ${field}: prt.readXmlMap(${nodeRef}.getList(${entryPath.map(x => JSON.stringify(x)).join(', ')}), ${this.configureInnerShapeReading(valueShape)}, ${JSON.stringify(mapConfig)}),`);
+          chunks.push(`    ${field}: readXmlMap(${nodeRef}.getList(${entryPath.map(x => JSON.stringify(x)).join(', ')}), ${this.configureInnerShapeReading(valueShape)}, ${JSON.stringify(mapConfig)}),`);
           break;
         }
 
@@ -354,7 +352,7 @@ import * as prt from "../client/proto-query.ts";
         this.helpers.addDep('Base64', 'https://deno.land/x/base64@v0.2.1/mod.ts');
         return `x => Base64.toUint8Array(x.content ?? '')`;
       case 'timestamp':
-        return `x => prt.parseTimestamp(x.content)`;
+        return `x => parseTimestamp(x.content)`;
       case 'map':
         return `() => ({}) /* TODO: map output */`; // TODO
       case 'structure':

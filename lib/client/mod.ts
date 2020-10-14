@@ -1,14 +1,13 @@
-// import { AWSSignerV4 } from "https://deno.land/x/aws_sign_v4@0.1.1/mod.ts";
-import { AWSSignerV4 } from "./signing-v4.ts";
+import { AWSSignerV4 } from "./signing.ts";
 import {
-  ServiceClient, ApiRequestConfig, ApiResponse as BaseApiResponse,
+  ServiceClient, ApiRequestConfig,
   ApiMetadata,
-  XmlNode,
   AwsServiceError, ServiceError,
   Credentials, CredentialsProvider,
 } from './common.ts';
-import { parseXml } from './xml.ts';
 import { DefaultCredentialsProvider, CredentialsProviderChain } from "./credentials.ts";
+
+import { readXmlResult } from "../encoding/xml.ts";
 
 type FetchOpts = {
   signal?: AbortSignal,
@@ -58,8 +57,9 @@ export class ApiFactory {
 
       // Resolve credentials and AWS region
       const credentials = await this.#credentials.getCredentials();
-      const region = apiMetadata.globalEndpoint ? 'us-east-1' : (this.#region ?? credentials.region);
-      if (!region) throw new Error(`No region provided, try setting AWS_REGION`);
+      const region = apiMetadata.globalEndpoint
+        ? 'us-east-1'
+        : (this.#region ?? credentials.region ?? throwMissingRegion());
 
       const signer = new AWSSignerV4(region, credentials);
       const serviceUrl = 'https://' + (apiMetadata.globalEndpoint
@@ -202,19 +202,6 @@ export class QueryServiceClient implements ServiceClient {
 }
 
 export class ApiResponse extends Response {
-  async xml(resultWrapper?: string): Promise<XmlNode> {
-    const text = await this.text();
-    // console.log(text)
-    const doc = parseXml(text);
-    if (!doc.root) throw new Error(`ApiResponse lacking XML root`);
-
-    if (resultWrapper) {
-      const result = doc.root.first(resultWrapper);
-      if (!result) throw new Error(`Result Wrapper ${JSON.stringify(resultWrapper)} is missing`);
-      return result;
-    }
-    return doc.root;
-  }
   get requestId(): string | null {
     return this.headers.get('x-amzn-requestid');
   }
@@ -224,7 +211,7 @@ async function handleErrorResponse(response: ApiResponse): Promise<never> {
 
   const contentType = response.headers.get('content-type');
   if (contentType?.startsWith('text/xml') || !contentType) {
-    const xml = await response.xml();
+    const xml = readXmlResult(await response.text());
     switch (xml.name) {
 
       case 'ErrorResponse': // e.g. sts
