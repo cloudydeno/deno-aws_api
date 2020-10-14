@@ -1,6 +1,11 @@
 # `aws_api` for Deno
 
-Artisanal, pure Typescript AWS API client built for Deno.
+From-scratch Typescript AWS API client built for Deno.
+
+A leading focus of this library is to be as lean as possible
+on the number of files downloaded to use a specific service.
+There's no single entrypoint; you'll need to make an `ApiFactory`
+and then pass it to the service you want to use.
 
 Package layout:
 
@@ -15,13 +20,25 @@ Only some services have completed clients at this time.
 Please reach out on Github Issues about missing clients or API issues,
 or ping `dantheman#8546` in the Deno Discord if you just wanna chat about this effort.
 
-The following clients have been successfully used in scripts:
+## Usage
 
-* SNS
-* SQS
-* STS
-* EC2
-* Kinesis
+Basic example: (see `demo.ts` for several more services)
+
+```typescript
+import {ApiFactory} from 'https://deno.land/x/aws_api/client/mod.ts';
+const factory = new ApiFactory();
+
+import STS from 'https://deno.land/x/aws_api/services/sts@2011-06-15.ts';
+const sts = new STS(factory);
+
+const identity = await sts.getCallerIdentity();
+console.log('You are', identity.UserId, 'in account', identity.Account);
+console.log('Identity ARN:', identity.Arn);
+```
+
+A couple more-detailed examples are in `examples/` and show concepts such as
+managing an EC2 instance's lifecycle, redriving SQS messages,
+and working directly with a Kinesis stream.
 
 ## Disclaimer
 
@@ -35,7 +52,49 @@ quick & dirty pieces of infrastructure,
 and prototype microservices and so on.
 
 If you just want the real, full-fat AWS SDK,
-a port of it is available at [/x/aws_sdk](https://deno.land/x/aws_sdk).
+a port of it has been uploaded at
+[/x/aws_sdk](https://deno.land/x/aws_sdk).
+
+## Methodology
+
+All of the clients are compiled from `aws-sdk-js`'s JSON data files.
+The code to generate clients isn't uploaded to `/x/`,
+so if you want to read through it, make sure you're in the Git repo.
+
+"Most" of the heavy lifting (such as compiling waiter JMESPaths)
+runs in the generation step so that the modules on /x/ are ready to run.
+
+## Completeness
+
+The following clients have been successfully used in scripts
+and should work quite well:
+
+* SQS
+* STS
+* EC2
+* Kinesis
+
+The following credential sources are supported:
+
+* Environment variables
+* Static credentials in `~/.aws/credentials`
+* EKS Pod Identity (web identity token files)
+
+Some individual features that are implemented:
+
+* Waiters (as `.waitForXYZ({...})`)
+* Automatic credential loading
+
+Multiple bits are *missing*:
+
+* Automatic pagination
+* AssumeRole credentials
+* EC2 instance metadata, and instance credentials
+* Credential chaining
+* Services with REST or XML protocols
+* Debug logging/tracing of API calls
+* Automatic retries
+* AWS endpoints other than `**.amazonaws.com` (govcloud, China AWS, etc)
 
 ## List of Typechecked API Clients
 
