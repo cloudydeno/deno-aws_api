@@ -1,16 +1,41 @@
 # `aws_api` for Deno
 
-Artisanal, pure Typescript AWS API client built for Deno. This is NOT a port of the official AWS SDK JS.
+Artisanal, pure Typescript AWS API client built for Deno.
 
 Package layout:
 
 * `client/`: A handwritten generic AWS API client (credentials, signing, etc)
+* `encoding/`: Shared modules for dealing with XML, JSON, & querystrings
 * `services/`: Generated Typescript classes and interfaces for all supported AWS services
 * `demo.ts`: A trivial example of using this library
 * `examples/`: Several full examples of using individual services
-* `SERVICES.md`: A full list of all AWS APIs and their build status
+* `SERVICES.md`: A complete list of all AWS APIs and their build status
 
-Only some services have completed clients at this time. Please reach out on Github Issues about missing clients or API issues, or ping `dantheman#8546` in the Deno Discord if you just wanna chat about this effort.
+Only some services have completed clients at this time.
+Please reach out on Github Issues about missing clients or API issues,
+or ping `dantheman#8546` in the Deno Discord if you just wanna chat about this effort.
+
+The following clients have been successfully used in scripts:
+
+* SNS
+* SQS
+* STS
+* EC2
+* Kinesis
+
+## Disclaimer
+
+**This is NOT a port of the official AWS SDK JS.**
+Lots of services are still not bound,
+and the services that are bound might have issues.
+
+Do not use this module in mission critical stuff.
+It's supposed to be for automation scripts,
+quick & dirty pieces of infrastructure,
+and prototype microservices and so on.
+
+If you just want the real, full-fat AWS SDK,
+a port of it is available at [/x/aws_sdk](https://deno.land/x/aws_sdk).
 
 ## List of Typechecked API Clients
 
