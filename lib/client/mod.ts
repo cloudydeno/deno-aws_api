@@ -10,6 +10,7 @@ import { DefaultCredentialsProvider, CredentialsProviderChain } from "./credenti
 import { readXmlResult } from "../encoding/xml.ts";
 
 type FetchOpts = {
+  urlPath: string,
   signal?: AbortSignal,
   hostPrefix?: string,
   skipSigning?: true,
@@ -51,7 +52,7 @@ export class ApiFactory {
             'amazonaws.com',
           ].join('.');
 
-        const fullUrl = `https://${opts.hostPrefix ?? ''}${endpoint}${request.url}`;
+        const fullUrl = `https://${opts.hostPrefix ?? ''}${endpoint}${opts.urlPath}`;
         return fetch(new Request(fullUrl, request), { signal: opts.signal });
       }
 
@@ -69,7 +70,7 @@ export class ApiFactory {
 
       // Assemble full URL
       const [scheme, host] = serviceUrl.split('//');
-      const url = `${scheme}//${opts.hostPrefix ?? ''}${host}${request.url}`;
+      const url = `${scheme}//${opts.hostPrefix ?? ''}${host}${opts.urlPath}`;
 
       const req = await signer.sign(signingName, url, request);
       return fetch(req, { signal: opts.signal });
@@ -120,12 +121,13 @@ export class JsonServiceClient implements ServiceClient {
     headers.append('content-type', 'application/x-amz-json-'+this.#jsonVersion);
     headers.append('content-length', reqBody.length.toString());
 
-    const request = new Request(serviceUrl, {
+    const request = new Request('https://example.com/', {
       method: method,
       headers: headers,
       body: reqBody,
     });
     const rawResp = await this.#signedFetcher(request, {
+      urlPath: serviceUrl,
       skipSigning: config.skipSigning,
       hostPrefix: config.hostPrefix,
       signal: config.abortSignal,
@@ -180,12 +182,13 @@ export class QueryServiceClient implements ServiceClient {
       query = (serviceUrl.includes('?') ? '&' : '?') + query;
     }
 
-    const request = new Request(serviceUrl + query, {
+    const request = new Request('https://example.com', {
       method: method,
       headers: headers,
       body: reqBody,
     });
     const rawResp = await this.#signedFetcher(request, {
+      urlPath: serviceUrl + query,
       skipSigning: config.skipSigning,
       hostPrefix: config.hostPrefix,
       signal: config.abortSignal,
