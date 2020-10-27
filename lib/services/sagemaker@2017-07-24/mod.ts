@@ -8,6 +8,11 @@ interface RequestConfig {
 import { JSONObject, JSONValue } from '../../encoding/json.ts';
 import * as prt from "../../encoding/json.ts";
 
+import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+function generateIdemptToken() {
+  return uuidv4.generate();
+}
+
 export default class SageMaker {
   #client: ServiceClient;
   constructor(apiFactory: ApiFactory) {
@@ -103,6 +108,25 @@ export default class SageMaker {
     }, await resp.json());
   }
 
+  async createAppImageConfig(
+    {abortSignal, ...params}: RequestConfig & CreateAppImageConfigRequest,
+  ): Promise<CreateAppImageConfigResponse> {
+    const body: JSONObject = {...params,
+    Tags: params["Tags"]?.map(x => fromTag(x)),
+    KernelGatewayImageConfig: fromKernelGatewayImageConfig(params["KernelGatewayImageConfig"]),
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateAppImageConfig",
+    });
+    return prt.readObj({
+      required: {},
+      optional: {
+        "AppImageConfigArn": "s",
+      },
+    }, await resp.json());
+  }
+
   async createAutoMLJob(
     {abortSignal, ...params}: RequestConfig & CreateAutoMLJobRequest,
   ): Promise<CreateAutoMLJobResponse> {
@@ -150,6 +174,7 @@ export default class SageMaker {
     InputConfig: fromInputConfig(params["InputConfig"]),
     OutputConfig: fromOutputConfig(params["OutputConfig"]),
     StoppingCondition: fromStoppingCondition(params["StoppingCondition"]),
+    Tags: params["Tags"]?.map(x => fromTag(x)),
   };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -302,6 +327,42 @@ export default class SageMaker {
     }, await resp.json());
   }
 
+  async createImage(
+    {abortSignal, ...params}: RequestConfig & CreateImageRequest,
+  ): Promise<CreateImageResponse> {
+    const body: JSONObject = {...params,
+    Tags: params["Tags"]?.map(x => fromTag(x)),
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateImage",
+    });
+    return prt.readObj({
+      required: {},
+      optional: {
+        "ImageArn": "s",
+      },
+    }, await resp.json());
+  }
+
+  async createImageVersion(
+    {abortSignal, ...params}: RequestConfig & CreateImageVersionRequest,
+  ): Promise<CreateImageVersionResponse> {
+    const body: JSONObject = {...params,
+    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateImageVersion",
+    });
+    return prt.readObj({
+      required: {},
+      optional: {
+        "ImageVersionArn": "s",
+      },
+    }, await resp.json());
+  }
+
   async createLabelingJob(
     {abortSignal, ...params}: RequestConfig & CreateLabelingJobRequest,
   ): Promise<CreateLabelingJobResponse> {
@@ -347,7 +408,7 @@ export default class SageMaker {
   }
 
   async createModelPackage(
-    {abortSignal, ...params}: RequestConfig & CreateModelPackageInput,
+    {abortSignal, ...params}: RequestConfig & CreateModelPackageInput = {},
   ): Promise<CreateModelPackageOutput> {
     const body: JSONObject = {...params,
     InferenceSpecification: fromInferenceSpecification(params["InferenceSpecification"]),
@@ -658,6 +719,17 @@ export default class SageMaker {
     });
   }
 
+  async deleteAppImageConfig(
+    {abortSignal, ...params}: RequestConfig & DeleteAppImageConfigRequest,
+  ): Promise<void> {
+    const body: JSONObject = {...params,
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteAppImageConfig",
+    });
+  }
+
   async deleteCodeRepository(
     {abortSignal, ...params}: RequestConfig & DeleteCodeRepositoryInput,
   ): Promise<void> {
@@ -743,6 +815,36 @@ export default class SageMaker {
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteHumanTaskUi",
+    });
+    return prt.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async deleteImage(
+    {abortSignal, ...params}: RequestConfig & DeleteImageRequest,
+  ): Promise<DeleteImageResponse> {
+    const body: JSONObject = {...params,
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteImage",
+    });
+    return prt.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async deleteImageVersion(
+    {abortSignal, ...params}: RequestConfig & DeleteImageVersionRequest,
+  ): Promise<DeleteImageVersionResponse> {
+    const body: JSONObject = {...params,
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteImageVersion",
     });
     return prt.readObj({
       required: {},
@@ -952,6 +1054,27 @@ export default class SageMaker {
     }, await resp.json());
   }
 
+  async describeAppImageConfig(
+    {abortSignal, ...params}: RequestConfig & DescribeAppImageConfigRequest,
+  ): Promise<DescribeAppImageConfigResponse> {
+    const body: JSONObject = {...params,
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeAppImageConfig",
+    });
+    return prt.readObj({
+      required: {},
+      optional: {
+        "AppImageConfigArn": "s",
+        "AppImageConfigName": "s",
+        "CreationTime": "d",
+        "LastModifiedTime": "d",
+        "KernelGatewayImageConfig": toKernelGatewayImageConfig,
+      },
+    }, await resp.json());
+  }
+
   async describeAutoMLJob(
     {abortSignal, ...params}: RequestConfig & DescribeAutoMLJobRequest,
   ): Promise<DescribeAutoMLJobResponse> {
@@ -1062,11 +1185,11 @@ export default class SageMaker {
         "FailureReason": "s",
         "AuthMode": toAuthMode,
         "DefaultUserSettings": toUserSettings,
+        "AppNetworkAccessType": toAppNetworkAccessType,
         "HomeEfsFileSystemKmsKeyId": "s",
         "SubnetIds": ["s"],
         "Url": "s",
         "VpcId": "s",
-        "AppNetworkAccessType": toAppNetworkAccessType,
       },
     }, await resp.json());
   }
@@ -1222,6 +1345,56 @@ export default class SageMaker {
         "OverallBestTrainingJob": toHyperParameterTrainingJobSummary,
         "WarmStartConfig": toHyperParameterTuningJobWarmStartConfig,
         "FailureReason": "s",
+      },
+    }, await resp.json());
+  }
+
+  async describeImage(
+    {abortSignal, ...params}: RequestConfig & DescribeImageRequest,
+  ): Promise<DescribeImageResponse> {
+    const body: JSONObject = {...params,
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeImage",
+    });
+    return prt.readObj({
+      required: {},
+      optional: {
+        "CreationTime": "d",
+        "Description": "s",
+        "DisplayName": "s",
+        "FailureReason": "s",
+        "ImageArn": "s",
+        "ImageName": "s",
+        "ImageStatus": toImageStatus,
+        "LastModifiedTime": "d",
+        "RoleArn": "s",
+      },
+    }, await resp.json());
+  }
+
+  async describeImageVersion(
+    {abortSignal, ...params}: RequestConfig & DescribeImageVersionRequest,
+  ): Promise<DescribeImageVersionResponse> {
+    const body: JSONObject = {...params,
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeImageVersion",
+    });
+    return prt.readObj({
+      required: {},
+      optional: {
+        "BaseImage": "s",
+        "ContainerImage": "s",
+        "CreationTime": "d",
+        "FailureReason": "s",
+        "ImageArn": "s",
+        "ImageVersionArn": "s",
+        "ImageVersionStatus": toImageVersionStatus,
+        "LastModifiedTime": "d",
+        "Version": "n",
       },
     }, await resp.json());
   }
@@ -1714,6 +1887,28 @@ export default class SageMaker {
     }, await resp.json());
   }
 
+  async listAppImageConfigs(
+    {abortSignal, ...params}: RequestConfig & ListAppImageConfigsRequest = {},
+  ): Promise<ListAppImageConfigsResponse> {
+    const body: JSONObject = {...params,
+    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+    ModifiedTimeBefore: prt.serializeDate_unixTimestamp(params["ModifiedTimeBefore"]),
+    ModifiedTimeAfter: prt.serializeDate_unixTimestamp(params["ModifiedTimeAfter"]),
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListAppImageConfigs",
+    });
+    return prt.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "AppImageConfigs": [toAppImageConfigDetails],
+      },
+    }, await resp.json());
+  }
+
   async listApps(
     {abortSignal, ...params}: RequestConfig & ListAppsRequest = {},
   ): Promise<ListAppsResponse> {
@@ -1962,6 +2157,50 @@ export default class SageMaker {
         "HyperParameterTuningJobSummaries": [toHyperParameterTuningJobSummary],
       },
       optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listImageVersions(
+    {abortSignal, ...params}: RequestConfig & ListImageVersionsRequest,
+  ): Promise<ListImageVersionsResponse> {
+    const body: JSONObject = {...params,
+    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+    LastModifiedTimeAfter: prt.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
+    LastModifiedTimeBefore: prt.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListImageVersions",
+    });
+    return prt.readObj({
+      required: {},
+      optional: {
+        "ImageVersions": [toImageVersion],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listImages(
+    {abortSignal, ...params}: RequestConfig & ListImagesRequest = {},
+  ): Promise<ListImagesResponse> {
+    const body: JSONObject = {...params,
+    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+    LastModifiedTimeAfter: prt.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
+    LastModifiedTimeBefore: prt.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListImages",
+    });
+    return prt.readObj({
+      required: {},
+      optional: {
+        "Images": [toImage],
         "NextToken": "s",
       },
     }, await resp.json());
@@ -2525,6 +2764,24 @@ export default class SageMaker {
     });
   }
 
+  async updateAppImageConfig(
+    {abortSignal, ...params}: RequestConfig & UpdateAppImageConfigRequest,
+  ): Promise<UpdateAppImageConfigResponse> {
+    const body: JSONObject = {...params,
+    KernelGatewayImageConfig: fromKernelGatewayImageConfig(params["KernelGatewayImageConfig"]),
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateAppImageConfig",
+    });
+    return prt.readObj({
+      required: {},
+      optional: {
+        "AppImageConfigArn": "s",
+      },
+    }, await resp.json());
+  }
+
   async updateCodeRepository(
     {abortSignal, ...params}: RequestConfig & UpdateCodeRepositoryInput,
   ): Promise<UpdateCodeRepositoryOutput> {
@@ -2610,6 +2867,23 @@ export default class SageMaker {
       required: {},
       optional: {
         "ExperimentArn": "s",
+      },
+    }, await resp.json());
+  }
+
+  async updateImage(
+    {abortSignal, ...params}: RequestConfig & UpdateImageRequest,
+  ): Promise<UpdateImageResponse> {
+    const body: JSONObject = {...params,
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateImage",
+    });
+    return prt.readObj({
+      required: {},
+      optional: {
+        "ImageArn": "s",
       },
     }, await resp.json());
   }
@@ -2946,6 +3220,13 @@ export interface CreateAppRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateAppImageConfigRequest {
+  AppImageConfigName: string;
+  Tags?: Tag[] | null;
+  KernelGatewayImageConfig?: KernelGatewayImageConfig | null;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateAutoMLJobRequest {
   AutoMLJobName: string;
   InputDataConfig: AutoMLChannel[];
@@ -2971,6 +3252,7 @@ export interface CreateCompilationJobRequest {
   InputConfig: InputConfig;
   OutputConfig: OutputConfig;
   StoppingCondition: StoppingCondition;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2981,8 +3263,8 @@ export interface CreateDomainRequest {
   SubnetIds: string[];
   VpcId: string;
   Tags?: Tag[] | null;
-  HomeEfsFileSystemKmsKeyId?: string | null;
   AppNetworkAccessType?: AppNetworkAccessType | null;
+  HomeEfsFileSystemKmsKeyId?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3038,6 +3320,22 @@ export interface CreateHyperParameterTuningJobRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateImageRequest {
+  Description?: string | null;
+  DisplayName?: string | null;
+  ImageName: string;
+  RoleArn: string;
+  Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateImageVersionRequest {
+  BaseImage: string;
+  ClientToken: string;
+  ImageName: string;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateLabelingJobRequest {
   LabelingJobName: string;
   LabelAttributeName: string;
@@ -3064,7 +3362,7 @@ export interface CreateModelInput {
 
 // refs: 1 - tags: named, input
 export interface CreateModelPackageInput {
-  ModelPackageName: string;
+  ModelPackageName?: string | null;
   ModelPackageDescription?: string | null;
   InferenceSpecification?: InferenceSpecification | null;
   ValidationSpecification?: ModelPackageValidationSpecification | null;
@@ -3235,6 +3533,11 @@ export interface DeleteAppRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteAppImageConfigRequest {
+  AppImageConfigName: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteCodeRepositoryInput {
   CodeRepositoryName: string;
 }
@@ -3268,6 +3571,17 @@ export interface DeleteFlowDefinitionRequest {
 // refs: 1 - tags: named, input
 export interface DeleteHumanTaskUiRequest {
   HumanTaskUiName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteImageRequest {
+  ImageName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteImageVersionRequest {
+  ImageName: string;
+  Version: number;
 }
 
 // refs: 1 - tags: named, input
@@ -3341,6 +3655,11 @@ export interface DescribeAppRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeAppImageConfigRequest {
+  AppImageConfigName: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeAutoMLJobRequest {
   AutoMLJobName: string;
 }
@@ -3388,6 +3707,17 @@ export interface DescribeHumanTaskUiRequest {
 // refs: 1 - tags: named, input
 export interface DescribeHyperParameterTuningJobRequest {
   HyperParameterTuningJobName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeImageRequest {
+  ImageName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeImageVersionRequest {
+  ImageName: string;
+  Version?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3486,6 +3816,19 @@ export interface ListAlgorithmsInput {
   NameContains?: string | null;
   NextToken?: string | null;
   SortBy?: AlgorithmSortBy | null;
+  SortOrder?: SortOrder | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListAppImageConfigsRequest {
+  MaxResults?: number | null;
+  NextToken?: string | null;
+  NameContains?: string | null;
+  CreationTimeBefore?: Date | number | null;
+  CreationTimeAfter?: Date | number | null;
+  ModifiedTimeBefore?: Date | number | null;
+  ModifiedTimeAfter?: Date | number | null;
+  SortBy?: AppImageConfigSortKey | null;
   SortOrder?: SortOrder | null;
 }
 
@@ -3622,6 +3965,32 @@ export interface ListHyperParameterTuningJobsRequest {
   LastModifiedTimeAfter?: Date | number | null;
   LastModifiedTimeBefore?: Date | number | null;
   StatusEquals?: HyperParameterTuningJobStatus | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListImageVersionsRequest {
+  CreationTimeAfter?: Date | number | null;
+  CreationTimeBefore?: Date | number | null;
+  ImageName: string;
+  LastModifiedTimeAfter?: Date | number | null;
+  LastModifiedTimeBefore?: Date | number | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+  SortBy?: ImageVersionSortBy | null;
+  SortOrder?: ImageVersionSortOrder | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListImagesRequest {
+  CreationTimeAfter?: Date | number | null;
+  CreationTimeBefore?: Date | number | null;
+  LastModifiedTimeAfter?: Date | number | null;
+  LastModifiedTimeBefore?: Date | number | null;
+  MaxResults?: number | null;
+  NameContains?: string | null;
+  NextToken?: string | null;
+  SortBy?: ImageSortBy | null;
+  SortOrder?: ImageSortOrder | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3927,6 +4296,12 @@ export interface StopTransformJobRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface UpdateAppImageConfigRequest {
+  AppImageConfigName: string;
+  KernelGatewayImageConfig?: KernelGatewayImageConfig | null;
+}
+
+// refs: 1 - tags: named, input
 export interface UpdateCodeRepositoryInput {
   CodeRepositoryName: string;
   GitConfig?: GitConfigForUpdate | null;
@@ -3957,6 +4332,15 @@ export interface UpdateExperimentRequest {
   ExperimentName: string;
   DisplayName?: string | null;
   Description?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateImageRequest {
+  DeleteProperties?: string[] | null;
+  Description?: string | null;
+  DisplayName?: string | null;
+  ImageName: string;
+  RoleArn?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4054,6 +4438,11 @@ export interface CreateAppResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateAppImageConfigResponse {
+  AppImageConfigArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateAutoMLJobResponse {
   AutoMLJobArn: string;
 }
@@ -4102,6 +4491,16 @@ export interface CreateHumanTaskUiResponse {
 // refs: 1 - tags: named, output
 export interface CreateHyperParameterTuningJobResponse {
   HyperParameterTuningJobArn: string;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateImageResponse {
+  ImageArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateImageVersionResponse {
+  ImageVersionArn?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -4198,6 +4597,14 @@ export interface DeleteHumanTaskUiResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DeleteImageResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteImageVersionResponse {
+}
+
+// refs: 1 - tags: named, output
 export interface DeleteTagsOutput {
 }
 
@@ -4248,6 +4655,15 @@ export interface DescribeAppResponse {
   CreationTime?: Date | number | null;
   FailureReason?: string | null;
   ResourceSpec?: ResourceSpec | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeAppImageConfigResponse {
+  AppImageConfigArn?: string | null;
+  AppImageConfigName?: string | null;
+  CreationTime?: Date | number | null;
+  LastModifiedTime?: Date | number | null;
+  KernelGatewayImageConfig?: KernelGatewayImageConfig | null;
 }
 
 // refs: 1 - tags: named, output
@@ -4311,11 +4727,11 @@ export interface DescribeDomainResponse {
   FailureReason?: string | null;
   AuthMode?: AuthMode | null;
   DefaultUserSettings?: UserSettings | null;
+  AppNetworkAccessType?: AppNetworkAccessType | null;
   HomeEfsFileSystemKmsKeyId?: string | null;
   SubnetIds?: string[] | null;
   Url?: string | null;
   VpcId?: string | null;
-  AppNetworkAccessType?: AppNetworkAccessType | null;
 }
 
 // refs: 1 - tags: named, output
@@ -4394,6 +4810,32 @@ export interface DescribeHyperParameterTuningJobResponse {
   OverallBestTrainingJob?: HyperParameterTrainingJobSummary | null;
   WarmStartConfig?: HyperParameterTuningJobWarmStartConfig | null;
   FailureReason?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeImageResponse {
+  CreationTime?: Date | number | null;
+  Description?: string | null;
+  DisplayName?: string | null;
+  FailureReason?: string | null;
+  ImageArn?: string | null;
+  ImageName?: string | null;
+  ImageStatus?: ImageStatus | null;
+  LastModifiedTime?: Date | number | null;
+  RoleArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeImageVersionResponse {
+  BaseImage?: string | null;
+  ContainerImage?: string | null;
+  CreationTime?: Date | number | null;
+  FailureReason?: string | null;
+  ImageArn?: string | null;
+  ImageVersionArn?: string | null;
+  ImageVersionStatus?: ImageVersionStatus | null;
+  LastModifiedTime?: Date | number | null;
+  Version?: number | null;
 }
 
 // refs: 1 - tags: named, output
@@ -4658,6 +5100,12 @@ export interface ListAlgorithmsOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface ListAppImageConfigsResponse {
+  NextToken?: string | null;
+  AppImageConfigs?: AppImageConfigDetails[] | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListAppsResponse {
   Apps?: AppDetails[] | null;
   NextToken?: string | null;
@@ -4726,6 +5174,18 @@ export interface ListHumanTaskUisResponse {
 // refs: 1 - tags: named, output
 export interface ListHyperParameterTuningJobsResponse {
   HyperParameterTuningJobSummaries: HyperParameterTuningJobSummary[];
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListImageVersionsResponse {
+  ImageVersions?: ImageVersion[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListImagesResponse {
+  Images?: Image[] | null;
   NextToken?: string | null;
 }
 
@@ -4856,6 +5316,11 @@ export interface SearchResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface UpdateAppImageConfigResponse {
+  AppImageConfigArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateCodeRepositoryOutput {
   CodeRepositoryArn: string;
 }
@@ -4878,6 +5343,11 @@ export interface UpdateEndpointWeightsAndCapacitiesOutput {
 // refs: 1 - tags: named, output
 export interface UpdateExperimentResponse {
   ExperimentArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateImageResponse {
+  ImageArn?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -4918,7 +5388,7 @@ export interface UpdateWorkteamResponse {
   Workteam: Workteam;
 }
 
-// refs: 32 - tags: input, named, interface, output
+// refs: 35 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
@@ -5137,6 +5607,7 @@ export type TrainingInstanceType =
 | "ml.p3.8xlarge"
 | "ml.p3.16xlarge"
 | "ml.p3dn.24xlarge"
+| "ml.p4d.24xlarge"
 | "ml.c5.xlarge"
 | "ml.c5.2xlarge"
 | "ml.c5.4xlarge"
@@ -5179,6 +5650,7 @@ function toTrainingInstanceType(root: JSONValue): TrainingInstanceType | null {
     || root == "ml.p3.8xlarge"
     || root == "ml.p3.16xlarge"
     || root == "ml.p3dn.24xlarge"
+    || root == "ml.p4d.24xlarge"
     || root == "ml.c5.xlarge"
     || root == "ml.c5.2xlarge"
     || root == "ml.c5.4xlarge"
@@ -6098,6 +6570,7 @@ function toAppType(root: JSONValue): AppType | null {
 // refs: 20 - tags: input, named, interface, output
 export interface ResourceSpec {
   SageMakerImageArn?: string | null;
+  SageMakerImageVersionArn?: string | null;
   InstanceType?: AppInstanceType | null;
 }
 function fromResourceSpec(input?: ResourceSpec | null): JSONValue {
@@ -6110,6 +6583,7 @@ function toResourceSpec(root: JSONValue): ResourceSpec {
     required: {},
     optional: {
       "SageMakerImageArn": "s",
+      "SageMakerImageVersionArn": "s",
       "InstanceType": toAppInstanceType,
     },
   }, root);
@@ -6186,6 +6660,72 @@ function toAppInstanceType(root: JSONValue): AppInstanceType | null {
     || root == "ml.g4dn.12xlarge"
     || root == "ml.g4dn.16xlarge"
   ) ? root : null;
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface KernelGatewayImageConfig {
+  KernelSpecs: KernelSpec[];
+  FileSystemConfig?: FileSystemConfig | null;
+}
+function fromKernelGatewayImageConfig(input?: KernelGatewayImageConfig | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+    KernelSpecs: input["KernelSpecs"]?.map(x => fromKernelSpec(x)),
+    FileSystemConfig: fromFileSystemConfig(input["FileSystemConfig"]),
+  }
+}
+function toKernelGatewayImageConfig(root: JSONValue): KernelGatewayImageConfig {
+  return prt.readObj({
+    required: {
+      "KernelSpecs": [toKernelSpec],
+    },
+    optional: {
+      "FileSystemConfig": toFileSystemConfig,
+    },
+  }, root);
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface KernelSpec {
+  Name: string;
+  DisplayName?: string | null;
+}
+function fromKernelSpec(input?: KernelSpec | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+  }
+}
+function toKernelSpec(root: JSONValue): KernelSpec {
+  return prt.readObj({
+    required: {
+      "Name": "s",
+    },
+    optional: {
+      "DisplayName": "s",
+    },
+  }, root);
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface FileSystemConfig {
+  MountPath?: string | null;
+  DefaultUid?: number | null;
+  DefaultGid?: number | null;
+}
+function fromFileSystemConfig(input?: FileSystemConfig | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+  }
+}
+function toFileSystemConfig(root: JSONValue): FileSystemConfig {
+  return prt.readObj({
+    required: {},
+    optional: {
+      "MountPath": "s",
+      "DefaultUid": "n",
+      "DefaultGid": "n",
+    },
+  }, root);
 }
 
 // refs: 2 - tags: input, named, interface, output
@@ -6478,6 +7018,7 @@ export type Framework =
 | "PYTORCH"
 | "XGBOOST"
 | "TFLITE"
+| "DARKNET"
 ;
 
 function toFramework(root: JSONValue): Framework | null {
@@ -6489,6 +7030,7 @@ function toFramework(root: JSONValue): Framework | null {
     || root == "PYTORCH"
     || root == "XGBOOST"
     || root == "TFLITE"
+    || root == "DARKNET"
   ) ? root : null;
 }
 
@@ -6546,6 +7088,7 @@ export type TargetDevice =
 | "amba_cv22"
 | "x86_win32"
 | "x86_win64"
+| "coreml"
 ;
 
 function toTargetDevice(root: JSONValue): TargetDevice | null {
@@ -6576,6 +7119,7 @@ function toTargetDevice(root: JSONValue): TargetDevice | null {
     || root == "amba_cv22"
     || root == "x86_win32"
     || root == "x86_win64"
+    || root == "coreml"
   ) ? root : null;
 }
 
@@ -6751,11 +7295,13 @@ function toJupyterServerAppSettings(root: JSONValue): JupyterServerAppSettings {
 // refs: 6 - tags: input, named, interface, output
 export interface KernelGatewayAppSettings {
   DefaultResourceSpec?: ResourceSpec | null;
+  CustomImages?: CustomImage[] | null;
 }
 function fromKernelGatewayAppSettings(input?: KernelGatewayAppSettings | null): JSONValue {
   if (!input) return input;
   return {...input,
     DefaultResourceSpec: fromResourceSpec(input["DefaultResourceSpec"]),
+    CustomImages: input["CustomImages"]?.map(x => fromCustomImage(x)),
   }
 }
 function toKernelGatewayAppSettings(root: JSONValue): KernelGatewayAppSettings {
@@ -6763,6 +7309,30 @@ function toKernelGatewayAppSettings(root: JSONValue): KernelGatewayAppSettings {
     required: {},
     optional: {
       "DefaultResourceSpec": toResourceSpec,
+      "CustomImages": [toCustomImage],
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface CustomImage {
+  ImageName: string;
+  ImageVersionNumber?: number | null;
+  AppImageConfigName: string;
+}
+function fromCustomImage(input?: CustomImage | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+  }
+}
+function toCustomImage(root: JSONValue): CustomImage {
+  return prt.readObj({
+    required: {
+      "ImageName": "s",
+      "AppImageConfigName": "s",
+    },
+    optional: {
+      "ImageVersionNumber": "n",
     },
   }, root);
 }
@@ -9240,10 +9810,18 @@ export type AlgorithmSortBy =
 ;
 
 
-// refs: 21 - tags: input, named, enum
+// refs: 22 - tags: input, named, enum
 export type SortOrder =
 | "Ascending"
 | "Descending"
+;
+
+
+// refs: 1 - tags: input, named, enum
+export type AppImageConfigSortKey =
+| "CreationTime"
+| "LastModifiedTime"
+| "Name"
 ;
 
 
@@ -9438,6 +10016,36 @@ function toHyperParameterTuningJobStatus(root: JSONValue): HyperParameterTuningJ
     || root == "Stopping"
   ) ? root : null;
 }
+
+// refs: 1 - tags: input, named, enum
+export type ImageVersionSortBy =
+| "CREATION_TIME"
+| "LAST_MODIFIED_TIME"
+| "VERSION"
+;
+
+
+// refs: 1 - tags: input, named, enum
+export type ImageVersionSortOrder =
+| "ASCENDING"
+| "DESCENDING"
+;
+
+
+// refs: 1 - tags: input, named, enum
+export type ImageSortBy =
+| "CREATION_TIME"
+| "LAST_MODIFIED_TIME"
+| "IMAGE_NAME"
+;
+
+
+// refs: 1 - tags: input, named, enum
+export type ImageSortOrder =
+| "ASCENDING"
+| "DESCENDING"
+;
+
 
 // refs: 4 - tags: input, named, enum
 export type SortBy =
@@ -10106,6 +10714,9 @@ export type DomainStatus =
 | "Failed"
 | "InService"
 | "Pending"
+| "Updating"
+| "Update_Failed"
+| "Delete_Failed"
 ;
 function toDomainStatus(root: JSONValue): DomainStatus | null {
   return ( false
@@ -10113,6 +10724,9 @@ function toDomainStatus(root: JSONValue): DomainStatus | null {
     || root == "Failed"
     || root == "InService"
     || root == "Pending"
+    || root == "Updating"
+    || root == "Update_Failed"
+    || root == "Delete_Failed"
   ) ? root : null;
 }
 
@@ -10356,6 +10970,46 @@ function toFinalHyperParameterTuningJobObjectiveMetric(root: JSONValue): FinalHy
       "Type": toHyperParameterTuningJobObjectiveType,
     },
   }, root);
+}
+
+// refs: 2 - tags: output, named, enum
+export type ImageStatus =
+| "CREATING"
+| "CREATED"
+| "CREATE_FAILED"
+| "UPDATING"
+| "UPDATE_FAILED"
+| "DELETING"
+| "DELETE_FAILED"
+;
+function toImageStatus(root: JSONValue): ImageStatus | null {
+  return ( false
+    || root == "CREATING"
+    || root == "CREATED"
+    || root == "CREATE_FAILED"
+    || root == "UPDATING"
+    || root == "UPDATE_FAILED"
+    || root == "DELETING"
+    || root == "DELETE_FAILED"
+  ) ? root : null;
+}
+
+// refs: 2 - tags: output, named, enum
+export type ImageVersionStatus =
+| "CREATING"
+| "CREATED"
+| "CREATE_FAILED"
+| "DELETING"
+| "DELETE_FAILED"
+;
+function toImageVersionStatus(root: JSONValue): ImageVersionStatus | null {
+  return ( false
+    || root == "CREATING"
+    || root == "CREATED"
+    || root == "CREATE_FAILED"
+    || root == "DELETING"
+    || root == "DELETE_FAILED"
+  ) ? root : null;
 }
 
 // refs: 2 - tags: output, named, interface
@@ -10694,6 +11348,9 @@ export type UserProfileStatus =
 | "Failed"
 | "InService"
 | "Pending"
+| "Updating"
+| "Update_Failed"
+| "Delete_Failed"
 ;
 function toUserProfileStatus(root: JSONValue): UserProfileStatus | null {
   return ( false
@@ -10701,6 +11358,9 @@ function toUserProfileStatus(root: JSONValue): UserProfileStatus | null {
     || root == "Failed"
     || root == "InService"
     || root == "Pending"
+    || root == "Updating"
+    || root == "Update_Failed"
+    || root == "Delete_Failed"
   ) ? root : null;
 }
 
@@ -10820,6 +11480,27 @@ function toAlgorithmSummary(root: JSONValue): AlgorithmSummary {
     },
     optional: {
       "AlgorithmDescription": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface AppImageConfigDetails {
+  AppImageConfigArn?: string | null;
+  AppImageConfigName?: string | null;
+  CreationTime?: Date | number | null;
+  LastModifiedTime?: Date | number | null;
+  KernelGatewayImageConfig?: KernelGatewayImageConfig | null;
+}
+function toAppImageConfigDetails(root: JSONValue): AppImageConfigDetails {
+  return prt.readObj({
+    required: {},
+    optional: {
+      "AppImageConfigArn": "s",
+      "AppImageConfigName": "s",
+      "CreationTime": "d",
+      "LastModifiedTime": "d",
+      "KernelGatewayImageConfig": toKernelGatewayImageConfig,
     },
   }, root);
 }
@@ -11084,6 +11765,60 @@ function toHyperParameterTuningJobSummary(root: JSONValue): HyperParameterTuning
       "HyperParameterTuningEndTime": "d",
       "LastModifiedTime": "d",
       "ResourceLimits": toResourceLimits,
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ImageVersion {
+  CreationTime: Date | number;
+  FailureReason?: string | null;
+  ImageArn: string;
+  ImageVersionArn: string;
+  ImageVersionStatus: ImageVersionStatus;
+  LastModifiedTime: Date | number;
+  Version: number;
+}
+function toImageVersion(root: JSONValue): ImageVersion {
+  return prt.readObj({
+    required: {
+      "CreationTime": "d",
+      "ImageArn": "s",
+      "ImageVersionArn": "s",
+      "ImageVersionStatus": toImageVersionStatus,
+      "LastModifiedTime": "d",
+      "Version": "n",
+    },
+    optional: {
+      "FailureReason": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface Image {
+  CreationTime: Date | number;
+  Description?: string | null;
+  DisplayName?: string | null;
+  FailureReason?: string | null;
+  ImageArn: string;
+  ImageName: string;
+  ImageStatus: ImageStatus;
+  LastModifiedTime: Date | number;
+}
+function toImage(root: JSONValue): Image {
+  return prt.readObj({
+    required: {
+      "CreationTime": "d",
+      "ImageArn": "s",
+      "ImageName": "s",
+      "ImageStatus": toImageStatus,
+      "LastModifiedTime": "d",
+    },
+    optional: {
+      "Description": "s",
+      "DisplayName": "s",
+      "FailureReason": "s",
     },
   }, root);
 }

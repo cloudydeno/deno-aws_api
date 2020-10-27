@@ -109,6 +109,25 @@ export default class WorkMail {
     }, await resp.json());
   }
 
+  async createOrganization(
+    {abortSignal, ...params}: RequestConfig & CreateOrganizationRequest,
+  ): Promise<CreateOrganizationResponse> {
+    const body: JSONObject = {...params,
+    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+    Domains: params["Domains"]?.map(x => fromDomain(x)),
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateOrganization",
+    });
+    return prt.readObj({
+      required: {},
+      optional: {
+        "OrganizationId": "s",
+      },
+    }, await resp.json());
+  }
+
   async createResource(
     {abortSignal, ...params}: RequestConfig & CreateResourceRequest,
   ): Promise<CreateResourceResponse> {
@@ -200,6 +219,25 @@ export default class WorkMail {
     return prt.readObj({
       required: {},
       optional: {},
+    }, await resp.json());
+  }
+
+  async deleteOrganization(
+    {abortSignal, ...params}: RequestConfig & DeleteOrganizationRequest,
+  ): Promise<DeleteOrganizationResponse> {
+    const body: JSONObject = {...params,
+    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteOrganization",
+    });
+    return prt.readObj({
+      required: {},
+      optional: {
+        "OrganizationId": "s",
+        "State": "s",
+      },
     }, await resp.json());
   }
 
@@ -876,6 +914,16 @@ export interface CreateGroupRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateOrganizationRequest {
+  DirectoryId?: string | null;
+  Alias: string;
+  ClientToken?: string | null;
+  Domains?: Domain[] | null;
+  KmsKeyArn?: string | null;
+  EnableInteroperability?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateResourceRequest {
   OrganizationId: string;
   Name: string;
@@ -914,6 +962,13 @@ export interface DeleteMailboxPermissionsRequest {
   OrganizationId: string;
   EntityId: string;
   GranteeId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteOrganizationRequest {
+  ClientToken?: string | null;
+  OrganizationId: string;
+  DeleteDirectory: boolean;
 }
 
 // refs: 1 - tags: named, input
@@ -1191,6 +1246,11 @@ export interface CreateGroupResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateOrganizationResponse {
+  OrganizationId?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateResourceResponse {
   ResourceId?: string | null;
 }
@@ -1214,6 +1274,12 @@ export interface DeleteGroupResponse {
 
 // refs: 1 - tags: named, output
 export interface DeleteMailboxPermissionsResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteOrganizationResponse {
+  OrganizationId?: string | null;
+  State?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1430,6 +1496,17 @@ export interface UpdatePrimaryEmailAddressResponse {
 
 // refs: 1 - tags: named, output
 export interface UpdateResourceResponse {
+}
+
+// refs: 1 - tags: input, named, interface
+export interface Domain {
+  DomainName?: string | null;
+  HostedZoneId?: string | null;
+}
+function fromDomain(input?: Domain | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+  }
 }
 
 // refs: 3 - tags: input, named, enum, output
@@ -1757,6 +1834,7 @@ function toPermission(root: JSONValue): Permission {
 export interface OrganizationSummary {
   OrganizationId?: string | null;
   Alias?: string | null;
+  DefaultMailDomain?: string | null;
   ErrorMessage?: string | null;
   State?: string | null;
 }
@@ -1766,6 +1844,7 @@ function toOrganizationSummary(root: JSONValue): OrganizationSummary {
     optional: {
       "OrganizationId": "s",
       "Alias": "s",
+      "DefaultMailDomain": "s",
       "ErrorMessage": "s",
       "State": "s",
     },

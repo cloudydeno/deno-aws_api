@@ -958,6 +958,8 @@ export interface Target {
   SqsParameters?: SqsParameters | null;
   HttpParameters?: HttpParameters | null;
   RedshiftDataParameters?: RedshiftDataParameters | null;
+  DeadLetterConfig?: DeadLetterConfig | null;
+  RetryPolicy?: RetryPolicy | null;
 }
 function fromTarget(input?: Target | null): JSONValue {
   if (!input) return input;
@@ -970,6 +972,8 @@ function fromTarget(input?: Target | null): JSONValue {
     SqsParameters: fromSqsParameters(input["SqsParameters"]),
     HttpParameters: fromHttpParameters(input["HttpParameters"]),
     RedshiftDataParameters: fromRedshiftDataParameters(input["RedshiftDataParameters"]),
+    DeadLetterConfig: fromDeadLetterConfig(input["DeadLetterConfig"]),
+    RetryPolicy: fromRetryPolicy(input["RetryPolicy"]),
   }
 }
 function toTarget(root: JSONValue): Target {
@@ -990,6 +994,8 @@ function toTarget(root: JSONValue): Target {
       "SqsParameters": toSqsParameters,
       "HttpParameters": toHttpParameters,
       "RedshiftDataParameters": toRedshiftDataParameters,
+      "DeadLetterConfig": toDeadLetterConfig,
+      "RetryPolicy": toRetryPolicy,
     },
   }, root);
 }
@@ -1298,6 +1304,44 @@ function toRedshiftDataParameters(root: JSONValue): RedshiftDataParameters {
       "DbUser": "s",
       "StatementName": "s",
       "WithEvent": "b",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface DeadLetterConfig {
+  Arn?: string | null;
+}
+function fromDeadLetterConfig(input?: DeadLetterConfig | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+  }
+}
+function toDeadLetterConfig(root: JSONValue): DeadLetterConfig {
+  return prt.readObj({
+    required: {},
+    optional: {
+      "Arn": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface RetryPolicy {
+  MaximumRetryAttempts?: number | null;
+  MaximumEventAgeInSeconds?: number | null;
+}
+function fromRetryPolicy(input?: RetryPolicy | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+  }
+}
+function toRetryPolicy(root: JSONValue): RetryPolicy {
+  return prt.readObj({
+    required: {},
+    optional: {
+      "MaximumRetryAttempts": "n",
+      "MaximumEventAgeInSeconds": "n",
     },
   }, root);
 }

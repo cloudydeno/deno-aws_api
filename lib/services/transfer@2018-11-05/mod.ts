@@ -589,6 +589,7 @@ export interface EndpointDetails {
   SubnetIds?: string[] | null;
   VpcEndpointId?: string | null;
   VpcId?: string | null;
+  SecurityGroupIds?: string[] | null;
 }
 function fromEndpointDetails(input?: EndpointDetails | null): JSONValue {
   if (!input) return input;
@@ -603,6 +604,7 @@ function toEndpointDetails(root: JSONValue): EndpointDetails {
       "SubnetIds": ["s"],
       "VpcEndpointId": "s",
       "VpcId": "s",
+      "SecurityGroupIds": ["s"],
     },
   }, root);
 }

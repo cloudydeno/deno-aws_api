@@ -2624,6 +2624,7 @@ export default class RDS {
     if (params["ProcessorFeatures"]) prt.appendList(body, prefix+"ProcessorFeatures", params["ProcessorFeatures"], {"appender":ProcessorFeature_Serialize,"entryPrefix":".ProcessorFeature."})
     if ("UseDefaultProcessorFeatures" in params) body.append(prefix+"UseDefaultProcessorFeatures", (params["UseDefaultProcessorFeatures"] ?? '').toString());
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
+    if ("MaxAllocatedStorage" in params) body.append(prefix+"MaxAllocatedStorage", (params["MaxAllocatedStorage"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreDBInstanceFromS3",
@@ -2670,6 +2671,7 @@ export default class RDS {
     if ("DBParameterGroupName" in params) body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
     if ("SourceDbiResourceId" in params) body.append(prefix+"SourceDbiResourceId", (params["SourceDbiResourceId"] ?? '').toString());
+    if ("MaxAllocatedStorage" in params) body.append(prefix+"MaxAllocatedStorage", (params["MaxAllocatedStorage"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreDBInstanceToPointInTime",
@@ -4186,6 +4188,7 @@ export interface RestoreDBInstanceFromS3Message {
   ProcessorFeatures?: ProcessorFeature[] | null;
   UseDefaultProcessorFeatures?: boolean | null;
   DeletionProtection?: boolean | null;
+  MaxAllocatedStorage?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4221,6 +4224,7 @@ export interface RestoreDBInstanceToPointInTimeMessage {
   DBParameterGroupName?: string | null;
   DeletionProtection?: boolean | null;
   SourceDbiResourceId?: string | null;
+  MaxAllocatedStorage?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4961,7 +4965,7 @@ export interface StopDBInstanceResult {
   DBInstance?: DBInstance | null;
 }
 
-// refs: 27 - tags: input, named, interface, output
+// refs: 59 - tags: input, named, interface, output
 export interface Tag {
   Key?: string | null;
   Value?: string | null;
@@ -5343,6 +5347,7 @@ export interface DBClusterSnapshot {
   DBClusterSnapshotArn?: string | null;
   SourceDBClusterSnapshotArn?: string | null;
   IAMDatabaseAuthenticationEnabled?: boolean | null;
+  TagList: Tag[];
 }
 function DBClusterSnapshot_Parse(node: XmlNode): DBClusterSnapshot {
   return {
@@ -5357,6 +5362,7 @@ function DBClusterSnapshot_Parse(node: XmlNode): DBClusterSnapshot {
     PercentProgress: node.first("PercentProgress", false, x => parseInt(x.content ?? '0')),
     StorageEncrypted: node.first("StorageEncrypted", false, x => x.content === 'true'),
     IAMDatabaseAuthenticationEnabled: node.first("IAMDatabaseAuthenticationEnabled", false, x => x.content === 'true'),
+    TagList: node.getList("TagList", "Tag").map(Tag_Parse),
   };
 }
 
@@ -5403,6 +5409,7 @@ export interface DBSnapshot {
   IAMDatabaseAuthenticationEnabled?: boolean | null;
   ProcessorFeatures: ProcessorFeature[];
   DbiResourceId?: string | null;
+  TagList: Tag[];
 }
 function DBSnapshot_Parse(node: XmlNode): DBSnapshot {
   return {
@@ -5418,6 +5425,7 @@ function DBSnapshot_Parse(node: XmlNode): DBSnapshot {
     Encrypted: node.first("Encrypted", false, x => x.content === 'true'),
     IAMDatabaseAuthenticationEnabled: node.first("IAMDatabaseAuthenticationEnabled", false, x => x.content === 'true'),
     ProcessorFeatures: node.getList("ProcessorFeatures", "ProcessorFeature").map(ProcessorFeature_Parse),
+    TagList: node.getList("TagList", "Tag").map(Tag_Parse),
   };
 }
 
@@ -5575,6 +5583,7 @@ export interface DBCluster {
   CopyTagsToSnapshot?: boolean | null;
   CrossAccountClone?: boolean | null;
   DomainMemberships: DomainMembership[];
+  TagList: Tag[];
   GlobalWriteForwardingStatus?: WriteForwardingStatus | null;
   GlobalWriteForwardingRequested?: boolean | null;
 }
@@ -5612,6 +5621,7 @@ function DBCluster_Parse(node: XmlNode): DBCluster {
     CopyTagsToSnapshot: node.first("CopyTagsToSnapshot", false, x => x.content === 'true'),
     CrossAccountClone: node.first("CrossAccountClone", false, x => x.content === 'true'),
     DomainMemberships: node.getList("DomainMemberships", "DomainMembership").map(DomainMembership_Parse),
+    TagList: node.getList("TagList", "Tag").map(Tag_Parse),
     GlobalWriteForwardingStatus: node.first("GlobalWriteForwardingStatus", false, x => (x.content ?? '') as WriteForwardingStatus),
     GlobalWriteForwardingRequested: node.first("GlobalWriteForwardingRequested", false, x => x.content === 'true'),
   };
@@ -5771,6 +5781,7 @@ export interface DBInstance {
   AssociatedRoles: DBInstanceRole[];
   ListenerEndpoint?: Endpoint | null;
   MaxAllocatedStorage?: number | null;
+  TagList: Tag[];
 }
 function DBInstance_Parse(node: XmlNode): DBInstance {
   return {
@@ -5811,6 +5822,7 @@ function DBInstance_Parse(node: XmlNode): DBInstance {
     AssociatedRoles: node.getList("AssociatedRoles", "DBInstanceRole").map(DBInstanceRole_Parse),
     ListenerEndpoint: node.first("ListenerEndpoint", false, Endpoint_Parse),
     MaxAllocatedStorage: node.first("MaxAllocatedStorage", false, x => parseInt(x.content ?? '0')),
+    TagList: node.getList("TagList", "Tag").map(Tag_Parse),
   };
 }
 

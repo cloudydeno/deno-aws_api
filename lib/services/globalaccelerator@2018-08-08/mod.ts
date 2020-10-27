@@ -74,6 +74,7 @@ export default class GlobalAccelerator {
     const body: JSONObject = {...params,
     EndpointConfigurations: params["EndpointConfigurations"]?.map(x => fromEndpointConfiguration(x)),
     IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
+    PortOverrides: params["PortOverrides"]?.map(x => fromPortOverride(x)),
   };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -401,6 +402,7 @@ export default class GlobalAccelerator {
   ): Promise<UpdateEndpointGroupResponse> {
     const body: JSONObject = {...params,
     EndpointConfigurations: params["EndpointConfigurations"]?.map(x => fromEndpointConfiguration(x)),
+    PortOverrides: params["PortOverrides"]?.map(x => fromPortOverride(x)),
   };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -478,6 +480,7 @@ export interface CreateEndpointGroupRequest {
   HealthCheckIntervalSeconds?: number | null;
   ThresholdCount?: number | null;
   IdempotencyToken: string;
+  PortOverrides?: PortOverride[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -604,6 +607,7 @@ export interface UpdateEndpointGroupRequest {
   HealthCheckPath?: string | null;
   HealthCheckIntervalSeconds?: number | null;
   ThresholdCount?: number | null;
+  PortOverrides?: PortOverride[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -787,6 +791,26 @@ function toHealthCheckProtocol(root: JSONValue): HealthCheckProtocol | null {
     || root == "HTTP"
     || root == "HTTPS"
   ) ? root : null;
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface PortOverride {
+  ListenerPort?: number | null;
+  EndpointPort?: number | null;
+}
+function fromPortOverride(input?: PortOverride | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+  }
+}
+function toPortOverride(root: JSONValue): PortOverride {
+  return prt.readObj({
+    required: {},
+    optional: {
+      "ListenerPort": "n",
+      "EndpointPort": "n",
+    },
+  }, root);
 }
 
 // refs: 6 - tags: input, named, interface, output
@@ -975,6 +999,7 @@ export interface EndpointGroup {
   HealthCheckPath?: string | null;
   HealthCheckIntervalSeconds?: number | null;
   ThresholdCount?: number | null;
+  PortOverrides?: PortOverride[] | null;
 }
 function toEndpointGroup(root: JSONValue): EndpointGroup {
   return prt.readObj({
@@ -989,6 +1014,7 @@ function toEndpointGroup(root: JSONValue): EndpointGroup {
       "HealthCheckPath": "s",
       "HealthCheckIntervalSeconds": "n",
       "ThresholdCount": "n",
+      "PortOverrides": [toPortOverride],
     },
   }, root);
 }

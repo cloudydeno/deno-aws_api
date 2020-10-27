@@ -2,7 +2,7 @@
 
 [//]: # (Generated Content Barrier)
 
-All API definitions are current as of aws-sdk-js `v2.768.0`.
+All API definitions are current as of aws-sdk-js `v2.780.0`.
 
 | Module | Protocol | Generates | File size | Typechecks | Approx check time |
 | --- | --- | :---: | ---: | :---: | ---: |
@@ -29,8 +29,8 @@ All API definitions are current as of aws-sdk-js `v2.768.0`.
 | `backup@2018-11-15.ts` | rest-json |  |  |  |  |
 | `batch@2016-08-10.ts` | rest-json |  |  |  |  |
 | `braket@2019-09-01.ts` | rest-json |  |  |  |  |
-| `budgets@2016-10-20.ts` | json | ✔️ | 21 KiB | ✔️ | 0.8 sec |
-| `ce@2017-10-25.ts` | json | ✔️ | 77 KiB | ✔️ | 1.4 sec |
+| `budgets@2016-10-20.ts` | json | ✔️ | 35 KiB | ✔️ | 1.9 sec |
+| `ce@2017-10-25.ts` | json | ✔️ | 79 KiB | ✔️ | 2.8 sec |
 | `chime@2018-05-01.ts` | rest-json |  |  |  |  |
 | `cloud9@2017-09-23.ts` | json | ✔️ | 14 KiB | ✔️ | 0.7 sec |
 | `clouddirectory@2016-05-10.ts` | rest-json |  |  |  |  |
@@ -64,7 +64,7 @@ All API definitions are current as of aws-sdk-js `v2.768.0`.
 | `cognito-sync@2014-06-30.ts` | rest-json |  |  |  |  |
 | `comprehend@2017-11-27.ts` | json | ✔️ | 88 KiB | ✔️ | 1.2 sec |
 | `comprehendmedical@2018-10-30.ts` | json | ✔️ | 34 KiB | ✔️ | 0.9 sec |
-| `compute-optimizer@2019-11-01.ts` | json | ✔️ | 23 KiB | ✔️ | 0.8 sec |
+| `compute-optimizer@2019-11-01.ts` | json | ✔️ | 24 KiB | ✔️ | 1.8 sec |
 | `config@2014-11-12.ts` | json | ✔️ | 128 KiB | ✔️ | 1.4 sec |
 | `connect@2017-08-08.ts` | rest-json |  |  |  |  |
 | `connectparticipant@2018-09-07.ts` | rest-json |  |  |  |  |
@@ -84,14 +84,14 @@ All API definitions are current as of aws-sdk-js `v2.768.0`.
 | `dynamodb@2011-12-05.ts` | json | ✔️ | 23 KiB | ✔️ | 0.8 sec |
 | `dynamodb@2012-08-10.ts` | json | ✔️ | 100 KiB | ✔️ | 1.3 sec |
 | `ebs@2019-11-02.ts` | rest-json |  |  |  |  |
-| `ec2@2016-11-15.ts` | ec2 | ✔️ | 1024 KiB | ✔️ | 4.2 sec |
+| `ec2@2016-11-15.ts` | ec2 | ✔️ | 1025 KiB | ✔️ | 10.7 sec |
 | `ec2-instance-connect@2018-04-02.ts` | json | ✔️ | 2 KiB | ✔️ | 0.7 sec |
 | `ecr@2015-09-21.ts` | json | ✔️ | 41 KiB | 🚫 |  |
 | `ecs@2014-11-13.ts` | json | ✔️ | 108 KiB | 🚫 |  |
 | `eks@2017-11-01.ts` | rest-json |  |  |  |  |
 | `elastic-inference@2017-07-25.ts` | rest-json |  |  |  |  |
-| `elasticache@2015-02-02.ts` | query | ✔️ | 132 KiB | ✔️ | 1.4 sec |
-| `elasticbeanstalk@2010-12-01.ts` | query | ✔️ | 99 KiB | ✔️ | 1.8 sec |
+| `elasticache@2015-02-02.ts` | query | ✔️ | 146 KiB | ✔️ | 3.9 sec |
+| `elasticbeanstalk@2010-12-01.ts` | query | ✔️ | 99 KiB | ✔️ | 3.4 sec |
 | `elasticfilesystem@2015-02-01.ts` | rest-json |  |  |  |  |
 | `elasticloadbalancing@2012-06-01.ts` | query | ✔️ | 48 KiB | ✔️ | 1.0 sec |
 | `elasticloadbalancingv2@2015-12-01.ts` | query | ✔️ | 76 KiB | ✔️ | 1.6 sec |
@@ -100,8 +100,8 @@ All API definitions are current as of aws-sdk-js `v2.768.0`.
 | `email@2010-12-01.ts` | query | ✔️ | 97 KiB | ✔️ | 1.5 sec |
 | `entitlement.marketplace@2017-01-11.ts` | json | ✔️ | 3 KiB | ✔️ | 0.7 sec |
 | `es@2015-01-01.ts` | rest-json |  |  |  |  |
-| `eventbridge@2015-10-07.ts` | json | ✔️ | 37 KiB | ✔️ | 0.9 sec |
-| `events@2015-10-07.ts` | json | ✔️ | 37 KiB | ✔️ | 1.4 sec |
+| `eventbridge@2015-10-07.ts` | json | ✔️ | 38 KiB | ✔️ | 2.1 sec |
+| `events@2015-10-07.ts` | json | ✔️ | 38 KiB | ✔️ | 2.1 sec |
 | `firehose@2015-08-04.ts` | json | ✔️ | 62 KiB | ✔️ | 1.0 sec |
 | `fms@2018-01-01.ts` | json | ✔️ | 34 KiB | 🚫 |  |
 | `forecast@2018-06-26.ts` | json | ✔️ | 44 KiB | ✔️ | 1.2 sec |
@@ -110,8 +110,8 @@ All API definitions are current as of aws-sdk-js `v2.768.0`.
 | `fsx@2018-03-01.ts` | json | ✔️ | 36 KiB | ✔️ | 1.1 sec |
 | `gamelift@2015-10-01.ts` | json | ✔️ | 120 KiB | ✔️ | 1.6 sec |
 | `glacier@2012-06-01.ts` | rest-json |  |  |  |  |
-| `globalaccelerator@2018-08-08.ts` | json | ✔️ | 27 KiB | ✔️ | 1.5 sec |
-| `glue@2017-03-31.ts` | json | ✔️ | 193 KiB | 🚫 |  |
+| `globalaccelerator@2018-08-08.ts` | json | ✔️ | 27 KiB | ✔️ | 1.9 sec |
+| `glue@2017-03-31.ts` | json | ✔️ | 196 KiB | 🚫 |  |
 | `greengrass@2017-06-07.ts` | rest-json |  |  |  |  |
 | `groundstation@2019-05-23.ts` | rest-json |  |  |  |  |
 | `guardduty@2017-11-28.ts` | rest-json |  |  |  |  |
@@ -135,7 +135,7 @@ All API definitions are current as of aws-sdk-js `v2.768.0`.
 | `iotthingsgraph@2018-09-06.ts` | json | ✔️ | 40 KiB | ✔️ | 1.4 sec |
 | `ivs@2020-07-14.ts` | rest-json |  |  |  |  |
 | `kafka@2018-11-14.ts` | rest-json |  |  |  |  |
-| `kendra@2019-02-03.ts` | json | ✔️ | 67 KiB | ✔️ | 1.1 sec |
+| `kendra@2019-02-03.ts` | json | ✔️ | 78 KiB | ✔️ | 2.7 sec |
 | `kinesis@2013-12-02.ts` | json | ✔️ | 28 KiB | ✔️ | 0.8 sec |
 | `kinesis-video-archived-media@2017-09-30.ts` | rest-json |  |  |  |  |
 | `kinesis-video-media@2017-09-30.ts` | rest-json |  |  |  |  |
@@ -172,7 +172,7 @@ All API definitions are current as of aws-sdk-js `v2.768.0`.
 | `monitoring@2010-08-01.ts` | query | ✔️ | 59 KiB | ✔️ | 1.1 sec |
 | `mq@2017-11-27.ts` | rest-json |  |  |  |  |
 | `mturk-requester@2017-01-17.ts` | json | ✔️ | 46 KiB | ✔️ | 1.3 sec |
-| `neptune@2014-10-31.ts` | query | ✔️ | 129 KiB | ✔️ | 1.8 sec |
+| `neptune@2014-10-31.ts` | query | ✔️ | 138 KiB | ✔️ | 3.9 sec |
 | `networkmanager@2019-07-05.ts` | rest-json |  |  |  |  |
 | `opsworks@2013-02-18.ts` | json | ✔️ | 96 KiB | 🚫 |  |
 | `opsworkscm@2016-11-01.ts` | json | ✔️ | 23 KiB | ✔️ | 0.8 sec |
@@ -194,11 +194,11 @@ All API definitions are current as of aws-sdk-js `v2.768.0`.
 | `rds@2013-02-12.ts` | query | ✔️ | 100 KiB | ✔️ | 1.4 sec |
 | `rds@2013-09-09.ts` | query | ✔️ | 108 KiB | ✔️ | 1.3 sec |
 | `rds@2014-09-01.ts` | query | ✔️ | 111 KiB | ✔️ | 1.8 sec |
-| `rds@2014-10-31.ts` | query | ✔️ | 301 KiB | ✔️ | 2.2 sec |
+| `rds@2014-10-31.ts` | query | ✔️ | 302 KiB | ✔️ | 5.7 sec |
 | `rds-data@2018-08-01.ts` | rest-json |  |  |  |  |
 | `redshift@2012-12-01.ts` | query | ✔️ | 176 KiB | ✔️ | 1.8 sec |
 | `redshift-data@2019-12-20.ts` | json | ✔️ | 12 KiB | 🚫 |  |
-| `rekognition@2016-06-27.ts` | json | ✔️ | 81 KiB | 🚫 |  |
+| `rekognition@2016-06-27.ts` | json | ✔️ | 86 KiB | 🚫 |  |
 | `resource-groups@2017-11-27.ts` | rest-json |  |  |  |  |
 | `resourcegroupstaggingapi@2017-01-26.ts` | json | ✔️ | 10 KiB | ✔️ | 0.9 sec |
 | `robomaker@2018-06-29.ts` | rest-json |  |  |  |  |
@@ -210,7 +210,7 @@ All API definitions are current as of aws-sdk-js `v2.768.0`.
 | `s3@2006-03-01.ts` | rest-xml |  |  |  |  |
 | `s3control@2018-08-20.ts` | rest-xml |  |  |  |  |
 | `s3outposts@2017-07-25.ts` | rest-json |  |  |  |  |
-| `sagemaker@2017-07-24.ts` | json | ✔️ | 328 KiB | ✔️ | 2.1 sec |
+| `sagemaker@2017-07-24.ts` | json | ✔️ | 347 KiB | ✔️ | 6.5 sec |
 | `sagemaker-a2i-runtime@2019-11-07.ts` | rest-json |  |  |  |  |
 | `savingsplans@2019-06-28.ts` | rest-json |  |  |  |  |
 | `schemas@2019-12-02.ts` | rest-json |  |  |  |  |
@@ -219,17 +219,17 @@ All API definitions are current as of aws-sdk-js `v2.768.0`.
 | `securityhub@2018-10-26.ts` | rest-json |  |  |  |  |
 | `serverlessrepo@2017-09-08.ts` | rest-json |  |  |  |  |
 | `service-quotas@2019-06-24.ts` | json | ✔️ | 20 KiB | ✔️ | 0.8 sec |
-| `servicecatalog@2015-12-10.ts` | json | ✔️ | 109 KiB | 🚫 |  |
+| `servicecatalog@2015-12-10.ts` | json | ✔️ | 110 KiB | 🚫 |  |
 | `servicediscovery@2017-03-14.ts` | json | ✔️ | 31 KiB | 🚫 |  |
 | `sesv2@2019-09-27.ts` | rest-json |  |  |  |  |
 | `shield@2016-06-02.ts` | json | ✔️ | 24 KiB | ✔️ | 0.8 sec |
 | `signer@2017-08-25.ts` | rest-json |  |  |  |  |
 | `sms@2016-10-24.ts` | json | ✔️ | 55 KiB | ✔️ | 1.0 sec |
 | `sms-voice@2018-09-05.ts` | rest-json |  |  |  |  |
-| `snowball@2016-06-30.ts` | json | ✔️ | 30 KiB | ✔️ | 0.9 sec |
-| `sns@2010-03-31.ts` | query | ✔️ | 31 KiB | ✔️ | 0.9 sec |
+| `snowball@2016-06-30.ts` | json | ✔️ | 33 KiB | ✔️ | 2.0 sec |
+| `sns@2010-03-31.ts` | query | ✔️ | 32 KiB | ✔️ | 2.1 sec |
 | `sqs@2012-11-05.ts` | query | ✔️ | 28 KiB | ✔️ | 0.9 sec |
-| `ssm@2014-11-06.ts` | json | ✔️ | 223 KiB | ✔️ | 1.9 sec |
+| `ssm@2014-11-06.ts` | json | ✔️ | 224 KiB | ✔️ | 4.8 sec |
 | `sso@2019-06-10.ts` | rest-json |  |  |  |  |
 | `sso-admin@2020-07-20.ts` | json | ✔️ | 29 KiB | ✔️ | 0.9 sec |
 | `sso-oidc@2019-06-10.ts` | rest-json |  |  |  |  |
@@ -244,14 +244,14 @@ All API definitions are current as of aws-sdk-js `v2.768.0`.
 | `timestream-query@2018-11-01.ts` | json | ✔️ | 6 KiB | ✔️ | 0.9 sec |
 | `timestream-write@2018-11-01.ts` | json | ✔️ | 14 KiB | ✔️ | 0.7 sec |
 | `transcribe@2017-10-26.ts` | json | ✔️ | 40 KiB | ✔️ | 0.9 sec |
-| `transfer@2018-11-05.ts` | json | ✔️ | 22 KiB | ✔️ | 0.8 sec |
+| `transfer@2018-11-05.ts` | json | ✔️ | 22 KiB | ✔️ | 1.8 sec |
 | `translate@2017-07-01.ts` | json | ✔️ | 15 KiB | ✔️ | 0.8 sec |
 | `waf@2015-08-24.ts` | json | ✔️ | 90 KiB | ✔️ | 1.3 sec |
 | `waf-regional@2016-11-28.ts` | json | ✔️ | 93 KiB | ✔️ | 2.1 sec |
 | `wafv2@2019-07-29.ts` | json | ✔️ | 71 KiB | ✔️ | 1.4 sec |
 | `workdocs@2016-05-01.ts` | rest-json |  |  |  |  |
 | `worklink@2018-09-25.ts` | rest-json |  |  |  |  |
-| `workmail@2017-10-01.ts` | json | ✔️ | 44 KiB | ✔️ | 1.0 sec |
+| `workmail@2017-10-01.ts` | json | ✔️ | 46 KiB | ✔️ | 2.4 sec |
 | `workmailmessageflow@2019-05-01.ts` | rest-json |  |  |  |  |
 | `workspaces@2015-04-08.ts` | json | ✔️ | 63 KiB | ✔️ | 1.0 sec |
 | `xray@2016-04-12.ts` | rest-json |  |  |  |  |

@@ -116,6 +116,23 @@ export default class Snowball {
     }, await resp.json());
   }
 
+  async createReturnShippingLabel(
+    {abortSignal, ...params}: RequestConfig & CreateReturnShippingLabelRequest,
+  ): Promise<CreateReturnShippingLabelResult> {
+    const body: JSONObject = {...params,
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateReturnShippingLabel",
+    });
+    return prt.readObj({
+      required: {},
+      optional: {
+        "Status": toShippingLabelStatus,
+      },
+    }, await resp.json());
+  }
+
   async describeAddress(
     {abortSignal, ...params}: RequestConfig & DescribeAddressRequest,
   ): Promise<DescribeAddressResult> {
@@ -182,6 +199,24 @@ export default class Snowball {
       optional: {
         "JobMetadata": toJobMetadata,
         "SubJobMetadata": [toJobMetadata],
+      },
+    }, await resp.json());
+  }
+
+  async describeReturnShippingLabel(
+    {abortSignal, ...params}: RequestConfig & DescribeReturnShippingLabelRequest = {},
+  ): Promise<DescribeReturnShippingLabelResult> {
+    const body: JSONObject = {...params,
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeReturnShippingLabel",
+    });
+    return prt.readObj({
+      required: {},
+      optional: {
+        "Status": toShippingLabelStatus,
+        "ExpirationDate": "d",
       },
     }, await resp.json());
   }
@@ -361,6 +396,21 @@ export default class Snowball {
     }, await resp.json());
   }
 
+  async updateJobShipmentState(
+    {abortSignal, ...params}: RequestConfig & UpdateJobShipmentStateRequest,
+  ): Promise<UpdateJobShipmentStateResult> {
+    const body: JSONObject = {...params,
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateJobShipmentState",
+    });
+    return prt.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
 }
 
 // refs: 1 - tags: named, input
@@ -412,6 +462,12 @@ export interface CreateJobRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateReturnShippingLabelRequest {
+  JobId: string;
+  ShippingOption?: ShippingOption | null;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeAddressRequest {
   AddressId: string;
 }
@@ -430,6 +486,11 @@ export interface DescribeClusterRequest {
 // refs: 1 - tags: named, input
 export interface DescribeJobRequest {
   JobId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeReturnShippingLabelRequest {
+  JobId?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -501,6 +562,12 @@ export interface UpdateJobRequest {
   ForwardingAddressId?: string | null;
 }
 
+// refs: 1 - tags: named, input
+export interface UpdateJobShipmentStateRequest {
+  JobId: string;
+  ShipmentState: ShipmentState;
+}
+
 // refs: 1 - tags: named, output
 export interface CancelClusterResult {
 }
@@ -525,6 +592,11 @@ export interface CreateJobResult {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateReturnShippingLabelResult {
+  Status?: ShippingLabelStatus | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeAddressResult {
   Address?: Address | null;
 }
@@ -544,6 +616,12 @@ export interface DescribeClusterResult {
 export interface DescribeJobResult {
   JobMetadata?: JobMetadata | null;
   SubJobMetadata?: JobMetadata[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeReturnShippingLabelResult {
+  Status?: ShippingLabelStatus | null;
+  ExpirationDate?: Date | number | null;
 }
 
 // refs: 1 - tags: named, output
@@ -597,6 +675,10 @@ export interface UpdateClusterResult {
 
 // refs: 1 - tags: named, output
 export interface UpdateJobResult {
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateJobShipmentStateResult {
 }
 
 // refs: 3 - tags: input, named, interface, output
@@ -805,7 +887,7 @@ function toSnowballType(root: JSONValue): SnowballType | null {
   ) ? root : null;
 }
 
-// refs: 7 - tags: input, named, enum, output
+// refs: 8 - tags: input, named, enum, output
 export type ShippingOption =
 | "SECOND_DAY"
 | "NEXT_DAY"
@@ -993,6 +1075,29 @@ function toWirelessConnection(root: JSONValue): WirelessConnection {
       "IsWifiEnabled": "b",
     },
   }, root);
+}
+
+// refs: 1 - tags: input, named, enum
+export type ShipmentState =
+| "RECEIVED"
+| "RETURNED"
+;
+
+
+// refs: 2 - tags: output, named, enum
+export type ShippingLabelStatus =
+| "InProgress"
+| "TimedOut"
+| "Succeeded"
+| "Failed"
+;
+function toShippingLabelStatus(root: JSONValue): ShippingLabelStatus | null {
+  return ( false
+    || root == "InProgress"
+    || root == "TimedOut"
+    || root == "Succeeded"
+    || root == "Failed"
+  ) ? root : null;
 }
 
 // refs: 1 - tags: output, named, interface

@@ -162,6 +162,9 @@ export default class ElastiCache {
     if ("SnapshotRetentionLimit" in params) body.append(prefix+"SnapshotRetentionLimit", (params["SnapshotRetentionLimit"] ?? '').toString());
     if ("SnapshotWindow" in params) body.append(prefix+"SnapshotWindow", (params["SnapshotWindow"] ?? '').toString());
     if ("AuthToken" in params) body.append(prefix+"AuthToken", (params["AuthToken"] ?? '').toString());
+    if ("OutpostMode" in params) body.append(prefix+"OutpostMode", (params["OutpostMode"] ?? '').toString());
+    if ("PreferredOutpostArn" in params) body.append(prefix+"PreferredOutpostArn", (params["PreferredOutpostArn"] ?? '').toString());
+    if (params["PreferredOutpostArns"]) prt.appendList(body, prefix+"PreferredOutpostArns", params["PreferredOutpostArns"], {"entryPrefix":".PreferredOutpostArn."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCacheCluster",
@@ -279,6 +282,7 @@ export default class ElastiCache {
     if ("TransitEncryptionEnabled" in params) body.append(prefix+"TransitEncryptionEnabled", (params["TransitEncryptionEnabled"] ?? '').toString());
     if ("AtRestEncryptionEnabled" in params) body.append(prefix+"AtRestEncryptionEnabled", (params["AtRestEncryptionEnabled"] ?? '').toString());
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
+    if (params["UserGroupIds"]) prt.appendList(body, prefix+"UserGroupIds", params["UserGroupIds"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateReplicationGroup",
@@ -306,6 +310,41 @@ export default class ElastiCache {
     return {
       Snapshot: xml.first("Snapshot", false, Snapshot_Parse),
     };
+  }
+
+  async createUser(
+    {abortSignal, ...params}: RequestConfig & CreateUserMessage,
+  ): Promise<User> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"UserId", (params["UserId"] ?? '').toString());
+    body.append(prefix+"UserName", (params["UserName"] ?? '').toString());
+    body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
+    if (params["Passwords"]) prt.appendList(body, prefix+"Passwords", params["Passwords"], {"entryPrefix":".member."})
+    body.append(prefix+"AccessString", (params["AccessString"] ?? '').toString());
+    if ("NoPasswordRequired" in params) body.append(prefix+"NoPasswordRequired", (params["NoPasswordRequired"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateUser",
+    });
+    const xml = readXmlResult(await resp.text(), "CreateUserResult");
+    return User_Parse(xml);
+  }
+
+  async createUserGroup(
+    {abortSignal, ...params}: RequestConfig & CreateUserGroupMessage,
+  ): Promise<UserGroup> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"UserGroupId", (params["UserGroupId"] ?? '').toString());
+    body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
+    if (params["UserIds"]) prt.appendList(body, prefix+"UserIds", params["UserIds"], {"entryPrefix":".member."})
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateUserGroup",
+    });
+    const xml = readXmlResult(await resp.text(), "CreateUserGroupResult");
+    return UserGroup_Parse(xml);
   }
 
   async decreaseNodeGroupsInGlobalReplicationGroup(
@@ -450,6 +489,34 @@ export default class ElastiCache {
     return {
       Snapshot: xml.first("Snapshot", false, Snapshot_Parse),
     };
+  }
+
+  async deleteUser(
+    {abortSignal, ...params}: RequestConfig & DeleteUserMessage,
+  ): Promise<User> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"UserId", (params["UserId"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteUser",
+    });
+    const xml = readXmlResult(await resp.text(), "DeleteUserResult");
+    return User_Parse(xml);
+  }
+
+  async deleteUserGroup(
+    {abortSignal, ...params}: RequestConfig & DeleteUserGroupMessage,
+  ): Promise<UserGroup> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"UserGroupId", (params["UserGroupId"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteUserGroup",
+    });
+    const xml = readXmlResult(await resp.text(), "DeleteUserGroupResult");
+    return UserGroup_Parse(xml);
   }
 
   async describeCacheClusters(
@@ -797,6 +864,50 @@ export default class ElastiCache {
     };
   }
 
+  async describeUserGroups(
+    {abortSignal, ...params}: RequestConfig & DescribeUserGroupsMessage = {},
+  ): Promise<DescribeUserGroupsResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("UserGroupId" in params) body.append(prefix+"UserGroupId", (params["UserGroupId"] ?? '').toString());
+    if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
+    if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeUserGroups",
+    });
+    const xml = readXmlResult(await resp.text(), "DescribeUserGroupsResult");
+    return {
+      ...xml.strings({
+        optional: {"Marker":true},
+      }),
+      UserGroups: xml.getList("UserGroups", "member").map(UserGroup_Parse),
+    };
+  }
+
+  async describeUsers(
+    {abortSignal, ...params}: RequestConfig & DescribeUsersMessage = {},
+  ): Promise<DescribeUsersResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("Engine" in params) body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
+    if ("UserId" in params) body.append(prefix+"UserId", (params["UserId"] ?? '').toString());
+    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".member."})
+    if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
+    if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeUsers",
+    });
+    const xml = readXmlResult(await resp.text(), "DescribeUsersResult");
+    return {
+      ...xml.strings({
+        optional: {"Marker":true},
+      }),
+      Users: xml.getList("Users", "member").map(User_Parse),
+    };
+  }
+
   async disassociateGlobalReplicationGroup(
     {abortSignal, ...params}: RequestConfig & DisassociateGlobalReplicationGroupMessage,
   ): Promise<DisassociateGlobalReplicationGroupResult> {
@@ -1021,6 +1132,9 @@ export default class ElastiCache {
     if ("CacheNodeType" in params) body.append(prefix+"CacheNodeType", (params["CacheNodeType"] ?? '').toString());
     if ("AuthToken" in params) body.append(prefix+"AuthToken", (params["AuthToken"] ?? '').toString());
     if ("AuthTokenUpdateStrategy" in params) body.append(prefix+"AuthTokenUpdateStrategy", (params["AuthTokenUpdateStrategy"] ?? '').toString());
+    if (params["UserGroupIdsToAdd"]) prt.appendList(body, prefix+"UserGroupIdsToAdd", params["UserGroupIdsToAdd"], {"entryPrefix":".member."})
+    if (params["UserGroupIdsToRemove"]) prt.appendList(body, prefix+"UserGroupIdsToRemove", params["UserGroupIdsToRemove"], {"entryPrefix":".member."})
+    if ("RemoveUserGroups" in params) body.append(prefix+"RemoveUserGroups", (params["RemoveUserGroups"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyReplicationGroup",
@@ -1050,6 +1164,40 @@ export default class ElastiCache {
     return {
       ReplicationGroup: xml.first("ReplicationGroup", false, ReplicationGroup_Parse),
     };
+  }
+
+  async modifyUser(
+    {abortSignal, ...params}: RequestConfig & ModifyUserMessage,
+  ): Promise<User> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"UserId", (params["UserId"] ?? '').toString());
+    if ("AccessString" in params) body.append(prefix+"AccessString", (params["AccessString"] ?? '').toString());
+    if ("AppendAccessString" in params) body.append(prefix+"AppendAccessString", (params["AppendAccessString"] ?? '').toString());
+    if (params["Passwords"]) prt.appendList(body, prefix+"Passwords", params["Passwords"], {"entryPrefix":".member."})
+    if ("NoPasswordRequired" in params) body.append(prefix+"NoPasswordRequired", (params["NoPasswordRequired"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ModifyUser",
+    });
+    const xml = readXmlResult(await resp.text(), "ModifyUserResult");
+    return User_Parse(xml);
+  }
+
+  async modifyUserGroup(
+    {abortSignal, ...params}: RequestConfig & ModifyUserGroupMessage,
+  ): Promise<UserGroup> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"UserGroupId", (params["UserGroupId"] ?? '').toString());
+    if (params["UserIdsToAdd"]) prt.appendList(body, prefix+"UserIdsToAdd", params["UserIdsToAdd"], {"entryPrefix":".member."})
+    if (params["UserIdsToRemove"]) prt.appendList(body, prefix+"UserIdsToRemove", params["UserIdsToRemove"], {"entryPrefix":".member."})
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ModifyUserGroup",
+    });
+    const xml = readXmlResult(await resp.text(), "ModifyUserGroupResult");
+    return UserGroup_Parse(xml);
   }
 
   async purchaseReservedCacheNodesOffering(
@@ -1351,6 +1499,9 @@ export interface CreateCacheClusterMessage {
   SnapshotRetentionLimit?: number | null;
   SnapshotWindow?: string | null;
   AuthToken?: string | null;
+  OutpostMode?: OutpostMode | null;
+  PreferredOutpostArn?: string | null;
+  PreferredOutpostArns?: string[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1413,6 +1564,7 @@ export interface CreateReplicationGroupMessage {
   TransitEncryptionEnabled?: boolean | null;
   AtRestEncryptionEnabled?: boolean | null;
   KmsKeyId?: string | null;
+  UserGroupIds?: string[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1421,6 +1573,23 @@ export interface CreateSnapshotMessage {
   CacheClusterId?: string | null;
   SnapshotName: string;
   KmsKeyId?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateUserMessage {
+  UserId: string;
+  UserName: string;
+  Engine: string;
+  Passwords?: string[] | null;
+  AccessString: string;
+  NoPasswordRequired?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateUserGroupMessage {
+  UserGroupId: string;
+  Engine: string;
+  UserIds?: string[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1478,6 +1647,16 @@ export interface DeleteReplicationGroupMessage {
 // refs: 1 - tags: named, input
 export interface DeleteSnapshotMessage {
   SnapshotName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteUserMessage {
+  UserId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteUserGroupMessage {
+  UserGroupId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -1618,6 +1797,22 @@ export interface DescribeUpdateActionsMessage {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeUserGroupsMessage {
+  UserGroupId?: string | null;
+  MaxRecords?: number | null;
+  Marker?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeUsersMessage {
+  Engine?: string | null;
+  UserId?: string | null;
+  Filters?: Filter[] | null;
+  MaxRecords?: number | null;
+  Marker?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface DisassociateGlobalReplicationGroupMessage {
   GlobalReplicationGroupId: string;
   ReplicationGroupId: string;
@@ -1727,6 +1922,9 @@ export interface ModifyReplicationGroupMessage {
   CacheNodeType?: string | null;
   AuthToken?: string | null;
   AuthTokenUpdateStrategy?: AuthTokenUpdateStrategyType | null;
+  UserGroupIdsToAdd?: string[] | null;
+  UserGroupIdsToRemove?: string[] | null;
+  RemoveUserGroups?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1737,6 +1935,22 @@ export interface ModifyReplicationGroupShardConfigurationMessage {
   ReshardingConfiguration?: ReshardingConfiguration[] | null;
   NodeGroupsToRemove?: string[] | null;
   NodeGroupsToRetain?: string[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ModifyUserMessage {
+  UserId: string;
+  AccessString?: string | null;
+  AppendAccessString?: string | null;
+  Passwords?: string[] | null;
+  NoPasswordRequired?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ModifyUserGroupMessage {
+  UserGroupId: string;
+  UserIdsToAdd?: string[] | null;
+  UserIdsToRemove?: string[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1849,6 +2063,48 @@ export interface CreateReplicationGroupResult {
 // refs: 1 - tags: named, output
 export interface CreateSnapshotResult {
   Snapshot?: Snapshot | null;
+}
+
+// refs: 2 - tags: named, output, interface
+export interface User {
+  UserId?: string | null;
+  UserName?: string | null;
+  Status?: string | null;
+  Engine?: string | null;
+  AccessString?: string | null;
+  UserGroupIds: string[];
+  Authentication?: Authentication | null;
+  ARN?: string | null;
+}
+function User_Parse(node: XmlNode): User {
+  return {
+    ...node.strings({
+      optional: {"UserId":true,"UserName":true,"Status":true,"Engine":true,"AccessString":true,"ARN":true},
+    }),
+    UserGroupIds: node.getList("UserGroupIds", "member").map(x => x.content ?? ''),
+    Authentication: node.first("Authentication", false, Authentication_Parse),
+  };
+}
+
+// refs: 2 - tags: named, output, interface
+export interface UserGroup {
+  UserGroupId?: string | null;
+  Status?: string | null;
+  Engine?: string | null;
+  UserIds: string[];
+  PendingChanges?: UserGroupPendingChanges | null;
+  ReplicationGroups: string[];
+  ARN?: string | null;
+}
+function UserGroup_Parse(node: XmlNode): UserGroup {
+  return {
+    ...node.strings({
+      optional: {"UserGroupId":true,"Status":true,"Engine":true,"ARN":true},
+    }),
+    UserIds: node.getList("UserIds", "member").map(x => x.content ?? ''),
+    PendingChanges: node.first("PendingChanges", false, UserGroupPendingChanges_Parse),
+    ReplicationGroups: node.getList("ReplicationGroups", "member").map(x => x.content ?? ''),
+  };
 }
 
 // refs: 1 - tags: named, output
@@ -1972,6 +2228,18 @@ export interface UpdateActionsMessage {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeUserGroupsResult {
+  UserGroups: UserGroup[];
+  Marker?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeUsersResult {
+  Users: User[];
+  Marker?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DisassociateGlobalReplicationGroupResult {
   GlobalReplicationGroup?: GlobalReplicationGroup | null;
 }
@@ -2079,6 +2347,13 @@ export type AZMode =
 ;
 
 
+// refs: 1 - tags: input, named, enum
+export type OutpostMode =
+| "single-outpost"
+| "cross-outpost"
+;
+
+
 // refs: 5 - tags: input, named, interface, output
 export interface NodeGroupConfiguration {
   NodeGroupId?: string | null;
@@ -2086,6 +2361,8 @@ export interface NodeGroupConfiguration {
   ReplicaCount?: number | null;
   PrimaryAvailabilityZone?: string | null;
   ReplicaAvailabilityZones: string[];
+  PrimaryOutpostArn?: string | null;
+  ReplicaOutpostArns: string[];
 }
 function NodeGroupConfiguration_Serialize(body: URLSearchParams, prefix: string, params: NodeGroupConfiguration) {
     if ("NodeGroupId" in params) body.append(prefix+".NodeGroupId", (params["NodeGroupId"] ?? '').toString());
@@ -2093,14 +2370,17 @@ function NodeGroupConfiguration_Serialize(body: URLSearchParams, prefix: string,
     if ("ReplicaCount" in params) body.append(prefix+".ReplicaCount", (params["ReplicaCount"] ?? '').toString());
     if ("PrimaryAvailabilityZone" in params) body.append(prefix+".PrimaryAvailabilityZone", (params["PrimaryAvailabilityZone"] ?? '').toString());
     if (params["ReplicaAvailabilityZones"]) prt.appendList(body, prefix+".ReplicaAvailabilityZones", params["ReplicaAvailabilityZones"], {"entryPrefix":".AvailabilityZone."})
+    if ("PrimaryOutpostArn" in params) body.append(prefix+".PrimaryOutpostArn", (params["PrimaryOutpostArn"] ?? '').toString());
+    if (params["ReplicaOutpostArns"]) prt.appendList(body, prefix+".ReplicaOutpostArns", params["ReplicaOutpostArns"], {"entryPrefix":".OutpostArn."})
 }
 function NodeGroupConfiguration_Parse(node: XmlNode): NodeGroupConfiguration {
   return {
     ...node.strings({
-      optional: {"NodeGroupId":true,"Slots":true,"PrimaryAvailabilityZone":true},
+      optional: {"NodeGroupId":true,"Slots":true,"PrimaryAvailabilityZone":true,"PrimaryOutpostArn":true},
     }),
     ReplicaCount: node.first("ReplicaCount", false, x => parseInt(x.content ?? '0')),
     ReplicaAvailabilityZones: node.getList("ReplicaAvailabilityZones", "AvailabilityZone").map(x => x.content ?? ''),
+    ReplicaOutpostArns: node.getList("ReplicaOutpostArns", "OutpostArn").map(x => x.content ?? ''),
   };
 }
 
@@ -2109,11 +2389,13 @@ export interface ConfigureShard {
   NodeGroupId: string;
   NewReplicaCount: number;
   PreferredAvailabilityZones?: string[] | null;
+  PreferredOutpostArns?: string[] | null;
 }
 function ConfigureShard_Serialize(body: URLSearchParams, prefix: string, params: ConfigureShard) {
     body.append(prefix+".NodeGroupId", (params["NodeGroupId"] ?? '').toString());
     body.append(prefix+".NewReplicaCount", (params["NewReplicaCount"] ?? '').toString());
     if (params["PreferredAvailabilityZones"]) prt.appendList(body, prefix+".PreferredAvailabilityZones", params["PreferredAvailabilityZones"], {"entryPrefix":".PreferredAvailabilityZone."})
+    if (params["PreferredOutpostArns"]) prt.appendList(body, prefix+".PreferredOutpostArns", params["PreferredOutpostArns"], {"entryPrefix":".PreferredOutpostArn."})
 }
 
 // refs: 2 - tags: input, named, enum, output
@@ -2123,6 +2405,8 @@ export type SourceType =
 | "cache-security-group"
 | "cache-subnet-group"
 | "replication-group"
+| "user"
+| "user-group"
 ;
 
 
@@ -2162,6 +2446,16 @@ export type UpdateActionStatus =
 
 
 // refs: 1 - tags: input, named, interface
+export interface Filter {
+  Name: string;
+  Values: string[];
+}
+function Filter_Serialize(body: URLSearchParams, prefix: string, params: Filter) {
+    body.append(prefix+".Name", (params["Name"] ?? '').toString());
+    if (params["Values"]) prt.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
+}
+
+// refs: 1 - tags: input, named, interface
 export interface RegionalConfiguration {
   ReplicationGroupId: string;
   ReplicationGroupRegion: string;
@@ -2187,6 +2481,7 @@ function ReshardingConfiguration_Serialize(body: URLSearchParams, prefix: string
 export type AuthTokenUpdateStrategyType =
 | "SET"
 | "ROTATE"
+| "DELETE"
 ;
 
 
@@ -2290,8 +2585,10 @@ export interface ReplicationGroup {
   AuthTokenLastModifiedDate?: Date | number | null;
   TransitEncryptionEnabled?: boolean | null;
   AtRestEncryptionEnabled?: boolean | null;
+  MemberClustersOutpostArns: string[];
   KmsKeyId?: string | null;
   ARN?: string | null;
+  UserGroupIds: string[];
 }
 function ReplicationGroup_Parse(node: XmlNode): ReplicationGroup {
   return {
@@ -2311,6 +2608,8 @@ function ReplicationGroup_Parse(node: XmlNode): ReplicationGroup {
     AuthTokenLastModifiedDate: node.first("AuthTokenLastModifiedDate", false, x => parseTimestamp(x.content)),
     TransitEncryptionEnabled: node.first("TransitEncryptionEnabled", false, x => x.content === 'true'),
     AtRestEncryptionEnabled: node.first("AtRestEncryptionEnabled", false, x => x.content === 'true'),
+    MemberClustersOutpostArns: node.getList("MemberClustersOutpostArns", "ReplicationGroupOutpostArn").map(x => x.content ?? ''),
+    UserGroupIds: node.getList("UserGroupIds", "member").map(x => x.content ?? ''),
   };
 }
 
@@ -2331,6 +2630,7 @@ export interface ReplicationGroupPendingModifiedValues {
   AutomaticFailoverStatus?: PendingAutomaticFailoverStatus | null;
   Resharding?: ReshardingStatus | null;
   AuthTokenStatus?: AuthTokenUpdateStatus | null;
+  UserGroups?: UserGroupsUpdateStatus | null;
 }
 function ReplicationGroupPendingModifiedValues_Parse(node: XmlNode): ReplicationGroupPendingModifiedValues {
   return {
@@ -2340,6 +2640,7 @@ function ReplicationGroupPendingModifiedValues_Parse(node: XmlNode): Replication
     AutomaticFailoverStatus: node.first("AutomaticFailoverStatus", false, x => (x.content ?? '') as PendingAutomaticFailoverStatus),
     Resharding: node.first("Resharding", false, ReshardingStatus_Parse),
     AuthTokenStatus: node.first("AuthTokenStatus", false, x => (x.content ?? '') as AuthTokenUpdateStatus),
+    UserGroups: node.first("UserGroups", false, UserGroupsUpdateStatus_Parse),
   };
 }
 
@@ -2376,6 +2677,18 @@ export type AuthTokenUpdateStatus =
 | "ROTATING"
 ;
 
+
+// refs: 10 - tags: output, named, interface
+export interface UserGroupsUpdateStatus {
+  UserGroupIdsToAdd: string[];
+  UserGroupIdsToRemove: string[];
+}
+function UserGroupsUpdateStatus_Parse(node: XmlNode): UserGroupsUpdateStatus {
+  return {
+    UserGroupIdsToAdd: node.getList("UserGroupIdsToAdd", "member").map(x => x.content ?? ''),
+    UserGroupIdsToRemove: node.getList("UserGroupIdsToRemove", "member").map(x => x.content ?? ''),
+  };
+}
 
 // refs: 10 - tags: output, named, interface
 export interface NodeGroup {
@@ -2417,12 +2730,13 @@ export interface NodeGroupMember {
   CacheNodeId?: string | null;
   ReadEndpoint?: Endpoint | null;
   PreferredAvailabilityZone?: string | null;
+  PreferredOutpostArn?: string | null;
   CurrentRole?: string | null;
 }
 function NodeGroupMember_Parse(node: XmlNode): NodeGroupMember {
   return {
     ...node.strings({
-      optional: {"CacheClusterId":true,"CacheNodeId":true,"PreferredAvailabilityZone":true,"CurrentRole":true},
+      optional: {"CacheClusterId":true,"CacheNodeId":true,"PreferredAvailabilityZone":true,"PreferredOutpostArn":true,"CurrentRole":true},
     }),
     ReadEndpoint: node.first("ReadEndpoint", false, Endpoint_Parse),
   };
@@ -2457,6 +2771,7 @@ export interface Snapshot {
   EngineVersion?: string | null;
   NumCacheNodes?: number | null;
   PreferredAvailabilityZone?: string | null;
+  PreferredOutpostArn?: string | null;
   CacheClusterCreateTime?: Date | number | null;
   PreferredMaintenanceWindow?: string | null;
   TopicArn?: string | null;
@@ -2476,7 +2791,7 @@ export interface Snapshot {
 function Snapshot_Parse(node: XmlNode): Snapshot {
   return {
     ...node.strings({
-      optional: {"SnapshotName":true,"ReplicationGroupId":true,"ReplicationGroupDescription":true,"CacheClusterId":true,"SnapshotStatus":true,"SnapshotSource":true,"CacheNodeType":true,"Engine":true,"EngineVersion":true,"PreferredAvailabilityZone":true,"PreferredMaintenanceWindow":true,"TopicArn":true,"CacheParameterGroupName":true,"CacheSubnetGroupName":true,"VpcId":true,"SnapshotWindow":true,"KmsKeyId":true,"ARN":true},
+      optional: {"SnapshotName":true,"ReplicationGroupId":true,"ReplicationGroupDescription":true,"CacheClusterId":true,"SnapshotStatus":true,"SnapshotSource":true,"CacheNodeType":true,"Engine":true,"EngineVersion":true,"PreferredAvailabilityZone":true,"PreferredOutpostArn":true,"PreferredMaintenanceWindow":true,"TopicArn":true,"CacheParameterGroupName":true,"CacheSubnetGroupName":true,"VpcId":true,"SnapshotWindow":true,"KmsKeyId":true,"ARN":true},
     }),
     NumCacheNodes: node.first("NumCacheNodes", false, x => parseInt(x.content ?? '0')),
     CacheClusterCreateTime: node.first("CacheClusterCreateTime", false, x => parseTimestamp(x.content)),
@@ -2521,6 +2836,7 @@ export interface CacheCluster {
   CacheClusterStatus?: string | null;
   NumCacheNodes?: number | null;
   PreferredAvailabilityZone?: string | null;
+  PreferredOutpostArn?: string | null;
   CacheClusterCreateTime?: Date | number | null;
   PreferredMaintenanceWindow?: string | null;
   PendingModifiedValues?: PendingModifiedValues | null;
@@ -2543,7 +2859,7 @@ export interface CacheCluster {
 function CacheCluster_Parse(node: XmlNode): CacheCluster {
   return {
     ...node.strings({
-      optional: {"CacheClusterId":true,"ClientDownloadLandingPage":true,"CacheNodeType":true,"Engine":true,"EngineVersion":true,"CacheClusterStatus":true,"PreferredAvailabilityZone":true,"PreferredMaintenanceWindow":true,"CacheSubnetGroupName":true,"ReplicationGroupId":true,"SnapshotWindow":true,"ARN":true},
+      optional: {"CacheClusterId":true,"ClientDownloadLandingPage":true,"CacheNodeType":true,"Engine":true,"EngineVersion":true,"CacheClusterStatus":true,"PreferredAvailabilityZone":true,"PreferredOutpostArn":true,"PreferredMaintenanceWindow":true,"CacheSubnetGroupName":true,"ReplicationGroupId":true,"SnapshotWindow":true,"ARN":true},
     }),
     ConfigurationEndpoint: node.first("ConfigurationEndpoint", false, Endpoint_Parse),
     NumCacheNodes: node.first("NumCacheNodes", false, x => parseInt(x.content ?? '0')),
@@ -2628,11 +2944,12 @@ export interface CacheNode {
   ParameterGroupStatus?: string | null;
   SourceCacheNodeId?: string | null;
   CustomerAvailabilityZone?: string | null;
+  CustomerOutpostArn?: string | null;
 }
 function CacheNode_Parse(node: XmlNode): CacheNode {
   return {
     ...node.strings({
-      optional: {"CacheNodeId":true,"CacheNodeStatus":true,"ParameterGroupStatus":true,"SourceCacheNodeId":true,"CustomerAvailabilityZone":true},
+      optional: {"CacheNodeId":true,"CacheNodeStatus":true,"ParameterGroupStatus":true,"SourceCacheNodeId":true,"CustomerAvailabilityZone":true,"CustomerOutpostArn":true},
     }),
     CacheNodeCreateTime: node.first("CacheNodeCreateTime", false, x => parseTimestamp(x.content)),
     Endpoint: node.first("Endpoint", false, Endpoint_Parse),
@@ -2688,6 +3005,7 @@ function CacheSubnetGroup_Parse(node: XmlNode): CacheSubnetGroup {
 export interface Subnet {
   SubnetIdentifier?: string | null;
   SubnetAvailabilityZone?: AvailabilityZone | null;
+  SubnetOutpost?: SubnetOutpost | null;
 }
 function Subnet_Parse(node: XmlNode): Subnet {
   return {
@@ -2695,6 +3013,7 @@ function Subnet_Parse(node: XmlNode): Subnet {
       optional: {"SubnetIdentifier":true},
     }),
     SubnetAvailabilityZone: node.first("SubnetAvailabilityZone", false, AvailabilityZone_Parse),
+    SubnetOutpost: node.first("SubnetOutpost", false, SubnetOutpost_Parse),
   };
 }
 
@@ -2705,6 +3024,16 @@ export interface AvailabilityZone {
 function AvailabilityZone_Parse(node: XmlNode): AvailabilityZone {
   return node.strings({
     optional: {"Name":true},
+  });
+}
+
+// refs: 3 - tags: output, named, interface
+export interface SubnetOutpost {
+  SubnetOutpostArn?: string | null;
+}
+function SubnetOutpost_Parse(node: XmlNode): SubnetOutpost {
+  return node.strings({
+    optional: {"SubnetOutpostArn":true},
   });
 }
 
@@ -2764,6 +3093,37 @@ function GlobalNodeGroup_Parse(node: XmlNode): GlobalNodeGroup {
   return node.strings({
     optional: {"GlobalNodeGroupId":true,"Slots":true},
   });
+}
+
+// refs: 2 - tags: output, named, interface
+export interface Authentication {
+  Type?: AuthenticationType | null;
+  PasswordCount?: number | null;
+}
+function Authentication_Parse(node: XmlNode): Authentication {
+  return {
+    Type: node.first("Type", false, x => (x.content ?? '') as AuthenticationType),
+    PasswordCount: node.first("PasswordCount", false, x => parseInt(x.content ?? '0')),
+  };
+}
+
+// refs: 2 - tags: output, named, enum
+export type AuthenticationType =
+| "password"
+| "no-password"
+;
+
+
+// refs: 2 - tags: output, named, interface
+export interface UserGroupPendingChanges {
+  UserIdsToRemove: string[];
+  UserIdsToAdd: string[];
+}
+function UserGroupPendingChanges_Parse(node: XmlNode): UserGroupPendingChanges {
+  return {
+    UserIdsToRemove: node.getList("UserIdsToRemove", "member").map(x => x.content ?? ''),
+    UserIdsToAdd: node.getList("UserIdsToAdd", "member").map(x => x.content ?? ''),
+  };
 }
 
 // refs: 1 - tags: output, named, interface

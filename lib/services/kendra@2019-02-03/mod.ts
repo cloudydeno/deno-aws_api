@@ -75,6 +75,7 @@ export default class Kendra {
     const body: JSONObject = {...params,
     Configuration: fromDataSourceConfiguration(params["Configuration"]),
     Tags: params["Tags"]?.map(x => fromTag(x)),
+    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
   };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -94,6 +95,7 @@ export default class Kendra {
     const body: JSONObject = {...params,
     S3Path: fromS3Path(params["S3Path"]),
     Tags: params["Tags"]?.map(x => fromTag(x)),
+    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
   };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -475,11 +477,12 @@ export interface CreateDataSourceRequest {
   Name: string;
   IndexId: string;
   Type: DataSourceType;
-  Configuration: DataSourceConfiguration;
+  Configuration?: DataSourceConfiguration | null;
   Description?: string | null;
   Schedule?: string | null;
-  RoleArn: string;
+  RoleArn?: string | null;
   Tags?: Tag[] | null;
+  ClientToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -491,6 +494,7 @@ export interface CreateFaqRequest {
   RoleArn: string;
   Tags?: Tag[] | null;
   FileFormat?: FaqFileFormat | null;
+  ClientToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -903,6 +907,8 @@ export type DataSourceType =
 | "SALESFORCE"
 | "ONEDRIVE"
 | "SERVICENOW"
+| "CUSTOM"
+| "CONFLUENCE"
 ;
 
 function toDataSourceType(root: JSONValue): DataSourceType | null {
@@ -913,6 +919,8 @@ function toDataSourceType(root: JSONValue): DataSourceType | null {
     || root == "SALESFORCE"
     || root == "ONEDRIVE"
     || root == "SERVICENOW"
+    || root == "CUSTOM"
+    || root == "CONFLUENCE"
   ) ? root : null;
 }
 
@@ -924,6 +932,7 @@ export interface DataSourceConfiguration {
   SalesforceConfiguration?: SalesforceConfiguration | null;
   OneDriveConfiguration?: OneDriveConfiguration | null;
   ServiceNowConfiguration?: ServiceNowConfiguration | null;
+  ConfluenceConfiguration?: ConfluenceConfiguration | null;
 }
 function fromDataSourceConfiguration(input?: DataSourceConfiguration | null): JSONValue {
   if (!input) return input;
@@ -934,6 +943,7 @@ function fromDataSourceConfiguration(input?: DataSourceConfiguration | null): JS
     SalesforceConfiguration: fromSalesforceConfiguration(input["SalesforceConfiguration"]),
     OneDriveConfiguration: fromOneDriveConfiguration(input["OneDriveConfiguration"]),
     ServiceNowConfiguration: fromServiceNowConfiguration(input["ServiceNowConfiguration"]),
+    ConfluenceConfiguration: fromConfluenceConfiguration(input["ConfluenceConfiguration"]),
   }
 }
 function toDataSourceConfiguration(root: JSONValue): DataSourceConfiguration {
@@ -946,6 +956,7 @@ function toDataSourceConfiguration(root: JSONValue): DataSourceConfiguration {
       "SalesforceConfiguration": toSalesforceConfiguration,
       "OneDriveConfiguration": toOneDriveConfiguration,
       "ServiceNowConfiguration": toServiceNowConfiguration,
+      "ConfluenceConfiguration": toConfluenceConfiguration,
     },
   }, root);
 }
@@ -954,6 +965,7 @@ function toDataSourceConfiguration(root: JSONValue): DataSourceConfiguration {
 export interface S3DataSourceConfiguration {
   BucketName: string;
   InclusionPrefixes?: string[] | null;
+  InclusionPatterns?: string[] | null;
   ExclusionPatterns?: string[] | null;
   DocumentsMetadataConfiguration?: DocumentsMetadataConfiguration | null;
   AccessControlListConfiguration?: AccessControlListConfiguration | null;
@@ -972,6 +984,7 @@ function toS3DataSourceConfiguration(root: JSONValue): S3DataSourceConfiguration
     },
     optional: {
       "InclusionPrefixes": ["s"],
+      "InclusionPatterns": ["s"],
       "ExclusionPatterns": ["s"],
       "DocumentsMetadataConfiguration": toDocumentsMetadataConfiguration,
       "AccessControlListConfiguration": toAccessControlListConfiguration,
@@ -1065,7 +1078,7 @@ function toSharePointVersion(root: JSONValue): SharePointVersion | null {
   ) ? root : null;
 }
 
-// refs: 6 - tags: input, named, interface, output
+// refs: 9 - tags: input, named, interface, output
 export interface DataSourceVpcConfiguration {
   SubnetIds: string[];
   SecurityGroupIds: string[];
@@ -1672,6 +1685,341 @@ function toServiceNowServiceCatalogConfiguration(root: JSONValue): ServiceNowSer
       "FieldMappings": [toDataSourceToIndexFieldMapping],
     },
   }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface ConfluenceConfiguration {
+  ServerUrl: string;
+  SecretArn: string;
+  Version: ConfluenceVersion;
+  SpaceConfiguration?: ConfluenceSpaceConfiguration | null;
+  PageConfiguration?: ConfluencePageConfiguration | null;
+  BlogConfiguration?: ConfluenceBlogConfiguration | null;
+  AttachmentConfiguration?: ConfluenceAttachmentConfiguration | null;
+  VpcConfiguration?: DataSourceVpcConfiguration | null;
+  InclusionPatterns?: string[] | null;
+  ExclusionPatterns?: string[] | null;
+}
+function fromConfluenceConfiguration(input?: ConfluenceConfiguration | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+    SpaceConfiguration: fromConfluenceSpaceConfiguration(input["SpaceConfiguration"]),
+    PageConfiguration: fromConfluencePageConfiguration(input["PageConfiguration"]),
+    BlogConfiguration: fromConfluenceBlogConfiguration(input["BlogConfiguration"]),
+    AttachmentConfiguration: fromConfluenceAttachmentConfiguration(input["AttachmentConfiguration"]),
+    VpcConfiguration: fromDataSourceVpcConfiguration(input["VpcConfiguration"]),
+  }
+}
+function toConfluenceConfiguration(root: JSONValue): ConfluenceConfiguration {
+  return prt.readObj({
+    required: {
+      "ServerUrl": "s",
+      "SecretArn": "s",
+      "Version": toConfluenceVersion,
+    },
+    optional: {
+      "SpaceConfiguration": toConfluenceSpaceConfiguration,
+      "PageConfiguration": toConfluencePageConfiguration,
+      "BlogConfiguration": toConfluenceBlogConfiguration,
+      "AttachmentConfiguration": toConfluenceAttachmentConfiguration,
+      "VpcConfiguration": toDataSourceVpcConfiguration,
+      "InclusionPatterns": ["s"],
+      "ExclusionPatterns": ["s"],
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type ConfluenceVersion =
+| "SERVER"
+;
+
+function toConfluenceVersion(root: JSONValue): ConfluenceVersion | null {
+  return ( false
+    || root == "SERVER"
+  ) ? root : null;
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface ConfluenceSpaceConfiguration {
+  CrawlPersonalSpaces?: boolean | null;
+  CrawlArchivedSpaces?: boolean | null;
+  IncludeSpaces?: string[] | null;
+  ExcludeSpaces?: string[] | null;
+  SpaceFieldMappings?: ConfluenceSpaceToIndexFieldMapping[] | null;
+}
+function fromConfluenceSpaceConfiguration(input?: ConfluenceSpaceConfiguration | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+    SpaceFieldMappings: input["SpaceFieldMappings"]?.map(x => fromConfluenceSpaceToIndexFieldMapping(x)),
+  }
+}
+function toConfluenceSpaceConfiguration(root: JSONValue): ConfluenceSpaceConfiguration {
+  return prt.readObj({
+    required: {},
+    optional: {
+      "CrawlPersonalSpaces": "b",
+      "CrawlArchivedSpaces": "b",
+      "IncludeSpaces": ["s"],
+      "ExcludeSpaces": ["s"],
+      "SpaceFieldMappings": [toConfluenceSpaceToIndexFieldMapping],
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface ConfluenceSpaceToIndexFieldMapping {
+  DataSourceFieldName?: ConfluenceSpaceFieldName | null;
+  DateFieldFormat?: string | null;
+  IndexFieldName?: string | null;
+}
+function fromConfluenceSpaceToIndexFieldMapping(input?: ConfluenceSpaceToIndexFieldMapping | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+  }
+}
+function toConfluenceSpaceToIndexFieldMapping(root: JSONValue): ConfluenceSpaceToIndexFieldMapping {
+  return prt.readObj({
+    required: {},
+    optional: {
+      "DataSourceFieldName": toConfluenceSpaceFieldName,
+      "DateFieldFormat": "s",
+      "IndexFieldName": "s",
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type ConfluenceSpaceFieldName =
+| "DISPLAY_URL"
+| "ITEM_TYPE"
+| "SPACE_KEY"
+| "URL"
+;
+
+function toConfluenceSpaceFieldName(root: JSONValue): ConfluenceSpaceFieldName | null {
+  return ( false
+    || root == "DISPLAY_URL"
+    || root == "ITEM_TYPE"
+    || root == "SPACE_KEY"
+    || root == "URL"
+  ) ? root : null;
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface ConfluencePageConfiguration {
+  PageFieldMappings?: ConfluencePageToIndexFieldMapping[] | null;
+}
+function fromConfluencePageConfiguration(input?: ConfluencePageConfiguration | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+    PageFieldMappings: input["PageFieldMappings"]?.map(x => fromConfluencePageToIndexFieldMapping(x)),
+  }
+}
+function toConfluencePageConfiguration(root: JSONValue): ConfluencePageConfiguration {
+  return prt.readObj({
+    required: {},
+    optional: {
+      "PageFieldMappings": [toConfluencePageToIndexFieldMapping],
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface ConfluencePageToIndexFieldMapping {
+  DataSourceFieldName?: ConfluencePageFieldName | null;
+  DateFieldFormat?: string | null;
+  IndexFieldName?: string | null;
+}
+function fromConfluencePageToIndexFieldMapping(input?: ConfluencePageToIndexFieldMapping | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+  }
+}
+function toConfluencePageToIndexFieldMapping(root: JSONValue): ConfluencePageToIndexFieldMapping {
+  return prt.readObj({
+    required: {},
+    optional: {
+      "DataSourceFieldName": toConfluencePageFieldName,
+      "DateFieldFormat": "s",
+      "IndexFieldName": "s",
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type ConfluencePageFieldName =
+| "AUTHOR"
+| "CONTENT_STATUS"
+| "CREATED_DATE"
+| "DISPLAY_URL"
+| "ITEM_TYPE"
+| "LABELS"
+| "MODIFIED_DATE"
+| "PARENT_ID"
+| "SPACE_KEY"
+| "SPACE_NAME"
+| "URL"
+| "VERSION"
+;
+
+function toConfluencePageFieldName(root: JSONValue): ConfluencePageFieldName | null {
+  return ( false
+    || root == "AUTHOR"
+    || root == "CONTENT_STATUS"
+    || root == "CREATED_DATE"
+    || root == "DISPLAY_URL"
+    || root == "ITEM_TYPE"
+    || root == "LABELS"
+    || root == "MODIFIED_DATE"
+    || root == "PARENT_ID"
+    || root == "SPACE_KEY"
+    || root == "SPACE_NAME"
+    || root == "URL"
+    || root == "VERSION"
+  ) ? root : null;
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface ConfluenceBlogConfiguration {
+  BlogFieldMappings?: ConfluenceBlogToIndexFieldMapping[] | null;
+}
+function fromConfluenceBlogConfiguration(input?: ConfluenceBlogConfiguration | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+    BlogFieldMappings: input["BlogFieldMappings"]?.map(x => fromConfluenceBlogToIndexFieldMapping(x)),
+  }
+}
+function toConfluenceBlogConfiguration(root: JSONValue): ConfluenceBlogConfiguration {
+  return prt.readObj({
+    required: {},
+    optional: {
+      "BlogFieldMappings": [toConfluenceBlogToIndexFieldMapping],
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface ConfluenceBlogToIndexFieldMapping {
+  DataSourceFieldName?: ConfluenceBlogFieldName | null;
+  DateFieldFormat?: string | null;
+  IndexFieldName?: string | null;
+}
+function fromConfluenceBlogToIndexFieldMapping(input?: ConfluenceBlogToIndexFieldMapping | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+  }
+}
+function toConfluenceBlogToIndexFieldMapping(root: JSONValue): ConfluenceBlogToIndexFieldMapping {
+  return prt.readObj({
+    required: {},
+    optional: {
+      "DataSourceFieldName": toConfluenceBlogFieldName,
+      "DateFieldFormat": "s",
+      "IndexFieldName": "s",
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type ConfluenceBlogFieldName =
+| "AUTHOR"
+| "DISPLAY_URL"
+| "ITEM_TYPE"
+| "LABELS"
+| "PUBLISH_DATE"
+| "SPACE_KEY"
+| "SPACE_NAME"
+| "URL"
+| "VERSION"
+;
+
+function toConfluenceBlogFieldName(root: JSONValue): ConfluenceBlogFieldName | null {
+  return ( false
+    || root == "AUTHOR"
+    || root == "DISPLAY_URL"
+    || root == "ITEM_TYPE"
+    || root == "LABELS"
+    || root == "PUBLISH_DATE"
+    || root == "SPACE_KEY"
+    || root == "SPACE_NAME"
+    || root == "URL"
+    || root == "VERSION"
+  ) ? root : null;
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface ConfluenceAttachmentConfiguration {
+  CrawlAttachments?: boolean | null;
+  AttachmentFieldMappings?: ConfluenceAttachmentToIndexFieldMapping[] | null;
+}
+function fromConfluenceAttachmentConfiguration(input?: ConfluenceAttachmentConfiguration | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+    AttachmentFieldMappings: input["AttachmentFieldMappings"]?.map(x => fromConfluenceAttachmentToIndexFieldMapping(x)),
+  }
+}
+function toConfluenceAttachmentConfiguration(root: JSONValue): ConfluenceAttachmentConfiguration {
+  return prt.readObj({
+    required: {},
+    optional: {
+      "CrawlAttachments": "b",
+      "AttachmentFieldMappings": [toConfluenceAttachmentToIndexFieldMapping],
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface ConfluenceAttachmentToIndexFieldMapping {
+  DataSourceFieldName?: ConfluenceAttachmentFieldName | null;
+  DateFieldFormat?: string | null;
+  IndexFieldName?: string | null;
+}
+function fromConfluenceAttachmentToIndexFieldMapping(input?: ConfluenceAttachmentToIndexFieldMapping | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+  }
+}
+function toConfluenceAttachmentToIndexFieldMapping(root: JSONValue): ConfluenceAttachmentToIndexFieldMapping {
+  return prt.readObj({
+    required: {},
+    optional: {
+      "DataSourceFieldName": toConfluenceAttachmentFieldName,
+      "DateFieldFormat": "s",
+      "IndexFieldName": "s",
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type ConfluenceAttachmentFieldName =
+| "AUTHOR"
+| "CONTENT_TYPE"
+| "CREATED_DATE"
+| "DISPLAY_URL"
+| "FILE_SIZE"
+| "ITEM_TYPE"
+| "PARENT_ID"
+| "SPACE_KEY"
+| "SPACE_NAME"
+| "URL"
+| "VERSION"
+;
+
+function toConfluenceAttachmentFieldName(root: JSONValue): ConfluenceAttachmentFieldName | null {
+  return ( false
+    || root == "AUTHOR"
+    || root == "CONTENT_TYPE"
+    || root == "CREATED_DATE"
+    || root == "DISPLAY_URL"
+    || root == "FILE_SIZE"
+    || root == "ITEM_TYPE"
+    || root == "PARENT_ID"
+    || root == "SPACE_KEY"
+    || root == "SPACE_NAME"
+    || root == "URL"
+    || root == "VERSION"
+  ) ? root : null;
 }
 
 // refs: 5 - tags: input, named, interface, output

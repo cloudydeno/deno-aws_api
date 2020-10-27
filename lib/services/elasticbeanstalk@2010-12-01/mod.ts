@@ -1823,8 +1823,11 @@ export type ActionType =
 
 // refs: 2 - tags: output, named, enum
 export type EnvironmentStatus =
+| "Aborting"
 | "Launching"
 | "Updating"
+| "LinkingFrom"
+| "LinkingTo"
 | "Ready"
 | "Terminating"
 | "Terminated"

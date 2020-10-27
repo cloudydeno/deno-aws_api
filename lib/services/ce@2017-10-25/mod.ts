@@ -1196,7 +1196,7 @@ function toDimension(root: JSONValue): Dimension | null {
   ) ? root : null;
 }
 
-// refs: 33 - tags: input, named, enum, output
+// refs: 49 - tags: input, named, enum, output
 export type MatchOption =
 | "EQUALS"
 | "STARTS_WITH"
@@ -1243,6 +1243,7 @@ function toTagValues(root: JSONValue): TagValues {
 export interface CostCategoryValues {
   Key?: string | null;
   Values?: string[] | null;
+  MatchOptions?: MatchOption[] | null;
 }
 function fromCostCategoryValues(input?: CostCategoryValues | null): JSONValue {
   if (!input) return input;
@@ -1255,6 +1256,7 @@ function toCostCategoryValues(root: JSONValue): CostCategoryValues {
     optional: {
       "Key": "s",
       "Values": ["s"],
+      "MatchOptions": [toMatchOption],
     },
   }, root);
 }
@@ -1684,6 +1686,7 @@ export interface CostCategory {
   Name: string;
   RuleVersion: CostCategoryRuleVersion;
   Rules: CostCategoryRule[];
+  ProcessingStatus?: CostCategoryProcessingStatus[] | null;
 }
 function toCostCategory(root: JSONValue): CostCategory {
   return prt.readObj({
@@ -1696,8 +1699,46 @@ function toCostCategory(root: JSONValue): CostCategory {
     },
     optional: {
       "EffectiveEnd": "s",
+      "ProcessingStatus": [toCostCategoryProcessingStatus],
     },
   }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface CostCategoryProcessingStatus {
+  Component?: CostCategoryStatusComponent | null;
+  Status?: CostCategoryStatus | null;
+}
+function toCostCategoryProcessingStatus(root: JSONValue): CostCategoryProcessingStatus {
+  return prt.readObj({
+    required: {},
+    optional: {
+      "Component": toCostCategoryStatusComponent,
+      "Status": toCostCategoryStatus,
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, enum
+export type CostCategoryStatusComponent =
+| "COST_EXPLORER"
+;
+function toCostCategoryStatusComponent(root: JSONValue): CostCategoryStatusComponent | null {
+  return ( false
+    || root == "COST_EXPLORER"
+  ) ? root : null;
+}
+
+// refs: 2 - tags: output, named, enum
+export type CostCategoryStatus =
+| "PROCESSING"
+| "APPLIED"
+;
+function toCostCategoryStatus(root: JSONValue): CostCategoryStatus | null {
+  return ( false
+    || root == "PROCESSING"
+    || root == "APPLIED"
+  ) ? root : null;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -2436,6 +2477,7 @@ export interface EC2ResourceUtilization {
   MaxCpuUtilizationPercentage?: string | null;
   MaxMemoryUtilizationPercentage?: string | null;
   MaxStorageUtilizationPercentage?: string | null;
+  EBSResourceUtilization?: EBSResourceUtilization | null;
 }
 function toEC2ResourceUtilization(root: JSONValue): EC2ResourceUtilization {
   return prt.readObj({
@@ -2444,6 +2486,26 @@ function toEC2ResourceUtilization(root: JSONValue): EC2ResourceUtilization {
       "MaxCpuUtilizationPercentage": "s",
       "MaxMemoryUtilizationPercentage": "s",
       "MaxStorageUtilizationPercentage": "s",
+      "EBSResourceUtilization": toEBSResourceUtilization,
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface EBSResourceUtilization {
+  EbsReadOpsPerSecond?: string | null;
+  EbsWriteOpsPerSecond?: string | null;
+  EbsReadBytesPerSecond?: string | null;
+  EbsWriteBytesPerSecond?: string | null;
+}
+function toEBSResourceUtilization(root: JSONValue): EBSResourceUtilization {
+  return prt.readObj({
+    required: {},
+    optional: {
+      "EbsReadOpsPerSecond": "s",
+      "EbsWriteOpsPerSecond": "s",
+      "EbsReadBytesPerSecond": "s",
+      "EbsWriteBytesPerSecond": "s",
     },
   }, root);
 }
@@ -2797,6 +2859,8 @@ export interface CostCategoryReference {
   EffectiveStart?: string | null;
   EffectiveEnd?: string | null;
   NumberOfRules?: number | null;
+  ProcessingStatus?: CostCategoryProcessingStatus[] | null;
+  Values?: string[] | null;
 }
 function toCostCategoryReference(root: JSONValue): CostCategoryReference {
   return prt.readObj({
@@ -2807,6 +2871,8 @@ function toCostCategoryReference(root: JSONValue): CostCategoryReference {
       "EffectiveStart": "s",
       "EffectiveEnd": "s",
       "NumberOfRules": "n",
+      "ProcessingStatus": [toCostCategoryProcessingStatus],
+      "Values": ["s"],
     },
   }, root);
 }

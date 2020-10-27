@@ -34,6 +34,7 @@ export default class Neptune {
     const prefix = '';
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     body.append(prefix+"RoleArn", (params["RoleArn"] ?? '').toString());
+    if ("FeatureName" in params) body.append(prefix+"FeatureName", (params["FeatureName"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddRoleToDBCluster",
@@ -183,6 +184,31 @@ export default class Neptune {
     const xml = readXmlResult(await resp.text(), "CreateDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
+    };
+  }
+
+  async createDBClusterEndpoint(
+    {abortSignal, ...params}: RequestConfig & CreateDBClusterEndpointMessage,
+  ): Promise<CreateDBClusterEndpointOutput> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
+    body.append(prefix+"DBClusterEndpointIdentifier", (params["DBClusterEndpointIdentifier"] ?? '').toString());
+    body.append(prefix+"EndpointType", (params["EndpointType"] ?? '').toString());
+    if (params["StaticMembers"]) prt.appendList(body, prefix+"StaticMembers", params["StaticMembers"], {"entryPrefix":".member."})
+    if (params["ExcludedMembers"]) prt.appendList(body, prefix+"ExcludedMembers", params["ExcludedMembers"], {"entryPrefix":".member."})
+    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateDBClusterEndpoint",
+    });
+    const xml = readXmlResult(await resp.text(), "CreateDBClusterEndpointResult");
+    return {
+      ...xml.strings({
+        optional: {"DBClusterEndpointIdentifier":true,"DBClusterIdentifier":true,"DBClusterEndpointResourceIdentifier":true,"Endpoint":true,"Status":true,"EndpointType":true,"CustomEndpointType":true,"DBClusterEndpointArn":true},
+      }),
+      StaticMembers: xml.getList("StaticMembers", "member").map(x => x.content ?? ''),
+      ExcludedMembers: xml.getList("ExcludedMembers", "member").map(x => x.content ?? ''),
     };
   }
 
@@ -359,6 +385,26 @@ export default class Neptune {
     };
   }
 
+  async deleteDBClusterEndpoint(
+    {abortSignal, ...params}: RequestConfig & DeleteDBClusterEndpointMessage,
+  ): Promise<DeleteDBClusterEndpointOutput> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"DBClusterEndpointIdentifier", (params["DBClusterEndpointIdentifier"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteDBClusterEndpoint",
+    });
+    const xml = readXmlResult(await resp.text(), "DeleteDBClusterEndpointResult");
+    return {
+      ...xml.strings({
+        optional: {"DBClusterEndpointIdentifier":true,"DBClusterIdentifier":true,"DBClusterEndpointResourceIdentifier":true,"Endpoint":true,"Status":true,"EndpointType":true,"CustomEndpointType":true,"DBClusterEndpointArn":true},
+      }),
+      StaticMembers: xml.getList("StaticMembers", "member").map(x => x.content ?? ''),
+      ExcludedMembers: xml.getList("ExcludedMembers", "member").map(x => x.content ?? ''),
+    };
+  }
+
   async deleteDBClusterParameterGroup(
     {abortSignal, ...params}: RequestConfig & DeleteDBClusterParameterGroupMessage,
   ): Promise<void> {
@@ -442,6 +488,29 @@ export default class Neptune {
     const xml = readXmlResult(await resp.text(), "DeleteEventSubscriptionResult");
     return {
       EventSubscription: xml.first("EventSubscription", false, EventSubscription_Parse),
+    };
+  }
+
+  async describeDBClusterEndpoints(
+    {abortSignal, ...params}: RequestConfig & DescribeDBClusterEndpointsMessage = {},
+  ): Promise<DBClusterEndpointMessage> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("DBClusterIdentifier" in params) body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
+    if ("DBClusterEndpointIdentifier" in params) body.append(prefix+"DBClusterEndpointIdentifier", (params["DBClusterEndpointIdentifier"] ?? '').toString());
+    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
+    if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeDBClusterEndpoints",
+    });
+    const xml = readXmlResult(await resp.text(), "DescribeDBClusterEndpointsResult");
+    return {
+      ...xml.strings({
+        optional: {"Marker":true},
+      }),
+      DBClusterEndpoints: xml.getList("DBClusterEndpoints", "DBClusterEndpointList").map(DBClusterEndpoint_Parse),
     };
   }
 
@@ -902,6 +971,29 @@ export default class Neptune {
     };
   }
 
+  async modifyDBClusterEndpoint(
+    {abortSignal, ...params}: RequestConfig & ModifyDBClusterEndpointMessage,
+  ): Promise<ModifyDBClusterEndpointOutput> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"DBClusterEndpointIdentifier", (params["DBClusterEndpointIdentifier"] ?? '').toString());
+    if ("EndpointType" in params) body.append(prefix+"EndpointType", (params["EndpointType"] ?? '').toString());
+    if (params["StaticMembers"]) prt.appendList(body, prefix+"StaticMembers", params["StaticMembers"], {"entryPrefix":".member."})
+    if (params["ExcludedMembers"]) prt.appendList(body, prefix+"ExcludedMembers", params["ExcludedMembers"], {"entryPrefix":".member."})
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ModifyDBClusterEndpoint",
+    });
+    const xml = readXmlResult(await resp.text(), "ModifyDBClusterEndpointResult");
+    return {
+      ...xml.strings({
+        optional: {"DBClusterEndpointIdentifier":true,"DBClusterIdentifier":true,"DBClusterEndpointResourceIdentifier":true,"Endpoint":true,"Status":true,"EndpointType":true,"CustomEndpointType":true,"DBClusterEndpointArn":true},
+      }),
+      StaticMembers: xml.getList("StaticMembers", "member").map(x => x.content ?? ''),
+      ExcludedMembers: xml.getList("ExcludedMembers", "member").map(x => x.content ?? ''),
+    };
+  }
+
   async modifyDBClusterParameterGroup(
     {abortSignal, ...params}: RequestConfig & ModifyDBClusterParameterGroupMessage,
   ): Promise<DBClusterParameterGroupNameMessage> {
@@ -1085,6 +1177,7 @@ export default class Neptune {
     const prefix = '';
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     body.append(prefix+"RoleArn", (params["RoleArn"] ?? '').toString());
+    if ("FeatureName" in params) body.append(prefix+"FeatureName", (params["FeatureName"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveRoleFromDBCluster",
@@ -1300,6 +1393,7 @@ export default class Neptune {
 export interface AddRoleToDBClusterMessage {
   DBClusterIdentifier: string;
   RoleArn: string;
+  FeatureName?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1373,6 +1467,16 @@ export interface CreateDBClusterMessage {
   EnableIAMDatabaseAuthentication?: boolean | null;
   EnableCloudwatchLogsExports?: string[] | null;
   DeletionProtection?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateDBClusterEndpointMessage {
+  DBClusterIdentifier: string;
+  DBClusterEndpointIdentifier: string;
+  EndpointType: string;
+  StaticMembers?: string[] | null;
+  ExcludedMembers?: string[] | null;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1472,6 +1576,11 @@ export interface DeleteDBClusterMessage {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteDBClusterEndpointMessage {
+  DBClusterEndpointIdentifier: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteDBClusterParameterGroupMessage {
   DBClusterParameterGroupName: string;
 }
@@ -1501,6 +1610,15 @@ export interface DeleteDBSubnetGroupMessage {
 // refs: 1 - tags: named, input
 export interface DeleteEventSubscriptionMessage {
   SubscriptionName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeDBClusterEndpointsMessage {
+  DBClusterIdentifier?: string | null;
+  DBClusterEndpointIdentifier?: string | null;
+  Filters?: Filter[] | null;
+  MaxRecords?: number | null;
+  Marker?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1691,6 +1809,14 @@ export interface ModifyDBClusterMessage {
 }
 
 // refs: 1 - tags: named, input
+export interface ModifyDBClusterEndpointMessage {
+  DBClusterEndpointIdentifier: string;
+  EndpointType?: string | null;
+  StaticMembers?: string[] | null;
+  ExcludedMembers?: string[] | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ModifyDBClusterParameterGroupMessage {
   DBClusterParameterGroupName: string;
   Parameters: Parameter[];
@@ -1782,6 +1908,7 @@ export interface RebootDBInstanceMessage {
 export interface RemoveRoleFromDBClusterMessage {
   DBClusterIdentifier: string;
   RoleArn: string;
+  FeatureName?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1890,6 +2017,20 @@ export interface CreateDBClusterResult {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateDBClusterEndpointOutput {
+  DBClusterEndpointIdentifier?: string | null;
+  DBClusterIdentifier?: string | null;
+  DBClusterEndpointResourceIdentifier?: string | null;
+  Endpoint?: string | null;
+  Status?: string | null;
+  EndpointType?: string | null;
+  CustomEndpointType?: string | null;
+  StaticMembers: string[];
+  ExcludedMembers: string[];
+  DBClusterEndpointArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateDBClusterParameterGroupResult {
   DBClusterParameterGroup?: DBClusterParameterGroup | null;
 }
@@ -1925,6 +2066,20 @@ export interface DeleteDBClusterResult {
 }
 
 // refs: 1 - tags: named, output
+export interface DeleteDBClusterEndpointOutput {
+  DBClusterEndpointIdentifier?: string | null;
+  DBClusterIdentifier?: string | null;
+  DBClusterEndpointResourceIdentifier?: string | null;
+  Endpoint?: string | null;
+  Status?: string | null;
+  EndpointType?: string | null;
+  CustomEndpointType?: string | null;
+  StaticMembers: string[];
+  ExcludedMembers: string[];
+  DBClusterEndpointArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DeleteDBClusterSnapshotResult {
   DBClusterSnapshot?: DBClusterSnapshot | null;
 }
@@ -1937,6 +2092,12 @@ export interface DeleteDBInstanceResult {
 // refs: 1 - tags: named, output
 export interface DeleteEventSubscriptionResult {
   EventSubscription?: EventSubscription | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DBClusterEndpointMessage {
+  Marker?: string | null;
+  DBClusterEndpoints: DBClusterEndpoint[];
 }
 
 // refs: 1 - tags: named, output
@@ -2058,6 +2219,20 @@ export interface ModifyDBClusterResult {
 }
 
 // refs: 1 - tags: named, output
+export interface ModifyDBClusterEndpointOutput {
+  DBClusterEndpointIdentifier?: string | null;
+  DBClusterIdentifier?: string | null;
+  DBClusterEndpointResourceIdentifier?: string | null;
+  Endpoint?: string | null;
+  Status?: string | null;
+  EndpointType?: string | null;
+  CustomEndpointType?: string | null;
+  StaticMembers: string[];
+  ExcludedMembers: string[];
+  DBClusterEndpointArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DBClusterParameterGroupNameMessage {
   DBClusterParameterGroupName?: string | null;
 }
@@ -2122,7 +2297,7 @@ export interface StopDBClusterResult {
   DBCluster?: DBCluster | null;
 }
 
-// refs: 14 - tags: input, named, interface, output
+// refs: 15 - tags: input, named, interface, output
 export interface Tag {
   Key?: string | null;
   Value?: string | null;
@@ -2137,7 +2312,7 @@ function Tag_Parse(node: XmlNode): Tag {
   });
 }
 
-// refs: 17 - tags: input, named, interface
+// refs: 18 - tags: input, named, interface
 export interface Filter {
   Name: string;
   Values: string[];
@@ -2443,10 +2618,11 @@ function VpcSecurityGroupMembership_Parse(node: XmlNode): VpcSecurityGroupMember
 export interface DBClusterRole {
   RoleArn?: string | null;
   Status?: string | null;
+  FeatureName?: string | null;
 }
 function DBClusterRole_Parse(node: XmlNode): DBClusterRole {
   return node.strings({
-    optional: {"RoleArn":true,"Status":true},
+    optional: {"RoleArn":true,"Status":true,"FeatureName":true},
   });
 }
 
@@ -2703,6 +2879,29 @@ function DomainMembership_Parse(node: XmlNode): DomainMembership {
   return node.strings({
     optional: {"Domain":true,"Status":true,"FQDN":true,"IAMRoleName":true},
   });
+}
+
+// refs: 1 - tags: output, named, interface
+export interface DBClusterEndpoint {
+  DBClusterEndpointIdentifier?: string | null;
+  DBClusterIdentifier?: string | null;
+  DBClusterEndpointResourceIdentifier?: string | null;
+  Endpoint?: string | null;
+  Status?: string | null;
+  EndpointType?: string | null;
+  CustomEndpointType?: string | null;
+  StaticMembers: string[];
+  ExcludedMembers: string[];
+  DBClusterEndpointArn?: string | null;
+}
+function DBClusterEndpoint_Parse(node: XmlNode): DBClusterEndpoint {
+  return {
+    ...node.strings({
+      optional: {"DBClusterEndpointIdentifier":true,"DBClusterIdentifier":true,"DBClusterEndpointResourceIdentifier":true,"Endpoint":true,"Status":true,"EndpointType":true,"CustomEndpointType":true,"DBClusterEndpointArn":true},
+    }),
+    StaticMembers: node.getList("StaticMembers", "member").map(x => x.content ?? ''),
+    ExcludedMembers: node.getList("ExcludedMembers", "member").map(x => x.content ?? ''),
+  };
 }
 
 // refs: 2 - tags: output, named, interface

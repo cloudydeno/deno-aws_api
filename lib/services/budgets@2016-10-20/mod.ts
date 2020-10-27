@@ -44,6 +44,28 @@ export default class Budgets {
     }, await resp.json());
   }
 
+  async createBudgetAction(
+    {abortSignal, ...params}: RequestConfig & CreateBudgetActionRequest,
+  ): Promise<CreateBudgetActionResponse> {
+    const body: JSONObject = {...params,
+    ActionThreshold: fromActionThreshold(params["ActionThreshold"]),
+    Definition: fromDefinition(params["Definition"]),
+    Subscribers: params["Subscribers"]?.map(x => fromSubscriber(x)),
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateBudgetAction",
+    });
+    return prt.readObj({
+      required: {
+        "AccountId": "s",
+        "BudgetName": "s",
+        "ActionId": "s",
+      },
+      optional: {},
+    }, await resp.json());
+  }
+
   async createNotification(
     {abortSignal, ...params}: RequestConfig & CreateNotificationRequest,
   ): Promise<CreateNotificationResponse> {
@@ -89,6 +111,25 @@ export default class Budgets {
     });
     return prt.readObj({
       required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async deleteBudgetAction(
+    {abortSignal, ...params}: RequestConfig & DeleteBudgetActionRequest,
+  ): Promise<DeleteBudgetActionResponse> {
+    const body: JSONObject = {...params,
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteBudgetAction",
+    });
+    return prt.readObj({
+      required: {
+        "AccountId": "s",
+        "BudgetName": "s",
+        "Action": toAction,
+      },
       optional: {},
     }, await resp.json());
   }
@@ -139,6 +180,83 @@ export default class Budgets {
       required: {},
       optional: {
         "Budget": toBudget,
+      },
+    }, await resp.json());
+  }
+
+  async describeBudgetAction(
+    {abortSignal, ...params}: RequestConfig & DescribeBudgetActionRequest,
+  ): Promise<DescribeBudgetActionResponse> {
+    const body: JSONObject = {...params,
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeBudgetAction",
+    });
+    return prt.readObj({
+      required: {
+        "AccountId": "s",
+        "BudgetName": "s",
+        "Action": toAction,
+      },
+      optional: {},
+    }, await resp.json());
+  }
+
+  async describeBudgetActionHistories(
+    {abortSignal, ...params}: RequestConfig & DescribeBudgetActionHistoriesRequest,
+  ): Promise<DescribeBudgetActionHistoriesResponse> {
+    const body: JSONObject = {...params,
+    TimePeriod: fromTimePeriod(params["TimePeriod"]),
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeBudgetActionHistories",
+    });
+    return prt.readObj({
+      required: {
+        "ActionHistories": [toActionHistory],
+      },
+      optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async describeBudgetActionsForAccount(
+    {abortSignal, ...params}: RequestConfig & DescribeBudgetActionsForAccountRequest,
+  ): Promise<DescribeBudgetActionsForAccountResponse> {
+    const body: JSONObject = {...params,
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeBudgetActionsForAccount",
+    });
+    return prt.readObj({
+      required: {
+        "Actions": [toAction],
+      },
+      optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async describeBudgetActionsForBudget(
+    {abortSignal, ...params}: RequestConfig & DescribeBudgetActionsForBudgetRequest,
+  ): Promise<DescribeBudgetActionsForBudgetResponse> {
+    const body: JSONObject = {...params,
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeBudgetActionsForBudget",
+    });
+    return prt.readObj({
+      required: {
+        "Actions": [toAction],
+      },
+      optional: {
+        "NextToken": "s",
       },
     }, await resp.json());
   }
@@ -217,6 +335,26 @@ export default class Budgets {
     }, await resp.json());
   }
 
+  async executeBudgetAction(
+    {abortSignal, ...params}: RequestConfig & ExecuteBudgetActionRequest,
+  ): Promise<ExecuteBudgetActionResponse> {
+    const body: JSONObject = {...params,
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ExecuteBudgetAction",
+    });
+    return prt.readObj({
+      required: {
+        "AccountId": "s",
+        "BudgetName": "s",
+        "ActionId": "s",
+        "ExecutionType": toExecutionType,
+      },
+      optional: {},
+    }, await resp.json());
+  }
+
   async updateBudget(
     {abortSignal, ...params}: RequestConfig & UpdateBudgetRequest,
   ): Promise<UpdateBudgetResponse> {
@@ -229,6 +367,29 @@ export default class Budgets {
     });
     return prt.readObj({
       required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async updateBudgetAction(
+    {abortSignal, ...params}: RequestConfig & UpdateBudgetActionRequest,
+  ): Promise<UpdateBudgetActionResponse> {
+    const body: JSONObject = {...params,
+    ActionThreshold: fromActionThreshold(params["ActionThreshold"]),
+    Definition: fromDefinition(params["Definition"]),
+    Subscribers: params["Subscribers"]?.map(x => fromSubscriber(x)),
+  };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateBudgetAction",
+    });
+    return prt.readObj({
+      required: {
+        "AccountId": "s",
+        "BudgetName": "s",
+        "OldAction": toAction,
+        "NewAction": toAction,
+      },
       optional: {},
     }, await resp.json());
   }
@@ -278,6 +439,19 @@ export interface CreateBudgetRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateBudgetActionRequest {
+  AccountId: string;
+  BudgetName: string;
+  NotificationType: NotificationType;
+  ActionType: ActionType;
+  ActionThreshold: ActionThreshold;
+  Definition: Definition;
+  ExecutionRoleArn: string;
+  ApprovalModel: ApprovalModel;
+  Subscribers: Subscriber[];
+}
+
+// refs: 1 - tags: named, input
 export interface CreateNotificationRequest {
   AccountId: string;
   BudgetName: string;
@@ -300,6 +474,13 @@ export interface DeleteBudgetRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteBudgetActionRequest {
+  AccountId: string;
+  BudgetName: string;
+  ActionId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteNotificationRequest {
   AccountId: string;
   BudgetName: string;
@@ -318,6 +499,38 @@ export interface DeleteSubscriberRequest {
 export interface DescribeBudgetRequest {
   AccountId: string;
   BudgetName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeBudgetActionRequest {
+  AccountId: string;
+  BudgetName: string;
+  ActionId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeBudgetActionHistoriesRequest {
+  AccountId: string;
+  BudgetName: string;
+  ActionId: string;
+  TimePeriod?: TimePeriod | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeBudgetActionsForAccountRequest {
+  AccountId: string;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeBudgetActionsForBudgetRequest {
+  AccountId: string;
+  BudgetName: string;
+  MaxResults?: number | null;
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -354,9 +567,30 @@ export interface DescribeSubscribersForNotificationRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ExecuteBudgetActionRequest {
+  AccountId: string;
+  BudgetName: string;
+  ActionId: string;
+  ExecutionType: ExecutionType;
+}
+
+// refs: 1 - tags: named, input
 export interface UpdateBudgetRequest {
   AccountId: string;
   NewBudget: Budget;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateBudgetActionRequest {
+  AccountId: string;
+  BudgetName: string;
+  ActionId: string;
+  NotificationType?: NotificationType | null;
+  ActionThreshold?: ActionThreshold | null;
+  Definition?: Definition | null;
+  ExecutionRoleArn?: string | null;
+  ApprovalModel?: ApprovalModel | null;
+  Subscribers?: Subscriber[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -381,6 +615,13 @@ export interface CreateBudgetResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateBudgetActionResponse {
+  AccountId: string;
+  BudgetName: string;
+  ActionId: string;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateNotificationResponse {
 }
 
@@ -390,6 +631,13 @@ export interface CreateSubscriberResponse {
 
 // refs: 1 - tags: named, output
 export interface DeleteBudgetResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteBudgetActionResponse {
+  AccountId: string;
+  BudgetName: string;
+  Action: Action;
 }
 
 // refs: 1 - tags: named, output
@@ -403,6 +651,31 @@ export interface DeleteSubscriberResponse {
 // refs: 1 - tags: named, output
 export interface DescribeBudgetResponse {
   Budget?: Budget | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeBudgetActionResponse {
+  AccountId: string;
+  BudgetName: string;
+  Action: Action;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeBudgetActionHistoriesResponse {
+  ActionHistories: ActionHistory[];
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeBudgetActionsForAccountResponse {
+  Actions: Action[];
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeBudgetActionsForBudgetResponse {
+  Actions: Action[];
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -430,7 +703,23 @@ export interface DescribeSubscribersForNotificationResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ExecuteBudgetActionResponse {
+  AccountId: string;
+  BudgetName: string;
+  ActionId: string;
+  ExecutionType: ExecutionType;
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateBudgetResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateBudgetActionResponse {
+  AccountId: string;
+  BudgetName: string;
+  OldAction: Action;
+  NewAction: Action;
 }
 
 // refs: 1 - tags: named, output
@@ -559,7 +848,7 @@ function toTimeUnit(root: JSONValue): TimeUnit | null {
   ) ? root : null;
 }
 
-// refs: 6 - tags: input, named, interface, output
+// refs: 7 - tags: input, named, interface, output
 export interface TimePeriod {
   Start?: Date | number | null;
   End?: Date | number | null;
@@ -665,7 +954,7 @@ function toNotification(root: JSONValue): Notification {
   }, root);
 }
 
-// refs: 10 - tags: input, named, enum, output
+// refs: 19 - tags: input, named, enum, output
 export type NotificationType =
 | "ACTUAL"
 | "FORECASTED"
@@ -693,7 +982,7 @@ function toComparisonOperator(root: JSONValue): ComparisonOperator | null {
   ) ? root : null;
 }
 
-// refs: 10 - tags: input, named, enum, output
+// refs: 19 - tags: input, named, enum, output
 export type ThresholdType =
 | "PERCENTAGE"
 | "ABSOLUTE_VALUE"
@@ -719,7 +1008,7 @@ function toNotificationState(root: JSONValue): NotificationState | null {
   ) ? root : null;
 }
 
-// refs: 7 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface Subscriber {
   SubscriptionType: SubscriptionType;
   Address: string;
@@ -739,7 +1028,7 @@ function toSubscriber(root: JSONValue): Subscriber {
   }, root);
 }
 
-// refs: 7 - tags: input, named, enum, output
+// refs: 16 - tags: input, named, enum, output
 export type SubscriptionType =
 | "SNS"
 | "EMAIL"
@@ -750,6 +1039,287 @@ function toSubscriptionType(root: JSONValue): SubscriptionType | null {
     || root == "SNS"
     || root == "EMAIL"
   ) ? root : null;
+}
+
+// refs: 8 - tags: input, named, enum, output
+export type ActionType =
+| "APPLY_IAM_POLICY"
+| "APPLY_SCP_POLICY"
+| "RUN_SSM_DOCUMENTS"
+;
+
+function toActionType(root: JSONValue): ActionType | null {
+  return ( false
+    || root == "APPLY_IAM_POLICY"
+    || root == "APPLY_SCP_POLICY"
+    || root == "RUN_SSM_DOCUMENTS"
+  ) ? root : null;
+}
+
+// refs: 9 - tags: input, named, interface, output
+export interface ActionThreshold {
+  ActionThresholdValue: number;
+  ActionThresholdType: ThresholdType;
+}
+function fromActionThreshold(input?: ActionThreshold | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+  }
+}
+function toActionThreshold(root: JSONValue): ActionThreshold {
+  return prt.readObj({
+    required: {
+      "ActionThresholdValue": "n",
+      "ActionThresholdType": toThresholdType,
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 9 - tags: input, named, interface, output
+export interface Definition {
+  IamActionDefinition?: IamActionDefinition | null;
+  ScpActionDefinition?: ScpActionDefinition | null;
+  SsmActionDefinition?: SsmActionDefinition | null;
+}
+function fromDefinition(input?: Definition | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+    IamActionDefinition: fromIamActionDefinition(input["IamActionDefinition"]),
+    ScpActionDefinition: fromScpActionDefinition(input["ScpActionDefinition"]),
+    SsmActionDefinition: fromSsmActionDefinition(input["SsmActionDefinition"]),
+  }
+}
+function toDefinition(root: JSONValue): Definition {
+  return prt.readObj({
+    required: {},
+    optional: {
+      "IamActionDefinition": toIamActionDefinition,
+      "ScpActionDefinition": toScpActionDefinition,
+      "SsmActionDefinition": toSsmActionDefinition,
+    },
+  }, root);
+}
+
+// refs: 9 - tags: input, named, interface, output
+export interface IamActionDefinition {
+  PolicyArn: string;
+  Roles?: string[] | null;
+  Groups?: string[] | null;
+  Users?: string[] | null;
+}
+function fromIamActionDefinition(input?: IamActionDefinition | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+  }
+}
+function toIamActionDefinition(root: JSONValue): IamActionDefinition {
+  return prt.readObj({
+    required: {
+      "PolicyArn": "s",
+    },
+    optional: {
+      "Roles": ["s"],
+      "Groups": ["s"],
+      "Users": ["s"],
+    },
+  }, root);
+}
+
+// refs: 9 - tags: input, named, interface, output
+export interface ScpActionDefinition {
+  PolicyId: string;
+  TargetIds: string[];
+}
+function fromScpActionDefinition(input?: ScpActionDefinition | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+  }
+}
+function toScpActionDefinition(root: JSONValue): ScpActionDefinition {
+  return prt.readObj({
+    required: {
+      "PolicyId": "s",
+      "TargetIds": ["s"],
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 9 - tags: input, named, interface, output
+export interface SsmActionDefinition {
+  ActionSubType: ActionSubType;
+  Region: string;
+  InstanceIds: string[];
+}
+function fromSsmActionDefinition(input?: SsmActionDefinition | null): JSONValue {
+  if (!input) return input;
+  return {...input,
+  }
+}
+function toSsmActionDefinition(root: JSONValue): SsmActionDefinition {
+  return prt.readObj({
+    required: {
+      "ActionSubType": toActionSubType,
+      "Region": "s",
+      "InstanceIds": ["s"],
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 9 - tags: input, named, enum, output
+export type ActionSubType =
+| "STOP_EC2_INSTANCES"
+| "STOP_RDS_INSTANCES"
+;
+
+function toActionSubType(root: JSONValue): ActionSubType | null {
+  return ( false
+    || root == "STOP_EC2_INSTANCES"
+    || root == "STOP_RDS_INSTANCES"
+  ) ? root : null;
+}
+
+// refs: 9 - tags: input, named, enum, output
+export type ApprovalModel =
+| "AUTOMATIC"
+| "MANUAL"
+;
+
+function toApprovalModel(root: JSONValue): ApprovalModel | null {
+  return ( false
+    || root == "AUTOMATIC"
+    || root == "MANUAL"
+  ) ? root : null;
+}
+
+// refs: 2 - tags: input, named, enum, output
+export type ExecutionType =
+| "APPROVE_BUDGET_ACTION"
+| "RETRY_BUDGET_ACTION"
+| "REVERSE_BUDGET_ACTION"
+| "RESET_BUDGET_ACTION"
+;
+
+function toExecutionType(root: JSONValue): ExecutionType | null {
+  return ( false
+    || root == "APPROVE_BUDGET_ACTION"
+    || root == "RETRY_BUDGET_ACTION"
+    || root == "REVERSE_BUDGET_ACTION"
+    || root == "RESET_BUDGET_ACTION"
+  ) ? root : null;
+}
+
+// refs: 7 - tags: output, named, interface
+export interface Action {
+  ActionId: string;
+  BudgetName: string;
+  NotificationType: NotificationType;
+  ActionType: ActionType;
+  ActionThreshold: ActionThreshold;
+  Definition: Definition;
+  ExecutionRoleArn: string;
+  ApprovalModel: ApprovalModel;
+  Status: ActionStatus;
+  Subscribers: Subscriber[];
+}
+function toAction(root: JSONValue): Action {
+  return prt.readObj({
+    required: {
+      "ActionId": "s",
+      "BudgetName": "s",
+      "NotificationType": toNotificationType,
+      "ActionType": toActionType,
+      "ActionThreshold": toActionThreshold,
+      "Definition": toDefinition,
+      "ExecutionRoleArn": "s",
+      "ApprovalModel": toApprovalModel,
+      "Status": toActionStatus,
+      "Subscribers": [toSubscriber],
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 8 - tags: output, named, enum
+export type ActionStatus =
+| "STANDBY"
+| "PENDING"
+| "EXECUTION_IN_PROGRESS"
+| "EXECUTION_SUCCESS"
+| "EXECUTION_FAILURE"
+| "REVERSE_IN_PROGRESS"
+| "REVERSE_SUCCESS"
+| "REVERSE_FAILURE"
+| "RESET_IN_PROGRESS"
+| "RESET_FAILURE"
+;
+function toActionStatus(root: JSONValue): ActionStatus | null {
+  return ( false
+    || root == "STANDBY"
+    || root == "PENDING"
+    || root == "EXECUTION_IN_PROGRESS"
+    || root == "EXECUTION_SUCCESS"
+    || root == "EXECUTION_FAILURE"
+    || root == "REVERSE_IN_PROGRESS"
+    || root == "REVERSE_SUCCESS"
+    || root == "REVERSE_FAILURE"
+    || root == "RESET_IN_PROGRESS"
+    || root == "RESET_FAILURE"
+  ) ? root : null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ActionHistory {
+  Timestamp: Date | number;
+  Status: ActionStatus;
+  EventType: EventType;
+  ActionHistoryDetails: ActionHistoryDetails;
+}
+function toActionHistory(root: JSONValue): ActionHistory {
+  return prt.readObj({
+    required: {
+      "Timestamp": "d",
+      "Status": toActionStatus,
+      "EventType": toEventType,
+      "ActionHistoryDetails": toActionHistoryDetails,
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type EventType =
+| "SYSTEM"
+| "CREATE_ACTION"
+| "DELETE_ACTION"
+| "UPDATE_ACTION"
+| "EXECUTE_ACTION"
+;
+function toEventType(root: JSONValue): EventType | null {
+  return ( false
+    || root == "SYSTEM"
+    || root == "CREATE_ACTION"
+    || root == "DELETE_ACTION"
+    || root == "UPDATE_ACTION"
+    || root == "EXECUTE_ACTION"
+  ) ? root : null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ActionHistoryDetails {
+  Message: string;
+  Action: Action;
+}
+function toActionHistoryDetails(root: JSONValue): ActionHistoryDetails {
+  return prt.readObj({
+    required: {
+      "Message": "s",
+      "Action": toAction,
+    },
+    optional: {},
+  }, root);
 }
 
 // refs: 1 - tags: output, named, interface

@@ -374,6 +374,10 @@ export type ExportableAutoScalingGroupField =
 | "Finding"
 | "UtilizationMetricsCpuMaximum"
 | "UtilizationMetricsMemoryMaximum"
+| "UtilizationMetricsEbsReadOpsPerSecondMaximum"
+| "UtilizationMetricsEbsWriteOpsPerSecondMaximum"
+| "UtilizationMetricsEbsReadBytesPerSecondMaximum"
+| "UtilizationMetricsEbsWriteBytesPerSecondMaximum"
 | "LookbackPeriodInDays"
 | "CurrentConfigurationInstanceType"
 | "CurrentConfigurationDesiredCapacity"
@@ -431,6 +435,10 @@ export type ExportableInstanceField =
 | "CurrentInstanceType"
 | "UtilizationMetricsCpuMaximum"
 | "UtilizationMetricsMemoryMaximum"
+| "UtilizationMetricsEbsReadOpsPerSecondMaximum"
+| "UtilizationMetricsEbsWriteOpsPerSecondMaximum"
+| "UtilizationMetricsEbsReadBytesPerSecondMaximum"
+| "UtilizationMetricsEbsWriteBytesPerSecondMaximum"
 | "CurrentOnDemandPrice"
 | "CurrentStandardOneYearNoUpfrontReservedPrice"
 | "CurrentStandardThreeYearNoUpfrontReservedPrice"
@@ -634,11 +642,19 @@ function toUtilizationMetric(root: JSONValue): UtilizationMetric {
 export type MetricName =
 | "Cpu"
 | "Memory"
+| "EBS_READ_OPS_PER_SECOND"
+| "EBS_WRITE_OPS_PER_SECOND"
+| "EBS_READ_BYTES_PER_SECOND"
+| "EBS_WRITE_BYTES_PER_SECOND"
 ;
 function toMetricName(root: JSONValue): MetricName | null {
   return ( false
     || root == "Cpu"
     || root == "Memory"
+    || root == "EBS_READ_OPS_PER_SECOND"
+    || root == "EBS_WRITE_OPS_PER_SECOND"
+    || root == "EBS_READ_BYTES_PER_SECOND"
+    || root == "EBS_WRITE_BYTES_PER_SECOND"
   ) ? root : null;
 }
 

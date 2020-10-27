@@ -4601,28 +4601,48 @@ function toPatchFilter(root: JSONValue): PatchFilter {
 
 // refs: 8 - tags: input, named, enum, output
 export type PatchFilterKey =
+| "ARCH"
+| "ADVISORY_ID"
+| "BUGZILLA_ID"
 | "PATCH_SET"
 | "PRODUCT"
 | "PRODUCT_FAMILY"
 | "CLASSIFICATION"
+| "CVE_ID"
+| "EPOCH"
 | "MSRC_SEVERITY"
+| "NAME"
 | "PATCH_ID"
 | "SECTION"
 | "PRIORITY"
+| "REPOSITORY"
+| "RELEASE"
 | "SEVERITY"
+| "SECURITY"
+| "VERSION"
 ;
 
 function toPatchFilterKey(root: JSONValue): PatchFilterKey | null {
   return ( false
+    || root == "ARCH"
+    || root == "ADVISORY_ID"
+    || root == "BUGZILLA_ID"
     || root == "PATCH_SET"
     || root == "PRODUCT"
     || root == "PRODUCT_FAMILY"
     || root == "CLASSIFICATION"
+    || root == "CVE_ID"
+    || root == "EPOCH"
     || root == "MSRC_SEVERITY"
+    || root == "NAME"
     || root == "PATCH_ID"
     || root == "SECTION"
     || root == "PRIORITY"
+    || root == "REPOSITORY"
+    || root == "RELEASE"
     || root == "SEVERITY"
+    || root == "SECURITY"
+    || root == "VERSION"
   ) ? root : null;
 }
 
@@ -6459,6 +6479,16 @@ export interface Patch {
   KbNumber?: string | null;
   MsrcNumber?: string | null;
   Language?: string | null;
+  AdvisoryIds?: string[] | null;
+  BugzillaIds?: string[] | null;
+  CVEIds?: string[] | null;
+  Name?: string | null;
+  Epoch?: number | null;
+  Version?: string | null;
+  Release?: string | null;
+  Arch?: string | null;
+  Severity?: string | null;
+  Repository?: string | null;
 }
 function toPatch(root: JSONValue): Patch {
   return prt.readObj({
@@ -6477,6 +6507,16 @@ function toPatch(root: JSONValue): Patch {
       "KbNumber": "s",
       "MsrcNumber": "s",
       "Language": "s",
+      "AdvisoryIds": ["s"],
+      "BugzillaIds": ["s"],
+      "CVEIds": ["s"],
+      "Name": "s",
+      "Epoch": "n",
+      "Version": "s",
+      "Release": "s",
+      "Arch": "s",
+      "Severity": "s",
+      "Repository": "s",
     },
   }, root);
 }
@@ -6798,6 +6838,7 @@ export interface PatchComplianceData {
   Severity: string;
   State: PatchComplianceDataState;
   InstalledTime: Date | number;
+  CVEIds?: string | null;
 }
 function toPatchComplianceData(root: JSONValue): PatchComplianceData {
   return prt.readObj({
@@ -6809,7 +6850,9 @@ function toPatchComplianceData(root: JSONValue): PatchComplianceData {
       "State": toPatchComplianceDataState,
       "InstalledTime": "d",
     },
-    optional: {},
+    optional: {
+      "CVEIds": "s",
+    },
   }, root);
 }
 

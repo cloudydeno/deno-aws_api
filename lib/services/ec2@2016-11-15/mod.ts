@@ -7812,7 +7812,7 @@ export default class EC2 {
 
   async revokeSecurityGroupEgress(
     {abortSignal, ...params}: RequestConfig & RevokeSecurityGroupEgressRequest,
-  ): Promise<void> {
+  ): Promise<RevokeSecurityGroupEgressResult> {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -7828,11 +7828,16 @@ export default class EC2 {
       abortSignal, body,
       action: "RevokeSecurityGroupEgress",
     });
+    const xml = readXmlResult(await resp.text());
+    return {
+      Return: xml.first("return", false, x => x.content === 'true'),
+      UnknownIpPermissions: xml.getList("unknownIpPermissionSet", "item").map(IpPermission_Parse),
+    };
   }
 
   async revokeSecurityGroupIngress(
     {abortSignal, ...params}: RequestConfig & RevokeSecurityGroupIngressRequest = {},
-  ): Promise<void> {
+  ): Promise<RevokeSecurityGroupIngressResult> {
     const body = new URLSearchParams;
     const prefix = '';
     if ("CidrIp" in params) body.append(prefix+"CidrIp", (params["CidrIp"] ?? '').toString());
@@ -7849,6 +7854,11 @@ export default class EC2 {
       abortSignal, body,
       action: "RevokeSecurityGroupIngress",
     });
+    const xml = readXmlResult(await resp.text());
+    return {
+      Return: xml.first("return", false, x => x.content === 'true'),
+      UnknownIpPermissions: xml.getList("unknownIpPermissionSet", "item").map(IpPermission_Parse),
+    };
   }
 
   async runInstances(
@@ -14285,6 +14295,18 @@ export interface RevokeClientVpnIngressResult {
   Status?: ClientVpnAuthorizationRuleStatus | null;
 }
 
+// refs: 1 - tags: named, output
+export interface RevokeSecurityGroupEgressResult {
+  Return?: boolean | null;
+  UnknownIpPermissions: IpPermission[];
+}
+
+// refs: 1 - tags: named, output
+export interface RevokeSecurityGroupIngressResult {
+  Return?: boolean | null;
+  UnknownIpPermissions: IpPermission[];
+}
+
 // refs: 2 - tags: output, named, interface
 export interface Reservation {
   Groups: GroupIdentifier[];
@@ -14511,7 +14533,7 @@ function IamInstanceProfileSpecification_Parse(node: XmlNode): IamInstanceProfil
   };
 }
 
-// refs: 8 - tags: input, named, interface, output
+// refs: 10 - tags: input, named, interface, output
 export interface IpPermission {
   FromPort?: number | null;
   IpProtocol?: string | null;
@@ -14542,7 +14564,7 @@ function IpPermission_Parse(node: XmlNode): IpPermission {
   };
 }
 
-// refs: 8 - tags: input, named, interface, output
+// refs: 10 - tags: input, named, interface, output
 export interface IpRange {
   CidrIp?: string | null;
   Description?: string | null;
@@ -14558,7 +14580,7 @@ function IpRange_Parse(node: XmlNode): IpRange {
   };
 }
 
-// refs: 8 - tags: input, named, interface, output
+// refs: 10 - tags: input, named, interface, output
 export interface Ipv6Range {
   CidrIpv6?: string | null;
   Description?: string | null;
@@ -14574,7 +14596,7 @@ function Ipv6Range_Parse(node: XmlNode): Ipv6Range {
   };
 }
 
-// refs: 8 - tags: input, named, interface, output
+// refs: 10 - tags: input, named, interface, output
 export interface PrefixListId {
   Description?: string | null;
   PrefixListId?: string | null;
@@ -14590,7 +14612,7 @@ function PrefixListId_Parse(node: XmlNode): PrefixListId {
   };
 }
 
-// refs: 10 - tags: input, named, interface, output
+// refs: 12 - tags: input, named, interface, output
 export interface UserIdGroupPair {
   Description?: string | null;
   GroupId?: string | null;
@@ -22739,11 +22761,13 @@ function MemoryInfo_Parse(node: XmlNode): MemoryInfo {
 export interface InstanceStorageInfo {
   TotalSizeInGB?: number | null;
   Disks: DiskInfo[];
+  NvmeSupport?: EphemeralNvmeSupport | null;
 }
 function InstanceStorageInfo_Parse(node: XmlNode): InstanceStorageInfo {
   return {
     TotalSizeInGB: node.first("totalSizeInGB", false, x => parseInt(x.content ?? '0')),
     Disks: node.getList("disks", "item").map(DiskInfo_Parse),
+    NvmeSupport: node.first("nvmeSupport", false, x => (x.content ?? '') as EphemeralNvmeSupport),
   };
 }
 
@@ -22765,6 +22789,14 @@ function DiskInfo_Parse(node: XmlNode): DiskInfo {
 export type DiskType =
 | "hdd"
 | "ssd"
+;
+
+
+// refs: 1 - tags: output, named, enum
+export type EphemeralNvmeSupport =
+| "unsupported"
+| "supported"
+| "required"
 ;
 
 

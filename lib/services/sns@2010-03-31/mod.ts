@@ -404,13 +404,15 @@ export default class SNS {
     if ("Subject" in params) body.append(prefix+"Subject", (params["Subject"] ?? '').toString());
     if ("MessageStructure" in params) body.append(prefix+"MessageStructure", (params["MessageStructure"] ?? '').toString());
     if (params["MessageAttributes"]) prt.appendMap(body, prefix+"MessageAttributes", params["MessageAttributes"], {"appender":MessageAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":".entry."})
+    if ("MessageDeduplicationId" in params) body.append(prefix+"MessageDeduplicationId", (params["MessageDeduplicationId"] ?? '').toString());
+    if ("MessageGroupId" in params) body.append(prefix+"MessageGroupId", (params["MessageGroupId"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Publish",
     });
     const xml = readXmlResult(await resp.text(), "PublishResult");
     return xml.strings({
-      optional: {"MessageId":true},
+      optional: {"MessageId":true,"SequenceNumber":true},
     });
   }
 
@@ -692,6 +694,8 @@ export interface PublishInput {
   Subject?: string | null;
   MessageStructure?: string | null;
   MessageAttributes?: { [key: string]: MessageAttributeValue } | null;
+  MessageDeduplicationId?: string | null;
+  MessageGroupId?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -855,6 +859,7 @@ export interface OptInPhoneNumberResponse {
 // refs: 1 - tags: named, output
 export interface PublishResponse {
   MessageId?: string | null;
+  SequenceNumber?: string | null;
 }
 
 // refs: 1 - tags: named, output
