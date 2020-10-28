@@ -23,11 +23,10 @@ export default class GenWaiter {
   }
 
   generateTypescript(): string {
-    // We expect that every waiter will use operations with input and output
-    const inputShape = this.shapes.get(this.operation.input ?? {shape: 'missing'});
-    const outputShape = this.shapes.get(this.operation.output ?? {shape: 'missing'});
-    if (inputShape?.spec.type !== 'structure') throw new Error(`TODO: ${inputShape.spec.type} input`);
-    if (outputShape?.spec.type !== 'structure') throw new Error(`TODO: ${outputShape.spec.type} input`);
+    const inputShape = this.operation.input ? this.shapes.get(this.operation.input) : null;
+    const outputShape = this.operation.output ? this.shapes.get(this.operation.output) : null;
+    if (inputShape && inputShape?.spec.type !== 'structure') throw new Error(`TODO: ${inputShape.spec.type} input`);
+    if (outputShape && outputShape?.spec.type !== 'structure') throw new Error(`TODO: ${outputShape.spec.type} input`);
 
     // Build a doc comment
     const docLines = new Array<string>();
@@ -64,12 +63,18 @@ export default class GenWaiter {
     const handlesAnyErr = this.spec.acceptors.some(x => x.matcher === 'error');
     const collapsePathEval = allPaths.length > 1 && allPaths.every(x => x === allPaths[0]);
 
-    const inputSignature = `RequestConfig & ${inputShape.censoredName}`;
-    const outputSignature = `${goodErrs.length > 0 ? 'Error | ' : ''}${outputShape.censoredName}`;
+    const inputSignature = [
+      `RequestConfig`,
+      inputShape?.censoredName,
+    ].filter(x => x).join(' & ');
+    const outputSignature = [
+      goodErrs.length > 0 ? 'Error' : '',
+      outputShape?.censoredName,
+    ].filter(x => x).join(' | ') || 'void';
 
     const innerChunks: string[] = [];
     const lowerCamelName = this.operation.name[0].toLowerCase() + this.operation.name.slice(1);
-    innerChunks.push(`      const resp = await this.${lowerCamelName}(params);`);
+    innerChunks.push(`      ${outputShape ? 'const resp = ' : ''}await this.${lowerCamelName}(params);`);
 
     if (collapsePathEval) {
       const code = fixupJmesCode(compileJMESPath(allPaths[0], 'resp'));
@@ -82,7 +87,7 @@ export default class GenWaiter {
       const statements: {[key: string]: string} = {
         'retry': 'continue;',
         'failure': 'throw new Error(errMessage);',
-        'success': 'return resp;',
+        'success': outputShape ? 'return resp;' : 'return;',
       };
       const statement = statements[acceptor.state];
 
