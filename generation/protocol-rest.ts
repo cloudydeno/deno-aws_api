@@ -1,27 +1,40 @@
+import HelperLibrary from "./helper-library.ts";
+import ProtocolJsonCodegen from "./protocol-json.ts";
+import ProtocolQueryCodegen from "./protocol-query.ts";
 import type * as Schema from './sdk-schema.ts';
+import ShapeLibrary, { KnownShape } from "./shape-library.ts";
 
-export default class ProtocolRestBase {
-  shapes: { [name: string]: Schema.ApiShape; };
-  constructor(shapes: {[name: string]: Schema.ApiShape}) {
-    this.shapes = shapes;
+export default class ProtocolRestCodegen {
+  shapes: ShapeLibrary;
+  helpers: HelperLibrary;
+  innerProtocol: ProtocolJsonCodegen | ProtocolQueryCodegen;
+  constructor(innerProtocol: ProtocolJsonCodegen | ProtocolQueryCodegen) {
+    this.shapes = innerProtocol.shapes;
+    this.helpers = innerProtocol.helpers;
+    this.innerProtocol = innerProtocol;
+
+    this.helpers.addHelper('encodePath', {
+      chunks: [
+        `function encodePath(strings: TemplateStringsArray, ...names: string[]): string {`,
+        `  return String.raw(strings, ...names.map(encodeURIComponent));`,
+        `}`],
+    });
+    this.helpers.addHelper('fmtDateHeader', {
+      chunks: [
+        `function fmtDateHeader(input: Date | number): string {`,
+        `  const date = (typeof input === 'number') ? new Date(input*1000) : input;`,
+        `  return date.toUTCString();`,
+        `}`],
+    });
   }
 
-  globalHelpers = `
-// Helpers, maybe these should be in a central place
-function encodePath(strings: TemplateStringsArray, ...names: string[]): string {
-  return String.raw(strings, ...names.map(encodeURIComponent));
-}
-function fmtDateHeader(input: Date | number): string {
-  const date = (typeof input === 'number') ? new Date(input*1000) : input;
-  return date.toUTCString();
-}
-`;
-
-  generateInputParsingTypescript(): { inputParsingCode: string; inputVariables: string[]; } {
+  generateOperationInputParsingTypescript(inputShape: Schema.ApiShape): { inputParsingCode: string; inputVariables: string[]; } {
     const chunks = new Array<string>();
 
-    // const locationTypes = new Set(Object.values(inputShape.members).map(x => x.location));
-    // // console.log(locationTypes);
+    if (inputShape.type !== 'structure') throw new Error(`REST Input wasn't a structure`);
+
+    const locationTypes = new Set(Object.values(inputShape.members).map(x => x.location));
+    // console.log(inputShape.documentation?.slice(0, 100), locationTypes);
 
     // if (locationTypes.has('header') || locationTypes.has('headers')) {
     //   chunks.push(`    const headers = new Headers;`);
@@ -89,5 +102,14 @@ function fmtDateHeader(input: Date | number): string {
       inputParsingCode: chunks.join('\n'),
       inputVariables: [],
     };
+  }
+  generateOperationOutputParsingTypescript(shape: KnownShape, resultWrapper?: string): { outputParsingCode: string; outputVariables: string[]; } {
+    return {outputParsingCode: "a", outputVariables: []};
+  }
+  generateShapeInputParsingTypescript(shape: KnownShape): { inputParsingFunction: string; } {
+    return this.innerProtocol.generateShapeInputParsingTypescript(shape);
+  }
+  generateShapeOutputParsingTypescript(shape: KnownShape): { outputParsingFunction: string; } {
+    return this.innerProtocol.generateShapeOutputParsingTypescript(shape);
   }
 }

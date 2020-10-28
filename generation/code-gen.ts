@@ -5,9 +5,9 @@ import ShapeLibrary, { KnownShape } from './shape-library.ts';
 import { fixupApiSpec, fixupWaitersSpec, unauthenticatedApis } from './quirks.ts';
 import GenWaiter from "./gen-waiter.ts";
 import HelperLibrary from "./helper-library.ts";
+import ProtocolRestCodegen from "./protocol-rest.ts";
 
 interface ProtocolCodegen {
-  globalHelpers: string;
   generateOperationInputParsingTypescript(inputShape: Schema.ApiShape): { inputParsingCode: string; inputVariables: string[]; };
   generateOperationOutputParsingTypescript(shape: KnownShape, resultWrapper?: string): { outputParsingCode: string; outputVariables: string[]; };
   generateShapeInputParsingTypescript(shape: KnownShape): { inputParsingFunction: string; };
@@ -61,13 +61,23 @@ export default class ServiceCodeGen {
       case 'ec2':
         this.protocol = new ProtocolQueryCodegen(this.shapes, this.helpers, {ec2: true});
         break;
-      case 'query':
-        this.protocol = new ProtocolQueryCodegen(this.shapes, this.helpers);
-        break;
-      case 'json':
-        this.protocol = new ProtocolJsonCodegen(this.shapes, this.helpers);
-        break;
-      default: throw new Error(
+        case 'query':
+          this.protocol = new ProtocolQueryCodegen(this.shapes, this.helpers);
+          break;
+        case 'json':
+          this.protocol = new ProtocolJsonCodegen(this.shapes, this.helpers);
+          break;
+        case 'rest-xml': {
+          const inner = new ProtocolQueryCodegen(this.shapes, this.helpers);
+          this.protocol = new ProtocolRestCodegen(inner);
+          break;
+        }
+        case 'rest-json': {
+          const inner = new ProtocolJsonCodegen(this.shapes, this.helpers);
+          this.protocol = new ProtocolRestCodegen(inner);
+          break;
+        }
+        default: throw new Error(
         `TODO: unimpl protocol ${specs.api.metadata.protocol}`);
     }
 
@@ -246,7 +256,6 @@ export default class ServiceCodeGen {
         `  abortSignal?: AbortSignal;`,
         `}`,
       ].join('\n'),
-      this.protocol.globalHelpers,
       this.helpers.toSourceString(),
       chunks.join('\n'),
     ].filter(x => x).join('\n\n');

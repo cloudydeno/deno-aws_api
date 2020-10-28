@@ -27,6 +27,8 @@ function canBuild(svc: ServiceEntry) {
   // post urlencoded, receive XML
   if (svc.protocol === 'query') return true;
   if (svc.protocol === 'ec2') return true;
+  // and also use headers
+  if (svc.protocol === 'rest-xml') return true;
 
   // post/receive plain JSON
   if (svc.protocol === 'json') return true;
@@ -50,11 +52,16 @@ for (const svc of Object.values(serviceList)) {
 }
 
 const specSuffix = `.normal.json`;
+const specificServices = Deno.args[0]?.split(',');
 for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
   if (!entry.name.endsWith(specSuffix)) continue;
   const uid = entry.name.slice(0, -specSuffix.length);
   const service = uid.slice(0, -11);
   const version = uid.slice(-10);
+
+  if (specificServices && !specificServices.includes(service)) {
+    continue;
+  }
 
   if (!(`${service}@${version}` in services)) {
     const apiSpec = JSON.parse(await Deno.readTextFile('./aws-sdk-js/apis/'+entry.name)) as Schema.Api;
@@ -93,6 +100,7 @@ for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
     cmd: ["deno", "cache", modPath],
     stderr: 'piped'
   });
+  const checkOutput = new TextDecoder().decode(await cache.stderrOutput())
   const { code } = await cache.status();
   const cacheEnd = new Date;
 
@@ -101,7 +109,6 @@ for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
     svc.typechecked = 'fail';
     continue;
   }
-  const checkOutput = new TextDecoder().decode(await cache.stderrOutput())
   if (!checkOutput) continue;
   console.log(checkOutput.trimEnd());
 
