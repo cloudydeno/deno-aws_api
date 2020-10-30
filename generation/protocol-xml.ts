@@ -16,12 +16,54 @@ export default class ProtocolXmlCodegen {
     helpers.addDep("xmlP", "../../encoding/xml.ts");
   }
 
-  generateOperationInputParsingTypescript(inputShape: Schema.ApiShape): { inputParsingCode: string; inputVariables: string[]; } {
+  generateOperationInputParsingTypescript(inputShape: Schema.ApiShape, meta: Schema.LocationInfo & {paramRef?: string}): { inputParsingCode: string; inputVariables: string[]; } {
     if (inputShape.type !== 'structure') throw new Error(
       `Can only generate top level structures`);
 
     const chunks = new Array<string>();
-    chunks.push(`TODO: protocol-xml input`);
+
+    chunks.push(`const body = xmlP.stringify({`);
+    chunks.push(`  name: ${JSON.stringify(meta.locationName)},`);
+    chunks.push(`  attributes: ${JSON.stringify({xmlns: meta.xmlNamespace?.uri})},`);
+    chunks.push(`  children: [`);
+    // if (inputShape.type )
+    chunks.push(this.generateStructureInputTypescript(inputShape, 'params'));
+
+    // const paramBase = meta.paramRef ?? 'params';
+    // for (const [field, spec] of Object.entries(inputShape.members)) {
+    //   const shape = this.shapes.get(spec);
+    //   const defaultName = this.ucfirst(field, false);
+    //   const locationName = this.ucfirst(spec.locationName, false) ?? shape.spec.locationName ?? defaultName;
+    //   const isRequired = (inputShape.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
+    //   const paramRef = `${paramBase}[${JSON.stringify(field)}]`;
+
+    //   switch (shape.spec.type) {
+    //     case 'string':
+    //       chunks.push(`    {name: ${JSON.stringify(locationName)}, content: ${paramRef}},`);
+    //       break;
+    //     case 'structure':
+    //       chunks.push(`    {name: ${JSON.stringify(locationName)}, children: ${shape.censoredName}_Serialize(${paramRef})},`);
+    //     // case 'm':
+    //     //   chunks.push(`    {name: ${JSON.stringify(locationName)}, contents: ${paramRef}},`);
+    //     //   break;
+    //     default:
+    //       chunks.push(`    // TODO: ${field} ${JSON.stringify(spec)}`);
+    //   }
+    //   // chunks.push(`    {name: ${JSON.stringify(locationName)}}`);
+    // }
+
+    // chunks.push(`    {name: 'VPC', children: [`);
+    // chunks.push(`      {name: ''}`);
+    // chunks.push(`    ]},`);
+    chunks.push(`  ]});`);
+
+
+    // chunks.push(`// TODO: protocol-xml input - ${meta.locationName} ${meta.xmlNamespace}`);
+    // for (const [field, spec] of Object.entries(inputShape.members)) {
+    //   chunks.push(`// ${field} ${JSON.stringify(spec)}`);
+    // }
+
+    // chunks.push(`// TODO: protocol-xml input`);
     // chunks.push(`    const body = new URLSearchParams;`);
     // chunks.push(`    const prefix = '';`);
 
@@ -34,12 +76,20 @@ export default class ProtocolXmlCodegen {
   }
 
   generateShapeInputParsingTypescript(shape: KnownShape): { inputParsingFunction: string; } {
-    if (shape.spec.type === 'string') return {
+    if (shape.spec.type !== 'structure') return {
       inputParsingFunction: '',
     };
 
     const chunks = new Array<string>();
-    chunks.push(`TODO: protocol-xml input`);
+
+    chunks.push(`function ${shape.censoredName}_Serialize(data: ${shape.censoredName} | undefined | null): xmlP.Node[] {`);
+    chunks.push(`  if (!data) return [];`);
+    chunks.push(`  return [`);
+    chunks.push(this.generateStructureInputTypescript(shape.spec, 'data'));
+    chunks.push(`  ];`);
+    chunks.push(`}`);
+
+    // chunks.push(`TODO: protocol-xml input`);
     // chunks.push(`function ${shape.censoredName}_Serialize(body: URLSearchParams, prefix: string, params: ${shape.censoredName}) {`);
 
     // switch (shape.spec.type) {
@@ -54,6 +104,57 @@ export default class ProtocolXmlCodegen {
     return {
       inputParsingFunction: chunks.join('\n'),
     };
+  }
+
+  generateStructureInputTypescript(inputStruct: Schema.ShapeStructure, paramsRef: string): string {
+    const chunks = new Array<string>();
+
+    for (const [field, spec] of Object.entries(inputStruct.members)) {
+      const shape = this.shapes.get(spec);
+      const defaultName = this.ucfirst(field, false);
+      const locationName = this.ucfirst(spec.locationName, false) ?? shape.spec.locationName ?? defaultName;
+      const isRequired = (inputStruct.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
+      const paramRef = `${paramsRef}[${JSON.stringify(field)}]`;
+
+      switch (shape.spec.type) {
+
+        case 'string':
+        case 'boolean':
+        case 'integer':
+        case 'float':
+        case 'double':
+        case 'long':
+          chunks.push(`    {name: ${JSON.stringify(locationName)}, content: ${paramRef}?.toString()},`);
+          break;
+
+        case 'list': {
+          const innerShape = this.shapes.get(shape.spec.member);
+          switch (innerShape.spec.type) {
+
+            case 'structure':
+              chunks.push(`    {name: ${JSON.stringify(locationName)}, children: ${paramRef}?.flatMap(${innerShape.censoredName}_Serialize)},`);
+              break;
+
+            case 'string':
+              chunks.push(`    {name: ${JSON.stringify(locationName)}, children: ${paramRef}?.map(x => ({name: 'member', content: x}))},`);
+              break;
+
+            default:
+              throw new Error(`TODO: protocol-xml.ts lacks input shape list generator for ${innerShape.spec.type}`);
+          }
+        }
+
+        case 'structure':
+          chunks.push(`    {name: ${JSON.stringify(locationName)}, children: ${shape.censoredName}_Serialize(${paramRef})},`);
+          break;
+
+      // {name: "ResourceRecordSet", children: ResourceRecordSet_Serialize(data["ResourceRecordSet"])},
+
+        default:
+          throw new Error(`TODO: protocol-xml.ts lacks input shape generator for ${shape.spec.type}`);
+      }
+    }
+    return chunks.join('\n');
   }
 
   // generateStructureInputTypescript(inputStruct: Schema.ShapeStructure, paramsRef = "params", prefix = ""): string {

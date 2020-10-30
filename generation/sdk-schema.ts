@@ -8,9 +8,6 @@ export interface ServiceMetadata {
   "cors"?: true;
 };
 
-const list: MetadataListing = {};
-list['hi'].name
-
 export interface Api {
   "version": "2.0";
   "metadata": ApiMetadata;
@@ -47,7 +44,7 @@ export interface ApiOperation {
     "requestUri": string;
     "responseCode"?: number;
   };
-  "input"?: ShapeRef;
+  "input"?: ShapeRef & LocationInfo;
   "output"?: ShapeRef & {
     "resultWrapper"?: string;
   };
@@ -74,6 +71,7 @@ export interface ApiShapeMetadata {
   "locationName"?: string; // e.g. SSES3, seems to be to alias things for network
   "sensitive"?: boolean; // params that shouldn't be logged
   "documentation"?: string;
+  "payload"?: string; // xml-rest body field name
   "resultWrapper"?: string; // only used for test fixturesI guess
 };
 export type ApiShapes =
@@ -163,11 +161,19 @@ export interface StructureFieldDetails {
   "streaming"?: true;
   "deprecated"?: true;
   "timestampFormat"?: "iso8601" | "unixTimestamp"; // default varies
-  "idempotencyToken"?: true; // shuold be auto filled with guid if not given
-  "xmlNamespace"?: { // used by s3
+  "idempotencyToken"?: true; // auto filled with guid if not provided
+  "xmlNamespace"?: { // used by rest-xml
     "uri": string;
   };
 };
+
+// especially for rest stuff
+export interface LocationInfo {
+  "locationName"?: string;
+  "xmlNamespace"?: {
+    "uri": string;
+  };
+}
 
 // elastictranscoder does this string bs instead of an enum:
 // "pattern": "(^Left$)|(^Right$)|(^Center$)"

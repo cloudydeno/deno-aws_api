@@ -22,22 +22,6 @@ interface ServiceEntry {
 }
 const services: Record<string, ServiceEntry> = {};
 
-function canBuild(svc: ServiceEntry) {
-
-  // post urlencoded, receive XML
-  if (svc.protocol === 'query') return true;
-  if (svc.protocol === 'ec2') return true;
-  // and also use headers
-  if (svc.protocol === 'rest-xml') return true;
-
-  // post/receive plain JSON
-  if (svc.protocol === 'json') return true;
-  // if (svc.service === 'dynamodb') return true;
-  // if (svc.service === 'kinesis') return true;
-
-  return false;
-}
-
 const f = await Deno.open("./grid-services.csv");
 for await (const obj of readCSVObjects(f)) {
   services[`${obj.service}@${obj.version}`] = obj as unknown as ServiceEntry;
@@ -81,7 +65,6 @@ for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
   }
 
   const svc = services[`${service}@${version}`];
-  if (!canBuild(svc)) continue;
 
   let modPath: string;
   let byteCount: number;

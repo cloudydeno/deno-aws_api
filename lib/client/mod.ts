@@ -94,98 +94,42 @@ export function wrapServiceClient(
     case 'ec2':
       return new QueryServiceClient(apiMetadata.apiVersion, signingFetcher);
     case 'json':
+    case 'rest-json':
       return new JsonServiceClient(apiMetadata.targetPrefix ?? 'TODO', apiMetadata.jsonVersion ?? '1.0', signingFetcher);
+    case 'rest-xml':
+      return new XmlServiceClient(signingFetcher);
     default: throw new Error(`TODO: protocol ${apiMetadata.protocol}`);
   }
 }
 
 
-export class JsonServiceClient implements ServiceClient {
-  #serviceTarget: string;
-  #jsonVersion: string;
+export class BaseServiceClient implements ServiceClient {
   #signedFetcher: SigningFetcher;
-  constructor(serviceTarget: string, jsonVersion: string, signedFetcher: SigningFetcher) {
-    this.#serviceTarget = serviceTarget;
-    this.#jsonVersion = jsonVersion;
+  constructor(signedFetcher: SigningFetcher) {
     this.#signedFetcher = signedFetcher;
   }
 
-  async performRequest(config: ApiRequestConfig): Promise<ApiResponse> {
-    const headers = config.headers ?? new Headers;
-    headers.append('x-amz-target', `${this.#serviceTarget}.${config.action}`);
-
+  async performRequest(config: ApiRequestConfig & {
+    body?: Uint8Array;
+    headers: Headers;
+  }): Promise<ApiResponse> {
+    const headers = config.headers;
     const serviceUrl = config.requestUri ?? '/';
     const method = config.method ?? 'POST';
 
-    let reqBody = new TextEncoder().encode(JSON.stringify(config.body));
-    headers.append('content-type', 'application/x-amz-json-'+this.#jsonVersion);
-    headers.append('content-length', reqBody.length.toString());
+    if (config.body) {
+      headers.append('content-length', config.body.length.toString());
+    }
+
+    let query = "";
+    if (config.query) {
+      query = (serviceUrl.includes('?') ? '&' : '?') + config.query.toString();
+    }
 
     const request = new Request('https://example.com/', {
       method: method,
       headers: headers,
-      body: reqBody,
-    });
-    const rawResp = await this.#signedFetcher(request, {
-      urlPath: serviceUrl,
-      skipSigning: config.skipSigning,
-      hostPrefix: config.hostPrefix,
-      signal: config.abortSignal,
-    });
-    const response = new ApiResponse(rawResp.body, rawResp);
-
-    if (response.status == (config.responseCode ?? 200)) {
-      return response;
-    } else if (response.status >= 400) {
-      await handleErrorResponse(response);
-    }
-    throw new Error(`BUG: Unexpected HTTP response status ${response.status}`);
-  }
-}
-
-export class QueryServiceClient implements ServiceClient {
-  #serviceVersion: string;
-  #signedFetcher: SigningFetcher;
-  constructor(serviceVersion: string, signedFetcher: SigningFetcher) {
-    this.#serviceVersion = serviceVersion;
-    this.#signedFetcher = signedFetcher;
-  }
-
-  async performRequest(config: ApiRequestConfig): Promise<ApiResponse> {
-    const headers = config.headers ?? new Headers;
-    // TODO: we should probably have the api metadata so we can pick one of these
-    // headers.append('accept', 'application/json'); // TODO
-    // headers.append('accept', 'text/xml');
-
-    const serviceUrl = config.requestUri ?? '/';
-    const method = config.method ?? 'POST';
-
-    let reqBody: Uint8Array | null = null;
-    let query = '';
-
-    if (config.body instanceof URLSearchParams) {
-      if (method !== 'POST') throw new Error(`query is supposed to be POSTed`);
-      const params = new URLSearchParams;
-      params.set('Action', config.action);
-      params.set('Version', this.#serviceVersion);
-      // TODO: probably zero-copy this
-      for (const [k, v] of config.body) {
-        params.append(k, v);
-      }
-
-      reqBody = new TextEncoder().encode(params.toString());
-      headers.append('content-type', 'application/x-www-form-urlencoded; charset=utf-8');
-      headers.append('content-length', reqBody.length.toString());
-    } else if (config.body) throw new Error(`BUG: non-query based request body passed to query client`);
-
-    if (query) {
-      query = (serviceUrl.includes('?') ? '&' : '?') + query;
-    }
-
-    const request = new Request('https://example.com', {
-      method: method,
-      headers: headers,
-      body: reqBody,
+      body: config.body,
     });
     const rawResp = await this.#signedFetcher(request, {
       urlPath: serviceUrl + query,
@@ -201,6 +145,95 @@ export class QueryServiceClient implements ServiceClient {
       await handleErrorResponse(response);
     }
     throw new Error(`BUG: Unexpected HTTP response status ${response.status}`);
+  }
+}
+
+
+export class XmlServiceClient extends BaseServiceClient {
+  constructor(signedFetcher: SigningFetcher) {
+    super(signedFetcher);
+  }
+
+  async performRequest(config: ApiRequestConfig): Promise<ApiResponse> {
+    const headers = config.headers ?? new Headers;
+    headers.append('accept', 'text/xml');
+
+    let reqBody: Uint8Array | undefined;
+    if (typeof config.body === 'string') {
+      reqBody = new TextEncoder().encode(config.body);
+      headers.append('content-type', 'text/xml');
+    } else if (config.body) throw new Error(`TODO: non-string body to XmlServiceClient`);
+
+    return super.performRequest({
+      ...config,
+      headers,
+      body: reqBody,
+    });
+  }
+}
+
+export class JsonServiceClient extends BaseServiceClient {
+  #serviceTarget: string;
+  #jsonVersion: string;
+  constructor(serviceTarget: string, jsonVersion: string, signedFetcher: SigningFetcher) {
+    super(signedFetcher);
+    this.#serviceTarget = serviceTarget;
+    this.#jsonVersion = jsonVersion;
+  }
+
+  async performRequest(config: ApiRequestConfig): Promise<ApiResponse> {
+    const headers = config.headers ?? new Headers;
+    headers.append('x-amz-target', `${this.#serviceTarget}.${config.action}`);
+    headers.append('accept', 'application/x-amz-json-'+this.#jsonVersion);
+
+    let reqBody: Uint8Array | undefined;
+    if (config.body) {
+      reqBody = new TextEncoder().encode(JSON.stringify(config.body));
+      headers.append('content-type', 'application/x-amz-json-'+this.#jsonVersion);
+    }
+
+    return super.performRequest({
+      ...config,
+      headers,
+      body: reqBody,
+    });
+  }
+}
+
+export class QueryServiceClient extends BaseServiceClient {
+  #serviceVersion: string;
+  constructor(serviceVersion: string, signedFetcher: SigningFetcher) {
+    super(signedFetcher);
+    this.#serviceVersion = serviceVersion;
+  }
+
+  async performRequest(config: ApiRequestConfig): Promise<ApiResponse> {
+    const headers = config.headers ?? new Headers;
+    headers.append('accept', 'text/xml');
+
+    const method = config.method ?? 'POST';
+
+    let reqBody: Uint8Array | undefined;
+
+    if (config.body instanceof URLSearchParams) {
+      if (method !== 'POST') throw new Error(`query is supposed to be POSTed`);
+      const params = new URLSearchParams;
+      params.set('Action', config.action);
+      params.set('Version', this.#serviceVersion);
+      // TODO: probably zero-copy this
+      for (const [k, v] of config.body) {
+        params.append(k, v);
+      }
+
+      reqBody = new TextEncoder().encode(params.toString());
+      headers.append('content-type', 'application/x-www-form-urlencoded; charset=utf-8');
+    } else if (config.body) throw new Error(`BUG: non-query based request body passed to query client`);
+
+    return super.performRequest({
+      ...config,
+      headers,
+      body: reqBody,
+    });
   }
 }
 
@@ -246,6 +279,12 @@ async function handleErrorResponse(response: ApiResponse): Promise<never> {
           throw new AwsServiceError(errors[0], xml.first('RequestID', false, x => x.content));
         }
         break;
+
+      case 'Error': // e.g. s3
+        throw new AwsServiceError(xml.strings({
+          required: { Code: true, Message: true },
+          optional: { 'Token-0': true, HostId: true },
+        }), xml.first('RequestId', false, x => x.content));
     }
 
   } else if (contentType?.startsWith('application/json')) {

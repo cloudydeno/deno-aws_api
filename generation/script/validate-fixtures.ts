@@ -14,7 +14,7 @@ type ProtocolFixture = Schema.Api & {
 type ProtocolTestCase = ProtocolInputTestCase | ProtocolOutputTestCase;
 interface ProtocolInputTestCase {
   "given": Schema.ApiOperation;
-  "params": { [key: string]: any };
+  "params"?: { [key: string]: any };
   "serialized": {
     "uri": string;
     "body": string;
@@ -85,13 +85,13 @@ async function *readTestFixtures(filePath: string): AsyncGenerator<TestRun> {
     for (const testCase of cases) {
       let inners: TestRunCase;
       let descr = filePath.split('/fixtures/')[1] + ': ' + (description ?? "Test case");
-      if ('params' in testCase) {
-        inners = { category: 'input', testCase: testCase as ProtocolInputTestCase };
-        descr += ` with params ${JSON.stringify(inners.testCase.params)}`;
-      } else if ('result' in testCase) {
+      if ('result' in testCase) {
         inners = { category: 'output', testCase: testCase as ProtocolOutputTestCase };
         descr += ` with result ${JSON.stringify(inners.testCase.result)}`;
-      } else throw new Error(`BUG: testcase wasn't input or output`);
+      } else {
+        inners = { category: 'input', testCase: testCase as ProtocolInputTestCase };
+        descr += ` with params ${JSON.stringify(inners.testCase.params)}`;
+      }
 
       yield {
         ...inners,
@@ -110,12 +110,16 @@ async function *readTestFixtures(filePath: string): AsyncGenerator<TestRun> {
 }
 
 async function* readAllTestFixtures() {
-  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/json.json');
-  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/output/json.json');
-  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/query.json');
-  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/output/query.json');
-  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/ec2.json');
-  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/output/ec2.json');
+  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/rest-json.json');
+  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/output/rest-json.json');
+  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/rest-xml.json');
+  yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/output/rest-xml.json');
+  // yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/json.json');
+  // yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/output/json.json');
+  // yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/query.json');
+  // yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/output/query.json');
+  // yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/input/ec2.json');
+  // yield* readTestFixtures('aws-sdk-js/test/fixtures/protocol/output/ec2.json');
 }
 const allTestRuns = readAllTestFixtures();
 
@@ -147,7 +151,7 @@ const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunR
   chunks.push(`import { assertEquals } from "https://deno.land/std@0.71.0/testing/asserts.ts";`);
   chunks.push(`import { wrapServiceClient } from '../../client/mod.ts';\n`);
 
-  chunks.push(`async function checkRequest(request: Request, opts: {hostPrefix?: string}): Promise<Response> {`);
+  chunks.push(`async function checkRequest(request: Request, opts: {hostPrefix?: string, urlPath: string}): Promise<Response> {`);
   if (run.category === 'input') {
     const { given, params, serialized } = run.testCase;
 
@@ -157,7 +161,7 @@ const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunR
 
     chunks.push(`  const [_, host] = ${JSON.stringify(run.clientEndpoint)}.match(/^https:\\/\\/([^\\/]+)$/) ?? [null, ''];`);
     if (serialized.host) chunks.push(`  assertEquals((opts.hostPrefix ?? '')+host, ${JSON.stringify(serialized.host)});`);
-    chunks.push(`  assertEquals(request.url, ${JSON.stringify(serialized.uri)});`);
+    chunks.push(`  assertEquals(opts.urlPath, ${JSON.stringify(serialized.uri)});`);
     if (expectedBody) {
       chunks.push(`  assertEquals(await request.text(),`);
       chunks.push(`    ${JSON.stringify(expectedBody)});`);

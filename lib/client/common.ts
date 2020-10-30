@@ -26,7 +26,7 @@ export interface ApiRequestConfig {
   // dynamic per call
   headers?: Headers;
   query?: URLSearchParams;
-  body?: URLSearchParams | JSONObject | Uint8Array;
+  body?: URLSearchParams | JSONObject | Uint8Array | string;
   abortSignal?: AbortSignal;
   skipSigning?: true; // for unauthenticated APIs (STS, cognito)
 }

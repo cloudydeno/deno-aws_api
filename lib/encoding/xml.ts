@@ -22,7 +22,7 @@ export interface Document {
 export interface XmlDeclaration {
   attributes: {[key: string]: string};
 }
-export class XmlNode {
+export class XmlNode implements Node {
   name: string;
   attributes: {[key: string]: string} = {};
   content?: string;
@@ -257,4 +257,33 @@ export function parseTimestamp(str: string | undefined): Date {
   if (str?.includes('T')) return new Date(str);
   if (str?.length === 10) return new Date(parseInt(str) * 1000)
   throw new Error(`Timestamp from server is unparsable: '${str}'`);
+}
+
+
+export interface Node {
+  name: string;
+  attributes?: {[key: string]: string};
+  content?: string | null;
+  children?: Node[];
+}
+
+export function stringify(root: Node): string {
+  const attrs = root.attributes
+    ? Object.entries(root.attributes)
+      .filter(x => x[1] !== undefined)
+      .map(x => ` ${x[0]}="${encodeXmlEntities(x[1])}"`)
+      .join('')
+    : '';
+
+  const contents = (root.children && root.children.length > 0)
+    ? root.children?.map(x => stringify(x)).filter(x => x)
+    : root.content !== undefined
+    ? [encodeXmlEntities(root.content ?? '')]
+    : [];
+
+  if (contents.length < 1) {
+    // if (!attrs) return '';
+    return `<${root.name}${attrs} />`;
+  }
+  return `<${root.name}${attrs}>${contents.join('')}</${root.name}>`;
 }

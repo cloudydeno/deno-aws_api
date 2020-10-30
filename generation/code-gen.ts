@@ -6,12 +6,24 @@ import { fixupApiSpec, fixupWaitersSpec, unauthenticatedApis } from './quirks.ts
 import GenWaiter from "./gen-waiter.ts";
 import HelperLibrary from "./helper-library.ts";
 import ProtocolRestCodegen from "./protocol-rest.ts";
+import ProtocolXmlCodegen from "./protocol-xml.ts";
 
 interface ProtocolCodegen {
-  generateOperationInputParsingTypescript(inputShape: Schema.ApiShape): { inputParsingCode: string; inputVariables: string[]; };
-  generateOperationOutputParsingTypescript(shape: KnownShape, resultWrapper?: string): { outputParsingCode: string; outputVariables: string[]; };
-  generateShapeInputParsingTypescript(shape: KnownShape): { inputParsingFunction: string; };
-  generateShapeOutputParsingTypescript(shape: KnownShape): { outputParsingFunction: string; };
+  generateOperationInputParsingTypescript(inputShape: Schema.ApiShape, meta: Schema.LocationInfo): {
+    inputParsingCode: string;
+    inputVariables: string[];
+    pathParts?: Map<string,string>;
+  };
+  generateOperationOutputParsingTypescript(shape: KnownShape, resultWrapper?: string): {
+    outputParsingCode: string;
+    outputVariables: string[];
+  };
+  generateShapeInputParsingTypescript(shape: KnownShape): {
+    inputParsingFunction: string;
+  };
+  generateShapeOutputParsingTypescript(shape: KnownShape): {
+    outputParsingFunction: string;
+  };
 }
 
 export default class ServiceCodeGen {
@@ -68,7 +80,7 @@ export default class ServiceCodeGen {
           this.protocol = new ProtocolJsonCodegen(this.shapes, this.helpers);
           break;
         case 'rest-xml': {
-          const inner = new ProtocolQueryCodegen(this.shapes, this.helpers);
+          const inner = new ProtocolXmlCodegen(this.shapes, this.helpers);
           this.protocol = new ProtocolRestCodegen(inner);
           break;
         }
@@ -101,6 +113,46 @@ export default class ServiceCodeGen {
         ],
       });
     }
+
+    this.helpers.addHelper('encodePath', {
+      chunks: [
+        `function encodePath(`,
+        `  strings: TemplateStringsArray,`,
+        `  ...names: (string | string[])[]`,
+        `): string {`,
+        `  return String.raw(strings, ...names.map((x) =>`,
+        `    typeof x === "string"`,
+        `      ? encodeURIComponent(x)`,
+        `      : x.map(encodeURIComponent).join("/")`,
+        `  ));`,
+        `}`],
+    });
+
+    this.helpers.addHelper('serializeDate_unixTimestamp', {
+      chunks: [
+        `function serializeDate_unixTimestamp(input: Date | number | null | undefined) {`,
+        `  if (input == null) return input;`,
+        `  const date = typeof input === 'number' ? new Date(input*1000) : input;`,
+        `  return Math.floor(date.valueOf() / 1000);`,
+        `}`,
+      ]});
+    this.helpers.addHelper('serializeDate_iso8601', {
+      chunks: [
+        `function serializeDate_iso8601(input: Date | number | null | undefined) {`,
+        `  if (input == null) return input;`,
+        `  const date = typeof input === 'number' ? new Date(input*1000) : input;`,
+        `  return date.toISOString();`,
+        `}`,
+      ]});
+    this.helpers.addHelper('serializeDate_rfc822', {
+      chunks: [
+        `function serializeDate_rfc822(input: Date | number | null | undefined) {`,
+        `  if (input == null) return input;`,
+        `  const date = typeof input === 'number' ? new Date(input*1000) : input;`,
+        `  return date.toUTCString();`,
+        `}`,
+      ]});
+
   }
 
   generateTypescript(namespace: string): string {
@@ -119,7 +171,7 @@ export default class ServiceCodeGen {
       let signature = `(\n    {abortSignal, ...params}: RequestConfig`;
       if (inputShape?.spec.type === 'structure') {
         signature += ' & ' + this.specifyShapeType(inputShape);
-        if (!inputShape.spec.required?.length) {
+        if (!inputShape.spec.required?.length && Object.values(inputShape.spec.members).every(x => x.location !== 'uri')) {
           signature += ' = {}';
         }
       } else if (inputShape) {
@@ -140,15 +192,14 @@ export default class ServiceCodeGen {
 
       const lowerCamelName = operation.name[0].toLowerCase() + operation.name.slice(1);
       chunks.push(`  async ${lowerCamelName}${signature} {`);
-      const pathParts = new Map;
+      let protoPathParts: Map<string,string> | undefined;
       const referencedInputs = new Set(['abortSignal']);
-      if (inputShape?.spec.type === 'structure') {
-        const {inputParsingCode, inputVariables} = this.protocol
-          .generateOperationInputParsingTypescript(inputShape.spec);
+      if (operation.input && inputShape?.spec.type === 'structure') {
+        const {inputParsingCode, inputVariables, pathParts} = this.protocol
+          .generateOperationInputParsingTypescript(inputShape.spec, operation.input);
         chunks.push(inputParsingCode);
         inputVariables.forEach(x => referencedInputs.add(x));
-      // } else {
-      //   referencedInputs.add(`body: new URLSearchParams()`);
+        protoPathParts = pathParts;
       }
 
       chunks.push(`    const resp = await this.#client.performRequest({`);
@@ -161,9 +212,10 @@ export default class ServiceCodeGen {
         chunks.push(`      method: ${JSON.stringify(operation.http.method)},`);
       }
       if (operation.http?.requestUri && operation.http.requestUri !== '/') {
+        this.helpers.useHelper('encodePath');
         const formattedPath = operation.http?.requestUri?.includes('{')
           ? ('encodePath`'+operation.http.requestUri
-              .replace(/{[^}]+}/g, x => pathParts.get(x)||x)
+              .replace(/{[^}]+}/g, x => protoPathParts?.get(x)||x)
             +'`').replace(/\+encodePath``/g, '')
           : JSON.stringify(operation.http?.requestUri || '/');
         chunks.push(`      requestUri: ${formattedPath},`);
@@ -271,7 +323,8 @@ export default class ServiceCodeGen {
           ...Object.entries(shape.spec.members).map(([key, spec]) => {
             const shape = this.shapes.get(spec);
             const isRequired = required.has(key.toLowerCase())
-              || (reqLists && (shape.spec.type === 'list' || shape.spec.type === 'map'));
+              || (reqLists && (shape.spec.type === 'list' || shape.spec.type === 'map'))
+              || spec.location === 'uri';
             return `  ${key}${isRequired ? '' : '?'}: ${this.specifyShapeType(shape)}${isRequired ? '' : ' | null'};`;
           }),
         '}'].join('\n');
