@@ -127,12 +127,15 @@ export type ShapeTag =
 export class KnownShape {
   name: string;
   spec: Schema.ApiShape;
-  tags = new Set<ShapeTag>();
-  refCount = 0;
+  payloadField?: string;
   constructor(name: string, spec: Schema.ApiShape) {
     this.name = name;
     this.spec = spec;
+    this.payloadField = spec.payload;
   }
+
+  tags = new Set<ShapeTag>();
+  refCount = 0;
 
   get censoredName(): string {
     if (['Object', 'Date', 'String'].includes(this.name))

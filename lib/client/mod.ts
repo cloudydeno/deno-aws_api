@@ -122,8 +122,9 @@ export class BaseServiceClient implements ServiceClient {
     }
 
     let query = "";
-    if (config.query) {
-      query = (serviceUrl.includes('?') ? '&' : '?') + config.query.toString();
+    const queryS = config.query?.toString();
+    if (queryS) {
+      query = (serviceUrl.includes('?') ? '&' : '?') + queryS;
     }
 
     const request = new Request('https://example.com/', {
@@ -187,7 +188,10 @@ export class JsonServiceClient extends BaseServiceClient {
     headers.append('accept', 'application/x-amz-json-'+this.#jsonVersion);
 
     let reqBody: Uint8Array | undefined;
-    if (config.body) {
+    if (config.body instanceof Uint8Array) {
+      reqBody = config.body;
+
+    } else if (config.body) {
       reqBody = new TextEncoder().encode(JSON.stringify(config.body));
       headers.append('content-type', 'application/x-amz-json-'+this.#jsonVersion);
     }

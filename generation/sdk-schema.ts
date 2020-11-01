@@ -63,11 +63,13 @@ export interface ApiOperation {
 
 export interface ShapeRef {
   "shape": string; // id for the shape in the api file
+  "jsonvalue"?: true; // wrap JSON.{stringify,parse} around the field
   "documentation"?: string;
 }
 
 export type ApiShape = ApiShapes & ApiShapeMetadata;
 export interface ApiShapeMetadata {
+  "location"?: string; // only in test cases maybe?
   "locationName"?: string; // e.g. SSES3, seems to be to alias things for network
   "sensitive"?: boolean; // params that shouldn't be logged
   "documentation"?: string;
@@ -173,6 +175,7 @@ export interface LocationInfo {
   "xmlNamespace"?: {
     "uri": string;
   };
+  "payload"?: string; // seemingly only test cases put this here
 }
 
 // elastictranscoder does this string bs instead of an enum:

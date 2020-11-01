@@ -9,7 +9,7 @@ import ProtocolRestCodegen from "./protocol-rest.ts";
 import ProtocolXmlCodegen from "./protocol-xml.ts";
 
 interface ProtocolCodegen {
-  generateOperationInputParsingTypescript(inputShape: Schema.ApiShape, meta: Schema.LocationInfo): {
+  generateOperationInputParsingTypescript(inputShape: KnownShape, meta: Schema.LocationInfo): {
     inputParsingCode: string;
     inputVariables: string[];
     pathParts?: Map<string,string>;
@@ -68,6 +68,7 @@ export default class ServiceCodeGen {
       outputNames: Array.from(outputShapes),
     });
     this.helpers = new HelperLibrary();
+    this.helpers.addDep("cmnP", "../../encoding/common.ts");
 
     switch (specs.api.metadata.protocol) {
       case 'ec2':
@@ -114,44 +115,44 @@ export default class ServiceCodeGen {
       });
     }
 
-    this.helpers.addHelper('encodePath', {
-      chunks: [
-        `function encodePath(`,
-        `  strings: TemplateStringsArray,`,
-        `  ...names: (string | string[])[]`,
-        `): string {`,
-        `  return String.raw(strings, ...names.map((x) =>`,
-        `    typeof x === "string"`,
-        `      ? encodeURIComponent(x)`,
-        `      : x.map(encodeURIComponent).join("/")`,
-        `  ));`,
-        `}`],
-    });
+    // this.helpers.addHelper('encodePath', {
+    //   chunks: [
+    //     `function encodePath(`,
+    //     `  strings: TemplateStringsArray,`,
+    //     `  ...names: (string | string[])[]`,
+    //     `): string {`,
+    //     `  return String.raw(strings, ...names.map((x) =>`,
+    //     `    typeof x === "string"`,
+    //     `      ? encodeURIComponent(x)`,
+    //     `      : x.map(encodeURIComponent).join("/")`,
+    //     `  ));`,
+    //     `}`],
+    // });
 
-    this.helpers.addHelper('serializeDate_unixTimestamp', {
-      chunks: [
-        `function serializeDate_unixTimestamp(input: Date | number | null | undefined) {`,
-        `  if (input == null) return input;`,
-        `  const date = typeof input === 'number' ? new Date(input*1000) : input;`,
-        `  return Math.floor(date.valueOf() / 1000);`,
-        `}`,
-      ]});
-    this.helpers.addHelper('serializeDate_iso8601', {
-      chunks: [
-        `function serializeDate_iso8601(input: Date | number | null | undefined) {`,
-        `  if (input == null) return input;`,
-        `  const date = typeof input === 'number' ? new Date(input*1000) : input;`,
-        `  return date.toISOString();`,
-        `}`,
-      ]});
-    this.helpers.addHelper('serializeDate_rfc822', {
-      chunks: [
-        `function serializeDate_rfc822(input: Date | number | null | undefined) {`,
-        `  if (input == null) return input;`,
-        `  const date = typeof input === 'number' ? new Date(input*1000) : input;`,
-        `  return date.toUTCString();`,
-        `}`,
-      ]});
+    // this.helpers.addHelper('serializeDate_unixTimestamp', {
+    //   chunks: [
+    //     `function serializeDate_unixTimestamp(input: Date | number | null | undefined) {`,
+    //     `  if (input == null) return input;`,
+    //     `  const date = typeof input === 'number' ? new Date(input*1000) : input;`,
+    //     `  return Math.floor(date.valueOf() / 1000);`,
+    //     `}`,
+    //   ]});
+    // this.helpers.addHelper('serializeDate_iso8601', {
+    //   chunks: [
+    //     `function serializeDate_iso8601(input: Date | number | null | undefined) {`,
+    //     `  if (input == null) return input;`,
+    //     `  const date = typeof input === 'number' ? new Date(input*1000) : input;`,
+    //     `  return date.toISOString();`,
+    //     `}`,
+    //   ]});
+    // this.helpers.addHelper('serializeDate_rfc822', {
+    //   chunks: [
+    //     `function serializeDate_rfc822(input: Date | number | null | undefined) {`,
+    //     `  if (input == null) return input;`,
+    //     `  const date = typeof input === 'number' ? new Date(input*1000) : input;`,
+    //     `  return date.toUTCString();`,
+    //     `}`,
+    //   ]});
 
   }
 
@@ -170,7 +171,10 @@ export default class ServiceCodeGen {
 
       let signature = `(\n    {abortSignal, ...params}: RequestConfig`;
       if (inputShape?.spec.type === 'structure') {
-        signature += ' & ' + this.specifyShapeType(inputShape);
+        signature += ' & ' + this.specifyShapeType(inputShape, {isJson: operation.input?.jsonvalue});
+        if (operation.input?.payload) {
+          inputShape.payloadField = operation.input.payload;
+        }
         if (!inputShape.spec.required?.length && Object.values(inputShape.spec.members).every(x => x.location !== 'uri')) {
           signature += ' = {}';
         }
@@ -182,7 +186,7 @@ export default class ServiceCodeGen {
 
       signature += `,\n  ): Promise<`;
       if (outputShape?.spec.type === 'structure') {
-        signature += this.specifyShapeType(outputShape);
+        signature += this.specifyShapeType(outputShape, {isJson: operation.output?.jsonvalue});
       } else if (outputShape) {
         throw new Error(`TODO: ${outputShape.spec.type} output`);
       } else {
@@ -196,7 +200,7 @@ export default class ServiceCodeGen {
       const referencedInputs = new Set(['abortSignal']);
       if (operation.input && inputShape?.spec.type === 'structure') {
         const {inputParsingCode, inputVariables, pathParts} = this.protocol
-          .generateOperationInputParsingTypescript(inputShape.spec, operation.input);
+          .generateOperationInputParsingTypescript(inputShape, operation.input);
         chunks.push(inputParsingCode);
         inputVariables.forEach(x => referencedInputs.add(x));
         protoPathParts = pathParts;
@@ -212,11 +216,11 @@ export default class ServiceCodeGen {
         chunks.push(`      method: ${JSON.stringify(operation.http.method)},`);
       }
       if (operation.http?.requestUri && operation.http.requestUri !== '/') {
-        this.helpers.useHelper('encodePath');
+        // this.helpers.useHelper('encodePath');
         const formattedPath = operation.http?.requestUri?.includes('{')
-          ? ('encodePath`'+operation.http.requestUri
+          ? ('cmnP.encodePath`'+operation.http.requestUri
               .replace(/{[^}]+}/g, x => protoPathParts?.get(x)||x)
-            +'`').replace(/\+encodePath``/g, '')
+            +'`')
           : JSON.stringify(operation.http?.requestUri || '/');
         chunks.push(`      requestUri: ${formattedPath},`);
       }
@@ -289,13 +293,13 @@ export default class ServiceCodeGen {
         }
       } else if (shape.tags.has('enum')) {
         // Maybe include input reading (prep for wire)
-        if (shape.tags.has('input')) {
-          chunks.push(this.protocol.generateShapeInputParsingTypescript(shape).inputParsingFunction);
-        }
+        // if (shape.tags.has('input')) {
+        //   chunks.push(this.protocol.generateShapeInputParsingTypescript(shape).inputParsingFunction);
+        // }
         // Maybe include output reading (post-wire enriching)
-        if (shape.tags.has('output')) {
-          chunks.push(this.protocol.generateShapeOutputParsingTypescript(shape).outputParsingFunction);
-        }
+        // if (shape.tags.has('output')) {
+        //   chunks.push(this.protocol.generateShapeOutputParsingTypescript(shape).outputParsingFunction);
+        // }
       }
       chunks.push('');
     }
@@ -321,11 +325,11 @@ export default class ServiceCodeGen {
         const reqLists = shape.tags.has('output') && !this.apiSpec.metadata.protocol.includes('json');
         return [`export interface ${shape.censoredName} {`,
           ...Object.entries(shape.spec.members).map(([key, spec]) => {
-            const shape = this.shapes.get(spec);
+            const innerShape = this.shapes.get(spec);
             const isRequired = required.has(key.toLowerCase())
-              || (reqLists && (shape.spec.type === 'list' || shape.spec.type === 'map'))
+              || (reqLists && (innerShape.spec.type === 'list' || innerShape.spec.type === 'map'))
               || spec.location === 'uri';
-            return `  ${key}${isRequired ? '' : '?'}: ${this.specifyShapeType(shape)}${isRequired ? '' : ' | null'};`;
+            return `  ${key}${isRequired ? '' : '?'}: ${this.specifyShapeType(innerShape, {isJson: spec.jsonvalue})}${isRequired ? '' : ' | null'};`;
           }),
         '}'].join('\n');
 
@@ -333,7 +337,7 @@ export default class ServiceCodeGen {
         if (shape.spec.enum) {
           return [`export type ${shape.censoredName} =`,
             ...shape.spec.enum.map(value => `| ${JSON.stringify(value)}`),
-          ';'].join('\n');
+          '| cmnP.UnexpectedEnumValue;'].join('\n');
         }
         break;
 
@@ -342,15 +346,17 @@ export default class ServiceCodeGen {
   }
 
   // TODO: enums as a map key type should become an object instead
-  specifyShapeType(shape: KnownShape, isDictKey = false): string {
-    if (shape.tags.has('named') && !isDictKey) {
+  specifyShapeType(shape: KnownShape, opts: {isDictKey?: true; isJson?: true}): string {
+    if (shape.tags.has('named') && !opts.isDictKey) {
       return shape.censoredName;
     }
 
     switch (shape.spec.type) {
       case 'string':
-        if (shape.spec.enum && !isDictKey) {
+        if (shape.spec.enum && !opts.isDictKey) {
           return shape.spec.enum.map(x => JSON.stringify(x)).join(' | ');
+        } else if (opts.isJson && !opts.isDictKey) {
+          return 'jsonP.JSONValue';
         }
       case 'boolean':
         return shape.spec.type;
@@ -363,7 +369,7 @@ export default class ServiceCodeGen {
         return 'number';
       case 'list':
         const memberShape = this.shapes.get(shape.spec.member);
-        let memberType = this.specifyShapeType(memberShape);
+        let memberType = this.specifyShapeType(memberShape, {isJson: shape.spec.member.jsonvalue});
         if (memberType.includes(' ')) memberType = `(${memberType})`;
         return `${memberType}[]`;
       case 'map':
@@ -371,8 +377,8 @@ export default class ServiceCodeGen {
         const valueShape = this.shapes.get(shape.spec.value);
         const keyType = (keyShape.spec.type === 'string' && keyShape.spec.enum)
           ? `key in ${keyShape.censoredName}`
-          : `key: ${this.specifyShapeType(keyShape, true)}`;
-        return `{ [${keyType}]: ${this.specifyShapeType(valueShape)} }`;
+          : `key: ${this.specifyShapeType(keyShape, {isDictKey: true})}`;
+        return `{ [${keyType}]: ${this.specifyShapeType(valueShape, {isJson: shape.spec.value.jsonvalue})} | null | undefined }`;
       case 'structure':
         return this.writeStructureType(shape).replace(/\n/g, '\n  ');
       case 'timestamp':

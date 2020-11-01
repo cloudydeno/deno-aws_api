@@ -13,15 +13,15 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
     helpers.addDep("qsP", "../../encoding/querystring.ts");
   }
 
-  generateOperationInputParsingTypescript(inputShape: Schema.ApiShape): { inputParsingCode: string; inputVariables: string[]; } {
-    if (inputShape.type !== 'structure') throw new Error(
+  generateOperationInputParsingTypescript(inputShape: KnownShape): { inputParsingCode: string; inputVariables: string[]; } {
+    if (inputShape.spec.type !== 'structure') throw new Error(
       `Can only generate top level structures`);
 
     const chunks = new Array<string>();
     chunks.push(`    const body = new URLSearchParams;`);
     chunks.push(`    const prefix = '';`);
 
-    chunks.push(this.generateStructureInputTypescript(inputShape, "params", ''));
+    chunks.push(this.generateStructureInputTypescript(inputShape.spec, "params", ''));
 
     return {
       inputParsingCode: chunks.join('\n'),

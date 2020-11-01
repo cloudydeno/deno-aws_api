@@ -89,12 +89,7 @@ function readField(typeSig: FieldTypeIn | [FieldTypeIn], raw: JSONValue): unknow
     case 'b':
       return typeof raw === 'boolean' ? raw : null
     case 'd':
-      if (typeof raw === 'string') {
-        return new Date(raw);
-      } else if (typeof raw === 'number') {
-        return new Date(raw * 1000);
-      }
-      break;
+      return readDate(raw);
     case 'a':
       if (typeof raw === 'string') {
         return Base64.toUint8Array(raw);
@@ -126,13 +121,26 @@ export function serializeDate_unixTimestamp(input: Date | number | null | undefi
 export function serializeDate_iso8601(input: Date | number | null | undefined): JSONValue {
   if (input == null) return input;
   const date = typeof input === 'number' ? new Date(input*1000) : input;
-  return date.toISOString();
+  return date.toISOString().replace(/\.000Z$/, 'Z');
 }
 export function serializeDate_rfc822(input: Date | number | null | undefined): JSONValue {
   if (input == null) return input;
   const date = typeof input === 'number' ? new Date(input*1000) : input;
   return date.toUTCString();
 }
+
+
+export function readDate(raw: JSONValue): Date | null {
+  if (typeof raw === 'string') {
+    const date = new Date(raw);
+    if (!isNaN(date.valueOf())) return date;
+  } else if (typeof raw === 'number') {
+    // TODO: check range of number? 1970-2038 would be pretty safe
+    return new Date(raw * 1000);
+  }
+  return null;
+}
+
 
 export function serializeBlob(input: string | Uint8Array | null | undefined): JSONValue {
   if (!input) return input;
@@ -149,6 +157,17 @@ export function serializeMap<T,U extends JSONValue>(input: {[key: string]: T} | 
     map[key] = encoder(val);
   }
   return map;
+}
+
+// TODO: do these fields want "null" or an actual null if optional?
+export function serializeJsonValue(input: JSONValue): string | undefined {
+  if (input === undefined) return input;
+  return JSON.stringify(input);
+}
+export function readJsonValue(input: JSONValue): JSONValue {
+  if (input == null) return undefined;
+  if (typeof input !== 'string') throw new Error(`Server's JSON Value was ${typeof input} instead of string`);
+  return JSON.parse(input);
 }
 
 export function readMap<K extends string,V>(keyEncoder: (x: string) => K, valEncoder: (x: JSONValue) => V, input: JSONValue): Record<K,V> | null {

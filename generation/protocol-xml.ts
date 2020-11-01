@@ -16,18 +16,17 @@ export default class ProtocolXmlCodegen {
     helpers.addDep("xmlP", "../../encoding/xml.ts");
   }
 
-  generateOperationInputParsingTypescript(inputShape: Schema.ApiShape, meta: Schema.LocationInfo & {paramRef?: string}): { inputParsingCode: string; inputVariables: string[]; } {
-    if (inputShape.type !== 'structure') throw new Error(
+  generateOperationInputParsingTypescript(inputShape: KnownShape, meta: Schema.LocationInfo & {paramRef?: string}): { inputParsingCode: string; inputVariables: string[]; } {
+    if (inputShape.spec.type !== 'structure') throw new Error(
       `Can only generate top level structures`);
 
     const chunks = new Array<string>();
 
-    chunks.push(`const body = xmlP.stringify({`);
-    chunks.push(`  name: ${JSON.stringify(meta.locationName)},`);
-    chunks.push(`  attributes: ${JSON.stringify({xmlns: meta.xmlNamespace?.uri})},`);
-    chunks.push(`  children: [`);
-    // if (inputShape.type )
-    chunks.push(this.generateStructureInputTypescript(inputShape, 'params'));
+    chunks.push(`    const body = xmlP.stringify({`);
+    chunks.push(`      name: ${JSON.stringify(meta.locationName)},`);
+    chunks.push(`      attributes: ${JSON.stringify({xmlns: meta.xmlNamespace?.uri})},`);
+    chunks.push(`      children: [`);
+    chunks.push(this.generateStructureInputTypescript(inputShape.spec, meta.paramRef ?? 'params').replace(/^/gm,'    '));
 
     // const paramBase = meta.paramRef ?? 'params';
     // for (const [field, spec] of Object.entries(inputShape.members)) {
@@ -55,7 +54,7 @@ export default class ProtocolXmlCodegen {
     // chunks.push(`    {name: 'VPC', children: [`);
     // chunks.push(`      {name: ''}`);
     // chunks.push(`    ]},`);
-    chunks.push(`  ]});`);
+    chunks.push(`      ]});`);
 
 
     // chunks.push(`// TODO: protocol-xml input - ${meta.locationName} ${meta.xmlNamespace}`);
@@ -127,6 +126,11 @@ export default class ProtocolXmlCodegen {
           chunks.push(`    {name: ${JSON.stringify(locationName)}, content: ${paramRef}?.toString()},`);
           break;
 
+        case 'timestamp':
+          const dateFmt = spec.timestampFormat ?? shape.spec.timestampFormat ?? 'iso8601';
+          chunks.push(`    {name: ${JSON.stringify(locationName)}, content: cmnP.serializeDate_${dateFmt}(${paramRef})},`);
+          break;
+
         case 'list': {
           const innerShape = this.shapes.get(shape.spec.member);
           switch (innerShape.spec.type) {
@@ -142,6 +146,7 @@ export default class ProtocolXmlCodegen {
             default:
               throw new Error(`TODO: protocol-xml.ts lacks input shape list generator for ${innerShape.spec.type}`);
           }
+          break;
         }
 
         case 'structure':
@@ -251,7 +256,7 @@ export default class ProtocolXmlCodegen {
     if (shape.refCount > 1) {
       chunks.push(`    return ${shape.censoredName}_Parse(xml);`);
     } else {
-      chunks.push('  '+this.generateStructureOutputTypescript(shape.spec, 'xml')
+      chunks.push('  '+this.generateStructureOutputTypescript(shape.spec, 'xml', shape.spec.payload)
         .replace(/\n/g, '\n  '));
     }
 
@@ -272,7 +277,7 @@ export default class ProtocolXmlCodegen {
 
     switch (shape.spec.type) {
       case 'structure':
-        chunks.push(this.generateStructureOutputTypescript(shape.spec, 'node'));
+        chunks.push(this.generateStructureOutputTypescript(shape.spec, 'node', shape.spec.payload));
         break;
       default:
         throw new Error(`TODO: protocol-query.ts lacks shape output generator for ${shape.spec.type}`);
@@ -284,7 +289,7 @@ export default class ProtocolXmlCodegen {
     };
   }
 
-  generateStructureOutputTypescript(outputStruct: Schema.ShapeStructure, nodeRef: string): string {
+  generateStructureOutputTypescript(outputStruct: Schema.ShapeStructure, nodeRef: string, payload?: string): string {
     // Organize fields into basic strings and 'special' others
     // Basic strings can be passed directly from the xml module
     // TODO: support for locationName and maybe even enums, as further strings() arguments
@@ -298,7 +303,7 @@ export default class ProtocolXmlCodegen {
       const defaultName = this.ucfirst(field, false);
       const locationName = this.ucfirst(spec.queryName, true) ?? spec.locationName ?? fieldShape.spec.locationName ?? defaultName;
       if (fieldShape.spec.type == 'string' && !fieldShape.spec.enum && (!locationName || locationName === field)) {
-        if (outputStruct.required?.includes(field)) {
+        if (outputStruct.required?.includes(field) || payload === field) {
           reqStrings[field] = true;
           hasRequiredStrs = true;
         } else {
@@ -339,7 +344,7 @@ export default class ProtocolXmlCodegen {
     for (const [field, spec, shape] of specials) {
       const defaultName = field;
       const locationName = this.ucfirst(spec.queryName, true) ?? spec.locationName ?? shape.spec.locationName ?? defaultName;
-      const isRequired = (outputStruct.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
+      const isRequired = payload === field || (outputStruct.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
       // const paramRef = `${paramsRef}[${JSON.stringify(field)}]`;
 
       switch (shape.spec.type) {
