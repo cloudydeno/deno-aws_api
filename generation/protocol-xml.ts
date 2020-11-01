@@ -23,9 +23,9 @@ export default class ProtocolXmlCodegen {
     const chunks = new Array<string>();
 
     chunks.push(`    const body = xmlP.stringify({`);
-    chunks.push(`      name: ${JSON.stringify(meta.locationName)},`);
+    chunks.push(`      name: ${JSON.stringify(meta.locationName ?? inputShape.spec.locationName)},`);
     chunks.push(`      attributes: ${JSON.stringify({xmlns: meta.xmlNamespace?.uri})},`);
-    chunks.push(`      children: [`);
+    chunks.push(`      children: ${meta.paramRef === 'inner' ? 'inner ? ' : ''}[`);
     chunks.push(this.generateStructureInputTypescript(inputShape.spec, meta.paramRef ?? 'params').replace(/^/gm,'    '));
 
     // const paramBase = meta.paramRef ?? 'params';
@@ -54,7 +54,7 @@ export default class ProtocolXmlCodegen {
     // chunks.push(`    {name: 'VPC', children: [`);
     // chunks.push(`      {name: ''}`);
     // chunks.push(`    ]},`);
-    chunks.push(`      ]});`);
+    chunks.push(`      ]${meta.paramRef === 'inner' ? ' : []' : ''}});`);
 
 
     // chunks.push(`// TODO: protocol-xml input - ${meta.locationName} ${meta.xmlNamespace}`);
@@ -81,11 +81,14 @@ export default class ProtocolXmlCodegen {
 
     const chunks = new Array<string>();
 
-    chunks.push(`function ${shape.censoredName}_Serialize(data: ${shape.censoredName} | undefined | null): xmlP.Node[] {`);
-    chunks.push(`  if (!data) return [];`);
-    chunks.push(`  return [`);
+    chunks.push(`function ${shape.censoredName}_Serialize(data: ${shape.censoredName} | undefined | null): Partial<xmlP.Node> {`);
+    chunks.push(`  if (!data) return {};`);
+    // return {attributes: {
+    //   "xsi:type": data["Type"] ?? undefined,
+    // }, children: [
+    chunks.push(`  return {children: [`);
     chunks.push(this.generateStructureInputTypescript(shape.spec, 'data'));
-    chunks.push(`  ];`);
+    chunks.push(`  ]};`);
     chunks.push(`}`);
 
     // chunks.push(`TODO: protocol-xml input`);
@@ -131,26 +134,75 @@ export default class ProtocolXmlCodegen {
           chunks.push(`    {name: ${JSON.stringify(locationName)}, content: cmnP.serializeDate_${dateFmt}(${paramRef})},`);
           break;
 
+        case 'blob':
+          chunks.push(`    {name: ${JSON.stringify(locationName)}, content: cmnP.serializeBlob(${paramRef})},`);
+          break;
+
         case 'list': {
+          const isFlattened = spec.flattened || shape.spec.flattened;
           const innerShape = this.shapes.get(shape.spec.member);
+
+          let childField: 'content: ' | 'children: ' | '...' = 'content: ';
+          let childExpr = '';
           switch (innerShape.spec.type) {
 
             case 'structure':
-              chunks.push(`    {name: ${JSON.stringify(locationName)}, children: ${paramRef}?.flatMap(${innerShape.censoredName}_Serialize)},`);
+              childField = '...';
+              childExpr = `${innerShape.censoredName}_Serialize(x)`;
+              // chunks.push(`    {name: ${JSON.stringify(locationName)}, children: ${paramRef}?.flatMap(${innerShape.censoredName}_Serialize)},`);
               break;
 
             case 'string':
-              chunks.push(`    {name: ${JSON.stringify(locationName)}, children: ${paramRef}?.map(x => ({name: 'member', content: x}))},`);
+              childField = 'content: ';
+              childExpr = `x`;
+              // if (isFlattened) {
+              //   chunks.push(`    ...(${paramRef}?.map(x => ({name: ${JSON.stringify(locationName)}, content: x})) ?? []),`);
+              // } else {
+              //   chunks.push(`    {name: ${JSON.stringify(locationName)}, children: ${paramRef}?.map(x => ({name: ${JSON.stringify(shape.spec.member.locationName ?? 'member')}, content: x}))},`);
+              // }
               break;
 
             default:
               throw new Error(`TODO: protocol-xml.ts lacks input shape list generator for ${innerShape.spec.type}`);
           }
+
+          if (isFlattened) {
+            chunks.push(`    ...(${paramRef}?.map(x => ({name: ${JSON.stringify(locationName)}, ${childField}${childExpr}})) ?? []),`);
+          } else {
+            chunks.push(`    {name: ${JSON.stringify(locationName)}, children: ${paramRef}?.map(x => ({name: ${JSON.stringify(shape.spec.member.locationName ?? 'member')}, ${childField}${childExpr}}))},`);
+          }
+
+          break;
+        }
+
+        case 'map': {
+          const isFlattened = spec.flattened || shape.spec.flattened;
+          const keyShape = this.shapes.get(shape.spec.key);
+          const valShape = this.shapes.get(shape.spec.value);
+          console.log('map', keyShape.spec.type, valShape.spec.type, shape.spec.value.locationName);
+
+          let valEncoder = '';
+          switch (valShape.spec.type) {
+
+            case 'structure':
+              valEncoder = `x => ({name: ${JSON.stringify(shape.spec.key.locationName ?? 'value')}, ...to${valShape.censoredName}(x)})`;
+              // chunks.push(`    {name: ${JSON.stringify(locationName)}, children: ${paramRef}?.flatMap(${innerShape.censoredName}_Serialize)},`);
+              break;
+
+            case 'string':
+              valEncoder = `x => ({name: ${JSON.stringify(shape.spec.key.locationName ?? 'value')}, contents: x})`;
+              break;
+
+            default:
+              throw new Error(`TODO: protocol-xml.ts lacks input shape map value generator for ${valShape.spec.type}`);
+          }
+
+          chunks.push(`    {name: ${JSON.stringify(locationName)}, children: xmlP.emitMap(${paramRef}, ${JSON.stringify(shape.spec.key.locationName ?? 'key')}, ${valEncoder})},`);
           break;
         }
 
         case 'structure':
-          chunks.push(`    {name: ${JSON.stringify(locationName)}, children: ${shape.censoredName}_Serialize(${paramRef})},`);
+          chunks.push(`    {name: ${JSON.stringify(locationName)}, ...${shape.censoredName}_Serialize(${paramRef})},`);
           break;
 
       // {name: "ResourceRecordSet", children: ResourceRecordSet_Serialize(data["ResourceRecordSet"])},

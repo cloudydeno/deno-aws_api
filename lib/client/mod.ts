@@ -160,10 +160,15 @@ export class XmlServiceClient extends BaseServiceClient {
     headers.append('accept', 'text/xml');
 
     let reqBody: Uint8Array | undefined;
-    if (typeof config.body === 'string') {
+    if (config.body instanceof Uint8Array) {
+      reqBody = config.body;
+
+    } else if (typeof config.body === 'string') {
       reqBody = new TextEncoder().encode(config.body);
       headers.append('content-type', 'text/xml');
-    } else if (config.body) throw new Error(`TODO: non-string body to XmlServiceClient`);
+
+    } else if (config.body) throw new Error(
+      `TODO: non-string body to XmlServiceClient`);
 
     return super.performRequest({
       ...config,

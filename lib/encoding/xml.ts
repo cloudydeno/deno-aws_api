@@ -253,6 +253,18 @@ export function readXmlMap<K extends string,T>(entries: XmlNode[], valMapper: (n
   return obj;
 }
 
+export function emitMap<K extends string,V>(obj: Record<K,V>, entryName: string, valEncoder: (val: V) => Node): Node[] | undefined {
+  if (obj == null) return undefined;
+  if (typeof obj !== 'object') throw new Error(`emitMap got type ${typeof obj}`);
+  const pairs = new Array<Node>();
+  for (const [key, val] of Object.entries<V>(obj)) {
+    pairs.push({name: key, children: [
+      {name: 'key', content: key},
+      valEncoder(val),
+    ]});
+  }
+}
+
 export function parseTimestamp(str: string | undefined): Date {
   if (str?.includes('T')) return new Date(str);
   if (str?.length === 10) return new Date(parseInt(str) * 1000)
@@ -262,7 +274,7 @@ export function parseTimestamp(str: string | undefined): Date {
 
 export interface Node {
   name: string;
-  attributes?: {[key: string]: string};
+  attributes?: {[key: string]: string | undefined};
   content?: string | null;
   children?: Node[];
 }
@@ -271,19 +283,27 @@ export function stringify(root: Node): string {
   const attrs = root.attributes
     ? Object.entries(root.attributes)
       .filter(x => x[1] !== undefined)
-      .map(x => ` ${x[0]}="${encodeXmlEntities(x[1])}"`)
+      .map(x => ` ${x[0]}="${encodeXmlEntities(x[1]!)}"`)
       .join('')
     : '';
 
-  const contents = (root.children && root.children.length > 0)
-    ? root.children?.map(x => stringify(x)).filter(x => x)
-    : root.content !== undefined
-    ? [encodeXmlEntities(root.content ?? '')]
-    : [];
+  if (root.children) {
+    const contents = root.children.map(x => stringify(x)).filter(x => x);
+    if (contents.length < 1) {
+      // if (!attrs) return '';
+      return `<${root.name}${attrs} />`;
+    }
+    return `<${root.name}${attrs}>${contents.join('')}</${root.name}>`;
 
-  if (contents.length < 1) {
-    // if (!attrs) return '';
-    return `<${root.name}${attrs} />`;
+  } else {
+    const contents = root.content !== undefined
+      ? [encodeXmlEntities(root.content ?? '')]
+      : [];
+
+    if (contents.length < 1) {
+      if (!attrs) return '';
+      return `<${root.name}${attrs} />`;
+    }
+    return `<${root.name}${attrs}>${contents.join('')}</${root.name}>`;
   }
-  return `<${root.name}${attrs}>${contents.join('')}</${root.name}>`;
 }

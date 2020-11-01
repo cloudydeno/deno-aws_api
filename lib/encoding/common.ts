@@ -20,6 +20,22 @@ export function readEnum<T extends string>(raw: unknown): T | null {
 }
 
 
+export function readNum(raw: string | undefined): number | undefined {
+  if (raw == null) return raw;
+  const num = parseFloat(raw);
+  if (isNaN(num)) throw new Error(`readNum gave NaN on ${raw}`);
+  return num;
+}
+
+
+export function readBool(raw: string | undefined): boolean | undefined {
+  if (raw == null) return raw;
+  if (raw === 'true') return true;
+  if (raw === 'false') return false;
+  throw new Error(`readBool didn't recognize ${raw}`);
+}
+
+
 export function serializeDate_unixTimestamp(input: Date | number | null | undefined) {
   if (input == null) return input;
   const date = typeof input === 'number' ? new Date(input*1000) : input;

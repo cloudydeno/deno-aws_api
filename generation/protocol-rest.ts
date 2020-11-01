@@ -28,7 +28,7 @@ export default class ProtocolRestCodegen {
 
     if (inputShape.spec.type !== 'structure') throw new Error(`REST Input wasn't a structure`);
 
-    const locationTypes = new Set(Object.values(inputShape.spec.members).map(x => x.location ?? 'body'));
+    const locationTypes = new Set(Object.values(inputShape.spec.members).map(x => x.location ?? this.shapes.get(x).spec.location ?? 'body'));
     const hasBody = locationTypes.delete('body');
     const hasFraming = locationTypes.size > 0;
 
@@ -43,14 +43,15 @@ export default class ProtocolRestCodegen {
     }
     // chunks.push(`    const body = new URLSearchParams;`);
 
-    const framings = Object.entries(inputShape.spec.members).filter(x => x[1].location);
+    const framings = Object.entries(inputShape.spec.members).filter(x => x[1].location ?? this.shapes.get(x[1]).spec.location);
     for (const [field, spec] of framings) {
       const shape = this.shapes.get(spec);
       const defaultName = (field[0].toUpperCase()+field.slice(1));
       const locationName = spec.locationName ?? shape.spec.locationName ?? defaultName;
       const isRequired = (inputShape.spec.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
       const paramRef = `params[${JSON.stringify(field)}]`;
-      switch (spec.location) {
+      const fieldLocation = spec.location ?? shape.spec.location
+      switch (fieldLocation) {
         case 'uri':
           // Store two copies to support toggling the url encoding
           switch (shape.spec.type) {
@@ -66,7 +67,7 @@ export default class ProtocolRestCodegen {
               pathParts.set(`{${locationName}}`, `\${${paramRef}.toString()}`);
               break;
             default:
-              throw new Error(`TODO: ${spec.location} ${shape.spec.type}`);
+              throw new Error(`TODO: ${fieldLocation} ${shape.spec.type}`);
           }
           break;
         case 'header':
@@ -96,11 +97,21 @@ export default class ProtocolRestCodegen {
             }
           chunks.push(`    ${isRequired ? '' : `if (${paramRef} != null) `}headers.append(${JSON.stringify(spec.queryName ?? locationName)}, ${formattedRef});`);
           break;
-        case 'headers':
+        case 'headers': {
+          if (shape.spec.type !== 'map') throw new Error(`rest input headers not map`);
           chunks.push(`    for (const [key, val] of Object.entries(${paramRef} ?? {})) {`);
-          chunks.push(`      headers.append(${JSON.stringify(locationName)}+key, val);`);
+
+          const inner = this.shapes.get(shape.spec.value);
+          switch (inner.spec.type) {
+            case 'string':
+              chunks.push(`      headers.append(${JSON.stringify(locationName)}+key, val ?? "");`);
+              break;
+            default:
+              throw new Error(`rest input headers inner type ${inner.spec.type}`);
+          }
           chunks.push(`    }`);
           break;
+        }
         case 'querystring':
           switch (shape.spec.type) {
             case 'string':
@@ -131,7 +142,7 @@ export default class ProtocolRestCodegen {
                   chunks.push(`    }`);
                   break;
                 default:
-                  throw new Error(`TODO: ${spec.location} ${shape.spec.type} ${inner.spec.type} ${field}`);
+                  throw new Error(`TODO: ${fieldLocation} ${shape.spec.type} ${inner.spec.type} ${field}`);
               }
               break;
             }
@@ -152,13 +163,13 @@ export default class ProtocolRestCodegen {
                   chunks.push(`    }`);
                   break;
                 default:
-                  throw new Error(`TODO: ${spec.location} ${shape.spec.type} ${inner.spec.type} ${field}`);
+                  throw new Error(`TODO: ${fieldLocation} ${shape.spec.type} ${inner.spec.type} ${field}`);
               }
               break;
             }
 
             default:
-              throw new Error(`TODO: ${spec.location} ${shape.spec.type} ${field}`);
+              throw new Error(`TODO: ${fieldLocation} ${shape.spec.type} ${field}`);
           }
           break;
       }
@@ -313,8 +324,20 @@ export default class ProtocolRestCodegen {
                   chunks.push(`    ${field}: resp.headers.get(${JSON.stringify(spec.locationName || field)}),`);
                 }
                 break;
+              case 'character':
+                chunks.push(`    ${field}: resp.headers.get(${JSON.stringify(spec.locationName || field)}),`);
+                break;
+              case 'integer':
+              case 'double':
+              case 'float':
+              case 'long':
+                chunks.push(`    ${field}: cmnP.readNum(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`);
+                break;
+              case 'boolean':
+                chunks.push(`    ${field}: cmnP.readBool(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`);
+                break;
               default:
-                throw new Error(`TODO: rest output header timestamp "${field}"`);
+                throw new Error(`TODO: rest output header ${fieldShape.spec.type} "${field}"`);
             }
             // chunks.push(`    ${field}: resp.headers.get(${JSON.stringify(spec.locationName || field)}),`);
             break;
