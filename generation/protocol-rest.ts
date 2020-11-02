@@ -270,9 +270,14 @@ export default class ProtocolRestCodegen {
       const payloadShape = this.shapes.get(payloadSpec);
 
       let payloadChunk = '';
+      let payloadHeader = '';
       if (payloadShape.spec.type === 'structure') {
         const bodyGen = this.innerProtocol.generateOperationOutputParsingTypescript(payloadShape, resultWrapper);
-        payloadChunk = `${shape.spec.payload}: `+bodyGen.outputParsingCode.replace(/^ +return +/, '').replace(/;$/, '').replace(/\n/g, '\n  ');
+        const bodyGenLines = bodyGen.outputParsingCode.split('\n');
+        const retLine = bodyGenLines.findIndex(x => x.match(/^ +return +/));
+        const bodyGenReturns = bodyGenLines.slice(retLine).join('\n');
+        payloadHeader = bodyGenLines.slice(0, retLine).join('\n');
+        payloadChunk = `${shape.spec.payload}: `+bodyGenReturns.replace(/^ +return +/, '').replace(/;$/, '').replace(/\n/g, '\n  ');
       } else if (payloadShape.spec.type === 'blob') {
         payloadChunk = `${shape.spec.payload}: await resp.text(), // TODO: maybe allow proper body streaming`;
       }
@@ -363,12 +368,17 @@ export default class ProtocolRestCodegen {
 
       const frame = new KnownShape(shape.name, frameSpec);
       const bodyGen = this.innerProtocol.generateOperationOutputParsingTypescript(frame, resultWrapper);
-      const payloadChunk = bodyGen.outputParsingCode.replace(/^ +return +/, '').replace(/;$/, '');
+      const bodyGenLines = bodyGen.outputParsingCode.split('\n');
+      const retLine = bodyGenLines.findIndex(x => x.match(/^ +return +/));
+      const bodyGenReturns = bodyGenLines.slice(retLine).join('\n');
+      const payloadHeader = bodyGenLines.slice(0, retLine);
+      const payloadChunk = bodyGenReturns.replace(/^ +return +/, '').replace(/;$/, '').replace(/\n/g, '\n  ');
+
       chunks.push(`    ...${payloadChunk},`);
 
       chunks.push(`  };`);
       return {
-        outputParsingCode: chunks.join('\n'),
+        outputParsingCode: [...payloadHeader, ...chunks].join('\n'),
         outputVariables: bodyGen.outputVariables,
       };
     }

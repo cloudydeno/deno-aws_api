@@ -1,4 +1,4 @@
-export function appendMap<T>(body: URLSearchParams, prefix: string, raw: {[k:string]:T}, {
+export function appendMap<T>(body: URLSearchParams, prefix: string, raw: {[k:string]:T | undefined}, {
   keyName = '.key',
   valName = '.value',
   entryPrefix,
@@ -17,7 +17,9 @@ export function appendMap<T>(body: URLSearchParams, prefix: string, raw: {[k:str
   }
   entries.forEach(([key, val], idx) => {
     body.append(prefix+entryPrefix+String(idx+1)+keyName, key);
-    if (appender) {
+    if (val == null) {
+      // TODO: do we want to emit this?
+    } else if (appender) {
       appender(body, prefix+entryPrefix+String(idx+1)+valName, val);
     } else {
       body.append(prefix+entryPrefix+String(idx+1)+valName, encoder(val));
