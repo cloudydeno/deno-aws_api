@@ -218,6 +218,7 @@ const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunR
       chunks.push(`assertEquals(resultJson,`);
       chunks.push(`  ${JSON.stringify(fixExpectedJson(JSON.stringify(result)))});`);
     }
+    chunks.push(`console.log("Assertions passed");`);
     chunks.push('');
     // chunks.push(`function transformJsObj(obj: {[key: string]: any}) {`);
     // chunks.push(`  const res: {[key: string]: any} = Object.create(null);`);

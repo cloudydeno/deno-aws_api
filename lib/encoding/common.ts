@@ -18,6 +18,10 @@ export function readEnum<T extends string>(raw: unknown): T | null {
   if (typeof raw === "string") return raw as T;
   return null;
 }
+export function readEnumReq<T extends string>(raw: unknown): T {
+  if (typeof raw === "string") return raw as T;
+  throw new Error(`Required enum value wasn't given`);
+}
 
 
 export function readNum(raw: string | null | undefined): number | null | undefined {

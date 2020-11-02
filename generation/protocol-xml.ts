@@ -22,11 +22,13 @@ export default class ProtocolXmlCodegen {
 
     const chunks = new Array<string>();
 
+    const {attrCode, childrenCode} = this.generateStructureInputTypescript(inputShape.spec, meta.paramRef ?? 'params');
+
     chunks.push(`    const body = xmlP.stringify({`);
     chunks.push(`      name: ${JSON.stringify(meta.locationName ?? inputShape.spec.locationName ?? inputShape.name)},`);
     chunks.push(`      attributes: ${JSON.stringify({xmlns: meta.xmlNamespace?.uri})},`);
     chunks.push(`      children: ${meta.paramRef === 'inner' ? 'inner ? ' : ''}[`);
-    chunks.push(this.generateStructureInputTypescript(inputShape.spec, meta.paramRef ?? 'params').replace(/^/gm,'    '));
+    chunks.push(childrenCode.replace(/^/gm,'    '));
 
     // const paramBase = meta.paramRef ?? 'params';
     // for (const [field, spec] of Object.entries(inputShape.members)) {
@@ -79,15 +81,28 @@ export default class ProtocolXmlCodegen {
       inputParsingFunction: '',
     };
 
-    const chunks = new Array<string>();
+    const {attrCode, childrenCode} = this.generateStructureInputTypescript(shape.spec, 'data');
 
+    const chunks = new Array<string>();
     chunks.push(`function ${shape.censoredName}_Serialize(data: ${shape.censoredName} | undefined | null): Partial<xmlP.Node> {`);
     chunks.push(`  if (!data) return {};`);
+    if (attrCode.length > 0) {
+      chunks.push(`  return {attributes: {`);
+      for (const line of attrCode) chunks.push(line);
+      chunks.push(`  }, children: [`);
+    } else {
+      chunks.push(`  return {children: [`);
+    }
     // return {attributes: {
     //   "xsi:type": data["Type"] ?? undefined,
     // }, children: [
-    chunks.push(`  return {children: [`);
-    chunks.push(this.generateStructureInputTypescript(shape.spec, 'data'));
+
+    // attributes: {
+    //   "xmlns:xsi": 'http://www.w3.org/2001/XMLSchema-instance',
+    //   "xsi:type": data["Type"] ?? undefined,
+    // },
+
+    chunks.push(childrenCode);
     chunks.push(`  ]};`);
     chunks.push(`}`);
 
@@ -108,8 +123,13 @@ export default class ProtocolXmlCodegen {
     };
   }
 
-  generateStructureInputTypescript(inputStruct: Schema.ShapeStructure, paramsRef: string): string {
+  generateStructureInputTypescript(inputStruct: Schema.ShapeStructure, paramsRef: string): {attrCode: string[], childrenCode: string} {
+    const attrChunks = new Array<string>();
     const chunks = new Array<string>();
+
+    if (inputStruct.xmlNamespace?.prefix) {
+      attrChunks.push(`    ${JSON.stringify(`xmlns:${inputStruct.xmlNamespace.prefix}`)}: ${JSON.stringify(inputStruct.xmlNamespace.uri)},`);
+    }
 
     for (const [field, spec] of Object.entries(inputStruct.members)) {
       const shape = this.shapes.get(spec);
@@ -117,6 +137,14 @@ export default class ProtocolXmlCodegen {
       const locationName = this.ucfirst(spec.locationName, false) ?? shape.spec.locationName ?? defaultName;
       const isRequired = (inputStruct.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
       const paramRef = `${paramsRef}[${JSON.stringify(field)}]`;
+
+      if (spec.xmlAttribute) {
+        if (shape.spec.type === 'string') {
+          attrChunks.push(`    ${JSON.stringify(locationName)}: ${paramRef} ?? undefined,`);
+          continue;
+        }
+        throw new Error(`TODO: xmlAttribute is only handled in certain cases`);
+      }
 
       switch (shape.spec.type) {
 
@@ -184,7 +212,7 @@ export default class ProtocolXmlCodegen {
           const isFlattened = spec.flattened || shape.spec.flattened;
           const keyShape = this.shapes.get(shape.spec.key);
           const valShape = this.shapes.get(shape.spec.value);
-          console.log('map', keyShape.spec.type, valShape.spec.type, shape.spec.value.locationName);
+          // console.log('map', keyShape.spec.type, valShape.spec.type, shape.spec.value.locationName);
 
           let valEncoder = '';
           switch (valShape.spec.type) {
@@ -222,7 +250,11 @@ export default class ProtocolXmlCodegen {
           throw new Error(`TODO: protocol-xml.ts lacks input shape generator for ${shape.spec.type}`);
       }
     }
-    return chunks.join('\n');
+
+    return {
+      attrCode: attrChunks,
+      childrenCode: chunks.join('\n'),
+    };
   }
 
   // generateStructureInputTypescript(inputStruct: Schema.ShapeStructure, paramsRef = "params", prefix = ""): string {
@@ -365,7 +397,7 @@ export default class ProtocolXmlCodegen {
       const fieldShape = this.shapes.get(spec);
       const defaultName = this.ucfirst(field, false);
       const locationName = this.ucfirst(spec.queryName, true) ?? spec.locationName ?? fieldShape.spec.locationName ?? defaultName;
-      if (fieldShape.spec.type == 'string' && !fieldShape.spec.enum && (!locationName || locationName === field)) {
+      if (fieldShape.spec.type == 'string' && !fieldShape.spec.enum && (!locationName || locationName === field) && !spec.xmlAttribute) {
         if (outputStruct.required?.includes(field) || payload === field) {
           reqStrings[field] = true;
           hasRequiredStrs = true;
@@ -450,9 +482,21 @@ export default class ProtocolXmlCodegen {
           break;
         }
 
+        case 'string': {
+          if (spec.xmlAttribute) {
+            if (shape.spec.enum && isRequired) {
+              chunks.push(`    ${field}: cmnP.readEnumReq<ItemType>(${nodeRef}.attributes[${JSON.stringify(locationName)}]),`);
+              break;
+            }
+            throw new Error(`xmlAttribute is only handled in certain cases for S3`);
+          }
+          // falls through
+        }
+
         default:
           chunks.push(`    ${field}: ${nodeRef}.first(${JSON.stringify(locationName)}, ${isRequired}, ${this.configureInnerShapeReading(shape)}),`);
           // chunks.push(`    // TODO: reading for ${(shape as KnownShape).spec.type}`);
+
       }
     }
 

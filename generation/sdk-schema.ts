@@ -152,6 +152,7 @@ export interface ShapeStructure {
     [name: string]: ShapeRef & StructureFieldDetails;
   };
   "endpointoperation"?: true, // only in dynamodb
+  "xmlNamespace"?: XmlNamespace;
   "deprecated"?: true,
 }
 
@@ -164,19 +165,21 @@ export interface StructureFieldDetails {
   "deprecated"?: true;
   "timestampFormat"?: "iso8601" | "unixTimestamp"; // default varies
   "idempotencyToken"?: true; // auto filled with guid if not provided
-  "xmlNamespace"?: { // used by rest-xml
-    "uri": string;
-  };
+  "xmlNamespace"?: XmlNamespace; // used by rest-xml
+  "xmlAttribute"?: true; // only in s3
 };
 
 // especially for rest stuff
 export interface LocationInfo {
   "locationName"?: string;
-  "xmlNamespace"?: {
-    "uri": string;
-  };
+  "xmlNamespace"?: XmlNamespace;
   "payload"?: string; // seemingly only test cases put this here
 }
+
+export type XmlNamespace = {
+  "uri": string;
+  "prefix"?: string;
+};
 
 // elastictranscoder does this string bs instead of an enum:
 // "pattern": "(^Left$)|(^Right$)|(^Center$)"

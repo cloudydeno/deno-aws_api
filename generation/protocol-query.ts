@@ -21,7 +21,7 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
     chunks.push(`    const body = new URLSearchParams;`);
     chunks.push(`    const prefix = '';`);
 
-    chunks.push(this.generateStructureInputTypescript(inputShape.spec, "params", ''));
+    chunks.push(this.generateQStructureInputTypescript(inputShape.spec, "params", ''));
 
     return {
       inputParsingCode: chunks.join('\n'),
@@ -39,7 +39,7 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
 
     switch (shape.spec.type) {
       case 'structure':
-        chunks.push(this.generateStructureInputTypescript(shape.spec, "params", '.'));
+        chunks.push(this.generateQStructureInputTypescript(shape.spec, "params", '.'));
         break;
       default:
         throw new Error(`TODO: protocol-query.ts lacks shape generator for ${shape.spec.type}`);
@@ -51,7 +51,7 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
     };
   }
 
-  generateStructureInputTypescript(inputStruct: Schema.ShapeStructure, paramsRef = "params", prefix = ""): string {
+  generateQStructureInputTypescript(inputStruct: Schema.ShapeStructure, paramsRef = "params", prefix = ""): string {
     const chunks = new Array<string>();
 
     for (const [field, spec] of Object.entries(inputStruct.members)) {
@@ -119,7 +119,7 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
             chunks.push(`    ${isRequired ? '' : `if (${paramRef} != null) `}${shape.censoredName}_Serialize(body, prefix+${JSON.stringify(prefix+locationName)}, ${paramRef});`);
           } else {
             if (isRequired) chunks.push(`    if (${paramRef}) {`);
-            chunks.push(this.generateStructureInputTypescript(shape.spec, paramRef, prefix+locationName+'.'));
+            chunks.push(this.generateQStructureInputTypescript(shape.spec, paramRef, prefix+locationName+'.'));
             if (isRequired) chunks.push(`    }`);
           }
           break;
