@@ -58,7 +58,7 @@ cognito-sync,2014-06-30,Amazon Cognito Sync,Cognito Sync,CognitoSync,rest-json,o
 comprehend,2017-11-27,Amazon Comprehend,Comprehend,Comprehend,json,ok,ok,95015,2079
 comprehendmedical,2018-10-30,AWS Comprehend Medical,ComprehendMedical,ComprehendMedical,json,ok,ok,34099,1462
 compute-optimizer,2019-11-01,AWS Compute Optimizer,Compute Optimizer,ComputeOptimizer,json,ok,ok,25328,1413
-config,2014-11-12,AWS Config,Config Service,ConfigService,json,ok,ok,138035,31251
+config,2014-11-12,AWS Config,Config Service,ConfigService,json,ok,ok,138035,2226
 connect,2017-08-08,Amazon Connect Service,Connect,Connect,rest-json,ok,ok,67194,1922
 connectparticipant,2018-09-07,Amazon Connect Participant Service,ConnectParticipant,ConnectParticipant,rest-json,ok,ok,9055,2129
 cur,2017-01-06,AWS Cost and Usage Report Service,Cost and Usage Report Service,CUR,json,ok,ok,7188,1948
@@ -132,7 +132,7 @@ kendra,2019-02-03,AWSKendraFrontendService,kendra,Kendra,json,ok,ok,84348,2017
 kinesis-video-archived-media,2017-09-30,Amazon Kinesis Video Streams Archived Media,Kinesis Video Archived Media,KinesisVideoArchivedMedia,rest-json,ok,ok,12686,1304
 kinesis-video-media,2017-09-30,Amazon Kinesis Video Streams Media,Kinesis Video Media,KinesisVideoMedia,rest-json,ok,ok,2579,1234
 kinesis-video-signaling,2019-12-04,Amazon Kinesis Video Signaling Channels,Kinesis Video Signaling,KinesisVideoSignalingChannels,rest-json,ok,ok,3379,1180
-kinesis,2013-12-02,Amazon Kinesis,Kinesis,Kinesis,json,ok,ok,31848,1429
+kinesis,2013-12-02,Amazon Kinesis,Kinesis,Kinesis,json,ok,ok,31848,1135
 kinesisanalytics,2015-08-14,Amazon Kinesis Analytics,Kinesis Analytics,KinesisAnalytics,json,fail,fail,48332,
 kinesisanalyticsv2,2018-05-23,Amazon Kinesis Analytics,Kinesis Analytics V2,KinesisAnalyticsV2,json,fail,fail,82812,
 kinesisvideo,2017-09-30,Amazon Kinesis Video Streams,Kinesis Video,KinesisVideo,rest-json,ok,ok,23455,1404
@@ -162,7 +162,7 @@ meteringmarketplace,2016-01-14,AWSMarketplace Metering,Marketplace Metering,Mark
 migrationhub-config,2019-06-30,AWS Migration Hub Config,MigrationHub Config,MigrationHubConfig,json,ok,ok,4656,1117
 mobile,2017-07-01,AWS Mobile,Mobile,Mobile,rest-json,ok,ok,11588,1336
 mobileanalytics,2014-06-05,Amazon Mobile Analytics,Mobile Analytics,MobileAnalytics,rest-json,ok,ok,2651,1160
-monitoring,2010-08-01,Amazon CloudWatch,CloudWatch,CloudWatch,query,ok,fail,60878,2090
+monitoring,2010-08-01,Amazon CloudWatch,CloudWatch,CloudWatch,query,ok,ok,60878,1708
 mq,2017-11-27,AmazonMQ,mq,MQ,rest-json,ok,ok,41908,1678
 mturk-requester,2017-01-17,Amazon Mechanical Turk,MTurk,MTurk,json,ok,ok,53114,1689
 neptune,2014-10-31,Amazon Neptune,Neptune,Neptune,query,ok,ok,141585,4463

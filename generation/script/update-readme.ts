@@ -1,5 +1,4 @@
 import { readCSVObjects, writeCSVObjects } from "https://raw.githubusercontent.com/danopia/deno-csv/658ab397acbb8e7c0168e036604ea60db424fa97/mod.ts";
-import * as path from "https://deno.land/std@0.71.0/path/mod.ts";
 
 const sdk = JSON.parse(await Deno.readTextFile('aws-sdk-js/package.json'));
 const header = `All API definitions are current as of aws-sdk-js \`v${sdk.version}\`.`;
@@ -49,14 +48,13 @@ async function updateFile(path: string, contents: string) {
 
 async function updateReadme(header: string) {
   const chunks = new Array<string>();
-  chunks.push(`| Class | Module | Protocol | File size | Approx check time |`);
-  chunks.push(`| --- | --- | --- | ---: | ---: |`);
+  chunks.push(`| Class | Module | File size | Approx check time |`);
+  chunks.push(`| --- | --- | ---: | ---: |`);
 
   for (const svc of workingSvc) {
     chunks.push(`| `+[
       svc.namespace,
-      `\`${svc.service}@${svc.version}.ts\``,
-      svc.protocol,
+      `\`${svc.service}@${svc.version}\``,
       formatFileSize(parseInt(svc.bytecount)),
       formatDuration(parseInt(svc.cachetime)),
     ].join(' | ')+` |`);
@@ -78,7 +76,7 @@ async function updateServices(header: string) {
   chunks.push(`| --- | --- | :---: | ---: | :---: | ---: |`);
   for (const svc of services) {
     chunks.push(`| `+[
-      `\`${svc.service}@${svc.version}.ts\``,
+      `\`${svc.service}@${svc.version}\``,
       svc.protocol,
       icons[svc.generated],
       svc.generated === 'ok' ? formatFileSize(parseInt(svc.bytecount)) : '',
