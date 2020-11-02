@@ -485,7 +485,7 @@ export default class ProtocolXmlCodegen {
         case 'string': {
           if (spec.xmlAttribute) {
             if (shape.spec.enum && isRequired) {
-              chunks.push(`    ${field}: cmnP.readEnumReq<ItemType>(${nodeRef}.attributes[${JSON.stringify(locationName)}]),`);
+              chunks.push(`    ${field}: cmnP.readEnumReq<${shape.censoredName}>(${nodeRef}.attributes[${JSON.stringify(locationName)}]),`);
               break;
             }
             throw new Error(`xmlAttribute is only handled in certain cases for S3`);

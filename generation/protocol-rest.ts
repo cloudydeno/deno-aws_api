@@ -286,18 +286,36 @@ export default class ProtocolRestCodegen {
       chunks.push(`  return {`);
       for (const [field, spec] of Object.entries(shape.spec.members)) {
         if (spec === payloadSpec) continue;
-        switch (spec.location) {
-          case 'statusCode':
-            chunks.push(`    ${field}: resp.status,`);
-            break;
-          case 'header':
-            chunks.push(`    ${field}: resp.headers.get(${JSON.stringify(spec.locationName)}),`);
-            break;
-          default:
-            throw new Error(`TODO: rest output location ${spec.location}`);
-        }
+
+        const isRequired = (shape.spec.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
+        chunks.push(this.describeOutputField(field, spec, isRequired));
+
+        // const fieldShape = this.shapes.get(spec);
+        // // const locationName = spec.locationName ?? fieldShape.spec.locationName ?? (field[0].toUpperCase()+field.slice(1));
+        // switch (spec.location) {
+        //   case 'statusCode':
+        //     chunks.push(`    ${field}: resp.status,`);
+        //     break;
+        //   case 'header':
+        //     chunks.push(`    ${field}: resp.headers.get(${JSON.stringify(spec.locationName)}),`);
+        //     break;
+        //   case 'headers':
+        //     if (fieldShape.spec.type !== 'map') throw new Error(`rest headers field needs to be a Map`);
+        //     // const keyShape = this.shapes.get(fieldShape.spec.key);
+        //     const valShape = this.shapes.get(fieldShape.spec.value);
+        //     switch (valShape.spec.type) {
+        //       case 'string':
+        //         chunks.push(`    ${field}: cmnP.toJsObj(resp.headers, ${spec.locationName ? JSON.stringify(spec.locationName.toLowerCase()) : 'true'}, v => v),`);
+        //         break;
+        //       default:
+        //         throw new Error(`TODO: rest output headerS ${valShape.spec.type} "${field}"`);
+        //     }
+        //     break;
+        //   default:
+        //     throw new Error(`TODO: rest output location ${spec.location}`);
+        // }
       }
-      chunks.push(`    ${payloadChunk},`);
+      if (payloadChunk) chunks.push(`    ${payloadChunk},`);
       chunks.push(`  };`);
       return {
         outputParsingCode: [...payloadHeader, ...chunks].join('\n'),
@@ -311,60 +329,11 @@ export default class ProtocolRestCodegen {
       chunks.push(`  return {`);
       for (const [field, spec] of Object.entries(shape.spec.members)) {
         const fieldShape = this.shapes.get(spec);
-        const locationName = spec.locationName ?? fieldShape.spec.locationName ?? (field[0].toUpperCase()+field.slice(1));
-        const isRequired = (shape.spec.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
-        switch (spec.location ?? fieldShape.spec.location) {
-          case 'statusCode':
-            chunks.push(`    ${field}: resp.status,`);
-            break;
-          case 'header':
-            switch (fieldShape.spec.type) {
-              case 'timestamp':
-                chunks.push(`    ${field}: cmnP.read${isRequired ? 'Req' : ''}Timestamp(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`);
-                break;
-              case 'string':
-                if (fieldShape.spec.enum) {
-                  chunks.push(`    ${field}: cmnP.readEnum<${fieldShape.censoredName}>(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`);
-                } else if (spec.jsonvalue) {
-                  chunks.push(`    ${field}: jsonP.readJsonValueBase64(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`);
-                } else {
-                  chunks.push(`    ${field}: resp.headers.get(${JSON.stringify(spec.locationName || field)}),`);
-                }
-                break;
-              case 'character':
-                chunks.push(`    ${field}: resp.headers.get(${JSON.stringify(spec.locationName || field)}),`);
-                break;
-              case 'integer':
-              case 'double':
-              case 'float':
-              case 'long':
-                chunks.push(`    ${field}: cmnP.readNum(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`);
-                break;
-              case 'boolean':
-                chunks.push(`    ${field}: cmnP.readBool(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`);
-                break;
-              default:
-                throw new Error(`TODO: rest output header ${fieldShape.spec.type} "${field}"`);
-            }
-            // chunks.push(`    ${field}: resp.headers.get(${JSON.stringify(spec.locationName || field)}),`);
-            break;
-          case 'headers':
-            if (fieldShape.spec.type !== 'map') throw new Error(`rest headers field needs to be a Map`);
-            const keyShape = this.shapes.get(fieldShape.spec.key);
-            const valShape = this.shapes.get(fieldShape.spec.value);
-            switch (valShape.spec.type) {
-              case 'string':
-                chunks.push(`    ${field}: cmnP.toJsObj(resp.headers, ${spec.locationName ? JSON.stringify(spec.locationName.toLowerCase()) : 'true'}, v => v),`);
-                break;
-              default:
-                throw new Error(`TODO: rest output headerS ${valShape.spec.type} "${field}"`);
-            }
-            break;
-          case undefined:
-            frameSpec.members[field] = spec;
-            break;
-          default:
-            throw new Error(`TODO: rest output location ${spec.location}`);
+        if (spec.location ?? fieldShape.spec.location) {
+          const isRequired = (shape.spec.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
+          chunks.push(this.describeOutputField(field, spec, isRequired));
+        } else {
+          frameSpec.members[field] = spec;
         }
       }
 
@@ -373,10 +342,14 @@ export default class ProtocolRestCodegen {
       const bodyGenLines = bodyGen.outputParsingCode.split('\n');
       const retLine = bodyGenLines.findIndex(x => x.match(/^ +return +/));
       const bodyGenReturns = bodyGenLines.slice(retLine).join('\n');
-      const payloadHeader = bodyGenLines.slice(0, retLine);
+      let payloadHeader = bodyGenLines.slice(0, retLine);
       const payloadChunk = bodyGenReturns.replace(/^ +return +/, '').replace(/;$/, '').replace(/\n/g, '\n  ');
 
-      chunks.push(`    ...${payloadChunk},`);
+      if (payloadChunk === '{}') {
+        payloadHeader = [];
+      } else {
+        chunks.push(`    ...${payloadChunk},`);
+      }
 
       chunks.push(`  };`);
       return {
@@ -390,5 +363,56 @@ export default class ProtocolRestCodegen {
   }
   generateShapeOutputParsingTypescript(shape: KnownShape): { outputParsingFunction: string; } {
     return this.innerProtocol.generateShapeOutputParsingTypescript(shape);
+  }
+
+
+
+  describeOutputField(field: string, spec: Schema.ShapeRef & Schema.StructureFieldDetails, isRequired: boolean): string {
+    const fieldShape = this.shapes.get(spec);
+    // const locationName = spec.locationName ?? fieldShape.spec.locationName ?? (field[0].toUpperCase()+field.slice(1));
+    switch (spec.location ?? fieldShape.spec.location) {
+      case 'statusCode':
+        return `    ${field}: resp.status,`;
+      case 'header':
+        switch (fieldShape.spec.type) {
+          case 'timestamp':
+            return `    ${field}: cmnP.read${isRequired ? 'Req' : ''}Timestamp(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`;
+          case 'string':
+            if (fieldShape.spec.enum) {
+              return `    ${field}: cmnP.readEnum<${fieldShape.censoredName}>(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`;
+            } else if (spec.jsonvalue) {
+              return `    ${field}: jsonP.readJsonValueBase64(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`;
+            } else {
+              return `    ${field}: resp.headers.get(${JSON.stringify(spec.locationName || field)}),`;
+            }
+          case 'character':
+            return `    ${field}: resp.headers.get(${JSON.stringify(spec.locationName || field)}),`;
+          case 'integer':
+          case 'double':
+          case 'float':
+          case 'long':
+            return `    ${field}: cmnP.readNum(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`;
+          case 'boolean':
+            return `    ${field}: cmnP.readBool(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`;
+          default:
+            throw new Error(`TODO: rest output header ${fieldShape.spec.type} "${field}"`);
+        }
+        // return `    ${field}: resp.headers.get(${JSON.stringify(spec.locationName || field)}),`;
+      case 'headers':
+        if (fieldShape.spec.type !== 'map') throw new Error(`rest headers field needs to be a Map`);
+        const keyShape = this.shapes.get(fieldShape.spec.key);
+        const valShape = this.shapes.get(fieldShape.spec.value);
+        switch (valShape.spec.type) {
+          case 'string':
+            return `    ${field}: cmnP.toJsObj(resp.headers, ${spec.locationName ? JSON.stringify(spec.locationName.toLowerCase()) : 'true'}, v => v),`;
+          default:
+            throw new Error(`TODO: rest output headerS ${valShape.spec.type} "${field}"`);
+        }
+      // case undefined:
+      //   frameSpec.members[field] = spec;
+      //   break;
+      default:
+        throw new Error(`TODO: rest output location ${spec.location}`);
+    }
   }
 }
