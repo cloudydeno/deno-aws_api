@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class SWF {
   #client: ServiceClient;
@@ -30,19 +30,20 @@ export default class SWF {
   async countClosedWorkflowExecutions(
     {abortSignal, ...params}: RequestConfig & CountClosedWorkflowExecutionsInput,
   ): Promise<WorkflowExecutionCount> {
-    const body: JSONObject = {...params,
-    startTimeFilter: fromExecutionTimeFilter(params["startTimeFilter"]),
-    closeTimeFilter: fromExecutionTimeFilter(params["closeTimeFilter"]),
-    executionFilter: fromWorkflowExecutionFilter(params["executionFilter"]),
-    typeFilter: fromWorkflowTypeFilter(params["typeFilter"]),
-    tagFilter: fromTagFilter(params["tagFilter"]),
-    closeStatusFilter: fromCloseStatusFilter(params["closeStatusFilter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      startTimeFilter: fromExecutionTimeFilter(params["startTimeFilter"]),
+      closeTimeFilter: fromExecutionTimeFilter(params["closeTimeFilter"]),
+      executionFilter: fromWorkflowExecutionFilter(params["executionFilter"]),
+      typeFilter: fromWorkflowTypeFilter(params["typeFilter"]),
+      tagFilter: fromTagFilter(params["tagFilter"]),
+      closeStatusFilter: fromCloseStatusFilter(params["closeStatusFilter"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CountClosedWorkflowExecutions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "count": "n",
       },
@@ -55,17 +56,18 @@ export default class SWF {
   async countOpenWorkflowExecutions(
     {abortSignal, ...params}: RequestConfig & CountOpenWorkflowExecutionsInput,
   ): Promise<WorkflowExecutionCount> {
-    const body: JSONObject = {...params,
-    startTimeFilter: fromExecutionTimeFilter(params["startTimeFilter"]),
-    typeFilter: fromWorkflowTypeFilter(params["typeFilter"]),
-    tagFilter: fromTagFilter(params["tagFilter"]),
-    executionFilter: fromWorkflowExecutionFilter(params["executionFilter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      startTimeFilter: fromExecutionTimeFilter(params["startTimeFilter"]),
+      typeFilter: fromWorkflowTypeFilter(params["typeFilter"]),
+      tagFilter: fromTagFilter(params["tagFilter"]),
+      executionFilter: fromWorkflowExecutionFilter(params["executionFilter"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CountOpenWorkflowExecutions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "count": "n",
       },
@@ -78,14 +80,15 @@ export default class SWF {
   async countPendingActivityTasks(
     {abortSignal, ...params}: RequestConfig & CountPendingActivityTasksInput,
   ): Promise<PendingTaskCount> {
-    const body: JSONObject = {...params,
-    taskList: fromTaskList(params["taskList"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      taskList: fromTaskList(params["taskList"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CountPendingActivityTasks",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "count": "n",
       },
@@ -98,14 +101,15 @@ export default class SWF {
   async countPendingDecisionTasks(
     {abortSignal, ...params}: RequestConfig & CountPendingDecisionTasksInput,
   ): Promise<PendingTaskCount> {
-    const body: JSONObject = {...params,
-    taskList: fromTaskList(params["taskList"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      taskList: fromTaskList(params["taskList"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CountPendingDecisionTasks",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "count": "n",
       },
@@ -118,9 +122,10 @@ export default class SWF {
   async deprecateActivityType(
     {abortSignal, ...params}: RequestConfig & DeprecateActivityTypeInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    activityType: fromActivityType(params["activityType"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      activityType: fromActivityType(params["activityType"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeprecateActivityType",
@@ -130,8 +135,9 @@ export default class SWF {
   async deprecateDomain(
     {abortSignal, ...params}: RequestConfig & DeprecateDomainInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeprecateDomain",
@@ -141,9 +147,10 @@ export default class SWF {
   async deprecateWorkflowType(
     {abortSignal, ...params}: RequestConfig & DeprecateWorkflowTypeInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    workflowType: fromWorkflowType(params["workflowType"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      workflowType: fromWorkflowType(params["workflowType"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeprecateWorkflowType",
@@ -153,14 +160,15 @@ export default class SWF {
   async describeActivityType(
     {abortSignal, ...params}: RequestConfig & DescribeActivityTypeInput,
   ): Promise<ActivityTypeDetail> {
-    const body: JSONObject = {...params,
-    activityType: fromActivityType(params["activityType"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      activityType: fromActivityType(params["activityType"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeActivityType",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "typeInfo": toActivityTypeInfo,
         "configuration": toActivityTypeConfiguration,
@@ -172,13 +180,14 @@ export default class SWF {
   async describeDomain(
     {abortSignal, ...params}: RequestConfig & DescribeDomainInput,
   ): Promise<DomainDetail> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDomain",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "domainInfo": toDomainInfo,
         "configuration": toDomainConfiguration,
@@ -190,14 +199,15 @@ export default class SWF {
   async describeWorkflowExecution(
     {abortSignal, ...params}: RequestConfig & DescribeWorkflowExecutionInput,
   ): Promise<WorkflowExecutionDetail> {
-    const body: JSONObject = {...params,
-    execution: fromWorkflowExecution(params["execution"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      execution: fromWorkflowExecution(params["execution"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorkflowExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "executionInfo": toWorkflowExecutionInfo,
         "executionConfiguration": toWorkflowExecutionConfiguration,
@@ -213,14 +223,15 @@ export default class SWF {
   async describeWorkflowType(
     {abortSignal, ...params}: RequestConfig & DescribeWorkflowTypeInput,
   ): Promise<WorkflowTypeDetail> {
-    const body: JSONObject = {...params,
-    workflowType: fromWorkflowType(params["workflowType"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      workflowType: fromWorkflowType(params["workflowType"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorkflowType",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "typeInfo": toWorkflowTypeInfo,
         "configuration": toWorkflowTypeConfiguration,
@@ -232,14 +243,18 @@ export default class SWF {
   async getWorkflowExecutionHistory(
     {abortSignal, ...params}: RequestConfig & GetWorkflowExecutionHistoryInput,
   ): Promise<History> {
-    const body: JSONObject = {...params,
-    execution: fromWorkflowExecution(params["execution"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      execution: fromWorkflowExecution(params["execution"]),
+      nextPageToken: params["nextPageToken"],
+      maximumPageSize: params["maximumPageSize"],
+      reverseOrder: params["reverseOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetWorkflowExecutionHistory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "events": [toHistoryEvent],
       },
@@ -252,13 +267,19 @@ export default class SWF {
   async listActivityTypes(
     {abortSignal, ...params}: RequestConfig & ListActivityTypesInput,
   ): Promise<ActivityTypeInfos> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      name: params["name"],
+      registrationStatus: params["registrationStatus"],
+      nextPageToken: params["nextPageToken"],
+      maximumPageSize: params["maximumPageSize"],
+      reverseOrder: params["reverseOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListActivityTypes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "typeInfos": [toActivityTypeInfo],
       },
@@ -271,19 +292,23 @@ export default class SWF {
   async listClosedWorkflowExecutions(
     {abortSignal, ...params}: RequestConfig & ListClosedWorkflowExecutionsInput,
   ): Promise<WorkflowExecutionInfos> {
-    const body: JSONObject = {...params,
-    startTimeFilter: fromExecutionTimeFilter(params["startTimeFilter"]),
-    closeTimeFilter: fromExecutionTimeFilter(params["closeTimeFilter"]),
-    executionFilter: fromWorkflowExecutionFilter(params["executionFilter"]),
-    closeStatusFilter: fromCloseStatusFilter(params["closeStatusFilter"]),
-    typeFilter: fromWorkflowTypeFilter(params["typeFilter"]),
-    tagFilter: fromTagFilter(params["tagFilter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      startTimeFilter: fromExecutionTimeFilter(params["startTimeFilter"]),
+      closeTimeFilter: fromExecutionTimeFilter(params["closeTimeFilter"]),
+      executionFilter: fromWorkflowExecutionFilter(params["executionFilter"]),
+      closeStatusFilter: fromCloseStatusFilter(params["closeStatusFilter"]),
+      typeFilter: fromWorkflowTypeFilter(params["typeFilter"]),
+      tagFilter: fromTagFilter(params["tagFilter"]),
+      nextPageToken: params["nextPageToken"],
+      maximumPageSize: params["maximumPageSize"],
+      reverseOrder: params["reverseOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListClosedWorkflowExecutions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "executionInfos": [toWorkflowExecutionInfo],
       },
@@ -296,13 +321,17 @@ export default class SWF {
   async listDomains(
     {abortSignal, ...params}: RequestConfig & ListDomainsInput,
   ): Promise<DomainInfos> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      nextPageToken: params["nextPageToken"],
+      registrationStatus: params["registrationStatus"],
+      maximumPageSize: params["maximumPageSize"],
+      reverseOrder: params["reverseOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDomains",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "domainInfos": [toDomainInfo],
       },
@@ -315,17 +344,21 @@ export default class SWF {
   async listOpenWorkflowExecutions(
     {abortSignal, ...params}: RequestConfig & ListOpenWorkflowExecutionsInput,
   ): Promise<WorkflowExecutionInfos> {
-    const body: JSONObject = {...params,
-    startTimeFilter: fromExecutionTimeFilter(params["startTimeFilter"]),
-    typeFilter: fromWorkflowTypeFilter(params["typeFilter"]),
-    tagFilter: fromTagFilter(params["tagFilter"]),
-    executionFilter: fromWorkflowExecutionFilter(params["executionFilter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      startTimeFilter: fromExecutionTimeFilter(params["startTimeFilter"]),
+      typeFilter: fromWorkflowTypeFilter(params["typeFilter"]),
+      tagFilter: fromTagFilter(params["tagFilter"]),
+      nextPageToken: params["nextPageToken"],
+      maximumPageSize: params["maximumPageSize"],
+      reverseOrder: params["reverseOrder"],
+      executionFilter: fromWorkflowExecutionFilter(params["executionFilter"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListOpenWorkflowExecutions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "executionInfos": [toWorkflowExecutionInfo],
       },
@@ -338,13 +371,14 @@ export default class SWF {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceInput,
   ): Promise<ListTagsForResourceOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceArn: params["resourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "tags": [toResourceTag],
@@ -355,13 +389,19 @@ export default class SWF {
   async listWorkflowTypes(
     {abortSignal, ...params}: RequestConfig & ListWorkflowTypesInput,
   ): Promise<WorkflowTypeInfos> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      name: params["name"],
+      registrationStatus: params["registrationStatus"],
+      nextPageToken: params["nextPageToken"],
+      maximumPageSize: params["maximumPageSize"],
+      reverseOrder: params["reverseOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWorkflowTypes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "typeInfos": [toWorkflowTypeInfo],
       },
@@ -374,14 +414,16 @@ export default class SWF {
   async pollForActivityTask(
     {abortSignal, ...params}: RequestConfig & PollForActivityTaskInput,
   ): Promise<ActivityTask> {
-    const body: JSONObject = {...params,
-    taskList: fromTaskList(params["taskList"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      taskList: fromTaskList(params["taskList"]),
+      identity: params["identity"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PollForActivityTask",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "taskToken": "s",
         "activityId": "s",
@@ -398,14 +440,19 @@ export default class SWF {
   async pollForDecisionTask(
     {abortSignal, ...params}: RequestConfig & PollForDecisionTaskInput,
   ): Promise<DecisionTask> {
-    const body: JSONObject = {...params,
-    taskList: fromTaskList(params["taskList"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      taskList: fromTaskList(params["taskList"]),
+      identity: params["identity"],
+      nextPageToken: params["nextPageToken"],
+      maximumPageSize: params["maximumPageSize"],
+      reverseOrder: params["reverseOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PollForDecisionTask",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "taskToken": "s",
         "startedEventId": "n",
@@ -423,13 +470,15 @@ export default class SWF {
   async recordActivityTaskHeartbeat(
     {abortSignal, ...params}: RequestConfig & RecordActivityTaskHeartbeatInput,
   ): Promise<ActivityTaskStatus> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      taskToken: params["taskToken"],
+      details: params["details"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RecordActivityTaskHeartbeat",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "cancelRequested": "b",
       },
@@ -440,9 +489,18 @@ export default class SWF {
   async registerActivityType(
     {abortSignal, ...params}: RequestConfig & RegisterActivityTypeInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    defaultTaskList: fromTaskList(params["defaultTaskList"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      name: params["name"],
+      version: params["version"],
+      description: params["description"],
+      defaultTaskStartToCloseTimeout: params["defaultTaskStartToCloseTimeout"],
+      defaultTaskHeartbeatTimeout: params["defaultTaskHeartbeatTimeout"],
+      defaultTaskList: fromTaskList(params["defaultTaskList"]),
+      defaultTaskPriority: params["defaultTaskPriority"],
+      defaultTaskScheduleToStartTimeout: params["defaultTaskScheduleToStartTimeout"],
+      defaultTaskScheduleToCloseTimeout: params["defaultTaskScheduleToCloseTimeout"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterActivityType",
@@ -452,9 +510,12 @@ export default class SWF {
   async registerDomain(
     {abortSignal, ...params}: RequestConfig & RegisterDomainInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromResourceTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      description: params["description"],
+      workflowExecutionRetentionPeriodInDays: params["workflowExecutionRetentionPeriodInDays"],
+      tags: params["tags"]?.map(x => fromResourceTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterDomain",
@@ -464,9 +525,18 @@ export default class SWF {
   async registerWorkflowType(
     {abortSignal, ...params}: RequestConfig & RegisterWorkflowTypeInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    defaultTaskList: fromTaskList(params["defaultTaskList"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      name: params["name"],
+      version: params["version"],
+      description: params["description"],
+      defaultTaskStartToCloseTimeout: params["defaultTaskStartToCloseTimeout"],
+      defaultExecutionStartToCloseTimeout: params["defaultExecutionStartToCloseTimeout"],
+      defaultTaskList: fromTaskList(params["defaultTaskList"]),
+      defaultTaskPriority: params["defaultTaskPriority"],
+      defaultChildPolicy: params["defaultChildPolicy"],
+      defaultLambdaRole: params["defaultLambdaRole"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterWorkflowType",
@@ -476,8 +546,11 @@ export default class SWF {
   async requestCancelWorkflowExecution(
     {abortSignal, ...params}: RequestConfig & RequestCancelWorkflowExecutionInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      workflowId: params["workflowId"],
+      runId: params["runId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RequestCancelWorkflowExecution",
@@ -487,8 +560,10 @@ export default class SWF {
   async respondActivityTaskCanceled(
     {abortSignal, ...params}: RequestConfig & RespondActivityTaskCanceledInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      taskToken: params["taskToken"],
+      details: params["details"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RespondActivityTaskCanceled",
@@ -498,8 +573,10 @@ export default class SWF {
   async respondActivityTaskCompleted(
     {abortSignal, ...params}: RequestConfig & RespondActivityTaskCompletedInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      taskToken: params["taskToken"],
+      result: params["result"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RespondActivityTaskCompleted",
@@ -509,8 +586,11 @@ export default class SWF {
   async respondActivityTaskFailed(
     {abortSignal, ...params}: RequestConfig & RespondActivityTaskFailedInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      taskToken: params["taskToken"],
+      reason: params["reason"],
+      details: params["details"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RespondActivityTaskFailed",
@@ -520,9 +600,11 @@ export default class SWF {
   async respondDecisionTaskCompleted(
     {abortSignal, ...params}: RequestConfig & RespondDecisionTaskCompletedInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    decisions: params["decisions"]?.map(x => fromDecision(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      taskToken: params["taskToken"],
+      decisions: params["decisions"]?.map(x => fromDecision(x)),
+      executionContext: params["executionContext"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RespondDecisionTaskCompleted",
@@ -532,8 +614,13 @@ export default class SWF {
   async signalWorkflowExecution(
     {abortSignal, ...params}: RequestConfig & SignalWorkflowExecutionInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      workflowId: params["workflowId"],
+      runId: params["runId"],
+      signalName: params["signalName"],
+      input: params["input"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SignalWorkflowExecution",
@@ -543,15 +630,24 @@ export default class SWF {
   async startWorkflowExecution(
     {abortSignal, ...params}: RequestConfig & StartWorkflowExecutionInput,
   ): Promise<Run> {
-    const body: JSONObject = {...params,
-    workflowType: fromWorkflowType(params["workflowType"]),
-    taskList: fromTaskList(params["taskList"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      workflowId: params["workflowId"],
+      workflowType: fromWorkflowType(params["workflowType"]),
+      taskList: fromTaskList(params["taskList"]),
+      taskPriority: params["taskPriority"],
+      input: params["input"],
+      executionStartToCloseTimeout: params["executionStartToCloseTimeout"],
+      tagList: params["tagList"],
+      taskStartToCloseTimeout: params["taskStartToCloseTimeout"],
+      childPolicy: params["childPolicy"],
+      lambdaRole: params["lambdaRole"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartWorkflowExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "runId": "s",
@@ -562,9 +658,10 @@ export default class SWF {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromResourceTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceArn: params["resourceArn"],
+      tags: params["tags"]?.map(x => fromResourceTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -574,8 +671,14 @@ export default class SWF {
   async terminateWorkflowExecution(
     {abortSignal, ...params}: RequestConfig & TerminateWorkflowExecutionInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      workflowId: params["workflowId"],
+      runId: params["runId"],
+      reason: params["reason"],
+      details: params["details"],
+      childPolicy: params["childPolicy"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TerminateWorkflowExecution",
@@ -585,9 +688,10 @@ export default class SWF {
   async undeprecateActivityType(
     {abortSignal, ...params}: RequestConfig & UndeprecateActivityTypeInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    activityType: fromActivityType(params["activityType"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      activityType: fromActivityType(params["activityType"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UndeprecateActivityType",
@@ -597,8 +701,9 @@ export default class SWF {
   async undeprecateDomain(
     {abortSignal, ...params}: RequestConfig & UndeprecateDomainInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UndeprecateDomain",
@@ -608,9 +713,10 @@ export default class SWF {
   async undeprecateWorkflowType(
     {abortSignal, ...params}: RequestConfig & UndeprecateWorkflowTypeInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    workflowType: fromWorkflowType(params["workflowType"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      domain: params["domain"],
+      workflowType: fromWorkflowType(params["workflowType"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UndeprecateWorkflowType",
@@ -620,8 +726,10 @@ export default class SWF {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceArn: params["resourceArn"],
+      tagKeys: params["tagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -1035,11 +1143,11 @@ export interface ExecutionTimeFilter {
   oldestDate: Date | number;
   latestDate?: Date | number | null;
 }
-function fromExecutionTimeFilter(input?: ExecutionTimeFilter | null): JSONValue {
+function fromExecutionTimeFilter(input?: ExecutionTimeFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    oldestDate: prt.serializeDate_unixTimestamp(input["oldestDate"]),
-    latestDate: prt.serializeDate_unixTimestamp(input["latestDate"]),
+  return {
+    oldestDate: jsonP.serializeDate_unixTimestamp(input["oldestDate"]),
+    latestDate: jsonP.serializeDate_unixTimestamp(input["latestDate"]),
   }
 }
 
@@ -1047,9 +1155,10 @@ function fromExecutionTimeFilter(input?: ExecutionTimeFilter | null): JSONValue 
 export interface WorkflowExecutionFilter {
   workflowId: string;
 }
-function fromWorkflowExecutionFilter(input?: WorkflowExecutionFilter | null): JSONValue {
+function fromWorkflowExecutionFilter(input?: WorkflowExecutionFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    workflowId: input["workflowId"],
   }
 }
 
@@ -1058,9 +1167,11 @@ export interface WorkflowTypeFilter {
   name: string;
   version?: string | null;
 }
-function fromWorkflowTypeFilter(input?: WorkflowTypeFilter | null): JSONValue {
+function fromWorkflowTypeFilter(input?: WorkflowTypeFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    version: input["version"],
   }
 }
 
@@ -1068,9 +1179,10 @@ function fromWorkflowTypeFilter(input?: WorkflowTypeFilter | null): JSONValue {
 export interface TagFilter {
   tag: string;
 }
-function fromTagFilter(input?: TagFilter | null): JSONValue {
+function fromTagFilter(input?: TagFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    tag: input["tag"],
   }
 }
 
@@ -1078,9 +1190,10 @@ function fromTagFilter(input?: TagFilter | null): JSONValue {
 export interface CloseStatusFilter {
   status: CloseStatus;
 }
-function fromCloseStatusFilter(input?: CloseStatusFilter | null): JSONValue {
+function fromCloseStatusFilter(input?: CloseStatusFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    status: input["status"],
   }
 }
 
@@ -1092,30 +1205,20 @@ export type CloseStatus =
 | "TERMINATED"
 | "CONTINUED_AS_NEW"
 | "TIMED_OUT"
-;
-
-function toCloseStatus(root: JSONValue): CloseStatus | null {
-  return ( false
-    || root == "COMPLETED"
-    || root == "FAILED"
-    || root == "CANCELED"
-    || root == "TERMINATED"
-    || root == "CONTINUED_AS_NEW"
-    || root == "TIMED_OUT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 23 - tags: input, named, interface, output
 export interface TaskList {
   name: string;
 }
-function fromTaskList(input?: TaskList | null): JSONValue {
+function fromTaskList(input?: TaskList | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
   }
 }
-function toTaskList(root: JSONValue): TaskList {
-  return prt.readObj({
+function toTaskList(root: jsonP.JSONValue): TaskList {
+  return jsonP.readObj({
     required: {
       "name": "s",
     },
@@ -1128,13 +1231,15 @@ export interface ActivityType {
   name: string;
   version: string;
 }
-function fromActivityType(input?: ActivityType | null): JSONValue {
+function fromActivityType(input?: ActivityType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    version: input["version"],
   }
 }
-function toActivityType(root: JSONValue): ActivityType {
-  return prt.readObj({
+function toActivityType(root: jsonP.JSONValue): ActivityType {
+  return jsonP.readObj({
     required: {
       "name": "s",
       "version": "s",
@@ -1148,13 +1253,15 @@ export interface WorkflowType {
   name: string;
   version: string;
 }
-function fromWorkflowType(input?: WorkflowType | null): JSONValue {
+function fromWorkflowType(input?: WorkflowType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    version: input["version"],
   }
 }
-function toWorkflowType(root: JSONValue): WorkflowType {
-  return prt.readObj({
+function toWorkflowType(root: jsonP.JSONValue): WorkflowType {
+  return jsonP.readObj({
     required: {
       "name": "s",
       "version": "s",
@@ -1168,13 +1275,15 @@ export interface WorkflowExecution {
   workflowId: string;
   runId: string;
 }
-function fromWorkflowExecution(input?: WorkflowExecution | null): JSONValue {
+function fromWorkflowExecution(input?: WorkflowExecution | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    workflowId: input["workflowId"],
+    runId: input["runId"],
   }
 }
-function toWorkflowExecution(root: JSONValue): WorkflowExecution {
-  return prt.readObj({
+function toWorkflowExecution(root: jsonP.JSONValue): WorkflowExecution {
+  return jsonP.readObj({
     required: {
       "workflowId": "s",
       "runId": "s",
@@ -1187,27 +1296,22 @@ function toWorkflowExecution(root: JSONValue): WorkflowExecution {
 export type RegistrationStatus =
 | "REGISTERED"
 | "DEPRECATED"
-;
-
-function toRegistrationStatus(root: JSONValue): RegistrationStatus | null {
-  return ( false
-    || root == "REGISTERED"
-    || root == "DEPRECATED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface ResourceTag {
   key: string;
   value?: string | null;
 }
-function fromResourceTag(input?: ResourceTag | null): JSONValue {
+function fromResourceTag(input?: ResourceTag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    key: input["key"],
+    value: input["value"],
   }
 }
-function toResourceTag(root: JSONValue): ResourceTag {
-  return prt.readObj({
+function toResourceTag(root: jsonP.JSONValue): ResourceTag {
+  return jsonP.readObj({
     required: {
       "key": "s",
     },
@@ -1222,15 +1326,7 @@ export type ChildPolicy =
 | "TERMINATE"
 | "REQUEST_CANCEL"
 | "ABANDON"
-;
-
-function toChildPolicy(root: JSONValue): ChildPolicy | null {
-  return ( false
-    || root == "TERMINATE"
-    || root == "REQUEST_CANCEL"
-    || root == "ABANDON"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface Decision {
@@ -1249,9 +1345,10 @@ export interface Decision {
   startChildWorkflowExecutionDecisionAttributes?: StartChildWorkflowExecutionDecisionAttributes | null;
   scheduleLambdaFunctionDecisionAttributes?: ScheduleLambdaFunctionDecisionAttributes | null;
 }
-function fromDecision(input?: Decision | null): JSONValue {
+function fromDecision(input?: Decision | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    decisionType: input["decisionType"],
     scheduleActivityTaskDecisionAttributes: fromScheduleActivityTaskDecisionAttributes(input["scheduleActivityTaskDecisionAttributes"]),
     requestCancelActivityTaskDecisionAttributes: fromRequestCancelActivityTaskDecisionAttributes(input["requestCancelActivityTaskDecisionAttributes"]),
     completeWorkflowExecutionDecisionAttributes: fromCompleteWorkflowExecutionDecisionAttributes(input["completeWorkflowExecutionDecisionAttributes"]),
@@ -1283,8 +1380,7 @@ export type DecisionType =
 | "RequestCancelExternalWorkflowExecution"
 | "StartChildWorkflowExecution"
 | "ScheduleLambdaFunction"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ScheduleActivityTaskDecisionAttributes {
@@ -1299,11 +1395,19 @@ export interface ScheduleActivityTaskDecisionAttributes {
   startToCloseTimeout?: string | null;
   heartbeatTimeout?: string | null;
 }
-function fromScheduleActivityTaskDecisionAttributes(input?: ScheduleActivityTaskDecisionAttributes | null): JSONValue {
+function fromScheduleActivityTaskDecisionAttributes(input?: ScheduleActivityTaskDecisionAttributes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     activityType: fromActivityType(input["activityType"]),
+    activityId: input["activityId"],
+    control: input["control"],
+    input: input["input"],
+    scheduleToCloseTimeout: input["scheduleToCloseTimeout"],
     taskList: fromTaskList(input["taskList"]),
+    taskPriority: input["taskPriority"],
+    scheduleToStartTimeout: input["scheduleToStartTimeout"],
+    startToCloseTimeout: input["startToCloseTimeout"],
+    heartbeatTimeout: input["heartbeatTimeout"],
   }
 }
 
@@ -1311,9 +1415,10 @@ function fromScheduleActivityTaskDecisionAttributes(input?: ScheduleActivityTask
 export interface RequestCancelActivityTaskDecisionAttributes {
   activityId: string;
 }
-function fromRequestCancelActivityTaskDecisionAttributes(input?: RequestCancelActivityTaskDecisionAttributes | null): JSONValue {
+function fromRequestCancelActivityTaskDecisionAttributes(input?: RequestCancelActivityTaskDecisionAttributes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    activityId: input["activityId"],
   }
 }
 
@@ -1321,9 +1426,10 @@ function fromRequestCancelActivityTaskDecisionAttributes(input?: RequestCancelAc
 export interface CompleteWorkflowExecutionDecisionAttributes {
   result?: string | null;
 }
-function fromCompleteWorkflowExecutionDecisionAttributes(input?: CompleteWorkflowExecutionDecisionAttributes | null): JSONValue {
+function fromCompleteWorkflowExecutionDecisionAttributes(input?: CompleteWorkflowExecutionDecisionAttributes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    result: input["result"],
   }
 }
 
@@ -1332,9 +1438,11 @@ export interface FailWorkflowExecutionDecisionAttributes {
   reason?: string | null;
   details?: string | null;
 }
-function fromFailWorkflowExecutionDecisionAttributes(input?: FailWorkflowExecutionDecisionAttributes | null): JSONValue {
+function fromFailWorkflowExecutionDecisionAttributes(input?: FailWorkflowExecutionDecisionAttributes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    reason: input["reason"],
+    details: input["details"],
   }
 }
 
@@ -1342,9 +1450,10 @@ function fromFailWorkflowExecutionDecisionAttributes(input?: FailWorkflowExecuti
 export interface CancelWorkflowExecutionDecisionAttributes {
   details?: string | null;
 }
-function fromCancelWorkflowExecutionDecisionAttributes(input?: CancelWorkflowExecutionDecisionAttributes | null): JSONValue {
+function fromCancelWorkflowExecutionDecisionAttributes(input?: CancelWorkflowExecutionDecisionAttributes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    details: input["details"],
   }
 }
 
@@ -1360,10 +1469,18 @@ export interface ContinueAsNewWorkflowExecutionDecisionAttributes {
   workflowTypeVersion?: string | null;
   lambdaRole?: string | null;
 }
-function fromContinueAsNewWorkflowExecutionDecisionAttributes(input?: ContinueAsNewWorkflowExecutionDecisionAttributes | null): JSONValue {
+function fromContinueAsNewWorkflowExecutionDecisionAttributes(input?: ContinueAsNewWorkflowExecutionDecisionAttributes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    input: input["input"],
+    executionStartToCloseTimeout: input["executionStartToCloseTimeout"],
     taskList: fromTaskList(input["taskList"]),
+    taskPriority: input["taskPriority"],
+    taskStartToCloseTimeout: input["taskStartToCloseTimeout"],
+    childPolicy: input["childPolicy"],
+    tagList: input["tagList"],
+    workflowTypeVersion: input["workflowTypeVersion"],
+    lambdaRole: input["lambdaRole"],
   }
 }
 
@@ -1372,9 +1489,11 @@ export interface RecordMarkerDecisionAttributes {
   markerName: string;
   details?: string | null;
 }
-function fromRecordMarkerDecisionAttributes(input?: RecordMarkerDecisionAttributes | null): JSONValue {
+function fromRecordMarkerDecisionAttributes(input?: RecordMarkerDecisionAttributes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    markerName: input["markerName"],
+    details: input["details"],
   }
 }
 
@@ -1384,9 +1503,12 @@ export interface StartTimerDecisionAttributes {
   control?: string | null;
   startToFireTimeout: string;
 }
-function fromStartTimerDecisionAttributes(input?: StartTimerDecisionAttributes | null): JSONValue {
+function fromStartTimerDecisionAttributes(input?: StartTimerDecisionAttributes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    timerId: input["timerId"],
+    control: input["control"],
+    startToFireTimeout: input["startToFireTimeout"],
   }
 }
 
@@ -1394,9 +1516,10 @@ function fromStartTimerDecisionAttributes(input?: StartTimerDecisionAttributes |
 export interface CancelTimerDecisionAttributes {
   timerId: string;
 }
-function fromCancelTimerDecisionAttributes(input?: CancelTimerDecisionAttributes | null): JSONValue {
+function fromCancelTimerDecisionAttributes(input?: CancelTimerDecisionAttributes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    timerId: input["timerId"],
   }
 }
 
@@ -1408,9 +1531,14 @@ export interface SignalExternalWorkflowExecutionDecisionAttributes {
   input?: string | null;
   control?: string | null;
 }
-function fromSignalExternalWorkflowExecutionDecisionAttributes(input?: SignalExternalWorkflowExecutionDecisionAttributes | null): JSONValue {
+function fromSignalExternalWorkflowExecutionDecisionAttributes(input?: SignalExternalWorkflowExecutionDecisionAttributes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    workflowId: input["workflowId"],
+    runId: input["runId"],
+    signalName: input["signalName"],
+    input: input["input"],
+    control: input["control"],
   }
 }
 
@@ -1420,9 +1548,12 @@ export interface RequestCancelExternalWorkflowExecutionDecisionAttributes {
   runId?: string | null;
   control?: string | null;
 }
-function fromRequestCancelExternalWorkflowExecutionDecisionAttributes(input?: RequestCancelExternalWorkflowExecutionDecisionAttributes | null): JSONValue {
+function fromRequestCancelExternalWorkflowExecutionDecisionAttributes(input?: RequestCancelExternalWorkflowExecutionDecisionAttributes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    workflowId: input["workflowId"],
+    runId: input["runId"],
+    control: input["control"],
   }
 }
 
@@ -1440,11 +1571,20 @@ export interface StartChildWorkflowExecutionDecisionAttributes {
   tagList?: string[] | null;
   lambdaRole?: string | null;
 }
-function fromStartChildWorkflowExecutionDecisionAttributes(input?: StartChildWorkflowExecutionDecisionAttributes | null): JSONValue {
+function fromStartChildWorkflowExecutionDecisionAttributes(input?: StartChildWorkflowExecutionDecisionAttributes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     workflowType: fromWorkflowType(input["workflowType"]),
+    workflowId: input["workflowId"],
+    control: input["control"],
+    input: input["input"],
+    executionStartToCloseTimeout: input["executionStartToCloseTimeout"],
     taskList: fromTaskList(input["taskList"]),
+    taskPriority: input["taskPriority"],
+    taskStartToCloseTimeout: input["taskStartToCloseTimeout"],
+    childPolicy: input["childPolicy"],
+    tagList: input["tagList"],
+    lambdaRole: input["lambdaRole"],
   }
 }
 
@@ -1456,9 +1596,14 @@ export interface ScheduleLambdaFunctionDecisionAttributes {
   input?: string | null;
   startToCloseTimeout?: string | null;
 }
-function fromScheduleLambdaFunctionDecisionAttributes(input?: ScheduleLambdaFunctionDecisionAttributes | null): JSONValue {
+function fromScheduleLambdaFunctionDecisionAttributes(input?: ScheduleLambdaFunctionDecisionAttributes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    id: input["id"],
+    name: input["name"],
+    control: input["control"],
+    input: input["input"],
+    startToCloseTimeout: input["startToCloseTimeout"],
   }
 }
 
@@ -1470,11 +1615,11 @@ export interface ActivityTypeInfo {
   creationDate: Date | number;
   deprecationDate?: Date | number | null;
 }
-function toActivityTypeInfo(root: JSONValue): ActivityTypeInfo {
-  return prt.readObj({
+function toActivityTypeInfo(root: jsonP.JSONValue): ActivityTypeInfo {
+  return jsonP.readObj({
     required: {
       "activityType": toActivityType,
-      "status": toRegistrationStatus,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<RegistrationStatus>(x),
       "creationDate": "d",
     },
     optional: {
@@ -1493,8 +1638,8 @@ export interface ActivityTypeConfiguration {
   defaultTaskScheduleToStartTimeout?: string | null;
   defaultTaskScheduleToCloseTimeout?: string | null;
 }
-function toActivityTypeConfiguration(root: JSONValue): ActivityTypeConfiguration {
-  return prt.readObj({
+function toActivityTypeConfiguration(root: jsonP.JSONValue): ActivityTypeConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "defaultTaskStartToCloseTimeout": "s",
@@ -1514,11 +1659,11 @@ export interface DomainInfo {
   description?: string | null;
   arn?: string | null;
 }
-function toDomainInfo(root: JSONValue): DomainInfo {
-  return prt.readObj({
+function toDomainInfo(root: jsonP.JSONValue): DomainInfo {
+  return jsonP.readObj({
     required: {
       "name": "s",
-      "status": toRegistrationStatus,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<RegistrationStatus>(x),
     },
     optional: {
       "description": "s",
@@ -1531,8 +1676,8 @@ function toDomainInfo(root: JSONValue): DomainInfo {
 export interface DomainConfiguration {
   workflowExecutionRetentionPeriodInDays: string;
 }
-function toDomainConfiguration(root: JSONValue): DomainConfiguration {
-  return prt.readObj({
+function toDomainConfiguration(root: jsonP.JSONValue): DomainConfiguration {
+  return jsonP.readObj({
     required: {
       "workflowExecutionRetentionPeriodInDays": "s",
     },
@@ -1552,17 +1697,17 @@ export interface WorkflowExecutionInfo {
   tagList?: string[] | null;
   cancelRequested?: boolean | null;
 }
-function toWorkflowExecutionInfo(root: JSONValue): WorkflowExecutionInfo {
-  return prt.readObj({
+function toWorkflowExecutionInfo(root: jsonP.JSONValue): WorkflowExecutionInfo {
+  return jsonP.readObj({
     required: {
       "execution": toWorkflowExecution,
       "workflowType": toWorkflowType,
       "startTimestamp": "d",
-      "executionStatus": toExecutionStatus,
+      "executionStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ExecutionStatus>(x),
     },
     optional: {
       "closeTimestamp": "d",
-      "closeStatus": toCloseStatus,
+      "closeStatus": (x: jsonP.JSONValue) => cmnP.readEnum<CloseStatus>(x),
       "parent": toWorkflowExecution,
       "tagList": ["s"],
       "cancelRequested": "b",
@@ -1574,13 +1719,7 @@ function toWorkflowExecutionInfo(root: JSONValue): WorkflowExecutionInfo {
 export type ExecutionStatus =
 | "OPEN"
 | "CLOSED"
-;
-function toExecutionStatus(root: JSONValue): ExecutionStatus | null {
-  return ( false
-    || root == "OPEN"
-    || root == "CLOSED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface WorkflowExecutionConfiguration {
@@ -1591,13 +1730,13 @@ export interface WorkflowExecutionConfiguration {
   childPolicy: ChildPolicy;
   lambdaRole?: string | null;
 }
-function toWorkflowExecutionConfiguration(root: JSONValue): WorkflowExecutionConfiguration {
-  return prt.readObj({
+function toWorkflowExecutionConfiguration(root: jsonP.JSONValue): WorkflowExecutionConfiguration {
+  return jsonP.readObj({
     required: {
       "taskStartToCloseTimeout": "s",
       "executionStartToCloseTimeout": "s",
       "taskList": toTaskList,
-      "childPolicy": toChildPolicy,
+      "childPolicy": (x: jsonP.JSONValue) => cmnP.readEnum<ChildPolicy>(x),
     },
     optional: {
       "taskPriority": "s",
@@ -1614,8 +1753,8 @@ export interface WorkflowExecutionOpenCounts {
   openChildWorkflowExecutions: number;
   openLambdaFunctions?: number | null;
 }
-function toWorkflowExecutionOpenCounts(root: JSONValue): WorkflowExecutionOpenCounts {
-  return prt.readObj({
+function toWorkflowExecutionOpenCounts(root: jsonP.JSONValue): WorkflowExecutionOpenCounts {
+  return jsonP.readObj({
     required: {
       "openActivityTasks": "n",
       "openDecisionTasks": "n",
@@ -1636,11 +1775,11 @@ export interface WorkflowTypeInfo {
   creationDate: Date | number;
   deprecationDate?: Date | number | null;
 }
-function toWorkflowTypeInfo(root: JSONValue): WorkflowTypeInfo {
-  return prt.readObj({
+function toWorkflowTypeInfo(root: jsonP.JSONValue): WorkflowTypeInfo {
+  return jsonP.readObj({
     required: {
       "workflowType": toWorkflowType,
-      "status": toRegistrationStatus,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<RegistrationStatus>(x),
       "creationDate": "d",
     },
     optional: {
@@ -1659,15 +1798,15 @@ export interface WorkflowTypeConfiguration {
   defaultChildPolicy?: ChildPolicy | null;
   defaultLambdaRole?: string | null;
 }
-function toWorkflowTypeConfiguration(root: JSONValue): WorkflowTypeConfiguration {
-  return prt.readObj({
+function toWorkflowTypeConfiguration(root: jsonP.JSONValue): WorkflowTypeConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "defaultTaskStartToCloseTimeout": "s",
       "defaultExecutionStartToCloseTimeout": "s",
       "defaultTaskList": toTaskList,
       "defaultTaskPriority": "s",
-      "defaultChildPolicy": toChildPolicy,
+      "defaultChildPolicy": (x: jsonP.JSONValue) => cmnP.readEnum<ChildPolicy>(x),
       "defaultLambdaRole": "s",
     },
   }, root);
@@ -1733,11 +1872,11 @@ export interface HistoryEvent {
   scheduleLambdaFunctionFailedEventAttributes?: ScheduleLambdaFunctionFailedEventAttributes | null;
   startLambdaFunctionFailedEventAttributes?: StartLambdaFunctionFailedEventAttributes | null;
 }
-function toHistoryEvent(root: JSONValue): HistoryEvent {
-  return prt.readObj({
+function toHistoryEvent(root: jsonP.JSONValue): HistoryEvent {
+  return jsonP.readObj({
     required: {
       "eventTimestamp": "d",
-      "eventType": toEventType,
+      "eventType": (x: jsonP.JSONValue) => cmnP.readEnum<EventType>(x),
       "eventId": "n",
     },
     optional: {
@@ -1855,65 +1994,7 @@ export type EventType =
 | "LambdaFunctionTimedOut"
 | "ScheduleLambdaFunctionFailed"
 | "StartLambdaFunctionFailed"
-;
-function toEventType(root: JSONValue): EventType | null {
-  return ( false
-    || root == "WorkflowExecutionStarted"
-    || root == "WorkflowExecutionCancelRequested"
-    || root == "WorkflowExecutionCompleted"
-    || root == "CompleteWorkflowExecutionFailed"
-    || root == "WorkflowExecutionFailed"
-    || root == "FailWorkflowExecutionFailed"
-    || root == "WorkflowExecutionTimedOut"
-    || root == "WorkflowExecutionCanceled"
-    || root == "CancelWorkflowExecutionFailed"
-    || root == "WorkflowExecutionContinuedAsNew"
-    || root == "ContinueAsNewWorkflowExecutionFailed"
-    || root == "WorkflowExecutionTerminated"
-    || root == "DecisionTaskScheduled"
-    || root == "DecisionTaskStarted"
-    || root == "DecisionTaskCompleted"
-    || root == "DecisionTaskTimedOut"
-    || root == "ActivityTaskScheduled"
-    || root == "ScheduleActivityTaskFailed"
-    || root == "ActivityTaskStarted"
-    || root == "ActivityTaskCompleted"
-    || root == "ActivityTaskFailed"
-    || root == "ActivityTaskTimedOut"
-    || root == "ActivityTaskCanceled"
-    || root == "ActivityTaskCancelRequested"
-    || root == "RequestCancelActivityTaskFailed"
-    || root == "WorkflowExecutionSignaled"
-    || root == "MarkerRecorded"
-    || root == "RecordMarkerFailed"
-    || root == "TimerStarted"
-    || root == "StartTimerFailed"
-    || root == "TimerFired"
-    || root == "TimerCanceled"
-    || root == "CancelTimerFailed"
-    || root == "StartChildWorkflowExecutionInitiated"
-    || root == "StartChildWorkflowExecutionFailed"
-    || root == "ChildWorkflowExecutionStarted"
-    || root == "ChildWorkflowExecutionCompleted"
-    || root == "ChildWorkflowExecutionFailed"
-    || root == "ChildWorkflowExecutionTimedOut"
-    || root == "ChildWorkflowExecutionCanceled"
-    || root == "ChildWorkflowExecutionTerminated"
-    || root == "SignalExternalWorkflowExecutionInitiated"
-    || root == "SignalExternalWorkflowExecutionFailed"
-    || root == "ExternalWorkflowExecutionSignaled"
-    || root == "RequestCancelExternalWorkflowExecutionInitiated"
-    || root == "RequestCancelExternalWorkflowExecutionFailed"
-    || root == "ExternalWorkflowExecutionCancelRequested"
-    || root == "LambdaFunctionScheduled"
-    || root == "LambdaFunctionStarted"
-    || root == "LambdaFunctionCompleted"
-    || root == "LambdaFunctionFailed"
-    || root == "LambdaFunctionTimedOut"
-    || root == "ScheduleLambdaFunctionFailed"
-    || root == "StartLambdaFunctionFailed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface WorkflowExecutionStartedEventAttributes {
@@ -1930,10 +2011,10 @@ export interface WorkflowExecutionStartedEventAttributes {
   parentInitiatedEventId?: number | null;
   lambdaRole?: string | null;
 }
-function toWorkflowExecutionStartedEventAttributes(root: JSONValue): WorkflowExecutionStartedEventAttributes {
-  return prt.readObj({
+function toWorkflowExecutionStartedEventAttributes(root: jsonP.JSONValue): WorkflowExecutionStartedEventAttributes {
+  return jsonP.readObj({
     required: {
-      "childPolicy": toChildPolicy,
+      "childPolicy": (x: jsonP.JSONValue) => cmnP.readEnum<ChildPolicy>(x),
       "taskList": toTaskList,
       "workflowType": toWorkflowType,
     },
@@ -1956,8 +2037,8 @@ export interface WorkflowExecutionCompletedEventAttributes {
   result?: string | null;
   decisionTaskCompletedEventId: number;
 }
-function toWorkflowExecutionCompletedEventAttributes(root: JSONValue): WorkflowExecutionCompletedEventAttributes {
-  return prt.readObj({
+function toWorkflowExecutionCompletedEventAttributes(root: jsonP.JSONValue): WorkflowExecutionCompletedEventAttributes {
+  return jsonP.readObj({
     required: {
       "decisionTaskCompletedEventId": "n",
     },
@@ -1972,10 +2053,10 @@ export interface CompleteWorkflowExecutionFailedEventAttributes {
   cause: CompleteWorkflowExecutionFailedCause;
   decisionTaskCompletedEventId: number;
 }
-function toCompleteWorkflowExecutionFailedEventAttributes(root: JSONValue): CompleteWorkflowExecutionFailedEventAttributes {
-  return prt.readObj({
+function toCompleteWorkflowExecutionFailedEventAttributes(root: jsonP.JSONValue): CompleteWorkflowExecutionFailedEventAttributes {
+  return jsonP.readObj({
     required: {
-      "cause": toCompleteWorkflowExecutionFailedCause,
+      "cause": (x: jsonP.JSONValue) => cmnP.readEnum<CompleteWorkflowExecutionFailedCause>(x),
       "decisionTaskCompletedEventId": "n",
     },
     optional: {},
@@ -1986,13 +2067,7 @@ function toCompleteWorkflowExecutionFailedEventAttributes(root: JSONValue): Comp
 export type CompleteWorkflowExecutionFailedCause =
 | "UNHANDLED_DECISION"
 | "OPERATION_NOT_PERMITTED"
-;
-function toCompleteWorkflowExecutionFailedCause(root: JSONValue): CompleteWorkflowExecutionFailedCause | null {
-  return ( false
-    || root == "UNHANDLED_DECISION"
-    || root == "OPERATION_NOT_PERMITTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface WorkflowExecutionFailedEventAttributes {
@@ -2000,8 +2075,8 @@ export interface WorkflowExecutionFailedEventAttributes {
   details?: string | null;
   decisionTaskCompletedEventId: number;
 }
-function toWorkflowExecutionFailedEventAttributes(root: JSONValue): WorkflowExecutionFailedEventAttributes {
-  return prt.readObj({
+function toWorkflowExecutionFailedEventAttributes(root: jsonP.JSONValue): WorkflowExecutionFailedEventAttributes {
+  return jsonP.readObj({
     required: {
       "decisionTaskCompletedEventId": "n",
     },
@@ -2017,10 +2092,10 @@ export interface FailWorkflowExecutionFailedEventAttributes {
   cause: FailWorkflowExecutionFailedCause;
   decisionTaskCompletedEventId: number;
 }
-function toFailWorkflowExecutionFailedEventAttributes(root: JSONValue): FailWorkflowExecutionFailedEventAttributes {
-  return prt.readObj({
+function toFailWorkflowExecutionFailedEventAttributes(root: jsonP.JSONValue): FailWorkflowExecutionFailedEventAttributes {
+  return jsonP.readObj({
     required: {
-      "cause": toFailWorkflowExecutionFailedCause,
+      "cause": (x: jsonP.JSONValue) => cmnP.readEnum<FailWorkflowExecutionFailedCause>(x),
       "decisionTaskCompletedEventId": "n",
     },
     optional: {},
@@ -2031,24 +2106,18 @@ function toFailWorkflowExecutionFailedEventAttributes(root: JSONValue): FailWork
 export type FailWorkflowExecutionFailedCause =
 | "UNHANDLED_DECISION"
 | "OPERATION_NOT_PERMITTED"
-;
-function toFailWorkflowExecutionFailedCause(root: JSONValue): FailWorkflowExecutionFailedCause | null {
-  return ( false
-    || root == "UNHANDLED_DECISION"
-    || root == "OPERATION_NOT_PERMITTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface WorkflowExecutionTimedOutEventAttributes {
   timeoutType: WorkflowExecutionTimeoutType;
   childPolicy: ChildPolicy;
 }
-function toWorkflowExecutionTimedOutEventAttributes(root: JSONValue): WorkflowExecutionTimedOutEventAttributes {
-  return prt.readObj({
+function toWorkflowExecutionTimedOutEventAttributes(root: jsonP.JSONValue): WorkflowExecutionTimedOutEventAttributes {
+  return jsonP.readObj({
     required: {
-      "timeoutType": toWorkflowExecutionTimeoutType,
-      "childPolicy": toChildPolicy,
+      "timeoutType": (x: jsonP.JSONValue) => cmnP.readEnum<WorkflowExecutionTimeoutType>(x),
+      "childPolicy": (x: jsonP.JSONValue) => cmnP.readEnum<ChildPolicy>(x),
     },
     optional: {},
   }, root);
@@ -2057,20 +2126,15 @@ function toWorkflowExecutionTimedOutEventAttributes(root: JSONValue): WorkflowEx
 // refs: 4 - tags: output, named, enum
 export type WorkflowExecutionTimeoutType =
 | "START_TO_CLOSE"
-;
-function toWorkflowExecutionTimeoutType(root: JSONValue): WorkflowExecutionTimeoutType | null {
-  return ( false
-    || root == "START_TO_CLOSE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface WorkflowExecutionCanceledEventAttributes {
   details?: string | null;
   decisionTaskCompletedEventId: number;
 }
-function toWorkflowExecutionCanceledEventAttributes(root: JSONValue): WorkflowExecutionCanceledEventAttributes {
-  return prt.readObj({
+function toWorkflowExecutionCanceledEventAttributes(root: jsonP.JSONValue): WorkflowExecutionCanceledEventAttributes {
+  return jsonP.readObj({
     required: {
       "decisionTaskCompletedEventId": "n",
     },
@@ -2085,10 +2149,10 @@ export interface CancelWorkflowExecutionFailedEventAttributes {
   cause: CancelWorkflowExecutionFailedCause;
   decisionTaskCompletedEventId: number;
 }
-function toCancelWorkflowExecutionFailedEventAttributes(root: JSONValue): CancelWorkflowExecutionFailedEventAttributes {
-  return prt.readObj({
+function toCancelWorkflowExecutionFailedEventAttributes(root: jsonP.JSONValue): CancelWorkflowExecutionFailedEventAttributes {
+  return jsonP.readObj({
     required: {
-      "cause": toCancelWorkflowExecutionFailedCause,
+      "cause": (x: jsonP.JSONValue) => cmnP.readEnum<CancelWorkflowExecutionFailedCause>(x),
       "decisionTaskCompletedEventId": "n",
     },
     optional: {},
@@ -2099,13 +2163,7 @@ function toCancelWorkflowExecutionFailedEventAttributes(root: JSONValue): Cancel
 export type CancelWorkflowExecutionFailedCause =
 | "UNHANDLED_DECISION"
 | "OPERATION_NOT_PERMITTED"
-;
-function toCancelWorkflowExecutionFailedCause(root: JSONValue): CancelWorkflowExecutionFailedCause | null {
-  return ( false
-    || root == "UNHANDLED_DECISION"
-    || root == "OPERATION_NOT_PERMITTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface WorkflowExecutionContinuedAsNewEventAttributes {
@@ -2121,13 +2179,13 @@ export interface WorkflowExecutionContinuedAsNewEventAttributes {
   workflowType: WorkflowType;
   lambdaRole?: string | null;
 }
-function toWorkflowExecutionContinuedAsNewEventAttributes(root: JSONValue): WorkflowExecutionContinuedAsNewEventAttributes {
-  return prt.readObj({
+function toWorkflowExecutionContinuedAsNewEventAttributes(root: jsonP.JSONValue): WorkflowExecutionContinuedAsNewEventAttributes {
+  return jsonP.readObj({
     required: {
       "decisionTaskCompletedEventId": "n",
       "newExecutionRunId": "s",
       "taskList": toTaskList,
-      "childPolicy": toChildPolicy,
+      "childPolicy": (x: jsonP.JSONValue) => cmnP.readEnum<ChildPolicy>(x),
       "workflowType": toWorkflowType,
     },
     optional: {
@@ -2146,10 +2204,10 @@ export interface ContinueAsNewWorkflowExecutionFailedEventAttributes {
   cause: ContinueAsNewWorkflowExecutionFailedCause;
   decisionTaskCompletedEventId: number;
 }
-function toContinueAsNewWorkflowExecutionFailedEventAttributes(root: JSONValue): ContinueAsNewWorkflowExecutionFailedEventAttributes {
-  return prt.readObj({
+function toContinueAsNewWorkflowExecutionFailedEventAttributes(root: jsonP.JSONValue): ContinueAsNewWorkflowExecutionFailedEventAttributes {
+  return jsonP.readObj({
     required: {
-      "cause": toContinueAsNewWorkflowExecutionFailedCause,
+      "cause": (x: jsonP.JSONValue) => cmnP.readEnum<ContinueAsNewWorkflowExecutionFailedCause>(x),
       "decisionTaskCompletedEventId": "n",
     },
     optional: {},
@@ -2167,20 +2225,7 @@ export type ContinueAsNewWorkflowExecutionFailedCause =
 | "DEFAULT_CHILD_POLICY_UNDEFINED"
 | "CONTINUE_AS_NEW_WORKFLOW_EXECUTION_RATE_EXCEEDED"
 | "OPERATION_NOT_PERMITTED"
-;
-function toContinueAsNewWorkflowExecutionFailedCause(root: JSONValue): ContinueAsNewWorkflowExecutionFailedCause | null {
-  return ( false
-    || root == "UNHANDLED_DECISION"
-    || root == "WORKFLOW_TYPE_DEPRECATED"
-    || root == "WORKFLOW_TYPE_DOES_NOT_EXIST"
-    || root == "DEFAULT_EXECUTION_START_TO_CLOSE_TIMEOUT_UNDEFINED"
-    || root == "DEFAULT_TASK_START_TO_CLOSE_TIMEOUT_UNDEFINED"
-    || root == "DEFAULT_TASK_LIST_UNDEFINED"
-    || root == "DEFAULT_CHILD_POLICY_UNDEFINED"
-    || root == "CONTINUE_AS_NEW_WORKFLOW_EXECUTION_RATE_EXCEEDED"
-    || root == "OPERATION_NOT_PERMITTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface WorkflowExecutionTerminatedEventAttributes {
@@ -2189,15 +2234,15 @@ export interface WorkflowExecutionTerminatedEventAttributes {
   childPolicy: ChildPolicy;
   cause?: WorkflowExecutionTerminatedCause | null;
 }
-function toWorkflowExecutionTerminatedEventAttributes(root: JSONValue): WorkflowExecutionTerminatedEventAttributes {
-  return prt.readObj({
+function toWorkflowExecutionTerminatedEventAttributes(root: jsonP.JSONValue): WorkflowExecutionTerminatedEventAttributes {
+  return jsonP.readObj({
     required: {
-      "childPolicy": toChildPolicy,
+      "childPolicy": (x: jsonP.JSONValue) => cmnP.readEnum<ChildPolicy>(x),
     },
     optional: {
       "reason": "s",
       "details": "s",
-      "cause": toWorkflowExecutionTerminatedCause,
+      "cause": (x: jsonP.JSONValue) => cmnP.readEnum<WorkflowExecutionTerminatedCause>(x),
     },
   }, root);
 }
@@ -2207,14 +2252,7 @@ export type WorkflowExecutionTerminatedCause =
 | "CHILD_POLICY_APPLIED"
 | "EVENT_LIMIT_EXCEEDED"
 | "OPERATOR_INITIATED"
-;
-function toWorkflowExecutionTerminatedCause(root: JSONValue): WorkflowExecutionTerminatedCause | null {
-  return ( false
-    || root == "CHILD_POLICY_APPLIED"
-    || root == "EVENT_LIMIT_EXCEEDED"
-    || root == "OPERATOR_INITIATED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface WorkflowExecutionCancelRequestedEventAttributes {
@@ -2222,13 +2260,13 @@ export interface WorkflowExecutionCancelRequestedEventAttributes {
   externalInitiatedEventId?: number | null;
   cause?: WorkflowExecutionCancelRequestedCause | null;
 }
-function toWorkflowExecutionCancelRequestedEventAttributes(root: JSONValue): WorkflowExecutionCancelRequestedEventAttributes {
-  return prt.readObj({
+function toWorkflowExecutionCancelRequestedEventAttributes(root: jsonP.JSONValue): WorkflowExecutionCancelRequestedEventAttributes {
+  return jsonP.readObj({
     required: {},
     optional: {
       "externalWorkflowExecution": toWorkflowExecution,
       "externalInitiatedEventId": "n",
-      "cause": toWorkflowExecutionCancelRequestedCause,
+      "cause": (x: jsonP.JSONValue) => cmnP.readEnum<WorkflowExecutionCancelRequestedCause>(x),
     },
   }, root);
 }
@@ -2236,12 +2274,7 @@ function toWorkflowExecutionCancelRequestedEventAttributes(root: JSONValue): Wor
 // refs: 2 - tags: output, named, enum
 export type WorkflowExecutionCancelRequestedCause =
 | "CHILD_POLICY_APPLIED"
-;
-function toWorkflowExecutionCancelRequestedCause(root: JSONValue): WorkflowExecutionCancelRequestedCause | null {
-  return ( false
-    || root == "CHILD_POLICY_APPLIED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface DecisionTaskScheduledEventAttributes {
@@ -2249,8 +2282,8 @@ export interface DecisionTaskScheduledEventAttributes {
   taskPriority?: string | null;
   startToCloseTimeout?: string | null;
 }
-function toDecisionTaskScheduledEventAttributes(root: JSONValue): DecisionTaskScheduledEventAttributes {
-  return prt.readObj({
+function toDecisionTaskScheduledEventAttributes(root: jsonP.JSONValue): DecisionTaskScheduledEventAttributes {
+  return jsonP.readObj({
     required: {
       "taskList": toTaskList,
     },
@@ -2266,8 +2299,8 @@ export interface DecisionTaskStartedEventAttributes {
   identity?: string | null;
   scheduledEventId: number;
 }
-function toDecisionTaskStartedEventAttributes(root: JSONValue): DecisionTaskStartedEventAttributes {
-  return prt.readObj({
+function toDecisionTaskStartedEventAttributes(root: jsonP.JSONValue): DecisionTaskStartedEventAttributes {
+  return jsonP.readObj({
     required: {
       "scheduledEventId": "n",
     },
@@ -2283,8 +2316,8 @@ export interface DecisionTaskCompletedEventAttributes {
   scheduledEventId: number;
   startedEventId: number;
 }
-function toDecisionTaskCompletedEventAttributes(root: JSONValue): DecisionTaskCompletedEventAttributes {
-  return prt.readObj({
+function toDecisionTaskCompletedEventAttributes(root: jsonP.JSONValue): DecisionTaskCompletedEventAttributes {
+  return jsonP.readObj({
     required: {
       "scheduledEventId": "n",
       "startedEventId": "n",
@@ -2301,10 +2334,10 @@ export interface DecisionTaskTimedOutEventAttributes {
   scheduledEventId: number;
   startedEventId: number;
 }
-function toDecisionTaskTimedOutEventAttributes(root: JSONValue): DecisionTaskTimedOutEventAttributes {
-  return prt.readObj({
+function toDecisionTaskTimedOutEventAttributes(root: jsonP.JSONValue): DecisionTaskTimedOutEventAttributes {
+  return jsonP.readObj({
     required: {
-      "timeoutType": toDecisionTaskTimeoutType,
+      "timeoutType": (x: jsonP.JSONValue) => cmnP.readEnum<DecisionTaskTimeoutType>(x),
       "scheduledEventId": "n",
       "startedEventId": "n",
     },
@@ -2315,12 +2348,7 @@ function toDecisionTaskTimedOutEventAttributes(root: JSONValue): DecisionTaskTim
 // refs: 2 - tags: output, named, enum
 export type DecisionTaskTimeoutType =
 | "START_TO_CLOSE"
-;
-function toDecisionTaskTimeoutType(root: JSONValue): DecisionTaskTimeoutType | null {
-  return ( false
-    || root == "START_TO_CLOSE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ActivityTaskScheduledEventAttributes {
@@ -2336,8 +2364,8 @@ export interface ActivityTaskScheduledEventAttributes {
   decisionTaskCompletedEventId: number;
   heartbeatTimeout?: string | null;
 }
-function toActivityTaskScheduledEventAttributes(root: JSONValue): ActivityTaskScheduledEventAttributes {
-  return prt.readObj({
+function toActivityTaskScheduledEventAttributes(root: jsonP.JSONValue): ActivityTaskScheduledEventAttributes {
+  return jsonP.readObj({
     required: {
       "activityType": toActivityType,
       "activityId": "s",
@@ -2361,8 +2389,8 @@ export interface ActivityTaskStartedEventAttributes {
   identity?: string | null;
   scheduledEventId: number;
 }
-function toActivityTaskStartedEventAttributes(root: JSONValue): ActivityTaskStartedEventAttributes {
-  return prt.readObj({
+function toActivityTaskStartedEventAttributes(root: jsonP.JSONValue): ActivityTaskStartedEventAttributes {
+  return jsonP.readObj({
     required: {
       "scheduledEventId": "n",
     },
@@ -2378,8 +2406,8 @@ export interface ActivityTaskCompletedEventAttributes {
   scheduledEventId: number;
   startedEventId: number;
 }
-function toActivityTaskCompletedEventAttributes(root: JSONValue): ActivityTaskCompletedEventAttributes {
-  return prt.readObj({
+function toActivityTaskCompletedEventAttributes(root: jsonP.JSONValue): ActivityTaskCompletedEventAttributes {
+  return jsonP.readObj({
     required: {
       "scheduledEventId": "n",
       "startedEventId": "n",
@@ -2397,8 +2425,8 @@ export interface ActivityTaskFailedEventAttributes {
   scheduledEventId: number;
   startedEventId: number;
 }
-function toActivityTaskFailedEventAttributes(root: JSONValue): ActivityTaskFailedEventAttributes {
-  return prt.readObj({
+function toActivityTaskFailedEventAttributes(root: jsonP.JSONValue): ActivityTaskFailedEventAttributes {
+  return jsonP.readObj({
     required: {
       "scheduledEventId": "n",
       "startedEventId": "n",
@@ -2417,10 +2445,10 @@ export interface ActivityTaskTimedOutEventAttributes {
   startedEventId: number;
   details?: string | null;
 }
-function toActivityTaskTimedOutEventAttributes(root: JSONValue): ActivityTaskTimedOutEventAttributes {
-  return prt.readObj({
+function toActivityTaskTimedOutEventAttributes(root: jsonP.JSONValue): ActivityTaskTimedOutEventAttributes {
+  return jsonP.readObj({
     required: {
-      "timeoutType": toActivityTaskTimeoutType,
+      "timeoutType": (x: jsonP.JSONValue) => cmnP.readEnum<ActivityTaskTimeoutType>(x),
       "scheduledEventId": "n",
       "startedEventId": "n",
     },
@@ -2436,15 +2464,7 @@ export type ActivityTaskTimeoutType =
 | "SCHEDULE_TO_START"
 | "SCHEDULE_TO_CLOSE"
 | "HEARTBEAT"
-;
-function toActivityTaskTimeoutType(root: JSONValue): ActivityTaskTimeoutType | null {
-  return ( false
-    || root == "START_TO_CLOSE"
-    || root == "SCHEDULE_TO_START"
-    || root == "SCHEDULE_TO_CLOSE"
-    || root == "HEARTBEAT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ActivityTaskCanceledEventAttributes {
@@ -2453,8 +2473,8 @@ export interface ActivityTaskCanceledEventAttributes {
   startedEventId: number;
   latestCancelRequestedEventId?: number | null;
 }
-function toActivityTaskCanceledEventAttributes(root: JSONValue): ActivityTaskCanceledEventAttributes {
-  return prt.readObj({
+function toActivityTaskCanceledEventAttributes(root: jsonP.JSONValue): ActivityTaskCanceledEventAttributes {
+  return jsonP.readObj({
     required: {
       "scheduledEventId": "n",
       "startedEventId": "n",
@@ -2471,8 +2491,8 @@ export interface ActivityTaskCancelRequestedEventAttributes {
   decisionTaskCompletedEventId: number;
   activityId: string;
 }
-function toActivityTaskCancelRequestedEventAttributes(root: JSONValue): ActivityTaskCancelRequestedEventAttributes {
-  return prt.readObj({
+function toActivityTaskCancelRequestedEventAttributes(root: jsonP.JSONValue): ActivityTaskCancelRequestedEventAttributes {
+  return jsonP.readObj({
     required: {
       "decisionTaskCompletedEventId": "n",
       "activityId": "s",
@@ -2488,8 +2508,8 @@ export interface WorkflowExecutionSignaledEventAttributes {
   externalWorkflowExecution?: WorkflowExecution | null;
   externalInitiatedEventId?: number | null;
 }
-function toWorkflowExecutionSignaledEventAttributes(root: JSONValue): WorkflowExecutionSignaledEventAttributes {
-  return prt.readObj({
+function toWorkflowExecutionSignaledEventAttributes(root: jsonP.JSONValue): WorkflowExecutionSignaledEventAttributes {
+  return jsonP.readObj({
     required: {
       "signalName": "s",
     },
@@ -2507,8 +2527,8 @@ export interface MarkerRecordedEventAttributes {
   details?: string | null;
   decisionTaskCompletedEventId: number;
 }
-function toMarkerRecordedEventAttributes(root: JSONValue): MarkerRecordedEventAttributes {
-  return prt.readObj({
+function toMarkerRecordedEventAttributes(root: jsonP.JSONValue): MarkerRecordedEventAttributes {
+  return jsonP.readObj({
     required: {
       "markerName": "s",
       "decisionTaskCompletedEventId": "n",
@@ -2525,11 +2545,11 @@ export interface RecordMarkerFailedEventAttributes {
   cause: RecordMarkerFailedCause;
   decisionTaskCompletedEventId: number;
 }
-function toRecordMarkerFailedEventAttributes(root: JSONValue): RecordMarkerFailedEventAttributes {
-  return prt.readObj({
+function toRecordMarkerFailedEventAttributes(root: jsonP.JSONValue): RecordMarkerFailedEventAttributes {
+  return jsonP.readObj({
     required: {
       "markerName": "s",
-      "cause": toRecordMarkerFailedCause,
+      "cause": (x: jsonP.JSONValue) => cmnP.readEnum<RecordMarkerFailedCause>(x),
       "decisionTaskCompletedEventId": "n",
     },
     optional: {},
@@ -2539,12 +2559,7 @@ function toRecordMarkerFailedEventAttributes(root: JSONValue): RecordMarkerFaile
 // refs: 2 - tags: output, named, enum
 export type RecordMarkerFailedCause =
 | "OPERATION_NOT_PERMITTED"
-;
-function toRecordMarkerFailedCause(root: JSONValue): RecordMarkerFailedCause | null {
-  return ( false
-    || root == "OPERATION_NOT_PERMITTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface TimerStartedEventAttributes {
@@ -2553,8 +2568,8 @@ export interface TimerStartedEventAttributes {
   startToFireTimeout: string;
   decisionTaskCompletedEventId: number;
 }
-function toTimerStartedEventAttributes(root: JSONValue): TimerStartedEventAttributes {
-  return prt.readObj({
+function toTimerStartedEventAttributes(root: jsonP.JSONValue): TimerStartedEventAttributes {
+  return jsonP.readObj({
     required: {
       "timerId": "s",
       "startToFireTimeout": "s",
@@ -2571,8 +2586,8 @@ export interface TimerFiredEventAttributes {
   timerId: string;
   startedEventId: number;
 }
-function toTimerFiredEventAttributes(root: JSONValue): TimerFiredEventAttributes {
-  return prt.readObj({
+function toTimerFiredEventAttributes(root: jsonP.JSONValue): TimerFiredEventAttributes {
+  return jsonP.readObj({
     required: {
       "timerId": "s",
       "startedEventId": "n",
@@ -2587,8 +2602,8 @@ export interface TimerCanceledEventAttributes {
   startedEventId: number;
   decisionTaskCompletedEventId: number;
 }
-function toTimerCanceledEventAttributes(root: JSONValue): TimerCanceledEventAttributes {
-  return prt.readObj({
+function toTimerCanceledEventAttributes(root: jsonP.JSONValue): TimerCanceledEventAttributes {
+  return jsonP.readObj({
     required: {
       "timerId": "s",
       "startedEventId": "n",
@@ -2613,14 +2628,14 @@ export interface StartChildWorkflowExecutionInitiatedEventAttributes {
   tagList?: string[] | null;
   lambdaRole?: string | null;
 }
-function toStartChildWorkflowExecutionInitiatedEventAttributes(root: JSONValue): StartChildWorkflowExecutionInitiatedEventAttributes {
-  return prt.readObj({
+function toStartChildWorkflowExecutionInitiatedEventAttributes(root: jsonP.JSONValue): StartChildWorkflowExecutionInitiatedEventAttributes {
+  return jsonP.readObj({
     required: {
       "workflowId": "s",
       "workflowType": toWorkflowType,
       "taskList": toTaskList,
       "decisionTaskCompletedEventId": "n",
-      "childPolicy": toChildPolicy,
+      "childPolicy": (x: jsonP.JSONValue) => cmnP.readEnum<ChildPolicy>(x),
     },
     optional: {
       "control": "s",
@@ -2640,8 +2655,8 @@ export interface ChildWorkflowExecutionStartedEventAttributes {
   workflowType: WorkflowType;
   initiatedEventId: number;
 }
-function toChildWorkflowExecutionStartedEventAttributes(root: JSONValue): ChildWorkflowExecutionStartedEventAttributes {
-  return prt.readObj({
+function toChildWorkflowExecutionStartedEventAttributes(root: jsonP.JSONValue): ChildWorkflowExecutionStartedEventAttributes {
+  return jsonP.readObj({
     required: {
       "workflowExecution": toWorkflowExecution,
       "workflowType": toWorkflowType,
@@ -2659,8 +2674,8 @@ export interface ChildWorkflowExecutionCompletedEventAttributes {
   initiatedEventId: number;
   startedEventId: number;
 }
-function toChildWorkflowExecutionCompletedEventAttributes(root: JSONValue): ChildWorkflowExecutionCompletedEventAttributes {
-  return prt.readObj({
+function toChildWorkflowExecutionCompletedEventAttributes(root: jsonP.JSONValue): ChildWorkflowExecutionCompletedEventAttributes {
+  return jsonP.readObj({
     required: {
       "workflowExecution": toWorkflowExecution,
       "workflowType": toWorkflowType,
@@ -2682,8 +2697,8 @@ export interface ChildWorkflowExecutionFailedEventAttributes {
   initiatedEventId: number;
   startedEventId: number;
 }
-function toChildWorkflowExecutionFailedEventAttributes(root: JSONValue): ChildWorkflowExecutionFailedEventAttributes {
-  return prt.readObj({
+function toChildWorkflowExecutionFailedEventAttributes(root: jsonP.JSONValue): ChildWorkflowExecutionFailedEventAttributes {
+  return jsonP.readObj({
     required: {
       "workflowExecution": toWorkflowExecution,
       "workflowType": toWorkflowType,
@@ -2705,12 +2720,12 @@ export interface ChildWorkflowExecutionTimedOutEventAttributes {
   initiatedEventId: number;
   startedEventId: number;
 }
-function toChildWorkflowExecutionTimedOutEventAttributes(root: JSONValue): ChildWorkflowExecutionTimedOutEventAttributes {
-  return prt.readObj({
+function toChildWorkflowExecutionTimedOutEventAttributes(root: jsonP.JSONValue): ChildWorkflowExecutionTimedOutEventAttributes {
+  return jsonP.readObj({
     required: {
       "workflowExecution": toWorkflowExecution,
       "workflowType": toWorkflowType,
-      "timeoutType": toWorkflowExecutionTimeoutType,
+      "timeoutType": (x: jsonP.JSONValue) => cmnP.readEnum<WorkflowExecutionTimeoutType>(x),
       "initiatedEventId": "n",
       "startedEventId": "n",
     },
@@ -2726,8 +2741,8 @@ export interface ChildWorkflowExecutionCanceledEventAttributes {
   initiatedEventId: number;
   startedEventId: number;
 }
-function toChildWorkflowExecutionCanceledEventAttributes(root: JSONValue): ChildWorkflowExecutionCanceledEventAttributes {
-  return prt.readObj({
+function toChildWorkflowExecutionCanceledEventAttributes(root: jsonP.JSONValue): ChildWorkflowExecutionCanceledEventAttributes {
+  return jsonP.readObj({
     required: {
       "workflowExecution": toWorkflowExecution,
       "workflowType": toWorkflowType,
@@ -2747,8 +2762,8 @@ export interface ChildWorkflowExecutionTerminatedEventAttributes {
   initiatedEventId: number;
   startedEventId: number;
 }
-function toChildWorkflowExecutionTerminatedEventAttributes(root: JSONValue): ChildWorkflowExecutionTerminatedEventAttributes {
-  return prt.readObj({
+function toChildWorkflowExecutionTerminatedEventAttributes(root: jsonP.JSONValue): ChildWorkflowExecutionTerminatedEventAttributes {
+  return jsonP.readObj({
     required: {
       "workflowExecution": toWorkflowExecution,
       "workflowType": toWorkflowType,
@@ -2768,8 +2783,8 @@ export interface SignalExternalWorkflowExecutionInitiatedEventAttributes {
   decisionTaskCompletedEventId: number;
   control?: string | null;
 }
-function toSignalExternalWorkflowExecutionInitiatedEventAttributes(root: JSONValue): SignalExternalWorkflowExecutionInitiatedEventAttributes {
-  return prt.readObj({
+function toSignalExternalWorkflowExecutionInitiatedEventAttributes(root: jsonP.JSONValue): SignalExternalWorkflowExecutionInitiatedEventAttributes {
+  return jsonP.readObj({
     required: {
       "workflowId": "s",
       "signalName": "s",
@@ -2788,8 +2803,8 @@ export interface ExternalWorkflowExecutionSignaledEventAttributes {
   workflowExecution: WorkflowExecution;
   initiatedEventId: number;
 }
-function toExternalWorkflowExecutionSignaledEventAttributes(root: JSONValue): ExternalWorkflowExecutionSignaledEventAttributes {
-  return prt.readObj({
+function toExternalWorkflowExecutionSignaledEventAttributes(root: jsonP.JSONValue): ExternalWorkflowExecutionSignaledEventAttributes {
+  return jsonP.readObj({
     required: {
       "workflowExecution": toWorkflowExecution,
       "initiatedEventId": "n",
@@ -2807,11 +2822,11 @@ export interface SignalExternalWorkflowExecutionFailedEventAttributes {
   decisionTaskCompletedEventId: number;
   control?: string | null;
 }
-function toSignalExternalWorkflowExecutionFailedEventAttributes(root: JSONValue): SignalExternalWorkflowExecutionFailedEventAttributes {
-  return prt.readObj({
+function toSignalExternalWorkflowExecutionFailedEventAttributes(root: jsonP.JSONValue): SignalExternalWorkflowExecutionFailedEventAttributes {
+  return jsonP.readObj({
     required: {
       "workflowId": "s",
-      "cause": toSignalExternalWorkflowExecutionFailedCause,
+      "cause": (x: jsonP.JSONValue) => cmnP.readEnum<SignalExternalWorkflowExecutionFailedCause>(x),
       "initiatedEventId": "n",
       "decisionTaskCompletedEventId": "n",
     },
@@ -2827,22 +2842,15 @@ export type SignalExternalWorkflowExecutionFailedCause =
 | "UNKNOWN_EXTERNAL_WORKFLOW_EXECUTION"
 | "SIGNAL_EXTERNAL_WORKFLOW_EXECUTION_RATE_EXCEEDED"
 | "OPERATION_NOT_PERMITTED"
-;
-function toSignalExternalWorkflowExecutionFailedCause(root: JSONValue): SignalExternalWorkflowExecutionFailedCause | null {
-  return ( false
-    || root == "UNKNOWN_EXTERNAL_WORKFLOW_EXECUTION"
-    || root == "SIGNAL_EXTERNAL_WORKFLOW_EXECUTION_RATE_EXCEEDED"
-    || root == "OPERATION_NOT_PERMITTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ExternalWorkflowExecutionCancelRequestedEventAttributes {
   workflowExecution: WorkflowExecution;
   initiatedEventId: number;
 }
-function toExternalWorkflowExecutionCancelRequestedEventAttributes(root: JSONValue): ExternalWorkflowExecutionCancelRequestedEventAttributes {
-  return prt.readObj({
+function toExternalWorkflowExecutionCancelRequestedEventAttributes(root: jsonP.JSONValue): ExternalWorkflowExecutionCancelRequestedEventAttributes {
+  return jsonP.readObj({
     required: {
       "workflowExecution": toWorkflowExecution,
       "initiatedEventId": "n",
@@ -2858,8 +2866,8 @@ export interface RequestCancelExternalWorkflowExecutionInitiatedEventAttributes 
   decisionTaskCompletedEventId: number;
   control?: string | null;
 }
-function toRequestCancelExternalWorkflowExecutionInitiatedEventAttributes(root: JSONValue): RequestCancelExternalWorkflowExecutionInitiatedEventAttributes {
-  return prt.readObj({
+function toRequestCancelExternalWorkflowExecutionInitiatedEventAttributes(root: jsonP.JSONValue): RequestCancelExternalWorkflowExecutionInitiatedEventAttributes {
+  return jsonP.readObj({
     required: {
       "workflowId": "s",
       "decisionTaskCompletedEventId": "n",
@@ -2880,11 +2888,11 @@ export interface RequestCancelExternalWorkflowExecutionFailedEventAttributes {
   decisionTaskCompletedEventId: number;
   control?: string | null;
 }
-function toRequestCancelExternalWorkflowExecutionFailedEventAttributes(root: JSONValue): RequestCancelExternalWorkflowExecutionFailedEventAttributes {
-  return prt.readObj({
+function toRequestCancelExternalWorkflowExecutionFailedEventAttributes(root: jsonP.JSONValue): RequestCancelExternalWorkflowExecutionFailedEventAttributes {
+  return jsonP.readObj({
     required: {
       "workflowId": "s",
-      "cause": toRequestCancelExternalWorkflowExecutionFailedCause,
+      "cause": (x: jsonP.JSONValue) => cmnP.readEnum<RequestCancelExternalWorkflowExecutionFailedCause>(x),
       "initiatedEventId": "n",
       "decisionTaskCompletedEventId": "n",
     },
@@ -2900,14 +2908,7 @@ export type RequestCancelExternalWorkflowExecutionFailedCause =
 | "UNKNOWN_EXTERNAL_WORKFLOW_EXECUTION"
 | "REQUEST_CANCEL_EXTERNAL_WORKFLOW_EXECUTION_RATE_EXCEEDED"
 | "OPERATION_NOT_PERMITTED"
-;
-function toRequestCancelExternalWorkflowExecutionFailedCause(root: JSONValue): RequestCancelExternalWorkflowExecutionFailedCause | null {
-  return ( false
-    || root == "UNKNOWN_EXTERNAL_WORKFLOW_EXECUTION"
-    || root == "REQUEST_CANCEL_EXTERNAL_WORKFLOW_EXECUTION_RATE_EXCEEDED"
-    || root == "OPERATION_NOT_PERMITTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ScheduleActivityTaskFailedEventAttributes {
@@ -2916,12 +2917,12 @@ export interface ScheduleActivityTaskFailedEventAttributes {
   cause: ScheduleActivityTaskFailedCause;
   decisionTaskCompletedEventId: number;
 }
-function toScheduleActivityTaskFailedEventAttributes(root: JSONValue): ScheduleActivityTaskFailedEventAttributes {
-  return prt.readObj({
+function toScheduleActivityTaskFailedEventAttributes(root: jsonP.JSONValue): ScheduleActivityTaskFailedEventAttributes {
+  return jsonP.readObj({
     required: {
       "activityType": toActivityType,
       "activityId": "s",
-      "cause": toScheduleActivityTaskFailedCause,
+      "cause": (x: jsonP.JSONValue) => cmnP.readEnum<ScheduleActivityTaskFailedCause>(x),
       "decisionTaskCompletedEventId": "n",
     },
     optional: {},
@@ -2941,22 +2942,7 @@ export type ScheduleActivityTaskFailedCause =
 | "DEFAULT_START_TO_CLOSE_TIMEOUT_UNDEFINED"
 | "DEFAULT_HEARTBEAT_TIMEOUT_UNDEFINED"
 | "OPERATION_NOT_PERMITTED"
-;
-function toScheduleActivityTaskFailedCause(root: JSONValue): ScheduleActivityTaskFailedCause | null {
-  return ( false
-    || root == "ACTIVITY_TYPE_DEPRECATED"
-    || root == "ACTIVITY_TYPE_DOES_NOT_EXIST"
-    || root == "ACTIVITY_ID_ALREADY_IN_USE"
-    || root == "OPEN_ACTIVITIES_LIMIT_EXCEEDED"
-    || root == "ACTIVITY_CREATION_RATE_EXCEEDED"
-    || root == "DEFAULT_SCHEDULE_TO_CLOSE_TIMEOUT_UNDEFINED"
-    || root == "DEFAULT_TASK_LIST_UNDEFINED"
-    || root == "DEFAULT_SCHEDULE_TO_START_TIMEOUT_UNDEFINED"
-    || root == "DEFAULT_START_TO_CLOSE_TIMEOUT_UNDEFINED"
-    || root == "DEFAULT_HEARTBEAT_TIMEOUT_UNDEFINED"
-    || root == "OPERATION_NOT_PERMITTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface RequestCancelActivityTaskFailedEventAttributes {
@@ -2964,11 +2950,11 @@ export interface RequestCancelActivityTaskFailedEventAttributes {
   cause: RequestCancelActivityTaskFailedCause;
   decisionTaskCompletedEventId: number;
 }
-function toRequestCancelActivityTaskFailedEventAttributes(root: JSONValue): RequestCancelActivityTaskFailedEventAttributes {
-  return prt.readObj({
+function toRequestCancelActivityTaskFailedEventAttributes(root: jsonP.JSONValue): RequestCancelActivityTaskFailedEventAttributes {
+  return jsonP.readObj({
     required: {
       "activityId": "s",
-      "cause": toRequestCancelActivityTaskFailedCause,
+      "cause": (x: jsonP.JSONValue) => cmnP.readEnum<RequestCancelActivityTaskFailedCause>(x),
       "decisionTaskCompletedEventId": "n",
     },
     optional: {},
@@ -2979,13 +2965,7 @@ function toRequestCancelActivityTaskFailedEventAttributes(root: JSONValue): Requ
 export type RequestCancelActivityTaskFailedCause =
 | "ACTIVITY_ID_UNKNOWN"
 | "OPERATION_NOT_PERMITTED"
-;
-function toRequestCancelActivityTaskFailedCause(root: JSONValue): RequestCancelActivityTaskFailedCause | null {
-  return ( false
-    || root == "ACTIVITY_ID_UNKNOWN"
-    || root == "OPERATION_NOT_PERMITTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface StartTimerFailedEventAttributes {
@@ -2993,11 +2973,11 @@ export interface StartTimerFailedEventAttributes {
   cause: StartTimerFailedCause;
   decisionTaskCompletedEventId: number;
 }
-function toStartTimerFailedEventAttributes(root: JSONValue): StartTimerFailedEventAttributes {
-  return prt.readObj({
+function toStartTimerFailedEventAttributes(root: jsonP.JSONValue): StartTimerFailedEventAttributes {
+  return jsonP.readObj({
     required: {
       "timerId": "s",
-      "cause": toStartTimerFailedCause,
+      "cause": (x: jsonP.JSONValue) => cmnP.readEnum<StartTimerFailedCause>(x),
       "decisionTaskCompletedEventId": "n",
     },
     optional: {},
@@ -3010,15 +2990,7 @@ export type StartTimerFailedCause =
 | "OPEN_TIMERS_LIMIT_EXCEEDED"
 | "TIMER_CREATION_RATE_EXCEEDED"
 | "OPERATION_NOT_PERMITTED"
-;
-function toStartTimerFailedCause(root: JSONValue): StartTimerFailedCause | null {
-  return ( false
-    || root == "TIMER_ID_ALREADY_IN_USE"
-    || root == "OPEN_TIMERS_LIMIT_EXCEEDED"
-    || root == "TIMER_CREATION_RATE_EXCEEDED"
-    || root == "OPERATION_NOT_PERMITTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface CancelTimerFailedEventAttributes {
@@ -3026,11 +2998,11 @@ export interface CancelTimerFailedEventAttributes {
   cause: CancelTimerFailedCause;
   decisionTaskCompletedEventId: number;
 }
-function toCancelTimerFailedEventAttributes(root: JSONValue): CancelTimerFailedEventAttributes {
-  return prt.readObj({
+function toCancelTimerFailedEventAttributes(root: jsonP.JSONValue): CancelTimerFailedEventAttributes {
+  return jsonP.readObj({
     required: {
       "timerId": "s",
-      "cause": toCancelTimerFailedCause,
+      "cause": (x: jsonP.JSONValue) => cmnP.readEnum<CancelTimerFailedCause>(x),
       "decisionTaskCompletedEventId": "n",
     },
     optional: {},
@@ -3041,13 +3013,7 @@ function toCancelTimerFailedEventAttributes(root: JSONValue): CancelTimerFailedE
 export type CancelTimerFailedCause =
 | "TIMER_ID_UNKNOWN"
 | "OPERATION_NOT_PERMITTED"
-;
-function toCancelTimerFailedCause(root: JSONValue): CancelTimerFailedCause | null {
-  return ( false
-    || root == "TIMER_ID_UNKNOWN"
-    || root == "OPERATION_NOT_PERMITTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface StartChildWorkflowExecutionFailedEventAttributes {
@@ -3058,11 +3024,11 @@ export interface StartChildWorkflowExecutionFailedEventAttributes {
   decisionTaskCompletedEventId: number;
   control?: string | null;
 }
-function toStartChildWorkflowExecutionFailedEventAttributes(root: JSONValue): StartChildWorkflowExecutionFailedEventAttributes {
-  return prt.readObj({
+function toStartChildWorkflowExecutionFailedEventAttributes(root: jsonP.JSONValue): StartChildWorkflowExecutionFailedEventAttributes {
+  return jsonP.readObj({
     required: {
       "workflowType": toWorkflowType,
-      "cause": toStartChildWorkflowExecutionFailedCause,
+      "cause": (x: jsonP.JSONValue) => cmnP.readEnum<StartChildWorkflowExecutionFailedCause>(x),
       "workflowId": "s",
       "initiatedEventId": "n",
       "decisionTaskCompletedEventId": "n",
@@ -3086,22 +3052,7 @@ export type StartChildWorkflowExecutionFailedCause =
 | "DEFAULT_TASK_START_TO_CLOSE_TIMEOUT_UNDEFINED"
 | "DEFAULT_CHILD_POLICY_UNDEFINED"
 | "OPERATION_NOT_PERMITTED"
-;
-function toStartChildWorkflowExecutionFailedCause(root: JSONValue): StartChildWorkflowExecutionFailedCause | null {
-  return ( false
-    || root == "WORKFLOW_TYPE_DOES_NOT_EXIST"
-    || root == "WORKFLOW_TYPE_DEPRECATED"
-    || root == "OPEN_CHILDREN_LIMIT_EXCEEDED"
-    || root == "OPEN_WORKFLOWS_LIMIT_EXCEEDED"
-    || root == "CHILD_CREATION_RATE_EXCEEDED"
-    || root == "WORKFLOW_ALREADY_RUNNING"
-    || root == "DEFAULT_EXECUTION_START_TO_CLOSE_TIMEOUT_UNDEFINED"
-    || root == "DEFAULT_TASK_LIST_UNDEFINED"
-    || root == "DEFAULT_TASK_START_TO_CLOSE_TIMEOUT_UNDEFINED"
-    || root == "DEFAULT_CHILD_POLICY_UNDEFINED"
-    || root == "OPERATION_NOT_PERMITTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface LambdaFunctionScheduledEventAttributes {
@@ -3112,8 +3063,8 @@ export interface LambdaFunctionScheduledEventAttributes {
   startToCloseTimeout?: string | null;
   decisionTaskCompletedEventId: number;
 }
-function toLambdaFunctionScheduledEventAttributes(root: JSONValue): LambdaFunctionScheduledEventAttributes {
-  return prt.readObj({
+function toLambdaFunctionScheduledEventAttributes(root: jsonP.JSONValue): LambdaFunctionScheduledEventAttributes {
+  return jsonP.readObj({
     required: {
       "id": "s",
       "name": "s",
@@ -3131,8 +3082,8 @@ function toLambdaFunctionScheduledEventAttributes(root: JSONValue): LambdaFuncti
 export interface LambdaFunctionStartedEventAttributes {
   scheduledEventId: number;
 }
-function toLambdaFunctionStartedEventAttributes(root: JSONValue): LambdaFunctionStartedEventAttributes {
-  return prt.readObj({
+function toLambdaFunctionStartedEventAttributes(root: jsonP.JSONValue): LambdaFunctionStartedEventAttributes {
+  return jsonP.readObj({
     required: {
       "scheduledEventId": "n",
     },
@@ -3146,8 +3097,8 @@ export interface LambdaFunctionCompletedEventAttributes {
   startedEventId: number;
   result?: string | null;
 }
-function toLambdaFunctionCompletedEventAttributes(root: JSONValue): LambdaFunctionCompletedEventAttributes {
-  return prt.readObj({
+function toLambdaFunctionCompletedEventAttributes(root: jsonP.JSONValue): LambdaFunctionCompletedEventAttributes {
+  return jsonP.readObj({
     required: {
       "scheduledEventId": "n",
       "startedEventId": "n",
@@ -3165,8 +3116,8 @@ export interface LambdaFunctionFailedEventAttributes {
   reason?: string | null;
   details?: string | null;
 }
-function toLambdaFunctionFailedEventAttributes(root: JSONValue): LambdaFunctionFailedEventAttributes {
-  return prt.readObj({
+function toLambdaFunctionFailedEventAttributes(root: jsonP.JSONValue): LambdaFunctionFailedEventAttributes {
+  return jsonP.readObj({
     required: {
       "scheduledEventId": "n",
       "startedEventId": "n",
@@ -3184,14 +3135,14 @@ export interface LambdaFunctionTimedOutEventAttributes {
   startedEventId: number;
   timeoutType?: LambdaFunctionTimeoutType | null;
 }
-function toLambdaFunctionTimedOutEventAttributes(root: JSONValue): LambdaFunctionTimedOutEventAttributes {
-  return prt.readObj({
+function toLambdaFunctionTimedOutEventAttributes(root: jsonP.JSONValue): LambdaFunctionTimedOutEventAttributes {
+  return jsonP.readObj({
     required: {
       "scheduledEventId": "n",
       "startedEventId": "n",
     },
     optional: {
-      "timeoutType": toLambdaFunctionTimeoutType,
+      "timeoutType": (x: jsonP.JSONValue) => cmnP.readEnum<LambdaFunctionTimeoutType>(x),
     },
   }, root);
 }
@@ -3199,12 +3150,7 @@ function toLambdaFunctionTimedOutEventAttributes(root: JSONValue): LambdaFunctio
 // refs: 2 - tags: output, named, enum
 export type LambdaFunctionTimeoutType =
 | "START_TO_CLOSE"
-;
-function toLambdaFunctionTimeoutType(root: JSONValue): LambdaFunctionTimeoutType | null {
-  return ( false
-    || root == "START_TO_CLOSE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ScheduleLambdaFunctionFailedEventAttributes {
@@ -3213,12 +3159,12 @@ export interface ScheduleLambdaFunctionFailedEventAttributes {
   cause: ScheduleLambdaFunctionFailedCause;
   decisionTaskCompletedEventId: number;
 }
-function toScheduleLambdaFunctionFailedEventAttributes(root: JSONValue): ScheduleLambdaFunctionFailedEventAttributes {
-  return prt.readObj({
+function toScheduleLambdaFunctionFailedEventAttributes(root: jsonP.JSONValue): ScheduleLambdaFunctionFailedEventAttributes {
+  return jsonP.readObj({
     required: {
       "id": "s",
       "name": "s",
-      "cause": toScheduleLambdaFunctionFailedCause,
+      "cause": (x: jsonP.JSONValue) => cmnP.readEnum<ScheduleLambdaFunctionFailedCause>(x),
       "decisionTaskCompletedEventId": "n",
     },
     optional: {},
@@ -3231,15 +3177,7 @@ export type ScheduleLambdaFunctionFailedCause =
 | "OPEN_LAMBDA_FUNCTIONS_LIMIT_EXCEEDED"
 | "LAMBDA_FUNCTION_CREATION_RATE_EXCEEDED"
 | "LAMBDA_SERVICE_NOT_AVAILABLE_IN_REGION"
-;
-function toScheduleLambdaFunctionFailedCause(root: JSONValue): ScheduleLambdaFunctionFailedCause | null {
-  return ( false
-    || root == "ID_ALREADY_IN_USE"
-    || root == "OPEN_LAMBDA_FUNCTIONS_LIMIT_EXCEEDED"
-    || root == "LAMBDA_FUNCTION_CREATION_RATE_EXCEEDED"
-    || root == "LAMBDA_SERVICE_NOT_AVAILABLE_IN_REGION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface StartLambdaFunctionFailedEventAttributes {
@@ -3247,12 +3185,12 @@ export interface StartLambdaFunctionFailedEventAttributes {
   cause?: StartLambdaFunctionFailedCause | null;
   message?: string | null;
 }
-function toStartLambdaFunctionFailedEventAttributes(root: JSONValue): StartLambdaFunctionFailedEventAttributes {
-  return prt.readObj({
+function toStartLambdaFunctionFailedEventAttributes(root: jsonP.JSONValue): StartLambdaFunctionFailedEventAttributes {
+  return jsonP.readObj({
     required: {},
     optional: {
       "scheduledEventId": "n",
-      "cause": toStartLambdaFunctionFailedCause,
+      "cause": (x: jsonP.JSONValue) => cmnP.readEnum<StartLambdaFunctionFailedCause>(x),
       "message": "s",
     },
   }, root);
@@ -3261,9 +3199,4 @@ function toStartLambdaFunctionFailedEventAttributes(root: JSONValue): StartLambd
 // refs: 2 - tags: output, named, enum
 export type StartLambdaFunctionFailedCause =
 | "ASSUME_ROLE_FAILED"
-;
-function toStartLambdaFunctionFailedCause(root: JSONValue): StartLambdaFunctionFailedCause | null {
-  return ( false
-    || root == "ASSUME_ROLE_FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;

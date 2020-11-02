@@ -5,10 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }
@@ -35,16 +34,17 @@ export default class FSx {
   async cancelDataRepositoryTask(
     {abortSignal, ...params}: RequestConfig & CancelDataRepositoryTaskRequest,
   ): Promise<CancelDataRepositoryTaskResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TaskId: params["TaskId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelDataRepositoryTask",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Lifecycle": toDataRepositoryTaskLifecycle,
+        "Lifecycle": (x: jsonP.JSONValue) => cmnP.readEnum<DataRepositoryTaskLifecycle>(x),
         "TaskId": "s",
       },
     }, await resp.json());
@@ -53,15 +53,16 @@ export default class FSx {
   async createBackup(
     {abortSignal, ...params}: RequestConfig & CreateBackupRequest,
   ): Promise<CreateBackupResponse> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      FileSystemId: params["FileSystemId"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBackup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Backup": toBackup,
@@ -72,16 +73,19 @@ export default class FSx {
   async createDataRepositoryTask(
     {abortSignal, ...params}: RequestConfig & CreateDataRepositoryTaskRequest,
   ): Promise<CreateDataRepositoryTaskResponse> {
-    const body: JSONObject = {...params,
-    Report: fromCompletionReport(params["Report"]),
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Type: params["Type"],
+      Paths: params["Paths"],
+      FileSystemId: params["FileSystemId"],
+      Report: fromCompletionReport(params["Report"]),
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDataRepositoryTask",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DataRepositoryTask": toDataRepositoryTask,
@@ -92,17 +96,23 @@ export default class FSx {
   async createFileSystem(
     {abortSignal, ...params}: RequestConfig & CreateFileSystemRequest,
   ): Promise<CreateFileSystemResponse> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-    WindowsConfiguration: fromCreateFileSystemWindowsConfiguration(params["WindowsConfiguration"]),
-    LustreConfiguration: fromCreateFileSystemLustreConfiguration(params["LustreConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      FileSystemType: params["FileSystemType"],
+      StorageCapacity: params["StorageCapacity"],
+      StorageType: params["StorageType"],
+      SubnetIds: params["SubnetIds"],
+      SecurityGroupIds: params["SecurityGroupIds"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      KmsKeyId: params["KmsKeyId"],
+      WindowsConfiguration: fromCreateFileSystemWindowsConfiguration(params["WindowsConfiguration"]),
+      LustreConfiguration: fromCreateFileSystemLustreConfiguration(params["LustreConfiguration"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFileSystem",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FileSystem": toFileSystem,
@@ -113,17 +123,21 @@ export default class FSx {
   async createFileSystemFromBackup(
     {abortSignal, ...params}: RequestConfig & CreateFileSystemFromBackupRequest,
   ): Promise<CreateFileSystemFromBackupResponse> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-    WindowsConfiguration: fromCreateFileSystemWindowsConfiguration(params["WindowsConfiguration"]),
-    LustreConfiguration: fromCreateFileSystemLustreConfiguration(params["LustreConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      BackupId: params["BackupId"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      SubnetIds: params["SubnetIds"],
+      SecurityGroupIds: params["SecurityGroupIds"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      WindowsConfiguration: fromCreateFileSystemWindowsConfiguration(params["WindowsConfiguration"]),
+      LustreConfiguration: fromCreateFileSystemLustreConfiguration(params["LustreConfiguration"]),
+      StorageType: params["StorageType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFileSystemFromBackup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FileSystem": toFileSystem,
@@ -134,18 +148,19 @@ export default class FSx {
   async deleteBackup(
     {abortSignal, ...params}: RequestConfig & DeleteBackupRequest,
   ): Promise<DeleteBackupResponse> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      BackupId: params["BackupId"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBackup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BackupId": "s",
-        "Lifecycle": toBackupLifecycle,
+        "Lifecycle": (x: jsonP.JSONValue) => cmnP.readEnum<BackupLifecycle>(x),
       },
     }, await resp.json());
   }
@@ -153,20 +168,21 @@ export default class FSx {
   async deleteFileSystem(
     {abortSignal, ...params}: RequestConfig & DeleteFileSystemRequest,
   ): Promise<DeleteFileSystemResponse> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    WindowsConfiguration: fromDeleteFileSystemWindowsConfiguration(params["WindowsConfiguration"]),
-    LustreConfiguration: fromDeleteFileSystemLustreConfiguration(params["LustreConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      FileSystemId: params["FileSystemId"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      WindowsConfiguration: fromDeleteFileSystemWindowsConfiguration(params["WindowsConfiguration"]),
+      LustreConfiguration: fromDeleteFileSystemLustreConfiguration(params["LustreConfiguration"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFileSystem",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FileSystemId": "s",
-        "Lifecycle": toFileSystemLifecycle,
+        "Lifecycle": (x: jsonP.JSONValue) => cmnP.readEnum<FileSystemLifecycle>(x),
         "WindowsResponse": toDeleteFileSystemWindowsResponse,
         "LustreResponse": toDeleteFileSystemLustreResponse,
       },
@@ -176,14 +192,17 @@ export default class FSx {
   async describeBackups(
     {abortSignal, ...params}: RequestConfig & DescribeBackupsRequest = {},
   ): Promise<DescribeBackupsResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      BackupIds: params["BackupIds"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBackups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Backups": [toBackup],
@@ -195,14 +214,17 @@ export default class FSx {
   async describeDataRepositoryTasks(
     {abortSignal, ...params}: RequestConfig & DescribeDataRepositoryTasksRequest = {},
   ): Promise<DescribeDataRepositoryTasksResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromDataRepositoryTaskFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TaskIds: params["TaskIds"],
+      Filters: params["Filters"]?.map(x => fromDataRepositoryTaskFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDataRepositoryTasks",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DataRepositoryTasks": [toDataRepositoryTask],
@@ -214,13 +236,16 @@ export default class FSx {
   async describeFileSystems(
     {abortSignal, ...params}: RequestConfig & DescribeFileSystemsRequest = {},
   ): Promise<DescribeFileSystemsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FileSystemIds: params["FileSystemIds"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFileSystems",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FileSystems": [toFileSystem],
@@ -232,13 +257,16 @@ export default class FSx {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -250,14 +278,15 @@ export default class FSx {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -266,13 +295,15 @@ export default class FSx {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -281,16 +312,18 @@ export default class FSx {
   async updateFileSystem(
     {abortSignal, ...params}: RequestConfig & UpdateFileSystemRequest,
   ): Promise<UpdateFileSystemResponse> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    WindowsConfiguration: fromUpdateFileSystemWindowsConfiguration(params["WindowsConfiguration"]),
-    LustreConfiguration: fromUpdateFileSystemLustreConfiguration(params["LustreConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      FileSystemId: params["FileSystemId"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      StorageCapacity: params["StorageCapacity"],
+      WindowsConfiguration: fromUpdateFileSystemWindowsConfiguration(params["WindowsConfiguration"]),
+      LustreConfiguration: fromUpdateFileSystemLustreConfiguration(params["LustreConfiguration"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFileSystem",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FileSystem": toFileSystem,
@@ -495,13 +528,15 @@ export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -513,13 +548,7 @@ function toTag(root: JSONValue): Tag {
 // refs: 3 - tags: input, named, enum, output
 export type DataRepositoryTaskType =
 | "EXPORT_TO_REPOSITORY"
-;
-
-function toDataRepositoryTaskType(root: JSONValue): DataRepositoryTaskType | null {
-  return ( false
-    || root == "EXPORT_TO_REPOSITORY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface CompletionReport {
@@ -528,20 +557,24 @@ export interface CompletionReport {
   Format?: ReportFormat | null;
   Scope?: ReportScope | null;
 }
-function fromCompletionReport(input?: CompletionReport | null): JSONValue {
+function fromCompletionReport(input?: CompletionReport | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Enabled: input["Enabled"],
+    Path: input["Path"],
+    Format: input["Format"],
+    Scope: input["Scope"],
   }
 }
-function toCompletionReport(root: JSONValue): CompletionReport {
-  return prt.readObj({
+function toCompletionReport(root: jsonP.JSONValue): CompletionReport {
+  return jsonP.readObj({
     required: {
       "Enabled": "b",
     },
     optional: {
       "Path": "s",
-      "Format": toReportFormat,
-      "Scope": toReportScope,
+      "Format": (x: jsonP.JSONValue) => cmnP.readEnum<ReportFormat>(x),
+      "Scope": (x: jsonP.JSONValue) => cmnP.readEnum<ReportScope>(x),
     },
   }, root);
 }
@@ -549,50 +582,24 @@ function toCompletionReport(root: JSONValue): CompletionReport {
 // refs: 3 - tags: input, named, enum, output
 export type ReportFormat =
 | "REPORT_CSV_20191124"
-;
-
-function toReportFormat(root: JSONValue): ReportFormat | null {
-  return ( false
-    || root == "REPORT_CSV_20191124"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type ReportScope =
 | "FAILED_FILES_ONLY"
-;
-
-function toReportScope(root: JSONValue): ReportScope | null {
-  return ( false
-    || root == "FAILED_FILES_ONLY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: input, named, enum, output
 export type FileSystemType =
 | "WINDOWS"
 | "LUSTRE"
-;
-
-function toFileSystemType(root: JSONValue): FileSystemType | null {
-  return ( false
-    || root == "WINDOWS"
-    || root == "LUSTRE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: input, named, enum, output
 export type StorageType =
 | "SSD"
 | "HDD"
-;
-
-function toStorageType(root: JSONValue): StorageType | null {
-  return ( false
-    || root == "SSD"
-    || root == "HDD"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface CreateFileSystemWindowsConfiguration {
@@ -606,10 +613,18 @@ export interface CreateFileSystemWindowsConfiguration {
   AutomaticBackupRetentionDays?: number | null;
   CopyTagsToBackups?: boolean | null;
 }
-function fromCreateFileSystemWindowsConfiguration(input?: CreateFileSystemWindowsConfiguration | null): JSONValue {
+function fromCreateFileSystemWindowsConfiguration(input?: CreateFileSystemWindowsConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ActiveDirectoryId: input["ActiveDirectoryId"],
     SelfManagedActiveDirectoryConfiguration: fromSelfManagedActiveDirectoryConfiguration(input["SelfManagedActiveDirectoryConfiguration"]),
+    DeploymentType: input["DeploymentType"],
+    PreferredSubnetId: input["PreferredSubnetId"],
+    ThroughputCapacity: input["ThroughputCapacity"],
+    WeeklyMaintenanceStartTime: input["WeeklyMaintenanceStartTime"],
+    DailyAutomaticBackupStartTime: input["DailyAutomaticBackupStartTime"],
+    AutomaticBackupRetentionDays: input["AutomaticBackupRetentionDays"],
+    CopyTagsToBackups: input["CopyTagsToBackups"],
   }
 }
 
@@ -622,9 +637,15 @@ export interface SelfManagedActiveDirectoryConfiguration {
   Password: string;
   DnsIps: string[];
 }
-function fromSelfManagedActiveDirectoryConfiguration(input?: SelfManagedActiveDirectoryConfiguration | null): JSONValue {
+function fromSelfManagedActiveDirectoryConfiguration(input?: SelfManagedActiveDirectoryConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DomainName: input["DomainName"],
+    OrganizationalUnitDistinguishedName: input["OrganizationalUnitDistinguishedName"],
+    FileSystemAdministratorsGroup: input["FileSystemAdministratorsGroup"],
+    UserName: input["UserName"],
+    Password: input["Password"],
+    DnsIps: input["DnsIps"],
   }
 }
 
@@ -633,15 +654,7 @@ export type WindowsDeploymentType =
 | "MULTI_AZ_1"
 | "SINGLE_AZ_1"
 | "SINGLE_AZ_2"
-;
-
-function toWindowsDeploymentType(root: JSONValue): WindowsDeploymentType | null {
-  return ( false
-    || root == "MULTI_AZ_1"
-    || root == "SINGLE_AZ_1"
-    || root == "SINGLE_AZ_2"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface CreateFileSystemLustreConfiguration {
@@ -657,9 +670,20 @@ export interface CreateFileSystemLustreConfiguration {
   CopyTagsToBackups?: boolean | null;
   DriveCacheType?: DriveCacheType | null;
 }
-function fromCreateFileSystemLustreConfiguration(input?: CreateFileSystemLustreConfiguration | null): JSONValue {
+function fromCreateFileSystemLustreConfiguration(input?: CreateFileSystemLustreConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    WeeklyMaintenanceStartTime: input["WeeklyMaintenanceStartTime"],
+    ImportPath: input["ImportPath"],
+    ExportPath: input["ExportPath"],
+    ImportedFileChunkSize: input["ImportedFileChunkSize"],
+    DeploymentType: input["DeploymentType"],
+    AutoImportPolicy: input["AutoImportPolicy"],
+    PerUnitStorageThroughput: input["PerUnitStorageThroughput"],
+    DailyAutomaticBackupStartTime: input["DailyAutomaticBackupStartTime"],
+    AutomaticBackupRetentionDays: input["AutomaticBackupRetentionDays"],
+    CopyTagsToBackups: input["CopyTagsToBackups"],
+    DriveCacheType: input["DriveCacheType"],
   }
 }
 
@@ -668,52 +692,30 @@ export type LustreDeploymentType =
 | "SCRATCH_1"
 | "SCRATCH_2"
 | "PERSISTENT_1"
-;
-
-function toLustreDeploymentType(root: JSONValue): LustreDeploymentType | null {
-  return ( false
-    || root == "SCRATCH_1"
-    || root == "SCRATCH_2"
-    || root == "PERSISTENT_1"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 9 - tags: input, named, enum, output
 export type AutoImportPolicyType =
 | "NONE"
 | "NEW"
 | "NEW_CHANGED"
-;
-
-function toAutoImportPolicyType(root: JSONValue): AutoImportPolicyType | null {
-  return ( false
-    || root == "NONE"
-    || root == "NEW"
-    || root == "NEW_CHANGED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: input, named, enum, output
 export type DriveCacheType =
 | "NONE"
 | "READ"
-;
-
-function toDriveCacheType(root: JSONValue): DriveCacheType | null {
-  return ( false
-    || root == "NONE"
-    || root == "READ"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface DeleteFileSystemWindowsConfiguration {
   SkipFinalBackup?: boolean | null;
   FinalBackupTags?: Tag[] | null;
 }
-function fromDeleteFileSystemWindowsConfiguration(input?: DeleteFileSystemWindowsConfiguration | null): JSONValue {
+function fromDeleteFileSystemWindowsConfiguration(input?: DeleteFileSystemWindowsConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SkipFinalBackup: input["SkipFinalBackup"],
     FinalBackupTags: input["FinalBackupTags"]?.map(x => fromTag(x)),
   }
 }
@@ -723,9 +725,10 @@ export interface DeleteFileSystemLustreConfiguration {
   SkipFinalBackup?: boolean | null;
   FinalBackupTags?: Tag[] | null;
 }
-function fromDeleteFileSystemLustreConfiguration(input?: DeleteFileSystemLustreConfiguration | null): JSONValue {
+function fromDeleteFileSystemLustreConfiguration(input?: DeleteFileSystemLustreConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SkipFinalBackup: input["SkipFinalBackup"],
     FinalBackupTags: input["FinalBackupTags"]?.map(x => fromTag(x)),
   }
 }
@@ -735,9 +738,11 @@ export interface Filter {
   Name?: FilterName | null;
   Values?: string[] | null;
 }
-function fromFilter(input?: Filter | null): JSONValue {
+function fromFilter(input?: Filter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Values: input["Values"],
   }
 }
 
@@ -746,17 +751,18 @@ export type FilterName =
 | "file-system-id"
 | "backup-type"
 | "file-system-type"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface DataRepositoryTaskFilter {
   Name?: DataRepositoryTaskFilterName | null;
   Values?: string[] | null;
 }
-function fromDataRepositoryTaskFilter(input?: DataRepositoryTaskFilter | null): JSONValue {
+function fromDataRepositoryTaskFilter(input?: DataRepositoryTaskFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Values: input["Values"],
   }
 }
 
@@ -764,8 +770,7 @@ function fromDataRepositoryTaskFilter(input?: DataRepositoryTaskFilter | null): 
 export type DataRepositoryTaskFilterName =
 | "file-system-id"
 | "task-lifecycle"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface UpdateFileSystemWindowsConfiguration {
@@ -775,9 +780,13 @@ export interface UpdateFileSystemWindowsConfiguration {
   ThroughputCapacity?: number | null;
   SelfManagedActiveDirectoryConfiguration?: SelfManagedActiveDirectoryConfigurationUpdates | null;
 }
-function fromUpdateFileSystemWindowsConfiguration(input?: UpdateFileSystemWindowsConfiguration | null): JSONValue {
+function fromUpdateFileSystemWindowsConfiguration(input?: UpdateFileSystemWindowsConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    WeeklyMaintenanceStartTime: input["WeeklyMaintenanceStartTime"],
+    DailyAutomaticBackupStartTime: input["DailyAutomaticBackupStartTime"],
+    AutomaticBackupRetentionDays: input["AutomaticBackupRetentionDays"],
+    ThroughputCapacity: input["ThroughputCapacity"],
     SelfManagedActiveDirectoryConfiguration: fromSelfManagedActiveDirectoryConfigurationUpdates(input["SelfManagedActiveDirectoryConfiguration"]),
   }
 }
@@ -788,9 +797,12 @@ export interface SelfManagedActiveDirectoryConfigurationUpdates {
   Password?: string | null;
   DnsIps?: string[] | null;
 }
-function fromSelfManagedActiveDirectoryConfigurationUpdates(input?: SelfManagedActiveDirectoryConfigurationUpdates | null): JSONValue {
+function fromSelfManagedActiveDirectoryConfigurationUpdates(input?: SelfManagedActiveDirectoryConfigurationUpdates | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    UserName: input["UserName"],
+    Password: input["Password"],
+    DnsIps: input["DnsIps"],
   }
 }
 
@@ -801,9 +813,13 @@ export interface UpdateFileSystemLustreConfiguration {
   AutomaticBackupRetentionDays?: number | null;
   AutoImportPolicy?: AutoImportPolicyType | null;
 }
-function fromUpdateFileSystemLustreConfiguration(input?: UpdateFileSystemLustreConfiguration | null): JSONValue {
+function fromUpdateFileSystemLustreConfiguration(input?: UpdateFileSystemLustreConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    WeeklyMaintenanceStartTime: input["WeeklyMaintenanceStartTime"],
+    DailyAutomaticBackupStartTime: input["DailyAutomaticBackupStartTime"],
+    AutomaticBackupRetentionDays: input["AutomaticBackupRetentionDays"],
+    AutoImportPolicy: input["AutoImportPolicy"],
   }
 }
 
@@ -815,17 +831,7 @@ export type DataRepositoryTaskLifecycle =
 | "SUCCEEDED"
 | "CANCELED"
 | "CANCELING"
-;
-function toDataRepositoryTaskLifecycle(root: JSONValue): DataRepositoryTaskLifecycle | null {
-  return ( false
-    || root == "PENDING"
-    || root == "EXECUTING"
-    || root == "FAILED"
-    || root == "SUCCEEDED"
-    || root == "CANCELED"
-    || root == "CANCELING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface Backup {
@@ -841,12 +847,12 @@ export interface Backup {
   FileSystem: FileSystem;
   DirectoryInformation?: ActiveDirectoryBackupAttributes | null;
 }
-function toBackup(root: JSONValue): Backup {
-  return prt.readObj({
+function toBackup(root: jsonP.JSONValue): Backup {
+  return jsonP.readObj({
     required: {
       "BackupId": "s",
-      "Lifecycle": toBackupLifecycle,
-      "Type": toBackupType,
+      "Lifecycle": (x: jsonP.JSONValue) => cmnP.readEnum<BackupLifecycle>(x),
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<BackupType>(x),
       "CreationTime": "d",
       "FileSystem": toFileSystem,
     },
@@ -868,23 +874,14 @@ export type BackupLifecycle =
 | "TRANSFERRING"
 | "DELETED"
 | "FAILED"
-;
-function toBackupLifecycle(root: JSONValue): BackupLifecycle | null {
-  return ( false
-    || root == "AVAILABLE"
-    || root == "CREATING"
-    || root == "TRANSFERRING"
-    || root == "DELETED"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface BackupFailureDetails {
   Message?: string | null;
 }
-function toBackupFailureDetails(root: JSONValue): BackupFailureDetails {
-  return prt.readObj({
+function toBackupFailureDetails(root: jsonP.JSONValue): BackupFailureDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Message": "s",
@@ -896,13 +893,7 @@ function toBackupFailureDetails(root: JSONValue): BackupFailureDetails {
 export type BackupType =
 | "AUTOMATIC"
 | "USER_INITIATED"
-;
-function toBackupType(root: JSONValue): BackupType | null {
-  return ( false
-    || root == "AUTOMATIC"
-    || root == "USER_INITIATED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 12 - tags: output, named, interface, recursed
 export interface FileSystem {
@@ -925,18 +916,18 @@ export interface FileSystem {
   LustreConfiguration?: LustreFileSystemConfiguration | null;
   AdministrativeActions?: AdministrativeAction[] | null;
 }
-function toFileSystem(root: JSONValue): FileSystem {
-  return prt.readObj({
+function toFileSystem(root: jsonP.JSONValue): FileSystem {
+  return jsonP.readObj({
     required: {},
     optional: {
       "OwnerId": "s",
       "CreationTime": "d",
       "FileSystemId": "s",
-      "FileSystemType": toFileSystemType,
-      "Lifecycle": toFileSystemLifecycle,
+      "FileSystemType": (x: jsonP.JSONValue) => cmnP.readEnum<FileSystemType>(x),
+      "Lifecycle": (x: jsonP.JSONValue) => cmnP.readEnum<FileSystemLifecycle>(x),
       "FailureDetails": toFileSystemFailureDetails,
       "StorageCapacity": "n",
-      "StorageType": toStorageType,
+      "StorageType": (x: jsonP.JSONValue) => cmnP.readEnum<StorageType>(x),
       "VpcId": "s",
       "SubnetIds": ["s"],
       "NetworkInterfaceIds": ["s"],
@@ -959,24 +950,14 @@ export type FileSystemLifecycle =
 | "DELETING"
 | "MISCONFIGURED"
 | "UPDATING"
-;
-function toFileSystemLifecycle(root: JSONValue): FileSystemLifecycle | null {
-  return ( false
-    || root == "AVAILABLE"
-    || root == "CREATING"
-    || root == "FAILED"
-    || root == "DELETING"
-    || root == "MISCONFIGURED"
-    || root == "UPDATING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: output, named, interface
 export interface FileSystemFailureDetails {
   Message?: string | null;
 }
-function toFileSystemFailureDetails(root: JSONValue): FileSystemFailureDetails {
-  return prt.readObj({
+function toFileSystemFailureDetails(root: jsonP.JSONValue): FileSystemFailureDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Message": "s",
@@ -999,18 +980,18 @@ export interface WindowsFileSystemConfiguration {
   AutomaticBackupRetentionDays?: number | null;
   CopyTagsToBackups?: boolean | null;
 }
-function toWindowsFileSystemConfiguration(root: JSONValue): WindowsFileSystemConfiguration {
-  return prt.readObj({
+function toWindowsFileSystemConfiguration(root: jsonP.JSONValue): WindowsFileSystemConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ActiveDirectoryId": "s",
       "SelfManagedActiveDirectoryConfiguration": toSelfManagedActiveDirectoryAttributes,
-      "DeploymentType": toWindowsDeploymentType,
+      "DeploymentType": (x: jsonP.JSONValue) => cmnP.readEnum<WindowsDeploymentType>(x),
       "RemoteAdministrationEndpoint": "s",
       "PreferredSubnetId": "s",
       "PreferredFileServerIp": "s",
       "ThroughputCapacity": "n",
-      "MaintenanceOperationsInProgress": [toFileSystemMaintenanceOperation],
+      "MaintenanceOperationsInProgress": [(x: jsonP.JSONValue) => cmnP.readEnum<FileSystemMaintenanceOperation>(x)],
       "WeeklyMaintenanceStartTime": "s",
       "DailyAutomaticBackupStartTime": "s",
       "AutomaticBackupRetentionDays": "n",
@@ -1027,8 +1008,8 @@ export interface SelfManagedActiveDirectoryAttributes {
   UserName?: string | null;
   DnsIps?: string[] | null;
 }
-function toSelfManagedActiveDirectoryAttributes(root: JSONValue): SelfManagedActiveDirectoryAttributes {
-  return prt.readObj({
+function toSelfManagedActiveDirectoryAttributes(root: jsonP.JSONValue): SelfManagedActiveDirectoryAttributes {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DomainName": "s",
@@ -1044,13 +1025,7 @@ function toSelfManagedActiveDirectoryAttributes(root: JSONValue): SelfManagedAct
 export type FileSystemMaintenanceOperation =
 | "PATCHING"
 | "BACKING_UP"
-;
-function toFileSystemMaintenanceOperation(root: JSONValue): FileSystemMaintenanceOperation | null {
-  return ( false
-    || root == "PATCHING"
-    || root == "BACKING_UP"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: output, named, interface
 export interface LustreFileSystemConfiguration {
@@ -1064,19 +1039,19 @@ export interface LustreFileSystemConfiguration {
   CopyTagsToBackups?: boolean | null;
   DriveCacheType?: DriveCacheType | null;
 }
-function toLustreFileSystemConfiguration(root: JSONValue): LustreFileSystemConfiguration {
-  return prt.readObj({
+function toLustreFileSystemConfiguration(root: jsonP.JSONValue): LustreFileSystemConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "WeeklyMaintenanceStartTime": "s",
       "DataRepositoryConfiguration": toDataRepositoryConfiguration,
-      "DeploymentType": toLustreDeploymentType,
+      "DeploymentType": (x: jsonP.JSONValue) => cmnP.readEnum<LustreDeploymentType>(x),
       "PerUnitStorageThroughput": "n",
       "MountName": "s",
       "DailyAutomaticBackupStartTime": "s",
       "AutomaticBackupRetentionDays": "n",
       "CopyTagsToBackups": "b",
-      "DriveCacheType": toDriveCacheType,
+      "DriveCacheType": (x: jsonP.JSONValue) => cmnP.readEnum<DriveCacheType>(x),
     },
   }, root);
 }
@@ -1090,15 +1065,15 @@ export interface DataRepositoryConfiguration {
   AutoImportPolicy?: AutoImportPolicyType | null;
   FailureDetails?: DataRepositoryFailureDetails | null;
 }
-function toDataRepositoryConfiguration(root: JSONValue): DataRepositoryConfiguration {
-  return prt.readObj({
+function toDataRepositoryConfiguration(root: jsonP.JSONValue): DataRepositoryConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Lifecycle": toDataRepositoryLifecycle,
+      "Lifecycle": (x: jsonP.JSONValue) => cmnP.readEnum<DataRepositoryLifecycle>(x),
       "ImportPath": "s",
       "ExportPath": "s",
       "ImportedFileChunkSize": "n",
-      "AutoImportPolicy": toAutoImportPolicyType,
+      "AutoImportPolicy": (x: jsonP.JSONValue) => cmnP.readEnum<AutoImportPolicyType>(x),
       "FailureDetails": toDataRepositoryFailureDetails,
     },
   }, root);
@@ -1111,23 +1086,14 @@ export type DataRepositoryLifecycle =
 | "MISCONFIGURED"
 | "UPDATING"
 | "DELETING"
-;
-function toDataRepositoryLifecycle(root: JSONValue): DataRepositoryLifecycle | null {
-  return ( false
-    || root == "CREATING"
-    || root == "AVAILABLE"
-    || root == "MISCONFIGURED"
-    || root == "UPDATING"
-    || root == "DELETING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: output, named, interface
 export interface DataRepositoryFailureDetails {
   Message?: string | null;
 }
-function toDataRepositoryFailureDetails(root: JSONValue): DataRepositoryFailureDetails {
-  return prt.readObj({
+function toDataRepositoryFailureDetails(root: jsonP.JSONValue): DataRepositoryFailureDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Message": "s",
@@ -1144,14 +1110,14 @@ export interface AdministrativeAction {
   TargetFileSystemValues?: FileSystem | null;
   FailureDetails?: AdministrativeActionFailureDetails | null;
 }
-function toAdministrativeAction(root: JSONValue): AdministrativeAction {
-  return prt.readObj({
+function toAdministrativeAction(root: jsonP.JSONValue): AdministrativeAction {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "AdministrativeActionType": toAdministrativeActionType,
+      "AdministrativeActionType": (x: jsonP.JSONValue) => cmnP.readEnum<AdministrativeActionType>(x),
       "ProgressPercent": "n",
       "RequestTime": "d",
-      "Status": toStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
       "TargetFileSystemValues": toFileSystem,
       "FailureDetails": toAdministrativeActionFailureDetails,
     },
@@ -1162,13 +1128,7 @@ function toAdministrativeAction(root: JSONValue): AdministrativeAction {
 export type AdministrativeActionType =
 | "FILE_SYSTEM_UPDATE"
 | "STORAGE_OPTIMIZATION"
-;
-function toAdministrativeActionType(root: JSONValue): AdministrativeActionType | null {
-  return ( false
-    || root == "FILE_SYSTEM_UPDATE"
-    || root == "STORAGE_OPTIMIZATION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: output, named, enum
 export type Status =
@@ -1177,23 +1137,14 @@ export type Status =
 | "PENDING"
 | "COMPLETED"
 | "UPDATED_OPTIMIZING"
-;
-function toStatus(root: JSONValue): Status | null {
-  return ( false
-    || root == "FAILED"
-    || root == "IN_PROGRESS"
-    || root == "PENDING"
-    || root == "COMPLETED"
-    || root == "UPDATED_OPTIMIZING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: output, named, interface
 export interface AdministrativeActionFailureDetails {
   Message?: string | null;
 }
-function toAdministrativeActionFailureDetails(root: JSONValue): AdministrativeActionFailureDetails {
-  return prt.readObj({
+function toAdministrativeActionFailureDetails(root: jsonP.JSONValue): AdministrativeActionFailureDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Message": "s",
@@ -1206,8 +1157,8 @@ export interface ActiveDirectoryBackupAttributes {
   DomainName?: string | null;
   ActiveDirectoryId?: string | null;
 }
-function toActiveDirectoryBackupAttributes(root: JSONValue): ActiveDirectoryBackupAttributes {
-  return prt.readObj({
+function toActiveDirectoryBackupAttributes(root: jsonP.JSONValue): ActiveDirectoryBackupAttributes {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DomainName": "s",
@@ -1232,12 +1183,12 @@ export interface DataRepositoryTask {
   Status?: DataRepositoryTaskStatus | null;
   Report?: CompletionReport | null;
 }
-function toDataRepositoryTask(root: JSONValue): DataRepositoryTask {
-  return prt.readObj({
+function toDataRepositoryTask(root: jsonP.JSONValue): DataRepositoryTask {
+  return jsonP.readObj({
     required: {
       "TaskId": "s",
-      "Lifecycle": toDataRepositoryTaskLifecycle,
-      "Type": toDataRepositoryTaskType,
+      "Lifecycle": (x: jsonP.JSONValue) => cmnP.readEnum<DataRepositoryTaskLifecycle>(x),
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<DataRepositoryTaskType>(x),
       "CreationTime": "d",
       "FileSystemId": "s",
     },
@@ -1258,8 +1209,8 @@ function toDataRepositoryTask(root: JSONValue): DataRepositoryTask {
 export interface DataRepositoryTaskFailureDetails {
   Message?: string | null;
 }
-function toDataRepositoryTaskFailureDetails(root: JSONValue): DataRepositoryTaskFailureDetails {
-  return prt.readObj({
+function toDataRepositoryTaskFailureDetails(root: jsonP.JSONValue): DataRepositoryTaskFailureDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Message": "s",
@@ -1274,8 +1225,8 @@ export interface DataRepositoryTaskStatus {
   FailedCount?: number | null;
   LastUpdatedTime?: Date | number | null;
 }
-function toDataRepositoryTaskStatus(root: JSONValue): DataRepositoryTaskStatus {
-  return prt.readObj({
+function toDataRepositoryTaskStatus(root: jsonP.JSONValue): DataRepositoryTaskStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TotalCount": "n",
@@ -1291,8 +1242,8 @@ export interface DeleteFileSystemWindowsResponse {
   FinalBackupId?: string | null;
   FinalBackupTags?: Tag[] | null;
 }
-function toDeleteFileSystemWindowsResponse(root: JSONValue): DeleteFileSystemWindowsResponse {
-  return prt.readObj({
+function toDeleteFileSystemWindowsResponse(root: jsonP.JSONValue): DeleteFileSystemWindowsResponse {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FinalBackupId": "s",
@@ -1306,8 +1257,8 @@ export interface DeleteFileSystemLustreResponse {
   FinalBackupId?: string | null;
   FinalBackupTags?: Tag[] | null;
 }
-function toDeleteFileSystemLustreResponse(root: JSONValue): DeleteFileSystemLustreResponse {
-  return prt.readObj({
+function toDeleteFileSystemLustreResponse(root: jsonP.JSONValue): DeleteFileSystemLustreResponse {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FinalBackupId": "s",

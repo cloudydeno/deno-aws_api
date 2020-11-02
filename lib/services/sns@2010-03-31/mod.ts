@@ -5,8 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 
 export default class SNS {
   #client: ServiceClient;
@@ -33,8 +34,8 @@ export default class SNS {
     const prefix = '';
     body.append(prefix+"TopicArn", (params["TopicArn"] ?? '').toString());
     body.append(prefix+"Label", (params["Label"] ?? '').toString());
-    if (params["AWSAccountId"]) prt.appendList(body, prefix+"AWSAccountId", params["AWSAccountId"], {"entryPrefix":".member."})
-    if (params["ActionName"]) prt.appendList(body, prefix+"ActionName", params["ActionName"], {"entryPrefix":".member."})
+    if (params["AWSAccountId"]) qsP.appendList(body, prefix+"AWSAccountId", params["AWSAccountId"], {"entryPrefix":".member."})
+    if (params["ActionName"]) qsP.appendList(body, prefix+"ActionName", params["ActionName"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddPermission",
@@ -51,7 +52,7 @@ export default class SNS {
       abortSignal, body,
       action: "CheckIfPhoneNumberIsOptedOut",
     });
-    const xml = readXmlResult(await resp.text(), "CheckIfPhoneNumberIsOptedOutResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CheckIfPhoneNumberIsOptedOutResult");
     return {
       isOptedOut: xml.first("isOptedOut", false, x => x.content === 'true'),
     };
@@ -69,7 +70,7 @@ export default class SNS {
       abortSignal, body,
       action: "ConfirmSubscription",
     });
-    const xml = readXmlResult(await resp.text(), "ConfirmSubscriptionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ConfirmSubscriptionResult");
     return xml.strings({
       optional: {"SubscriptionArn":true},
     });
@@ -82,12 +83,12 @@ export default class SNS {
     const prefix = '';
     body.append(prefix+"Name", (params["Name"] ?? '').toString());
     body.append(prefix+"Platform", (params["Platform"] ?? '').toString());
-    if (params["Attributes"]) prt.appendMap(body, prefix+"Attributes", params["Attributes"], {"entryPrefix":".entry."})
+    if (params["Attributes"]) qsP.appendMap(body, prefix+"Attributes", params["Attributes"], {"entryPrefix":".entry."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePlatformApplication",
     });
-    const xml = readXmlResult(await resp.text(), "CreatePlatformApplicationResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreatePlatformApplicationResult");
     return xml.strings({
       optional: {"PlatformApplicationArn":true},
     });
@@ -101,12 +102,12 @@ export default class SNS {
     body.append(prefix+"PlatformApplicationArn", (params["PlatformApplicationArn"] ?? '').toString());
     body.append(prefix+"Token", (params["Token"] ?? '').toString());
     if ("CustomUserData" in params) body.append(prefix+"CustomUserData", (params["CustomUserData"] ?? '').toString());
-    if (params["Attributes"]) prt.appendMap(body, prefix+"Attributes", params["Attributes"], {"entryPrefix":".entry."})
+    if (params["Attributes"]) qsP.appendMap(body, prefix+"Attributes", params["Attributes"], {"entryPrefix":".entry."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePlatformEndpoint",
     });
-    const xml = readXmlResult(await resp.text(), "CreatePlatformEndpointResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreatePlatformEndpointResult");
     return xml.strings({
       optional: {"EndpointArn":true},
     });
@@ -118,13 +119,13 @@ export default class SNS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"Name", (params["Name"] ?? '').toString());
-    if (params["Attributes"]) prt.appendMap(body, prefix+"Attributes", params["Attributes"], {"entryPrefix":".entry."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Attributes"]) qsP.appendMap(body, prefix+"Attributes", params["Attributes"], {"entryPrefix":".entry."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTopic",
     });
-    const xml = readXmlResult(await resp.text(), "CreateTopicResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateTopicResult");
     return xml.strings({
       optional: {"TopicArn":true},
     });
@@ -176,9 +177,9 @@ export default class SNS {
       abortSignal, body,
       action: "GetEndpointAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "GetEndpointAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetEndpointAttributesResult");
     return {
-      Attributes: readXmlMap(xml.getList("Attributes", "entry"), x => x.content ?? '', {}),
+      Attributes: xmlP.readXmlMap(xml.getList("Attributes", "entry"), x => x.content ?? '', {}),
     };
   }
 
@@ -192,9 +193,9 @@ export default class SNS {
       abortSignal, body,
       action: "GetPlatformApplicationAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "GetPlatformApplicationAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetPlatformApplicationAttributesResult");
     return {
-      Attributes: readXmlMap(xml.getList("Attributes", "entry"), x => x.content ?? '', {}),
+      Attributes: xmlP.readXmlMap(xml.getList("Attributes", "entry"), x => x.content ?? '', {}),
     };
   }
 
@@ -203,14 +204,14 @@ export default class SNS {
   ): Promise<GetSMSAttributesResponse> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["attributes"]) prt.appendList(body, prefix+"attributes", params["attributes"], {"entryPrefix":".member."})
+    if (params["attributes"]) qsP.appendList(body, prefix+"attributes", params["attributes"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSMSAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "GetSMSAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetSMSAttributesResult");
     return {
-      attributes: readXmlMap(xml.getList("attributes", "entry"), x => x.content ?? '', {}),
+      attributes: xmlP.readXmlMap(xml.getList("attributes", "entry"), x => x.content ?? '', {}),
     };
   }
 
@@ -224,9 +225,9 @@ export default class SNS {
       abortSignal, body,
       action: "GetSubscriptionAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "GetSubscriptionAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetSubscriptionAttributesResult");
     return {
-      Attributes: readXmlMap(xml.getList("Attributes", "entry"), x => x.content ?? '', {}),
+      Attributes: xmlP.readXmlMap(xml.getList("Attributes", "entry"), x => x.content ?? '', {}),
     };
   }
 
@@ -240,9 +241,9 @@ export default class SNS {
       abortSignal, body,
       action: "GetTopicAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "GetTopicAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetTopicAttributesResult");
     return {
-      Attributes: readXmlMap(xml.getList("Attributes", "entry"), x => x.content ?? '', {}),
+      Attributes: xmlP.readXmlMap(xml.getList("Attributes", "entry"), x => x.content ?? '', {}),
     };
   }
 
@@ -257,7 +258,7 @@ export default class SNS {
       abortSignal, body,
       action: "ListEndpointsByPlatformApplication",
     });
-    const xml = readXmlResult(await resp.text(), "ListEndpointsByPlatformApplicationResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListEndpointsByPlatformApplicationResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -276,7 +277,7 @@ export default class SNS {
       abortSignal, body,
       action: "ListPhoneNumbersOptedOut",
     });
-    const xml = readXmlResult(await resp.text(), "ListPhoneNumbersOptedOutResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListPhoneNumbersOptedOutResult");
     return {
       ...xml.strings({
         optional: {"nextToken":true},
@@ -295,7 +296,7 @@ export default class SNS {
       abortSignal, body,
       action: "ListPlatformApplications",
     });
-    const xml = readXmlResult(await resp.text(), "ListPlatformApplicationsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListPlatformApplicationsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -314,7 +315,7 @@ export default class SNS {
       abortSignal, body,
       action: "ListSubscriptions",
     });
-    const xml = readXmlResult(await resp.text(), "ListSubscriptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListSubscriptionsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -334,7 +335,7 @@ export default class SNS {
       abortSignal, body,
       action: "ListSubscriptionsByTopic",
     });
-    const xml = readXmlResult(await resp.text(), "ListSubscriptionsByTopicResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListSubscriptionsByTopicResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -353,7 +354,7 @@ export default class SNS {
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    const xml = readXmlResult(await resp.text(), "ListTagsForResourceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListTagsForResourceResult");
     return {
       Tags: xml.getList("Tags", "member").map(Tag_Parse),
     };
@@ -369,7 +370,7 @@ export default class SNS {
       abortSignal, body,
       action: "ListTopics",
     });
-    const xml = readXmlResult(await resp.text(), "ListTopicsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListTopicsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -388,7 +389,7 @@ export default class SNS {
       abortSignal, body,
       action: "OptInPhoneNumber",
     });
-    const xml = readXmlResult(await resp.text(), "OptInPhoneNumberResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "OptInPhoneNumberResult");
     return {};
   }
 
@@ -403,14 +404,14 @@ export default class SNS {
     body.append(prefix+"Message", (params["Message"] ?? '').toString());
     if ("Subject" in params) body.append(prefix+"Subject", (params["Subject"] ?? '').toString());
     if ("MessageStructure" in params) body.append(prefix+"MessageStructure", (params["MessageStructure"] ?? '').toString());
-    if (params["MessageAttributes"]) prt.appendMap(body, prefix+"MessageAttributes", params["MessageAttributes"], {"appender":MessageAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":".entry."})
+    if (params["MessageAttributes"]) qsP.appendMap(body, prefix+"MessageAttributes", params["MessageAttributes"], {"appender":MessageAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":".entry."})
     if ("MessageDeduplicationId" in params) body.append(prefix+"MessageDeduplicationId", (params["MessageDeduplicationId"] ?? '').toString());
     if ("MessageGroupId" in params) body.append(prefix+"MessageGroupId", (params["MessageGroupId"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Publish",
     });
-    const xml = readXmlResult(await resp.text(), "PublishResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "PublishResult");
     return xml.strings({
       optional: {"MessageId":true,"SequenceNumber":true},
     });
@@ -435,7 +436,7 @@ export default class SNS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"EndpointArn", (params["EndpointArn"] ?? '').toString());
-    if (params["Attributes"]) prt.appendMap(body, prefix+"Attributes", params["Attributes"], {"entryPrefix":".entry."})
+    if (params["Attributes"]) qsP.appendMap(body, prefix+"Attributes", params["Attributes"], {"entryPrefix":".entry."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetEndpointAttributes",
@@ -448,7 +449,7 @@ export default class SNS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"PlatformApplicationArn", (params["PlatformApplicationArn"] ?? '').toString());
-    if (params["Attributes"]) prt.appendMap(body, prefix+"Attributes", params["Attributes"], {"entryPrefix":".entry."})
+    if (params["Attributes"]) qsP.appendMap(body, prefix+"Attributes", params["Attributes"], {"entryPrefix":".entry."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetPlatformApplicationAttributes",
@@ -460,12 +461,12 @@ export default class SNS {
   ): Promise<SetSMSAttributesResponse> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["attributes"]) prt.appendMap(body, prefix+"attributes", params["attributes"], {"entryPrefix":".entry."})
+    if (params["attributes"]) qsP.appendMap(body, prefix+"attributes", params["attributes"], {"entryPrefix":".entry."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetSMSAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "SetSMSAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SetSMSAttributesResult");
     return {};
   }
 
@@ -505,13 +506,13 @@ export default class SNS {
     body.append(prefix+"TopicArn", (params["TopicArn"] ?? '').toString());
     body.append(prefix+"Protocol", (params["Protocol"] ?? '').toString());
     if ("Endpoint" in params) body.append(prefix+"Endpoint", (params["Endpoint"] ?? '').toString());
-    if (params["Attributes"]) prt.appendMap(body, prefix+"Attributes", params["Attributes"], {"entryPrefix":".entry."})
+    if (params["Attributes"]) qsP.appendMap(body, prefix+"Attributes", params["Attributes"], {"entryPrefix":".entry."})
     if ("ReturnSubscriptionArn" in params) body.append(prefix+"ReturnSubscriptionArn", (params["ReturnSubscriptionArn"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Subscribe",
     });
-    const xml = readXmlResult(await resp.text(), "SubscribeResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SubscribeResult");
     return xml.strings({
       optional: {"SubscriptionArn":true},
     });
@@ -523,12 +524,12 @@ export default class SNS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceArn", (params["ResourceArn"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    const xml = readXmlResult(await resp.text(), "TagResourceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "TagResourceResult");
     return {};
   }
 
@@ -550,12 +551,12 @@ export default class SNS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceArn", (params["ResourceArn"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    const xml = readXmlResult(await resp.text(), "UntagResourceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UntagResourceResult");
     return {};
   }
 
@@ -585,7 +586,7 @@ export interface ConfirmSubscriptionInput {
 export interface CreatePlatformApplicationInput {
   Name: string;
   Platform: string;
-  Attributes: { [key: string]: string };
+  Attributes: { [key: string]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, input
@@ -593,13 +594,13 @@ export interface CreatePlatformEndpointInput {
   PlatformApplicationArn: string;
   Token: string;
   CustomUserData?: string | null;
-  Attributes?: { [key: string]: string } | null;
+  Attributes?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
 export interface CreateTopicInput {
   Name: string;
-  Attributes?: { [key: string]: string } | null;
+  Attributes?: { [key: string]: string | null | undefined } | null;
   Tags?: Tag[] | null;
 }
 
@@ -693,7 +694,7 @@ export interface PublishInput {
   Message: string;
   Subject?: string | null;
   MessageStructure?: string | null;
-  MessageAttributes?: { [key: string]: MessageAttributeValue } | null;
+  MessageAttributes?: { [key: string]: MessageAttributeValue | null | undefined } | null;
   MessageDeduplicationId?: string | null;
   MessageGroupId?: string | null;
 }
@@ -707,18 +708,18 @@ export interface RemovePermissionInput {
 // refs: 1 - tags: named, input
 export interface SetEndpointAttributesInput {
   EndpointArn: string;
-  Attributes: { [key: string]: string };
+  Attributes: { [key: string]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, input
 export interface SetPlatformApplicationAttributesInput {
   PlatformApplicationArn: string;
-  Attributes: { [key: string]: string };
+  Attributes: { [key: string]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, input
 export interface SetSMSAttributesInput {
-  attributes: { [key: string]: string };
+  attributes: { [key: string]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, input
@@ -740,7 +741,7 @@ export interface SubscribeInput {
   TopicArn: string;
   Protocol: string;
   Endpoint?: string | null;
-  Attributes?: { [key: string]: string } | null;
+  Attributes?: { [key: string]: string | null | undefined } | null;
   ReturnSubscriptionArn?: boolean | null;
 }
 
@@ -788,27 +789,27 @@ export interface CreateTopicResponse {
 
 // refs: 1 - tags: named, output
 export interface GetEndpointAttributesResponse {
-  Attributes: { [key: string]: string };
+  Attributes: { [key: string]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, output
 export interface GetPlatformApplicationAttributesResponse {
-  Attributes: { [key: string]: string };
+  Attributes: { [key: string]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, output
 export interface GetSMSAttributesResponse {
-  attributes: { [key: string]: string };
+  attributes: { [key: string]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, output
 export interface GetSubscriptionAttributesResponse {
-  Attributes: { [key: string]: string };
+  Attributes: { [key: string]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, output
 export interface GetTopicAttributesResponse {
-  Attributes: { [key: string]: string };
+  Attributes: { [key: string]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, output
@@ -888,7 +889,7 @@ function Tag_Serialize(body: URLSearchParams, prefix: string, params: Tag) {
     body.append(prefix+".Key", (params["Key"] ?? '').toString());
     body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function Tag_Parse(node: XmlNode): Tag {
+function Tag_Parse(node: xmlP.XmlNode): Tag {
   return node.strings({
     required: {"Key":true,"Value":true},
   });
@@ -903,34 +904,34 @@ export interface MessageAttributeValue {
 function MessageAttributeValue_Serialize(body: URLSearchParams, prefix: string, params: MessageAttributeValue) {
     body.append(prefix+".DataType", (params["DataType"] ?? '').toString());
     if ("StringValue" in params) body.append(prefix+".StringValue", (params["StringValue"] ?? '').toString());
-    if ("BinaryValue" in params) body.append(prefix+".BinaryValue", prt.encodeBlob(params["BinaryValue"]));
+    if ("BinaryValue" in params) body.append(prefix+".BinaryValue", qsP.encodeBlob(params["BinaryValue"]));
 }
 
 // refs: 1 - tags: output, named, interface
 export interface Endpoint {
   EndpointArn?: string | null;
-  Attributes: { [key: string]: string };
+  Attributes: { [key: string]: string | null | undefined };
 }
-function Endpoint_Parse(node: XmlNode): Endpoint {
+function Endpoint_Parse(node: xmlP.XmlNode): Endpoint {
   return {
     ...node.strings({
       optional: {"EndpointArn":true},
     }),
-    Attributes: readXmlMap(node.getList("Attributes", "entry"), x => x.content ?? '', {}),
+    Attributes: xmlP.readXmlMap(node.getList("Attributes", "entry"), x => x.content ?? '', {}),
   };
 }
 
 // refs: 1 - tags: output, named, interface
 export interface PlatformApplication {
   PlatformApplicationArn?: string | null;
-  Attributes: { [key: string]: string };
+  Attributes: { [key: string]: string | null | undefined };
 }
-function PlatformApplication_Parse(node: XmlNode): PlatformApplication {
+function PlatformApplication_Parse(node: xmlP.XmlNode): PlatformApplication {
   return {
     ...node.strings({
       optional: {"PlatformApplicationArn":true},
     }),
-    Attributes: readXmlMap(node.getList("Attributes", "entry"), x => x.content ?? '', {}),
+    Attributes: xmlP.readXmlMap(node.getList("Attributes", "entry"), x => x.content ?? '', {}),
   };
 }
 
@@ -942,7 +943,7 @@ export interface Subscription {
   Endpoint?: string | null;
   TopicArn?: string | null;
 }
-function Subscription_Parse(node: XmlNode): Subscription {
+function Subscription_Parse(node: xmlP.XmlNode): Subscription {
   return node.strings({
     optional: {"SubscriptionArn":true,"Owner":true,"Protocol":true,"Endpoint":true,"TopicArn":true},
   });
@@ -952,7 +953,7 @@ function Subscription_Parse(node: XmlNode): Subscription {
 export interface Topic {
   TopicArn?: string | null;
 }
-function Topic_Parse(node: XmlNode): Topic {
+function Topic_Parse(node: xmlP.XmlNode): Topic {
   return node.strings({
     optional: {"TopicArn":true},
   });

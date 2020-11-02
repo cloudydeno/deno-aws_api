@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class Macie {
   #client: ServiceClient;
@@ -29,8 +29,9 @@ export default class Macie {
   async associateMemberAccount(
     {abortSignal, ...params}: RequestConfig & AssociateMemberAccountRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      memberAccountId: params["memberAccountId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateMemberAccount",
@@ -40,14 +41,15 @@ export default class Macie {
   async associateS3Resources(
     {abortSignal, ...params}: RequestConfig & AssociateS3ResourcesRequest,
   ): Promise<AssociateS3ResourcesResult> {
-    const body: JSONObject = {...params,
-    s3Resources: params["s3Resources"]?.map(x => fromS3ResourceClassification(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      memberAccountId: params["memberAccountId"],
+      s3Resources: params["s3Resources"]?.map(x => fromS3ResourceClassification(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateS3Resources",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "failedS3Resources": [toFailedS3Resource],
@@ -58,8 +60,9 @@ export default class Macie {
   async disassociateMemberAccount(
     {abortSignal, ...params}: RequestConfig & DisassociateMemberAccountRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      memberAccountId: params["memberAccountId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateMemberAccount",
@@ -69,14 +72,15 @@ export default class Macie {
   async disassociateS3Resources(
     {abortSignal, ...params}: RequestConfig & DisassociateS3ResourcesRequest,
   ): Promise<DisassociateS3ResourcesResult> {
-    const body: JSONObject = {...params,
-    associatedS3Resources: params["associatedS3Resources"]?.map(x => fromS3Resource(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      memberAccountId: params["memberAccountId"],
+      associatedS3Resources: params["associatedS3Resources"]?.map(x => fromS3Resource(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateS3Resources",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "failedS3Resources": [toFailedS3Resource],
@@ -87,13 +91,15 @@ export default class Macie {
   async listMemberAccounts(
     {abortSignal, ...params}: RequestConfig & ListMemberAccountsRequest = {},
   ): Promise<ListMemberAccountsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListMemberAccounts",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "memberAccounts": [toMemberAccount],
@@ -105,13 +111,16 @@ export default class Macie {
   async listS3Resources(
     {abortSignal, ...params}: RequestConfig & ListS3ResourcesRequest = {},
   ): Promise<ListS3ResourcesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      memberAccountId: params["memberAccountId"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListS3Resources",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "s3Resources": [toS3ResourceClassification],
@@ -123,14 +132,15 @@ export default class Macie {
   async updateS3Resources(
     {abortSignal, ...params}: RequestConfig & UpdateS3ResourcesRequest,
   ): Promise<UpdateS3ResourcesResult> {
-    const body: JSONObject = {...params,
-    s3ResourcesUpdate: params["s3ResourcesUpdate"]?.map(x => fromS3ResourceClassificationUpdate(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      memberAccountId: params["memberAccountId"],
+      s3ResourcesUpdate: params["s3ResourcesUpdate"]?.map(x => fromS3ResourceClassificationUpdate(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateS3Resources",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "failedS3Resources": [toFailedS3Resource],
@@ -214,14 +224,16 @@ export interface S3ResourceClassification {
   prefix?: string | null;
   classificationType: ClassificationType;
 }
-function fromS3ResourceClassification(input?: S3ResourceClassification | null): JSONValue {
+function fromS3ResourceClassification(input?: S3ResourceClassification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    bucketName: input["bucketName"],
+    prefix: input["prefix"],
     classificationType: fromClassificationType(input["classificationType"]),
   }
 }
-function toS3ResourceClassification(root: JSONValue): S3ResourceClassification {
-  return prt.readObj({
+function toS3ResourceClassification(root: jsonP.JSONValue): S3ResourceClassification {
+  return jsonP.readObj({
     required: {
       "bucketName": "s",
       "classificationType": toClassificationType,
@@ -237,16 +249,18 @@ export interface ClassificationType {
   oneTime: S3OneTimeClassificationType;
   continuous: S3ContinuousClassificationType;
 }
-function fromClassificationType(input?: ClassificationType | null): JSONValue {
+function fromClassificationType(input?: ClassificationType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    oneTime: input["oneTime"],
+    continuous: input["continuous"],
   }
 }
-function toClassificationType(root: JSONValue): ClassificationType {
-  return prt.readObj({
+function toClassificationType(root: jsonP.JSONValue): ClassificationType {
+  return jsonP.readObj({
     required: {
-      "oneTime": toS3OneTimeClassificationType,
-      "continuous": toS3ContinuousClassificationType,
+      "oneTime": (x: jsonP.JSONValue) => cmnP.readEnum<S3OneTimeClassificationType>(x),
+      "continuous": (x: jsonP.JSONValue) => cmnP.readEnum<S3ContinuousClassificationType>(x),
     },
     optional: {},
   }, root);
@@ -256,38 +270,27 @@ function toClassificationType(root: JSONValue): ClassificationType {
 export type S3OneTimeClassificationType =
 | "FULL"
 | "NONE"
-;
-
-function toS3OneTimeClassificationType(root: JSONValue): S3OneTimeClassificationType | null {
-  return ( false
-    || root == "FULL"
-    || root == "NONE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type S3ContinuousClassificationType =
 | "FULL"
-;
-
-function toS3ContinuousClassificationType(root: JSONValue): S3ContinuousClassificationType | null {
-  return ( false
-    || root == "FULL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface S3Resource {
   bucketName: string;
   prefix?: string | null;
 }
-function fromS3Resource(input?: S3Resource | null): JSONValue {
+function fromS3Resource(input?: S3Resource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    bucketName: input["bucketName"],
+    prefix: input["prefix"],
   }
 }
-function toS3Resource(root: JSONValue): S3Resource {
-  return prt.readObj({
+function toS3Resource(root: jsonP.JSONValue): S3Resource {
+  return jsonP.readObj({
     required: {
       "bucketName": "s",
     },
@@ -303,9 +306,11 @@ export interface S3ResourceClassificationUpdate {
   prefix?: string | null;
   classificationTypeUpdate: ClassificationTypeUpdate;
 }
-function fromS3ResourceClassificationUpdate(input?: S3ResourceClassificationUpdate | null): JSONValue {
+function fromS3ResourceClassificationUpdate(input?: S3ResourceClassificationUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    bucketName: input["bucketName"],
+    prefix: input["prefix"],
     classificationTypeUpdate: fromClassificationTypeUpdate(input["classificationTypeUpdate"]),
   }
 }
@@ -315,9 +320,11 @@ export interface ClassificationTypeUpdate {
   oneTime?: S3OneTimeClassificationType | null;
   continuous?: S3ContinuousClassificationType | null;
 }
-function fromClassificationTypeUpdate(input?: ClassificationTypeUpdate | null): JSONValue {
+function fromClassificationTypeUpdate(input?: ClassificationTypeUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    oneTime: input["oneTime"],
+    continuous: input["continuous"],
   }
 }
 
@@ -327,8 +334,8 @@ export interface FailedS3Resource {
   errorCode?: string | null;
   errorMessage?: string | null;
 }
-function toFailedS3Resource(root: JSONValue): FailedS3Resource {
-  return prt.readObj({
+function toFailedS3Resource(root: jsonP.JSONValue): FailedS3Resource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "failedItem": toS3Resource,
@@ -342,8 +349,8 @@ function toFailedS3Resource(root: JSONValue): FailedS3Resource {
 export interface MemberAccount {
   accountId?: string | null;
 }
-function toMemberAccount(root: JSONValue): MemberAccount {
-  return prt.readObj({
+function toMemberAccount(root: jsonP.JSONValue): MemberAccount {
+  return jsonP.readObj({
     required: {},
     optional: {
       "accountId": "s",

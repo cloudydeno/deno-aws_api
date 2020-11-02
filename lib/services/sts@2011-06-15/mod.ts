@@ -5,8 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 
 export default class STS {
   #client: ServiceClient;
@@ -34,11 +35,11 @@ export default class STS {
     const prefix = '';
     body.append(prefix+"RoleArn", (params["RoleArn"] ?? '').toString());
     body.append(prefix+"RoleSessionName", (params["RoleSessionName"] ?? '').toString());
-    if (params["PolicyArns"]) prt.appendList(body, prefix+"PolicyArns", params["PolicyArns"], {"appender":PolicyDescriptorType_Serialize,"entryPrefix":".member."})
+    if (params["PolicyArns"]) qsP.appendList(body, prefix+"PolicyArns", params["PolicyArns"], {"appender":PolicyDescriptorType_Serialize,"entryPrefix":".member."})
     if ("Policy" in params) body.append(prefix+"Policy", (params["Policy"] ?? '').toString());
     if ("DurationSeconds" in params) body.append(prefix+"DurationSeconds", (params["DurationSeconds"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
-    if (params["TransitiveTagKeys"]) prt.appendList(body, prefix+"TransitiveTagKeys", params["TransitiveTagKeys"], {"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["TransitiveTagKeys"]) qsP.appendList(body, prefix+"TransitiveTagKeys", params["TransitiveTagKeys"], {"entryPrefix":".member."})
     if ("ExternalId" in params) body.append(prefix+"ExternalId", (params["ExternalId"] ?? '').toString());
     if ("SerialNumber" in params) body.append(prefix+"SerialNumber", (params["SerialNumber"] ?? '').toString());
     if ("TokenCode" in params) body.append(prefix+"TokenCode", (params["TokenCode"] ?? '').toString());
@@ -46,7 +47,7 @@ export default class STS {
       abortSignal, body,
       action: "AssumeRole",
     });
-    const xml = readXmlResult(await resp.text(), "AssumeRoleResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "AssumeRoleResult");
     return {
       Credentials: xml.first("Credentials", false, Credentials_Parse),
       AssumedRoleUser: xml.first("AssumedRoleUser", false, AssumedRoleUser_Parse),
@@ -62,7 +63,7 @@ export default class STS {
     body.append(prefix+"RoleArn", (params["RoleArn"] ?? '').toString());
     body.append(prefix+"PrincipalArn", (params["PrincipalArn"] ?? '').toString());
     body.append(prefix+"SAMLAssertion", (params["SAMLAssertion"] ?? '').toString());
-    if (params["PolicyArns"]) prt.appendList(body, prefix+"PolicyArns", params["PolicyArns"], {"appender":PolicyDescriptorType_Serialize,"entryPrefix":".member."})
+    if (params["PolicyArns"]) qsP.appendList(body, prefix+"PolicyArns", params["PolicyArns"], {"appender":PolicyDescriptorType_Serialize,"entryPrefix":".member."})
     if ("Policy" in params) body.append(prefix+"Policy", (params["Policy"] ?? '').toString());
     if ("DurationSeconds" in params) body.append(prefix+"DurationSeconds", (params["DurationSeconds"] ?? '').toString());
     const resp = await this.#client.performRequest({
@@ -70,7 +71,7 @@ export default class STS {
       abortSignal, body,
       action: "AssumeRoleWithSAML",
     });
-    const xml = readXmlResult(await resp.text(), "AssumeRoleWithSAMLResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "AssumeRoleWithSAMLResult");
     return {
       ...xml.strings({
         optional: {"Subject":true,"SubjectType":true,"Issuer":true,"Audience":true,"NameQualifier":true},
@@ -90,7 +91,7 @@ export default class STS {
     body.append(prefix+"RoleSessionName", (params["RoleSessionName"] ?? '').toString());
     body.append(prefix+"WebIdentityToken", (params["WebIdentityToken"] ?? '').toString());
     if ("ProviderId" in params) body.append(prefix+"ProviderId", (params["ProviderId"] ?? '').toString());
-    if (params["PolicyArns"]) prt.appendList(body, prefix+"PolicyArns", params["PolicyArns"], {"appender":PolicyDescriptorType_Serialize,"entryPrefix":".member."})
+    if (params["PolicyArns"]) qsP.appendList(body, prefix+"PolicyArns", params["PolicyArns"], {"appender":PolicyDescriptorType_Serialize,"entryPrefix":".member."})
     if ("Policy" in params) body.append(prefix+"Policy", (params["Policy"] ?? '').toString());
     if ("DurationSeconds" in params) body.append(prefix+"DurationSeconds", (params["DurationSeconds"] ?? '').toString());
     const resp = await this.#client.performRequest({
@@ -98,7 +99,7 @@ export default class STS {
       abortSignal, body,
       action: "AssumeRoleWithWebIdentity",
     });
-    const xml = readXmlResult(await resp.text(), "AssumeRoleWithWebIdentityResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "AssumeRoleWithWebIdentityResult");
     return {
       ...xml.strings({
         optional: {"SubjectFromWebIdentityToken":true,"Provider":true,"Audience":true},
@@ -119,7 +120,7 @@ export default class STS {
       abortSignal, body,
       action: "DecodeAuthorizationMessage",
     });
-    const xml = readXmlResult(await resp.text(), "DecodeAuthorizationMessageResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DecodeAuthorizationMessageResult");
     return xml.strings({
       optional: {"DecodedMessage":true},
     });
@@ -135,7 +136,7 @@ export default class STS {
       abortSignal, body,
       action: "GetAccessKeyInfo",
     });
-    const xml = readXmlResult(await resp.text(), "GetAccessKeyInfoResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetAccessKeyInfoResult");
     return xml.strings({
       optional: {"Account":true},
     });
@@ -151,7 +152,7 @@ export default class STS {
       abortSignal, body,
       action: "GetCallerIdentity",
     });
-    const xml = readXmlResult(await resp.text(), "GetCallerIdentityResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetCallerIdentityResult");
     return xml.strings({
       optional: {"UserId":true,"Account":true,"Arn":true},
     });
@@ -164,14 +165,14 @@ export default class STS {
     const prefix = '';
     body.append(prefix+"Name", (params["Name"] ?? '').toString());
     if ("Policy" in params) body.append(prefix+"Policy", (params["Policy"] ?? '').toString());
-    if (params["PolicyArns"]) prt.appendList(body, prefix+"PolicyArns", params["PolicyArns"], {"appender":PolicyDescriptorType_Serialize,"entryPrefix":".member."})
+    if (params["PolicyArns"]) qsP.appendList(body, prefix+"PolicyArns", params["PolicyArns"], {"appender":PolicyDescriptorType_Serialize,"entryPrefix":".member."})
     if ("DurationSeconds" in params) body.append(prefix+"DurationSeconds", (params["DurationSeconds"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetFederationToken",
     });
-    const xml = readXmlResult(await resp.text(), "GetFederationTokenResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetFederationTokenResult");
     return {
       Credentials: xml.first("Credentials", false, Credentials_Parse),
       FederatedUser: xml.first("FederatedUser", false, FederatedUser_Parse),
@@ -191,7 +192,7 @@ export default class STS {
       abortSignal, body,
       action: "GetSessionToken",
     });
-    const xml = readXmlResult(await resp.text(), "GetSessionTokenResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetSessionTokenResult");
     return {
       Credentials: xml.first("Credentials", false, Credentials_Parse),
     };
@@ -347,12 +348,12 @@ export interface Credentials {
   SessionToken: string;
   Expiration: Date | number;
 }
-function Credentials_Parse(node: XmlNode): Credentials {
+function Credentials_Parse(node: xmlP.XmlNode): Credentials {
   return {
     ...node.strings({
       required: {"AccessKeyId":true,"SecretAccessKey":true,"SessionToken":true},
     }),
-    Expiration: node.first("Expiration", true, x => parseTimestamp(x.content)),
+    Expiration: node.first("Expiration", true, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -361,7 +362,7 @@ export interface AssumedRoleUser {
   AssumedRoleId: string;
   Arn: string;
 }
-function AssumedRoleUser_Parse(node: XmlNode): AssumedRoleUser {
+function AssumedRoleUser_Parse(node: xmlP.XmlNode): AssumedRoleUser {
   return node.strings({
     required: {"AssumedRoleId":true,"Arn":true},
   });
@@ -372,7 +373,7 @@ export interface FederatedUser {
   FederatedUserId: string;
   Arn: string;
 }
-function FederatedUser_Parse(node: XmlNode): FederatedUser {
+function FederatedUser_Parse(node: xmlP.XmlNode): FederatedUser {
   return node.strings({
     required: {"FederatedUserId":true,"Arn":true},
   });

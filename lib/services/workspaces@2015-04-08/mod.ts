@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class WorkSpaces {
   #client: ServiceClient;
@@ -29,13 +29,15 @@ export default class WorkSpaces {
   async associateConnectionAlias(
     {abortSignal, ...params}: RequestConfig & AssociateConnectionAliasRequest,
   ): Promise<AssociateConnectionAliasResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AliasId: params["AliasId"],
+      ResourceId: params["ResourceId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateConnectionAlias",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConnectionIdentifier": "s",
@@ -46,13 +48,15 @@ export default class WorkSpaces {
   async associateIpGroups(
     {abortSignal, ...params}: RequestConfig & AssociateIpGroupsRequest,
   ): Promise<AssociateIpGroupsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      GroupIds: params["GroupIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateIpGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -61,14 +65,15 @@ export default class WorkSpaces {
   async authorizeIpRules(
     {abortSignal, ...params}: RequestConfig & AuthorizeIpRulesRequest,
   ): Promise<AuthorizeIpRulesResult> {
-    const body: JSONObject = {...params,
-    UserRules: params["UserRules"]?.map(x => fromIpRuleItem(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      GroupId: params["GroupId"],
+      UserRules: params["UserRules"]?.map(x => fromIpRuleItem(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AuthorizeIpRules",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -77,14 +82,18 @@ export default class WorkSpaces {
   async copyWorkspaceImage(
     {abortSignal, ...params}: RequestConfig & CopyWorkspaceImageRequest,
   ): Promise<CopyWorkspaceImageResult> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Description: params["Description"],
+      SourceImageId: params["SourceImageId"],
+      SourceRegion: params["SourceRegion"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CopyWorkspaceImage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ImageId": "s",
@@ -95,14 +104,15 @@ export default class WorkSpaces {
   async createConnectionAlias(
     {abortSignal, ...params}: RequestConfig & CreateConnectionAliasRequest,
   ): Promise<CreateConnectionAliasResult> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConnectionString: params["ConnectionString"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateConnectionAlias",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AliasId": "s",
@@ -113,15 +123,17 @@ export default class WorkSpaces {
   async createIpGroup(
     {abortSignal, ...params}: RequestConfig & CreateIpGroupRequest,
   ): Promise<CreateIpGroupResult> {
-    const body: JSONObject = {...params,
-    UserRules: params["UserRules"]?.map(x => fromIpRuleItem(x)),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      GroupName: params["GroupName"],
+      GroupDesc: params["GroupDesc"],
+      UserRules: params["UserRules"]?.map(x => fromIpRuleItem(x)),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateIpGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GroupId": "s",
@@ -132,14 +144,15 @@ export default class WorkSpaces {
   async createTags(
     {abortSignal, ...params}: RequestConfig & CreateTagsRequest,
   ): Promise<CreateTagsResult> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -148,14 +161,14 @@ export default class WorkSpaces {
   async createWorkspaces(
     {abortSignal, ...params}: RequestConfig & CreateWorkspacesRequest,
   ): Promise<CreateWorkspacesResult> {
-    const body: JSONObject = {...params,
-    Workspaces: params["Workspaces"]?.map(x => fromWorkspaceRequest(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Workspaces: params["Workspaces"]?.map(x => fromWorkspaceRequest(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWorkspaces",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FailedRequests": [toFailedCreateWorkspaceRequest],
@@ -167,13 +180,14 @@ export default class WorkSpaces {
   async deleteConnectionAlias(
     {abortSignal, ...params}: RequestConfig & DeleteConnectionAliasRequest,
   ): Promise<DeleteConnectionAliasResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AliasId: params["AliasId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteConnectionAlias",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -182,13 +196,14 @@ export default class WorkSpaces {
   async deleteIpGroup(
     {abortSignal, ...params}: RequestConfig & DeleteIpGroupRequest,
   ): Promise<DeleteIpGroupResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GroupId: params["GroupId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteIpGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -197,13 +212,15 @@ export default class WorkSpaces {
   async deleteTags(
     {abortSignal, ...params}: RequestConfig & DeleteTagsRequest,
   ): Promise<DeleteTagsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -212,13 +229,14 @@ export default class WorkSpaces {
   async deleteWorkspaceImage(
     {abortSignal, ...params}: RequestConfig & DeleteWorkspaceImageRequest,
   ): Promise<DeleteWorkspaceImageResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ImageId: params["ImageId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteWorkspaceImage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -227,13 +245,14 @@ export default class WorkSpaces {
   async deregisterWorkspaceDirectory(
     {abortSignal, ...params}: RequestConfig & DeregisterWorkspaceDirectoryRequest,
   ): Promise<DeregisterWorkspaceDirectoryResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterWorkspaceDirectory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -242,16 +261,16 @@ export default class WorkSpaces {
   async describeAccount(
     {abortSignal, ...params}: RequestConfig & DescribeAccountRequest = {},
   ): Promise<DescribeAccountResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccount",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "DedicatedTenancySupport": toDedicatedTenancySupportResultEnum,
+        "DedicatedTenancySupport": (x: jsonP.JSONValue) => cmnP.readEnum<DedicatedTenancySupportResultEnum>(x),
         "DedicatedTenancyManagementCidrRange": "s",
       },
     }, await resp.json());
@@ -260,13 +279,14 @@ export default class WorkSpaces {
   async describeAccountModifications(
     {abortSignal, ...params}: RequestConfig & DescribeAccountModificationsRequest = {},
   ): Promise<DescribeAccountModificationsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccountModifications",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AccountModifications": [toAccountModification],
@@ -278,13 +298,14 @@ export default class WorkSpaces {
   async describeClientProperties(
     {abortSignal, ...params}: RequestConfig & DescribeClientPropertiesRequest,
   ): Promise<DescribeClientPropertiesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceIds: params["ResourceIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeClientProperties",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ClientPropertiesList": [toClientPropertiesResult],
@@ -295,13 +316,16 @@ export default class WorkSpaces {
   async describeConnectionAliasPermissions(
     {abortSignal, ...params}: RequestConfig & DescribeConnectionAliasPermissionsRequest,
   ): Promise<DescribeConnectionAliasPermissionsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AliasId: params["AliasId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConnectionAliasPermissions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AliasId": "s",
@@ -314,13 +338,17 @@ export default class WorkSpaces {
   async describeConnectionAliases(
     {abortSignal, ...params}: RequestConfig & DescribeConnectionAliasesRequest = {},
   ): Promise<DescribeConnectionAliasesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AliasIds: params["AliasIds"],
+      ResourceId: params["ResourceId"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConnectionAliases",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConnectionAliases": [toConnectionAlias],
@@ -332,13 +360,16 @@ export default class WorkSpaces {
   async describeIpGroups(
     {abortSignal, ...params}: RequestConfig & DescribeIpGroupsRequest = {},
   ): Promise<DescribeIpGroupsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GroupIds: params["GroupIds"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeIpGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Result": [toWorkspacesIpGroup],
@@ -350,13 +381,14 @@ export default class WorkSpaces {
   async describeTags(
     {abortSignal, ...params}: RequestConfig & DescribeTagsRequest,
   ): Promise<DescribeTagsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TagList": [toTag],
@@ -367,13 +399,16 @@ export default class WorkSpaces {
   async describeWorkspaceBundles(
     {abortSignal, ...params}: RequestConfig & DescribeWorkspaceBundlesRequest = {},
   ): Promise<DescribeWorkspaceBundlesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      BundleIds: params["BundleIds"],
+      Owner: params["Owner"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorkspaceBundles",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Bundles": [toWorkspaceBundle],
@@ -385,13 +420,16 @@ export default class WorkSpaces {
   async describeWorkspaceDirectories(
     {abortSignal, ...params}: RequestConfig & DescribeWorkspaceDirectoriesRequest = {},
   ): Promise<DescribeWorkspaceDirectoriesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryIds: params["DirectoryIds"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorkspaceDirectories",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Directories": [toWorkspaceDirectory],
@@ -403,13 +441,16 @@ export default class WorkSpaces {
   async describeWorkspaceImagePermissions(
     {abortSignal, ...params}: RequestConfig & DescribeWorkspaceImagePermissionsRequest,
   ): Promise<DescribeWorkspaceImagePermissionsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ImageId: params["ImageId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorkspaceImagePermissions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ImageId": "s",
@@ -422,13 +463,17 @@ export default class WorkSpaces {
   async describeWorkspaceImages(
     {abortSignal, ...params}: RequestConfig & DescribeWorkspaceImagesRequest = {},
   ): Promise<DescribeWorkspaceImagesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ImageIds: params["ImageIds"],
+      ImageType: params["ImageType"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorkspaceImages",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Images": [toWorkspaceImage],
@@ -440,13 +485,14 @@ export default class WorkSpaces {
   async describeWorkspaceSnapshots(
     {abortSignal, ...params}: RequestConfig & DescribeWorkspaceSnapshotsRequest,
   ): Promise<DescribeWorkspaceSnapshotsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkspaceId: params["WorkspaceId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorkspaceSnapshots",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RebuildSnapshots": [toSnapshot],
@@ -458,13 +504,19 @@ export default class WorkSpaces {
   async describeWorkspaces(
     {abortSignal, ...params}: RequestConfig & DescribeWorkspacesRequest = {},
   ): Promise<DescribeWorkspacesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkspaceIds: params["WorkspaceIds"],
+      DirectoryId: params["DirectoryId"],
+      UserName: params["UserName"],
+      BundleId: params["BundleId"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorkspaces",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Workspaces": [toWorkspace],
@@ -476,13 +528,15 @@ export default class WorkSpaces {
   async describeWorkspacesConnectionStatus(
     {abortSignal, ...params}: RequestConfig & DescribeWorkspacesConnectionStatusRequest = {},
   ): Promise<DescribeWorkspacesConnectionStatusResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkspaceIds: params["WorkspaceIds"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorkspacesConnectionStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WorkspacesConnectionStatus": [toWorkspaceConnectionStatus],
@@ -494,13 +548,14 @@ export default class WorkSpaces {
   async disassociateConnectionAlias(
     {abortSignal, ...params}: RequestConfig & DisassociateConnectionAliasRequest,
   ): Promise<DisassociateConnectionAliasResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AliasId: params["AliasId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateConnectionAlias",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -509,13 +564,15 @@ export default class WorkSpaces {
   async disassociateIpGroups(
     {abortSignal, ...params}: RequestConfig & DisassociateIpGroupsRequest,
   ): Promise<DisassociateIpGroupsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      GroupIds: params["GroupIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateIpGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -524,14 +581,19 @@ export default class WorkSpaces {
   async importWorkspaceImage(
     {abortSignal, ...params}: RequestConfig & ImportWorkspaceImageRequest,
   ): Promise<ImportWorkspaceImageResult> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Ec2ImageId: params["Ec2ImageId"],
+      IngestionProcess: params["IngestionProcess"],
+      ImageName: params["ImageName"],
+      ImageDescription: params["ImageDescription"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      Applications: params["Applications"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportWorkspaceImage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ImageId": "s",
@@ -542,13 +604,16 @@ export default class WorkSpaces {
   async listAvailableManagementCidrRanges(
     {abortSignal, ...params}: RequestConfig & ListAvailableManagementCidrRangesRequest,
   ): Promise<ListAvailableManagementCidrRangesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ManagementCidrRangeConstraint: params["ManagementCidrRangeConstraint"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAvailableManagementCidrRanges",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ManagementCidrRanges": ["s"],
@@ -560,13 +625,15 @@ export default class WorkSpaces {
   async migrateWorkspace(
     {abortSignal, ...params}: RequestConfig & MigrateWorkspaceRequest,
   ): Promise<MigrateWorkspaceResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SourceWorkspaceId: params["SourceWorkspaceId"],
+      BundleId: params["BundleId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MigrateWorkspace",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SourceWorkspaceId": "s",
@@ -578,13 +645,15 @@ export default class WorkSpaces {
   async modifyAccount(
     {abortSignal, ...params}: RequestConfig & ModifyAccountRequest = {},
   ): Promise<ModifyAccountResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DedicatedTenancySupport: params["DedicatedTenancySupport"],
+      DedicatedTenancyManagementCidrRange: params["DedicatedTenancyManagementCidrRange"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyAccount",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -593,14 +662,15 @@ export default class WorkSpaces {
   async modifyClientProperties(
     {abortSignal, ...params}: RequestConfig & ModifyClientPropertiesRequest,
   ): Promise<ModifyClientPropertiesResult> {
-    const body: JSONObject = {...params,
-    ClientProperties: fromClientProperties(params["ClientProperties"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      ClientProperties: fromClientProperties(params["ClientProperties"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyClientProperties",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -609,14 +679,15 @@ export default class WorkSpaces {
   async modifySelfservicePermissions(
     {abortSignal, ...params}: RequestConfig & ModifySelfservicePermissionsRequest,
   ): Promise<ModifySelfservicePermissionsResult> {
-    const body: JSONObject = {...params,
-    SelfservicePermissions: fromSelfservicePermissions(params["SelfservicePermissions"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      SelfservicePermissions: fromSelfservicePermissions(params["SelfservicePermissions"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifySelfservicePermissions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -625,14 +696,15 @@ export default class WorkSpaces {
   async modifyWorkspaceAccessProperties(
     {abortSignal, ...params}: RequestConfig & ModifyWorkspaceAccessPropertiesRequest,
   ): Promise<ModifyWorkspaceAccessPropertiesResult> {
-    const body: JSONObject = {...params,
-    WorkspaceAccessProperties: fromWorkspaceAccessProperties(params["WorkspaceAccessProperties"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      WorkspaceAccessProperties: fromWorkspaceAccessProperties(params["WorkspaceAccessProperties"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyWorkspaceAccessProperties",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -641,14 +713,15 @@ export default class WorkSpaces {
   async modifyWorkspaceCreationProperties(
     {abortSignal, ...params}: RequestConfig & ModifyWorkspaceCreationPropertiesRequest,
   ): Promise<ModifyWorkspaceCreationPropertiesResult> {
-    const body: JSONObject = {...params,
-    WorkspaceCreationProperties: fromWorkspaceCreationProperties(params["WorkspaceCreationProperties"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      WorkspaceCreationProperties: fromWorkspaceCreationProperties(params["WorkspaceCreationProperties"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyWorkspaceCreationProperties",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -657,14 +730,15 @@ export default class WorkSpaces {
   async modifyWorkspaceProperties(
     {abortSignal, ...params}: RequestConfig & ModifyWorkspacePropertiesRequest,
   ): Promise<ModifyWorkspacePropertiesResult> {
-    const body: JSONObject = {...params,
-    WorkspaceProperties: fromWorkspaceProperties(params["WorkspaceProperties"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkspaceId: params["WorkspaceId"],
+      WorkspaceProperties: fromWorkspaceProperties(params["WorkspaceProperties"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyWorkspaceProperties",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -673,13 +747,15 @@ export default class WorkSpaces {
   async modifyWorkspaceState(
     {abortSignal, ...params}: RequestConfig & ModifyWorkspaceStateRequest,
   ): Promise<ModifyWorkspaceStateResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkspaceId: params["WorkspaceId"],
+      WorkspaceState: params["WorkspaceState"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyWorkspaceState",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -688,14 +764,14 @@ export default class WorkSpaces {
   async rebootWorkspaces(
     {abortSignal, ...params}: RequestConfig & RebootWorkspacesRequest,
   ): Promise<RebootWorkspacesResult> {
-    const body: JSONObject = {...params,
-    RebootWorkspaceRequests: params["RebootWorkspaceRequests"]?.map(x => fromRebootRequest(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      RebootWorkspaceRequests: params["RebootWorkspaceRequests"]?.map(x => fromRebootRequest(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RebootWorkspaces",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FailedRequests": [toFailedWorkspaceChangeRequest],
@@ -706,14 +782,14 @@ export default class WorkSpaces {
   async rebuildWorkspaces(
     {abortSignal, ...params}: RequestConfig & RebuildWorkspacesRequest,
   ): Promise<RebuildWorkspacesResult> {
-    const body: JSONObject = {...params,
-    RebuildWorkspaceRequests: params["RebuildWorkspaceRequests"]?.map(x => fromRebuildRequest(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      RebuildWorkspaceRequests: params["RebuildWorkspaceRequests"]?.map(x => fromRebuildRequest(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RebuildWorkspaces",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FailedRequests": [toFailedWorkspaceChangeRequest],
@@ -724,14 +800,19 @@ export default class WorkSpaces {
   async registerWorkspaceDirectory(
     {abortSignal, ...params}: RequestConfig & RegisterWorkspaceDirectoryRequest,
   ): Promise<RegisterWorkspaceDirectoryResult> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      SubnetIds: params["SubnetIds"],
+      EnableWorkDocs: params["EnableWorkDocs"],
+      EnableSelfService: params["EnableSelfService"],
+      Tenancy: params["Tenancy"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterWorkspaceDirectory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -740,13 +821,14 @@ export default class WorkSpaces {
   async restoreWorkspace(
     {abortSignal, ...params}: RequestConfig & RestoreWorkspaceRequest,
   ): Promise<RestoreWorkspaceResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkspaceId: params["WorkspaceId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreWorkspace",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -755,13 +837,15 @@ export default class WorkSpaces {
   async revokeIpRules(
     {abortSignal, ...params}: RequestConfig & RevokeIpRulesRequest,
   ): Promise<RevokeIpRulesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GroupId: params["GroupId"],
+      UserRules: params["UserRules"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RevokeIpRules",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -770,14 +854,14 @@ export default class WorkSpaces {
   async startWorkspaces(
     {abortSignal, ...params}: RequestConfig & StartWorkspacesRequest,
   ): Promise<StartWorkspacesResult> {
-    const body: JSONObject = {...params,
-    StartWorkspaceRequests: params["StartWorkspaceRequests"]?.map(x => fromStartRequest(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      StartWorkspaceRequests: params["StartWorkspaceRequests"]?.map(x => fromStartRequest(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartWorkspaces",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FailedRequests": [toFailedWorkspaceChangeRequest],
@@ -788,14 +872,14 @@ export default class WorkSpaces {
   async stopWorkspaces(
     {abortSignal, ...params}: RequestConfig & StopWorkspacesRequest,
   ): Promise<StopWorkspacesResult> {
-    const body: JSONObject = {...params,
-    StopWorkspaceRequests: params["StopWorkspaceRequests"]?.map(x => fromStopRequest(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      StopWorkspaceRequests: params["StopWorkspaceRequests"]?.map(x => fromStopRequest(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopWorkspaces",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FailedRequests": [toFailedWorkspaceChangeRequest],
@@ -806,14 +890,14 @@ export default class WorkSpaces {
   async terminateWorkspaces(
     {abortSignal, ...params}: RequestConfig & TerminateWorkspacesRequest,
   ): Promise<TerminateWorkspacesResult> {
-    const body: JSONObject = {...params,
-    TerminateWorkspaceRequests: params["TerminateWorkspaceRequests"]?.map(x => fromTerminateRequest(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TerminateWorkspaceRequests: params["TerminateWorkspaceRequests"]?.map(x => fromTerminateRequest(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TerminateWorkspaces",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FailedRequests": [toFailedWorkspaceChangeRequest],
@@ -824,14 +908,15 @@ export default class WorkSpaces {
   async updateConnectionAliasPermission(
     {abortSignal, ...params}: RequestConfig & UpdateConnectionAliasPermissionRequest,
   ): Promise<UpdateConnectionAliasPermissionResult> {
-    const body: JSONObject = {...params,
-    ConnectionAliasPermission: fromConnectionAliasPermission(params["ConnectionAliasPermission"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AliasId: params["AliasId"],
+      ConnectionAliasPermission: fromConnectionAliasPermission(params["ConnectionAliasPermission"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateConnectionAliasPermission",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -840,14 +925,15 @@ export default class WorkSpaces {
   async updateRulesOfIpGroup(
     {abortSignal, ...params}: RequestConfig & UpdateRulesOfIpGroupRequest,
   ): Promise<UpdateRulesOfIpGroupResult> {
-    const body: JSONObject = {...params,
-    UserRules: params["UserRules"]?.map(x => fromIpRuleItem(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      GroupId: params["GroupId"],
+      UserRules: params["UserRules"]?.map(x => fromIpRuleItem(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRulesOfIpGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -856,13 +942,16 @@ export default class WorkSpaces {
   async updateWorkspaceImagePermission(
     {abortSignal, ...params}: RequestConfig & UpdateWorkspaceImagePermissionRequest,
   ): Promise<UpdateWorkspaceImagePermissionResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ImageId: params["ImageId"],
+      AllowCopyImage: params["AllowCopyImage"],
+      SharedAccountId: params["SharedAccountId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateWorkspaceImagePermission",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1429,13 +1518,15 @@ export interface IpRuleItem {
   ipRule?: string | null;
   ruleDesc?: string | null;
 }
-function fromIpRuleItem(input?: IpRuleItem | null): JSONValue {
+function fromIpRuleItem(input?: IpRuleItem | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ipRule: input["ipRule"],
+    ruleDesc: input["ruleDesc"],
   }
 }
-function toIpRuleItem(root: JSONValue): IpRuleItem {
-  return prt.readObj({
+function toIpRuleItem(root: jsonP.JSONValue): IpRuleItem {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ipRule": "s",
@@ -1449,13 +1540,15 @@ export interface Tag {
   Key: string;
   Value?: string | null;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
     },
@@ -1476,15 +1569,21 @@ export interface WorkspaceRequest {
   WorkspaceProperties?: WorkspaceProperties | null;
   Tags?: Tag[] | null;
 }
-function fromWorkspaceRequest(input?: WorkspaceRequest | null): JSONValue {
+function fromWorkspaceRequest(input?: WorkspaceRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DirectoryId: input["DirectoryId"],
+    UserName: input["UserName"],
+    BundleId: input["BundleId"],
+    VolumeEncryptionKey: input["VolumeEncryptionKey"],
+    UserVolumeEncryptionEnabled: input["UserVolumeEncryptionEnabled"],
+    RootVolumeEncryptionEnabled: input["RootVolumeEncryptionEnabled"],
     WorkspaceProperties: fromWorkspaceProperties(input["WorkspaceProperties"]),
     Tags: input["Tags"]?.map(x => fromTag(x)),
   }
 }
-function toWorkspaceRequest(root: JSONValue): WorkspaceRequest {
-  return prt.readObj({
+function toWorkspaceRequest(root: jsonP.JSONValue): WorkspaceRequest {
+  return jsonP.readObj({
     required: {
       "DirectoryId": "s",
       "UserName": "s",
@@ -1508,20 +1607,25 @@ export interface WorkspaceProperties {
   UserVolumeSizeGib?: number | null;
   ComputeTypeName?: Compute | null;
 }
-function fromWorkspaceProperties(input?: WorkspaceProperties | null): JSONValue {
+function fromWorkspaceProperties(input?: WorkspaceProperties | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RunningMode: input["RunningMode"],
+    RunningModeAutoStopTimeoutInMinutes: input["RunningModeAutoStopTimeoutInMinutes"],
+    RootVolumeSizeGib: input["RootVolumeSizeGib"],
+    UserVolumeSizeGib: input["UserVolumeSizeGib"],
+    ComputeTypeName: input["ComputeTypeName"],
   }
 }
-function toWorkspaceProperties(root: JSONValue): WorkspaceProperties {
-  return prt.readObj({
+function toWorkspaceProperties(root: jsonP.JSONValue): WorkspaceProperties {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "RunningMode": toRunningMode,
+      "RunningMode": (x: jsonP.JSONValue) => cmnP.readEnum<RunningMode>(x),
       "RunningModeAutoStopTimeoutInMinutes": "n",
       "RootVolumeSizeGib": "n",
       "UserVolumeSizeGib": "n",
-      "ComputeTypeName": toCompute,
+      "ComputeTypeName": (x: jsonP.JSONValue) => cmnP.readEnum<Compute>(x),
     },
   }, root);
 }
@@ -1530,14 +1634,7 @@ function toWorkspaceProperties(root: JSONValue): WorkspaceProperties {
 export type RunningMode =
 | "AUTO_STOP"
 | "ALWAYS_ON"
-;
-
-function toRunningMode(root: JSONValue): RunningMode | null {
-  return ( false
-    || root == "AUTO_STOP"
-    || root == "ALWAYS_ON"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, enum, output
 export type Compute =
@@ -1548,62 +1645,47 @@ export type Compute =
 | "GRAPHICS"
 | "POWERPRO"
 | "GRAPHICSPRO"
-;
-
-function toCompute(root: JSONValue): Compute | null {
-  return ( false
-    || root == "VALUE"
-    || root == "STANDARD"
-    || root == "PERFORMANCE"
-    || root == "POWER"
-    || root == "GRAPHICS"
-    || root == "POWERPRO"
-    || root == "GRAPHICSPRO"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ImageType =
 | "OWNED"
 | "SHARED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type WorkspaceImageIngestionProcess =
 | "BYOL_REGULAR"
 | "BYOL_GRAPHICS"
 | "BYOL_GRAPHICSPRO"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type Application =
 | "Microsoft_Office_2016"
 | "Microsoft_Office_2019"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type DedicatedTenancySupportEnum =
 | "ENABLED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface ClientProperties {
   ReconnectEnabled?: ReconnectEnum | null;
 }
-function fromClientProperties(input?: ClientProperties | null): JSONValue {
+function fromClientProperties(input?: ClientProperties | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ReconnectEnabled: input["ReconnectEnabled"],
   }
 }
-function toClientProperties(root: JSONValue): ClientProperties {
-  return prt.readObj({
+function toClientProperties(root: jsonP.JSONValue): ClientProperties {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "ReconnectEnabled": toReconnectEnum,
+      "ReconnectEnabled": (x: jsonP.JSONValue) => cmnP.readEnum<ReconnectEnum>(x),
     },
   }, root);
 }
@@ -1612,14 +1694,7 @@ function toClientProperties(root: JSONValue): ClientProperties {
 export type ReconnectEnum =
 | "ENABLED"
 | "DISABLED"
-;
-
-function toReconnectEnum(root: JSONValue): ReconnectEnum | null {
-  return ( false
-    || root == "ENABLED"
-    || root == "DISABLED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface SelfservicePermissions {
@@ -1629,20 +1704,25 @@ export interface SelfservicePermissions {
   SwitchRunningMode?: ReconnectEnum | null;
   RebuildWorkspace?: ReconnectEnum | null;
 }
-function fromSelfservicePermissions(input?: SelfservicePermissions | null): JSONValue {
+function fromSelfservicePermissions(input?: SelfservicePermissions | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RestartWorkspace: input["RestartWorkspace"],
+    IncreaseVolumeSize: input["IncreaseVolumeSize"],
+    ChangeComputeType: input["ChangeComputeType"],
+    SwitchRunningMode: input["SwitchRunningMode"],
+    RebuildWorkspace: input["RebuildWorkspace"],
   }
 }
-function toSelfservicePermissions(root: JSONValue): SelfservicePermissions {
-  return prt.readObj({
+function toSelfservicePermissions(root: jsonP.JSONValue): SelfservicePermissions {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "RestartWorkspace": toReconnectEnum,
-      "IncreaseVolumeSize": toReconnectEnum,
-      "ChangeComputeType": toReconnectEnum,
-      "SwitchRunningMode": toReconnectEnum,
-      "RebuildWorkspace": toReconnectEnum,
+      "RestartWorkspace": (x: jsonP.JSONValue) => cmnP.readEnum<ReconnectEnum>(x),
+      "IncreaseVolumeSize": (x: jsonP.JSONValue) => cmnP.readEnum<ReconnectEnum>(x),
+      "ChangeComputeType": (x: jsonP.JSONValue) => cmnP.readEnum<ReconnectEnum>(x),
+      "SwitchRunningMode": (x: jsonP.JSONValue) => cmnP.readEnum<ReconnectEnum>(x),
+      "RebuildWorkspace": (x: jsonP.JSONValue) => cmnP.readEnum<ReconnectEnum>(x),
     },
   }, root);
 }
@@ -1657,22 +1737,29 @@ export interface WorkspaceAccessProperties {
   DeviceTypeChromeOs?: AccessPropertyValue | null;
   DeviceTypeZeroClient?: AccessPropertyValue | null;
 }
-function fromWorkspaceAccessProperties(input?: WorkspaceAccessProperties | null): JSONValue {
+function fromWorkspaceAccessProperties(input?: WorkspaceAccessProperties | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DeviceTypeWindows: input["DeviceTypeWindows"],
+    DeviceTypeOsx: input["DeviceTypeOsx"],
+    DeviceTypeWeb: input["DeviceTypeWeb"],
+    DeviceTypeIos: input["DeviceTypeIos"],
+    DeviceTypeAndroid: input["DeviceTypeAndroid"],
+    DeviceTypeChromeOs: input["DeviceTypeChromeOs"],
+    DeviceTypeZeroClient: input["DeviceTypeZeroClient"],
   }
 }
-function toWorkspaceAccessProperties(root: JSONValue): WorkspaceAccessProperties {
-  return prt.readObj({
+function toWorkspaceAccessProperties(root: jsonP.JSONValue): WorkspaceAccessProperties {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "DeviceTypeWindows": toAccessPropertyValue,
-      "DeviceTypeOsx": toAccessPropertyValue,
-      "DeviceTypeWeb": toAccessPropertyValue,
-      "DeviceTypeIos": toAccessPropertyValue,
-      "DeviceTypeAndroid": toAccessPropertyValue,
-      "DeviceTypeChromeOs": toAccessPropertyValue,
-      "DeviceTypeZeroClient": toAccessPropertyValue,
+      "DeviceTypeWindows": (x: jsonP.JSONValue) => cmnP.readEnum<AccessPropertyValue>(x),
+      "DeviceTypeOsx": (x: jsonP.JSONValue) => cmnP.readEnum<AccessPropertyValue>(x),
+      "DeviceTypeWeb": (x: jsonP.JSONValue) => cmnP.readEnum<AccessPropertyValue>(x),
+      "DeviceTypeIos": (x: jsonP.JSONValue) => cmnP.readEnum<AccessPropertyValue>(x),
+      "DeviceTypeAndroid": (x: jsonP.JSONValue) => cmnP.readEnum<AccessPropertyValue>(x),
+      "DeviceTypeChromeOs": (x: jsonP.JSONValue) => cmnP.readEnum<AccessPropertyValue>(x),
+      "DeviceTypeZeroClient": (x: jsonP.JSONValue) => cmnP.readEnum<AccessPropertyValue>(x),
     },
   }, root);
 }
@@ -1681,14 +1768,7 @@ function toWorkspaceAccessProperties(root: JSONValue): WorkspaceAccessProperties
 export type AccessPropertyValue =
 | "ALLOW"
 | "DENY"
-;
-
-function toAccessPropertyValue(root: JSONValue): AccessPropertyValue | null {
-  return ( false
-    || root == "ALLOW"
-    || root == "DENY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface WorkspaceCreationProperties {
@@ -1699,9 +1779,15 @@ export interface WorkspaceCreationProperties {
   UserEnabledAsLocalAdministrator?: boolean | null;
   EnableMaintenanceMode?: boolean | null;
 }
-function fromWorkspaceCreationProperties(input?: WorkspaceCreationProperties | null): JSONValue {
+function fromWorkspaceCreationProperties(input?: WorkspaceCreationProperties | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    EnableWorkDocs: input["EnableWorkDocs"],
+    EnableInternetAccess: input["EnableInternetAccess"],
+    DefaultOu: input["DefaultOu"],
+    CustomSecurityGroupId: input["CustomSecurityGroupId"],
+    UserEnabledAsLocalAdministrator: input["UserEnabledAsLocalAdministrator"],
+    EnableMaintenanceMode: input["EnableMaintenanceMode"],
   }
 }
 
@@ -1709,16 +1795,16 @@ function fromWorkspaceCreationProperties(input?: WorkspaceCreationProperties | n
 export type TargetWorkspaceState =
 | "AVAILABLE"
 | "ADMIN_MAINTENANCE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface RebootRequest {
   WorkspaceId: string;
 }
-function fromRebootRequest(input?: RebootRequest | null): JSONValue {
+function fromRebootRequest(input?: RebootRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    WorkspaceId: input["WorkspaceId"],
   }
 }
 
@@ -1726,9 +1812,10 @@ function fromRebootRequest(input?: RebootRequest | null): JSONValue {
 export interface RebuildRequest {
   WorkspaceId: string;
 }
-function fromRebuildRequest(input?: RebuildRequest | null): JSONValue {
+function fromRebuildRequest(input?: RebuildRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    WorkspaceId: input["WorkspaceId"],
   }
 }
 
@@ -1736,22 +1823,16 @@ function fromRebuildRequest(input?: RebuildRequest | null): JSONValue {
 export type Tenancy =
 | "DEDICATED"
 | "SHARED"
-;
-
-function toTenancy(root: JSONValue): Tenancy | null {
-  return ( false
-    || root == "DEDICATED"
-    || root == "SHARED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface StartRequest {
   WorkspaceId?: string | null;
 }
-function fromStartRequest(input?: StartRequest | null): JSONValue {
+function fromStartRequest(input?: StartRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    WorkspaceId: input["WorkspaceId"],
   }
 }
 
@@ -1759,9 +1840,10 @@ function fromStartRequest(input?: StartRequest | null): JSONValue {
 export interface StopRequest {
   WorkspaceId?: string | null;
 }
-function fromStopRequest(input?: StopRequest | null): JSONValue {
+function fromStopRequest(input?: StopRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    WorkspaceId: input["WorkspaceId"],
   }
 }
 
@@ -1769,9 +1851,10 @@ function fromStopRequest(input?: StopRequest | null): JSONValue {
 export interface TerminateRequest {
   WorkspaceId: string;
 }
-function fromTerminateRequest(input?: TerminateRequest | null): JSONValue {
+function fromTerminateRequest(input?: TerminateRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    WorkspaceId: input["WorkspaceId"],
   }
 }
 
@@ -1780,13 +1863,15 @@ export interface ConnectionAliasPermission {
   SharedAccountId: string;
   AllowAssociation: boolean;
 }
-function fromConnectionAliasPermission(input?: ConnectionAliasPermission | null): JSONValue {
+function fromConnectionAliasPermission(input?: ConnectionAliasPermission | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SharedAccountId: input["SharedAccountId"],
+    AllowAssociation: input["AllowAssociation"],
   }
 }
-function toConnectionAliasPermission(root: JSONValue): ConnectionAliasPermission {
-  return prt.readObj({
+function toConnectionAliasPermission(root: jsonP.JSONValue): ConnectionAliasPermission {
+  return jsonP.readObj({
     required: {
       "SharedAccountId": "s",
       "AllowAssociation": "b",
@@ -1801,8 +1886,8 @@ export interface FailedCreateWorkspaceRequest {
   ErrorCode?: string | null;
   ErrorMessage?: string | null;
 }
-function toFailedCreateWorkspaceRequest(root: JSONValue): FailedCreateWorkspaceRequest {
-  return prt.readObj({
+function toFailedCreateWorkspaceRequest(root: jsonP.JSONValue): FailedCreateWorkspaceRequest {
+  return jsonP.readObj({
     required: {},
     optional: {
       "WorkspaceRequest": toWorkspaceRequest,
@@ -1830,15 +1915,15 @@ export interface Workspace {
   WorkspaceProperties?: WorkspaceProperties | null;
   ModificationStates?: ModificationState[] | null;
 }
-function toWorkspace(root: JSONValue): Workspace {
-  return prt.readObj({
+function toWorkspace(root: jsonP.JSONValue): Workspace {
+  return jsonP.readObj({
     required: {},
     optional: {
       "WorkspaceId": "s",
       "DirectoryId": "s",
       "UserName": "s",
       "IpAddress": "s",
-      "State": toWorkspaceState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<WorkspaceState>(x),
       "BundleId": "s",
       "SubnetId": "s",
       "ErrorMessage": "s",
@@ -1872,40 +1957,19 @@ export type WorkspaceState =
 | "STOPPING"
 | "STOPPED"
 | "ERROR"
-;
-function toWorkspaceState(root: JSONValue): WorkspaceState | null {
-  return ( false
-    || root == "PENDING"
-    || root == "AVAILABLE"
-    || root == "IMPAIRED"
-    || root == "UNHEALTHY"
-    || root == "REBOOTING"
-    || root == "STARTING"
-    || root == "REBUILDING"
-    || root == "RESTORING"
-    || root == "MAINTENANCE"
-    || root == "ADMIN_MAINTENANCE"
-    || root == "TERMINATING"
-    || root == "TERMINATED"
-    || root == "SUSPENDED"
-    || root == "UPDATING"
-    || root == "STOPPING"
-    || root == "STOPPED"
-    || root == "ERROR"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ModificationState {
   Resource?: ModificationResourceEnum | null;
   State?: ModificationStateEnum | null;
 }
-function toModificationState(root: JSONValue): ModificationState {
-  return prt.readObj({
+function toModificationState(root: jsonP.JSONValue): ModificationState {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Resource": toModificationResourceEnum,
-      "State": toModificationStateEnum,
+      "Resource": (x: jsonP.JSONValue) => cmnP.readEnum<ModificationResourceEnum>(x),
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<ModificationStateEnum>(x),
     },
   }, root);
 }
@@ -1915,38 +1979,19 @@ export type ModificationResourceEnum =
 | "ROOT_VOLUME"
 | "USER_VOLUME"
 | "COMPUTE_TYPE"
-;
-function toModificationResourceEnum(root: JSONValue): ModificationResourceEnum | null {
-  return ( false
-    || root == "ROOT_VOLUME"
-    || root == "USER_VOLUME"
-    || root == "COMPUTE_TYPE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type ModificationStateEnum =
 | "UPDATE_INITIATED"
 | "UPDATE_IN_PROGRESS"
-;
-function toModificationStateEnum(root: JSONValue): ModificationStateEnum | null {
-  return ( false
-    || root == "UPDATE_INITIATED"
-    || root == "UPDATE_IN_PROGRESS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type DedicatedTenancySupportResultEnum =
 | "ENABLED"
 | "DISABLED"
-;
-function toDedicatedTenancySupportResultEnum(root: JSONValue): DedicatedTenancySupportResultEnum | null {
-  return ( false
-    || root == "ENABLED"
-    || root == "DISABLED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AccountModification {
@@ -1957,12 +2002,12 @@ export interface AccountModification {
   ErrorCode?: string | null;
   ErrorMessage?: string | null;
 }
-function toAccountModification(root: JSONValue): AccountModification {
-  return prt.readObj({
+function toAccountModification(root: jsonP.JSONValue): AccountModification {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "ModificationState": toDedicatedTenancyModificationStateEnum,
-      "DedicatedTenancySupport": toDedicatedTenancySupportResultEnum,
+      "ModificationState": (x: jsonP.JSONValue) => cmnP.readEnum<DedicatedTenancyModificationStateEnum>(x),
+      "DedicatedTenancySupport": (x: jsonP.JSONValue) => cmnP.readEnum<DedicatedTenancySupportResultEnum>(x),
       "DedicatedTenancyManagementCidrRange": "s",
       "StartTime": "d",
       "ErrorCode": "s",
@@ -1976,22 +2021,15 @@ export type DedicatedTenancyModificationStateEnum =
 | "PENDING"
 | "COMPLETED"
 | "FAILED"
-;
-function toDedicatedTenancyModificationStateEnum(root: JSONValue): DedicatedTenancyModificationStateEnum | null {
-  return ( false
-    || root == "PENDING"
-    || root == "COMPLETED"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ClientPropertiesResult {
   ResourceId?: string | null;
   ClientProperties?: ClientProperties | null;
 }
-function toClientPropertiesResult(root: JSONValue): ClientPropertiesResult {
-  return prt.readObj({
+function toClientPropertiesResult(root: jsonP.JSONValue): ClientPropertiesResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ResourceId": "s",
@@ -2008,13 +2046,13 @@ export interface ConnectionAlias {
   OwnerAccountId?: string | null;
   Associations?: ConnectionAliasAssociation[] | null;
 }
-function toConnectionAlias(root: JSONValue): ConnectionAlias {
-  return prt.readObj({
+function toConnectionAlias(root: jsonP.JSONValue): ConnectionAlias {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ConnectionString": "s",
       "AliasId": "s",
-      "State": toConnectionAliasState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<ConnectionAliasState>(x),
       "OwnerAccountId": "s",
       "Associations": [toConnectionAliasAssociation],
     },
@@ -2026,14 +2064,7 @@ export type ConnectionAliasState =
 | "CREATING"
 | "CREATED"
 | "DELETING"
-;
-function toConnectionAliasState(root: JSONValue): ConnectionAliasState | null {
-  return ( false
-    || root == "CREATING"
-    || root == "CREATED"
-    || root == "DELETING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ConnectionAliasAssociation {
@@ -2042,11 +2073,11 @@ export interface ConnectionAliasAssociation {
   ResourceId?: string | null;
   ConnectionIdentifier?: string | null;
 }
-function toConnectionAliasAssociation(root: JSONValue): ConnectionAliasAssociation {
-  return prt.readObj({
+function toConnectionAliasAssociation(root: jsonP.JSONValue): ConnectionAliasAssociation {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "AssociationStatus": toAssociationStatus,
+      "AssociationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AssociationStatus>(x),
       "AssociatedAccountId": "s",
       "ResourceId": "s",
       "ConnectionIdentifier": "s",
@@ -2061,16 +2092,7 @@ export type AssociationStatus =
 | "ASSOCIATED_WITH_SHARED_ACCOUNT"
 | "PENDING_ASSOCIATION"
 | "PENDING_DISASSOCIATION"
-;
-function toAssociationStatus(root: JSONValue): AssociationStatus | null {
-  return ( false
-    || root == "NOT_ASSOCIATED"
-    || root == "ASSOCIATED_WITH_OWNER_ACCOUNT"
-    || root == "ASSOCIATED_WITH_SHARED_ACCOUNT"
-    || root == "PENDING_ASSOCIATION"
-    || root == "PENDING_DISASSOCIATION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface WorkspacesIpGroup {
@@ -2079,8 +2101,8 @@ export interface WorkspacesIpGroup {
   groupDesc?: string | null;
   userRules?: IpRuleItem[] | null;
 }
-function toWorkspacesIpGroup(root: JSONValue): WorkspacesIpGroup {
-  return prt.readObj({
+function toWorkspacesIpGroup(root: jsonP.JSONValue): WorkspacesIpGroup {
+  return jsonP.readObj({
     required: {},
     optional: {
       "groupId": "s",
@@ -2103,8 +2125,8 @@ export interface WorkspaceBundle {
   ComputeType?: ComputeType | null;
   LastUpdatedTime?: Date | number | null;
 }
-function toWorkspaceBundle(root: JSONValue): WorkspaceBundle {
-  return prt.readObj({
+function toWorkspaceBundle(root: jsonP.JSONValue): WorkspaceBundle {
+  return jsonP.readObj({
     required: {},
     optional: {
       "BundleId": "s",
@@ -2124,8 +2146,8 @@ function toWorkspaceBundle(root: JSONValue): WorkspaceBundle {
 export interface RootStorage {
   Capacity?: string | null;
 }
-function toRootStorage(root: JSONValue): RootStorage {
-  return prt.readObj({
+function toRootStorage(root: jsonP.JSONValue): RootStorage {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Capacity": "s",
@@ -2137,8 +2159,8 @@ function toRootStorage(root: JSONValue): RootStorage {
 export interface UserStorage {
   Capacity?: string | null;
 }
-function toUserStorage(root: JSONValue): UserStorage {
-  return prt.readObj({
+function toUserStorage(root: jsonP.JSONValue): UserStorage {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Capacity": "s",
@@ -2150,11 +2172,11 @@ function toUserStorage(root: JSONValue): UserStorage {
 export interface ComputeType {
   Name?: Compute | null;
 }
-function toComputeType(root: JSONValue): ComputeType {
-  return prt.readObj({
+function toComputeType(root: jsonP.JSONValue): ComputeType {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Name": toCompute,
+      "Name": (x: jsonP.JSONValue) => cmnP.readEnum<Compute>(x),
     },
   }, root);
 }
@@ -2178,8 +2200,8 @@ export interface WorkspaceDirectory {
   Tenancy?: Tenancy | null;
   SelfservicePermissions?: SelfservicePermissions | null;
 }
-function toWorkspaceDirectory(root: JSONValue): WorkspaceDirectory {
-  return prt.readObj({
+function toWorkspaceDirectory(root: jsonP.JSONValue): WorkspaceDirectory {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DirectoryId": "s",
@@ -2190,13 +2212,13 @@ function toWorkspaceDirectory(root: JSONValue): WorkspaceDirectory {
       "DnsIpAddresses": ["s"],
       "CustomerUserName": "s",
       "IamRoleId": "s",
-      "DirectoryType": toWorkspaceDirectoryType,
+      "DirectoryType": (x: jsonP.JSONValue) => cmnP.readEnum<WorkspaceDirectoryType>(x),
       "WorkspaceSecurityGroupId": "s",
-      "State": toWorkspaceDirectoryState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<WorkspaceDirectoryState>(x),
       "WorkspaceCreationProperties": toDefaultWorkspaceCreationProperties,
       "ipGroupIds": ["s"],
       "WorkspaceAccessProperties": toWorkspaceAccessProperties,
-      "Tenancy": toTenancy,
+      "Tenancy": (x: jsonP.JSONValue) => cmnP.readEnum<Tenancy>(x),
       "SelfservicePermissions": toSelfservicePermissions,
     },
   }, root);
@@ -2206,13 +2228,7 @@ function toWorkspaceDirectory(root: JSONValue): WorkspaceDirectory {
 export type WorkspaceDirectoryType =
 | "SIMPLE_AD"
 | "AD_CONNECTOR"
-;
-function toWorkspaceDirectoryType(root: JSONValue): WorkspaceDirectoryType | null {
-  return ( false
-    || root == "SIMPLE_AD"
-    || root == "AD_CONNECTOR"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type WorkspaceDirectoryState =
@@ -2221,16 +2237,7 @@ export type WorkspaceDirectoryState =
 | "DEREGISTERING"
 | "DEREGISTERED"
 | "ERROR"
-;
-function toWorkspaceDirectoryState(root: JSONValue): WorkspaceDirectoryState | null {
-  return ( false
-    || root == "REGISTERING"
-    || root == "REGISTERED"
-    || root == "DEREGISTERING"
-    || root == "DEREGISTERED"
-    || root == "ERROR"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface DefaultWorkspaceCreationProperties {
@@ -2241,8 +2248,8 @@ export interface DefaultWorkspaceCreationProperties {
   UserEnabledAsLocalAdministrator?: boolean | null;
   EnableMaintenanceMode?: boolean | null;
 }
-function toDefaultWorkspaceCreationProperties(root: JSONValue): DefaultWorkspaceCreationProperties {
-  return prt.readObj({
+function toDefaultWorkspaceCreationProperties(root: jsonP.JSONValue): DefaultWorkspaceCreationProperties {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EnableWorkDocs": "b",
@@ -2259,8 +2266,8 @@ function toDefaultWorkspaceCreationProperties(root: JSONValue): DefaultWorkspace
 export interface ImagePermission {
   SharedAccountId?: string | null;
 }
-function toImagePermission(root: JSONValue): ImagePermission {
-  return prt.readObj({
+function toImagePermission(root: jsonP.JSONValue): ImagePermission {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SharedAccountId": "s",
@@ -2281,16 +2288,16 @@ export interface WorkspaceImage {
   Created?: Date | number | null;
   OwnerAccountId?: string | null;
 }
-function toWorkspaceImage(root: JSONValue): WorkspaceImage {
-  return prt.readObj({
+function toWorkspaceImage(root: jsonP.JSONValue): WorkspaceImage {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ImageId": "s",
       "Name": "s",
       "Description": "s",
       "OperatingSystem": toOperatingSystem,
-      "State": toWorkspaceImageState,
-      "RequiredTenancy": toWorkspaceImageRequiredTenancy,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<WorkspaceImageState>(x),
+      "RequiredTenancy": (x: jsonP.JSONValue) => cmnP.readEnum<WorkspaceImageRequiredTenancy>(x),
       "ErrorCode": "s",
       "ErrorMessage": "s",
       "Created": "d",
@@ -2303,11 +2310,11 @@ function toWorkspaceImage(root: JSONValue): WorkspaceImage {
 export interface OperatingSystem {
   Type?: OperatingSystemType | null;
 }
-function toOperatingSystem(root: JSONValue): OperatingSystem {
-  return prt.readObj({
+function toOperatingSystem(root: jsonP.JSONValue): OperatingSystem {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Type": toOperatingSystemType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<OperatingSystemType>(x),
     },
   }, root);
 }
@@ -2316,46 +2323,27 @@ function toOperatingSystem(root: JSONValue): OperatingSystem {
 export type OperatingSystemType =
 | "WINDOWS"
 | "LINUX"
-;
-function toOperatingSystemType(root: JSONValue): OperatingSystemType | null {
-  return ( false
-    || root == "WINDOWS"
-    || root == "LINUX"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type WorkspaceImageState =
 | "AVAILABLE"
 | "PENDING"
 | "ERROR"
-;
-function toWorkspaceImageState(root: JSONValue): WorkspaceImageState | null {
-  return ( false
-    || root == "AVAILABLE"
-    || root == "PENDING"
-    || root == "ERROR"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type WorkspaceImageRequiredTenancy =
 | "DEFAULT"
 | "DEDICATED"
-;
-function toWorkspaceImageRequiredTenancy(root: JSONValue): WorkspaceImageRequiredTenancy | null {
-  return ( false
-    || root == "DEFAULT"
-    || root == "DEDICATED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface Snapshot {
   SnapshotTime?: Date | number | null;
 }
-function toSnapshot(root: JSONValue): Snapshot {
-  return prt.readObj({
+function toSnapshot(root: jsonP.JSONValue): Snapshot {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SnapshotTime": "d",
@@ -2370,12 +2358,12 @@ export interface WorkspaceConnectionStatus {
   ConnectionStateCheckTimestamp?: Date | number | null;
   LastKnownUserConnectionTimestamp?: Date | number | null;
 }
-function toWorkspaceConnectionStatus(root: JSONValue): WorkspaceConnectionStatus {
-  return prt.readObj({
+function toWorkspaceConnectionStatus(root: jsonP.JSONValue): WorkspaceConnectionStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
       "WorkspaceId": "s",
-      "ConnectionState": toConnectionState,
+      "ConnectionState": (x: jsonP.JSONValue) => cmnP.readEnum<ConnectionState>(x),
       "ConnectionStateCheckTimestamp": "d",
       "LastKnownUserConnectionTimestamp": "d",
     },
@@ -2387,14 +2375,7 @@ export type ConnectionState =
 | "CONNECTED"
 | "DISCONNECTED"
 | "UNKNOWN"
-;
-function toConnectionState(root: JSONValue): ConnectionState | null {
-  return ( false
-    || root == "CONNECTED"
-    || root == "DISCONNECTED"
-    || root == "UNKNOWN"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, interface
 export interface FailedWorkspaceChangeRequest {
@@ -2402,8 +2383,8 @@ export interface FailedWorkspaceChangeRequest {
   ErrorCode?: string | null;
   ErrorMessage?: string | null;
 }
-function toFailedWorkspaceChangeRequest(root: JSONValue): FailedWorkspaceChangeRequest {
-  return prt.readObj({
+function toFailedWorkspaceChangeRequest(root: jsonP.JSONValue): FailedWorkspaceChangeRequest {
+  return jsonP.readObj({
     required: {},
     optional: {
       "WorkspaceId": "s",

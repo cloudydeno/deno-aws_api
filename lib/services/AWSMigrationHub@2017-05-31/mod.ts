@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class MigrationHub {
   #client: ServiceClient;
@@ -29,14 +29,17 @@ export default class MigrationHub {
   async associateCreatedArtifact(
     {abortSignal, ...params}: RequestConfig & AssociateCreatedArtifactRequest,
   ): Promise<AssociateCreatedArtifactResult> {
-    const body: JSONObject = {...params,
-    CreatedArtifact: fromCreatedArtifact(params["CreatedArtifact"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProgressUpdateStream: params["ProgressUpdateStream"],
+      MigrationTaskName: params["MigrationTaskName"],
+      CreatedArtifact: fromCreatedArtifact(params["CreatedArtifact"]),
+      DryRun: params["DryRun"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateCreatedArtifact",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -45,14 +48,17 @@ export default class MigrationHub {
   async associateDiscoveredResource(
     {abortSignal, ...params}: RequestConfig & AssociateDiscoveredResourceRequest,
   ): Promise<AssociateDiscoveredResourceResult> {
-    const body: JSONObject = {...params,
-    DiscoveredResource: fromDiscoveredResource(params["DiscoveredResource"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProgressUpdateStream: params["ProgressUpdateStream"],
+      MigrationTaskName: params["MigrationTaskName"],
+      DiscoveredResource: fromDiscoveredResource(params["DiscoveredResource"]),
+      DryRun: params["DryRun"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateDiscoveredResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -61,13 +67,15 @@ export default class MigrationHub {
   async createProgressUpdateStream(
     {abortSignal, ...params}: RequestConfig & CreateProgressUpdateStreamRequest,
   ): Promise<CreateProgressUpdateStreamResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProgressUpdateStreamName: params["ProgressUpdateStreamName"],
+      DryRun: params["DryRun"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProgressUpdateStream",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -76,13 +84,15 @@ export default class MigrationHub {
   async deleteProgressUpdateStream(
     {abortSignal, ...params}: RequestConfig & DeleteProgressUpdateStreamRequest,
   ): Promise<DeleteProgressUpdateStreamResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProgressUpdateStreamName: params["ProgressUpdateStreamName"],
+      DryRun: params["DryRun"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteProgressUpdateStream",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -91,16 +101,17 @@ export default class MigrationHub {
   async describeApplicationState(
     {abortSignal, ...params}: RequestConfig & DescribeApplicationStateRequest,
   ): Promise<DescribeApplicationStateResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ApplicationId: params["ApplicationId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeApplicationState",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "ApplicationStatus": toApplicationStatus,
+        "ApplicationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ApplicationStatus>(x),
         "LastUpdatedTime": "d",
       },
     }, await resp.json());
@@ -109,13 +120,15 @@ export default class MigrationHub {
   async describeMigrationTask(
     {abortSignal, ...params}: RequestConfig & DescribeMigrationTaskRequest,
   ): Promise<DescribeMigrationTaskResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProgressUpdateStream: params["ProgressUpdateStream"],
+      MigrationTaskName: params["MigrationTaskName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMigrationTask",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "MigrationTask": toMigrationTask,
@@ -126,13 +139,17 @@ export default class MigrationHub {
   async disassociateCreatedArtifact(
     {abortSignal, ...params}: RequestConfig & DisassociateCreatedArtifactRequest,
   ): Promise<DisassociateCreatedArtifactResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProgressUpdateStream: params["ProgressUpdateStream"],
+      MigrationTaskName: params["MigrationTaskName"],
+      CreatedArtifactName: params["CreatedArtifactName"],
+      DryRun: params["DryRun"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateCreatedArtifact",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -141,13 +158,17 @@ export default class MigrationHub {
   async disassociateDiscoveredResource(
     {abortSignal, ...params}: RequestConfig & DisassociateDiscoveredResourceRequest,
   ): Promise<DisassociateDiscoveredResourceResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProgressUpdateStream: params["ProgressUpdateStream"],
+      MigrationTaskName: params["MigrationTaskName"],
+      ConfigurationId: params["ConfigurationId"],
+      DryRun: params["DryRun"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateDiscoveredResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -156,13 +177,16 @@ export default class MigrationHub {
   async importMigrationTask(
     {abortSignal, ...params}: RequestConfig & ImportMigrationTaskRequest,
   ): Promise<ImportMigrationTaskResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProgressUpdateStream: params["ProgressUpdateStream"],
+      MigrationTaskName: params["MigrationTaskName"],
+      DryRun: params["DryRun"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportMigrationTask",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -171,13 +195,16 @@ export default class MigrationHub {
   async listApplicationStates(
     {abortSignal, ...params}: RequestConfig & ListApplicationStatesRequest = {},
   ): Promise<ListApplicationStatesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ApplicationIds: params["ApplicationIds"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListApplicationStates",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ApplicationStateList": [toApplicationState],
@@ -189,13 +216,17 @@ export default class MigrationHub {
   async listCreatedArtifacts(
     {abortSignal, ...params}: RequestConfig & ListCreatedArtifactsRequest,
   ): Promise<ListCreatedArtifactsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProgressUpdateStream: params["ProgressUpdateStream"],
+      MigrationTaskName: params["MigrationTaskName"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCreatedArtifacts",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -207,13 +238,17 @@ export default class MigrationHub {
   async listDiscoveredResources(
     {abortSignal, ...params}: RequestConfig & ListDiscoveredResourcesRequest,
   ): Promise<ListDiscoveredResourcesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProgressUpdateStream: params["ProgressUpdateStream"],
+      MigrationTaskName: params["MigrationTaskName"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDiscoveredResources",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -225,13 +260,16 @@ export default class MigrationHub {
   async listMigrationTasks(
     {abortSignal, ...params}: RequestConfig & ListMigrationTasksRequest = {},
   ): Promise<ListMigrationTasksResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      ResourceName: params["ResourceName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListMigrationTasks",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -243,13 +281,15 @@ export default class MigrationHub {
   async listProgressUpdateStreams(
     {abortSignal, ...params}: RequestConfig & ListProgressUpdateStreamsRequest = {},
   ): Promise<ListProgressUpdateStreamsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListProgressUpdateStreams",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ProgressUpdateStreamSummaryList": [toProgressUpdateStreamSummary],
@@ -261,14 +301,17 @@ export default class MigrationHub {
   async notifyApplicationState(
     {abortSignal, ...params}: RequestConfig & NotifyApplicationStateRequest,
   ): Promise<NotifyApplicationStateResult> {
-    const body: JSONObject = {...params,
-    UpdateDateTime: prt.serializeDate_unixTimestamp(params["UpdateDateTime"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ApplicationId: params["ApplicationId"],
+      Status: params["Status"],
+      UpdateDateTime: jsonP.serializeDate_unixTimestamp(params["UpdateDateTime"]),
+      DryRun: params["DryRun"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "NotifyApplicationState",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -277,15 +320,19 @@ export default class MigrationHub {
   async notifyMigrationTaskState(
     {abortSignal, ...params}: RequestConfig & NotifyMigrationTaskStateRequest,
   ): Promise<NotifyMigrationTaskStateResult> {
-    const body: JSONObject = {...params,
-    Task: fromTask(params["Task"]),
-    UpdateDateTime: prt.serializeDate_unixTimestamp(params["UpdateDateTime"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProgressUpdateStream: params["ProgressUpdateStream"],
+      MigrationTaskName: params["MigrationTaskName"],
+      Task: fromTask(params["Task"]),
+      UpdateDateTime: jsonP.serializeDate_unixTimestamp(params["UpdateDateTime"]),
+      NextUpdateSeconds: params["NextUpdateSeconds"],
+      DryRun: params["DryRun"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "NotifyMigrationTaskState",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -294,14 +341,17 @@ export default class MigrationHub {
   async putResourceAttributes(
     {abortSignal, ...params}: RequestConfig & PutResourceAttributesRequest,
   ): Promise<PutResourceAttributesResult> {
-    const body: JSONObject = {...params,
-    ResourceAttributeList: params["ResourceAttributeList"]?.map(x => fromResourceAttribute(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProgressUpdateStream: params["ProgressUpdateStream"],
+      MigrationTaskName: params["MigrationTaskName"],
+      ResourceAttributeList: params["ResourceAttributeList"]?.map(x => fromResourceAttribute(x)),
+      DryRun: params["DryRun"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutResourceAttributes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -519,13 +569,15 @@ export interface CreatedArtifact {
   Name: string;
   Description?: string | null;
 }
-function fromCreatedArtifact(input?: CreatedArtifact | null): JSONValue {
+function fromCreatedArtifact(input?: CreatedArtifact | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Description: input["Description"],
   }
 }
-function toCreatedArtifact(root: JSONValue): CreatedArtifact {
-  return prt.readObj({
+function toCreatedArtifact(root: jsonP.JSONValue): CreatedArtifact {
+  return jsonP.readObj({
     required: {
       "Name": "s",
     },
@@ -540,13 +592,15 @@ export interface DiscoveredResource {
   ConfigurationId: string;
   Description?: string | null;
 }
-function fromDiscoveredResource(input?: DiscoveredResource | null): JSONValue {
+function fromDiscoveredResource(input?: DiscoveredResource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ConfigurationId: input["ConfigurationId"],
+    Description: input["Description"],
   }
 }
-function toDiscoveredResource(root: JSONValue): DiscoveredResource {
-  return prt.readObj({
+function toDiscoveredResource(root: jsonP.JSONValue): DiscoveredResource {
+  return jsonP.readObj({
     required: {
       "ConfigurationId": "s",
     },
@@ -561,15 +615,7 @@ export type ApplicationStatus =
 | "NOT_STARTED"
 | "IN_PROGRESS"
 | "COMPLETED"
-;
-
-function toApplicationStatus(root: JSONValue): ApplicationStatus | null {
-  return ( false
-    || root == "NOT_STARTED"
-    || root == "IN_PROGRESS"
-    || root == "COMPLETED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface Task {
@@ -577,15 +623,18 @@ export interface Task {
   StatusDetail?: string | null;
   ProgressPercent?: number | null;
 }
-function fromTask(input?: Task | null): JSONValue {
+function fromTask(input?: Task | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Status: input["Status"],
+    StatusDetail: input["StatusDetail"],
+    ProgressPercent: input["ProgressPercent"],
   }
 }
-function toTask(root: JSONValue): Task {
-  return prt.readObj({
+function toTask(root: jsonP.JSONValue): Task {
+  return jsonP.readObj({
     required: {
-      "Status": toStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
     },
     optional: {
       "StatusDetail": "s",
@@ -600,31 +649,24 @@ export type Status =
 | "IN_PROGRESS"
 | "FAILED"
 | "COMPLETED"
-;
-
-function toStatus(root: JSONValue): Status | null {
-  return ( false
-    || root == "NOT_STARTED"
-    || root == "IN_PROGRESS"
-    || root == "FAILED"
-    || root == "COMPLETED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface ResourceAttribute {
   Type: ResourceAttributeType;
   Value: string;
 }
-function fromResourceAttribute(input?: ResourceAttribute | null): JSONValue {
+function fromResourceAttribute(input?: ResourceAttribute | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Type: input["Type"],
+    Value: input["Value"],
   }
 }
-function toResourceAttribute(root: JSONValue): ResourceAttribute {
-  return prt.readObj({
+function toResourceAttribute(root: jsonP.JSONValue): ResourceAttribute {
+  return jsonP.readObj({
     required: {
-      "Type": toResourceAttributeType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceAttributeType>(x),
       "Value": "s",
     },
     optional: {},
@@ -643,22 +685,7 @@ export type ResourceAttributeType =
 | "VM_PATH"
 | "BIOS_ID"
 | "MOTHERBOARD_SERIAL_NUMBER"
-;
-
-function toResourceAttributeType(root: JSONValue): ResourceAttributeType | null {
-  return ( false
-    || root == "IPV4_ADDRESS"
-    || root == "IPV6_ADDRESS"
-    || root == "MAC_ADDRESS"
-    || root == "FQDN"
-    || root == "VM_MANAGER_ID"
-    || root == "VM_MANAGED_OBJECT_REFERENCE"
-    || root == "VM_NAME"
-    || root == "VM_PATH"
-    || root == "BIOS_ID"
-    || root == "MOTHERBOARD_SERIAL_NUMBER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface MigrationTask {
@@ -668,8 +695,8 @@ export interface MigrationTask {
   UpdateDateTime?: Date | number | null;
   ResourceAttributeList?: ResourceAttribute[] | null;
 }
-function toMigrationTask(root: JSONValue): MigrationTask {
-  return prt.readObj({
+function toMigrationTask(root: jsonP.JSONValue): MigrationTask {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ProgressUpdateStream": "s",
@@ -687,12 +714,12 @@ export interface ApplicationState {
   ApplicationStatus?: ApplicationStatus | null;
   LastUpdatedTime?: Date | number | null;
 }
-function toApplicationState(root: JSONValue): ApplicationState {
-  return prt.readObj({
+function toApplicationState(root: jsonP.JSONValue): ApplicationState {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ApplicationId": "s",
-      "ApplicationStatus": toApplicationStatus,
+      "ApplicationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ApplicationStatus>(x),
       "LastUpdatedTime": "d",
     },
   }, root);
@@ -707,13 +734,13 @@ export interface MigrationTaskSummary {
   StatusDetail?: string | null;
   UpdateDateTime?: Date | number | null;
 }
-function toMigrationTaskSummary(root: JSONValue): MigrationTaskSummary {
-  return prt.readObj({
+function toMigrationTaskSummary(root: jsonP.JSONValue): MigrationTaskSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ProgressUpdateStream": "s",
       "MigrationTaskName": "s",
-      "Status": toStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
       "ProgressPercent": "n",
       "StatusDetail": "s",
       "UpdateDateTime": "d",
@@ -725,8 +752,8 @@ function toMigrationTaskSummary(root: JSONValue): MigrationTaskSummary {
 export interface ProgressUpdateStreamSummary {
   ProgressUpdateStreamName?: string | null;
 }
-function toProgressUpdateStreamSummary(root: JSONValue): ProgressUpdateStreamSummary {
-  return prt.readObj({
+function toProgressUpdateStreamSummary(root: jsonP.JSONValue): ProgressUpdateStreamSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ProgressUpdateStreamName": "s",

@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class DataPipeline {
   #client: ServiceClient;
@@ -29,15 +29,16 @@ export default class DataPipeline {
   async activatePipeline(
     {abortSignal, ...params}: RequestConfig & ActivatePipelineInput,
   ): Promise<ActivatePipelineOutput> {
-    const body: JSONObject = {...params,
-    parameterValues: params["parameterValues"]?.map(x => fromParameterValue(x)),
-    startTimestamp: prt.serializeDate_unixTimestamp(params["startTimestamp"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineId: params["pipelineId"],
+      parameterValues: params["parameterValues"]?.map(x => fromParameterValue(x)),
+      startTimestamp: jsonP.serializeDate_unixTimestamp(params["startTimestamp"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ActivatePipeline",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -46,14 +47,15 @@ export default class DataPipeline {
   async addTags(
     {abortSignal, ...params}: RequestConfig & AddTagsInput,
   ): Promise<AddTagsOutput> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineId: params["pipelineId"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -62,14 +64,17 @@ export default class DataPipeline {
   async createPipeline(
     {abortSignal, ...params}: RequestConfig & CreatePipelineInput,
   ): Promise<CreatePipelineOutput> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      uniqueId: params["uniqueId"],
+      description: params["description"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePipeline",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "pipelineId": "s",
       },
@@ -80,13 +85,15 @@ export default class DataPipeline {
   async deactivatePipeline(
     {abortSignal, ...params}: RequestConfig & DeactivatePipelineInput,
   ): Promise<DeactivatePipelineOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineId: params["pipelineId"],
+      cancelActive: params["cancelActive"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeactivatePipeline",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -95,8 +102,9 @@ export default class DataPipeline {
   async deletePipeline(
     {abortSignal, ...params}: RequestConfig & DeletePipelineInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineId: params["pipelineId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePipeline",
@@ -106,13 +114,17 @@ export default class DataPipeline {
   async describeObjects(
     {abortSignal, ...params}: RequestConfig & DescribeObjectsInput,
   ): Promise<DescribeObjectsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineId: params["pipelineId"],
+      objectIds: params["objectIds"],
+      evaluateExpressions: params["evaluateExpressions"],
+      marker: params["marker"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeObjects",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "pipelineObjects": [toPipelineObject],
       },
@@ -126,13 +138,14 @@ export default class DataPipeline {
   async describePipelines(
     {abortSignal, ...params}: RequestConfig & DescribePipelinesInput,
   ): Promise<DescribePipelinesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineIds: params["pipelineIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePipelines",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "pipelineDescriptionList": [toPipelineDescription],
       },
@@ -143,13 +156,16 @@ export default class DataPipeline {
   async evaluateExpression(
     {abortSignal, ...params}: RequestConfig & EvaluateExpressionInput,
   ): Promise<EvaluateExpressionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineId: params["pipelineId"],
+      objectId: params["objectId"],
+      expression: params["expression"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EvaluateExpression",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "evaluatedExpression": "s",
       },
@@ -160,13 +176,15 @@ export default class DataPipeline {
   async getPipelineDefinition(
     {abortSignal, ...params}: RequestConfig & GetPipelineDefinitionInput,
   ): Promise<GetPipelineDefinitionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineId: params["pipelineId"],
+      version: params["version"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPipelineDefinition",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "pipelineObjects": [toPipelineObject],
@@ -179,13 +197,14 @@ export default class DataPipeline {
   async listPipelines(
     {abortSignal, ...params}: RequestConfig & ListPipelinesInput = {},
   ): Promise<ListPipelinesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      marker: params["marker"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPipelines",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "pipelineIdList": [toPipelineIdName],
       },
@@ -199,14 +218,16 @@ export default class DataPipeline {
   async pollForTask(
     {abortSignal, ...params}: RequestConfig & PollForTaskInput,
   ): Promise<PollForTaskOutput> {
-    const body: JSONObject = {...params,
-    instanceIdentity: fromInstanceIdentity(params["instanceIdentity"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      workerGroup: params["workerGroup"],
+      hostname: params["hostname"],
+      instanceIdentity: fromInstanceIdentity(params["instanceIdentity"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PollForTask",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "taskObject": toTaskObject,
@@ -217,16 +238,17 @@ export default class DataPipeline {
   async putPipelineDefinition(
     {abortSignal, ...params}: RequestConfig & PutPipelineDefinitionInput,
   ): Promise<PutPipelineDefinitionOutput> {
-    const body: JSONObject = {...params,
-    pipelineObjects: params["pipelineObjects"]?.map(x => fromPipelineObject(x)),
-    parameterObjects: params["parameterObjects"]?.map(x => fromParameterObject(x)),
-    parameterValues: params["parameterValues"]?.map(x => fromParameterValue(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineId: params["pipelineId"],
+      pipelineObjects: params["pipelineObjects"]?.map(x => fromPipelineObject(x)),
+      parameterObjects: params["parameterObjects"]?.map(x => fromParameterObject(x)),
+      parameterValues: params["parameterValues"]?.map(x => fromParameterValue(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutPipelineDefinition",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "errored": "b",
       },
@@ -240,14 +262,18 @@ export default class DataPipeline {
   async queryObjects(
     {abortSignal, ...params}: RequestConfig & QueryObjectsInput,
   ): Promise<QueryObjectsOutput> {
-    const body: JSONObject = {...params,
-    query: fromQuery(params["query"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineId: params["pipelineId"],
+      query: fromQuery(params["query"]),
+      sphere: params["sphere"],
+      marker: params["marker"],
+      limit: params["limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "QueryObjects",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ids": ["s"],
@@ -260,13 +286,15 @@ export default class DataPipeline {
   async removeTags(
     {abortSignal, ...params}: RequestConfig & RemoveTagsInput,
   ): Promise<RemoveTagsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineId: params["pipelineId"],
+      tagKeys: params["tagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -275,14 +303,15 @@ export default class DataPipeline {
   async reportTaskProgress(
     {abortSignal, ...params}: RequestConfig & ReportTaskProgressInput,
   ): Promise<ReportTaskProgressOutput> {
-    const body: JSONObject = {...params,
-    fields: params["fields"]?.map(x => fromField(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      taskId: params["taskId"],
+      fields: params["fields"]?.map(x => fromField(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ReportTaskProgress",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "canceled": "b",
       },
@@ -293,13 +322,16 @@ export default class DataPipeline {
   async reportTaskRunnerHeartbeat(
     {abortSignal, ...params}: RequestConfig & ReportTaskRunnerHeartbeatInput,
   ): Promise<ReportTaskRunnerHeartbeatOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      taskrunnerId: params["taskrunnerId"],
+      workerGroup: params["workerGroup"],
+      hostname: params["hostname"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ReportTaskRunnerHeartbeat",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "terminate": "b",
       },
@@ -310,8 +342,11 @@ export default class DataPipeline {
   async setStatus(
     {abortSignal, ...params}: RequestConfig & SetStatusInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineId: params["pipelineId"],
+      objectIds: params["objectIds"],
+      status: params["status"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetStatus",
@@ -321,13 +356,18 @@ export default class DataPipeline {
   async setTaskStatus(
     {abortSignal, ...params}: RequestConfig & SetTaskStatusInput,
   ): Promise<SetTaskStatusOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      taskId: params["taskId"],
+      taskStatus: params["taskStatus"],
+      errorId: params["errorId"],
+      errorMessage: params["errorMessage"],
+      errorStackTrace: params["errorStackTrace"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetTaskStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -336,16 +376,17 @@ export default class DataPipeline {
   async validatePipelineDefinition(
     {abortSignal, ...params}: RequestConfig & ValidatePipelineDefinitionInput,
   ): Promise<ValidatePipelineDefinitionOutput> {
-    const body: JSONObject = {...params,
-    pipelineObjects: params["pipelineObjects"]?.map(x => fromPipelineObject(x)),
-    parameterObjects: params["parameterObjects"]?.map(x => fromParameterObject(x)),
-    parameterValues: params["parameterValues"]?.map(x => fromParameterValue(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineId: params["pipelineId"],
+      pipelineObjects: params["pipelineObjects"]?.map(x => fromPipelineObject(x)),
+      parameterObjects: params["parameterObjects"]?.map(x => fromParameterObject(x)),
+      parameterValues: params["parameterValues"]?.map(x => fromParameterValue(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ValidatePipelineDefinition",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "errored": "b",
       },
@@ -585,13 +626,15 @@ export interface ParameterValue {
   id: string;
   stringValue: string;
 }
-function fromParameterValue(input?: ParameterValue | null): JSONValue {
+function fromParameterValue(input?: ParameterValue | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    id: input["id"],
+    stringValue: input["stringValue"],
   }
 }
-function toParameterValue(root: JSONValue): ParameterValue {
-  return prt.readObj({
+function toParameterValue(root: jsonP.JSONValue): ParameterValue {
+  return jsonP.readObj({
     required: {
       "id": "s",
       "stringValue": "s",
@@ -605,13 +648,15 @@ export interface Tag {
   key: string;
   value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    key: input["key"],
+    value: input["value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "key": "s",
       "value": "s",
@@ -625,9 +670,11 @@ export interface InstanceIdentity {
   document?: string | null;
   signature?: string | null;
 }
-function fromInstanceIdentity(input?: InstanceIdentity | null): JSONValue {
+function fromInstanceIdentity(input?: InstanceIdentity | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    document: input["document"],
+    signature: input["signature"],
   }
 }
 
@@ -637,14 +684,16 @@ export interface PipelineObject {
   name: string;
   fields: Field[];
 }
-function fromPipelineObject(input?: PipelineObject | null): JSONValue {
+function fromPipelineObject(input?: PipelineObject | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    id: input["id"],
+    name: input["name"],
     fields: input["fields"]?.map(x => fromField(x)),
   }
 }
-function toPipelineObject(root: JSONValue): PipelineObject {
-  return prt.readObj({
+function toPipelineObject(root: jsonP.JSONValue): PipelineObject {
+  return jsonP.readObj({
     required: {
       "id": "s",
       "name": "s",
@@ -660,13 +709,16 @@ export interface Field {
   stringValue?: string | null;
   refValue?: string | null;
 }
-function fromField(input?: Field | null): JSONValue {
+function fromField(input?: Field | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    key: input["key"],
+    stringValue: input["stringValue"],
+    refValue: input["refValue"],
   }
 }
-function toField(root: JSONValue): Field {
-  return prt.readObj({
+function toField(root: jsonP.JSONValue): Field {
+  return jsonP.readObj({
     required: {
       "key": "s",
     },
@@ -682,14 +734,15 @@ export interface ParameterObject {
   id: string;
   attributes: ParameterAttribute[];
 }
-function fromParameterObject(input?: ParameterObject | null): JSONValue {
+function fromParameterObject(input?: ParameterObject | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    id: input["id"],
     attributes: input["attributes"]?.map(x => fromParameterAttribute(x)),
   }
 }
-function toParameterObject(root: JSONValue): ParameterObject {
-  return prt.readObj({
+function toParameterObject(root: jsonP.JSONValue): ParameterObject {
+  return jsonP.readObj({
     required: {
       "id": "s",
       "attributes": [toParameterAttribute],
@@ -703,13 +756,15 @@ export interface ParameterAttribute {
   key: string;
   stringValue: string;
 }
-function fromParameterAttribute(input?: ParameterAttribute | null): JSONValue {
+function fromParameterAttribute(input?: ParameterAttribute | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    key: input["key"],
+    stringValue: input["stringValue"],
   }
 }
-function toParameterAttribute(root: JSONValue): ParameterAttribute {
-  return prt.readObj({
+function toParameterAttribute(root: jsonP.JSONValue): ParameterAttribute {
+  return jsonP.readObj({
     required: {
       "key": "s",
       "stringValue": "s",
@@ -722,9 +777,9 @@ function toParameterAttribute(root: JSONValue): ParameterAttribute {
 export interface Query {
   selectors?: Selector[] | null;
 }
-function fromQuery(input?: Query | null): JSONValue {
+function fromQuery(input?: Query | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     selectors: input["selectors"]?.map(x => fromSelector(x)),
   }
 }
@@ -734,9 +789,10 @@ export interface Selector {
   fieldName?: string | null;
   operator?: Operator | null;
 }
-function fromSelector(input?: Selector | null): JSONValue {
+function fromSelector(input?: Selector | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    fieldName: input["fieldName"],
     operator: fromOperator(input["operator"]),
   }
 }
@@ -746,9 +802,11 @@ export interface Operator {
   type?: OperatorType | null;
   values?: string[] | null;
 }
-function fromOperator(input?: Operator | null): JSONValue {
+function fromOperator(input?: Operator | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    type: input["type"],
+    values: input["values"],
   }
 }
 
@@ -759,16 +817,14 @@ export type OperatorType =
 | "LE"
 | "GE"
 | "BETWEEN"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type TaskStatus =
 | "FINISHED"
 | "FAILED"
 | "FALSE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface PipelineDescription {
@@ -778,8 +834,8 @@ export interface PipelineDescription {
   description?: string | null;
   tags?: Tag[] | null;
 }
-function toPipelineDescription(root: JSONValue): PipelineDescription {
-  return prt.readObj({
+function toPipelineDescription(root: jsonP.JSONValue): PipelineDescription {
+  return jsonP.readObj({
     required: {
       "pipelineId": "s",
       "name": "s",
@@ -797,8 +853,8 @@ export interface PipelineIdName {
   id?: string | null;
   name?: string | null;
 }
-function toPipelineIdName(root: JSONValue): PipelineIdName {
-  return prt.readObj({
+function toPipelineIdName(root: jsonP.JSONValue): PipelineIdName {
+  return jsonP.readObj({
     required: {},
     optional: {
       "id": "s",
@@ -812,16 +868,16 @@ export interface TaskObject {
   taskId?: string | null;
   pipelineId?: string | null;
   attemptId?: string | null;
-  objects?: { [key: string]: PipelineObject } | null;
+  objects?: { [key: string]: PipelineObject | null | undefined } | null;
 }
-function toTaskObject(root: JSONValue): TaskObject {
-  return prt.readObj({
+function toTaskObject(root: jsonP.JSONValue): TaskObject {
+  return jsonP.readObj({
     required: {},
     optional: {
       "taskId": "s",
       "pipelineId": "s",
       "attemptId": "s",
-      "objects": x => prt.readMap(String, toPipelineObject, x),
+      "objects": x => jsonP.readMap(String, toPipelineObject, x),
     },
   }, root);
 }
@@ -831,8 +887,8 @@ export interface ValidationError {
   id?: string | null;
   errors?: string[] | null;
 }
-function toValidationError(root: JSONValue): ValidationError {
-  return prt.readObj({
+function toValidationError(root: jsonP.JSONValue): ValidationError {
+  return jsonP.readObj({
     required: {},
     optional: {
       "id": "s",
@@ -846,8 +902,8 @@ export interface ValidationWarning {
   id?: string | null;
   warnings?: string[] | null;
 }
-function toValidationWarning(root: JSONValue): ValidationWarning {
-  return prt.readObj({
+function toValidationWarning(root: jsonP.JSONValue): ValidationWarning {
+  return jsonP.readObj({
     required: {},
     optional: {
       "id": "s",

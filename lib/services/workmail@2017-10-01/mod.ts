@@ -5,10 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }
@@ -34,13 +33,16 @@ export default class WorkMail {
   async associateDelegateToResource(
     {abortSignal, ...params}: RequestConfig & AssociateDelegateToResourceRequest,
   ): Promise<AssociateDelegateToResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      ResourceId: params["ResourceId"],
+      EntityId: params["EntityId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateDelegateToResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -49,13 +51,16 @@ export default class WorkMail {
   async associateMemberToGroup(
     {abortSignal, ...params}: RequestConfig & AssociateMemberToGroupRequest,
   ): Promise<AssociateMemberToGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      GroupId: params["GroupId"],
+      MemberId: params["MemberId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateMemberToGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -64,14 +69,16 @@ export default class WorkMail {
   async cancelMailboxExportJob(
     {abortSignal, ...params}: RequestConfig & CancelMailboxExportJobRequest,
   ): Promise<CancelMailboxExportJobResponse> {
-    const body: JSONObject = {...params,
-    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+      JobId: params["JobId"],
+      OrganizationId: params["OrganizationId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelMailboxExportJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -80,13 +87,16 @@ export default class WorkMail {
   async createAlias(
     {abortSignal, ...params}: RequestConfig & CreateAliasRequest,
   ): Promise<CreateAliasResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      EntityId: params["EntityId"],
+      Alias: params["Alias"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAlias",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -95,13 +105,15 @@ export default class WorkMail {
   async createGroup(
     {abortSignal, ...params}: RequestConfig & CreateGroupRequest,
   ): Promise<CreateGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GroupId": "s",
@@ -112,15 +124,19 @@ export default class WorkMail {
   async createOrganization(
     {abortSignal, ...params}: RequestConfig & CreateOrganizationRequest,
   ): Promise<CreateOrganizationResponse> {
-    const body: JSONObject = {...params,
-    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-    Domains: params["Domains"]?.map(x => fromDomain(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      Alias: params["Alias"],
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+      Domains: params["Domains"]?.map(x => fromDomain(x)),
+      KmsKeyArn: params["KmsKeyArn"],
+      EnableInteroperability: params["EnableInteroperability"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateOrganization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OrganizationId": "s",
@@ -131,13 +147,16 @@ export default class WorkMail {
   async createResource(
     {abortSignal, ...params}: RequestConfig & CreateResourceRequest,
   ): Promise<CreateResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      Name: params["Name"],
+      Type: params["Type"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResourceId": "s",
@@ -148,13 +167,17 @@ export default class WorkMail {
   async createUser(
     {abortSignal, ...params}: RequestConfig & CreateUserRequest,
   ): Promise<CreateUserResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      Name: params["Name"],
+      DisplayName: params["DisplayName"],
+      Password: params["Password"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUser",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserId": "s",
@@ -165,13 +188,15 @@ export default class WorkMail {
   async deleteAccessControlRule(
     {abortSignal, ...params}: RequestConfig & DeleteAccessControlRuleRequest,
   ): Promise<DeleteAccessControlRuleResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAccessControlRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -180,13 +205,16 @@ export default class WorkMail {
   async deleteAlias(
     {abortSignal, ...params}: RequestConfig & DeleteAliasRequest,
   ): Promise<DeleteAliasResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      EntityId: params["EntityId"],
+      Alias: params["Alias"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAlias",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -195,13 +223,15 @@ export default class WorkMail {
   async deleteGroup(
     {abortSignal, ...params}: RequestConfig & DeleteGroupRequest,
   ): Promise<DeleteGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      GroupId: params["GroupId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -210,13 +240,16 @@ export default class WorkMail {
   async deleteMailboxPermissions(
     {abortSignal, ...params}: RequestConfig & DeleteMailboxPermissionsRequest,
   ): Promise<DeleteMailboxPermissionsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      EntityId: params["EntityId"],
+      GranteeId: params["GranteeId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMailboxPermissions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -225,14 +258,16 @@ export default class WorkMail {
   async deleteOrganization(
     {abortSignal, ...params}: RequestConfig & DeleteOrganizationRequest,
   ): Promise<DeleteOrganizationResponse> {
-    const body: JSONObject = {...params,
-    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+      OrganizationId: params["OrganizationId"],
+      DeleteDirectory: params["DeleteDirectory"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteOrganization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OrganizationId": "s",
@@ -244,13 +279,15 @@ export default class WorkMail {
   async deleteResource(
     {abortSignal, ...params}: RequestConfig & DeleteResourceRequest,
   ): Promise<DeleteResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      ResourceId: params["ResourceId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -259,13 +296,15 @@ export default class WorkMail {
   async deleteRetentionPolicy(
     {abortSignal, ...params}: RequestConfig & DeleteRetentionPolicyRequest,
   ): Promise<DeleteRetentionPolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      Id: params["Id"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRetentionPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -274,13 +313,15 @@ export default class WorkMail {
   async deleteUser(
     {abortSignal, ...params}: RequestConfig & DeleteUserRequest,
   ): Promise<DeleteUserResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      UserId: params["UserId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUser",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -289,13 +330,15 @@ export default class WorkMail {
   async deregisterFromWorkMail(
     {abortSignal, ...params}: RequestConfig & DeregisterFromWorkMailRequest,
   ): Promise<DeregisterFromWorkMailResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      EntityId: params["EntityId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterFromWorkMail",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -304,19 +347,21 @@ export default class WorkMail {
   async describeGroup(
     {abortSignal, ...params}: RequestConfig & DescribeGroupRequest,
   ): Promise<DescribeGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      GroupId: params["GroupId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GroupId": "s",
         "Name": "s",
         "Email": "s",
-        "State": toEntityState,
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<EntityState>(x),
         "EnabledDate": "d",
         "DisabledDate": "d",
       },
@@ -326,13 +371,15 @@ export default class WorkMail {
   async describeMailboxExportJob(
     {abortSignal, ...params}: RequestConfig & DescribeMailboxExportJobRequest,
   ): Promise<DescribeMailboxExportJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+      OrganizationId: params["OrganizationId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMailboxExportJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EntityId": "s",
@@ -343,7 +390,7 @@ export default class WorkMail {
         "S3Prefix": "s",
         "S3Path": "s",
         "EstimatedProgress": "n",
-        "State": toMailboxExportJobState,
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<MailboxExportJobState>(x),
         "ErrorInfo": "s",
         "StartTime": "d",
         "EndTime": "d",
@@ -354,13 +401,14 @@ export default class WorkMail {
   async describeOrganization(
     {abortSignal, ...params}: RequestConfig & DescribeOrganizationRequest,
   ): Promise<DescribeOrganizationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOrganization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OrganizationId": "s",
@@ -379,21 +427,23 @@ export default class WorkMail {
   async describeResource(
     {abortSignal, ...params}: RequestConfig & DescribeResourceRequest,
   ): Promise<DescribeResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      ResourceId: params["ResourceId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResourceId": "s",
         "Email": "s",
         "Name": "s",
-        "Type": toResourceType,
+        "Type": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
         "BookingOptions": toBookingOptions,
-        "State": toEntityState,
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<EntityState>(x),
         "EnabledDate": "d",
         "DisabledDate": "d",
       },
@@ -403,21 +453,23 @@ export default class WorkMail {
   async describeUser(
     {abortSignal, ...params}: RequestConfig & DescribeUserRequest,
   ): Promise<DescribeUserResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      UserId: params["UserId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUser",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserId": "s",
         "Name": "s",
         "Email": "s",
         "DisplayName": "s",
-        "State": toEntityState,
-        "UserRole": toUserRole,
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<EntityState>(x),
+        "UserRole": (x: jsonP.JSONValue) => cmnP.readEnum<UserRole>(x),
         "EnabledDate": "d",
         "DisabledDate": "d",
       },
@@ -427,13 +479,16 @@ export default class WorkMail {
   async disassociateDelegateFromResource(
     {abortSignal, ...params}: RequestConfig & DisassociateDelegateFromResourceRequest,
   ): Promise<DisassociateDelegateFromResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      ResourceId: params["ResourceId"],
+      EntityId: params["EntityId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateDelegateFromResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -442,13 +497,16 @@ export default class WorkMail {
   async disassociateMemberFromGroup(
     {abortSignal, ...params}: RequestConfig & DisassociateMemberFromGroupRequest,
   ): Promise<DisassociateMemberFromGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      GroupId: params["GroupId"],
+      MemberId: params["MemberId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateMemberFromGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -457,16 +515,20 @@ export default class WorkMail {
   async getAccessControlEffect(
     {abortSignal, ...params}: RequestConfig & GetAccessControlEffectRequest,
   ): Promise<GetAccessControlEffectResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      IpAddress: params["IpAddress"],
+      Action: params["Action"],
+      UserId: params["UserId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAccessControlEffect",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Effect": toAccessControlRuleEffect,
+        "Effect": (x: jsonP.JSONValue) => cmnP.readEnum<AccessControlRuleEffect>(x),
         "MatchedRules": ["s"],
       },
     }, await resp.json());
@@ -475,13 +537,14 @@ export default class WorkMail {
   async getDefaultRetentionPolicy(
     {abortSignal, ...params}: RequestConfig & GetDefaultRetentionPolicyRequest,
   ): Promise<GetDefaultRetentionPolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDefaultRetentionPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Id": "s",
@@ -495,13 +558,15 @@ export default class WorkMail {
   async getMailboxDetails(
     {abortSignal, ...params}: RequestConfig & GetMailboxDetailsRequest,
   ): Promise<GetMailboxDetailsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      UserId: params["UserId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMailboxDetails",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "MailboxQuota": "n",
@@ -513,13 +578,14 @@ export default class WorkMail {
   async listAccessControlRules(
     {abortSignal, ...params}: RequestConfig & ListAccessControlRulesRequest,
   ): Promise<ListAccessControlRulesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAccessControlRules",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Rules": [toAccessControlRule],
@@ -530,13 +596,17 @@ export default class WorkMail {
   async listAliases(
     {abortSignal, ...params}: RequestConfig & ListAliasesRequest,
   ): Promise<ListAliasesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      EntityId: params["EntityId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAliases",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Aliases": ["s"],
@@ -548,13 +618,17 @@ export default class WorkMail {
   async listGroupMembers(
     {abortSignal, ...params}: RequestConfig & ListGroupMembersRequest,
   ): Promise<ListGroupMembersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      GroupId: params["GroupId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGroupMembers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Members": [toMember],
@@ -566,13 +640,16 @@ export default class WorkMail {
   async listGroups(
     {abortSignal, ...params}: RequestConfig & ListGroupsRequest,
   ): Promise<ListGroupsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Groups": [toGroup],
@@ -584,13 +661,16 @@ export default class WorkMail {
   async listMailboxExportJobs(
     {abortSignal, ...params}: RequestConfig & ListMailboxExportJobsRequest,
   ): Promise<ListMailboxExportJobsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListMailboxExportJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Jobs": [toMailboxExportJob],
@@ -602,13 +682,17 @@ export default class WorkMail {
   async listMailboxPermissions(
     {abortSignal, ...params}: RequestConfig & ListMailboxPermissionsRequest,
   ): Promise<ListMailboxPermissionsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      EntityId: params["EntityId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListMailboxPermissions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Permissions": [toPermission],
@@ -620,13 +704,15 @@ export default class WorkMail {
   async listOrganizations(
     {abortSignal, ...params}: RequestConfig & ListOrganizationsRequest = {},
   ): Promise<ListOrganizationsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListOrganizations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OrganizationSummaries": [toOrganizationSummary],
@@ -638,13 +724,17 @@ export default class WorkMail {
   async listResourceDelegates(
     {abortSignal, ...params}: RequestConfig & ListResourceDelegatesRequest,
   ): Promise<ListResourceDelegatesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      ResourceId: params["ResourceId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResourceDelegates",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Delegates": [toDelegate],
@@ -656,13 +746,16 @@ export default class WorkMail {
   async listResources(
     {abortSignal, ...params}: RequestConfig & ListResourcesRequest,
   ): Promise<ListResourcesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResources",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Resources": [toResource],
@@ -674,13 +767,14 @@ export default class WorkMail {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -691,13 +785,16 @@ export default class WorkMail {
   async listUsers(
     {abortSignal, ...params}: RequestConfig & ListUsersRequest,
   ): Promise<ListUsersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUsers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Users": [toUser],
@@ -709,13 +806,23 @@ export default class WorkMail {
   async putAccessControlRule(
     {abortSignal, ...params}: RequestConfig & PutAccessControlRuleRequest,
   ): Promise<PutAccessControlRuleResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Effect: params["Effect"],
+      Description: params["Description"],
+      IpRanges: params["IpRanges"],
+      NotIpRanges: params["NotIpRanges"],
+      Actions: params["Actions"],
+      NotActions: params["NotActions"],
+      UserIds: params["UserIds"],
+      NotUserIds: params["NotUserIds"],
+      OrganizationId: params["OrganizationId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAccessControlRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -724,13 +831,17 @@ export default class WorkMail {
   async putMailboxPermissions(
     {abortSignal, ...params}: RequestConfig & PutMailboxPermissionsRequest,
   ): Promise<PutMailboxPermissionsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      EntityId: params["EntityId"],
+      GranteeId: params["GranteeId"],
+      PermissionValues: params["PermissionValues"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutMailboxPermissions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -739,14 +850,18 @@ export default class WorkMail {
   async putRetentionPolicy(
     {abortSignal, ...params}: RequestConfig & PutRetentionPolicyRequest,
   ): Promise<PutRetentionPolicyResponse> {
-    const body: JSONObject = {...params,
-    FolderConfigurations: params["FolderConfigurations"]?.map(x => fromFolderConfiguration(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      Id: params["Id"],
+      Name: params["Name"],
+      Description: params["Description"],
+      FolderConfigurations: params["FolderConfigurations"]?.map(x => fromFolderConfiguration(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRetentionPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -755,13 +870,16 @@ export default class WorkMail {
   async registerToWorkMail(
     {abortSignal, ...params}: RequestConfig & RegisterToWorkMailRequest,
   ): Promise<RegisterToWorkMailResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      EntityId: params["EntityId"],
+      Email: params["Email"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterToWorkMail",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -770,13 +888,16 @@ export default class WorkMail {
   async resetPassword(
     {abortSignal, ...params}: RequestConfig & ResetPasswordRequest,
   ): Promise<ResetPasswordResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      UserId: params["UserId"],
+      Password: params["Password"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResetPassword",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -785,14 +906,21 @@ export default class WorkMail {
   async startMailboxExportJob(
     {abortSignal, ...params}: RequestConfig & StartMailboxExportJobRequest,
   ): Promise<StartMailboxExportJobResponse> {
-    const body: JSONObject = {...params,
-    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+      OrganizationId: params["OrganizationId"],
+      EntityId: params["EntityId"],
+      Description: params["Description"],
+      RoleArn: params["RoleArn"],
+      KmsKeyArn: params["KmsKeyArn"],
+      S3BucketName: params["S3BucketName"],
+      S3Prefix: params["S3Prefix"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartMailboxExportJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
@@ -803,14 +931,15 @@ export default class WorkMail {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -819,13 +948,15 @@ export default class WorkMail {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -834,13 +965,16 @@ export default class WorkMail {
   async updateMailboxQuota(
     {abortSignal, ...params}: RequestConfig & UpdateMailboxQuotaRequest,
   ): Promise<UpdateMailboxQuotaResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      UserId: params["UserId"],
+      MailboxQuota: params["MailboxQuota"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMailboxQuota",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -849,13 +983,16 @@ export default class WorkMail {
   async updatePrimaryEmailAddress(
     {abortSignal, ...params}: RequestConfig & UpdatePrimaryEmailAddressRequest,
   ): Promise<UpdatePrimaryEmailAddressResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      EntityId: params["EntityId"],
+      Email: params["Email"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePrimaryEmailAddress",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -864,14 +1001,17 @@ export default class WorkMail {
   async updateResource(
     {abortSignal, ...params}: RequestConfig & UpdateResourceRequest,
   ): Promise<UpdateResourceResponse> {
-    const body: JSONObject = {...params,
-    BookingOptions: fromBookingOptions(params["BookingOptions"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationId: params["OrganizationId"],
+      ResourceId: params["ResourceId"],
+      Name: params["Name"],
+      BookingOptions: fromBookingOptions(params["BookingOptions"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1503,9 +1643,11 @@ export interface Domain {
   DomainName?: string | null;
   HostedZoneId?: string | null;
 }
-function fromDomain(input?: Domain | null): JSONValue {
+function fromDomain(input?: Domain | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DomainName: input["DomainName"],
+    HostedZoneId: input["HostedZoneId"],
   }
 }
 
@@ -1513,42 +1655,20 @@ function fromDomain(input?: Domain | null): JSONValue {
 export type ResourceType =
 | "ROOM"
 | "EQUIPMENT"
-;
-
-function toResourceType(root: JSONValue): ResourceType | null {
-  return ( false
-    || root == "ROOM"
-    || root == "EQUIPMENT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type AccessControlRuleEffect =
 | "ALLOW"
 | "DENY"
-;
-
-function toAccessControlRuleEffect(root: JSONValue): AccessControlRuleEffect | null {
-  return ( false
-    || root == "ALLOW"
-    || root == "DENY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type PermissionType =
 | "FULL_ACCESS"
 | "SEND_AS"
 | "SEND_ON_BEHALF"
-;
-
-function toPermissionType(root: JSONValue): PermissionType | null {
-  return ( false
-    || root == "FULL_ACCESS"
-    || root == "SEND_AS"
-    || root == "SEND_ON_BEHALF"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface FolderConfiguration {
@@ -1556,16 +1676,19 @@ export interface FolderConfiguration {
   Action: RetentionAction;
   Period?: number | null;
 }
-function fromFolderConfiguration(input?: FolderConfiguration | null): JSONValue {
+function fromFolderConfiguration(input?: FolderConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Action: input["Action"],
+    Period: input["Period"],
   }
 }
-function toFolderConfiguration(root: JSONValue): FolderConfiguration {
-  return prt.readObj({
+function toFolderConfiguration(root: jsonP.JSONValue): FolderConfiguration {
+  return jsonP.readObj({
     required: {
-      "Name": toFolderName,
-      "Action": toRetentionAction,
+      "Name": (x: jsonP.JSONValue) => cmnP.readEnum<FolderName>(x),
+      "Action": (x: jsonP.JSONValue) => cmnP.readEnum<RetentionAction>(x),
     },
     optional: {
       "Period": "n",
@@ -1580,45 +1703,29 @@ export type FolderName =
 | "SENT_ITEMS"
 | "DRAFTS"
 | "JUNK_EMAIL"
-;
-
-function toFolderName(root: JSONValue): FolderName | null {
-  return ( false
-    || root == "INBOX"
-    || root == "DELETED_ITEMS"
-    || root == "SENT_ITEMS"
-    || root == "DRAFTS"
-    || root == "JUNK_EMAIL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type RetentionAction =
 | "NONE"
 | "DELETE"
 | "PERMANENTLY_DELETE"
-;
-
-function toRetentionAction(root: JSONValue): RetentionAction | null {
-  return ( false
-    || root == "NONE"
-    || root == "DELETE"
-    || root == "PERMANENTLY_DELETE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -1633,13 +1740,16 @@ export interface BookingOptions {
   AutoDeclineRecurringRequests?: boolean | null;
   AutoDeclineConflictingRequests?: boolean | null;
 }
-function fromBookingOptions(input?: BookingOptions | null): JSONValue {
+function fromBookingOptions(input?: BookingOptions | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AutoAcceptRequests: input["AutoAcceptRequests"],
+    AutoDeclineRecurringRequests: input["AutoDeclineRecurringRequests"],
+    AutoDeclineConflictingRequests: input["AutoDeclineConflictingRequests"],
   }
 }
-function toBookingOptions(root: JSONValue): BookingOptions {
-  return prt.readObj({
+function toBookingOptions(root: jsonP.JSONValue): BookingOptions {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AutoAcceptRequests": "b",
@@ -1654,14 +1764,7 @@ export type EntityState =
 | "ENABLED"
 | "DISABLED"
 | "DELETED"
-;
-function toEntityState(root: JSONValue): EntityState | null {
-  return ( false
-    || root == "ENABLED"
-    || root == "DISABLED"
-    || root == "DELETED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type MailboxExportJobState =
@@ -1669,29 +1772,14 @@ export type MailboxExportJobState =
 | "COMPLETED"
 | "FAILED"
 | "CANCELLED"
-;
-function toMailboxExportJobState(root: JSONValue): MailboxExportJobState | null {
-  return ( false
-    || root == "RUNNING"
-    || root == "COMPLETED"
-    || root == "FAILED"
-    || root == "CANCELLED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type UserRole =
 | "USER"
 | "RESOURCE"
 | "SYSTEM_USER"
-;
-function toUserRole(root: JSONValue): UserRole | null {
-  return ( false
-    || root == "USER"
-    || root == "RESOURCE"
-    || root == "SYSTEM_USER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AccessControlRule {
@@ -1707,12 +1795,12 @@ export interface AccessControlRule {
   DateCreated?: Date | number | null;
   DateModified?: Date | number | null;
 }
-function toAccessControlRule(root: JSONValue): AccessControlRule {
-  return prt.readObj({
+function toAccessControlRule(root: jsonP.JSONValue): AccessControlRule {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
-      "Effect": toAccessControlRuleEffect,
+      "Effect": (x: jsonP.JSONValue) => cmnP.readEnum<AccessControlRuleEffect>(x),
       "Description": "s",
       "IpRanges": ["s"],
       "NotIpRanges": ["s"],
@@ -1735,14 +1823,14 @@ export interface Member {
   EnabledDate?: Date | number | null;
   DisabledDate?: Date | number | null;
 }
-function toMember(root: JSONValue): Member {
-  return prt.readObj({
+function toMember(root: jsonP.JSONValue): Member {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "Name": "s",
-      "Type": toMemberType,
-      "State": toEntityState,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<MemberType>(x),
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<EntityState>(x),
       "EnabledDate": "d",
       "DisabledDate": "d",
     },
@@ -1753,13 +1841,7 @@ function toMember(root: JSONValue): Member {
 export type MemberType =
 | "GROUP"
 | "USER"
-;
-function toMemberType(root: JSONValue): MemberType | null {
-  return ( false
-    || root == "GROUP"
-    || root == "USER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Group {
@@ -1770,14 +1852,14 @@ export interface Group {
   EnabledDate?: Date | number | null;
   DisabledDate?: Date | number | null;
 }
-function toGroup(root: JSONValue): Group {
-  return prt.readObj({
+function toGroup(root: jsonP.JSONValue): Group {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "Email": "s",
       "Name": "s",
-      "State": toEntityState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<EntityState>(x),
       "EnabledDate": "d",
       "DisabledDate": "d",
     },
@@ -1796,8 +1878,8 @@ export interface MailboxExportJob {
   StartTime?: Date | number | null;
   EndTime?: Date | number | null;
 }
-function toMailboxExportJob(root: JSONValue): MailboxExportJob {
-  return prt.readObj({
+function toMailboxExportJob(root: jsonP.JSONValue): MailboxExportJob {
+  return jsonP.readObj({
     required: {},
     optional: {
       "JobId": "s",
@@ -1806,7 +1888,7 @@ function toMailboxExportJob(root: JSONValue): MailboxExportJob {
       "S3BucketName": "s",
       "S3Path": "s",
       "EstimatedProgress": "n",
-      "State": toMailboxExportJobState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<MailboxExportJobState>(x),
       "StartTime": "d",
       "EndTime": "d",
     },
@@ -1819,12 +1901,12 @@ export interface Permission {
   GranteeType: MemberType;
   PermissionValues: PermissionType[];
 }
-function toPermission(root: JSONValue): Permission {
-  return prt.readObj({
+function toPermission(root: jsonP.JSONValue): Permission {
+  return jsonP.readObj({
     required: {
       "GranteeId": "s",
-      "GranteeType": toMemberType,
-      "PermissionValues": [toPermissionType],
+      "GranteeType": (x: jsonP.JSONValue) => cmnP.readEnum<MemberType>(x),
+      "PermissionValues": [(x: jsonP.JSONValue) => cmnP.readEnum<PermissionType>(x)],
     },
     optional: {},
   }, root);
@@ -1838,8 +1920,8 @@ export interface OrganizationSummary {
   ErrorMessage?: string | null;
   State?: string | null;
 }
-function toOrganizationSummary(root: JSONValue): OrganizationSummary {
-  return prt.readObj({
+function toOrganizationSummary(root: jsonP.JSONValue): OrganizationSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "OrganizationId": "s",
@@ -1856,11 +1938,11 @@ export interface Delegate {
   Id: string;
   Type: MemberType;
 }
-function toDelegate(root: JSONValue): Delegate {
-  return prt.readObj({
+function toDelegate(root: jsonP.JSONValue): Delegate {
+  return jsonP.readObj({
     required: {
       "Id": "s",
-      "Type": toMemberType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<MemberType>(x),
     },
     optional: {},
   }, root);
@@ -1876,15 +1958,15 @@ export interface Resource {
   EnabledDate?: Date | number | null;
   DisabledDate?: Date | number | null;
 }
-function toResource(root: JSONValue): Resource {
-  return prt.readObj({
+function toResource(root: jsonP.JSONValue): Resource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "Email": "s",
       "Name": "s",
-      "Type": toResourceType,
-      "State": toEntityState,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<EntityState>(x),
       "EnabledDate": "d",
       "DisabledDate": "d",
     },
@@ -1902,16 +1984,16 @@ export interface User {
   EnabledDate?: Date | number | null;
   DisabledDate?: Date | number | null;
 }
-function toUser(root: JSONValue): User {
-  return prt.readObj({
+function toUser(root: jsonP.JSONValue): User {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "Email": "s",
       "Name": "s",
       "DisplayName": "s",
-      "State": toEntityState,
-      "UserRole": toUserRole,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<EntityState>(x),
+      "UserRole": (x: jsonP.JSONValue) => cmnP.readEnum<UserRole>(x),
       "EnabledDate": "d",
       "DisabledDate": "d",
     },

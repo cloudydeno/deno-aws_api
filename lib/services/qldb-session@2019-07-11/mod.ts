@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class QLDBSession {
   #client: ServiceClient;
@@ -31,20 +31,21 @@ export default class QLDBSession {
   async sendCommand(
     {abortSignal, ...params}: RequestConfig & SendCommandRequest = {},
   ): Promise<SendCommandResult> {
-    const body: JSONObject = {...params,
-    StartSession: fromStartSessionRequest(params["StartSession"]),
-    StartTransaction: fromStartTransactionRequest(params["StartTransaction"]),
-    EndSession: fromEndSessionRequest(params["EndSession"]),
-    CommitTransaction: fromCommitTransactionRequest(params["CommitTransaction"]),
-    AbortTransaction: fromAbortTransactionRequest(params["AbortTransaction"]),
-    ExecuteStatement: fromExecuteStatementRequest(params["ExecuteStatement"]),
-    FetchPage: fromFetchPageRequest(params["FetchPage"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SessionToken: params["SessionToken"],
+      StartSession: fromStartSessionRequest(params["StartSession"]),
+      StartTransaction: fromStartTransactionRequest(params["StartTransaction"]),
+      EndSession: fromEndSessionRequest(params["EndSession"]),
+      CommitTransaction: fromCommitTransactionRequest(params["CommitTransaction"]),
+      AbortTransaction: fromAbortTransactionRequest(params["AbortTransaction"]),
+      ExecuteStatement: fromExecuteStatementRequest(params["ExecuteStatement"]),
+      FetchPage: fromFetchPageRequest(params["FetchPage"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendCommand",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "StartSession": toStartSessionResult,
@@ -87,27 +88,28 @@ export interface SendCommandResult {
 export interface StartSessionRequest {
   LedgerName: string;
 }
-function fromStartSessionRequest(input?: StartSessionRequest | null): JSONValue {
+function fromStartSessionRequest(input?: StartSessionRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    LedgerName: input["LedgerName"],
   }
 }
 
 // refs: 1 - tags: input, named, interface
 export interface StartTransactionRequest {
 }
-function fromStartTransactionRequest(input?: StartTransactionRequest | null): JSONValue {
+function fromStartTransactionRequest(input?: StartTransactionRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
   }
 }
 
 // refs: 1 - tags: input, named, interface
 export interface EndSessionRequest {
 }
-function fromEndSessionRequest(input?: EndSessionRequest | null): JSONValue {
+function fromEndSessionRequest(input?: EndSessionRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
   }
 }
 
@@ -116,19 +118,20 @@ export interface CommitTransactionRequest {
   TransactionId: string;
   CommitDigest: Uint8Array | string;
 }
-function fromCommitTransactionRequest(input?: CommitTransactionRequest | null): JSONValue {
+function fromCommitTransactionRequest(input?: CommitTransactionRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    CommitDigest: prt.serializeBlob(input["CommitDigest"]),
+  return {
+    TransactionId: input["TransactionId"],
+    CommitDigest: jsonP.serializeBlob(input["CommitDigest"]),
   }
 }
 
 // refs: 1 - tags: input, named, interface
 export interface AbortTransactionRequest {
 }
-function fromAbortTransactionRequest(input?: AbortTransactionRequest | null): JSONValue {
+function fromAbortTransactionRequest(input?: AbortTransactionRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
   }
 }
 
@@ -138,9 +141,11 @@ export interface ExecuteStatementRequest {
   Statement: string;
   Parameters?: ValueHolder[] | null;
 }
-function fromExecuteStatementRequest(input?: ExecuteStatementRequest | null): JSONValue {
+function fromExecuteStatementRequest(input?: ExecuteStatementRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    TransactionId: input["TransactionId"],
+    Statement: input["Statement"],
     Parameters: input["Parameters"]?.map(x => fromValueHolder(x)),
   }
 }
@@ -150,14 +155,15 @@ export interface ValueHolder {
   IonBinary?: Uint8Array | string | null;
   IonText?: string | null;
 }
-function fromValueHolder(input?: ValueHolder | null): JSONValue {
+function fromValueHolder(input?: ValueHolder | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    IonBinary: prt.serializeBlob(input["IonBinary"]),
+  return {
+    IonBinary: jsonP.serializeBlob(input["IonBinary"]),
+    IonText: input["IonText"],
   }
 }
-function toValueHolder(root: JSONValue): ValueHolder {
-  return prt.readObj({
+function toValueHolder(root: jsonP.JSONValue): ValueHolder {
+  return jsonP.readObj({
     required: {},
     optional: {
       "IonBinary": "a",
@@ -171,9 +177,11 @@ export interface FetchPageRequest {
   TransactionId: string;
   NextPageToken: string;
 }
-function fromFetchPageRequest(input?: FetchPageRequest | null): JSONValue {
+function fromFetchPageRequest(input?: FetchPageRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    TransactionId: input["TransactionId"],
+    NextPageToken: input["NextPageToken"],
   }
 }
 
@@ -181,8 +189,8 @@ function fromFetchPageRequest(input?: FetchPageRequest | null): JSONValue {
 export interface StartSessionResult {
   SessionToken?: string | null;
 }
-function toStartSessionResult(root: JSONValue): StartSessionResult {
-  return prt.readObj({
+function toStartSessionResult(root: jsonP.JSONValue): StartSessionResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SessionToken": "s",
@@ -194,8 +202,8 @@ function toStartSessionResult(root: JSONValue): StartSessionResult {
 export interface StartTransactionResult {
   TransactionId?: string | null;
 }
-function toStartTransactionResult(root: JSONValue): StartTransactionResult {
-  return prt.readObj({
+function toStartTransactionResult(root: jsonP.JSONValue): StartTransactionResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TransactionId": "s",
@@ -206,8 +214,8 @@ function toStartTransactionResult(root: JSONValue): StartTransactionResult {
 // refs: 1 - tags: output, named, interface
 export interface EndSessionResult {
 }
-function toEndSessionResult(root: JSONValue): EndSessionResult {
-  return prt.readObj({
+function toEndSessionResult(root: jsonP.JSONValue): EndSessionResult {
+  return jsonP.readObj({
     required: {},
     optional: {},
   }, root);
@@ -218,8 +226,8 @@ export interface CommitTransactionResult {
   TransactionId?: string | null;
   CommitDigest?: Uint8Array | string | null;
 }
-function toCommitTransactionResult(root: JSONValue): CommitTransactionResult {
-  return prt.readObj({
+function toCommitTransactionResult(root: jsonP.JSONValue): CommitTransactionResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TransactionId": "s",
@@ -231,8 +239,8 @@ function toCommitTransactionResult(root: JSONValue): CommitTransactionResult {
 // refs: 1 - tags: output, named, interface
 export interface AbortTransactionResult {
 }
-function toAbortTransactionResult(root: JSONValue): AbortTransactionResult {
-  return prt.readObj({
+function toAbortTransactionResult(root: jsonP.JSONValue): AbortTransactionResult {
+  return jsonP.readObj({
     required: {},
     optional: {},
   }, root);
@@ -242,8 +250,8 @@ function toAbortTransactionResult(root: JSONValue): AbortTransactionResult {
 export interface ExecuteStatementResult {
   FirstPage?: Page | null;
 }
-function toExecuteStatementResult(root: JSONValue): ExecuteStatementResult {
-  return prt.readObj({
+function toExecuteStatementResult(root: jsonP.JSONValue): ExecuteStatementResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FirstPage": toPage,
@@ -256,8 +264,8 @@ export interface Page {
   Values?: ValueHolder[] | null;
   NextPageToken?: string | null;
 }
-function toPage(root: JSONValue): Page {
-  return prt.readObj({
+function toPage(root: jsonP.JSONValue): Page {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Values": [toValueHolder],
@@ -270,8 +278,8 @@ function toPage(root: JSONValue): Page {
 export interface FetchPageResult {
   Page?: Page | null;
 }
-function toFetchPageResult(root: JSONValue): FetchPageResult {
-  return prt.readObj({
+function toFetchPageResult(root: jsonP.JSONValue): FetchPageResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Page": toPage,

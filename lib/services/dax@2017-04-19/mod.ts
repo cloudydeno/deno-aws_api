@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class DAX {
   #client: ServiceClient;
@@ -30,15 +30,26 @@ export default class DAX {
   async createCluster(
     {abortSignal, ...params}: RequestConfig & CreateClusterRequest,
   ): Promise<CreateClusterResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-    SSESpecification: fromSSESpecification(params["SSESpecification"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterName: params["ClusterName"],
+      NodeType: params["NodeType"],
+      Description: params["Description"],
+      ReplicationFactor: params["ReplicationFactor"],
+      AvailabilityZones: params["AvailabilityZones"],
+      SubnetGroupName: params["SubnetGroupName"],
+      SecurityGroupIds: params["SecurityGroupIds"],
+      PreferredMaintenanceWindow: params["PreferredMaintenanceWindow"],
+      NotificationTopicArn: params["NotificationTopicArn"],
+      IamRoleArn: params["IamRoleArn"],
+      ParameterGroupName: params["ParameterGroupName"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      SSESpecification: fromSSESpecification(params["SSESpecification"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCluster",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Cluster": toCluster,
@@ -49,13 +60,15 @@ export default class DAX {
   async createParameterGroup(
     {abortSignal, ...params}: RequestConfig & CreateParameterGroupRequest,
   ): Promise<CreateParameterGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ParameterGroupName: params["ParameterGroupName"],
+      Description: params["Description"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateParameterGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ParameterGroup": toParameterGroup,
@@ -66,13 +79,16 @@ export default class DAX {
   async createSubnetGroup(
     {abortSignal, ...params}: RequestConfig & CreateSubnetGroupRequest,
   ): Promise<CreateSubnetGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SubnetGroupName: params["SubnetGroupName"],
+      Description: params["Description"],
+      SubnetIds: params["SubnetIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSubnetGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SubnetGroup": toSubnetGroup,
@@ -83,13 +99,17 @@ export default class DAX {
   async decreaseReplicationFactor(
     {abortSignal, ...params}: RequestConfig & DecreaseReplicationFactorRequest,
   ): Promise<DecreaseReplicationFactorResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterName: params["ClusterName"],
+      NewReplicationFactor: params["NewReplicationFactor"],
+      AvailabilityZones: params["AvailabilityZones"],
+      NodeIdsToRemove: params["NodeIdsToRemove"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DecreaseReplicationFactor",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Cluster": toCluster,
@@ -100,13 +120,14 @@ export default class DAX {
   async deleteCluster(
     {abortSignal, ...params}: RequestConfig & DeleteClusterRequest,
   ): Promise<DeleteClusterResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterName: params["ClusterName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCluster",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Cluster": toCluster,
@@ -117,13 +138,14 @@ export default class DAX {
   async deleteParameterGroup(
     {abortSignal, ...params}: RequestConfig & DeleteParameterGroupRequest,
   ): Promise<DeleteParameterGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ParameterGroupName: params["ParameterGroupName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteParameterGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DeletionMessage": "s",
@@ -134,13 +156,14 @@ export default class DAX {
   async deleteSubnetGroup(
     {abortSignal, ...params}: RequestConfig & DeleteSubnetGroupRequest,
   ): Promise<DeleteSubnetGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SubnetGroupName: params["SubnetGroupName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSubnetGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DeletionMessage": "s",
@@ -151,13 +174,16 @@ export default class DAX {
   async describeClusters(
     {abortSignal, ...params}: RequestConfig & DescribeClustersRequest = {},
   ): Promise<DescribeClustersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterNames: params["ClusterNames"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeClusters",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -169,13 +195,15 @@ export default class DAX {
   async describeDefaultParameters(
     {abortSignal, ...params}: RequestConfig & DescribeDefaultParametersRequest = {},
   ): Promise<DescribeDefaultParametersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDefaultParameters",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -187,15 +215,20 @@ export default class DAX {
   async describeEvents(
     {abortSignal, ...params}: RequestConfig & DescribeEventsRequest = {},
   ): Promise<DescribeEventsResponse> {
-    const body: JSONObject = {...params,
-    StartTime: prt.serializeDate_unixTimestamp(params["StartTime"]),
-    EndTime: prt.serializeDate_unixTimestamp(params["EndTime"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SourceName: params["SourceName"],
+      SourceType: params["SourceType"],
+      StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
+      EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
+      Duration: params["Duration"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEvents",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -207,13 +240,16 @@ export default class DAX {
   async describeParameterGroups(
     {abortSignal, ...params}: RequestConfig & DescribeParameterGroupsRequest = {},
   ): Promise<DescribeParameterGroupsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ParameterGroupNames: params["ParameterGroupNames"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeParameterGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -225,13 +261,17 @@ export default class DAX {
   async describeParameters(
     {abortSignal, ...params}: RequestConfig & DescribeParametersRequest,
   ): Promise<DescribeParametersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ParameterGroupName: params["ParameterGroupName"],
+      Source: params["Source"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeParameters",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -243,13 +283,16 @@ export default class DAX {
   async describeSubnetGroups(
     {abortSignal, ...params}: RequestConfig & DescribeSubnetGroupsRequest = {},
   ): Promise<DescribeSubnetGroupsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SubnetGroupNames: params["SubnetGroupNames"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSubnetGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -261,13 +304,16 @@ export default class DAX {
   async increaseReplicationFactor(
     {abortSignal, ...params}: RequestConfig & IncreaseReplicationFactorRequest,
   ): Promise<IncreaseReplicationFactorResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterName: params["ClusterName"],
+      NewReplicationFactor: params["NewReplicationFactor"],
+      AvailabilityZones: params["AvailabilityZones"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "IncreaseReplicationFactor",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Cluster": toCluster,
@@ -278,13 +324,15 @@ export default class DAX {
   async listTags(
     {abortSignal, ...params}: RequestConfig & ListTagsRequest,
   ): Promise<ListTagsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceName: params["ResourceName"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -296,13 +344,15 @@ export default class DAX {
   async rebootNode(
     {abortSignal, ...params}: RequestConfig & RebootNodeRequest,
   ): Promise<RebootNodeResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterName: params["ClusterName"],
+      NodeId: params["NodeId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RebootNode",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Cluster": toCluster,
@@ -313,14 +363,15 @@ export default class DAX {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceName: params["ResourceName"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -331,13 +382,15 @@ export default class DAX {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceName: params["ResourceName"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -348,13 +401,20 @@ export default class DAX {
   async updateCluster(
     {abortSignal, ...params}: RequestConfig & UpdateClusterRequest,
   ): Promise<UpdateClusterResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterName: params["ClusterName"],
+      Description: params["Description"],
+      PreferredMaintenanceWindow: params["PreferredMaintenanceWindow"],
+      NotificationTopicArn: params["NotificationTopicArn"],
+      NotificationTopicStatus: params["NotificationTopicStatus"],
+      ParameterGroupName: params["ParameterGroupName"],
+      SecurityGroupIds: params["SecurityGroupIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateCluster",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Cluster": toCluster,
@@ -365,14 +425,15 @@ export default class DAX {
   async updateParameterGroup(
     {abortSignal, ...params}: RequestConfig & UpdateParameterGroupRequest,
   ): Promise<UpdateParameterGroupResponse> {
-    const body: JSONObject = {...params,
-    ParameterNameValues: params["ParameterNameValues"]?.map(x => fromParameterNameValue(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ParameterGroupName: params["ParameterGroupName"],
+      ParameterNameValues: params["ParameterNameValues"]?.map(x => fromParameterNameValue(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateParameterGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ParameterGroup": toParameterGroup,
@@ -383,13 +444,16 @@ export default class DAX {
   async updateSubnetGroup(
     {abortSignal, ...params}: RequestConfig & UpdateSubnetGroupRequest,
   ): Promise<UpdateSubnetGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SubnetGroupName: params["SubnetGroupName"],
+      Description: params["Description"],
+      SubnetIds: params["SubnetIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSubnetGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SubnetGroup": toSubnetGroup,
@@ -670,13 +734,15 @@ export interface Tag {
   Key?: string | null;
   Value?: string | null;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Key": "s",
@@ -689,9 +755,10 @@ function toTag(root: JSONValue): Tag {
 export interface SSESpecification {
   Enabled: boolean;
 }
-function fromSSESpecification(input?: SSESpecification | null): JSONValue {
+function fromSSESpecification(input?: SSESpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Enabled: input["Enabled"],
   }
 }
 
@@ -700,24 +767,18 @@ export type SourceType =
 | "CLUSTER"
 | "PARAMETER_GROUP"
 | "SUBNET_GROUP"
-;
-
-function toSourceType(root: JSONValue): SourceType | null {
-  return ( false
-    || root == "CLUSTER"
-    || root == "PARAMETER_GROUP"
-    || root == "SUBNET_GROUP"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ParameterNameValue {
   ParameterName?: string | null;
   ParameterValue?: string | null;
 }
-function fromParameterNameValue(input?: ParameterNameValue | null): JSONValue {
+function fromParameterNameValue(input?: ParameterNameValue | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ParameterName: input["ParameterName"],
+    ParameterValue: input["ParameterValue"],
   }
 }
 
@@ -741,8 +802,8 @@ export interface Cluster {
   ParameterGroup?: ParameterGroupStatus | null;
   SSEDescription?: SSEDescription | null;
 }
-function toCluster(root: JSONValue): Cluster {
-  return prt.readObj({
+function toCluster(root: jsonP.JSONValue): Cluster {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ClusterName": "s",
@@ -771,8 +832,8 @@ export interface Endpoint {
   Address?: string | null;
   Port?: number | null;
 }
-function toEndpoint(root: JSONValue): Endpoint {
-  return prt.readObj({
+function toEndpoint(root: jsonP.JSONValue): Endpoint {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Address": "s",
@@ -790,8 +851,8 @@ export interface Node {
   NodeStatus?: string | null;
   ParameterGroupStatus?: string | null;
 }
-function toNode(root: JSONValue): Node {
-  return prt.readObj({
+function toNode(root: jsonP.JSONValue): Node {
+  return jsonP.readObj({
     required: {},
     optional: {
       "NodeId": "s",
@@ -809,8 +870,8 @@ export interface NotificationConfiguration {
   TopicArn?: string | null;
   TopicStatus?: string | null;
 }
-function toNotificationConfiguration(root: JSONValue): NotificationConfiguration {
-  return prt.readObj({
+function toNotificationConfiguration(root: jsonP.JSONValue): NotificationConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TopicArn": "s",
@@ -824,8 +885,8 @@ export interface SecurityGroupMembership {
   SecurityGroupIdentifier?: string | null;
   Status?: string | null;
 }
-function toSecurityGroupMembership(root: JSONValue): SecurityGroupMembership {
-  return prt.readObj({
+function toSecurityGroupMembership(root: jsonP.JSONValue): SecurityGroupMembership {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SecurityGroupIdentifier": "s",
@@ -840,8 +901,8 @@ export interface ParameterGroupStatus {
   ParameterApplyStatus?: string | null;
   NodeIdsToReboot?: string[] | null;
 }
-function toParameterGroupStatus(root: JSONValue): ParameterGroupStatus {
-  return prt.readObj({
+function toParameterGroupStatus(root: jsonP.JSONValue): ParameterGroupStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ParameterGroupName": "s",
@@ -855,11 +916,11 @@ function toParameterGroupStatus(root: JSONValue): ParameterGroupStatus {
 export interface SSEDescription {
   Status?: SSEStatus | null;
 }
-function toSSEDescription(root: JSONValue): SSEDescription {
-  return prt.readObj({
+function toSSEDescription(root: jsonP.JSONValue): SSEDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Status": toSSEStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<SSEStatus>(x),
     },
   }, root);
 }
@@ -870,23 +931,15 @@ export type SSEStatus =
 | "ENABLED"
 | "DISABLING"
 | "DISABLED"
-;
-function toSSEStatus(root: JSONValue): SSEStatus | null {
-  return ( false
-    || root == "ENABLING"
-    || root == "ENABLED"
-    || root == "DISABLING"
-    || root == "DISABLED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface ParameterGroup {
   ParameterGroupName?: string | null;
   Description?: string | null;
 }
-function toParameterGroup(root: JSONValue): ParameterGroup {
-  return prt.readObj({
+function toParameterGroup(root: jsonP.JSONValue): ParameterGroup {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ParameterGroupName": "s",
@@ -902,8 +955,8 @@ export interface SubnetGroup {
   VpcId?: string | null;
   Subnets?: Subnet[] | null;
 }
-function toSubnetGroup(root: JSONValue): SubnetGroup {
-  return prt.readObj({
+function toSubnetGroup(root: jsonP.JSONValue): SubnetGroup {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SubnetGroupName": "s",
@@ -919,8 +972,8 @@ export interface Subnet {
   SubnetIdentifier?: string | null;
   SubnetAvailabilityZone?: string | null;
 }
-function toSubnet(root: JSONValue): Subnet {
-  return prt.readObj({
+function toSubnet(root: jsonP.JSONValue): Subnet {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SubnetIdentifier": "s",
@@ -942,20 +995,20 @@ export interface Parameter {
   IsModifiable?: IsModifiable | null;
   ChangeType?: ChangeType | null;
 }
-function toParameter(root: JSONValue): Parameter {
-  return prt.readObj({
+function toParameter(root: jsonP.JSONValue): Parameter {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ParameterName": "s",
-      "ParameterType": toParameterType,
+      "ParameterType": (x: jsonP.JSONValue) => cmnP.readEnum<ParameterType>(x),
       "ParameterValue": "s",
       "NodeTypeSpecificValues": [toNodeTypeSpecificValue],
       "Description": "s",
       "Source": "s",
       "DataType": "s",
       "AllowedValues": "s",
-      "IsModifiable": toIsModifiable,
-      "ChangeType": toChangeType,
+      "IsModifiable": (x: jsonP.JSONValue) => cmnP.readEnum<IsModifiable>(x),
+      "ChangeType": (x: jsonP.JSONValue) => cmnP.readEnum<ChangeType>(x),
     },
   }, root);
 }
@@ -964,21 +1017,15 @@ function toParameter(root: JSONValue): Parameter {
 export type ParameterType =
 | "DEFAULT"
 | "NODE_TYPE_SPECIFIC"
-;
-function toParameterType(root: JSONValue): ParameterType | null {
-  return ( false
-    || root == "DEFAULT"
-    || root == "NODE_TYPE_SPECIFIC"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface NodeTypeSpecificValue {
   NodeType?: string | null;
   Value?: string | null;
 }
-function toNodeTypeSpecificValue(root: JSONValue): NodeTypeSpecificValue {
-  return prt.readObj({
+function toNodeTypeSpecificValue(root: jsonP.JSONValue): NodeTypeSpecificValue {
+  return jsonP.readObj({
     required: {},
     optional: {
       "NodeType": "s",
@@ -992,26 +1039,13 @@ export type IsModifiable =
 | "TRUE"
 | "FALSE"
 | "CONDITIONAL"
-;
-function toIsModifiable(root: JSONValue): IsModifiable | null {
-  return ( false
-    || root == "TRUE"
-    || root == "FALSE"
-    || root == "CONDITIONAL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type ChangeType =
 | "IMMEDIATE"
 | "REQUIRES_REBOOT"
-;
-function toChangeType(root: JSONValue): ChangeType | null {
-  return ( false
-    || root == "IMMEDIATE"
-    || root == "REQUIRES_REBOOT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Event {
@@ -1020,12 +1054,12 @@ export interface Event {
   Message?: string | null;
   Date?: Date | number | null;
 }
-function toEvent(root: JSONValue): Event {
-  return prt.readObj({
+function toEvent(root: jsonP.JSONValue): Event {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SourceName": "s",
-      "SourceType": toSourceType,
+      "SourceType": (x: jsonP.JSONValue) => cmnP.readEnum<SourceType>(x),
       "Message": "s",
       "Date": "d",
     },

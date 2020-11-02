@@ -5,10 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }
@@ -35,14 +34,16 @@ export default class SSM {
   async addTagsToResource(
     {abortSignal, ...params}: RequestConfig & AddTagsToResourceRequest,
   ): Promise<AddTagsToResourceResult> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceType: params["ResourceType"],
+      ResourceId: params["ResourceId"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTagsToResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -51,13 +52,15 @@ export default class SSM {
   async cancelCommand(
     {abortSignal, ...params}: RequestConfig & CancelCommandRequest,
   ): Promise<CancelCommandResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CommandId: params["CommandId"],
+      InstanceIds: params["InstanceIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelCommand",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -66,13 +69,14 @@ export default class SSM {
   async cancelMaintenanceWindowExecution(
     {abortSignal, ...params}: RequestConfig & CancelMaintenanceWindowExecutionRequest,
   ): Promise<CancelMaintenanceWindowExecutionResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowExecutionId: params["WindowExecutionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelMaintenanceWindowExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowExecutionId": "s",
@@ -83,15 +87,19 @@ export default class SSM {
   async createActivation(
     {abortSignal, ...params}: RequestConfig & CreateActivationRequest,
   ): Promise<CreateActivationResult> {
-    const body: JSONObject = {...params,
-    ExpirationDate: prt.serializeDate_unixTimestamp(params["ExpirationDate"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Description: params["Description"],
+      DefaultInstanceName: params["DefaultInstanceName"],
+      IamRole: params["IamRole"],
+      RegistrationLimit: params["RegistrationLimit"],
+      ExpirationDate: jsonP.serializeDate_unixTimestamp(params["ExpirationDate"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateActivation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ActivationId": "s",
@@ -103,15 +111,27 @@ export default class SSM {
   async createAssociation(
     {abortSignal, ...params}: RequestConfig & CreateAssociationRequest,
   ): Promise<CreateAssociationResult> {
-    const body: JSONObject = {...params,
-    Targets: params["Targets"]?.map(x => fromTarget(x)),
-    OutputLocation: fromInstanceAssociationOutputLocation(params["OutputLocation"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      DocumentVersion: params["DocumentVersion"],
+      InstanceId: params["InstanceId"],
+      Parameters: params["Parameters"],
+      Targets: params["Targets"]?.map(x => fromTarget(x)),
+      ScheduleExpression: params["ScheduleExpression"],
+      OutputLocation: fromInstanceAssociationOutputLocation(params["OutputLocation"]),
+      AssociationName: params["AssociationName"],
+      AutomationTargetParameterName: params["AutomationTargetParameterName"],
+      MaxErrors: params["MaxErrors"],
+      MaxConcurrency: params["MaxConcurrency"],
+      ComplianceSeverity: params["ComplianceSeverity"],
+      SyncCompliance: params["SyncCompliance"],
+      ApplyOnlyAtCronInterval: params["ApplyOnlyAtCronInterval"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAssociation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AssociationDescription": toAssociationDescription,
@@ -122,14 +142,14 @@ export default class SSM {
   async createAssociationBatch(
     {abortSignal, ...params}: RequestConfig & CreateAssociationBatchRequest,
   ): Promise<CreateAssociationBatchResult> {
-    const body: JSONObject = {...params,
-    Entries: params["Entries"]?.map(x => fromCreateAssociationBatchRequestEntry(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Entries: params["Entries"]?.map(x => fromCreateAssociationBatchRequestEntry(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAssociationBatch",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Successful": [toAssociationDescription],
@@ -141,16 +161,22 @@ export default class SSM {
   async createDocument(
     {abortSignal, ...params}: RequestConfig & CreateDocumentRequest,
   ): Promise<CreateDocumentResult> {
-    const body: JSONObject = {...params,
-    Requires: params["Requires"]?.map(x => fromDocumentRequires(x)),
-    Attachments: params["Attachments"]?.map(x => fromAttachmentsSource(x)),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Content: params["Content"],
+      Requires: params["Requires"]?.map(x => fromDocumentRequires(x)),
+      Attachments: params["Attachments"]?.map(x => fromAttachmentsSource(x)),
+      Name: params["Name"],
+      VersionName: params["VersionName"],
+      DocumentType: params["DocumentType"],
+      DocumentFormat: params["DocumentFormat"],
+      TargetType: params["TargetType"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDocument",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DocumentDescription": toDocumentDescription,
@@ -161,15 +187,25 @@ export default class SSM {
   async createMaintenanceWindow(
     {abortSignal, ...params}: RequestConfig & CreateMaintenanceWindowRequest,
   ): Promise<CreateMaintenanceWindowResult> {
-    const body: JSONObject = {...params,
-    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Description: params["Description"],
+      StartDate: params["StartDate"],
+      EndDate: params["EndDate"],
+      Schedule: params["Schedule"],
+      ScheduleTimezone: params["ScheduleTimezone"],
+      ScheduleOffset: params["ScheduleOffset"],
+      Duration: params["Duration"],
+      Cutoff: params["Cutoff"],
+      AllowUnassociatedTargets: params["AllowUnassociatedTargets"],
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMaintenanceWindow",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowId": "s",
@@ -180,17 +216,23 @@ export default class SSM {
   async createOpsItem(
     {abortSignal, ...params}: RequestConfig & CreateOpsItemRequest,
   ): Promise<CreateOpsItemResponse> {
-    const body: JSONObject = {...params,
-    OperationalData: prt.serializeMap(params["OperationalData"], x => fromOpsItemDataValue(x)),
-    Notifications: params["Notifications"]?.map(x => fromOpsItemNotification(x)),
-    RelatedOpsItems: params["RelatedOpsItems"]?.map(x => fromRelatedOpsItem(x)),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Description: params["Description"],
+      OperationalData: jsonP.serializeMap(params["OperationalData"], x => fromOpsItemDataValue(x)),
+      Notifications: params["Notifications"]?.map(x => fromOpsItemNotification(x)),
+      Priority: params["Priority"],
+      RelatedOpsItems: params["RelatedOpsItems"]?.map(x => fromRelatedOpsItem(x)),
+      Source: params["Source"],
+      Title: params["Title"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      Category: params["Category"],
+      Severity: params["Severity"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateOpsItem",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OpsItemId": "s",
@@ -201,18 +243,26 @@ export default class SSM {
   async createPatchBaseline(
     {abortSignal, ...params}: RequestConfig & CreatePatchBaselineRequest,
   ): Promise<CreatePatchBaselineResult> {
-    const body: JSONObject = {...params,
-    GlobalFilters: fromPatchFilterGroup(params["GlobalFilters"]),
-    ApprovalRules: fromPatchRuleGroup(params["ApprovalRules"]),
-    Sources: params["Sources"]?.map(x => fromPatchSource(x)),
-    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      OperatingSystem: params["OperatingSystem"],
+      Name: params["Name"],
+      GlobalFilters: fromPatchFilterGroup(params["GlobalFilters"]),
+      ApprovalRules: fromPatchRuleGroup(params["ApprovalRules"]),
+      ApprovedPatches: params["ApprovedPatches"],
+      ApprovedPatchesComplianceLevel: params["ApprovedPatchesComplianceLevel"],
+      ApprovedPatchesEnableNonSecurity: params["ApprovedPatchesEnableNonSecurity"],
+      RejectedPatches: params["RejectedPatches"],
+      RejectedPatchesAction: params["RejectedPatchesAction"],
+      Description: params["Description"],
+      Sources: params["Sources"]?.map(x => fromPatchSource(x)),
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePatchBaseline",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BaselineId": "s",
@@ -223,15 +273,17 @@ export default class SSM {
   async createResourceDataSync(
     {abortSignal, ...params}: RequestConfig & CreateResourceDataSyncRequest,
   ): Promise<CreateResourceDataSyncResult> {
-    const body: JSONObject = {...params,
-    S3Destination: fromResourceDataSyncS3Destination(params["S3Destination"]),
-    SyncSource: fromResourceDataSyncSource(params["SyncSource"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SyncName: params["SyncName"],
+      S3Destination: fromResourceDataSyncS3Destination(params["S3Destination"]),
+      SyncType: params["SyncType"],
+      SyncSource: fromResourceDataSyncSource(params["SyncSource"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateResourceDataSync",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -240,13 +292,14 @@ export default class SSM {
   async deleteActivation(
     {abortSignal, ...params}: RequestConfig & DeleteActivationRequest,
   ): Promise<DeleteActivationResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ActivationId: params["ActivationId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteActivation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -255,13 +308,16 @@ export default class SSM {
   async deleteAssociation(
     {abortSignal, ...params}: RequestConfig & DeleteAssociationRequest = {},
   ): Promise<DeleteAssociationResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      InstanceId: params["InstanceId"],
+      AssociationId: params["AssociationId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAssociation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -270,13 +326,17 @@ export default class SSM {
   async deleteDocument(
     {abortSignal, ...params}: RequestConfig & DeleteDocumentRequest,
   ): Promise<DeleteDocumentResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      DocumentVersion: params["DocumentVersion"],
+      VersionName: params["VersionName"],
+      Force: params["Force"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDocument",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -285,14 +345,17 @@ export default class SSM {
   async deleteInventory(
     {abortSignal, ...params}: RequestConfig & DeleteInventoryRequest,
   ): Promise<DeleteInventoryResult> {
-    const body: JSONObject = {...params,
-    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TypeName: params["TypeName"],
+      SchemaDeleteOption: params["SchemaDeleteOption"],
+      DryRun: params["DryRun"],
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteInventory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DeletionId": "s",
@@ -305,13 +368,14 @@ export default class SSM {
   async deleteMaintenanceWindow(
     {abortSignal, ...params}: RequestConfig & DeleteMaintenanceWindowRequest,
   ): Promise<DeleteMaintenanceWindowResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowId: params["WindowId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMaintenanceWindow",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowId": "s",
@@ -322,13 +386,14 @@ export default class SSM {
   async deleteParameter(
     {abortSignal, ...params}: RequestConfig & DeleteParameterRequest,
   ): Promise<DeleteParameterResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteParameter",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -337,13 +402,14 @@ export default class SSM {
   async deleteParameters(
     {abortSignal, ...params}: RequestConfig & DeleteParametersRequest,
   ): Promise<DeleteParametersResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Names: params["Names"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteParameters",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DeletedParameters": ["s"],
@@ -355,13 +421,14 @@ export default class SSM {
   async deletePatchBaseline(
     {abortSignal, ...params}: RequestConfig & DeletePatchBaselineRequest,
   ): Promise<DeletePatchBaselineResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      BaselineId: params["BaselineId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePatchBaseline",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BaselineId": "s",
@@ -372,13 +439,15 @@ export default class SSM {
   async deleteResourceDataSync(
     {abortSignal, ...params}: RequestConfig & DeleteResourceDataSyncRequest,
   ): Promise<DeleteResourceDataSyncResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SyncName: params["SyncName"],
+      SyncType: params["SyncType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteResourceDataSync",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -387,13 +456,14 @@ export default class SSM {
   async deregisterManagedInstance(
     {abortSignal, ...params}: RequestConfig & DeregisterManagedInstanceRequest,
   ): Promise<DeregisterManagedInstanceResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceId: params["InstanceId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterManagedInstance",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -402,13 +472,15 @@ export default class SSM {
   async deregisterPatchBaselineForPatchGroup(
     {abortSignal, ...params}: RequestConfig & DeregisterPatchBaselineForPatchGroupRequest,
   ): Promise<DeregisterPatchBaselineForPatchGroupResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      BaselineId: params["BaselineId"],
+      PatchGroup: params["PatchGroup"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterPatchBaselineForPatchGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BaselineId": "s",
@@ -420,13 +492,16 @@ export default class SSM {
   async deregisterTargetFromMaintenanceWindow(
     {abortSignal, ...params}: RequestConfig & DeregisterTargetFromMaintenanceWindowRequest,
   ): Promise<DeregisterTargetFromMaintenanceWindowResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowId: params["WindowId"],
+      WindowTargetId: params["WindowTargetId"],
+      Safe: params["Safe"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterTargetFromMaintenanceWindow",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowId": "s",
@@ -438,13 +513,15 @@ export default class SSM {
   async deregisterTaskFromMaintenanceWindow(
     {abortSignal, ...params}: RequestConfig & DeregisterTaskFromMaintenanceWindowRequest,
   ): Promise<DeregisterTaskFromMaintenanceWindowResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowId: params["WindowId"],
+      WindowTaskId: params["WindowTaskId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterTaskFromMaintenanceWindow",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowId": "s",
@@ -456,14 +533,16 @@ export default class SSM {
   async describeActivations(
     {abortSignal, ...params}: RequestConfig & DescribeActivationsRequest = {},
   ): Promise<DescribeActivationsResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromDescribeActivationsFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filters: params["Filters"]?.map(x => fromDescribeActivationsFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeActivations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ActivationList": [toActivation],
@@ -475,13 +554,17 @@ export default class SSM {
   async describeAssociation(
     {abortSignal, ...params}: RequestConfig & DescribeAssociationRequest = {},
   ): Promise<DescribeAssociationResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      InstanceId: params["InstanceId"],
+      AssociationId: params["AssociationId"],
+      AssociationVersion: params["AssociationVersion"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAssociation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AssociationDescription": toAssociationDescription,
@@ -492,14 +575,18 @@ export default class SSM {
   async describeAssociationExecutionTargets(
     {abortSignal, ...params}: RequestConfig & DescribeAssociationExecutionTargetsRequest,
   ): Promise<DescribeAssociationExecutionTargetsResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromAssociationExecutionTargetsFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AssociationId: params["AssociationId"],
+      ExecutionId: params["ExecutionId"],
+      Filters: params["Filters"]?.map(x => fromAssociationExecutionTargetsFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAssociationExecutionTargets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AssociationExecutionTargets": [toAssociationExecutionTarget],
@@ -511,14 +598,17 @@ export default class SSM {
   async describeAssociationExecutions(
     {abortSignal, ...params}: RequestConfig & DescribeAssociationExecutionsRequest,
   ): Promise<DescribeAssociationExecutionsResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromAssociationExecutionFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AssociationId: params["AssociationId"],
+      Filters: params["Filters"]?.map(x => fromAssociationExecutionFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAssociationExecutions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AssociationExecutions": [toAssociationExecution],
@@ -530,14 +620,16 @@ export default class SSM {
   async describeAutomationExecutions(
     {abortSignal, ...params}: RequestConfig & DescribeAutomationExecutionsRequest = {},
   ): Promise<DescribeAutomationExecutionsResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromAutomationExecutionFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filters: params["Filters"]?.map(x => fromAutomationExecutionFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAutomationExecutions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AutomationExecutionMetadataList": [toAutomationExecutionMetadata],
@@ -549,14 +641,18 @@ export default class SSM {
   async describeAutomationStepExecutions(
     {abortSignal, ...params}: RequestConfig & DescribeAutomationStepExecutionsRequest,
   ): Promise<DescribeAutomationStepExecutionsResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromStepExecutionFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AutomationExecutionId: params["AutomationExecutionId"],
+      Filters: params["Filters"]?.map(x => fromStepExecutionFilter(x)),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      ReverseOrder: params["ReverseOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAutomationStepExecutions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "StepExecutions": [toStepExecution],
@@ -568,14 +664,16 @@ export default class SSM {
   async describeAvailablePatches(
     {abortSignal, ...params}: RequestConfig & DescribeAvailablePatchesRequest = {},
   ): Promise<DescribeAvailablePatchesResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromPatchOrchestratorFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filters: params["Filters"]?.map(x => fromPatchOrchestratorFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAvailablePatches",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Patches": [toPatch],
@@ -587,13 +685,16 @@ export default class SSM {
   async describeDocument(
     {abortSignal, ...params}: RequestConfig & DescribeDocumentRequest,
   ): Promise<DescribeDocumentResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      DocumentVersion: params["DocumentVersion"],
+      VersionName: params["VersionName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDocument",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Document": toDocumentDescription,
@@ -604,13 +705,15 @@ export default class SSM {
   async describeDocumentPermission(
     {abortSignal, ...params}: RequestConfig & DescribeDocumentPermissionRequest,
   ): Promise<DescribeDocumentPermissionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      PermissionType: params["PermissionType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDocumentPermission",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AccountIds": ["s"],
@@ -622,13 +725,16 @@ export default class SSM {
   async describeEffectiveInstanceAssociations(
     {abortSignal, ...params}: RequestConfig & DescribeEffectiveInstanceAssociationsRequest,
   ): Promise<DescribeEffectiveInstanceAssociationsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceId: params["InstanceId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEffectiveInstanceAssociations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Associations": [toInstanceAssociation],
@@ -640,13 +746,16 @@ export default class SSM {
   async describeEffectivePatchesForPatchBaseline(
     {abortSignal, ...params}: RequestConfig & DescribeEffectivePatchesForPatchBaselineRequest,
   ): Promise<DescribeEffectivePatchesForPatchBaselineResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      BaselineId: params["BaselineId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEffectivePatchesForPatchBaseline",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EffectivePatches": [toEffectivePatch],
@@ -658,13 +767,16 @@ export default class SSM {
   async describeInstanceAssociationsStatus(
     {abortSignal, ...params}: RequestConfig & DescribeInstanceAssociationsStatusRequest,
   ): Promise<DescribeInstanceAssociationsStatusResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceId: params["InstanceId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstanceAssociationsStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "InstanceAssociationStatusInfos": [toInstanceAssociationStatusInfo],
@@ -676,15 +788,17 @@ export default class SSM {
   async describeInstanceInformation(
     {abortSignal, ...params}: RequestConfig & DescribeInstanceInformationRequest = {},
   ): Promise<DescribeInstanceInformationResult> {
-    const body: JSONObject = {...params,
-    InstanceInformationFilterList: params["InstanceInformationFilterList"]?.map(x => fromInstanceInformationFilter(x)),
-    Filters: params["Filters"]?.map(x => fromInstanceInformationStringFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceInformationFilterList: params["InstanceInformationFilterList"]?.map(x => fromInstanceInformationFilter(x)),
+      Filters: params["Filters"]?.map(x => fromInstanceInformationStringFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstanceInformation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "InstanceInformationList": [toInstanceInformation],
@@ -696,13 +810,16 @@ export default class SSM {
   async describeInstancePatchStates(
     {abortSignal, ...params}: RequestConfig & DescribeInstancePatchStatesRequest,
   ): Promise<DescribeInstancePatchStatesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceIds: params["InstanceIds"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstancePatchStates",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "InstancePatchStates": [toInstancePatchState],
@@ -714,14 +831,17 @@ export default class SSM {
   async describeInstancePatchStatesForPatchGroup(
     {abortSignal, ...params}: RequestConfig & DescribeInstancePatchStatesForPatchGroupRequest,
   ): Promise<DescribeInstancePatchStatesForPatchGroupResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromInstancePatchStateFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      PatchGroup: params["PatchGroup"],
+      Filters: params["Filters"]?.map(x => fromInstancePatchStateFilter(x)),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstancePatchStatesForPatchGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "InstancePatchStates": [toInstancePatchState],
@@ -733,14 +853,17 @@ export default class SSM {
   async describeInstancePatches(
     {abortSignal, ...params}: RequestConfig & DescribeInstancePatchesRequest,
   ): Promise<DescribeInstancePatchesResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromPatchOrchestratorFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceId: params["InstanceId"],
+      Filters: params["Filters"]?.map(x => fromPatchOrchestratorFilter(x)),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstancePatches",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Patches": [toPatchComplianceData],
@@ -752,13 +875,16 @@ export default class SSM {
   async describeInventoryDeletions(
     {abortSignal, ...params}: RequestConfig & DescribeInventoryDeletionsRequest = {},
   ): Promise<DescribeInventoryDeletionsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeletionId: params["DeletionId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInventoryDeletions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "InventoryDeletions": [toInventoryDeletionStatusItem],
@@ -770,14 +896,18 @@ export default class SSM {
   async describeMaintenanceWindowExecutionTaskInvocations(
     {abortSignal, ...params}: RequestConfig & DescribeMaintenanceWindowExecutionTaskInvocationsRequest,
   ): Promise<DescribeMaintenanceWindowExecutionTaskInvocationsResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromMaintenanceWindowFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowExecutionId: params["WindowExecutionId"],
+      TaskId: params["TaskId"],
+      Filters: params["Filters"]?.map(x => fromMaintenanceWindowFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMaintenanceWindowExecutionTaskInvocations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowExecutionTaskInvocationIdentities": [toMaintenanceWindowExecutionTaskInvocationIdentity],
@@ -789,14 +919,17 @@ export default class SSM {
   async describeMaintenanceWindowExecutionTasks(
     {abortSignal, ...params}: RequestConfig & DescribeMaintenanceWindowExecutionTasksRequest,
   ): Promise<DescribeMaintenanceWindowExecutionTasksResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromMaintenanceWindowFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowExecutionId: params["WindowExecutionId"],
+      Filters: params["Filters"]?.map(x => fromMaintenanceWindowFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMaintenanceWindowExecutionTasks",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowExecutionTaskIdentities": [toMaintenanceWindowExecutionTaskIdentity],
@@ -808,14 +941,17 @@ export default class SSM {
   async describeMaintenanceWindowExecutions(
     {abortSignal, ...params}: RequestConfig & DescribeMaintenanceWindowExecutionsRequest,
   ): Promise<DescribeMaintenanceWindowExecutionsResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromMaintenanceWindowFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowId: params["WindowId"],
+      Filters: params["Filters"]?.map(x => fromMaintenanceWindowFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMaintenanceWindowExecutions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowExecutions": [toMaintenanceWindowExecution],
@@ -827,15 +963,19 @@ export default class SSM {
   async describeMaintenanceWindowSchedule(
     {abortSignal, ...params}: RequestConfig & DescribeMaintenanceWindowScheduleRequest = {},
   ): Promise<DescribeMaintenanceWindowScheduleResult> {
-    const body: JSONObject = {...params,
-    Targets: params["Targets"]?.map(x => fromTarget(x)),
-    Filters: params["Filters"]?.map(x => fromPatchOrchestratorFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowId: params["WindowId"],
+      Targets: params["Targets"]?.map(x => fromTarget(x)),
+      ResourceType: params["ResourceType"],
+      Filters: params["Filters"]?.map(x => fromPatchOrchestratorFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMaintenanceWindowSchedule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ScheduledWindowExecutions": [toScheduledWindowExecution],
@@ -847,14 +987,17 @@ export default class SSM {
   async describeMaintenanceWindowTargets(
     {abortSignal, ...params}: RequestConfig & DescribeMaintenanceWindowTargetsRequest,
   ): Promise<DescribeMaintenanceWindowTargetsResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromMaintenanceWindowFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowId: params["WindowId"],
+      Filters: params["Filters"]?.map(x => fromMaintenanceWindowFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMaintenanceWindowTargets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Targets": [toMaintenanceWindowTarget],
@@ -866,14 +1009,17 @@ export default class SSM {
   async describeMaintenanceWindowTasks(
     {abortSignal, ...params}: RequestConfig & DescribeMaintenanceWindowTasksRequest,
   ): Promise<DescribeMaintenanceWindowTasksResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromMaintenanceWindowFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowId: params["WindowId"],
+      Filters: params["Filters"]?.map(x => fromMaintenanceWindowFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMaintenanceWindowTasks",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tasks": [toMaintenanceWindowTask],
@@ -885,14 +1031,16 @@ export default class SSM {
   async describeMaintenanceWindows(
     {abortSignal, ...params}: RequestConfig & DescribeMaintenanceWindowsRequest = {},
   ): Promise<DescribeMaintenanceWindowsResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromMaintenanceWindowFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filters: params["Filters"]?.map(x => fromMaintenanceWindowFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMaintenanceWindows",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowIdentities": [toMaintenanceWindowIdentity],
@@ -904,14 +1052,17 @@ export default class SSM {
   async describeMaintenanceWindowsForTarget(
     {abortSignal, ...params}: RequestConfig & DescribeMaintenanceWindowsForTargetRequest,
   ): Promise<DescribeMaintenanceWindowsForTargetResult> {
-    const body: JSONObject = {...params,
-    Targets: params["Targets"]?.map(x => fromTarget(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Targets: params["Targets"]?.map(x => fromTarget(x)),
+      ResourceType: params["ResourceType"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMaintenanceWindowsForTarget",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowIdentities": [toMaintenanceWindowIdentityForTarget],
@@ -923,14 +1074,16 @@ export default class SSM {
   async describeOpsItems(
     {abortSignal, ...params}: RequestConfig & DescribeOpsItemsRequest = {},
   ): Promise<DescribeOpsItemsResponse> {
-    const body: JSONObject = {...params,
-    OpsItemFilters: params["OpsItemFilters"]?.map(x => fromOpsItemFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      OpsItemFilters: params["OpsItemFilters"]?.map(x => fromOpsItemFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOpsItems",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -942,15 +1095,17 @@ export default class SSM {
   async describeParameters(
     {abortSignal, ...params}: RequestConfig & DescribeParametersRequest = {},
   ): Promise<DescribeParametersResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromParametersFilter(x)),
-    ParameterFilters: params["ParameterFilters"]?.map(x => fromParameterStringFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filters: params["Filters"]?.map(x => fromParametersFilter(x)),
+      ParameterFilters: params["ParameterFilters"]?.map(x => fromParameterStringFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeParameters",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Parameters": [toParameterMetadata],
@@ -962,14 +1117,16 @@ export default class SSM {
   async describePatchBaselines(
     {abortSignal, ...params}: RequestConfig & DescribePatchBaselinesRequest = {},
   ): Promise<DescribePatchBaselinesResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromPatchOrchestratorFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filters: params["Filters"]?.map(x => fromPatchOrchestratorFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePatchBaselines",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BaselineIdentities": [toPatchBaselineIdentity],
@@ -981,13 +1138,14 @@ export default class SSM {
   async describePatchGroupState(
     {abortSignal, ...params}: RequestConfig & DescribePatchGroupStateRequest,
   ): Promise<DescribePatchGroupStateResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PatchGroup: params["PatchGroup"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePatchGroupState",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Instances": "n",
@@ -1006,14 +1164,16 @@ export default class SSM {
   async describePatchGroups(
     {abortSignal, ...params}: RequestConfig & DescribePatchGroupsRequest = {},
   ): Promise<DescribePatchGroupsResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromPatchOrchestratorFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      Filters: params["Filters"]?.map(x => fromPatchOrchestratorFilter(x)),
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePatchGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Mappings": [toPatchGroupPatchBaselineMapping],
@@ -1025,16 +1185,21 @@ export default class SSM {
   async describePatchProperties(
     {abortSignal, ...params}: RequestConfig & DescribePatchPropertiesRequest,
   ): Promise<DescribePatchPropertiesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OperatingSystem: params["OperatingSystem"],
+      Property: params["Property"],
+      PatchSet: params["PatchSet"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePatchProperties",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Properties": [x => prt.readMap(String, String, x)],
+        "Properties": [x => jsonP.readMap(String, String, x)],
         "NextToken": "s",
       },
     }, await resp.json());
@@ -1043,14 +1208,17 @@ export default class SSM {
   async describeSessions(
     {abortSignal, ...params}: RequestConfig & DescribeSessionsRequest,
   ): Promise<DescribeSessionsResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromSessionFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      State: params["State"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filters: params["Filters"]?.map(x => fromSessionFilter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSessions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Sessions": [toSession],
@@ -1062,13 +1230,14 @@ export default class SSM {
   async getAutomationExecution(
     {abortSignal, ...params}: RequestConfig & GetAutomationExecutionRequest,
   ): Promise<GetAutomationExecutionResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AutomationExecutionId: params["AutomationExecutionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAutomationExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AutomationExecution": toAutomationExecution,
@@ -1079,16 +1248,18 @@ export default class SSM {
   async getCalendarState(
     {abortSignal, ...params}: RequestConfig & GetCalendarStateRequest,
   ): Promise<GetCalendarStateResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CalendarNames: params["CalendarNames"],
+      AtTime: params["AtTime"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCalendarState",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "State": toCalendarState,
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<CalendarState>(x),
         "AtTime": "s",
         "NextTransitionTime": "s",
       },
@@ -1098,13 +1269,16 @@ export default class SSM {
   async getCommandInvocation(
     {abortSignal, ...params}: RequestConfig & GetCommandInvocationRequest,
   ): Promise<GetCommandInvocationResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CommandId: params["CommandId"],
+      InstanceId: params["InstanceId"],
+      PluginName: params["PluginName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCommandInvocation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CommandId": "s",
@@ -1117,7 +1291,7 @@ export default class SSM {
         "ExecutionStartDateTime": "s",
         "ExecutionElapsedTime": "s",
         "ExecutionEndDateTime": "s",
-        "Status": toCommandInvocationStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<CommandInvocationStatus>(x),
         "StatusDetails": "s",
         "StandardOutputContent": "s",
         "StandardOutputUrl": "s",
@@ -1131,17 +1305,18 @@ export default class SSM {
   async getConnectionStatus(
     {abortSignal, ...params}: RequestConfig & GetConnectionStatusRequest,
   ): Promise<GetConnectionStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Target: params["Target"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetConnectionStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Target": "s",
-        "Status": toConnectionStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ConnectionStatus>(x),
       },
     }, await resp.json());
   }
@@ -1149,17 +1324,18 @@ export default class SSM {
   async getDefaultPatchBaseline(
     {abortSignal, ...params}: RequestConfig & GetDefaultPatchBaselineRequest = {},
   ): Promise<GetDefaultPatchBaselineResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OperatingSystem: params["OperatingSystem"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDefaultPatchBaseline",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BaselineId": "s",
-        "OperatingSystem": toOperatingSystem,
+        "OperatingSystem": (x: jsonP.JSONValue) => cmnP.readEnum<OperatingSystem>(x),
       },
     }, await resp.json());
   }
@@ -1167,13 +1343,15 @@ export default class SSM {
   async getDeployablePatchSnapshotForInstance(
     {abortSignal, ...params}: RequestConfig & GetDeployablePatchSnapshotForInstanceRequest,
   ): Promise<GetDeployablePatchSnapshotForInstanceResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceId: params["InstanceId"],
+      SnapshotId: params["SnapshotId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDeployablePatchSnapshotForInstance",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "InstanceId": "s",
@@ -1187,23 +1365,27 @@ export default class SSM {
   async getDocument(
     {abortSignal, ...params}: RequestConfig & GetDocumentRequest,
   ): Promise<GetDocumentResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      VersionName: params["VersionName"],
+      DocumentVersion: params["DocumentVersion"],
+      DocumentFormat: params["DocumentFormat"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDocument",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Name": "s",
         "VersionName": "s",
         "DocumentVersion": "s",
-        "Status": toDocumentStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentStatus>(x),
         "StatusInformation": "s",
         "Content": "s",
-        "DocumentType": toDocumentType,
-        "DocumentFormat": toDocumentFormat,
+        "DocumentType": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentType>(x),
+        "DocumentFormat": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentFormat>(x),
         "Requires": [toDocumentRequires],
         "AttachmentsContent": [toAttachmentContent],
       },
@@ -1213,16 +1395,18 @@ export default class SSM {
   async getInventory(
     {abortSignal, ...params}: RequestConfig & GetInventoryRequest = {},
   ): Promise<GetInventoryResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromInventoryFilter(x)),
-    Aggregators: params["Aggregators"]?.map(x => fromInventoryAggregator(x)),
-    ResultAttributes: params["ResultAttributes"]?.map(x => fromResultAttribute(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filters: params["Filters"]?.map(x => fromInventoryFilter(x)),
+      Aggregators: params["Aggregators"]?.map(x => fromInventoryAggregator(x)),
+      ResultAttributes: params["ResultAttributes"]?.map(x => fromResultAttribute(x)),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInventory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Entities": [toInventoryResultEntity],
@@ -1234,13 +1418,18 @@ export default class SSM {
   async getInventorySchema(
     {abortSignal, ...params}: RequestConfig & GetInventorySchemaRequest = {},
   ): Promise<GetInventorySchemaResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TypeName: params["TypeName"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      Aggregator: params["Aggregator"],
+      SubType: params["SubType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInventorySchema",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Schemas": [toInventoryItemSchema],
@@ -1252,13 +1441,14 @@ export default class SSM {
   async getMaintenanceWindow(
     {abortSignal, ...params}: RequestConfig & GetMaintenanceWindowRequest,
   ): Promise<GetMaintenanceWindowResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowId: params["WindowId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMaintenanceWindow",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowId": "s",
@@ -1283,18 +1473,19 @@ export default class SSM {
   async getMaintenanceWindowExecution(
     {abortSignal, ...params}: RequestConfig & GetMaintenanceWindowExecutionRequest,
   ): Promise<GetMaintenanceWindowExecutionResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowExecutionId: params["WindowExecutionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMaintenanceWindowExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowExecutionId": "s",
         "TaskIds": ["s"],
-        "Status": toMaintenanceWindowExecutionStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<MaintenanceWindowExecutionStatus>(x),
         "StatusDetails": "s",
         "StartTime": "d",
         "EndTime": "d",
@@ -1305,25 +1496,27 @@ export default class SSM {
   async getMaintenanceWindowExecutionTask(
     {abortSignal, ...params}: RequestConfig & GetMaintenanceWindowExecutionTaskRequest,
   ): Promise<GetMaintenanceWindowExecutionTaskResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowExecutionId: params["WindowExecutionId"],
+      TaskId: params["TaskId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMaintenanceWindowExecutionTask",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowExecutionId": "s",
         "TaskExecutionId": "s",
         "TaskArn": "s",
         "ServiceRole": "s",
-        "Type": toMaintenanceWindowTaskType,
-        "TaskParameters": [x => prt.readMap(String, toMaintenanceWindowTaskParameterValueExpression, x)],
+        "Type": (x: jsonP.JSONValue) => cmnP.readEnum<MaintenanceWindowTaskType>(x),
+        "TaskParameters": [x => jsonP.readMap(String, toMaintenanceWindowTaskParameterValueExpression, x)],
         "Priority": "n",
         "MaxConcurrency": "s",
         "MaxErrors": "s",
-        "Status": toMaintenanceWindowExecutionStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<MaintenanceWindowExecutionStatus>(x),
         "StatusDetails": "s",
         "StartTime": "d",
         "EndTime": "d",
@@ -1334,22 +1527,25 @@ export default class SSM {
   async getMaintenanceWindowExecutionTaskInvocation(
     {abortSignal, ...params}: RequestConfig & GetMaintenanceWindowExecutionTaskInvocationRequest,
   ): Promise<GetMaintenanceWindowExecutionTaskInvocationResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowExecutionId: params["WindowExecutionId"],
+      TaskId: params["TaskId"],
+      InvocationId: params["InvocationId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMaintenanceWindowExecutionTaskInvocation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowExecutionId": "s",
         "TaskExecutionId": "s",
         "InvocationId": "s",
         "ExecutionId": "s",
-        "TaskType": toMaintenanceWindowTaskType,
+        "TaskType": (x: jsonP.JSONValue) => cmnP.readEnum<MaintenanceWindowTaskType>(x),
         "Parameters": "s",
-        "Status": toMaintenanceWindowExecutionStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<MaintenanceWindowExecutionStatus>(x),
         "StatusDetails": "s",
         "StartTime": "d",
         "EndTime": "d",
@@ -1362,13 +1558,15 @@ export default class SSM {
   async getMaintenanceWindowTask(
     {abortSignal, ...params}: RequestConfig & GetMaintenanceWindowTaskRequest,
   ): Promise<GetMaintenanceWindowTaskResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowId: params["WindowId"],
+      WindowTaskId: params["WindowTaskId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMaintenanceWindowTask",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowId": "s",
@@ -1376,8 +1574,8 @@ export default class SSM {
         "Targets": [toTarget],
         "TaskArn": "s",
         "ServiceRoleArn": "s",
-        "TaskType": toMaintenanceWindowTaskType,
-        "TaskParameters": x => prt.readMap(String, toMaintenanceWindowTaskParameterValueExpression, x),
+        "TaskType": (x: jsonP.JSONValue) => cmnP.readEnum<MaintenanceWindowTaskType>(x),
+        "TaskParameters": x => jsonP.readMap(String, toMaintenanceWindowTaskParameterValueExpression, x),
         "TaskInvocationParameters": toMaintenanceWindowTaskInvocationParameters,
         "Priority": "n",
         "MaxConcurrency": "s",
@@ -1392,13 +1590,14 @@ export default class SSM {
   async getOpsItem(
     {abortSignal, ...params}: RequestConfig & GetOpsItemRequest,
   ): Promise<GetOpsItemResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OpsItemId: params["OpsItemId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetOpsItem",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OpsItem": toOpsItem,
@@ -1409,16 +1608,19 @@ export default class SSM {
   async getOpsSummary(
     {abortSignal, ...params}: RequestConfig & GetOpsSummaryRequest = {},
   ): Promise<GetOpsSummaryResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromOpsFilter(x)),
-    Aggregators: params["Aggregators"]?.map(x => fromOpsAggregator(x)),
-    ResultAttributes: params["ResultAttributes"]?.map(x => fromOpsResultAttribute(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SyncName: params["SyncName"],
+      Filters: params["Filters"]?.map(x => fromOpsFilter(x)),
+      Aggregators: params["Aggregators"]?.map(x => fromOpsAggregator(x)),
+      ResultAttributes: params["ResultAttributes"]?.map(x => fromOpsResultAttribute(x)),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetOpsSummary",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Entities": [toOpsEntity],
@@ -1430,13 +1632,15 @@ export default class SSM {
   async getParameter(
     {abortSignal, ...params}: RequestConfig & GetParameterRequest,
   ): Promise<GetParameterResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      WithDecryption: params["WithDecryption"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetParameter",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Parameter": toParameter,
@@ -1447,13 +1651,17 @@ export default class SSM {
   async getParameterHistory(
     {abortSignal, ...params}: RequestConfig & GetParameterHistoryRequest,
   ): Promise<GetParameterHistoryResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      WithDecryption: params["WithDecryption"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetParameterHistory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Parameters": [toParameterHistory],
@@ -1465,13 +1673,15 @@ export default class SSM {
   async getParameters(
     {abortSignal, ...params}: RequestConfig & GetParametersRequest,
   ): Promise<GetParametersResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Names: params["Names"],
+      WithDecryption: params["WithDecryption"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetParameters",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Parameters": [toParameter],
@@ -1483,14 +1693,19 @@ export default class SSM {
   async getParametersByPath(
     {abortSignal, ...params}: RequestConfig & GetParametersByPathRequest,
   ): Promise<GetParametersByPathResult> {
-    const body: JSONObject = {...params,
-    ParameterFilters: params["ParameterFilters"]?.map(x => fromParameterStringFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Path: params["Path"],
+      Recursive: params["Recursive"],
+      ParameterFilters: params["ParameterFilters"]?.map(x => fromParameterStringFilter(x)),
+      WithDecryption: params["WithDecryption"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetParametersByPath",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Parameters": [toParameter],
@@ -1502,25 +1717,26 @@ export default class SSM {
   async getPatchBaseline(
     {abortSignal, ...params}: RequestConfig & GetPatchBaselineRequest,
   ): Promise<GetPatchBaselineResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      BaselineId: params["BaselineId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPatchBaseline",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BaselineId": "s",
         "Name": "s",
-        "OperatingSystem": toOperatingSystem,
+        "OperatingSystem": (x: jsonP.JSONValue) => cmnP.readEnum<OperatingSystem>(x),
         "GlobalFilters": toPatchFilterGroup,
         "ApprovalRules": toPatchRuleGroup,
         "ApprovedPatches": ["s"],
-        "ApprovedPatchesComplianceLevel": toPatchComplianceLevel,
+        "ApprovedPatchesComplianceLevel": (x: jsonP.JSONValue) => cmnP.readEnum<PatchComplianceLevel>(x),
         "ApprovedPatchesEnableNonSecurity": "b",
         "RejectedPatches": ["s"],
-        "RejectedPatchesAction": toPatchAction,
+        "RejectedPatchesAction": (x: jsonP.JSONValue) => cmnP.readEnum<PatchAction>(x),
         "PatchGroups": ["s"],
         "CreatedDate": "d",
         "ModifiedDate": "d",
@@ -1533,18 +1749,20 @@ export default class SSM {
   async getPatchBaselineForPatchGroup(
     {abortSignal, ...params}: RequestConfig & GetPatchBaselineForPatchGroupRequest,
   ): Promise<GetPatchBaselineForPatchGroupResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PatchGroup: params["PatchGroup"],
+      OperatingSystem: params["OperatingSystem"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPatchBaselineForPatchGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BaselineId": "s",
         "PatchGroup": "s",
-        "OperatingSystem": toOperatingSystem,
+        "OperatingSystem": (x: jsonP.JSONValue) => cmnP.readEnum<OperatingSystem>(x),
       },
     }, await resp.json());
   }
@@ -1552,13 +1770,14 @@ export default class SSM {
   async getServiceSetting(
     {abortSignal, ...params}: RequestConfig & GetServiceSettingRequest,
   ): Promise<GetServiceSettingResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SettingId: params["SettingId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetServiceSetting",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ServiceSetting": toServiceSetting,
@@ -1569,13 +1788,16 @@ export default class SSM {
   async labelParameterVersion(
     {abortSignal, ...params}: RequestConfig & LabelParameterVersionRequest,
   ): Promise<LabelParameterVersionResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      ParameterVersion: params["ParameterVersion"],
+      Labels: params["Labels"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "LabelParameterVersion",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "InvalidLabels": ["s"],
@@ -1587,13 +1809,16 @@ export default class SSM {
   async listAssociationVersions(
     {abortSignal, ...params}: RequestConfig & ListAssociationVersionsRequest,
   ): Promise<ListAssociationVersionsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AssociationId: params["AssociationId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAssociationVersions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AssociationVersions": [toAssociationVersionInfo],
@@ -1605,14 +1830,16 @@ export default class SSM {
   async listAssociations(
     {abortSignal, ...params}: RequestConfig & ListAssociationsRequest = {},
   ): Promise<ListAssociationsResult> {
-    const body: JSONObject = {...params,
-    AssociationFilterList: params["AssociationFilterList"]?.map(x => fromAssociationFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AssociationFilterList: params["AssociationFilterList"]?.map(x => fromAssociationFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAssociations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Associations": [toAssociation],
@@ -1624,14 +1851,19 @@ export default class SSM {
   async listCommandInvocations(
     {abortSignal, ...params}: RequestConfig & ListCommandInvocationsRequest = {},
   ): Promise<ListCommandInvocationsResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromCommandFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CommandId: params["CommandId"],
+      InstanceId: params["InstanceId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filters: params["Filters"]?.map(x => fromCommandFilter(x)),
+      Details: params["Details"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCommandInvocations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CommandInvocations": [toCommandInvocation],
@@ -1643,14 +1875,18 @@ export default class SSM {
   async listCommands(
     {abortSignal, ...params}: RequestConfig & ListCommandsRequest = {},
   ): Promise<ListCommandsResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromCommandFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CommandId: params["CommandId"],
+      InstanceId: params["InstanceId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filters: params["Filters"]?.map(x => fromCommandFilter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCommands",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Commands": [toCommand],
@@ -1662,14 +1898,18 @@ export default class SSM {
   async listComplianceItems(
     {abortSignal, ...params}: RequestConfig & ListComplianceItemsRequest = {},
   ): Promise<ListComplianceItemsResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromComplianceStringFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filters: params["Filters"]?.map(x => fromComplianceStringFilter(x)),
+      ResourceIds: params["ResourceIds"],
+      ResourceTypes: params["ResourceTypes"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListComplianceItems",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ComplianceItems": [toComplianceItem],
@@ -1681,14 +1921,16 @@ export default class SSM {
   async listComplianceSummaries(
     {abortSignal, ...params}: RequestConfig & ListComplianceSummariesRequest = {},
   ): Promise<ListComplianceSummariesResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromComplianceStringFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filters: params["Filters"]?.map(x => fromComplianceStringFilter(x)),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListComplianceSummaries",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ComplianceSummaryItems": [toComplianceSummaryItem],
@@ -1700,13 +1942,16 @@ export default class SSM {
   async listDocumentVersions(
     {abortSignal, ...params}: RequestConfig & ListDocumentVersionsRequest,
   ): Promise<ListDocumentVersionsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDocumentVersions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DocumentVersions": [toDocumentVersionInfo],
@@ -1718,15 +1963,17 @@ export default class SSM {
   async listDocuments(
     {abortSignal, ...params}: RequestConfig & ListDocumentsRequest = {},
   ): Promise<ListDocumentsResult> {
-    const body: JSONObject = {...params,
-    DocumentFilterList: params["DocumentFilterList"]?.map(x => fromDocumentFilter(x)),
-    Filters: params["Filters"]?.map(x => fromDocumentKeyValuesFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DocumentFilterList: params["DocumentFilterList"]?.map(x => fromDocumentFilter(x)),
+      Filters: params["Filters"]?.map(x => fromDocumentKeyValuesFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDocuments",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DocumentIdentifiers": [toDocumentIdentifier],
@@ -1738,21 +1985,25 @@ export default class SSM {
   async listInventoryEntries(
     {abortSignal, ...params}: RequestConfig & ListInventoryEntriesRequest,
   ): Promise<ListInventoryEntriesResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromInventoryFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceId: params["InstanceId"],
+      TypeName: params["TypeName"],
+      Filters: params["Filters"]?.map(x => fromInventoryFilter(x)),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListInventoryEntries",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TypeName": "s",
         "InstanceId": "s",
         "SchemaVersion": "s",
         "CaptureTime": "s",
-        "Entries": [x => prt.readMap(String, String, x)],
+        "Entries": [x => jsonP.readMap(String, String, x)],
         "NextToken": "s",
       },
     }, await resp.json());
@@ -1761,14 +2012,16 @@ export default class SSM {
   async listResourceComplianceSummaries(
     {abortSignal, ...params}: RequestConfig & ListResourceComplianceSummariesRequest = {},
   ): Promise<ListResourceComplianceSummariesResult> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromComplianceStringFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filters: params["Filters"]?.map(x => fromComplianceStringFilter(x)),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResourceComplianceSummaries",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResourceComplianceSummaryItems": [toResourceComplianceSummaryItem],
@@ -1780,13 +2033,16 @@ export default class SSM {
   async listResourceDataSync(
     {abortSignal, ...params}: RequestConfig & ListResourceDataSyncRequest = {},
   ): Promise<ListResourceDataSyncResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SyncType: params["SyncType"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResourceDataSync",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResourceDataSyncItems": [toResourceDataSyncItem],
@@ -1798,13 +2054,15 @@ export default class SSM {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceType: params["ResourceType"],
+      ResourceId: params["ResourceId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TagList": [toTag],
@@ -1815,13 +2073,18 @@ export default class SSM {
   async modifyDocumentPermission(
     {abortSignal, ...params}: RequestConfig & ModifyDocumentPermissionRequest,
   ): Promise<ModifyDocumentPermissionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      PermissionType: params["PermissionType"],
+      AccountIdsToAdd: params["AccountIdsToAdd"],
+      AccountIdsToRemove: params["AccountIdsToRemove"],
+      SharedDocumentVersion: params["SharedDocumentVersion"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDocumentPermission",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1830,15 +2093,20 @@ export default class SSM {
   async putComplianceItems(
     {abortSignal, ...params}: RequestConfig & PutComplianceItemsRequest,
   ): Promise<PutComplianceItemsResult> {
-    const body: JSONObject = {...params,
-    ExecutionSummary: fromComplianceExecutionSummary(params["ExecutionSummary"]),
-    Items: params["Items"]?.map(x => fromComplianceItemEntry(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      ResourceType: params["ResourceType"],
+      ComplianceType: params["ComplianceType"],
+      ExecutionSummary: fromComplianceExecutionSummary(params["ExecutionSummary"]),
+      Items: params["Items"]?.map(x => fromComplianceItemEntry(x)),
+      ItemContentHash: params["ItemContentHash"],
+      UploadType: params["UploadType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutComplianceItems",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1847,14 +2115,15 @@ export default class SSM {
   async putInventory(
     {abortSignal, ...params}: RequestConfig & PutInventoryRequest,
   ): Promise<PutInventoryResult> {
-    const body: JSONObject = {...params,
-    Items: params["Items"]?.map(x => fromInventoryItem(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceId: params["InstanceId"],
+      Items: params["Items"]?.map(x => fromInventoryItem(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutInventory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Message": "s",
@@ -1865,18 +2134,28 @@ export default class SSM {
   async putParameter(
     {abortSignal, ...params}: RequestConfig & PutParameterRequest,
   ): Promise<PutParameterResult> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Description: params["Description"],
+      Value: params["Value"],
+      Type: params["Type"],
+      KeyId: params["KeyId"],
+      Overwrite: params["Overwrite"],
+      AllowedPattern: params["AllowedPattern"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      Tier: params["Tier"],
+      Policies: params["Policies"],
+      DataType: params["DataType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutParameter",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Version": "n",
-        "Tier": toParameterTier,
+        "Tier": (x: jsonP.JSONValue) => cmnP.readEnum<ParameterTier>(x),
       },
     }, await resp.json());
   }
@@ -1884,13 +2163,14 @@ export default class SSM {
   async registerDefaultPatchBaseline(
     {abortSignal, ...params}: RequestConfig & RegisterDefaultPatchBaselineRequest,
   ): Promise<RegisterDefaultPatchBaselineResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      BaselineId: params["BaselineId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterDefaultPatchBaseline",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BaselineId": "s",
@@ -1901,13 +2181,15 @@ export default class SSM {
   async registerPatchBaselineForPatchGroup(
     {abortSignal, ...params}: RequestConfig & RegisterPatchBaselineForPatchGroupRequest,
   ): Promise<RegisterPatchBaselineForPatchGroupResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      BaselineId: params["BaselineId"],
+      PatchGroup: params["PatchGroup"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterPatchBaselineForPatchGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BaselineId": "s",
@@ -1919,15 +2201,20 @@ export default class SSM {
   async registerTargetWithMaintenanceWindow(
     {abortSignal, ...params}: RequestConfig & RegisterTargetWithMaintenanceWindowRequest,
   ): Promise<RegisterTargetWithMaintenanceWindowResult> {
-    const body: JSONObject = {...params,
-    Targets: params["Targets"]?.map(x => fromTarget(x)),
-    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowId: params["WindowId"],
+      ResourceType: params["ResourceType"],
+      Targets: params["Targets"]?.map(x => fromTarget(x)),
+      OwnerInformation: params["OwnerInformation"],
+      Name: params["Name"],
+      Description: params["Description"],
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterTargetWithMaintenanceWindow",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowTargetId": "s",
@@ -1938,18 +2225,27 @@ export default class SSM {
   async registerTaskWithMaintenanceWindow(
     {abortSignal, ...params}: RequestConfig & RegisterTaskWithMaintenanceWindowRequest,
   ): Promise<RegisterTaskWithMaintenanceWindowResult> {
-    const body: JSONObject = {...params,
-    Targets: params["Targets"]?.map(x => fromTarget(x)),
-    TaskParameters: prt.serializeMap(params["TaskParameters"], x => fromMaintenanceWindowTaskParameterValueExpression(x)),
-    TaskInvocationParameters: fromMaintenanceWindowTaskInvocationParameters(params["TaskInvocationParameters"]),
-    LoggingInfo: fromLoggingInfo(params["LoggingInfo"]),
-    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowId: params["WindowId"],
+      Targets: params["Targets"]?.map(x => fromTarget(x)),
+      TaskArn: params["TaskArn"],
+      ServiceRoleArn: params["ServiceRoleArn"],
+      TaskType: params["TaskType"],
+      TaskParameters: jsonP.serializeMap(params["TaskParameters"], x => fromMaintenanceWindowTaskParameterValueExpression(x)),
+      TaskInvocationParameters: fromMaintenanceWindowTaskInvocationParameters(params["TaskInvocationParameters"]),
+      Priority: params["Priority"],
+      MaxConcurrency: params["MaxConcurrency"],
+      MaxErrors: params["MaxErrors"],
+      LoggingInfo: fromLoggingInfo(params["LoggingInfo"]),
+      Name: params["Name"],
+      Description: params["Description"],
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterTaskWithMaintenanceWindow",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowTaskId": "s",
@@ -1960,13 +2256,16 @@ export default class SSM {
   async removeTagsFromResource(
     {abortSignal, ...params}: RequestConfig & RemoveTagsFromResourceRequest,
   ): Promise<RemoveTagsFromResourceResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceType: params["ResourceType"],
+      ResourceId: params["ResourceId"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTagsFromResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1975,13 +2274,14 @@ export default class SSM {
   async resetServiceSetting(
     {abortSignal, ...params}: RequestConfig & ResetServiceSettingRequest,
   ): Promise<ResetServiceSettingResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SettingId: params["SettingId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResetServiceSetting",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ServiceSetting": toServiceSetting,
@@ -1992,13 +2292,14 @@ export default class SSM {
   async resumeSession(
     {abortSignal, ...params}: RequestConfig & ResumeSessionRequest,
   ): Promise<ResumeSessionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SessionId: params["SessionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResumeSession",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SessionId": "s",
@@ -2011,13 +2312,16 @@ export default class SSM {
   async sendAutomationSignal(
     {abortSignal, ...params}: RequestConfig & SendAutomationSignalRequest,
   ): Promise<SendAutomationSignalResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AutomationExecutionId: params["AutomationExecutionId"],
+      SignalType: params["SignalType"],
+      Payload: params["Payload"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendAutomationSignal",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -2026,16 +2330,30 @@ export default class SSM {
   async sendCommand(
     {abortSignal, ...params}: RequestConfig & SendCommandRequest,
   ): Promise<SendCommandResult> {
-    const body: JSONObject = {...params,
-    Targets: params["Targets"]?.map(x => fromTarget(x)),
-    NotificationConfig: fromNotificationConfig(params["NotificationConfig"]),
-    CloudWatchOutputConfig: fromCloudWatchOutputConfig(params["CloudWatchOutputConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceIds: params["InstanceIds"],
+      Targets: params["Targets"]?.map(x => fromTarget(x)),
+      DocumentName: params["DocumentName"],
+      DocumentVersion: params["DocumentVersion"],
+      DocumentHash: params["DocumentHash"],
+      DocumentHashType: params["DocumentHashType"],
+      TimeoutSeconds: params["TimeoutSeconds"],
+      Comment: params["Comment"],
+      Parameters: params["Parameters"],
+      OutputS3Region: params["OutputS3Region"],
+      OutputS3BucketName: params["OutputS3BucketName"],
+      OutputS3KeyPrefix: params["OutputS3KeyPrefix"],
+      MaxConcurrency: params["MaxConcurrency"],
+      MaxErrors: params["MaxErrors"],
+      ServiceRoleArn: params["ServiceRoleArn"],
+      NotificationConfig: fromNotificationConfig(params["NotificationConfig"]),
+      CloudWatchOutputConfig: fromCloudWatchOutputConfig(params["CloudWatchOutputConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendCommand",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Command": toCommand,
@@ -2046,13 +2364,14 @@ export default class SSM {
   async startAssociationsOnce(
     {abortSignal, ...params}: RequestConfig & StartAssociationsOnceRequest,
   ): Promise<StartAssociationsOnceResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AssociationIds: params["AssociationIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartAssociationsOnce",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -2061,16 +2380,25 @@ export default class SSM {
   async startAutomationExecution(
     {abortSignal, ...params}: RequestConfig & StartAutomationExecutionRequest,
   ): Promise<StartAutomationExecutionResult> {
-    const body: JSONObject = {...params,
-    Targets: params["Targets"]?.map(x => fromTarget(x)),
-    TargetLocations: params["TargetLocations"]?.map(x => fromTargetLocation(x)),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DocumentName: params["DocumentName"],
+      DocumentVersion: params["DocumentVersion"],
+      Parameters: params["Parameters"],
+      ClientToken: params["ClientToken"],
+      Mode: params["Mode"],
+      TargetParameterName: params["TargetParameterName"],
+      Targets: params["Targets"]?.map(x => fromTarget(x)),
+      TargetMaps: params["TargetMaps"],
+      MaxConcurrency: params["MaxConcurrency"],
+      MaxErrors: params["MaxErrors"],
+      TargetLocations: params["TargetLocations"]?.map(x => fromTargetLocation(x)),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartAutomationExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AutomationExecutionId": "s",
@@ -2081,13 +2409,16 @@ export default class SSM {
   async startSession(
     {abortSignal, ...params}: RequestConfig & StartSessionRequest,
   ): Promise<StartSessionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Target: params["Target"],
+      DocumentName: params["DocumentName"],
+      Parameters: params["Parameters"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartSession",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SessionId": "s",
@@ -2100,13 +2431,15 @@ export default class SSM {
   async stopAutomationExecution(
     {abortSignal, ...params}: RequestConfig & StopAutomationExecutionRequest,
   ): Promise<StopAutomationExecutionResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AutomationExecutionId: params["AutomationExecutionId"],
+      Type: params["Type"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopAutomationExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -2115,13 +2448,14 @@ export default class SSM {
   async terminateSession(
     {abortSignal, ...params}: RequestConfig & TerminateSessionRequest,
   ): Promise<TerminateSessionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SessionId: params["SessionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TerminateSession",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SessionId": "s",
@@ -2132,15 +2466,28 @@ export default class SSM {
   async updateAssociation(
     {abortSignal, ...params}: RequestConfig & UpdateAssociationRequest,
   ): Promise<UpdateAssociationResult> {
-    const body: JSONObject = {...params,
-    OutputLocation: fromInstanceAssociationOutputLocation(params["OutputLocation"]),
-    Targets: params["Targets"]?.map(x => fromTarget(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AssociationId: params["AssociationId"],
+      Parameters: params["Parameters"],
+      DocumentVersion: params["DocumentVersion"],
+      ScheduleExpression: params["ScheduleExpression"],
+      OutputLocation: fromInstanceAssociationOutputLocation(params["OutputLocation"]),
+      Name: params["Name"],
+      Targets: params["Targets"]?.map(x => fromTarget(x)),
+      AssociationName: params["AssociationName"],
+      AssociationVersion: params["AssociationVersion"],
+      AutomationTargetParameterName: params["AutomationTargetParameterName"],
+      MaxErrors: params["MaxErrors"],
+      MaxConcurrency: params["MaxConcurrency"],
+      ComplianceSeverity: params["ComplianceSeverity"],
+      SyncCompliance: params["SyncCompliance"],
+      ApplyOnlyAtCronInterval: params["ApplyOnlyAtCronInterval"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAssociation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AssociationDescription": toAssociationDescription,
@@ -2151,14 +2498,16 @@ export default class SSM {
   async updateAssociationStatus(
     {abortSignal, ...params}: RequestConfig & UpdateAssociationStatusRequest,
   ): Promise<UpdateAssociationStatusResult> {
-    const body: JSONObject = {...params,
-    AssociationStatus: fromAssociationStatus(params["AssociationStatus"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      InstanceId: params["InstanceId"],
+      AssociationStatus: fromAssociationStatus(params["AssociationStatus"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAssociationStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AssociationDescription": toAssociationDescription,
@@ -2169,14 +2518,20 @@ export default class SSM {
   async updateDocument(
     {abortSignal, ...params}: RequestConfig & UpdateDocumentRequest,
   ): Promise<UpdateDocumentResult> {
-    const body: JSONObject = {...params,
-    Attachments: params["Attachments"]?.map(x => fromAttachmentsSource(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Content: params["Content"],
+      Attachments: params["Attachments"]?.map(x => fromAttachmentsSource(x)),
+      Name: params["Name"],
+      VersionName: params["VersionName"],
+      DocumentVersion: params["DocumentVersion"],
+      DocumentFormat: params["DocumentFormat"],
+      TargetType: params["TargetType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDocument",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DocumentDescription": toDocumentDescription,
@@ -2187,13 +2542,15 @@ export default class SSM {
   async updateDocumentDefaultVersion(
     {abortSignal, ...params}: RequestConfig & UpdateDocumentDefaultVersionRequest,
   ): Promise<UpdateDocumentDefaultVersionResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      DocumentVersion: params["DocumentVersion"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDocumentDefaultVersion",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Description": toDocumentDefaultVersionDescription,
@@ -2204,13 +2561,26 @@ export default class SSM {
   async updateMaintenanceWindow(
     {abortSignal, ...params}: RequestConfig & UpdateMaintenanceWindowRequest,
   ): Promise<UpdateMaintenanceWindowResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowId: params["WindowId"],
+      Name: params["Name"],
+      Description: params["Description"],
+      StartDate: params["StartDate"],
+      EndDate: params["EndDate"],
+      Schedule: params["Schedule"],
+      ScheduleTimezone: params["ScheduleTimezone"],
+      ScheduleOffset: params["ScheduleOffset"],
+      Duration: params["Duration"],
+      Cutoff: params["Cutoff"],
+      AllowUnassociatedTargets: params["AllowUnassociatedTargets"],
+      Enabled: params["Enabled"],
+      Replace: params["Replace"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMaintenanceWindow",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowId": "s",
@@ -2232,14 +2602,20 @@ export default class SSM {
   async updateMaintenanceWindowTarget(
     {abortSignal, ...params}: RequestConfig & UpdateMaintenanceWindowTargetRequest,
   ): Promise<UpdateMaintenanceWindowTargetResult> {
-    const body: JSONObject = {...params,
-    Targets: params["Targets"]?.map(x => fromTarget(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowId: params["WindowId"],
+      WindowTargetId: params["WindowTargetId"],
+      Targets: params["Targets"]?.map(x => fromTarget(x)),
+      OwnerInformation: params["OwnerInformation"],
+      Name: params["Name"],
+      Description: params["Description"],
+      Replace: params["Replace"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMaintenanceWindowTarget",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowId": "s",
@@ -2255,17 +2631,27 @@ export default class SSM {
   async updateMaintenanceWindowTask(
     {abortSignal, ...params}: RequestConfig & UpdateMaintenanceWindowTaskRequest,
   ): Promise<UpdateMaintenanceWindowTaskResult> {
-    const body: JSONObject = {...params,
-    Targets: params["Targets"]?.map(x => fromTarget(x)),
-    TaskParameters: prt.serializeMap(params["TaskParameters"], x => fromMaintenanceWindowTaskParameterValueExpression(x)),
-    TaskInvocationParameters: fromMaintenanceWindowTaskInvocationParameters(params["TaskInvocationParameters"]),
-    LoggingInfo: fromLoggingInfo(params["LoggingInfo"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      WindowId: params["WindowId"],
+      WindowTaskId: params["WindowTaskId"],
+      Targets: params["Targets"]?.map(x => fromTarget(x)),
+      TaskArn: params["TaskArn"],
+      ServiceRoleArn: params["ServiceRoleArn"],
+      TaskParameters: jsonP.serializeMap(params["TaskParameters"], x => fromMaintenanceWindowTaskParameterValueExpression(x)),
+      TaskInvocationParameters: fromMaintenanceWindowTaskInvocationParameters(params["TaskInvocationParameters"]),
+      Priority: params["Priority"],
+      MaxConcurrency: params["MaxConcurrency"],
+      MaxErrors: params["MaxErrors"],
+      LoggingInfo: fromLoggingInfo(params["LoggingInfo"]),
+      Name: params["Name"],
+      Description: params["Description"],
+      Replace: params["Replace"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMaintenanceWindowTask",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WindowId": "s",
@@ -2273,7 +2659,7 @@ export default class SSM {
         "Targets": [toTarget],
         "TaskArn": "s",
         "ServiceRoleArn": "s",
-        "TaskParameters": x => prt.readMap(String, toMaintenanceWindowTaskParameterValueExpression, x),
+        "TaskParameters": x => jsonP.readMap(String, toMaintenanceWindowTaskParameterValueExpression, x),
         "TaskInvocationParameters": toMaintenanceWindowTaskInvocationParameters,
         "Priority": "n",
         "MaxConcurrency": "s",
@@ -2288,13 +2674,15 @@ export default class SSM {
   async updateManagedInstanceRole(
     {abortSignal, ...params}: RequestConfig & UpdateManagedInstanceRoleRequest,
   ): Promise<UpdateManagedInstanceRoleResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceId: params["InstanceId"],
+      IamRole: params["IamRole"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateManagedInstanceRole",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -2303,16 +2691,24 @@ export default class SSM {
   async updateOpsItem(
     {abortSignal, ...params}: RequestConfig & UpdateOpsItemRequest,
   ): Promise<UpdateOpsItemResponse> {
-    const body: JSONObject = {...params,
-    OperationalData: prt.serializeMap(params["OperationalData"], x => fromOpsItemDataValue(x)),
-    Notifications: params["Notifications"]?.map(x => fromOpsItemNotification(x)),
-    RelatedOpsItems: params["RelatedOpsItems"]?.map(x => fromRelatedOpsItem(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Description: params["Description"],
+      OperationalData: jsonP.serializeMap(params["OperationalData"], x => fromOpsItemDataValue(x)),
+      OperationalDataToDelete: params["OperationalDataToDelete"],
+      Notifications: params["Notifications"]?.map(x => fromOpsItemNotification(x)),
+      Priority: params["Priority"],
+      RelatedOpsItems: params["RelatedOpsItems"]?.map(x => fromRelatedOpsItem(x)),
+      Status: params["Status"],
+      OpsItemId: params["OpsItemId"],
+      Title: params["Title"],
+      Category: params["Category"],
+      Severity: params["Severity"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateOpsItem",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -2321,28 +2717,37 @@ export default class SSM {
   async updatePatchBaseline(
     {abortSignal, ...params}: RequestConfig & UpdatePatchBaselineRequest,
   ): Promise<UpdatePatchBaselineResult> {
-    const body: JSONObject = {...params,
-    GlobalFilters: fromPatchFilterGroup(params["GlobalFilters"]),
-    ApprovalRules: fromPatchRuleGroup(params["ApprovalRules"]),
-    Sources: params["Sources"]?.map(x => fromPatchSource(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      BaselineId: params["BaselineId"],
+      Name: params["Name"],
+      GlobalFilters: fromPatchFilterGroup(params["GlobalFilters"]),
+      ApprovalRules: fromPatchRuleGroup(params["ApprovalRules"]),
+      ApprovedPatches: params["ApprovedPatches"],
+      ApprovedPatchesComplianceLevel: params["ApprovedPatchesComplianceLevel"],
+      ApprovedPatchesEnableNonSecurity: params["ApprovedPatchesEnableNonSecurity"],
+      RejectedPatches: params["RejectedPatches"],
+      RejectedPatchesAction: params["RejectedPatchesAction"],
+      Description: params["Description"],
+      Sources: params["Sources"]?.map(x => fromPatchSource(x)),
+      Replace: params["Replace"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePatchBaseline",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BaselineId": "s",
         "Name": "s",
-        "OperatingSystem": toOperatingSystem,
+        "OperatingSystem": (x: jsonP.JSONValue) => cmnP.readEnum<OperatingSystem>(x),
         "GlobalFilters": toPatchFilterGroup,
         "ApprovalRules": toPatchRuleGroup,
         "ApprovedPatches": ["s"],
-        "ApprovedPatchesComplianceLevel": toPatchComplianceLevel,
+        "ApprovedPatchesComplianceLevel": (x: jsonP.JSONValue) => cmnP.readEnum<PatchComplianceLevel>(x),
         "ApprovedPatchesEnableNonSecurity": "b",
         "RejectedPatches": ["s"],
-        "RejectedPatchesAction": toPatchAction,
+        "RejectedPatchesAction": (x: jsonP.JSONValue) => cmnP.readEnum<PatchAction>(x),
         "CreatedDate": "d",
         "ModifiedDate": "d",
         "Description": "s",
@@ -2354,14 +2759,16 @@ export default class SSM {
   async updateResourceDataSync(
     {abortSignal, ...params}: RequestConfig & UpdateResourceDataSyncRequest,
   ): Promise<UpdateResourceDataSyncResult> {
-    const body: JSONObject = {...params,
-    SyncSource: fromResourceDataSyncSource(params["SyncSource"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SyncName: params["SyncName"],
+      SyncType: params["SyncType"],
+      SyncSource: fromResourceDataSyncSource(params["SyncSource"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateResourceDataSync",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -2370,13 +2777,15 @@ export default class SSM {
   async updateServiceSetting(
     {abortSignal, ...params}: RequestConfig & UpdateServiceSettingRequest,
   ): Promise<UpdateServiceSettingResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SettingId: params["SettingId"],
+      SettingValue: params["SettingValue"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateServiceSetting",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -2391,7 +2800,7 @@ export default class SSM {
     const errMessage = 'ResourceNotReady: Resource is not in the state CommandExecuted';
     for (let i = 0; i < 20; i++) {
       const resp = await this.getCommandInvocation(params);
-      const field = resp["Status"];
+      const field = resp?.Status;
       if (field === "Pending") continue;
       if (field === "InProgress") continue;
       if (field === "Delayed") continue;
@@ -2440,7 +2849,7 @@ export interface CreateAssociationRequest {
   Name: string;
   DocumentVersion?: string | null;
   InstanceId?: string | null;
-  Parameters?: { [key: string]: string[] } | null;
+  Parameters?: { [key: string]: string[] | null | undefined } | null;
   Targets?: Target[] | null;
   ScheduleExpression?: string | null;
   OutputLocation?: InstanceAssociationOutputLocation | null;
@@ -2490,7 +2899,7 @@ export interface CreateMaintenanceWindowRequest {
 // refs: 1 - tags: named, input
 export interface CreateOpsItemRequest {
   Description: string;
-  OperationalData?: { [key: string]: OpsItemDataValue } | null;
+  OperationalData?: { [key: string]: OpsItemDataValue | null | undefined } | null;
   Notifications?: OpsItemNotification[] | null;
   Priority?: number | null;
   RelatedOpsItems?: RelatedOpsItem[] | null;
@@ -3168,7 +3577,7 @@ export interface RegisterTaskWithMaintenanceWindowRequest {
   TaskArn: string;
   ServiceRoleArn?: string | null;
   TaskType: MaintenanceWindowTaskType;
-  TaskParameters?: { [key: string]: MaintenanceWindowTaskParameterValueExpression } | null;
+  TaskParameters?: { [key: string]: MaintenanceWindowTaskParameterValueExpression | null | undefined } | null;
   TaskInvocationParameters?: MaintenanceWindowTaskInvocationParameters | null;
   Priority?: number | null;
   MaxConcurrency: string;
@@ -3200,7 +3609,7 @@ export interface ResumeSessionRequest {
 export interface SendAutomationSignalRequest {
   AutomationExecutionId: string;
   SignalType: SignalType;
-  Payload?: { [key: string]: string[] } | null;
+  Payload?: { [key: string]: string[] | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3213,7 +3622,7 @@ export interface SendCommandRequest {
   DocumentHashType?: DocumentHashType | null;
   TimeoutSeconds?: number | null;
   Comment?: string | null;
-  Parameters?: { [key: string]: string[] } | null;
+  Parameters?: { [key: string]: string[] | null | undefined } | null;
   OutputS3Region?: string | null;
   OutputS3BucketName?: string | null;
   OutputS3KeyPrefix?: string | null;
@@ -3233,12 +3642,12 @@ export interface StartAssociationsOnceRequest {
 export interface StartAutomationExecutionRequest {
   DocumentName: string;
   DocumentVersion?: string | null;
-  Parameters?: { [key: string]: string[] } | null;
+  Parameters?: { [key: string]: string[] | null | undefined } | null;
   ClientToken?: string | null;
   Mode?: ExecutionMode | null;
   TargetParameterName?: string | null;
   Targets?: Target[] | null;
-  TargetMaps?: ({ [key: string]: string[] })[] | null;
+  TargetMaps?: ({ [key: string]: string[] | null | undefined })[] | null;
   MaxConcurrency?: string | null;
   MaxErrors?: string | null;
   TargetLocations?: TargetLocation[] | null;
@@ -3249,7 +3658,7 @@ export interface StartAutomationExecutionRequest {
 export interface StartSessionRequest {
   Target: string;
   DocumentName?: string | null;
-  Parameters?: { [key: string]: string[] } | null;
+  Parameters?: { [key: string]: string[] | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3266,7 +3675,7 @@ export interface TerminateSessionRequest {
 // refs: 1 - tags: named, input
 export interface UpdateAssociationRequest {
   AssociationId: string;
-  Parameters?: { [key: string]: string[] } | null;
+  Parameters?: { [key: string]: string[] | null | undefined } | null;
   DocumentVersion?: string | null;
   ScheduleExpression?: string | null;
   OutputLocation?: InstanceAssociationOutputLocation | null;
@@ -3341,7 +3750,7 @@ export interface UpdateMaintenanceWindowTaskRequest {
   Targets?: Target[] | null;
   TaskArn?: string | null;
   ServiceRoleArn?: string | null;
-  TaskParameters?: { [key: string]: MaintenanceWindowTaskParameterValueExpression } | null;
+  TaskParameters?: { [key: string]: MaintenanceWindowTaskParameterValueExpression | null | undefined } | null;
   TaskInvocationParameters?: MaintenanceWindowTaskInvocationParameters | null;
   Priority?: number | null;
   MaxConcurrency?: string | null;
@@ -3361,7 +3770,7 @@ export interface UpdateManagedInstanceRoleRequest {
 // refs: 1 - tags: named, input
 export interface UpdateOpsItemRequest {
   Description?: string | null;
-  OperationalData?: { [key: string]: OpsItemDataValue } | null;
+  OperationalData?: { [key: string]: OpsItemDataValue | null | undefined } | null;
   OperationalDataToDelete?: string[] | null;
   Notifications?: OpsItemNotification[] | null;
   Priority?: number | null;
@@ -3708,7 +4117,7 @@ export interface DescribePatchGroupsResult {
 
 // refs: 1 - tags: named, output
 export interface DescribePatchPropertiesResult {
-  Properties?: ({ [key: string]: string })[] | null;
+  Properties?: ({ [key: string]: string | null | undefined })[] | null;
   NextToken?: string | null;
 }
 
@@ -3833,7 +4242,7 @@ export interface GetMaintenanceWindowExecutionTaskResult {
   TaskArn?: string | null;
   ServiceRole?: string | null;
   Type?: MaintenanceWindowTaskType | null;
-  TaskParameters?: ({ [key: string]: MaintenanceWindowTaskParameterValueExpression })[] | null;
+  TaskParameters?: ({ [key: string]: MaintenanceWindowTaskParameterValueExpression | null | undefined })[] | null;
   Priority?: number | null;
   MaxConcurrency?: string | null;
   MaxErrors?: string | null;
@@ -3867,7 +4276,7 @@ export interface GetMaintenanceWindowTaskResult {
   TaskArn?: string | null;
   ServiceRoleArn?: string | null;
   TaskType?: MaintenanceWindowTaskType | null;
-  TaskParameters?: { [key: string]: MaintenanceWindowTaskParameterValueExpression } | null;
+  TaskParameters?: { [key: string]: MaintenanceWindowTaskParameterValueExpression | null | undefined } | null;
   TaskInvocationParameters?: MaintenanceWindowTaskInvocationParameters | null;
   Priority?: number | null;
   MaxConcurrency?: string | null;
@@ -4002,7 +4411,7 @@ export interface ListInventoryEntriesResult {
   InstanceId?: string | null;
   SchemaVersion?: string | null;
   CaptureTime?: string | null;
-  Entries?: ({ [key: string]: string })[] | null;
+  Entries?: ({ [key: string]: string | null | undefined })[] | null;
   NextToken?: string | null;
 }
 
@@ -4166,7 +4575,7 @@ export interface UpdateMaintenanceWindowTaskResult {
   Targets?: Target[] | null;
   TaskArn?: string | null;
   ServiceRoleArn?: string | null;
-  TaskParameters?: { [key: string]: MaintenanceWindowTaskParameterValueExpression } | null;
+  TaskParameters?: { [key: string]: MaintenanceWindowTaskParameterValueExpression | null | undefined } | null;
   TaskInvocationParameters?: MaintenanceWindowTaskInvocationParameters | null;
   Priority?: number | null;
   MaxConcurrency?: string | null;
@@ -4218,21 +4627,22 @@ export type ResourceTypeForTagging =
 | "Parameter"
 | "PatchBaseline"
 | "OpsItem"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 14 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -4246,13 +4656,15 @@ export interface Target {
   Key?: string | null;
   Values?: string[] | null;
 }
-function fromTarget(input?: Target | null): JSONValue {
+function fromTarget(input?: Target | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
   }
 }
-function toTarget(root: JSONValue): Target {
-  return prt.readObj({
+function toTarget(root: jsonP.JSONValue): Target {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Key": "s",
@@ -4265,14 +4677,14 @@ function toTarget(root: JSONValue): Target {
 export interface InstanceAssociationOutputLocation {
   S3Location?: S3OutputLocation | null;
 }
-function fromInstanceAssociationOutputLocation(input?: InstanceAssociationOutputLocation | null): JSONValue {
+function fromInstanceAssociationOutputLocation(input?: InstanceAssociationOutputLocation | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     S3Location: fromS3OutputLocation(input["S3Location"]),
   }
 }
-function toInstanceAssociationOutputLocation(root: JSONValue): InstanceAssociationOutputLocation {
-  return prt.readObj({
+function toInstanceAssociationOutputLocation(root: jsonP.JSONValue): InstanceAssociationOutputLocation {
+  return jsonP.readObj({
     required: {},
     optional: {
       "S3Location": toS3OutputLocation,
@@ -4286,13 +4698,16 @@ export interface S3OutputLocation {
   OutputS3BucketName?: string | null;
   OutputS3KeyPrefix?: string | null;
 }
-function fromS3OutputLocation(input?: S3OutputLocation | null): JSONValue {
+function fromS3OutputLocation(input?: S3OutputLocation | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    OutputS3Region: input["OutputS3Region"],
+    OutputS3BucketName: input["OutputS3BucketName"],
+    OutputS3KeyPrefix: input["OutputS3KeyPrefix"],
   }
 }
-function toS3OutputLocation(root: JSONValue): S3OutputLocation {
-  return prt.readObj({
+function toS3OutputLocation(root: jsonP.JSONValue): S3OutputLocation {
+  return jsonP.readObj({
     required: {},
     optional: {
       "OutputS3Region": "s",
@@ -4309,36 +4724,19 @@ export type AssociationComplianceSeverity =
 | "MEDIUM"
 | "LOW"
 | "UNSPECIFIED"
-;
-
-function toAssociationComplianceSeverity(root: JSONValue): AssociationComplianceSeverity | null {
-  return ( false
-    || root == "CRITICAL"
-    || root == "HIGH"
-    || root == "MEDIUM"
-    || root == "LOW"
-    || root == "UNSPECIFIED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, enum, output
 export type AssociationSyncCompliance =
 | "AUTO"
 | "MANUAL"
-;
-
-function toAssociationSyncCompliance(root: JSONValue): AssociationSyncCompliance | null {
-  return ( false
-    || root == "AUTO"
-    || root == "MANUAL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface CreateAssociationBatchRequestEntry {
   Name: string;
   InstanceId?: string | null;
-  Parameters?: { [key: string]: string[] } | null;
+  Parameters?: { [key: string]: string[] | null | undefined } | null;
   AutomationTargetParameterName?: string | null;
   DocumentVersion?: string | null;
   Targets?: Target[] | null;
@@ -4351,21 +4749,33 @@ export interface CreateAssociationBatchRequestEntry {
   SyncCompliance?: AssociationSyncCompliance | null;
   ApplyOnlyAtCronInterval?: boolean | null;
 }
-function fromCreateAssociationBatchRequestEntry(input?: CreateAssociationBatchRequestEntry | null): JSONValue {
+function fromCreateAssociationBatchRequestEntry(input?: CreateAssociationBatchRequestEntry | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    InstanceId: input["InstanceId"],
+    Parameters: input["Parameters"],
+    AutomationTargetParameterName: input["AutomationTargetParameterName"],
+    DocumentVersion: input["DocumentVersion"],
     Targets: input["Targets"]?.map(x => fromTarget(x)),
+    ScheduleExpression: input["ScheduleExpression"],
     OutputLocation: fromInstanceAssociationOutputLocation(input["OutputLocation"]),
+    AssociationName: input["AssociationName"],
+    MaxErrors: input["MaxErrors"],
+    MaxConcurrency: input["MaxConcurrency"],
+    ComplianceSeverity: input["ComplianceSeverity"],
+    SyncCompliance: input["SyncCompliance"],
+    ApplyOnlyAtCronInterval: input["ApplyOnlyAtCronInterval"],
   }
 }
-function toCreateAssociationBatchRequestEntry(root: JSONValue): CreateAssociationBatchRequestEntry {
-  return prt.readObj({
+function toCreateAssociationBatchRequestEntry(root: jsonP.JSONValue): CreateAssociationBatchRequestEntry {
+  return jsonP.readObj({
     required: {
       "Name": "s",
     },
     optional: {
       "InstanceId": "s",
-      "Parameters": x => prt.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+      "Parameters": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
       "AutomationTargetParameterName": "s",
       "DocumentVersion": "s",
       "Targets": [toTarget],
@@ -4374,8 +4784,8 @@ function toCreateAssociationBatchRequestEntry(root: JSONValue): CreateAssociatio
       "AssociationName": "s",
       "MaxErrors": "s",
       "MaxConcurrency": "s",
-      "ComplianceSeverity": toAssociationComplianceSeverity,
-      "SyncCompliance": toAssociationSyncCompliance,
+      "ComplianceSeverity": (x: jsonP.JSONValue) => cmnP.readEnum<AssociationComplianceSeverity>(x),
+      "SyncCompliance": (x: jsonP.JSONValue) => cmnP.readEnum<AssociationSyncCompliance>(x),
       "ApplyOnlyAtCronInterval": "b",
     },
   }, root);
@@ -4386,13 +4796,15 @@ export interface DocumentRequires {
   Name: string;
   Version?: string | null;
 }
-function fromDocumentRequires(input?: DocumentRequires | null): JSONValue {
+function fromDocumentRequires(input?: DocumentRequires | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Version: input["Version"],
   }
 }
-function toDocumentRequires(root: JSONValue): DocumentRequires {
-  return prt.readObj({
+function toDocumentRequires(root: jsonP.JSONValue): DocumentRequires {
+  return jsonP.readObj({
     required: {
       "Name": "s",
     },
@@ -4408,9 +4820,12 @@ export interface AttachmentsSource {
   Values?: string[] | null;
   Name?: string | null;
 }
-function fromAttachmentsSource(input?: AttachmentsSource | null): JSONValue {
+function fromAttachmentsSource(input?: AttachmentsSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
+    Name: input["Name"],
   }
 }
 
@@ -4419,8 +4834,7 @@ export type AttachmentsSourceKey =
 | "SourceUrl"
 | "S3FileUrl"
 | "AttachmentReference"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, enum, output
 export type DocumentType =
@@ -4433,53 +4847,33 @@ export type DocumentType =
 | "ApplicationConfigurationSchema"
 | "DeploymentStrategy"
 | "ChangeCalendar"
-;
-
-function toDocumentType(root: JSONValue): DocumentType | null {
-  return ( false
-    || root == "Command"
-    || root == "Policy"
-    || root == "Automation"
-    || root == "Session"
-    || root == "Package"
-    || root == "ApplicationConfiguration"
-    || root == "ApplicationConfigurationSchema"
-    || root == "DeploymentStrategy"
-    || root == "ChangeCalendar"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 9 - tags: input, named, enum, output
 export type DocumentFormat =
 | "YAML"
 | "JSON"
 | "TEXT"
-;
-
-function toDocumentFormat(root: JSONValue): DocumentFormat | null {
-  return ( false
-    || root == "YAML"
-    || root == "JSON"
-    || root == "TEXT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface OpsItemDataValue {
   Value?: string | null;
   Type?: OpsItemDataType | null;
 }
-function fromOpsItemDataValue(input?: OpsItemDataValue | null): JSONValue {
+function fromOpsItemDataValue(input?: OpsItemDataValue | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Value: input["Value"],
+    Type: input["Type"],
   }
 }
-function toOpsItemDataValue(root: JSONValue): OpsItemDataValue {
-  return prt.readObj({
+function toOpsItemDataValue(root: jsonP.JSONValue): OpsItemDataValue {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Value": "s",
-      "Type": toOpsItemDataType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<OpsItemDataType>(x),
     },
   }, root);
 }
@@ -4488,26 +4882,20 @@ function toOpsItemDataValue(root: JSONValue): OpsItemDataValue {
 export type OpsItemDataType =
 | "SearchableString"
 | "String"
-;
-
-function toOpsItemDataType(root: JSONValue): OpsItemDataType | null {
-  return ( false
-    || root == "SearchableString"
-    || root == "String"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface OpsItemNotification {
   Arn?: string | null;
 }
-function fromOpsItemNotification(input?: OpsItemNotification | null): JSONValue {
+function fromOpsItemNotification(input?: OpsItemNotification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Arn: input["Arn"],
   }
 }
-function toOpsItemNotification(root: JSONValue): OpsItemNotification {
-  return prt.readObj({
+function toOpsItemNotification(root: jsonP.JSONValue): OpsItemNotification {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Arn": "s",
@@ -4519,13 +4907,14 @@ function toOpsItemNotification(root: JSONValue): OpsItemNotification {
 export interface RelatedOpsItem {
   OpsItemId: string;
 }
-function fromRelatedOpsItem(input?: RelatedOpsItem | null): JSONValue {
+function fromRelatedOpsItem(input?: RelatedOpsItem | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    OpsItemId: input["OpsItemId"],
   }
 }
-function toRelatedOpsItem(root: JSONValue): RelatedOpsItem {
-  return prt.readObj({
+function toRelatedOpsItem(root: jsonP.JSONValue): RelatedOpsItem {
+  return jsonP.readObj({
     required: {
       "OpsItemId": "s",
     },
@@ -4544,34 +4933,20 @@ export type OperatingSystem =
 | "CENTOS"
 | "ORACLE_LINUX"
 | "DEBIAN"
-;
-
-function toOperatingSystem(root: JSONValue): OperatingSystem | null {
-  return ( false
-    || root == "WINDOWS"
-    || root == "AMAZON_LINUX"
-    || root == "AMAZON_LINUX_2"
-    || root == "UBUNTU"
-    || root == "REDHAT_ENTERPRISE_LINUX"
-    || root == "SUSE"
-    || root == "CENTOS"
-    || root == "ORACLE_LINUX"
-    || root == "DEBIAN"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: input, named, interface, output
 export interface PatchFilterGroup {
   PatchFilters: PatchFilter[];
 }
-function fromPatchFilterGroup(input?: PatchFilterGroup | null): JSONValue {
+function fromPatchFilterGroup(input?: PatchFilterGroup | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     PatchFilters: input["PatchFilters"]?.map(x => fromPatchFilter(x)),
   }
 }
-function toPatchFilterGroup(root: JSONValue): PatchFilterGroup {
-  return prt.readObj({
+function toPatchFilterGroup(root: jsonP.JSONValue): PatchFilterGroup {
+  return jsonP.readObj({
     required: {
       "PatchFilters": [toPatchFilter],
     },
@@ -4584,15 +4959,17 @@ export interface PatchFilter {
   Key: PatchFilterKey;
   Values: string[];
 }
-function fromPatchFilter(input?: PatchFilter | null): JSONValue {
+function fromPatchFilter(input?: PatchFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
   }
 }
-function toPatchFilter(root: JSONValue): PatchFilter {
-  return prt.readObj({
+function toPatchFilter(root: jsonP.JSONValue): PatchFilter {
+  return jsonP.readObj({
     required: {
-      "Key": toPatchFilterKey,
+      "Key": (x: jsonP.JSONValue) => cmnP.readEnum<PatchFilterKey>(x),
       "Values": ["s"],
     },
     optional: {},
@@ -4620,44 +4997,20 @@ export type PatchFilterKey =
 | "SEVERITY"
 | "SECURITY"
 | "VERSION"
-;
-
-function toPatchFilterKey(root: JSONValue): PatchFilterKey | null {
-  return ( false
-    || root == "ARCH"
-    || root == "ADVISORY_ID"
-    || root == "BUGZILLA_ID"
-    || root == "PATCH_SET"
-    || root == "PRODUCT"
-    || root == "PRODUCT_FAMILY"
-    || root == "CLASSIFICATION"
-    || root == "CVE_ID"
-    || root == "EPOCH"
-    || root == "MSRC_SEVERITY"
-    || root == "NAME"
-    || root == "PATCH_ID"
-    || root == "SECTION"
-    || root == "PRIORITY"
-    || root == "REPOSITORY"
-    || root == "RELEASE"
-    || root == "SEVERITY"
-    || root == "SECURITY"
-    || root == "VERSION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface PatchRuleGroup {
   PatchRules: PatchRule[];
 }
-function fromPatchRuleGroup(input?: PatchRuleGroup | null): JSONValue {
+function fromPatchRuleGroup(input?: PatchRuleGroup | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     PatchRules: input["PatchRules"]?.map(x => fromPatchRule(x)),
   }
 }
-function toPatchRuleGroup(root: JSONValue): PatchRuleGroup {
-  return prt.readObj({
+function toPatchRuleGroup(root: jsonP.JSONValue): PatchRuleGroup {
+  return jsonP.readObj({
     required: {
       "PatchRules": [toPatchRule],
     },
@@ -4673,19 +5026,23 @@ export interface PatchRule {
   ApproveUntilDate?: string | null;
   EnableNonSecurity?: boolean | null;
 }
-function fromPatchRule(input?: PatchRule | null): JSONValue {
+function fromPatchRule(input?: PatchRule | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     PatchFilterGroup: fromPatchFilterGroup(input["PatchFilterGroup"]),
+    ComplianceLevel: input["ComplianceLevel"],
+    ApproveAfterDays: input["ApproveAfterDays"],
+    ApproveUntilDate: input["ApproveUntilDate"],
+    EnableNonSecurity: input["EnableNonSecurity"],
   }
 }
-function toPatchRule(root: JSONValue): PatchRule {
-  return prt.readObj({
+function toPatchRule(root: jsonP.JSONValue): PatchRule {
+  return jsonP.readObj({
     required: {
       "PatchFilterGroup": toPatchFilterGroup,
     },
     optional: {
-      "ComplianceLevel": toPatchComplianceLevel,
+      "ComplianceLevel": (x: jsonP.JSONValue) => cmnP.readEnum<PatchComplianceLevel>(x),
       "ApproveAfterDays": "n",
       "ApproveUntilDate": "s",
       "EnableNonSecurity": "b",
@@ -4701,31 +5058,13 @@ export type PatchComplianceLevel =
 | "LOW"
 | "INFORMATIONAL"
 | "UNSPECIFIED"
-;
-
-function toPatchComplianceLevel(root: JSONValue): PatchComplianceLevel | null {
-  return ( false
-    || root == "CRITICAL"
-    || root == "HIGH"
-    || root == "MEDIUM"
-    || root == "LOW"
-    || root == "INFORMATIONAL"
-    || root == "UNSPECIFIED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type PatchAction =
 | "ALLOW_AS_DEPENDENCY"
 | "BLOCK"
-;
-
-function toPatchAction(root: JSONValue): PatchAction | null {
-  return ( false
-    || root == "ALLOW_AS_DEPENDENCY"
-    || root == "BLOCK"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface PatchSource {
@@ -4733,13 +5072,16 @@ export interface PatchSource {
   Products: string[];
   Configuration: string;
 }
-function fromPatchSource(input?: PatchSource | null): JSONValue {
+function fromPatchSource(input?: PatchSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Products: input["Products"],
+    Configuration: input["Configuration"],
   }
 }
-function toPatchSource(root: JSONValue): PatchSource {
-  return prt.readObj({
+function toPatchSource(root: jsonP.JSONValue): PatchSource {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "Products": ["s"],
@@ -4758,17 +5100,22 @@ export interface ResourceDataSyncS3Destination {
   AWSKMSKeyARN?: string | null;
   DestinationDataSharing?: ResourceDataSyncDestinationDataSharing | null;
 }
-function fromResourceDataSyncS3Destination(input?: ResourceDataSyncS3Destination | null): JSONValue {
+function fromResourceDataSyncS3Destination(input?: ResourceDataSyncS3Destination | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    BucketName: input["BucketName"],
+    Prefix: input["Prefix"],
+    SyncFormat: input["SyncFormat"],
+    Region: input["Region"],
+    AWSKMSKeyARN: input["AWSKMSKeyARN"],
     DestinationDataSharing: fromResourceDataSyncDestinationDataSharing(input["DestinationDataSharing"]),
   }
 }
-function toResourceDataSyncS3Destination(root: JSONValue): ResourceDataSyncS3Destination {
-  return prt.readObj({
+function toResourceDataSyncS3Destination(root: jsonP.JSONValue): ResourceDataSyncS3Destination {
+  return jsonP.readObj({
     required: {
       "BucketName": "s",
-      "SyncFormat": toResourceDataSyncS3Format,
+      "SyncFormat": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceDataSyncS3Format>(x),
       "Region": "s",
     },
     optional: {
@@ -4782,25 +5129,20 @@ function toResourceDataSyncS3Destination(root: JSONValue): ResourceDataSyncS3Des
 // refs: 2 - tags: input, named, enum, output
 export type ResourceDataSyncS3Format =
 | "JsonSerDe"
-;
-
-function toResourceDataSyncS3Format(root: JSONValue): ResourceDataSyncS3Format | null {
-  return ( false
-    || root == "JsonSerDe"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface ResourceDataSyncDestinationDataSharing {
   DestinationDataSharingType?: string | null;
 }
-function fromResourceDataSyncDestinationDataSharing(input?: ResourceDataSyncDestinationDataSharing | null): JSONValue {
+function fromResourceDataSyncDestinationDataSharing(input?: ResourceDataSyncDestinationDataSharing | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DestinationDataSharingType: input["DestinationDataSharingType"],
   }
 }
-function toResourceDataSyncDestinationDataSharing(root: JSONValue): ResourceDataSyncDestinationDataSharing {
-  return prt.readObj({
+function toResourceDataSyncDestinationDataSharing(root: jsonP.JSONValue): ResourceDataSyncDestinationDataSharing {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DestinationDataSharingType": "s",
@@ -4815,10 +5157,13 @@ export interface ResourceDataSyncSource {
   SourceRegions: string[];
   IncludeFutureRegions?: boolean | null;
 }
-function fromResourceDataSyncSource(input?: ResourceDataSyncSource | null): JSONValue {
+function fromResourceDataSyncSource(input?: ResourceDataSyncSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SourceType: input["SourceType"],
     AwsOrganizationsSource: fromResourceDataSyncAwsOrganizationsSource(input["AwsOrganizationsSource"]),
+    SourceRegions: input["SourceRegions"],
+    IncludeFutureRegions: input["IncludeFutureRegions"],
   }
 }
 
@@ -4827,14 +5172,15 @@ export interface ResourceDataSyncAwsOrganizationsSource {
   OrganizationSourceType: string;
   OrganizationalUnits?: ResourceDataSyncOrganizationalUnit[] | null;
 }
-function fromResourceDataSyncAwsOrganizationsSource(input?: ResourceDataSyncAwsOrganizationsSource | null): JSONValue {
+function fromResourceDataSyncAwsOrganizationsSource(input?: ResourceDataSyncAwsOrganizationsSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    OrganizationSourceType: input["OrganizationSourceType"],
     OrganizationalUnits: input["OrganizationalUnits"]?.map(x => fromResourceDataSyncOrganizationalUnit(x)),
   }
 }
-function toResourceDataSyncAwsOrganizationsSource(root: JSONValue): ResourceDataSyncAwsOrganizationsSource {
-  return prt.readObj({
+function toResourceDataSyncAwsOrganizationsSource(root: jsonP.JSONValue): ResourceDataSyncAwsOrganizationsSource {
+  return jsonP.readObj({
     required: {
       "OrganizationSourceType": "s",
     },
@@ -4848,13 +5194,14 @@ function toResourceDataSyncAwsOrganizationsSource(root: JSONValue): ResourceData
 export interface ResourceDataSyncOrganizationalUnit {
   OrganizationalUnitId?: string | null;
 }
-function fromResourceDataSyncOrganizationalUnit(input?: ResourceDataSyncOrganizationalUnit | null): JSONValue {
+function fromResourceDataSyncOrganizationalUnit(input?: ResourceDataSyncOrganizationalUnit | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    OrganizationalUnitId: input["OrganizationalUnitId"],
   }
 }
-function toResourceDataSyncOrganizationalUnit(root: JSONValue): ResourceDataSyncOrganizationalUnit {
-  return prt.readObj({
+function toResourceDataSyncOrganizationalUnit(root: jsonP.JSONValue): ResourceDataSyncOrganizationalUnit {
+  return jsonP.readObj({
     required: {},
     optional: {
       "OrganizationalUnitId": "s",
@@ -4866,17 +5213,18 @@ function toResourceDataSyncOrganizationalUnit(root: JSONValue): ResourceDataSync
 export type InventorySchemaDeleteOption =
 | "DisableSchema"
 | "DeleteSchema"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface DescribeActivationsFilter {
   FilterKey?: DescribeActivationsFilterKeys | null;
   FilterValues?: string[] | null;
 }
-function fromDescribeActivationsFilter(input?: DescribeActivationsFilter | null): JSONValue {
+function fromDescribeActivationsFilter(input?: DescribeActivationsFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    FilterKey: input["FilterKey"],
+    FilterValues: input["FilterValues"],
   }
 }
 
@@ -4885,17 +5233,18 @@ export type DescribeActivationsFilterKeys =
 | "ActivationIds"
 | "DefaultInstanceName"
 | "IamRole"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface AssociationExecutionTargetsFilter {
   Key: AssociationExecutionTargetsFilterKey;
   Value: string;
 }
-function fromAssociationExecutionTargetsFilter(input?: AssociationExecutionTargetsFilter | null): JSONValue {
+function fromAssociationExecutionTargetsFilter(input?: AssociationExecutionTargetsFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
 
@@ -4904,8 +5253,7 @@ export type AssociationExecutionTargetsFilterKey =
 | "Status"
 | "ResourceId"
 | "ResourceType"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface AssociationExecutionFilter {
@@ -4913,9 +5261,12 @@ export interface AssociationExecutionFilter {
   Value: string;
   Type: AssociationFilterOperatorType;
 }
-function fromAssociationExecutionFilter(input?: AssociationExecutionFilter | null): JSONValue {
+function fromAssociationExecutionFilter(input?: AssociationExecutionFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
+    Type: input["Type"],
   }
 }
 
@@ -4924,25 +5275,25 @@ export type AssociationExecutionFilterKey =
 | "ExecutionId"
 | "Status"
 | "CreatedTime"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type AssociationFilterOperatorType =
 | "EQUAL"
 | "LESS_THAN"
 | "GREATER_THAN"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface AutomationExecutionFilter {
   Key: AutomationExecutionFilterKey;
   Values: string[];
 }
-function fromAutomationExecutionFilter(input?: AutomationExecutionFilter | null): JSONValue {
+function fromAutomationExecutionFilter(input?: AutomationExecutionFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
   }
 }
 
@@ -4957,17 +5308,18 @@ export type AutomationExecutionFilterKey =
 | "StartTimeAfter"
 | "AutomationType"
 | "TagKey"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface StepExecutionFilter {
   Key: StepExecutionFilterKey;
   Values: string[];
 }
-function fromStepExecutionFilter(input?: StepExecutionFilter | null): JSONValue {
+function fromStepExecutionFilter(input?: StepExecutionFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
   }
 }
 
@@ -4979,34 +5331,36 @@ export type StepExecutionFilterKey =
 | "StepExecutionId"
 | "StepName"
 | "Action"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface
 export interface PatchOrchestratorFilter {
   Key?: string | null;
   Values?: string[] | null;
 }
-function fromPatchOrchestratorFilter(input?: PatchOrchestratorFilter | null): JSONValue {
+function fromPatchOrchestratorFilter(input?: PatchOrchestratorFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
   }
 }
 
 // refs: 2 - tags: input, named, enum
 export type DocumentPermissionType =
 | "Share"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface InstanceInformationFilter {
   key: InstanceInformationFilterKey;
   valueSet: string[];
 }
-function fromInstanceInformationFilter(input?: InstanceInformationFilter | null): JSONValue {
+function fromInstanceInformationFilter(input?: InstanceInformationFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    key: input["key"],
+    valueSet: input["valueSet"],
   }
 }
 
@@ -5020,17 +5374,18 @@ export type InstanceInformationFilterKey =
 | "IamRole"
 | "ResourceType"
 | "AssociationStatus"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface InstanceInformationStringFilter {
   Key: string;
   Values: string[];
 }
-function fromInstanceInformationStringFilter(input?: InstanceInformationStringFilter | null): JSONValue {
+function fromInstanceInformationStringFilter(input?: InstanceInformationStringFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
   }
 }
 
@@ -5040,9 +5395,12 @@ export interface InstancePatchStateFilter {
   Values: string[];
   Type: InstancePatchStateOperatorType;
 }
-function fromInstancePatchStateFilter(input?: InstancePatchStateFilter | null): JSONValue {
+function fromInstancePatchStateFilter(input?: InstancePatchStateFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
+    Type: input["Type"],
   }
 }
 
@@ -5052,17 +5410,18 @@ export type InstancePatchStateOperatorType =
 | "NotEqual"
 | "LessThan"
 | "GreaterThan"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface
 export interface MaintenanceWindowFilter {
   Key?: string | null;
   Values?: string[] | null;
 }
-function fromMaintenanceWindowFilter(input?: MaintenanceWindowFilter | null): JSONValue {
+function fromMaintenanceWindowFilter(input?: MaintenanceWindowFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
   }
 }
 
@@ -5070,14 +5429,7 @@ function fromMaintenanceWindowFilter(input?: MaintenanceWindowFilter | null): JS
 export type MaintenanceWindowResourceType =
 | "INSTANCE"
 | "RESOURCE_GROUP"
-;
-
-function toMaintenanceWindowResourceType(root: JSONValue): MaintenanceWindowResourceType | null {
-  return ( false
-    || root == "INSTANCE"
-    || root == "RESOURCE_GROUP"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface OpsItemFilter {
@@ -5085,9 +5437,12 @@ export interface OpsItemFilter {
   Values: string[];
   Operator: OpsItemFilterOperator;
 }
-function fromOpsItemFilter(input?: OpsItemFilter | null): JSONValue {
+function fromOpsItemFilter(input?: OpsItemFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
+    Operator: input["Operator"],
   }
 }
 
@@ -5108,8 +5463,7 @@ export type OpsItemFilterKey =
 | "AutomationId"
 | "Category"
 | "Severity"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type OpsItemFilterOperator =
@@ -5117,17 +5471,18 @@ export type OpsItemFilterOperator =
 | "Contains"
 | "GreaterThan"
 | "LessThan"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ParametersFilter {
   Key: ParametersFilterKey;
   Values: string[];
 }
-function fromParametersFilter(input?: ParametersFilter | null): JSONValue {
+function fromParametersFilter(input?: ParametersFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
   }
 }
 
@@ -5136,8 +5491,7 @@ export type ParametersFilterKey =
 | "Name"
 | "Type"
 | "KeyId"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface ParameterStringFilter {
@@ -5145,9 +5499,12 @@ export interface ParameterStringFilter {
   Option?: string | null;
   Values?: string[] | null;
 }
-function fromParameterStringFilter(input?: ParameterStringFilter | null): JSONValue {
+function fromParameterStringFilter(input?: ParameterStringFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Option: input["Option"],
+    Values: input["Values"],
   }
 }
 
@@ -5159,31 +5516,30 @@ export type PatchProperty =
 | "MSRC_SEVERITY"
 | "PRIORITY"
 | "SEVERITY"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type PatchSet =
 | "OS"
 | "APPLICATION"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type SessionState =
 | "Active"
 | "History"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface SessionFilter {
   key: SessionFilterKey;
   value: string;
 }
-function fromSessionFilter(input?: SessionFilter | null): JSONValue {
+function fromSessionFilter(input?: SessionFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    key: input["key"],
+    value: input["value"],
   }
 }
 
@@ -5194,8 +5550,7 @@ export type SessionFilterKey =
 | "Target"
 | "Owner"
 | "Status"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface
 export interface InventoryFilter {
@@ -5203,9 +5558,12 @@ export interface InventoryFilter {
   Values: string[];
   Type?: InventoryQueryOperatorType | null;
 }
-function fromInventoryFilter(input?: InventoryFilter | null): JSONValue {
+function fromInventoryFilter(input?: InventoryFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
+    Type: input["Type"],
   }
 }
 
@@ -5217,8 +5575,7 @@ export type InventoryQueryOperatorType =
 | "LessThan"
 | "GreaterThan"
 | "Exists"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface, recursive
 export interface InventoryAggregator {
@@ -5226,9 +5583,10 @@ export interface InventoryAggregator {
   Aggregators?: InventoryAggregator[] | null;
   Groups?: InventoryGroup[] | null;
 }
-function fromInventoryAggregator(input?: InventoryAggregator | null): JSONValue {
+function fromInventoryAggregator(input?: InventoryAggregator | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Expression: input["Expression"],
     Aggregators: input["Aggregators"]?.map(x => fromInventoryAggregator(x)),
     Groups: input["Groups"]?.map(x => fromInventoryGroup(x)),
   }
@@ -5239,9 +5597,10 @@ export interface InventoryGroup {
   Name: string;
   Filters: InventoryFilter[];
 }
-function fromInventoryGroup(input?: InventoryGroup | null): JSONValue {
+function fromInventoryGroup(input?: InventoryGroup | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
     Filters: input["Filters"]?.map(x => fromInventoryFilter(x)),
   }
 }
@@ -5250,9 +5609,10 @@ function fromInventoryGroup(input?: InventoryGroup | null): JSONValue {
 export interface ResultAttribute {
   TypeName: string;
 }
-function fromResultAttribute(input?: ResultAttribute | null): JSONValue {
+function fromResultAttribute(input?: ResultAttribute | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    TypeName: input["TypeName"],
   }
 }
 
@@ -5262,9 +5622,12 @@ export interface OpsFilter {
   Values: string[];
   Type?: OpsFilterOperatorType | null;
 }
-function fromOpsFilter(input?: OpsFilter | null): JSONValue {
+function fromOpsFilter(input?: OpsFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
+    Type: input["Type"],
   }
 }
 
@@ -5276,21 +5639,24 @@ export type OpsFilterOperatorType =
 | "LessThan"
 | "GreaterThan"
 | "Exists"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface, recursive
 export interface OpsAggregator {
   AggregatorType?: string | null;
   TypeName?: string | null;
   AttributeName?: string | null;
-  Values?: { [key: string]: string } | null;
+  Values?: { [key: string]: string | null | undefined } | null;
   Filters?: OpsFilter[] | null;
   Aggregators?: OpsAggregator[] | null;
 }
-function fromOpsAggregator(input?: OpsAggregator | null): JSONValue {
+function fromOpsAggregator(input?: OpsAggregator | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AggregatorType: input["AggregatorType"],
+    TypeName: input["TypeName"],
+    AttributeName: input["AttributeName"],
+    Values: input["Values"],
     Filters: input["Filters"]?.map(x => fromOpsFilter(x)),
     Aggregators: input["Aggregators"]?.map(x => fromOpsAggregator(x)),
   }
@@ -5300,9 +5666,10 @@ function fromOpsAggregator(input?: OpsAggregator | null): JSONValue {
 export interface OpsResultAttribute {
   TypeName: string;
 }
-function fromOpsResultAttribute(input?: OpsResultAttribute | null): JSONValue {
+function fromOpsResultAttribute(input?: OpsResultAttribute | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    TypeName: input["TypeName"],
   }
 }
 
@@ -5311,9 +5678,11 @@ export interface AssociationFilter {
   key: AssociationFilterKey;
   value: string;
 }
-function fromAssociationFilter(input?: AssociationFilter | null): JSONValue {
+function fromAssociationFilter(input?: AssociationFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    key: input["key"],
+    value: input["value"],
   }
 }
 
@@ -5327,17 +5696,18 @@ export type AssociationFilterKey =
 | "LastExecutedAfter"
 | "AssociationName"
 | "ResourceGroupName"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface CommandFilter {
   key: CommandFilterKey;
   value: string;
 }
-function fromCommandFilter(input?: CommandFilter | null): JSONValue {
+function fromCommandFilter(input?: CommandFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    key: input["key"],
+    value: input["value"],
   }
 }
 
@@ -5348,8 +5718,7 @@ export type CommandFilterKey =
 | "Status"
 | "ExecutionStage"
 | "DocumentName"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface
 export interface ComplianceStringFilter {
@@ -5357,9 +5726,12 @@ export interface ComplianceStringFilter {
   Values?: string[] | null;
   Type?: ComplianceQueryOperatorType | null;
 }
-function fromComplianceStringFilter(input?: ComplianceStringFilter | null): JSONValue {
+function fromComplianceStringFilter(input?: ComplianceStringFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
+    Type: input["Type"],
   }
 }
 
@@ -5370,17 +5742,18 @@ export type ComplianceQueryOperatorType =
 | "BEGIN_WITH"
 | "LESS_THAN"
 | "GREATER_THAN"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface DocumentFilter {
   key: DocumentFilterKey;
   value: string;
 }
-function fromDocumentFilter(input?: DocumentFilter | null): JSONValue {
+function fromDocumentFilter(input?: DocumentFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    key: input["key"],
+    value: input["value"],
   }
 }
 
@@ -5390,17 +5763,18 @@ export type DocumentFilterKey =
 | "Owner"
 | "PlatformTypes"
 | "DocumentType"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface DocumentKeyValuesFilter {
   Key?: string | null;
   Values?: string[] | null;
 }
-function fromDocumentKeyValuesFilter(input?: DocumentKeyValuesFilter | null): JSONValue {
+function fromDocumentKeyValuesFilter(input?: DocumentKeyValuesFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
   }
 }
 
@@ -5410,14 +5784,16 @@ export interface ComplianceExecutionSummary {
   ExecutionId?: string | null;
   ExecutionType?: string | null;
 }
-function fromComplianceExecutionSummary(input?: ComplianceExecutionSummary | null): JSONValue {
+function fromComplianceExecutionSummary(input?: ComplianceExecutionSummary | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    ExecutionTime: prt.serializeDate_unixTimestamp(input["ExecutionTime"]),
+  return {
+    ExecutionTime: jsonP.serializeDate_unixTimestamp(input["ExecutionTime"]),
+    ExecutionId: input["ExecutionId"],
+    ExecutionType: input["ExecutionType"],
   }
 }
-function toComplianceExecutionSummary(root: JSONValue): ComplianceExecutionSummary {
-  return prt.readObj({
+function toComplianceExecutionSummary(root: jsonP.JSONValue): ComplianceExecutionSummary {
+  return jsonP.readObj({
     required: {
       "ExecutionTime": "d",
     },
@@ -5434,11 +5810,16 @@ export interface ComplianceItemEntry {
   Title?: string | null;
   Severity: ComplianceSeverity;
   Status: ComplianceStatus;
-  Details?: { [key: string]: string } | null;
+  Details?: { [key: string]: string | null | undefined } | null;
 }
-function fromComplianceItemEntry(input?: ComplianceItemEntry | null): JSONValue {
+function fromComplianceItemEntry(input?: ComplianceItemEntry | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Id: input["Id"],
+    Title: input["Title"],
+    Severity: input["Severity"],
+    Status: input["Status"],
+    Details: input["Details"],
   }
 }
 
@@ -5450,38 +5831,19 @@ export type ComplianceSeverity =
 | "LOW"
 | "INFORMATIONAL"
 | "UNSPECIFIED"
-;
-
-function toComplianceSeverity(root: JSONValue): ComplianceSeverity | null {
-  return ( false
-    || root == "CRITICAL"
-    || root == "HIGH"
-    || root == "MEDIUM"
-    || root == "LOW"
-    || root == "INFORMATIONAL"
-    || root == "UNSPECIFIED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type ComplianceStatus =
 | "COMPLIANT"
 | "NON_COMPLIANT"
-;
-
-function toComplianceStatus(root: JSONValue): ComplianceStatus | null {
-  return ( false
-    || root == "COMPLIANT"
-    || root == "NON_COMPLIANT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ComplianceUploadType =
 | "COMPLETE"
 | "PARTIAL"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface InventoryItem {
@@ -5489,12 +5851,18 @@ export interface InventoryItem {
   SchemaVersion: string;
   CaptureTime: string;
   ContentHash?: string | null;
-  Content?: ({ [key: string]: string })[] | null;
-  Context?: { [key: string]: string } | null;
+  Content?: ({ [key: string]: string | null | undefined })[] | null;
+  Context?: { [key: string]: string | null | undefined } | null;
 }
-function fromInventoryItem(input?: InventoryItem | null): JSONValue {
+function fromInventoryItem(input?: InventoryItem | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    TypeName: input["TypeName"],
+    SchemaVersion: input["SchemaVersion"],
+    CaptureTime: input["CaptureTime"],
+    ContentHash: input["ContentHash"],
+    Content: input["Content"],
+    Context: input["Context"],
   }
 }
 
@@ -5503,30 +5871,14 @@ export type ParameterType =
 | "String"
 | "StringList"
 | "SecureString"
-;
-
-function toParameterType(root: JSONValue): ParameterType | null {
-  return ( false
-    || root == "String"
-    || root == "StringList"
-    || root == "SecureString"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type ParameterTier =
 | "Standard"
 | "Advanced"
 | "Intelligent-Tiering"
-;
-
-function toParameterTier(root: JSONValue): ParameterTier | null {
-  return ( false
-    || root == "Standard"
-    || root == "Advanced"
-    || root == "Intelligent-Tiering"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: input, named, enum, output
 export type MaintenanceWindowTaskType =
@@ -5534,28 +5886,20 @@ export type MaintenanceWindowTaskType =
 | "AUTOMATION"
 | "STEP_FUNCTIONS"
 | "LAMBDA"
-;
-
-function toMaintenanceWindowTaskType(root: JSONValue): MaintenanceWindowTaskType | null {
-  return ( false
-    || root == "RUN_COMMAND"
-    || root == "AUTOMATION"
-    || root == "STEP_FUNCTIONS"
-    || root == "LAMBDA"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface MaintenanceWindowTaskParameterValueExpression {
   Values?: string[] | null;
 }
-function fromMaintenanceWindowTaskParameterValueExpression(input?: MaintenanceWindowTaskParameterValueExpression | null): JSONValue {
+function fromMaintenanceWindowTaskParameterValueExpression(input?: MaintenanceWindowTaskParameterValueExpression | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Values: input["Values"],
   }
 }
-function toMaintenanceWindowTaskParameterValueExpression(root: JSONValue): MaintenanceWindowTaskParameterValueExpression {
-  return prt.readObj({
+function toMaintenanceWindowTaskParameterValueExpression(root: jsonP.JSONValue): MaintenanceWindowTaskParameterValueExpression {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Values": ["s"],
@@ -5570,17 +5914,17 @@ export interface MaintenanceWindowTaskInvocationParameters {
   StepFunctions?: MaintenanceWindowStepFunctionsParameters | null;
   Lambda?: MaintenanceWindowLambdaParameters | null;
 }
-function fromMaintenanceWindowTaskInvocationParameters(input?: MaintenanceWindowTaskInvocationParameters | null): JSONValue {
+function fromMaintenanceWindowTaskInvocationParameters(input?: MaintenanceWindowTaskInvocationParameters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     RunCommand: fromMaintenanceWindowRunCommandParameters(input["RunCommand"]),
     Automation: fromMaintenanceWindowAutomationParameters(input["Automation"]),
     StepFunctions: fromMaintenanceWindowStepFunctionsParameters(input["StepFunctions"]),
     Lambda: fromMaintenanceWindowLambdaParameters(input["Lambda"]),
   }
 }
-function toMaintenanceWindowTaskInvocationParameters(root: JSONValue): MaintenanceWindowTaskInvocationParameters {
-  return prt.readObj({
+function toMaintenanceWindowTaskInvocationParameters(root: jsonP.JSONValue): MaintenanceWindowTaskInvocationParameters {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RunCommand": toMaintenanceWindowRunCommandParameters,
@@ -5601,30 +5945,39 @@ export interface MaintenanceWindowRunCommandParameters {
   NotificationConfig?: NotificationConfig | null;
   OutputS3BucketName?: string | null;
   OutputS3KeyPrefix?: string | null;
-  Parameters?: { [key: string]: string[] } | null;
+  Parameters?: { [key: string]: string[] | null | undefined } | null;
   ServiceRoleArn?: string | null;
   TimeoutSeconds?: number | null;
 }
-function fromMaintenanceWindowRunCommandParameters(input?: MaintenanceWindowRunCommandParameters | null): JSONValue {
+function fromMaintenanceWindowRunCommandParameters(input?: MaintenanceWindowRunCommandParameters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Comment: input["Comment"],
     CloudWatchOutputConfig: fromCloudWatchOutputConfig(input["CloudWatchOutputConfig"]),
+    DocumentHash: input["DocumentHash"],
+    DocumentHashType: input["DocumentHashType"],
+    DocumentVersion: input["DocumentVersion"],
     NotificationConfig: fromNotificationConfig(input["NotificationConfig"]),
+    OutputS3BucketName: input["OutputS3BucketName"],
+    OutputS3KeyPrefix: input["OutputS3KeyPrefix"],
+    Parameters: input["Parameters"],
+    ServiceRoleArn: input["ServiceRoleArn"],
+    TimeoutSeconds: input["TimeoutSeconds"],
   }
 }
-function toMaintenanceWindowRunCommandParameters(root: JSONValue): MaintenanceWindowRunCommandParameters {
-  return prt.readObj({
+function toMaintenanceWindowRunCommandParameters(root: jsonP.JSONValue): MaintenanceWindowRunCommandParameters {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Comment": "s",
       "CloudWatchOutputConfig": toCloudWatchOutputConfig,
       "DocumentHash": "s",
-      "DocumentHashType": toDocumentHashType,
+      "DocumentHashType": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentHashType>(x),
       "DocumentVersion": "s",
       "NotificationConfig": toNotificationConfig,
       "OutputS3BucketName": "s",
       "OutputS3KeyPrefix": "s",
-      "Parameters": x => prt.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+      "Parameters": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
       "ServiceRoleArn": "s",
       "TimeoutSeconds": "n",
     },
@@ -5636,13 +5989,15 @@ export interface CloudWatchOutputConfig {
   CloudWatchLogGroupName?: string | null;
   CloudWatchOutputEnabled?: boolean | null;
 }
-function fromCloudWatchOutputConfig(input?: CloudWatchOutputConfig | null): JSONValue {
+function fromCloudWatchOutputConfig(input?: CloudWatchOutputConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CloudWatchLogGroupName: input["CloudWatchLogGroupName"],
+    CloudWatchOutputEnabled: input["CloudWatchOutputEnabled"],
   }
 }
-function toCloudWatchOutputConfig(root: JSONValue): CloudWatchOutputConfig {
-  return prt.readObj({
+function toCloudWatchOutputConfig(root: jsonP.JSONValue): CloudWatchOutputConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CloudWatchLogGroupName": "s",
@@ -5655,14 +6010,7 @@ function toCloudWatchOutputConfig(root: JSONValue): CloudWatchOutputConfig {
 export type DocumentHashType =
 | "Sha256"
 | "Sha1"
-;
-
-function toDocumentHashType(root: JSONValue): DocumentHashType | null {
-  return ( false
-    || root == "Sha256"
-    || root == "Sha1"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: input, named, interface, output
 export interface NotificationConfig {
@@ -5670,18 +6018,21 @@ export interface NotificationConfig {
   NotificationEvents?: NotificationEvent[] | null;
   NotificationType?: NotificationType | null;
 }
-function fromNotificationConfig(input?: NotificationConfig | null): JSONValue {
+function fromNotificationConfig(input?: NotificationConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    NotificationArn: input["NotificationArn"],
+    NotificationEvents: input["NotificationEvents"],
+    NotificationType: input["NotificationType"],
   }
 }
-function toNotificationConfig(root: JSONValue): NotificationConfig {
-  return prt.readObj({
+function toNotificationConfig(root: jsonP.JSONValue): NotificationConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "NotificationArn": "s",
-      "NotificationEvents": [toNotificationEvent],
-      "NotificationType": toNotificationType,
+      "NotificationEvents": [(x: jsonP.JSONValue) => cmnP.readEnum<NotificationEvent>(x)],
+      "NotificationType": (x: jsonP.JSONValue) => cmnP.readEnum<NotificationType>(x),
     },
   }, root);
 }
@@ -5694,48 +6045,32 @@ export type NotificationEvent =
 | "TimedOut"
 | "Cancelled"
 | "Failed"
-;
-
-function toNotificationEvent(root: JSONValue): NotificationEvent | null {
-  return ( false
-    || root == "All"
-    || root == "InProgress"
-    || root == "Success"
-    || root == "TimedOut"
-    || root == "Cancelled"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: input, named, enum, output
 export type NotificationType =
 | "Command"
 | "Invocation"
-;
-
-function toNotificationType(root: JSONValue): NotificationType | null {
-  return ( false
-    || root == "Command"
-    || root == "Invocation"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface MaintenanceWindowAutomationParameters {
   DocumentVersion?: string | null;
-  Parameters?: { [key: string]: string[] } | null;
+  Parameters?: { [key: string]: string[] | null | undefined } | null;
 }
-function fromMaintenanceWindowAutomationParameters(input?: MaintenanceWindowAutomationParameters | null): JSONValue {
+function fromMaintenanceWindowAutomationParameters(input?: MaintenanceWindowAutomationParameters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DocumentVersion: input["DocumentVersion"],
+    Parameters: input["Parameters"],
   }
 }
-function toMaintenanceWindowAutomationParameters(root: JSONValue): MaintenanceWindowAutomationParameters {
-  return prt.readObj({
+function toMaintenanceWindowAutomationParameters(root: jsonP.JSONValue): MaintenanceWindowAutomationParameters {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DocumentVersion": "s",
-      "Parameters": x => prt.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+      "Parameters": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
     },
   }, root);
 }
@@ -5745,13 +6080,15 @@ export interface MaintenanceWindowStepFunctionsParameters {
   Input?: string | null;
   Name?: string | null;
 }
-function fromMaintenanceWindowStepFunctionsParameters(input?: MaintenanceWindowStepFunctionsParameters | null): JSONValue {
+function fromMaintenanceWindowStepFunctionsParameters(input?: MaintenanceWindowStepFunctionsParameters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Input: input["Input"],
+    Name: input["Name"],
   }
 }
-function toMaintenanceWindowStepFunctionsParameters(root: JSONValue): MaintenanceWindowStepFunctionsParameters {
-  return prt.readObj({
+function toMaintenanceWindowStepFunctionsParameters(root: jsonP.JSONValue): MaintenanceWindowStepFunctionsParameters {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Input": "s",
@@ -5766,14 +6103,16 @@ export interface MaintenanceWindowLambdaParameters {
   Qualifier?: string | null;
   Payload?: Uint8Array | string | null;
 }
-function fromMaintenanceWindowLambdaParameters(input?: MaintenanceWindowLambdaParameters | null): JSONValue {
+function fromMaintenanceWindowLambdaParameters(input?: MaintenanceWindowLambdaParameters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Payload: prt.serializeBlob(input["Payload"]),
+  return {
+    ClientContext: input["ClientContext"],
+    Qualifier: input["Qualifier"],
+    Payload: jsonP.serializeBlob(input["Payload"]),
   }
 }
-function toMaintenanceWindowLambdaParameters(root: JSONValue): MaintenanceWindowLambdaParameters {
-  return prt.readObj({
+function toMaintenanceWindowLambdaParameters(root: jsonP.JSONValue): MaintenanceWindowLambdaParameters {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ClientContext": "s",
@@ -5789,13 +6128,16 @@ export interface LoggingInfo {
   S3KeyPrefix?: string | null;
   S3Region: string;
 }
-function fromLoggingInfo(input?: LoggingInfo | null): JSONValue {
+function fromLoggingInfo(input?: LoggingInfo | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3BucketName: input["S3BucketName"],
+    S3KeyPrefix: input["S3KeyPrefix"],
+    S3Region: input["S3Region"],
   }
 }
-function toLoggingInfo(root: JSONValue): LoggingInfo {
-  return prt.readObj({
+function toLoggingInfo(root: jsonP.JSONValue): LoggingInfo {
+  return jsonP.readObj({
     required: {
       "S3BucketName": "s",
       "S3Region": "s",
@@ -5813,21 +6155,13 @@ export type SignalType =
 | "StartStep"
 | "StopStep"
 | "Resume"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type ExecutionMode =
 | "Auto"
 | "Interactive"
-;
-
-function toExecutionMode(root: JSONValue): ExecutionMode | null {
-  return ( false
-    || root == "Auto"
-    || root == "Interactive"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface TargetLocation {
@@ -5837,13 +6171,18 @@ export interface TargetLocation {
   TargetLocationMaxErrors?: string | null;
   ExecutionRoleName?: string | null;
 }
-function fromTargetLocation(input?: TargetLocation | null): JSONValue {
+function fromTargetLocation(input?: TargetLocation | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Accounts: input["Accounts"],
+    Regions: input["Regions"],
+    TargetLocationMaxConcurrency: input["TargetLocationMaxConcurrency"],
+    TargetLocationMaxErrors: input["TargetLocationMaxErrors"],
+    ExecutionRoleName: input["ExecutionRoleName"],
   }
 }
-function toTargetLocation(root: JSONValue): TargetLocation {
-  return prt.readObj({
+function toTargetLocation(root: jsonP.JSONValue): TargetLocation {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Accounts": ["s"],
@@ -5859,8 +6198,7 @@ function toTargetLocation(root: JSONValue): TargetLocation {
 export type StopType =
 | "Complete"
 | "Cancel"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface AssociationStatus {
@@ -5869,17 +6207,20 @@ export interface AssociationStatus {
   Message: string;
   AdditionalInfo?: string | null;
 }
-function fromAssociationStatus(input?: AssociationStatus | null): JSONValue {
+function fromAssociationStatus(input?: AssociationStatus | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Date: prt.serializeDate_unixTimestamp(input["Date"]),
+  return {
+    Date: jsonP.serializeDate_unixTimestamp(input["Date"]),
+    Name: input["Name"],
+    Message: input["Message"],
+    AdditionalInfo: input["AdditionalInfo"],
   }
 }
-function toAssociationStatus(root: JSONValue): AssociationStatus {
-  return prt.readObj({
+function toAssociationStatus(root: jsonP.JSONValue): AssociationStatus {
+  return jsonP.readObj({
     required: {
       "Date": "d",
-      "Name": toAssociationStatusName,
+      "Name": (x: jsonP.JSONValue) => cmnP.readEnum<AssociationStatusName>(x),
       "Message": "s",
     },
     optional: {
@@ -5893,30 +6234,14 @@ export type AssociationStatusName =
 | "Pending"
 | "Success"
 | "Failed"
-;
-
-function toAssociationStatusName(root: JSONValue): AssociationStatusName | null {
-  return ( false
-    || root == "Pending"
-    || root == "Success"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type OpsItemStatus =
 | "Open"
 | "InProgress"
 | "Resolved"
-;
-
-function toOpsItemStatus(root: JSONValue): OpsItemStatus | null {
-  return ( false
-    || root == "Open"
-    || root == "InProgress"
-    || root == "Resolved"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, interface
 export interface AssociationDescription {
@@ -5929,7 +6254,7 @@ export interface AssociationDescription {
   Overview?: AssociationOverview | null;
   DocumentVersion?: string | null;
   AutomationTargetParameterName?: string | null;
-  Parameters?: { [key: string]: string[] } | null;
+  Parameters?: { [key: string]: string[] | null | undefined } | null;
   AssociationId?: string | null;
   Targets?: Target[] | null;
   ScheduleExpression?: string | null;
@@ -5943,8 +6268,8 @@ export interface AssociationDescription {
   SyncCompliance?: AssociationSyncCompliance | null;
   ApplyOnlyAtCronInterval?: boolean | null;
 }
-function toAssociationDescription(root: JSONValue): AssociationDescription {
-  return prt.readObj({
+function toAssociationDescription(root: jsonP.JSONValue): AssociationDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -5956,7 +6281,7 @@ function toAssociationDescription(root: JSONValue): AssociationDescription {
       "Overview": toAssociationOverview,
       "DocumentVersion": "s",
       "AutomationTargetParameterName": "s",
-      "Parameters": x => prt.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+      "Parameters": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
       "AssociationId": "s",
       "Targets": [toTarget],
       "ScheduleExpression": "s",
@@ -5966,8 +6291,8 @@ function toAssociationDescription(root: JSONValue): AssociationDescription {
       "AssociationName": "s",
       "MaxErrors": "s",
       "MaxConcurrency": "s",
-      "ComplianceSeverity": toAssociationComplianceSeverity,
-      "SyncCompliance": toAssociationSyncCompliance,
+      "ComplianceSeverity": (x: jsonP.JSONValue) => cmnP.readEnum<AssociationComplianceSeverity>(x),
+      "SyncCompliance": (x: jsonP.JSONValue) => cmnP.readEnum<AssociationSyncCompliance>(x),
       "ApplyOnlyAtCronInterval": "b",
     },
   }, root);
@@ -5977,15 +6302,15 @@ function toAssociationDescription(root: JSONValue): AssociationDescription {
 export interface AssociationOverview {
   Status?: string | null;
   DetailedStatus?: string | null;
-  AssociationStatusAggregatedCount?: { [key: string]: number } | null;
+  AssociationStatusAggregatedCount?: { [key: string]: number | null | undefined } | null;
 }
-function toAssociationOverview(root: JSONValue): AssociationOverview {
-  return prt.readObj({
+function toAssociationOverview(root: jsonP.JSONValue): AssociationOverview {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Status": "s",
       "DetailedStatus": "s",
-      "AssociationStatusAggregatedCount": x => prt.readMap(String, Number, x),
+      "AssociationStatusAggregatedCount": x => jsonP.readMap(String, Number, x),
     },
   }, root);
 }
@@ -5996,13 +6321,13 @@ export interface FailedCreateAssociation {
   Message?: string | null;
   Fault?: Fault | null;
 }
-function toFailedCreateAssociation(root: JSONValue): FailedCreateAssociation {
-  return prt.readObj({
+function toFailedCreateAssociation(root: jsonP.JSONValue): FailedCreateAssociation {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Entry": toCreateAssociationBatchRequestEntry,
       "Message": "s",
-      "Fault": toFault,
+      "Fault": (x: jsonP.JSONValue) => cmnP.readEnum<Fault>(x),
     },
   }, root);
 }
@@ -6012,14 +6337,7 @@ export type Fault =
 | "Client"
 | "Server"
 | "Unknown"
-;
-function toFault(root: JSONValue): Fault | null {
-  return ( false
-    || root == "Client"
-    || root == "Server"
-    || root == "Unknown"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface DocumentDescription {
@@ -6046,28 +6364,28 @@ export interface DocumentDescription {
   AttachmentsInformation?: AttachmentInformation[] | null;
   Requires?: DocumentRequires[] | null;
 }
-function toDocumentDescription(root: JSONValue): DocumentDescription {
-  return prt.readObj({
+function toDocumentDescription(root: jsonP.JSONValue): DocumentDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Sha1": "s",
       "Hash": "s",
-      "HashType": toDocumentHashType,
+      "HashType": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentHashType>(x),
       "Name": "s",
       "VersionName": "s",
       "Owner": "s",
       "CreatedDate": "d",
-      "Status": toDocumentStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentStatus>(x),
       "StatusInformation": "s",
       "DocumentVersion": "s",
       "Description": "s",
       "Parameters": [toDocumentParameter],
-      "PlatformTypes": [toPlatformType],
-      "DocumentType": toDocumentType,
+      "PlatformTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<PlatformType>(x)],
+      "DocumentType": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentType>(x),
       "SchemaVersion": "s",
       "LatestVersion": "s",
       "DefaultVersion": "s",
-      "DocumentFormat": toDocumentFormat,
+      "DocumentFormat": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentFormat>(x),
       "TargetType": "s",
       "Tags": [toTag],
       "AttachmentsInformation": [toAttachmentInformation],
@@ -6083,16 +6401,7 @@ export type DocumentStatus =
 | "Updating"
 | "Deleting"
 | "Failed"
-;
-function toDocumentStatus(root: JSONValue): DocumentStatus | null {
-  return ( false
-    || root == "Creating"
-    || root == "Active"
-    || root == "Updating"
-    || root == "Deleting"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface DocumentParameter {
@@ -6101,12 +6410,12 @@ export interface DocumentParameter {
   Description?: string | null;
   DefaultValue?: string | null;
 }
-function toDocumentParameter(root: JSONValue): DocumentParameter {
-  return prt.readObj({
+function toDocumentParameter(root: jsonP.JSONValue): DocumentParameter {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
-      "Type": toDocumentParameterType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentParameterType>(x),
       "Description": "s",
       "DefaultValue": "s",
     },
@@ -6117,32 +6426,20 @@ function toDocumentParameter(root: JSONValue): DocumentParameter {
 export type DocumentParameterType =
 | "String"
 | "StringList"
-;
-function toDocumentParameterType(root: JSONValue): DocumentParameterType | null {
-  return ( false
-    || root == "String"
-    || root == "StringList"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, enum
 export type PlatformType =
 | "Windows"
 | "Linux"
-;
-function toPlatformType(root: JSONValue): PlatformType | null {
-  return ( false
-    || root == "Windows"
-    || root == "Linux"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface AttachmentInformation {
   Name?: string | null;
 }
-function toAttachmentInformation(root: JSONValue): AttachmentInformation {
-  return prt.readObj({
+function toAttachmentInformation(root: jsonP.JSONValue): AttachmentInformation {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -6156,8 +6453,8 @@ export interface InventoryDeletionSummary {
   RemainingCount?: number | null;
   SummaryItems?: InventoryDeletionSummaryItem[] | null;
 }
-function toInventoryDeletionSummary(root: JSONValue): InventoryDeletionSummary {
-  return prt.readObj({
+function toInventoryDeletionSummary(root: jsonP.JSONValue): InventoryDeletionSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TotalCount": "n",
@@ -6173,8 +6470,8 @@ export interface InventoryDeletionSummaryItem {
   Count?: number | null;
   RemainingCount?: number | null;
 }
-function toInventoryDeletionSummaryItem(root: JSONValue): InventoryDeletionSummaryItem {
-  return prt.readObj({
+function toInventoryDeletionSummaryItem(root: jsonP.JSONValue): InventoryDeletionSummaryItem {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Version": "s",
@@ -6197,8 +6494,8 @@ export interface Activation {
   CreatedDate?: Date | number | null;
   Tags?: Tag[] | null;
 }
-function toActivation(root: JSONValue): Activation {
-  return prt.readObj({
+function toActivation(root: jsonP.JSONValue): Activation {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ActivationId": "s",
@@ -6227,8 +6524,8 @@ export interface AssociationExecutionTarget {
   LastExecutionDate?: Date | number | null;
   OutputSource?: OutputSource | null;
 }
-function toAssociationExecutionTarget(root: JSONValue): AssociationExecutionTarget {
-  return prt.readObj({
+function toAssociationExecutionTarget(root: jsonP.JSONValue): AssociationExecutionTarget {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AssociationId": "s",
@@ -6249,8 +6546,8 @@ export interface OutputSource {
   OutputSourceId?: string | null;
   OutputSourceType?: string | null;
 }
-function toOutputSource(root: JSONValue): OutputSource {
-  return prt.readObj({
+function toOutputSource(root: jsonP.JSONValue): OutputSource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "OutputSourceId": "s",
@@ -6270,8 +6567,8 @@ export interface AssociationExecution {
   LastExecutionDate?: Date | number | null;
   ResourceCountByStatus?: string | null;
 }
-function toAssociationExecution(root: JSONValue): AssociationExecution {
-  return prt.readObj({
+function toAssociationExecution(root: jsonP.JSONValue): AssociationExecution {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AssociationId": "s",
@@ -6296,7 +6593,7 @@ export interface AutomationExecutionMetadata {
   ExecutionEndTime?: Date | number | null;
   ExecutedBy?: string | null;
   LogFile?: string | null;
-  Outputs?: { [key: string]: string[] } | null;
+  Outputs?: { [key: string]: string[] | null | undefined } | null;
   Mode?: ExecutionMode | null;
   ParentAutomationExecutionId?: string | null;
   CurrentStepName?: string | null;
@@ -6304,39 +6601,39 @@ export interface AutomationExecutionMetadata {
   FailureMessage?: string | null;
   TargetParameterName?: string | null;
   Targets?: Target[] | null;
-  TargetMaps?: ({ [key: string]: string[] })[] | null;
+  TargetMaps?: ({ [key: string]: string[] | null | undefined })[] | null;
   ResolvedTargets?: ResolvedTargets | null;
   MaxConcurrency?: string | null;
   MaxErrors?: string | null;
   Target?: string | null;
   AutomationType?: AutomationType | null;
 }
-function toAutomationExecutionMetadata(root: JSONValue): AutomationExecutionMetadata {
-  return prt.readObj({
+function toAutomationExecutionMetadata(root: jsonP.JSONValue): AutomationExecutionMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AutomationExecutionId": "s",
       "DocumentName": "s",
       "DocumentVersion": "s",
-      "AutomationExecutionStatus": toAutomationExecutionStatus,
+      "AutomationExecutionStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AutomationExecutionStatus>(x),
       "ExecutionStartTime": "d",
       "ExecutionEndTime": "d",
       "ExecutedBy": "s",
       "LogFile": "s",
-      "Outputs": x => prt.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
-      "Mode": toExecutionMode,
+      "Outputs": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+      "Mode": (x: jsonP.JSONValue) => cmnP.readEnum<ExecutionMode>(x),
       "ParentAutomationExecutionId": "s",
       "CurrentStepName": "s",
       "CurrentAction": "s",
       "FailureMessage": "s",
       "TargetParameterName": "s",
       "Targets": [toTarget],
-      "TargetMaps": [x => prt.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x)],
+      "TargetMaps": [x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x)],
       "ResolvedTargets": toResolvedTargets,
       "MaxConcurrency": "s",
       "MaxErrors": "s",
       "Target": "s",
-      "AutomationType": toAutomationType,
+      "AutomationType": (x: jsonP.JSONValue) => cmnP.readEnum<AutomationType>(x),
     },
   }, root);
 }
@@ -6351,27 +6648,15 @@ export type AutomationExecutionStatus =
 | "Cancelling"
 | "Cancelled"
 | "Failed"
-;
-function toAutomationExecutionStatus(root: JSONValue): AutomationExecutionStatus | null {
-  return ( false
-    || root == "Pending"
-    || root == "InProgress"
-    || root == "Waiting"
-    || root == "Success"
-    || root == "TimedOut"
-    || root == "Cancelling"
-    || root == "Cancelled"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ResolvedTargets {
   ParameterValues?: string[] | null;
   Truncated?: boolean | null;
 }
-function toResolvedTargets(root: JSONValue): ResolvedTargets {
-  return prt.readObj({
+function toResolvedTargets(root: jsonP.JSONValue): ResolvedTargets {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ParameterValues": ["s"],
@@ -6384,13 +6669,7 @@ function toResolvedTargets(root: JSONValue): ResolvedTargets {
 export type AutomationType =
 | "CrossAccount"
 | "Local"
-;
-function toAutomationType(root: JSONValue): AutomationType | null {
-  return ( false
-    || root == "CrossAccount"
-    || root == "Local"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface StepExecution {
@@ -6403,13 +6682,13 @@ export interface StepExecution {
   ExecutionEndTime?: Date | number | null;
   StepStatus?: AutomationExecutionStatus | null;
   ResponseCode?: string | null;
-  Inputs?: { [key: string]: string } | null;
-  Outputs?: { [key: string]: string[] } | null;
+  Inputs?: { [key: string]: string | null | undefined } | null;
+  Outputs?: { [key: string]: string[] | null | undefined } | null;
   Response?: string | null;
   FailureMessage?: string | null;
   FailureDetails?: FailureDetails | null;
   StepExecutionId?: string | null;
-  OverriddenParameters?: { [key: string]: string[] } | null;
+  OverriddenParameters?: { [key: string]: string[] | null | undefined } | null;
   IsEnd?: boolean | null;
   NextStep?: string | null;
   IsCritical?: boolean | null;
@@ -6417,8 +6696,8 @@ export interface StepExecution {
   Targets?: Target[] | null;
   TargetLocation?: TargetLocation | null;
 }
-function toStepExecution(root: JSONValue): StepExecution {
-  return prt.readObj({
+function toStepExecution(root: jsonP.JSONValue): StepExecution {
+  return jsonP.readObj({
     required: {},
     optional: {
       "StepName": "s",
@@ -6428,15 +6707,15 @@ function toStepExecution(root: JSONValue): StepExecution {
       "MaxAttempts": "n",
       "ExecutionStartTime": "d",
       "ExecutionEndTime": "d",
-      "StepStatus": toAutomationExecutionStatus,
+      "StepStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AutomationExecutionStatus>(x),
       "ResponseCode": "s",
-      "Inputs": x => prt.readMap(String, String, x),
-      "Outputs": x => prt.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+      "Inputs": x => jsonP.readMap(String, String, x),
+      "Outputs": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
       "Response": "s",
       "FailureMessage": "s",
       "FailureDetails": toFailureDetails,
       "StepExecutionId": "s",
-      "OverriddenParameters": x => prt.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+      "OverriddenParameters": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
       "IsEnd": "b",
       "NextStep": "s",
       "IsCritical": "b",
@@ -6451,15 +6730,15 @@ function toStepExecution(root: JSONValue): StepExecution {
 export interface FailureDetails {
   FailureStage?: string | null;
   FailureType?: string | null;
-  Details?: { [key: string]: string[] } | null;
+  Details?: { [key: string]: string[] | null | undefined } | null;
 }
-function toFailureDetails(root: JSONValue): FailureDetails {
-  return prt.readObj({
+function toFailureDetails(root: jsonP.JSONValue): FailureDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FailureStage": "s",
       "FailureType": "s",
-      "Details": x => prt.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+      "Details": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
     },
   }, root);
 }
@@ -6490,8 +6769,8 @@ export interface Patch {
   Severity?: string | null;
   Repository?: string | null;
 }
-function toPatch(root: JSONValue): Patch {
-  return prt.readObj({
+function toPatch(root: jsonP.JSONValue): Patch {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
@@ -6526,8 +6805,8 @@ export interface AccountSharingInfo {
   AccountId?: string | null;
   SharedDocumentVersion?: string | null;
 }
-function toAccountSharingInfo(root: JSONValue): AccountSharingInfo {
-  return prt.readObj({
+function toAccountSharingInfo(root: jsonP.JSONValue): AccountSharingInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AccountId": "s",
@@ -6543,8 +6822,8 @@ export interface InstanceAssociation {
   Content?: string | null;
   AssociationVersion?: string | null;
 }
-function toInstanceAssociation(root: JSONValue): InstanceAssociation {
-  return prt.readObj({
+function toInstanceAssociation(root: jsonP.JSONValue): InstanceAssociation {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AssociationId": "s",
@@ -6560,8 +6839,8 @@ export interface EffectivePatch {
   Patch?: Patch | null;
   PatchStatus?: PatchStatus | null;
 }
-function toEffectivePatch(root: JSONValue): EffectivePatch {
-  return prt.readObj({
+function toEffectivePatch(root: jsonP.JSONValue): EffectivePatch {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Patch": toPatch,
@@ -6576,12 +6855,12 @@ export interface PatchStatus {
   ComplianceLevel?: PatchComplianceLevel | null;
   ApprovalDate?: Date | number | null;
 }
-function toPatchStatus(root: JSONValue): PatchStatus {
-  return prt.readObj({
+function toPatchStatus(root: jsonP.JSONValue): PatchStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "DeploymentStatus": toPatchDeploymentStatus,
-      "ComplianceLevel": toPatchComplianceLevel,
+      "DeploymentStatus": (x: jsonP.JSONValue) => cmnP.readEnum<PatchDeploymentStatus>(x),
+      "ComplianceLevel": (x: jsonP.JSONValue) => cmnP.readEnum<PatchComplianceLevel>(x),
       "ApprovalDate": "d",
     },
   }, root);
@@ -6593,15 +6872,7 @@ export type PatchDeploymentStatus =
 | "PENDING_APPROVAL"
 | "EXPLICIT_APPROVED"
 | "EXPLICIT_REJECTED"
-;
-function toPatchDeploymentStatus(root: JSONValue): PatchDeploymentStatus | null {
-  return ( false
-    || root == "APPROVED"
-    || root == "PENDING_APPROVAL"
-    || root == "EXPLICIT_APPROVED"
-    || root == "EXPLICIT_REJECTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface InstanceAssociationStatusInfo {
@@ -6618,8 +6889,8 @@ export interface InstanceAssociationStatusInfo {
   OutputUrl?: InstanceAssociationOutputUrl | null;
   AssociationName?: string | null;
 }
-function toInstanceAssociationStatusInfo(root: JSONValue): InstanceAssociationStatusInfo {
-  return prt.readObj({
+function toInstanceAssociationStatusInfo(root: jsonP.JSONValue): InstanceAssociationStatusInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AssociationId": "s",
@@ -6642,8 +6913,8 @@ function toInstanceAssociationStatusInfo(root: JSONValue): InstanceAssociationSt
 export interface InstanceAssociationOutputUrl {
   S3OutputUrl?: S3OutputUrl | null;
 }
-function toInstanceAssociationOutputUrl(root: JSONValue): InstanceAssociationOutputUrl {
-  return prt.readObj({
+function toInstanceAssociationOutputUrl(root: jsonP.JSONValue): InstanceAssociationOutputUrl {
+  return jsonP.readObj({
     required: {},
     optional: {
       "S3OutputUrl": toS3OutputUrl,
@@ -6655,8 +6926,8 @@ function toInstanceAssociationOutputUrl(root: JSONValue): InstanceAssociationOut
 export interface S3OutputUrl {
   OutputUrl?: string | null;
 }
-function toS3OutputUrl(root: JSONValue): S3OutputUrl {
-  return prt.readObj({
+function toS3OutputUrl(root: jsonP.JSONValue): S3OutputUrl {
+  return jsonP.readObj({
     required: {},
     optional: {
       "OutputUrl": "s",
@@ -6686,22 +6957,22 @@ export interface InstanceInformation {
   LastSuccessfulAssociationExecutionDate?: Date | number | null;
   AssociationOverview?: InstanceAggregatedAssociationOverview | null;
 }
-function toInstanceInformation(root: JSONValue): InstanceInformation {
-  return prt.readObj({
+function toInstanceInformation(root: jsonP.JSONValue): InstanceInformation {
+  return jsonP.readObj({
     required: {},
     optional: {
       "InstanceId": "s",
-      "PingStatus": toPingStatus,
+      "PingStatus": (x: jsonP.JSONValue) => cmnP.readEnum<PingStatus>(x),
       "LastPingDateTime": "d",
       "AgentVersion": "s",
       "IsLatestVersion": "b",
-      "PlatformType": toPlatformType,
+      "PlatformType": (x: jsonP.JSONValue) => cmnP.readEnum<PlatformType>(x),
       "PlatformName": "s",
       "PlatformVersion": "s",
       "ActivationId": "s",
       "IamRole": "s",
       "RegistrationDate": "d",
-      "ResourceType": toResourceType,
+      "ResourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
       "Name": "s",
       "IPAddress": "s",
       "ComputerName": "s",
@@ -6718,40 +6989,26 @@ export type PingStatus =
 | "Online"
 | "ConnectionLost"
 | "Inactive"
-;
-function toPingStatus(root: JSONValue): PingStatus | null {
-  return ( false
-    || root == "Online"
-    || root == "ConnectionLost"
-    || root == "Inactive"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type ResourceType =
 | "ManagedInstance"
 | "Document"
 | "EC2Instance"
-;
-function toResourceType(root: JSONValue): ResourceType | null {
-  return ( false
-    || root == "ManagedInstance"
-    || root == "Document"
-    || root == "EC2Instance"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface InstanceAggregatedAssociationOverview {
   DetailedStatus?: string | null;
-  InstanceAssociationStatusAggregatedCount?: { [key: string]: number } | null;
+  InstanceAssociationStatusAggregatedCount?: { [key: string]: number | null | undefined } | null;
 }
-function toInstanceAggregatedAssociationOverview(root: JSONValue): InstanceAggregatedAssociationOverview {
-  return prt.readObj({
+function toInstanceAggregatedAssociationOverview(root: jsonP.JSONValue): InstanceAggregatedAssociationOverview {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DetailedStatus": "s",
-      "InstanceAssociationStatusAggregatedCount": x => prt.readMap(String, Number, x),
+      "InstanceAssociationStatusAggregatedCount": x => jsonP.readMap(String, Number, x),
     },
   }, root);
 }
@@ -6778,15 +7035,15 @@ export interface InstancePatchState {
   LastNoRebootInstallOperationTime?: Date | number | null;
   RebootOption?: RebootOption | null;
 }
-function toInstancePatchState(root: JSONValue): InstancePatchState {
-  return prt.readObj({
+function toInstancePatchState(root: jsonP.JSONValue): InstancePatchState {
+  return jsonP.readObj({
     required: {
       "InstanceId": "s",
       "PatchGroup": "s",
       "BaselineId": "s",
       "OperationStartTime": "d",
       "OperationEndTime": "d",
-      "Operation": toPatchOperationType,
+      "Operation": (x: jsonP.JSONValue) => cmnP.readEnum<PatchOperationType>(x),
     },
     optional: {
       "SnapshotId": "s",
@@ -6801,7 +7058,7 @@ function toInstancePatchState(root: JSONValue): InstancePatchState {
       "UnreportedNotApplicableCount": "n",
       "NotApplicableCount": "n",
       "LastNoRebootInstallOperationTime": "d",
-      "RebootOption": toRebootOption,
+      "RebootOption": (x: jsonP.JSONValue) => cmnP.readEnum<RebootOption>(x),
     },
   }, root);
 }
@@ -6810,25 +7067,13 @@ function toInstancePatchState(root: JSONValue): InstancePatchState {
 export type PatchOperationType =
 | "Scan"
 | "Install"
-;
-function toPatchOperationType(root: JSONValue): PatchOperationType | null {
-  return ( false
-    || root == "Scan"
-    || root == "Install"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type RebootOption =
 | "RebootIfNeeded"
 | "NoReboot"
-;
-function toRebootOption(root: JSONValue): RebootOption | null {
-  return ( false
-    || root == "RebootIfNeeded"
-    || root == "NoReboot"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface PatchComplianceData {
@@ -6840,14 +7085,14 @@ export interface PatchComplianceData {
   InstalledTime: Date | number;
   CVEIds?: string | null;
 }
-function toPatchComplianceData(root: JSONValue): PatchComplianceData {
-  return prt.readObj({
+function toPatchComplianceData(root: jsonP.JSONValue): PatchComplianceData {
+  return jsonP.readObj({
     required: {
       "Title": "s",
       "KBId": "s",
       "Classification": "s",
       "Severity": "s",
-      "State": toPatchComplianceDataState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<PatchComplianceDataState>(x),
       "InstalledTime": "d",
     },
     optional: {
@@ -6865,18 +7110,7 @@ export type PatchComplianceDataState =
 | "MISSING"
 | "NOT_APPLICABLE"
 | "FAILED"
-;
-function toPatchComplianceDataState(root: JSONValue): PatchComplianceDataState | null {
-  return ( false
-    || root == "INSTALLED"
-    || root == "INSTALLED_OTHER"
-    || root == "INSTALLED_PENDING_REBOOT"
-    || root == "INSTALLED_REJECTED"
-    || root == "MISSING"
-    || root == "NOT_APPLICABLE"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface InventoryDeletionStatusItem {
@@ -6888,14 +7122,14 @@ export interface InventoryDeletionStatusItem {
   DeletionSummary?: InventoryDeletionSummary | null;
   LastStatusUpdateTime?: Date | number | null;
 }
-function toInventoryDeletionStatusItem(root: JSONValue): InventoryDeletionStatusItem {
-  return prt.readObj({
+function toInventoryDeletionStatusItem(root: jsonP.JSONValue): InventoryDeletionStatusItem {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DeletionId": "s",
       "TypeName": "s",
       "DeletionStartTime": "d",
-      "LastStatus": toInventoryDeletionStatus,
+      "LastStatus": (x: jsonP.JSONValue) => cmnP.readEnum<InventoryDeletionStatus>(x),
       "LastStatusMessage": "s",
       "DeletionSummary": toInventoryDeletionSummary,
       "LastStatusUpdateTime": "d",
@@ -6907,13 +7141,7 @@ function toInventoryDeletionStatusItem(root: JSONValue): InventoryDeletionStatus
 export type InventoryDeletionStatus =
 | "InProgress"
 | "Complete"
-;
-function toInventoryDeletionStatus(root: JSONValue): InventoryDeletionStatus | null {
-  return ( false
-    || root == "InProgress"
-    || root == "Complete"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface MaintenanceWindowExecutionTaskInvocationIdentity {
@@ -6930,17 +7158,17 @@ export interface MaintenanceWindowExecutionTaskInvocationIdentity {
   OwnerInformation?: string | null;
   WindowTargetId?: string | null;
 }
-function toMaintenanceWindowExecutionTaskInvocationIdentity(root: JSONValue): MaintenanceWindowExecutionTaskInvocationIdentity {
-  return prt.readObj({
+function toMaintenanceWindowExecutionTaskInvocationIdentity(root: jsonP.JSONValue): MaintenanceWindowExecutionTaskInvocationIdentity {
+  return jsonP.readObj({
     required: {},
     optional: {
       "WindowExecutionId": "s",
       "TaskExecutionId": "s",
       "InvocationId": "s",
       "ExecutionId": "s",
-      "TaskType": toMaintenanceWindowTaskType,
+      "TaskType": (x: jsonP.JSONValue) => cmnP.readEnum<MaintenanceWindowTaskType>(x),
       "Parameters": "s",
-      "Status": toMaintenanceWindowExecutionStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<MaintenanceWindowExecutionStatus>(x),
       "StatusDetails": "s",
       "StartTime": "d",
       "EndTime": "d",
@@ -6960,19 +7188,7 @@ export type MaintenanceWindowExecutionStatus =
 | "CANCELLING"
 | "CANCELLED"
 | "SKIPPED_OVERLAPPING"
-;
-function toMaintenanceWindowExecutionStatus(root: JSONValue): MaintenanceWindowExecutionStatus | null {
-  return ( false
-    || root == "PENDING"
-    || root == "IN_PROGRESS"
-    || root == "SUCCESS"
-    || root == "FAILED"
-    || root == "TIMED_OUT"
-    || root == "CANCELLING"
-    || root == "CANCELLED"
-    || root == "SKIPPED_OVERLAPPING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface MaintenanceWindowExecutionTaskIdentity {
@@ -6985,18 +7201,18 @@ export interface MaintenanceWindowExecutionTaskIdentity {
   TaskArn?: string | null;
   TaskType?: MaintenanceWindowTaskType | null;
 }
-function toMaintenanceWindowExecutionTaskIdentity(root: JSONValue): MaintenanceWindowExecutionTaskIdentity {
-  return prt.readObj({
+function toMaintenanceWindowExecutionTaskIdentity(root: jsonP.JSONValue): MaintenanceWindowExecutionTaskIdentity {
+  return jsonP.readObj({
     required: {},
     optional: {
       "WindowExecutionId": "s",
       "TaskExecutionId": "s",
-      "Status": toMaintenanceWindowExecutionStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<MaintenanceWindowExecutionStatus>(x),
       "StatusDetails": "s",
       "StartTime": "d",
       "EndTime": "d",
       "TaskArn": "s",
-      "TaskType": toMaintenanceWindowTaskType,
+      "TaskType": (x: jsonP.JSONValue) => cmnP.readEnum<MaintenanceWindowTaskType>(x),
     },
   }, root);
 }
@@ -7010,13 +7226,13 @@ export interface MaintenanceWindowExecution {
   StartTime?: Date | number | null;
   EndTime?: Date | number | null;
 }
-function toMaintenanceWindowExecution(root: JSONValue): MaintenanceWindowExecution {
-  return prt.readObj({
+function toMaintenanceWindowExecution(root: jsonP.JSONValue): MaintenanceWindowExecution {
+  return jsonP.readObj({
     required: {},
     optional: {
       "WindowId": "s",
       "WindowExecutionId": "s",
-      "Status": toMaintenanceWindowExecutionStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<MaintenanceWindowExecutionStatus>(x),
       "StatusDetails": "s",
       "StartTime": "d",
       "EndTime": "d",
@@ -7030,8 +7246,8 @@ export interface ScheduledWindowExecution {
   Name?: string | null;
   ExecutionTime?: string | null;
 }
-function toScheduledWindowExecution(root: JSONValue): ScheduledWindowExecution {
-  return prt.readObj({
+function toScheduledWindowExecution(root: jsonP.JSONValue): ScheduledWindowExecution {
+  return jsonP.readObj({
     required: {},
     optional: {
       "WindowId": "s",
@@ -7051,13 +7267,13 @@ export interface MaintenanceWindowTarget {
   Name?: string | null;
   Description?: string | null;
 }
-function toMaintenanceWindowTarget(root: JSONValue): MaintenanceWindowTarget {
-  return prt.readObj({
+function toMaintenanceWindowTarget(root: jsonP.JSONValue): MaintenanceWindowTarget {
+  return jsonP.readObj({
     required: {},
     optional: {
       "WindowId": "s",
       "WindowTargetId": "s",
-      "ResourceType": toMaintenanceWindowResourceType,
+      "ResourceType": (x: jsonP.JSONValue) => cmnP.readEnum<MaintenanceWindowResourceType>(x),
       "Targets": [toTarget],
       "OwnerInformation": "s",
       "Name": "s",
@@ -7073,7 +7289,7 @@ export interface MaintenanceWindowTask {
   TaskArn?: string | null;
   Type?: MaintenanceWindowTaskType | null;
   Targets?: Target[] | null;
-  TaskParameters?: { [key: string]: MaintenanceWindowTaskParameterValueExpression } | null;
+  TaskParameters?: { [key: string]: MaintenanceWindowTaskParameterValueExpression | null | undefined } | null;
   Priority?: number | null;
   LoggingInfo?: LoggingInfo | null;
   ServiceRoleArn?: string | null;
@@ -7082,16 +7298,16 @@ export interface MaintenanceWindowTask {
   Name?: string | null;
   Description?: string | null;
 }
-function toMaintenanceWindowTask(root: JSONValue): MaintenanceWindowTask {
-  return prt.readObj({
+function toMaintenanceWindowTask(root: jsonP.JSONValue): MaintenanceWindowTask {
+  return jsonP.readObj({
     required: {},
     optional: {
       "WindowId": "s",
       "WindowTaskId": "s",
       "TaskArn": "s",
-      "Type": toMaintenanceWindowTaskType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<MaintenanceWindowTaskType>(x),
       "Targets": [toTarget],
-      "TaskParameters": x => prt.readMap(String, toMaintenanceWindowTaskParameterValueExpression, x),
+      "TaskParameters": x => jsonP.readMap(String, toMaintenanceWindowTaskParameterValueExpression, x),
       "Priority": "n",
       "LoggingInfo": toLoggingInfo,
       "ServiceRoleArn": "s",
@@ -7118,8 +7334,8 @@ export interface MaintenanceWindowIdentity {
   StartDate?: string | null;
   NextExecutionTime?: string | null;
 }
-function toMaintenanceWindowIdentity(root: JSONValue): MaintenanceWindowIdentity {
-  return prt.readObj({
+function toMaintenanceWindowIdentity(root: jsonP.JSONValue): MaintenanceWindowIdentity {
+  return jsonP.readObj({
     required: {},
     optional: {
       "WindowId": "s",
@@ -7143,8 +7359,8 @@ export interface MaintenanceWindowIdentityForTarget {
   WindowId?: string | null;
   Name?: string | null;
 }
-function toMaintenanceWindowIdentityForTarget(root: JSONValue): MaintenanceWindowIdentityForTarget {
-  return prt.readObj({
+function toMaintenanceWindowIdentityForTarget(root: jsonP.JSONValue): MaintenanceWindowIdentityForTarget {
+  return jsonP.readObj({
     required: {},
     optional: {
       "WindowId": "s",
@@ -7164,12 +7380,12 @@ export interface OpsItemSummary {
   Status?: OpsItemStatus | null;
   OpsItemId?: string | null;
   Title?: string | null;
-  OperationalData?: { [key: string]: OpsItemDataValue } | null;
+  OperationalData?: { [key: string]: OpsItemDataValue | null | undefined } | null;
   Category?: string | null;
   Severity?: string | null;
 }
-function toOpsItemSummary(root: JSONValue): OpsItemSummary {
-  return prt.readObj({
+function toOpsItemSummary(root: jsonP.JSONValue): OpsItemSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CreatedBy": "s",
@@ -7178,10 +7394,10 @@ function toOpsItemSummary(root: JSONValue): OpsItemSummary {
       "LastModifiedTime": "d",
       "Priority": "n",
       "Source": "s",
-      "Status": toOpsItemStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<OpsItemStatus>(x),
       "OpsItemId": "s",
       "Title": "s",
-      "OperationalData": x => prt.readMap(String, toOpsItemDataValue, x),
+      "OperationalData": x => jsonP.readMap(String, toOpsItemDataValue, x),
       "Category": "s",
       "Severity": "s",
     },
@@ -7202,19 +7418,19 @@ export interface ParameterMetadata {
   Policies?: ParameterInlinePolicy[] | null;
   DataType?: string | null;
 }
-function toParameterMetadata(root: JSONValue): ParameterMetadata {
-  return prt.readObj({
+function toParameterMetadata(root: jsonP.JSONValue): ParameterMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
-      "Type": toParameterType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<ParameterType>(x),
       "KeyId": "s",
       "LastModifiedDate": "d",
       "LastModifiedUser": "s",
       "Description": "s",
       "AllowedPattern": "s",
       "Version": "n",
-      "Tier": toParameterTier,
+      "Tier": (x: jsonP.JSONValue) => cmnP.readEnum<ParameterTier>(x),
       "Policies": [toParameterInlinePolicy],
       "DataType": "s",
     },
@@ -7227,8 +7443,8 @@ export interface ParameterInlinePolicy {
   PolicyType?: string | null;
   PolicyStatus?: string | null;
 }
-function toParameterInlinePolicy(root: JSONValue): ParameterInlinePolicy {
-  return prt.readObj({
+function toParameterInlinePolicy(root: jsonP.JSONValue): ParameterInlinePolicy {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PolicyText": "s",
@@ -7246,13 +7462,13 @@ export interface PatchBaselineIdentity {
   BaselineDescription?: string | null;
   DefaultBaseline?: boolean | null;
 }
-function toPatchBaselineIdentity(root: JSONValue): PatchBaselineIdentity {
-  return prt.readObj({
+function toPatchBaselineIdentity(root: jsonP.JSONValue): PatchBaselineIdentity {
+  return jsonP.readObj({
     required: {},
     optional: {
       "BaselineId": "s",
       "BaselineName": "s",
-      "OperatingSystem": toOperatingSystem,
+      "OperatingSystem": (x: jsonP.JSONValue) => cmnP.readEnum<OperatingSystem>(x),
       "BaselineDescription": "s",
       "DefaultBaseline": "b",
     },
@@ -7264,8 +7480,8 @@ export interface PatchGroupPatchBaselineMapping {
   PatchGroup?: string | null;
   BaselineIdentity?: PatchBaselineIdentity | null;
 }
-function toPatchGroupPatchBaselineMapping(root: JSONValue): PatchGroupPatchBaselineMapping {
-  return prt.readObj({
+function toPatchGroupPatchBaselineMapping(root: jsonP.JSONValue): PatchGroupPatchBaselineMapping {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PatchGroup": "s",
@@ -7286,13 +7502,13 @@ export interface Session {
   Details?: string | null;
   OutputUrl?: SessionManagerOutputUrl | null;
 }
-function toSession(root: JSONValue): Session {
-  return prt.readObj({
+function toSession(root: jsonP.JSONValue): Session {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SessionId": "s",
       "Target": "s",
-      "Status": toSessionStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<SessionStatus>(x),
       "StartDate": "d",
       "EndDate": "d",
       "DocumentName": "s",
@@ -7311,25 +7527,15 @@ export type SessionStatus =
 | "Terminated"
 | "Terminating"
 | "Failed"
-;
-function toSessionStatus(root: JSONValue): SessionStatus | null {
-  return ( false
-    || root == "Connected"
-    || root == "Connecting"
-    || root == "Disconnected"
-    || root == "Terminated"
-    || root == "Terminating"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface SessionManagerOutputUrl {
   S3OutputUrl?: string | null;
   CloudWatchOutputUrl?: string | null;
 }
-function toSessionManagerOutputUrl(root: JSONValue): SessionManagerOutputUrl {
-  return prt.readObj({
+function toSessionManagerOutputUrl(root: jsonP.JSONValue): SessionManagerOutputUrl {
+  return jsonP.readObj({
     required: {},
     optional: {
       "S3OutputUrl": "s",
@@ -7348,8 +7554,8 @@ export interface AutomationExecution {
   AutomationExecutionStatus?: AutomationExecutionStatus | null;
   StepExecutions?: StepExecution[] | null;
   StepExecutionsTruncated?: boolean | null;
-  Parameters?: { [key: string]: string[] } | null;
-  Outputs?: { [key: string]: string[] } | null;
+  Parameters?: { [key: string]: string[] | null | undefined } | null;
+  Outputs?: { [key: string]: string[] | null | undefined } | null;
   FailureMessage?: string | null;
   Mode?: ExecutionMode | null;
   ParentAutomationExecutionId?: string | null;
@@ -7358,7 +7564,7 @@ export interface AutomationExecution {
   CurrentAction?: string | null;
   TargetParameterName?: string | null;
   Targets?: Target[] | null;
-  TargetMaps?: ({ [key: string]: string[] })[] | null;
+  TargetMaps?: ({ [key: string]: string[] | null | undefined })[] | null;
   ResolvedTargets?: ResolvedTargets | null;
   MaxConcurrency?: string | null;
   MaxErrors?: string | null;
@@ -7366,8 +7572,8 @@ export interface AutomationExecution {
   TargetLocations?: TargetLocation[] | null;
   ProgressCounters?: ProgressCounters | null;
 }
-function toAutomationExecution(root: JSONValue): AutomationExecution {
-  return prt.readObj({
+function toAutomationExecution(root: jsonP.JSONValue): AutomationExecution {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AutomationExecutionId": "s",
@@ -7375,20 +7581,20 @@ function toAutomationExecution(root: JSONValue): AutomationExecution {
       "DocumentVersion": "s",
       "ExecutionStartTime": "d",
       "ExecutionEndTime": "d",
-      "AutomationExecutionStatus": toAutomationExecutionStatus,
+      "AutomationExecutionStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AutomationExecutionStatus>(x),
       "StepExecutions": [toStepExecution],
       "StepExecutionsTruncated": "b",
-      "Parameters": x => prt.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
-      "Outputs": x => prt.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+      "Parameters": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+      "Outputs": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
       "FailureMessage": "s",
-      "Mode": toExecutionMode,
+      "Mode": (x: jsonP.JSONValue) => cmnP.readEnum<ExecutionMode>(x),
       "ParentAutomationExecutionId": "s",
       "ExecutedBy": "s",
       "CurrentStepName": "s",
       "CurrentAction": "s",
       "TargetParameterName": "s",
       "Targets": [toTarget],
-      "TargetMaps": [x => prt.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x)],
+      "TargetMaps": [x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x)],
       "ResolvedTargets": toResolvedTargets,
       "MaxConcurrency": "s",
       "MaxErrors": "s",
@@ -7407,8 +7613,8 @@ export interface ProgressCounters {
   CancelledSteps?: number | null;
   TimedOutSteps?: number | null;
 }
-function toProgressCounters(root: JSONValue): ProgressCounters {
-  return prt.readObj({
+function toProgressCounters(root: jsonP.JSONValue): ProgressCounters {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TotalSteps": "n",
@@ -7424,13 +7630,7 @@ function toProgressCounters(root: JSONValue): ProgressCounters {
 export type CalendarState =
 | "OPEN"
 | "CLOSED"
-;
-function toCalendarState(root: JSONValue): CalendarState | null {
-  return ( false
-    || root == "OPEN"
-    || root == "CLOSED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type CommandInvocationStatus =
@@ -7442,31 +7642,13 @@ export type CommandInvocationStatus =
 | "TimedOut"
 | "Failed"
 | "Cancelling"
-;
-function toCommandInvocationStatus(root: JSONValue): CommandInvocationStatus | null {
-  return ( false
-    || root == "Pending"
-    || root == "InProgress"
-    || root == "Delayed"
-    || root == "Success"
-    || root == "Cancelled"
-    || root == "TimedOut"
-    || root == "Failed"
-    || root == "Cancelling"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type ConnectionStatus =
 | "Connected"
 | "NotConnected"
-;
-function toConnectionStatus(root: JSONValue): ConnectionStatus | null {
-  return ( false
-    || root == "Connected"
-    || root == "NotConnected"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AttachmentContent {
@@ -7476,14 +7658,14 @@ export interface AttachmentContent {
   HashType?: AttachmentHashType | null;
   Url?: string | null;
 }
-function toAttachmentContent(root: JSONValue): AttachmentContent {
-  return prt.readObj({
+function toAttachmentContent(root: jsonP.JSONValue): AttachmentContent {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
       "Size": "n",
       "Hash": "s",
-      "HashType": toAttachmentHashType,
+      "HashType": (x: jsonP.JSONValue) => cmnP.readEnum<AttachmentHashType>(x),
       "Url": "s",
     },
   }, root);
@@ -7492,24 +7674,19 @@ function toAttachmentContent(root: JSONValue): AttachmentContent {
 // refs: 1 - tags: output, named, enum
 export type AttachmentHashType =
 | "Sha256"
-;
-function toAttachmentHashType(root: JSONValue): AttachmentHashType | null {
-  return ( false
-    || root == "Sha256"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface InventoryResultEntity {
   Id?: string | null;
-  Data?: { [key: string]: InventoryResultItem } | null;
+  Data?: { [key: string]: InventoryResultItem | null | undefined } | null;
 }
-function toInventoryResultEntity(root: JSONValue): InventoryResultEntity {
-  return prt.readObj({
+function toInventoryResultEntity(root: jsonP.JSONValue): InventoryResultEntity {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
-      "Data": x => prt.readMap(String, toInventoryResultItem, x),
+      "Data": x => jsonP.readMap(String, toInventoryResultItem, x),
     },
   }, root);
 }
@@ -7520,14 +7697,14 @@ export interface InventoryResultItem {
   SchemaVersion: string;
   CaptureTime?: string | null;
   ContentHash?: string | null;
-  Content: ({ [key: string]: string })[];
+  Content: ({ [key: string]: string | null | undefined })[];
 }
-function toInventoryResultItem(root: JSONValue): InventoryResultItem {
-  return prt.readObj({
+function toInventoryResultItem(root: jsonP.JSONValue): InventoryResultItem {
+  return jsonP.readObj({
     required: {
       "TypeName": "s",
       "SchemaVersion": "s",
-      "Content": [x => prt.readMap(String, String, x)],
+      "Content": [x => jsonP.readMap(String, String, x)],
     },
     optional: {
       "CaptureTime": "s",
@@ -7543,8 +7720,8 @@ export interface InventoryItemSchema {
   Attributes: InventoryItemAttribute[];
   DisplayName?: string | null;
 }
-function toInventoryItemSchema(root: JSONValue): InventoryItemSchema {
-  return prt.readObj({
+function toInventoryItemSchema(root: jsonP.JSONValue): InventoryItemSchema {
+  return jsonP.readObj({
     required: {
       "TypeName": "s",
       "Attributes": [toInventoryItemAttribute],
@@ -7561,11 +7738,11 @@ export interface InventoryItemAttribute {
   Name: string;
   DataType: InventoryAttributeDataType;
 }
-function toInventoryItemAttribute(root: JSONValue): InventoryItemAttribute {
-  return prt.readObj({
+function toInventoryItemAttribute(root: jsonP.JSONValue): InventoryItemAttribute {
+  return jsonP.readObj({
     required: {
       "Name": "s",
-      "DataType": toInventoryAttributeDataType,
+      "DataType": (x: jsonP.JSONValue) => cmnP.readEnum<InventoryAttributeDataType>(x),
     },
     optional: {},
   }, root);
@@ -7575,13 +7752,7 @@ function toInventoryItemAttribute(root: JSONValue): InventoryItemAttribute {
 export type InventoryAttributeDataType =
 | "string"
 | "number"
-;
-function toInventoryAttributeDataType(root: JSONValue): InventoryAttributeDataType | null {
-  return ( false
-    || root == "string"
-    || root == "number"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface OpsItem {
@@ -7598,12 +7769,12 @@ export interface OpsItem {
   Version?: string | null;
   Title?: string | null;
   Source?: string | null;
-  OperationalData?: { [key: string]: OpsItemDataValue } | null;
+  OperationalData?: { [key: string]: OpsItemDataValue | null | undefined } | null;
   Category?: string | null;
   Severity?: string | null;
 }
-function toOpsItem(root: JSONValue): OpsItem {
-  return prt.readObj({
+function toOpsItem(root: jsonP.JSONValue): OpsItem {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CreatedBy": "s",
@@ -7614,12 +7785,12 @@ function toOpsItem(root: JSONValue): OpsItem {
       "Notifications": [toOpsItemNotification],
       "Priority": "n",
       "RelatedOpsItems": [toRelatedOpsItem],
-      "Status": toOpsItemStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<OpsItemStatus>(x),
       "OpsItemId": "s",
       "Version": "s",
       "Title": "s",
       "Source": "s",
-      "OperationalData": x => prt.readMap(String, toOpsItemDataValue, x),
+      "OperationalData": x => jsonP.readMap(String, toOpsItemDataValue, x),
       "Category": "s",
       "Severity": "s",
     },
@@ -7629,14 +7800,14 @@ function toOpsItem(root: JSONValue): OpsItem {
 // refs: 1 - tags: output, named, interface
 export interface OpsEntity {
   Id?: string | null;
-  Data?: { [key: string]: OpsEntityItem } | null;
+  Data?: { [key: string]: OpsEntityItem | null | undefined } | null;
 }
-function toOpsEntity(root: JSONValue): OpsEntity {
-  return prt.readObj({
+function toOpsEntity(root: jsonP.JSONValue): OpsEntity {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
-      "Data": x => prt.readMap(String, toOpsEntityItem, x),
+      "Data": x => jsonP.readMap(String, toOpsEntityItem, x),
     },
   }, root);
 }
@@ -7644,14 +7815,14 @@ function toOpsEntity(root: JSONValue): OpsEntity {
 // refs: 1 - tags: output, named, interface
 export interface OpsEntityItem {
   CaptureTime?: string | null;
-  Content?: ({ [key: string]: string })[] | null;
+  Content?: ({ [key: string]: string | null | undefined })[] | null;
 }
-function toOpsEntityItem(root: JSONValue): OpsEntityItem {
-  return prt.readObj({
+function toOpsEntityItem(root: jsonP.JSONValue): OpsEntityItem {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CaptureTime": "s",
-      "Content": [x => prt.readMap(String, String, x)],
+      "Content": [x => jsonP.readMap(String, String, x)],
     },
   }, root);
 }
@@ -7668,12 +7839,12 @@ export interface Parameter {
   ARN?: string | null;
   DataType?: string | null;
 }
-function toParameter(root: JSONValue): Parameter {
-  return prt.readObj({
+function toParameter(root: jsonP.JSONValue): Parameter {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
-      "Type": toParameterType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<ParameterType>(x),
       "Value": "s",
       "Version": "n",
       "Selector": "s",
@@ -7701,12 +7872,12 @@ export interface ParameterHistory {
   Policies?: ParameterInlinePolicy[] | null;
   DataType?: string | null;
 }
-function toParameterHistory(root: JSONValue): ParameterHistory {
-  return prt.readObj({
+function toParameterHistory(root: jsonP.JSONValue): ParameterHistory {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
-      "Type": toParameterType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<ParameterType>(x),
       "KeyId": "s",
       "LastModifiedDate": "d",
       "LastModifiedUser": "s",
@@ -7715,7 +7886,7 @@ function toParameterHistory(root: JSONValue): ParameterHistory {
       "AllowedPattern": "s",
       "Version": "n",
       "Labels": ["s"],
-      "Tier": toParameterTier,
+      "Tier": (x: jsonP.JSONValue) => cmnP.readEnum<ParameterTier>(x),
       "Policies": [toParameterInlinePolicy],
       "DataType": "s",
     },
@@ -7731,8 +7902,8 @@ export interface ServiceSetting {
   ARN?: string | null;
   Status?: string | null;
 }
-function toServiceSetting(root: JSONValue): ServiceSetting {
-  return prt.readObj({
+function toServiceSetting(root: jsonP.JSONValue): ServiceSetting {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SettingId": "s",
@@ -7752,7 +7923,7 @@ export interface AssociationVersionInfo {
   CreatedDate?: Date | number | null;
   Name?: string | null;
   DocumentVersion?: string | null;
-  Parameters?: { [key: string]: string[] } | null;
+  Parameters?: { [key: string]: string[] | null | undefined } | null;
   Targets?: Target[] | null;
   ScheduleExpression?: string | null;
   OutputLocation?: InstanceAssociationOutputLocation | null;
@@ -7763,8 +7934,8 @@ export interface AssociationVersionInfo {
   SyncCompliance?: AssociationSyncCompliance | null;
   ApplyOnlyAtCronInterval?: boolean | null;
 }
-function toAssociationVersionInfo(root: JSONValue): AssociationVersionInfo {
-  return prt.readObj({
+function toAssociationVersionInfo(root: jsonP.JSONValue): AssociationVersionInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AssociationId": "s",
@@ -7772,15 +7943,15 @@ function toAssociationVersionInfo(root: JSONValue): AssociationVersionInfo {
       "CreatedDate": "d",
       "Name": "s",
       "DocumentVersion": "s",
-      "Parameters": x => prt.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+      "Parameters": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
       "Targets": [toTarget],
       "ScheduleExpression": "s",
       "OutputLocation": toInstanceAssociationOutputLocation,
       "AssociationName": "s",
       "MaxErrors": "s",
       "MaxConcurrency": "s",
-      "ComplianceSeverity": toAssociationComplianceSeverity,
-      "SyncCompliance": toAssociationSyncCompliance,
+      "ComplianceSeverity": (x: jsonP.JSONValue) => cmnP.readEnum<AssociationComplianceSeverity>(x),
+      "SyncCompliance": (x: jsonP.JSONValue) => cmnP.readEnum<AssociationSyncCompliance>(x),
       "ApplyOnlyAtCronInterval": "b",
     },
   }, root);
@@ -7799,8 +7970,8 @@ export interface Association {
   ScheduleExpression?: string | null;
   AssociationName?: string | null;
 }
-function toAssociation(root: JSONValue): Association {
-  return prt.readObj({
+function toAssociation(root: jsonP.JSONValue): Association {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -7836,8 +8007,8 @@ export interface CommandInvocation {
   NotificationConfig?: NotificationConfig | null;
   CloudWatchOutputConfig?: CloudWatchOutputConfig | null;
 }
-function toCommandInvocation(root: JSONValue): CommandInvocation {
-  return prt.readObj({
+function toCommandInvocation(root: jsonP.JSONValue): CommandInvocation {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CommandId": "s",
@@ -7847,7 +8018,7 @@ function toCommandInvocation(root: JSONValue): CommandInvocation {
       "DocumentName": "s",
       "DocumentVersion": "s",
       "RequestedDateTime": "d",
-      "Status": toCommandInvocationStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<CommandInvocationStatus>(x),
       "StatusDetails": "s",
       "TraceOutput": "s",
       "StandardOutputUrl": "s",
@@ -7875,12 +8046,12 @@ export interface CommandPlugin {
   OutputS3BucketName?: string | null;
   OutputS3KeyPrefix?: string | null;
 }
-function toCommandPlugin(root: JSONValue): CommandPlugin {
-  return prt.readObj({
+function toCommandPlugin(root: jsonP.JSONValue): CommandPlugin {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
-      "Status": toCommandPluginStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<CommandPluginStatus>(x),
       "StatusDetails": "s",
       "ResponseCode": "n",
       "ResponseStartDateTime": "d",
@@ -7903,17 +8074,7 @@ export type CommandPluginStatus =
 | "TimedOut"
 | "Cancelled"
 | "Failed"
-;
-function toCommandPluginStatus(root: JSONValue): CommandPluginStatus | null {
-  return ( false
-    || root == "Pending"
-    || root == "InProgress"
-    || root == "Success"
-    || root == "TimedOut"
-    || root == "Cancelled"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface Command {
@@ -7922,7 +8083,7 @@ export interface Command {
   DocumentVersion?: string | null;
   Comment?: string | null;
   ExpiresAfter?: Date | number | null;
-  Parameters?: { [key: string]: string[] } | null;
+  Parameters?: { [key: string]: string[] | null | undefined } | null;
   InstanceIds?: string[] | null;
   Targets?: Target[] | null;
   RequestedDateTime?: Date | number | null;
@@ -7942,8 +8103,8 @@ export interface Command {
   CloudWatchOutputConfig?: CloudWatchOutputConfig | null;
   TimeoutSeconds?: number | null;
 }
-function toCommand(root: JSONValue): Command {
-  return prt.readObj({
+function toCommand(root: jsonP.JSONValue): Command {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CommandId": "s",
@@ -7951,11 +8112,11 @@ function toCommand(root: JSONValue): Command {
       "DocumentVersion": "s",
       "Comment": "s",
       "ExpiresAfter": "d",
-      "Parameters": x => prt.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+      "Parameters": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
       "InstanceIds": ["s"],
       "Targets": [toTarget],
       "RequestedDateTime": "d",
-      "Status": toCommandStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<CommandStatus>(x),
       "StatusDetails": "s",
       "OutputS3Region": "s",
       "OutputS3BucketName": "s",
@@ -7983,18 +8144,7 @@ export type CommandStatus =
 | "Failed"
 | "TimedOut"
 | "Cancelling"
-;
-function toCommandStatus(root: JSONValue): CommandStatus | null {
-  return ( false
-    || root == "Pending"
-    || root == "InProgress"
-    || root == "Success"
-    || root == "Cancelled"
-    || root == "Failed"
-    || root == "TimedOut"
-    || root == "Cancelling"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ComplianceItem {
@@ -8006,10 +8156,10 @@ export interface ComplianceItem {
   Status?: ComplianceStatus | null;
   Severity?: ComplianceSeverity | null;
   ExecutionSummary?: ComplianceExecutionSummary | null;
-  Details?: { [key: string]: string } | null;
+  Details?: { [key: string]: string | null | undefined } | null;
 }
-function toComplianceItem(root: JSONValue): ComplianceItem {
-  return prt.readObj({
+function toComplianceItem(root: jsonP.JSONValue): ComplianceItem {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ComplianceType": "s",
@@ -8017,10 +8167,10 @@ function toComplianceItem(root: JSONValue): ComplianceItem {
       "ResourceId": "s",
       "Id": "s",
       "Title": "s",
-      "Status": toComplianceStatus,
-      "Severity": toComplianceSeverity,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ComplianceStatus>(x),
+      "Severity": (x: jsonP.JSONValue) => cmnP.readEnum<ComplianceSeverity>(x),
       "ExecutionSummary": toComplianceExecutionSummary,
-      "Details": x => prt.readMap(String, String, x),
+      "Details": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -8031,8 +8181,8 @@ export interface ComplianceSummaryItem {
   CompliantSummary?: CompliantSummary | null;
   NonCompliantSummary?: NonCompliantSummary | null;
 }
-function toComplianceSummaryItem(root: JSONValue): ComplianceSummaryItem {
-  return prt.readObj({
+function toComplianceSummaryItem(root: jsonP.JSONValue): ComplianceSummaryItem {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ComplianceType": "s",
@@ -8047,8 +8197,8 @@ export interface CompliantSummary {
   CompliantCount?: number | null;
   SeveritySummary?: SeveritySummary | null;
 }
-function toCompliantSummary(root: JSONValue): CompliantSummary {
-  return prt.readObj({
+function toCompliantSummary(root: jsonP.JSONValue): CompliantSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CompliantCount": "n",
@@ -8066,8 +8216,8 @@ export interface SeveritySummary {
   InformationalCount?: number | null;
   UnspecifiedCount?: number | null;
 }
-function toSeveritySummary(root: JSONValue): SeveritySummary {
-  return prt.readObj({
+function toSeveritySummary(root: jsonP.JSONValue): SeveritySummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CriticalCount": "n",
@@ -8085,8 +8235,8 @@ export interface NonCompliantSummary {
   NonCompliantCount?: number | null;
   SeveritySummary?: SeveritySummary | null;
 }
-function toNonCompliantSummary(root: JSONValue): NonCompliantSummary {
-  return prt.readObj({
+function toNonCompliantSummary(root: jsonP.JSONValue): NonCompliantSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "NonCompliantCount": "n",
@@ -8106,8 +8256,8 @@ export interface DocumentVersionInfo {
   Status?: DocumentStatus | null;
   StatusInformation?: string | null;
 }
-function toDocumentVersionInfo(root: JSONValue): DocumentVersionInfo {
-  return prt.readObj({
+function toDocumentVersionInfo(root: jsonP.JSONValue): DocumentVersionInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -8115,8 +8265,8 @@ function toDocumentVersionInfo(root: JSONValue): DocumentVersionInfo {
       "VersionName": "s",
       "CreatedDate": "d",
       "IsDefaultVersion": "b",
-      "DocumentFormat": toDocumentFormat,
-      "Status": toDocumentStatus,
+      "DocumentFormat": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentFormat>(x),
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentStatus>(x),
       "StatusInformation": "s",
     },
   }, root);
@@ -8136,18 +8286,18 @@ export interface DocumentIdentifier {
   Tags?: Tag[] | null;
   Requires?: DocumentRequires[] | null;
 }
-function toDocumentIdentifier(root: JSONValue): DocumentIdentifier {
-  return prt.readObj({
+function toDocumentIdentifier(root: jsonP.JSONValue): DocumentIdentifier {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
       "Owner": "s",
       "VersionName": "s",
-      "PlatformTypes": [toPlatformType],
+      "PlatformTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<PlatformType>(x)],
       "DocumentVersion": "s",
-      "DocumentType": toDocumentType,
+      "DocumentType": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentType>(x),
       "SchemaVersion": "s",
-      "DocumentFormat": toDocumentFormat,
+      "DocumentFormat": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentFormat>(x),
       "TargetType": "s",
       "Tags": [toTag],
       "Requires": [toDocumentRequires],
@@ -8166,15 +8316,15 @@ export interface ResourceComplianceSummaryItem {
   CompliantSummary?: CompliantSummary | null;
   NonCompliantSummary?: NonCompliantSummary | null;
 }
-function toResourceComplianceSummaryItem(root: JSONValue): ResourceComplianceSummaryItem {
-  return prt.readObj({
+function toResourceComplianceSummaryItem(root: jsonP.JSONValue): ResourceComplianceSummaryItem {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ComplianceType": "s",
       "ResourceType": "s",
       "ResourceId": "s",
-      "Status": toComplianceStatus,
-      "OverallSeverity": toComplianceSeverity,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ComplianceStatus>(x),
+      "OverallSeverity": (x: jsonP.JSONValue) => cmnP.readEnum<ComplianceSeverity>(x),
       "ExecutionSummary": toComplianceExecutionSummary,
       "CompliantSummary": toCompliantSummary,
       "NonCompliantSummary": toNonCompliantSummary,
@@ -8195,8 +8345,8 @@ export interface ResourceDataSyncItem {
   SyncCreatedTime?: Date | number | null;
   LastSyncStatusMessage?: string | null;
 }
-function toResourceDataSyncItem(root: JSONValue): ResourceDataSyncItem {
-  return prt.readObj({
+function toResourceDataSyncItem(root: jsonP.JSONValue): ResourceDataSyncItem {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SyncName": "s",
@@ -8206,7 +8356,7 @@ function toResourceDataSyncItem(root: JSONValue): ResourceDataSyncItem {
       "LastSyncTime": "d",
       "LastSuccessfulSyncTime": "d",
       "SyncLastModifiedTime": "d",
-      "LastStatus": toLastResourceDataSyncStatus,
+      "LastStatus": (x: jsonP.JSONValue) => cmnP.readEnum<LastResourceDataSyncStatus>(x),
       "SyncCreatedTime": "d",
       "LastSyncStatusMessage": "s",
     },
@@ -8221,8 +8371,8 @@ export interface ResourceDataSyncSourceWithState {
   IncludeFutureRegions?: boolean | null;
   State?: string | null;
 }
-function toResourceDataSyncSourceWithState(root: JSONValue): ResourceDataSyncSourceWithState {
-  return prt.readObj({
+function toResourceDataSyncSourceWithState(root: jsonP.JSONValue): ResourceDataSyncSourceWithState {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SourceType": "s",
@@ -8239,14 +8389,7 @@ export type LastResourceDataSyncStatus =
 | "Successful"
 | "Failed"
 | "InProgress"
-;
-function toLastResourceDataSyncStatus(root: JSONValue): LastResourceDataSyncStatus | null {
-  return ( false
-    || root == "Successful"
-    || root == "Failed"
-    || root == "InProgress"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface DocumentDefaultVersionDescription {
@@ -8254,8 +8397,8 @@ export interface DocumentDefaultVersionDescription {
   DefaultVersion?: string | null;
   DefaultVersionName?: string | null;
 }
-function toDocumentDefaultVersionDescription(root: JSONValue): DocumentDefaultVersionDescription {
-  return prt.readObj({
+function toDocumentDefaultVersionDescription(root: jsonP.JSONValue): DocumentDefaultVersionDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",

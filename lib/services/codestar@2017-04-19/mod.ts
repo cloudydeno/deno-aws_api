@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class CodeStar {
   #client: ServiceClient;
@@ -30,13 +30,18 @@ export default class CodeStar {
   async associateTeamMember(
     {abortSignal, ...params}: RequestConfig & AssociateTeamMemberRequest,
   ): Promise<AssociateTeamMemberResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      projectId: params["projectId"],
+      clientRequestToken: params["clientRequestToken"],
+      userArn: params["userArn"],
+      projectRole: params["projectRole"],
+      remoteAccessAllowed: params["remoteAccessAllowed"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateTeamMember",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "clientRequestToken": "s",
@@ -47,15 +52,20 @@ export default class CodeStar {
   async createProject(
     {abortSignal, ...params}: RequestConfig & CreateProjectRequest,
   ): Promise<CreateProjectResult> {
-    const body: JSONObject = {...params,
-    sourceCode: params["sourceCode"]?.map(x => fromCode(x)),
-    toolchain: fromToolchain(params["toolchain"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      id: params["id"],
+      description: params["description"],
+      clientRequestToken: params["clientRequestToken"],
+      sourceCode: params["sourceCode"]?.map(x => fromCode(x)),
+      toolchain: fromToolchain(params["toolchain"]),
+      tags: params["tags"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProject",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "id": "s",
         "arn": "s",
@@ -70,13 +80,17 @@ export default class CodeStar {
   async createUserProfile(
     {abortSignal, ...params}: RequestConfig & CreateUserProfileRequest,
   ): Promise<CreateUserProfileResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      userArn: params["userArn"],
+      displayName: params["displayName"],
+      emailAddress: params["emailAddress"],
+      sshPublicKey: params["sshPublicKey"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUserProfile",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "userArn": "s",
       },
@@ -93,13 +107,16 @@ export default class CodeStar {
   async deleteProject(
     {abortSignal, ...params}: RequestConfig & DeleteProjectRequest,
   ): Promise<DeleteProjectResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+      clientRequestToken: params["clientRequestToken"],
+      deleteStack: params["deleteStack"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteProject",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "stackId": "s",
@@ -111,13 +128,14 @@ export default class CodeStar {
   async deleteUserProfile(
     {abortSignal, ...params}: RequestConfig & DeleteUserProfileRequest,
   ): Promise<DeleteUserProfileResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      userArn: params["userArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUserProfile",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "userArn": "s",
       },
@@ -128,13 +146,14 @@ export default class CodeStar {
   async describeProject(
     {abortSignal, ...params}: RequestConfig & DescribeProjectRequest,
   ): Promise<DescribeProjectResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeProject",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "name": "s",
@@ -153,13 +172,14 @@ export default class CodeStar {
   async describeUserProfile(
     {abortSignal, ...params}: RequestConfig & DescribeUserProfileRequest,
   ): Promise<DescribeUserProfileResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      userArn: params["userArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUserProfile",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "userArn": "s",
         "createdTimestamp": "d",
@@ -176,13 +196,15 @@ export default class CodeStar {
   async disassociateTeamMember(
     {abortSignal, ...params}: RequestConfig & DisassociateTeamMemberRequest,
   ): Promise<DisassociateTeamMemberResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      projectId: params["projectId"],
+      userArn: params["userArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateTeamMember",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -191,13 +213,15 @@ export default class CodeStar {
   async listProjects(
     {abortSignal, ...params}: RequestConfig & ListProjectsRequest = {},
   ): Promise<ListProjectsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListProjects",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "projects": [toProjectSummary],
       },
@@ -210,13 +234,16 @@ export default class CodeStar {
   async listResources(
     {abortSignal, ...params}: RequestConfig & ListResourcesRequest,
   ): Promise<ListResourcesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      projectId: params["projectId"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResources",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "resources": [toResource],
@@ -228,16 +255,19 @@ export default class CodeStar {
   async listTagsForProject(
     {abortSignal, ...params}: RequestConfig & ListTagsForProjectRequest,
   ): Promise<ListTagsForProjectResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForProject",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "tags": x => prt.readMap(String, String, x),
+        "tags": x => jsonP.readMap(String, String, x),
         "nextToken": "s",
       },
     }, await resp.json());
@@ -246,13 +276,16 @@ export default class CodeStar {
   async listTeamMembers(
     {abortSignal, ...params}: RequestConfig & ListTeamMembersRequest,
   ): Promise<ListTeamMembersResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      projectId: params["projectId"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTeamMembers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "teamMembers": [toTeamMember],
       },
@@ -265,13 +298,15 @@ export default class CodeStar {
   async listUserProfiles(
     {abortSignal, ...params}: RequestConfig & ListUserProfilesRequest = {},
   ): Promise<ListUserProfilesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUserProfiles",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "userProfiles": [toUserProfileSummary],
       },
@@ -284,16 +319,18 @@ export default class CodeStar {
   async tagProject(
     {abortSignal, ...params}: RequestConfig & TagProjectRequest,
   ): Promise<TagProjectResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+      tags: params["tags"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagProject",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "tags": x => prt.readMap(String, String, x),
+        "tags": x => jsonP.readMap(String, String, x),
       },
     }, await resp.json());
   }
@@ -301,13 +338,15 @@ export default class CodeStar {
   async untagProject(
     {abortSignal, ...params}: RequestConfig & UntagProjectRequest,
   ): Promise<UntagProjectResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+      tags: params["tags"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagProject",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -316,13 +355,16 @@ export default class CodeStar {
   async updateProject(
     {abortSignal, ...params}: RequestConfig & UpdateProjectRequest,
   ): Promise<UpdateProjectResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+      name: params["name"],
+      description: params["description"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateProject",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -331,13 +373,17 @@ export default class CodeStar {
   async updateTeamMember(
     {abortSignal, ...params}: RequestConfig & UpdateTeamMemberRequest,
   ): Promise<UpdateTeamMemberResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      projectId: params["projectId"],
+      userArn: params["userArn"],
+      projectRole: params["projectRole"],
+      remoteAccessAllowed: params["remoteAccessAllowed"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTeamMember",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "userArn": "s",
@@ -350,13 +396,17 @@ export default class CodeStar {
   async updateUserProfile(
     {abortSignal, ...params}: RequestConfig & UpdateUserProfileRequest,
   ): Promise<UpdateUserProfileResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      userArn: params["userArn"],
+      displayName: params["displayName"],
+      emailAddress: params["emailAddress"],
+      sshPublicKey: params["sshPublicKey"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUserProfile",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "userArn": "s",
       },
@@ -389,7 +439,7 @@ export interface CreateProjectRequest {
   clientRequestToken?: string | null;
   sourceCode?: Code[] | null;
   toolchain?: Toolchain | null;
-  tags?: { [key: string]: string } | null;
+  tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -464,7 +514,7 @@ export interface ListUserProfilesRequest {
 // refs: 1 - tags: named, input
 export interface TagProjectRequest {
   id: string;
-  tags: { [key: string]: string };
+  tags: { [key: string]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, input
@@ -571,7 +621,7 @@ export interface ListResourcesResult {
 
 // refs: 1 - tags: named, output
 export interface ListTagsForProjectResult {
-  tags?: { [key: string]: string } | null;
+  tags?: { [key: string]: string | null | undefined } | null;
   nextToken?: string | null;
 }
 
@@ -589,7 +639,7 @@ export interface ListUserProfilesResult {
 
 // refs: 1 - tags: named, output
 export interface TagProjectResult {
-  tags?: { [key: string]: string } | null;
+  tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output
@@ -622,9 +672,9 @@ export interface Code {
   source: CodeSource;
   destination: CodeDestination;
 }
-function fromCode(input?: Code | null): JSONValue {
+function fromCode(input?: Code | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     source: fromCodeSource(input["source"]),
     destination: fromCodeDestination(input["destination"]),
   }
@@ -634,9 +684,9 @@ function fromCode(input?: Code | null): JSONValue {
 export interface CodeSource {
   s3: S3Location;
 }
-function fromCodeSource(input?: CodeSource | null): JSONValue {
+function fromCodeSource(input?: CodeSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     s3: fromS3Location(input["s3"]),
   }
 }
@@ -646,9 +696,11 @@ export interface S3Location {
   bucketName?: string | null;
   bucketKey?: string | null;
 }
-function fromS3Location(input?: S3Location | null): JSONValue {
+function fromS3Location(input?: S3Location | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    bucketName: input["bucketName"],
+    bucketKey: input["bucketKey"],
   }
 }
 
@@ -657,9 +709,9 @@ export interface CodeDestination {
   codeCommit?: CodeCommitCodeDestination | null;
   gitHub?: GitHubCodeDestination | null;
 }
-function fromCodeDestination(input?: CodeDestination | null): JSONValue {
+function fromCodeDestination(input?: CodeDestination | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     codeCommit: fromCodeCommitCodeDestination(input["codeCommit"]),
     gitHub: fromGitHubCodeDestination(input["gitHub"]),
   }
@@ -669,9 +721,10 @@ function fromCodeDestination(input?: CodeDestination | null): JSONValue {
 export interface CodeCommitCodeDestination {
   name: string;
 }
-function fromCodeCommitCodeDestination(input?: CodeCommitCodeDestination | null): JSONValue {
+function fromCodeCommitCodeDestination(input?: CodeCommitCodeDestination | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
   }
 }
 
@@ -685,9 +738,16 @@ export interface GitHubCodeDestination {
   issuesEnabled: boolean;
   token: string;
 }
-function fromGitHubCodeDestination(input?: GitHubCodeDestination | null): JSONValue {
+function fromGitHubCodeDestination(input?: GitHubCodeDestination | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    description: input["description"],
+    type: input["type"],
+    owner: input["owner"],
+    privateRepository: input["privateRepository"],
+    issuesEnabled: input["issuesEnabled"],
+    token: input["token"],
   }
 }
 
@@ -695,12 +755,14 @@ function fromGitHubCodeDestination(input?: GitHubCodeDestination | null): JSONVa
 export interface Toolchain {
   source: ToolchainSource;
   roleArn?: string | null;
-  stackParameters?: { [key: string]: string } | null;
+  stackParameters?: { [key: string]: string | null | undefined } | null;
 }
-function fromToolchain(input?: Toolchain | null): JSONValue {
+function fromToolchain(input?: Toolchain | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     source: fromToolchainSource(input["source"]),
+    roleArn: input["roleArn"],
+    stackParameters: input["stackParameters"],
   }
 }
 
@@ -708,9 +770,9 @@ function fromToolchain(input?: Toolchain | null): JSONValue {
 export interface ToolchainSource {
   s3: S3Location;
 }
-function fromToolchainSource(input?: ToolchainSource | null): JSONValue {
+function fromToolchainSource(input?: ToolchainSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     s3: fromS3Location(input["s3"]),
   }
 }
@@ -720,8 +782,8 @@ export interface ProjectStatus {
   state: string;
   reason?: string | null;
 }
-function toProjectStatus(root: JSONValue): ProjectStatus {
-  return prt.readObj({
+function toProjectStatus(root: jsonP.JSONValue): ProjectStatus {
+  return jsonP.readObj({
     required: {
       "state": "s",
     },
@@ -736,8 +798,8 @@ export interface ProjectSummary {
   projectId?: string | null;
   projectArn?: string | null;
 }
-function toProjectSummary(root: JSONValue): ProjectSummary {
-  return prt.readObj({
+function toProjectSummary(root: jsonP.JSONValue): ProjectSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "projectId": "s",
@@ -750,8 +812,8 @@ function toProjectSummary(root: JSONValue): ProjectSummary {
 export interface Resource {
   id: string;
 }
-function toResource(root: JSONValue): Resource {
-  return prt.readObj({
+function toResource(root: jsonP.JSONValue): Resource {
+  return jsonP.readObj({
     required: {
       "id": "s",
     },
@@ -765,8 +827,8 @@ export interface TeamMember {
   projectRole: string;
   remoteAccessAllowed?: boolean | null;
 }
-function toTeamMember(root: JSONValue): TeamMember {
-  return prt.readObj({
+function toTeamMember(root: jsonP.JSONValue): TeamMember {
+  return jsonP.readObj({
     required: {
       "userArn": "s",
       "projectRole": "s",
@@ -784,8 +846,8 @@ export interface UserProfileSummary {
   emailAddress?: string | null;
   sshPublicKey?: string | null;
 }
-function toUserProfileSummary(root: JSONValue): UserProfileSummary {
-  return prt.readObj({
+function toUserProfileSummary(root: jsonP.JSONValue): UserProfileSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "userArn": "s",

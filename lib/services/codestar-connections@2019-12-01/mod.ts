@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class CodeStarconnections {
   #client: ServiceClient;
@@ -30,14 +30,17 @@ export default class CodeStarconnections {
   async createConnection(
     {abortSignal, ...params}: RequestConfig & CreateConnectionInput,
   ): Promise<CreateConnectionOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProviderType: params["ProviderType"],
+      ConnectionName: params["ConnectionName"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      HostArn: params["HostArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateConnection",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ConnectionArn": "s",
       },
@@ -50,14 +53,17 @@ export default class CodeStarconnections {
   async createHost(
     {abortSignal, ...params}: RequestConfig & CreateHostInput,
   ): Promise<CreateHostOutput> {
-    const body: JSONObject = {...params,
-    VpcConfiguration: fromVpcConfiguration(params["VpcConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      ProviderType: params["ProviderType"],
+      ProviderEndpoint: params["ProviderEndpoint"],
+      VpcConfiguration: fromVpcConfiguration(params["VpcConfiguration"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHost",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "HostArn": "s",
@@ -68,13 +74,14 @@ export default class CodeStarconnections {
   async deleteConnection(
     {abortSignal, ...params}: RequestConfig & DeleteConnectionInput,
   ): Promise<DeleteConnectionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConnectionArn: params["ConnectionArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteConnection",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -83,13 +90,14 @@ export default class CodeStarconnections {
   async deleteHost(
     {abortSignal, ...params}: RequestConfig & DeleteHostInput,
   ): Promise<DeleteHostOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HostArn: params["HostArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteHost",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -98,13 +106,14 @@ export default class CodeStarconnections {
   async getConnection(
     {abortSignal, ...params}: RequestConfig & GetConnectionInput,
   ): Promise<GetConnectionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConnectionArn: params["ConnectionArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetConnection",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Connection": toConnection,
@@ -115,18 +124,19 @@ export default class CodeStarconnections {
   async getHost(
     {abortSignal, ...params}: RequestConfig & GetHostInput,
   ): Promise<GetHostOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HostArn: params["HostArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetHost",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Name": "s",
         "Status": "s",
-        "ProviderType": toProviderType,
+        "ProviderType": (x: jsonP.JSONValue) => cmnP.readEnum<ProviderType>(x),
         "ProviderEndpoint": "s",
         "VpcConfiguration": toVpcConfiguration,
       },
@@ -136,13 +146,17 @@ export default class CodeStarconnections {
   async listConnections(
     {abortSignal, ...params}: RequestConfig & ListConnectionsInput = {},
   ): Promise<ListConnectionsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProviderTypeFilter: params["ProviderTypeFilter"],
+      HostArnFilter: params["HostArnFilter"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListConnections",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Connections": [toConnection],
@@ -154,13 +168,15 @@ export default class CodeStarconnections {
   async listHosts(
     {abortSignal, ...params}: RequestConfig & ListHostsInput = {},
   ): Promise<ListHostsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListHosts",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Hosts": [toHost],
@@ -172,13 +188,14 @@ export default class CodeStarconnections {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceInput,
   ): Promise<ListTagsForResourceOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -189,14 +206,15 @@ export default class CodeStarconnections {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceInput,
   ): Promise<TagResourceOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -205,13 +223,15 @@ export default class CodeStarconnections {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceInput,
   ): Promise<UntagResourceOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -349,28 +369,22 @@ export type ProviderType =
 | "Bitbucket"
 | "GitHub"
 | "GitHubEnterpriseServer"
-;
-
-function toProviderType(root: JSONValue): ProviderType | null {
-  return ( false
-    || root == "Bitbucket"
-    || root == "GitHub"
-    || root == "GitHubEnterpriseServer"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -386,13 +400,17 @@ export interface VpcConfiguration {
   SecurityGroupIds: string[];
   TlsCertificate?: string | null;
 }
-function fromVpcConfiguration(input?: VpcConfiguration | null): JSONValue {
+function fromVpcConfiguration(input?: VpcConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    VpcId: input["VpcId"],
+    SubnetIds: input["SubnetIds"],
+    SecurityGroupIds: input["SecurityGroupIds"],
+    TlsCertificate: input["TlsCertificate"],
   }
 }
-function toVpcConfiguration(root: JSONValue): VpcConfiguration {
-  return prt.readObj({
+function toVpcConfiguration(root: jsonP.JSONValue): VpcConfiguration {
+  return jsonP.readObj({
     required: {
       "VpcId": "s",
       "SubnetIds": ["s"],
@@ -413,15 +431,15 @@ export interface Connection {
   ConnectionStatus?: ConnectionStatus | null;
   HostArn?: string | null;
 }
-function toConnection(root: JSONValue): Connection {
-  return prt.readObj({
+function toConnection(root: jsonP.JSONValue): Connection {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ConnectionName": "s",
       "ConnectionArn": "s",
-      "ProviderType": toProviderType,
+      "ProviderType": (x: jsonP.JSONValue) => cmnP.readEnum<ProviderType>(x),
       "OwnerAccountId": "s",
-      "ConnectionStatus": toConnectionStatus,
+      "ConnectionStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ConnectionStatus>(x),
       "HostArn": "s",
     },
   }, root);
@@ -432,14 +450,7 @@ export type ConnectionStatus =
 | "PENDING"
 | "AVAILABLE"
 | "ERROR"
-;
-function toConnectionStatus(root: JSONValue): ConnectionStatus | null {
-  return ( false
-    || root == "PENDING"
-    || root == "AVAILABLE"
-    || root == "ERROR"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Host {
@@ -451,13 +462,13 @@ export interface Host {
   Status?: string | null;
   StatusMessage?: string | null;
 }
-function toHost(root: JSONValue): Host {
-  return prt.readObj({
+function toHost(root: jsonP.JSONValue): Host {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
       "HostArn": "s",
-      "ProviderType": toProviderType,
+      "ProviderType": (x: jsonP.JSONValue) => cmnP.readEnum<ProviderType>(x),
       "ProviderEndpoint": "s",
       "VpcConfiguration": toVpcConfiguration,
       "Status": "s",

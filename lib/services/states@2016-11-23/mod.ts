@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class StepFunctions {
   #client: ServiceClient;
@@ -30,14 +30,15 @@ export default class StepFunctions {
   async createActivity(
     {abortSignal, ...params}: RequestConfig & CreateActivityInput,
   ): Promise<CreateActivityOutput> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateActivity",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "activityArn": "s",
         "creationDate": "d",
@@ -49,16 +50,20 @@ export default class StepFunctions {
   async createStateMachine(
     {abortSignal, ...params}: RequestConfig & CreateStateMachineInput,
   ): Promise<CreateStateMachineOutput> {
-    const body: JSONObject = {...params,
-    loggingConfiguration: fromLoggingConfiguration(params["loggingConfiguration"]),
-    tags: params["tags"]?.map(x => fromTag(x)),
-    tracingConfiguration: fromTracingConfiguration(params["tracingConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      definition: params["definition"],
+      roleArn: params["roleArn"],
+      type: params["type"],
+      loggingConfiguration: fromLoggingConfiguration(params["loggingConfiguration"]),
+      tags: params["tags"]?.map(x => fromTag(x)),
+      tracingConfiguration: fromTracingConfiguration(params["tracingConfiguration"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateStateMachine",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "stateMachineArn": "s",
         "creationDate": "d",
@@ -70,13 +75,14 @@ export default class StepFunctions {
   async deleteActivity(
     {abortSignal, ...params}: RequestConfig & DeleteActivityInput,
   ): Promise<DeleteActivityOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      activityArn: params["activityArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteActivity",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -85,13 +91,14 @@ export default class StepFunctions {
   async deleteStateMachine(
     {abortSignal, ...params}: RequestConfig & DeleteStateMachineInput,
   ): Promise<DeleteStateMachineOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      stateMachineArn: params["stateMachineArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteStateMachine",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -100,13 +107,14 @@ export default class StepFunctions {
   async describeActivity(
     {abortSignal, ...params}: RequestConfig & DescribeActivityInput,
   ): Promise<DescribeActivityOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      activityArn: params["activityArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeActivity",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "activityArn": "s",
         "name": "s",
@@ -119,17 +127,18 @@ export default class StepFunctions {
   async describeExecution(
     {abortSignal, ...params}: RequestConfig & DescribeExecutionInput,
   ): Promise<DescribeExecutionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      executionArn: params["executionArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "executionArn": "s",
         "stateMachineArn": "s",
-        "status": toExecutionStatus,
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<ExecutionStatus>(x),
         "startDate": "d",
       },
       optional: {
@@ -147,23 +156,24 @@ export default class StepFunctions {
   async describeStateMachine(
     {abortSignal, ...params}: RequestConfig & DescribeStateMachineInput,
   ): Promise<DescribeStateMachineOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      stateMachineArn: params["stateMachineArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStateMachine",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "stateMachineArn": "s",
         "name": "s",
         "definition": "s",
         "roleArn": "s",
-        "type": toStateMachineType,
+        "type": (x: jsonP.JSONValue) => cmnP.readEnum<StateMachineType>(x),
         "creationDate": "d",
       },
       optional: {
-        "status": toStateMachineStatus,
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<StateMachineStatus>(x),
         "loggingConfiguration": toLoggingConfiguration,
         "tracingConfiguration": toTracingConfiguration,
       },
@@ -173,13 +183,14 @@ export default class StepFunctions {
   async describeStateMachineForExecution(
     {abortSignal, ...params}: RequestConfig & DescribeStateMachineForExecutionInput,
   ): Promise<DescribeStateMachineForExecutionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      executionArn: params["executionArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStateMachineForExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "stateMachineArn": "s",
         "name": "s",
@@ -197,13 +208,15 @@ export default class StepFunctions {
   async getActivityTask(
     {abortSignal, ...params}: RequestConfig & GetActivityTaskInput,
   ): Promise<GetActivityTaskOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      activityArn: params["activityArn"],
+      workerName: params["workerName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetActivityTask",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "taskToken": "s",
@@ -215,13 +228,18 @@ export default class StepFunctions {
   async getExecutionHistory(
     {abortSignal, ...params}: RequestConfig & GetExecutionHistoryInput,
   ): Promise<GetExecutionHistoryOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      executionArn: params["executionArn"],
+      maxResults: params["maxResults"],
+      reverseOrder: params["reverseOrder"],
+      nextToken: params["nextToken"],
+      includeExecutionData: params["includeExecutionData"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetExecutionHistory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "events": [toHistoryEvent],
       },
@@ -234,13 +252,15 @@ export default class StepFunctions {
   async listActivities(
     {abortSignal, ...params}: RequestConfig & ListActivitiesInput = {},
   ): Promise<ListActivitiesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListActivities",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "activities": [toActivityListItem],
       },
@@ -253,13 +273,17 @@ export default class StepFunctions {
   async listExecutions(
     {abortSignal, ...params}: RequestConfig & ListExecutionsInput,
   ): Promise<ListExecutionsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      stateMachineArn: params["stateMachineArn"],
+      statusFilter: params["statusFilter"],
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListExecutions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "executions": [toExecutionListItem],
       },
@@ -272,13 +296,15 @@ export default class StepFunctions {
   async listStateMachines(
     {abortSignal, ...params}: RequestConfig & ListStateMachinesInput = {},
   ): Promise<ListStateMachinesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListStateMachines",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "stateMachines": [toStateMachineListItem],
       },
@@ -291,13 +317,14 @@ export default class StepFunctions {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceInput,
   ): Promise<ListTagsForResourceOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceArn: params["resourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "tags": [toTag],
@@ -308,13 +335,16 @@ export default class StepFunctions {
   async sendTaskFailure(
     {abortSignal, ...params}: RequestConfig & SendTaskFailureInput,
   ): Promise<SendTaskFailureOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      taskToken: params["taskToken"],
+      error: params["error"],
+      cause: params["cause"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendTaskFailure",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -323,13 +353,14 @@ export default class StepFunctions {
   async sendTaskHeartbeat(
     {abortSignal, ...params}: RequestConfig & SendTaskHeartbeatInput,
   ): Promise<SendTaskHeartbeatOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      taskToken: params["taskToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendTaskHeartbeat",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -338,13 +369,15 @@ export default class StepFunctions {
   async sendTaskSuccess(
     {abortSignal, ...params}: RequestConfig & SendTaskSuccessInput,
   ): Promise<SendTaskSuccessOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      taskToken: params["taskToken"],
+      output: params["output"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendTaskSuccess",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -353,13 +386,17 @@ export default class StepFunctions {
   async startExecution(
     {abortSignal, ...params}: RequestConfig & StartExecutionInput,
   ): Promise<StartExecutionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      stateMachineArn: params["stateMachineArn"],
+      name: params["name"],
+      input: params["input"],
+      traceHeader: params["traceHeader"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "executionArn": "s",
         "startDate": "d",
@@ -371,13 +408,16 @@ export default class StepFunctions {
   async stopExecution(
     {abortSignal, ...params}: RequestConfig & StopExecutionInput,
   ): Promise<StopExecutionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      executionArn: params["executionArn"],
+      error: params["error"],
+      cause: params["cause"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "stopDate": "d",
       },
@@ -388,14 +428,15 @@ export default class StepFunctions {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceInput,
   ): Promise<TagResourceOutput> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceArn: params["resourceArn"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -404,13 +445,15 @@ export default class StepFunctions {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceInput,
   ): Promise<UntagResourceOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceArn: params["resourceArn"],
+      tagKeys: params["tagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -419,15 +462,18 @@ export default class StepFunctions {
   async updateStateMachine(
     {abortSignal, ...params}: RequestConfig & UpdateStateMachineInput,
   ): Promise<UpdateStateMachineOutput> {
-    const body: JSONObject = {...params,
-    loggingConfiguration: fromLoggingConfiguration(params["loggingConfiguration"]),
-    tracingConfiguration: fromTracingConfiguration(params["tracingConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      stateMachineArn: params["stateMachineArn"],
+      definition: params["definition"],
+      roleArn: params["roleArn"],
+      loggingConfiguration: fromLoggingConfiguration(params["loggingConfiguration"]),
+      tracingConfiguration: fromTracingConfiguration(params["tracingConfiguration"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateStateMachine",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "updateDate": "d",
       },
@@ -720,13 +766,15 @@ export interface Tag {
   key?: string | null;
   value?: string | null;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    key: input["key"],
+    value: input["value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {},
     optional: {
       "key": "s",
@@ -739,14 +787,7 @@ function toTag(root: JSONValue): Tag {
 export type StateMachineType =
 | "STANDARD"
 | "EXPRESS"
-;
-
-function toStateMachineType(root: JSONValue): StateMachineType | null {
-  return ( false
-    || root == "STANDARD"
-    || root == "EXPRESS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface LoggingConfiguration {
@@ -754,17 +795,19 @@ export interface LoggingConfiguration {
   includeExecutionData?: boolean | null;
   destinations?: LogDestination[] | null;
 }
-function fromLoggingConfiguration(input?: LoggingConfiguration | null): JSONValue {
+function fromLoggingConfiguration(input?: LoggingConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    level: input["level"],
+    includeExecutionData: input["includeExecutionData"],
     destinations: input["destinations"]?.map(x => fromLogDestination(x)),
   }
 }
-function toLoggingConfiguration(root: JSONValue): LoggingConfiguration {
-  return prt.readObj({
+function toLoggingConfiguration(root: jsonP.JSONValue): LoggingConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "level": toLogLevel,
+      "level": (x: jsonP.JSONValue) => cmnP.readEnum<LogLevel>(x),
       "includeExecutionData": "b",
       "destinations": [toLogDestination],
     },
@@ -777,29 +820,20 @@ export type LogLevel =
 | "ERROR"
 | "FATAL"
 | "OFF"
-;
-
-function toLogLevel(root: JSONValue): LogLevel | null {
-  return ( false
-    || root == "ALL"
-    || root == "ERROR"
-    || root == "FATAL"
-    || root == "OFF"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface LogDestination {
   cloudWatchLogsLogGroup?: CloudWatchLogsLogGroup | null;
 }
-function fromLogDestination(input?: LogDestination | null): JSONValue {
+function fromLogDestination(input?: LogDestination | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     cloudWatchLogsLogGroup: fromCloudWatchLogsLogGroup(input["cloudWatchLogsLogGroup"]),
   }
 }
-function toLogDestination(root: JSONValue): LogDestination {
-  return prt.readObj({
+function toLogDestination(root: jsonP.JSONValue): LogDestination {
+  return jsonP.readObj({
     required: {},
     optional: {
       "cloudWatchLogsLogGroup": toCloudWatchLogsLogGroup,
@@ -811,13 +845,14 @@ function toLogDestination(root: JSONValue): LogDestination {
 export interface CloudWatchLogsLogGroup {
   logGroupArn?: string | null;
 }
-function fromCloudWatchLogsLogGroup(input?: CloudWatchLogsLogGroup | null): JSONValue {
+function fromCloudWatchLogsLogGroup(input?: CloudWatchLogsLogGroup | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    logGroupArn: input["logGroupArn"],
   }
 }
-function toCloudWatchLogsLogGroup(root: JSONValue): CloudWatchLogsLogGroup {
-  return prt.readObj({
+function toCloudWatchLogsLogGroup(root: jsonP.JSONValue): CloudWatchLogsLogGroup {
+  return jsonP.readObj({
     required: {},
     optional: {
       "logGroupArn": "s",
@@ -829,13 +864,14 @@ function toCloudWatchLogsLogGroup(root: JSONValue): CloudWatchLogsLogGroup {
 export interface TracingConfiguration {
   enabled?: boolean | null;
 }
-function fromTracingConfiguration(input?: TracingConfiguration | null): JSONValue {
+function fromTracingConfiguration(input?: TracingConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    enabled: input["enabled"],
   }
 }
-function toTracingConfiguration(root: JSONValue): TracingConfiguration {
-  return prt.readObj({
+function toTracingConfiguration(root: jsonP.JSONValue): TracingConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "enabled": "b",
@@ -850,24 +886,14 @@ export type ExecutionStatus =
 | "FAILED"
 | "TIMED_OUT"
 | "ABORTED"
-;
-
-function toExecutionStatus(root: JSONValue): ExecutionStatus | null {
-  return ( false
-    || root == "RUNNING"
-    || root == "SUCCEEDED"
-    || root == "FAILED"
-    || root == "TIMED_OUT"
-    || root == "ABORTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface CloudWatchEventsExecutionDataDetails {
   included?: boolean | null;
 }
-function toCloudWatchEventsExecutionDataDetails(root: JSONValue): CloudWatchEventsExecutionDataDetails {
-  return prt.readObj({
+function toCloudWatchEventsExecutionDataDetails(root: jsonP.JSONValue): CloudWatchEventsExecutionDataDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "included": "b",
@@ -879,13 +905,7 @@ function toCloudWatchEventsExecutionDataDetails(root: JSONValue): CloudWatchEven
 export type StateMachineStatus =
 | "ACTIVE"
 | "DELETING"
-;
-function toStateMachineStatus(root: JSONValue): StateMachineStatus | null {
-  return ( false
-    || root == "ACTIVE"
-    || root == "DELETING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface HistoryEvent {
@@ -926,11 +946,11 @@ export interface HistoryEvent {
   stateEnteredEventDetails?: StateEnteredEventDetails | null;
   stateExitedEventDetails?: StateExitedEventDetails | null;
 }
-function toHistoryEvent(root: JSONValue): HistoryEvent {
-  return prt.readObj({
+function toHistoryEvent(root: jsonP.JSONValue): HistoryEvent {
+  return jsonP.readObj({
     required: {
       "timestamp": "d",
-      "type": toHistoryEventType,
+      "type": (x: jsonP.JSONValue) => cmnP.readEnum<HistoryEventType>(x),
       "id": "n",
     },
     optional: {
@@ -1028,74 +1048,15 @@ export type HistoryEventType =
 | "WaitStateAborted"
 | "WaitStateEntered"
 | "WaitStateExited"
-;
-function toHistoryEventType(root: JSONValue): HistoryEventType | null {
-  return ( false
-    || root == "ActivityFailed"
-    || root == "ActivityScheduled"
-    || root == "ActivityScheduleFailed"
-    || root == "ActivityStarted"
-    || root == "ActivitySucceeded"
-    || root == "ActivityTimedOut"
-    || root == "ChoiceStateEntered"
-    || root == "ChoiceStateExited"
-    || root == "ExecutionAborted"
-    || root == "ExecutionFailed"
-    || root == "ExecutionStarted"
-    || root == "ExecutionSucceeded"
-    || root == "ExecutionTimedOut"
-    || root == "FailStateEntered"
-    || root == "LambdaFunctionFailed"
-    || root == "LambdaFunctionScheduled"
-    || root == "LambdaFunctionScheduleFailed"
-    || root == "LambdaFunctionStarted"
-    || root == "LambdaFunctionStartFailed"
-    || root == "LambdaFunctionSucceeded"
-    || root == "LambdaFunctionTimedOut"
-    || root == "MapIterationAborted"
-    || root == "MapIterationFailed"
-    || root == "MapIterationStarted"
-    || root == "MapIterationSucceeded"
-    || root == "MapStateAborted"
-    || root == "MapStateEntered"
-    || root == "MapStateExited"
-    || root == "MapStateFailed"
-    || root == "MapStateStarted"
-    || root == "MapStateSucceeded"
-    || root == "ParallelStateAborted"
-    || root == "ParallelStateEntered"
-    || root == "ParallelStateExited"
-    || root == "ParallelStateFailed"
-    || root == "ParallelStateStarted"
-    || root == "ParallelStateSucceeded"
-    || root == "PassStateEntered"
-    || root == "PassStateExited"
-    || root == "SucceedStateEntered"
-    || root == "SucceedStateExited"
-    || root == "TaskFailed"
-    || root == "TaskScheduled"
-    || root == "TaskStarted"
-    || root == "TaskStartFailed"
-    || root == "TaskStateAborted"
-    || root == "TaskStateEntered"
-    || root == "TaskStateExited"
-    || root == "TaskSubmitFailed"
-    || root == "TaskSubmitted"
-    || root == "TaskSucceeded"
-    || root == "TaskTimedOut"
-    || root == "WaitStateAborted"
-    || root == "WaitStateEntered"
-    || root == "WaitStateExited"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ActivityFailedEventDetails {
   error?: string | null;
   cause?: string | null;
 }
-function toActivityFailedEventDetails(root: JSONValue): ActivityFailedEventDetails {
-  return prt.readObj({
+function toActivityFailedEventDetails(root: jsonP.JSONValue): ActivityFailedEventDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "error": "s",
@@ -1109,8 +1070,8 @@ export interface ActivityScheduleFailedEventDetails {
   error?: string | null;
   cause?: string | null;
 }
-function toActivityScheduleFailedEventDetails(root: JSONValue): ActivityScheduleFailedEventDetails {
-  return prt.readObj({
+function toActivityScheduleFailedEventDetails(root: jsonP.JSONValue): ActivityScheduleFailedEventDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "error": "s",
@@ -1127,8 +1088,8 @@ export interface ActivityScheduledEventDetails {
   timeoutInSeconds?: number | null;
   heartbeatInSeconds?: number | null;
 }
-function toActivityScheduledEventDetails(root: JSONValue): ActivityScheduledEventDetails {
-  return prt.readObj({
+function toActivityScheduledEventDetails(root: jsonP.JSONValue): ActivityScheduledEventDetails {
+  return jsonP.readObj({
     required: {
       "resource": "s",
     },
@@ -1145,8 +1106,8 @@ function toActivityScheduledEventDetails(root: JSONValue): ActivityScheduledEven
 export interface HistoryEventExecutionDataDetails {
   truncated?: boolean | null;
 }
-function toHistoryEventExecutionDataDetails(root: JSONValue): HistoryEventExecutionDataDetails {
-  return prt.readObj({
+function toHistoryEventExecutionDataDetails(root: jsonP.JSONValue): HistoryEventExecutionDataDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "truncated": "b",
@@ -1158,8 +1119,8 @@ function toHistoryEventExecutionDataDetails(root: JSONValue): HistoryEventExecut
 export interface ActivityStartedEventDetails {
   workerName?: string | null;
 }
-function toActivityStartedEventDetails(root: JSONValue): ActivityStartedEventDetails {
-  return prt.readObj({
+function toActivityStartedEventDetails(root: jsonP.JSONValue): ActivityStartedEventDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "workerName": "s",
@@ -1172,8 +1133,8 @@ export interface ActivitySucceededEventDetails {
   output?: string | null;
   outputDetails?: HistoryEventExecutionDataDetails | null;
 }
-function toActivitySucceededEventDetails(root: JSONValue): ActivitySucceededEventDetails {
-  return prt.readObj({
+function toActivitySucceededEventDetails(root: jsonP.JSONValue): ActivitySucceededEventDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "output": "s",
@@ -1187,8 +1148,8 @@ export interface ActivityTimedOutEventDetails {
   error?: string | null;
   cause?: string | null;
 }
-function toActivityTimedOutEventDetails(root: JSONValue): ActivityTimedOutEventDetails {
-  return prt.readObj({
+function toActivityTimedOutEventDetails(root: jsonP.JSONValue): ActivityTimedOutEventDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "error": "s",
@@ -1204,8 +1165,8 @@ export interface TaskFailedEventDetails {
   error?: string | null;
   cause?: string | null;
 }
-function toTaskFailedEventDetails(root: JSONValue): TaskFailedEventDetails {
-  return prt.readObj({
+function toTaskFailedEventDetails(root: jsonP.JSONValue): TaskFailedEventDetails {
+  return jsonP.readObj({
     required: {
       "resourceType": "s",
       "resource": "s",
@@ -1226,8 +1187,8 @@ export interface TaskScheduledEventDetails {
   timeoutInSeconds?: number | null;
   heartbeatInSeconds?: number | null;
 }
-function toTaskScheduledEventDetails(root: JSONValue): TaskScheduledEventDetails {
-  return prt.readObj({
+function toTaskScheduledEventDetails(root: jsonP.JSONValue): TaskScheduledEventDetails {
+  return jsonP.readObj({
     required: {
       "resourceType": "s",
       "resource": "s",
@@ -1248,8 +1209,8 @@ export interface TaskStartFailedEventDetails {
   error?: string | null;
   cause?: string | null;
 }
-function toTaskStartFailedEventDetails(root: JSONValue): TaskStartFailedEventDetails {
-  return prt.readObj({
+function toTaskStartFailedEventDetails(root: jsonP.JSONValue): TaskStartFailedEventDetails {
+  return jsonP.readObj({
     required: {
       "resourceType": "s",
       "resource": "s",
@@ -1266,8 +1227,8 @@ export interface TaskStartedEventDetails {
   resourceType: string;
   resource: string;
 }
-function toTaskStartedEventDetails(root: JSONValue): TaskStartedEventDetails {
-  return prt.readObj({
+function toTaskStartedEventDetails(root: jsonP.JSONValue): TaskStartedEventDetails {
+  return jsonP.readObj({
     required: {
       "resourceType": "s",
       "resource": "s",
@@ -1283,8 +1244,8 @@ export interface TaskSubmitFailedEventDetails {
   error?: string | null;
   cause?: string | null;
 }
-function toTaskSubmitFailedEventDetails(root: JSONValue): TaskSubmitFailedEventDetails {
-  return prt.readObj({
+function toTaskSubmitFailedEventDetails(root: jsonP.JSONValue): TaskSubmitFailedEventDetails {
+  return jsonP.readObj({
     required: {
       "resourceType": "s",
       "resource": "s",
@@ -1303,8 +1264,8 @@ export interface TaskSubmittedEventDetails {
   output?: string | null;
   outputDetails?: HistoryEventExecutionDataDetails | null;
 }
-function toTaskSubmittedEventDetails(root: JSONValue): TaskSubmittedEventDetails {
-  return prt.readObj({
+function toTaskSubmittedEventDetails(root: jsonP.JSONValue): TaskSubmittedEventDetails {
+  return jsonP.readObj({
     required: {
       "resourceType": "s",
       "resource": "s",
@@ -1323,8 +1284,8 @@ export interface TaskSucceededEventDetails {
   output?: string | null;
   outputDetails?: HistoryEventExecutionDataDetails | null;
 }
-function toTaskSucceededEventDetails(root: JSONValue): TaskSucceededEventDetails {
-  return prt.readObj({
+function toTaskSucceededEventDetails(root: jsonP.JSONValue): TaskSucceededEventDetails {
+  return jsonP.readObj({
     required: {
       "resourceType": "s",
       "resource": "s",
@@ -1343,8 +1304,8 @@ export interface TaskTimedOutEventDetails {
   error?: string | null;
   cause?: string | null;
 }
-function toTaskTimedOutEventDetails(root: JSONValue): TaskTimedOutEventDetails {
-  return prt.readObj({
+function toTaskTimedOutEventDetails(root: jsonP.JSONValue): TaskTimedOutEventDetails {
+  return jsonP.readObj({
     required: {
       "resourceType": "s",
       "resource": "s",
@@ -1361,8 +1322,8 @@ export interface ExecutionFailedEventDetails {
   error?: string | null;
   cause?: string | null;
 }
-function toExecutionFailedEventDetails(root: JSONValue): ExecutionFailedEventDetails {
-  return prt.readObj({
+function toExecutionFailedEventDetails(root: jsonP.JSONValue): ExecutionFailedEventDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "error": "s",
@@ -1377,8 +1338,8 @@ export interface ExecutionStartedEventDetails {
   inputDetails?: HistoryEventExecutionDataDetails | null;
   roleArn?: string | null;
 }
-function toExecutionStartedEventDetails(root: JSONValue): ExecutionStartedEventDetails {
-  return prt.readObj({
+function toExecutionStartedEventDetails(root: jsonP.JSONValue): ExecutionStartedEventDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "input": "s",
@@ -1393,8 +1354,8 @@ export interface ExecutionSucceededEventDetails {
   output?: string | null;
   outputDetails?: HistoryEventExecutionDataDetails | null;
 }
-function toExecutionSucceededEventDetails(root: JSONValue): ExecutionSucceededEventDetails {
-  return prt.readObj({
+function toExecutionSucceededEventDetails(root: jsonP.JSONValue): ExecutionSucceededEventDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "output": "s",
@@ -1408,8 +1369,8 @@ export interface ExecutionAbortedEventDetails {
   error?: string | null;
   cause?: string | null;
 }
-function toExecutionAbortedEventDetails(root: JSONValue): ExecutionAbortedEventDetails {
-  return prt.readObj({
+function toExecutionAbortedEventDetails(root: jsonP.JSONValue): ExecutionAbortedEventDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "error": "s",
@@ -1423,8 +1384,8 @@ export interface ExecutionTimedOutEventDetails {
   error?: string | null;
   cause?: string | null;
 }
-function toExecutionTimedOutEventDetails(root: JSONValue): ExecutionTimedOutEventDetails {
-  return prt.readObj({
+function toExecutionTimedOutEventDetails(root: jsonP.JSONValue): ExecutionTimedOutEventDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "error": "s",
@@ -1437,8 +1398,8 @@ function toExecutionTimedOutEventDetails(root: JSONValue): ExecutionTimedOutEven
 export interface MapStateStartedEventDetails {
   length?: number | null;
 }
-function toMapStateStartedEventDetails(root: JSONValue): MapStateStartedEventDetails {
-  return prt.readObj({
+function toMapStateStartedEventDetails(root: jsonP.JSONValue): MapStateStartedEventDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "length": "n",
@@ -1451,8 +1412,8 @@ export interface MapIterationEventDetails {
   name?: string | null;
   index?: number | null;
 }
-function toMapIterationEventDetails(root: JSONValue): MapIterationEventDetails {
-  return prt.readObj({
+function toMapIterationEventDetails(root: jsonP.JSONValue): MapIterationEventDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1466,8 +1427,8 @@ export interface LambdaFunctionFailedEventDetails {
   error?: string | null;
   cause?: string | null;
 }
-function toLambdaFunctionFailedEventDetails(root: JSONValue): LambdaFunctionFailedEventDetails {
-  return prt.readObj({
+function toLambdaFunctionFailedEventDetails(root: jsonP.JSONValue): LambdaFunctionFailedEventDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "error": "s",
@@ -1481,8 +1442,8 @@ export interface LambdaFunctionScheduleFailedEventDetails {
   error?: string | null;
   cause?: string | null;
 }
-function toLambdaFunctionScheduleFailedEventDetails(root: JSONValue): LambdaFunctionScheduleFailedEventDetails {
-  return prt.readObj({
+function toLambdaFunctionScheduleFailedEventDetails(root: jsonP.JSONValue): LambdaFunctionScheduleFailedEventDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "error": "s",
@@ -1498,8 +1459,8 @@ export interface LambdaFunctionScheduledEventDetails {
   inputDetails?: HistoryEventExecutionDataDetails | null;
   timeoutInSeconds?: number | null;
 }
-function toLambdaFunctionScheduledEventDetails(root: JSONValue): LambdaFunctionScheduledEventDetails {
-  return prt.readObj({
+function toLambdaFunctionScheduledEventDetails(root: jsonP.JSONValue): LambdaFunctionScheduledEventDetails {
+  return jsonP.readObj({
     required: {
       "resource": "s",
     },
@@ -1516,8 +1477,8 @@ export interface LambdaFunctionStartFailedEventDetails {
   error?: string | null;
   cause?: string | null;
 }
-function toLambdaFunctionStartFailedEventDetails(root: JSONValue): LambdaFunctionStartFailedEventDetails {
-  return prt.readObj({
+function toLambdaFunctionStartFailedEventDetails(root: jsonP.JSONValue): LambdaFunctionStartFailedEventDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "error": "s",
@@ -1531,8 +1492,8 @@ export interface LambdaFunctionSucceededEventDetails {
   output?: string | null;
   outputDetails?: HistoryEventExecutionDataDetails | null;
 }
-function toLambdaFunctionSucceededEventDetails(root: JSONValue): LambdaFunctionSucceededEventDetails {
-  return prt.readObj({
+function toLambdaFunctionSucceededEventDetails(root: jsonP.JSONValue): LambdaFunctionSucceededEventDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "output": "s",
@@ -1546,8 +1507,8 @@ export interface LambdaFunctionTimedOutEventDetails {
   error?: string | null;
   cause?: string | null;
 }
-function toLambdaFunctionTimedOutEventDetails(root: JSONValue): LambdaFunctionTimedOutEventDetails {
-  return prt.readObj({
+function toLambdaFunctionTimedOutEventDetails(root: jsonP.JSONValue): LambdaFunctionTimedOutEventDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "error": "s",
@@ -1562,8 +1523,8 @@ export interface StateEnteredEventDetails {
   input?: string | null;
   inputDetails?: HistoryEventExecutionDataDetails | null;
 }
-function toStateEnteredEventDetails(root: JSONValue): StateEnteredEventDetails {
-  return prt.readObj({
+function toStateEnteredEventDetails(root: jsonP.JSONValue): StateEnteredEventDetails {
+  return jsonP.readObj({
     required: {
       "name": "s",
     },
@@ -1580,8 +1541,8 @@ export interface StateExitedEventDetails {
   output?: string | null;
   outputDetails?: HistoryEventExecutionDataDetails | null;
 }
-function toStateExitedEventDetails(root: JSONValue): StateExitedEventDetails {
-  return prt.readObj({
+function toStateExitedEventDetails(root: jsonP.JSONValue): StateExitedEventDetails {
+  return jsonP.readObj({
     required: {
       "name": "s",
     },
@@ -1598,8 +1559,8 @@ export interface ActivityListItem {
   name: string;
   creationDate: Date | number;
 }
-function toActivityListItem(root: JSONValue): ActivityListItem {
-  return prt.readObj({
+function toActivityListItem(root: jsonP.JSONValue): ActivityListItem {
+  return jsonP.readObj({
     required: {
       "activityArn": "s",
       "name": "s",
@@ -1618,13 +1579,13 @@ export interface ExecutionListItem {
   startDate: Date | number;
   stopDate?: Date | number | null;
 }
-function toExecutionListItem(root: JSONValue): ExecutionListItem {
-  return prt.readObj({
+function toExecutionListItem(root: jsonP.JSONValue): ExecutionListItem {
+  return jsonP.readObj({
     required: {
       "executionArn": "s",
       "stateMachineArn": "s",
       "name": "s",
-      "status": toExecutionStatus,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<ExecutionStatus>(x),
       "startDate": "d",
     },
     optional: {
@@ -1640,12 +1601,12 @@ export interface StateMachineListItem {
   type: StateMachineType;
   creationDate: Date | number;
 }
-function toStateMachineListItem(root: JSONValue): StateMachineListItem {
-  return prt.readObj({
+function toStateMachineListItem(root: jsonP.JSONValue): StateMachineListItem {
+  return jsonP.readObj({
     required: {
       "stateMachineArn": "s",
       "name": "s",
-      "type": toStateMachineType,
+      "type": (x: jsonP.JSONValue) => cmnP.readEnum<StateMachineType>(x),
       "creationDate": "d",
     },
     optional: {},

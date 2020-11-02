@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class DataSync {
   #client: ServiceClient;
@@ -31,13 +31,14 @@ export default class DataSync {
   async cancelTaskExecution(
     {abortSignal, ...params}: RequestConfig & CancelTaskExecutionRequest,
   ): Promise<CancelTaskExecutionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TaskExecutionArn: params["TaskExecutionArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelTaskExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -46,14 +47,19 @@ export default class DataSync {
   async createAgent(
     {abortSignal, ...params}: RequestConfig & CreateAgentRequest,
   ): Promise<CreateAgentResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ActivationKey: params["ActivationKey"],
+      AgentName: params["AgentName"],
+      Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
+      VpcEndpointId: params["VpcEndpointId"],
+      SubnetArns: params["SubnetArns"],
+      SecurityGroupArns: params["SecurityGroupArns"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAgent",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AgentArn": "s",
@@ -64,15 +70,17 @@ export default class DataSync {
   async createLocationEfs(
     {abortSignal, ...params}: RequestConfig & CreateLocationEfsRequest,
   ): Promise<CreateLocationEfsResponse> {
-    const body: JSONObject = {...params,
-    Ec2Config: fromEc2Config(params["Ec2Config"]),
-    Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Subdirectory: params["Subdirectory"],
+      EfsFilesystemArn: params["EfsFilesystemArn"],
+      Ec2Config: fromEc2Config(params["Ec2Config"]),
+      Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLocationEfs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LocationArn": "s",
@@ -83,14 +91,20 @@ export default class DataSync {
   async createLocationFsxWindows(
     {abortSignal, ...params}: RequestConfig & CreateLocationFsxWindowsRequest,
   ): Promise<CreateLocationFsxWindowsResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Subdirectory: params["Subdirectory"],
+      FsxFilesystemArn: params["FsxFilesystemArn"],
+      SecurityGroupArns: params["SecurityGroupArns"],
+      Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
+      User: params["User"],
+      Domain: params["Domain"],
+      Password: params["Password"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLocationFsxWindows",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LocationArn": "s",
@@ -101,16 +115,18 @@ export default class DataSync {
   async createLocationNfs(
     {abortSignal, ...params}: RequestConfig & CreateLocationNfsRequest,
   ): Promise<CreateLocationNfsResponse> {
-    const body: JSONObject = {...params,
-    OnPremConfig: fromOnPremConfig(params["OnPremConfig"]),
-    MountOptions: fromNfsMountOptions(params["MountOptions"]),
-    Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Subdirectory: params["Subdirectory"],
+      ServerHostname: params["ServerHostname"],
+      OnPremConfig: fromOnPremConfig(params["OnPremConfig"]),
+      MountOptions: fromNfsMountOptions(params["MountOptions"]),
+      Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLocationNfs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LocationArn": "s",
@@ -121,14 +137,22 @@ export default class DataSync {
   async createLocationObjectStorage(
     {abortSignal, ...params}: RequestConfig & CreateLocationObjectStorageRequest,
   ): Promise<CreateLocationObjectStorageResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServerHostname: params["ServerHostname"],
+      ServerPort: params["ServerPort"],
+      ServerProtocol: params["ServerProtocol"],
+      Subdirectory: params["Subdirectory"],
+      BucketName: params["BucketName"],
+      AccessKey: params["AccessKey"],
+      SecretKey: params["SecretKey"],
+      AgentArns: params["AgentArns"],
+      Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLocationObjectStorage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LocationArn": "s",
@@ -139,15 +163,19 @@ export default class DataSync {
   async createLocationS3(
     {abortSignal, ...params}: RequestConfig & CreateLocationS3Request,
   ): Promise<CreateLocationS3Response> {
-    const body: JSONObject = {...params,
-    S3Config: fromS3Config(params["S3Config"]),
-    Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Subdirectory: params["Subdirectory"],
+      S3BucketArn: params["S3BucketArn"],
+      S3StorageClass: params["S3StorageClass"],
+      S3Config: fromS3Config(params["S3Config"]),
+      AgentArns: params["AgentArns"],
+      Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLocationS3",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LocationArn": "s",
@@ -158,15 +186,21 @@ export default class DataSync {
   async createLocationSmb(
     {abortSignal, ...params}: RequestConfig & CreateLocationSmbRequest,
   ): Promise<CreateLocationSmbResponse> {
-    const body: JSONObject = {...params,
-    MountOptions: fromSmbMountOptions(params["MountOptions"]),
-    Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Subdirectory: params["Subdirectory"],
+      ServerHostname: params["ServerHostname"],
+      User: params["User"],
+      Domain: params["Domain"],
+      Password: params["Password"],
+      AgentArns: params["AgentArns"],
+      MountOptions: fromSmbMountOptions(params["MountOptions"]),
+      Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLocationSmb",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LocationArn": "s",
@@ -177,17 +211,21 @@ export default class DataSync {
   async createTask(
     {abortSignal, ...params}: RequestConfig & CreateTaskRequest,
   ): Promise<CreateTaskResponse> {
-    const body: JSONObject = {...params,
-    Options: fromOptions(params["Options"]),
-    Excludes: params["Excludes"]?.map(x => fromFilterRule(x)),
-    Schedule: fromTaskSchedule(params["Schedule"]),
-    Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SourceLocationArn: params["SourceLocationArn"],
+      DestinationLocationArn: params["DestinationLocationArn"],
+      CloudWatchLogGroupArn: params["CloudWatchLogGroupArn"],
+      Name: params["Name"],
+      Options: fromOptions(params["Options"]),
+      Excludes: params["Excludes"]?.map(x => fromFilterRule(x)),
+      Schedule: fromTaskSchedule(params["Schedule"]),
+      Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTask",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TaskArn": "s",
@@ -198,13 +236,14 @@ export default class DataSync {
   async deleteAgent(
     {abortSignal, ...params}: RequestConfig & DeleteAgentRequest,
   ): Promise<DeleteAgentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AgentArn: params["AgentArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAgent",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -213,13 +252,14 @@ export default class DataSync {
   async deleteLocation(
     {abortSignal, ...params}: RequestConfig & DeleteLocationRequest,
   ): Promise<DeleteLocationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      LocationArn: params["LocationArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLocation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -228,13 +268,14 @@ export default class DataSync {
   async deleteTask(
     {abortSignal, ...params}: RequestConfig & DeleteTaskRequest,
   ): Promise<DeleteTaskResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TaskArn: params["TaskArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTask",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -243,21 +284,22 @@ export default class DataSync {
   async describeAgent(
     {abortSignal, ...params}: RequestConfig & DescribeAgentRequest,
   ): Promise<DescribeAgentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AgentArn: params["AgentArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAgent",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AgentArn": "s",
         "Name": "s",
-        "Status": toAgentStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<AgentStatus>(x),
         "LastConnectionTime": "d",
         "CreationTime": "d",
-        "EndpointType": toEndpointType,
+        "EndpointType": (x: jsonP.JSONValue) => cmnP.readEnum<EndpointType>(x),
         "PrivateLinkConfig": toPrivateLinkConfig,
       },
     }, await resp.json());
@@ -266,13 +308,14 @@ export default class DataSync {
   async describeLocationEfs(
     {abortSignal, ...params}: RequestConfig & DescribeLocationEfsRequest,
   ): Promise<DescribeLocationEfsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      LocationArn: params["LocationArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLocationEfs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LocationArn": "s",
@@ -286,13 +329,14 @@ export default class DataSync {
   async describeLocationFsxWindows(
     {abortSignal, ...params}: RequestConfig & DescribeLocationFsxWindowsRequest,
   ): Promise<DescribeLocationFsxWindowsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      LocationArn: params["LocationArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLocationFsxWindows",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LocationArn": "s",
@@ -308,13 +352,14 @@ export default class DataSync {
   async describeLocationNfs(
     {abortSignal, ...params}: RequestConfig & DescribeLocationNfsRequest,
   ): Promise<DescribeLocationNfsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      LocationArn: params["LocationArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLocationNfs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LocationArn": "s",
@@ -329,20 +374,21 @@ export default class DataSync {
   async describeLocationObjectStorage(
     {abortSignal, ...params}: RequestConfig & DescribeLocationObjectStorageRequest,
   ): Promise<DescribeLocationObjectStorageResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      LocationArn: params["LocationArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLocationObjectStorage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LocationArn": "s",
         "LocationUri": "s",
         "AccessKey": "s",
         "ServerPort": "n",
-        "ServerProtocol": toObjectStorageServerProtocol,
+        "ServerProtocol": (x: jsonP.JSONValue) => cmnP.readEnum<ObjectStorageServerProtocol>(x),
         "AgentArns": ["s"],
         "CreationTime": "d",
       },
@@ -352,18 +398,19 @@ export default class DataSync {
   async describeLocationS3(
     {abortSignal, ...params}: RequestConfig & DescribeLocationS3Request,
   ): Promise<DescribeLocationS3Response> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      LocationArn: params["LocationArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLocationS3",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LocationArn": "s",
         "LocationUri": "s",
-        "S3StorageClass": toS3StorageClass,
+        "S3StorageClass": (x: jsonP.JSONValue) => cmnP.readEnum<S3StorageClass>(x),
         "S3Config": toS3Config,
         "AgentArns": ["s"],
         "CreationTime": "d",
@@ -374,13 +421,14 @@ export default class DataSync {
   async describeLocationSmb(
     {abortSignal, ...params}: RequestConfig & DescribeLocationSmbRequest,
   ): Promise<DescribeLocationSmbResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      LocationArn: params["LocationArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLocationSmb",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LocationArn": "s",
@@ -397,17 +445,18 @@ export default class DataSync {
   async describeTask(
     {abortSignal, ...params}: RequestConfig & DescribeTaskRequest,
   ): Promise<DescribeTaskResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TaskArn: params["TaskArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTask",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TaskArn": "s",
-        "Status": toTaskStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<TaskStatus>(x),
         "Name": "s",
         "CurrentTaskExecutionArn": "s",
         "SourceLocationArn": "s",
@@ -428,17 +477,18 @@ export default class DataSync {
   async describeTaskExecution(
     {abortSignal, ...params}: RequestConfig & DescribeTaskExecutionRequest,
   ): Promise<DescribeTaskExecutionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TaskExecutionArn: params["TaskExecutionArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTaskExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TaskExecutionArn": "s",
-        "Status": toTaskExecutionStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<TaskExecutionStatus>(x),
         "Options": toOptions,
         "Excludes": [toFilterRule],
         "Includes": [toFilterRule],
@@ -456,13 +506,15 @@ export default class DataSync {
   async listAgents(
     {abortSignal, ...params}: RequestConfig & ListAgentsRequest = {},
   ): Promise<ListAgentsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAgents",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Agents": [toAgentListEntry],
@@ -474,14 +526,16 @@ export default class DataSync {
   async listLocations(
     {abortSignal, ...params}: RequestConfig & ListLocationsRequest = {},
   ): Promise<ListLocationsResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromLocationFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filters: params["Filters"]?.map(x => fromLocationFilter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLocations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Locations": [toLocationListEntry],
@@ -493,13 +547,16 @@ export default class DataSync {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTagListEntry],
@@ -511,13 +568,16 @@ export default class DataSync {
   async listTaskExecutions(
     {abortSignal, ...params}: RequestConfig & ListTaskExecutionsRequest = {},
   ): Promise<ListTaskExecutionsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TaskArn: params["TaskArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTaskExecutions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TaskExecutions": [toTaskExecutionListEntry],
@@ -529,14 +589,16 @@ export default class DataSync {
   async listTasks(
     {abortSignal, ...params}: RequestConfig & ListTasksRequest = {},
   ): Promise<ListTasksResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromTaskFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filters: params["Filters"]?.map(x => fromTaskFilter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTasks",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tasks": [toTaskListEntry],
@@ -548,15 +610,16 @@ export default class DataSync {
   async startTaskExecution(
     {abortSignal, ...params}: RequestConfig & StartTaskExecutionRequest,
   ): Promise<StartTaskExecutionResponse> {
-    const body: JSONObject = {...params,
-    OverrideOptions: fromOptions(params["OverrideOptions"]),
-    Includes: params["Includes"]?.map(x => fromFilterRule(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TaskArn: params["TaskArn"],
+      OverrideOptions: fromOptions(params["OverrideOptions"]),
+      Includes: params["Includes"]?.map(x => fromFilterRule(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartTaskExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TaskExecutionArn": "s",
@@ -567,14 +630,15 @@ export default class DataSync {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -583,13 +647,15 @@ export default class DataSync {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      Keys: params["Keys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -598,13 +664,15 @@ export default class DataSync {
   async updateAgent(
     {abortSignal, ...params}: RequestConfig & UpdateAgentRequest,
   ): Promise<UpdateAgentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AgentArn: params["AgentArn"],
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAgent",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -613,16 +681,19 @@ export default class DataSync {
   async updateTask(
     {abortSignal, ...params}: RequestConfig & UpdateTaskRequest,
   ): Promise<UpdateTaskResponse> {
-    const body: JSONObject = {...params,
-    Options: fromOptions(params["Options"]),
-    Excludes: params["Excludes"]?.map(x => fromFilterRule(x)),
-    Schedule: fromTaskSchedule(params["Schedule"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TaskArn: params["TaskArn"],
+      Options: fromOptions(params["Options"]),
+      Excludes: params["Excludes"]?.map(x => fromFilterRule(x)),
+      Schedule: fromTaskSchedule(params["Schedule"]),
+      Name: params["Name"],
+      CloudWatchLogGroupArn: params["CloudWatchLogGroupArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTask",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1066,13 +1137,15 @@ export interface TagListEntry {
   Key: string;
   Value?: string | null;
 }
-function fromTagListEntry(input?: TagListEntry | null): JSONValue {
+function fromTagListEntry(input?: TagListEntry | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTagListEntry(root: JSONValue): TagListEntry {
-  return prt.readObj({
+function toTagListEntry(root: jsonP.JSONValue): TagListEntry {
+  return jsonP.readObj({
     required: {
       "Key": "s",
     },
@@ -1087,13 +1160,15 @@ export interface Ec2Config {
   SubnetArn: string;
   SecurityGroupArns: string[];
 }
-function fromEc2Config(input?: Ec2Config | null): JSONValue {
+function fromEc2Config(input?: Ec2Config | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SubnetArn: input["SubnetArn"],
+    SecurityGroupArns: input["SecurityGroupArns"],
   }
 }
-function toEc2Config(root: JSONValue): Ec2Config {
-  return prt.readObj({
+function toEc2Config(root: jsonP.JSONValue): Ec2Config {
+  return jsonP.readObj({
     required: {
       "SubnetArn": "s",
       "SecurityGroupArns": ["s"],
@@ -1106,13 +1181,14 @@ function toEc2Config(root: JSONValue): Ec2Config {
 export interface OnPremConfig {
   AgentArns: string[];
 }
-function fromOnPremConfig(input?: OnPremConfig | null): JSONValue {
+function fromOnPremConfig(input?: OnPremConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AgentArns: input["AgentArns"],
   }
 }
-function toOnPremConfig(root: JSONValue): OnPremConfig {
-  return prt.readObj({
+function toOnPremConfig(root: jsonP.JSONValue): OnPremConfig {
+  return jsonP.readObj({
     required: {
       "AgentArns": ["s"],
     },
@@ -1124,16 +1200,17 @@ function toOnPremConfig(root: JSONValue): OnPremConfig {
 export interface NfsMountOptions {
   Version?: NfsVersion | null;
 }
-function fromNfsMountOptions(input?: NfsMountOptions | null): JSONValue {
+function fromNfsMountOptions(input?: NfsMountOptions | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Version: input["Version"],
   }
 }
-function toNfsMountOptions(root: JSONValue): NfsMountOptions {
-  return prt.readObj({
+function toNfsMountOptions(root: jsonP.JSONValue): NfsMountOptions {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Version": toNfsVersion,
+      "Version": (x: jsonP.JSONValue) => cmnP.readEnum<NfsVersion>(x),
     },
   }, root);
 }
@@ -1144,29 +1221,13 @@ export type NfsVersion =
 | "NFS3"
 | "NFS4_0"
 | "NFS4_1"
-;
-
-function toNfsVersion(root: JSONValue): NfsVersion | null {
-  return ( false
-    || root == "AUTOMATIC"
-    || root == "NFS3"
-    || root == "NFS4_0"
-    || root == "NFS4_1"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type ObjectStorageServerProtocol =
 | "HTTPS"
 | "HTTP"
-;
-
-function toObjectStorageServerProtocol(root: JSONValue): ObjectStorageServerProtocol | null {
-  return ( false
-    || root == "HTTPS"
-    || root == "HTTP"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type S3StorageClass =
@@ -1177,31 +1238,20 @@ export type S3StorageClass =
 | "GLACIER"
 | "DEEP_ARCHIVE"
 | "OUTPOSTS"
-;
-
-function toS3StorageClass(root: JSONValue): S3StorageClass | null {
-  return ( false
-    || root == "STANDARD"
-    || root == "STANDARD_IA"
-    || root == "ONEZONE_IA"
-    || root == "INTELLIGENT_TIERING"
-    || root == "GLACIER"
-    || root == "DEEP_ARCHIVE"
-    || root == "OUTPOSTS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface S3Config {
   BucketAccessRoleArn: string;
 }
-function fromS3Config(input?: S3Config | null): JSONValue {
+function fromS3Config(input?: S3Config | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    BucketAccessRoleArn: input["BucketAccessRoleArn"],
   }
 }
-function toS3Config(root: JSONValue): S3Config {
-  return prt.readObj({
+function toS3Config(root: jsonP.JSONValue): S3Config {
+  return jsonP.readObj({
     required: {
       "BucketAccessRoleArn": "s",
     },
@@ -1213,16 +1263,17 @@ function toS3Config(root: JSONValue): S3Config {
 export interface SmbMountOptions {
   Version?: SmbVersion | null;
 }
-function fromSmbMountOptions(input?: SmbMountOptions | null): JSONValue {
+function fromSmbMountOptions(input?: SmbMountOptions | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Version: input["Version"],
   }
 }
-function toSmbMountOptions(root: JSONValue): SmbMountOptions {
-  return prt.readObj({
+function toSmbMountOptions(root: jsonP.JSONValue): SmbMountOptions {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Version": toSmbVersion,
+      "Version": (x: jsonP.JSONValue) => cmnP.readEnum<SmbVersion>(x),
     },
   }, root);
 }
@@ -1232,15 +1283,7 @@ export type SmbVersion =
 | "AUTOMATIC"
 | "SMB2"
 | "SMB3"
-;
-
-function toSmbVersion(root: JSONValue): SmbVersion | null {
-  return ( false
-    || root == "AUTOMATIC"
-    || root == "SMB2"
-    || root == "SMB3"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface Options {
@@ -1258,28 +1301,41 @@ export interface Options {
   LogLevel?: LogLevel | null;
   TransferMode?: TransferMode | null;
 }
-function fromOptions(input?: Options | null): JSONValue {
+function fromOptions(input?: Options | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    VerifyMode: input["VerifyMode"],
+    OverwriteMode: input["OverwriteMode"],
+    Atime: input["Atime"],
+    Mtime: input["Mtime"],
+    Uid: input["Uid"],
+    Gid: input["Gid"],
+    PreserveDeletedFiles: input["PreserveDeletedFiles"],
+    PreserveDevices: input["PreserveDevices"],
+    PosixPermissions: input["PosixPermissions"],
+    BytesPerSecond: input["BytesPerSecond"],
+    TaskQueueing: input["TaskQueueing"],
+    LogLevel: input["LogLevel"],
+    TransferMode: input["TransferMode"],
   }
 }
-function toOptions(root: JSONValue): Options {
-  return prt.readObj({
+function toOptions(root: jsonP.JSONValue): Options {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "VerifyMode": toVerifyMode,
-      "OverwriteMode": toOverwriteMode,
-      "Atime": toAtime,
-      "Mtime": toMtime,
-      "Uid": toUid,
-      "Gid": toGid,
-      "PreserveDeletedFiles": toPreserveDeletedFiles,
-      "PreserveDevices": toPreserveDevices,
-      "PosixPermissions": toPosixPermissions,
+      "VerifyMode": (x: jsonP.JSONValue) => cmnP.readEnum<VerifyMode>(x),
+      "OverwriteMode": (x: jsonP.JSONValue) => cmnP.readEnum<OverwriteMode>(x),
+      "Atime": (x: jsonP.JSONValue) => cmnP.readEnum<Atime>(x),
+      "Mtime": (x: jsonP.JSONValue) => cmnP.readEnum<Mtime>(x),
+      "Uid": (x: jsonP.JSONValue) => cmnP.readEnum<Uid>(x),
+      "Gid": (x: jsonP.JSONValue) => cmnP.readEnum<Gid>(x),
+      "PreserveDeletedFiles": (x: jsonP.JSONValue) => cmnP.readEnum<PreserveDeletedFiles>(x),
+      "PreserveDevices": (x: jsonP.JSONValue) => cmnP.readEnum<PreserveDevices>(x),
+      "PosixPermissions": (x: jsonP.JSONValue) => cmnP.readEnum<PosixPermissions>(x),
       "BytesPerSecond": "n",
-      "TaskQueueing": toTaskQueueing,
-      "LogLevel": toLogLevel,
-      "TransferMode": toTransferMode,
+      "TaskQueueing": (x: jsonP.JSONValue) => cmnP.readEnum<TaskQueueing>(x),
+      "LogLevel": (x: jsonP.JSONValue) => cmnP.readEnum<LogLevel>(x),
+      "TransferMode": (x: jsonP.JSONValue) => cmnP.readEnum<TransferMode>(x),
     },
   }, root);
 }
@@ -1289,54 +1345,25 @@ export type VerifyMode =
 | "POINT_IN_TIME_CONSISTENT"
 | "ONLY_FILES_TRANSFERRED"
 | "NONE"
-;
-
-function toVerifyMode(root: JSONValue): VerifyMode | null {
-  return ( false
-    || root == "POINT_IN_TIME_CONSISTENT"
-    || root == "ONLY_FILES_TRANSFERRED"
-    || root == "NONE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type OverwriteMode =
 | "ALWAYS"
 | "NEVER"
-;
-
-function toOverwriteMode(root: JSONValue): OverwriteMode | null {
-  return ( false
-    || root == "ALWAYS"
-    || root == "NEVER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type Atime =
 | "NONE"
 | "BEST_EFFORT"
-;
-
-function toAtime(root: JSONValue): Atime | null {
-  return ( false
-    || root == "NONE"
-    || root == "BEST_EFFORT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type Mtime =
 | "NONE"
 | "PRESERVE"
-;
-
-function toMtime(root: JSONValue): Mtime | null {
-  return ( false
-    || root == "NONE"
-    || root == "PRESERVE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type Uid =
@@ -1344,16 +1371,7 @@ export type Uid =
 | "INT_VALUE"
 | "NAME"
 | "BOTH"
-;
-
-function toUid(root: JSONValue): Uid | null {
-  return ( false
-    || root == "NONE"
-    || root == "INT_VALUE"
-    || root == "NAME"
-    || root == "BOTH"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type Gid =
@@ -1361,112 +1379,62 @@ export type Gid =
 | "INT_VALUE"
 | "NAME"
 | "BOTH"
-;
-
-function toGid(root: JSONValue): Gid | null {
-  return ( false
-    || root == "NONE"
-    || root == "INT_VALUE"
-    || root == "NAME"
-    || root == "BOTH"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type PreserveDeletedFiles =
 | "PRESERVE"
 | "REMOVE"
-;
-
-function toPreserveDeletedFiles(root: JSONValue): PreserveDeletedFiles | null {
-  return ( false
-    || root == "PRESERVE"
-    || root == "REMOVE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type PreserveDevices =
 | "NONE"
 | "PRESERVE"
-;
-
-function toPreserveDevices(root: JSONValue): PreserveDevices | null {
-  return ( false
-    || root == "NONE"
-    || root == "PRESERVE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type PosixPermissions =
 | "NONE"
 | "PRESERVE"
-;
-
-function toPosixPermissions(root: JSONValue): PosixPermissions | null {
-  return ( false
-    || root == "NONE"
-    || root == "PRESERVE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type TaskQueueing =
 | "ENABLED"
 | "DISABLED"
-;
-
-function toTaskQueueing(root: JSONValue): TaskQueueing | null {
-  return ( false
-    || root == "ENABLED"
-    || root == "DISABLED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type LogLevel =
 | "OFF"
 | "BASIC"
 | "TRANSFER"
-;
-
-function toLogLevel(root: JSONValue): LogLevel | null {
-  return ( false
-    || root == "OFF"
-    || root == "BASIC"
-    || root == "TRANSFER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type TransferMode =
 | "CHANGED"
 | "ALL"
-;
-
-function toTransferMode(root: JSONValue): TransferMode | null {
-  return ( false
-    || root == "CHANGED"
-    || root == "ALL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface FilterRule {
   FilterType?: FilterType | null;
   Value?: string | null;
 }
-function fromFilterRule(input?: FilterRule | null): JSONValue {
+function fromFilterRule(input?: FilterRule | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    FilterType: input["FilterType"],
+    Value: input["Value"],
   }
 }
-function toFilterRule(root: JSONValue): FilterRule {
-  return prt.readObj({
+function toFilterRule(root: jsonP.JSONValue): FilterRule {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "FilterType": toFilterType,
+      "FilterType": (x: jsonP.JSONValue) => cmnP.readEnum<FilterType>(x),
       "Value": "s",
     },
   }, root);
@@ -1475,25 +1443,20 @@ function toFilterRule(root: JSONValue): FilterRule {
 // refs: 6 - tags: input, named, enum, output
 export type FilterType =
 | "SIMPLE_PATTERN"
-;
-
-function toFilterType(root: JSONValue): FilterType | null {
-  return ( false
-    || root == "SIMPLE_PATTERN"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface TaskSchedule {
   ScheduleExpression: string;
 }
-function fromTaskSchedule(input?: TaskSchedule | null): JSONValue {
+function fromTaskSchedule(input?: TaskSchedule | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ScheduleExpression: input["ScheduleExpression"],
   }
 }
-function toTaskSchedule(root: JSONValue): TaskSchedule {
-  return prt.readObj({
+function toTaskSchedule(root: jsonP.JSONValue): TaskSchedule {
+  return jsonP.readObj({
     required: {
       "ScheduleExpression": "s",
     },
@@ -1507,9 +1470,12 @@ export interface LocationFilter {
   Values: string[];
   Operator: Operator;
 }
-function fromLocationFilter(input?: LocationFilter | null): JSONValue {
+function fromLocationFilter(input?: LocationFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Values: input["Values"],
+    Operator: input["Operator"],
   }
 }
 
@@ -1518,8 +1484,7 @@ export type LocationFilterName =
 | "LocationUri"
 | "LocationType"
 | "CreationTime"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
 export type Operator =
@@ -1533,8 +1498,7 @@ export type Operator =
 | "Contains"
 | "NotContains"
 | "BeginsWith"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface TaskFilter {
@@ -1542,9 +1506,12 @@ export interface TaskFilter {
   Values: string[];
   Operator: Operator;
 }
-function fromTaskFilter(input?: TaskFilter | null): JSONValue {
+function fromTaskFilter(input?: TaskFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Values: input["Values"],
+    Operator: input["Operator"],
   }
 }
 
@@ -1552,34 +1519,20 @@ function fromTaskFilter(input?: TaskFilter | null): JSONValue {
 export type TaskFilterName =
 | "LocationId"
 | "CreationTime"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type AgentStatus =
 | "ONLINE"
 | "OFFLINE"
-;
-function toAgentStatus(root: JSONValue): AgentStatus | null {
-  return ( false
-    || root == "ONLINE"
-    || root == "OFFLINE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type EndpointType =
 | "PUBLIC"
 | "PRIVATE_LINK"
 | "FIPS"
-;
-function toEndpointType(root: JSONValue): EndpointType | null {
-  return ( false
-    || root == "PUBLIC"
-    || root == "PRIVATE_LINK"
-    || root == "FIPS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface PrivateLinkConfig {
@@ -1588,8 +1541,8 @@ export interface PrivateLinkConfig {
   SubnetArns?: string[] | null;
   SecurityGroupArns?: string[] | null;
 }
-function toPrivateLinkConfig(root: JSONValue): PrivateLinkConfig {
-  return prt.readObj({
+function toPrivateLinkConfig(root: jsonP.JSONValue): PrivateLinkConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "VpcEndpointId": "s",
@@ -1607,16 +1560,7 @@ export type TaskStatus =
 | "QUEUED"
 | "RUNNING"
 | "UNAVAILABLE"
-;
-function toTaskStatus(root: JSONValue): TaskStatus | null {
-  return ( false
-    || root == "AVAILABLE"
-    || root == "CREATING"
-    || root == "QUEUED"
-    || root == "RUNNING"
-    || root == "UNAVAILABLE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type TaskExecutionStatus =
@@ -1627,18 +1571,7 @@ export type TaskExecutionStatus =
 | "VERIFYING"
 | "SUCCESS"
 | "ERROR"
-;
-function toTaskExecutionStatus(root: JSONValue): TaskExecutionStatus | null {
-  return ( false
-    || root == "QUEUED"
-    || root == "LAUNCHING"
-    || root == "PREPARING"
-    || root == "TRANSFERRING"
-    || root == "VERIFYING"
-    || root == "SUCCESS"
-    || root == "ERROR"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface TaskExecutionResultDetail {
@@ -1652,17 +1585,17 @@ export interface TaskExecutionResultDetail {
   ErrorCode?: string | null;
   ErrorDetail?: string | null;
 }
-function toTaskExecutionResultDetail(root: JSONValue): TaskExecutionResultDetail {
-  return prt.readObj({
+function toTaskExecutionResultDetail(root: jsonP.JSONValue): TaskExecutionResultDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PrepareDuration": "n",
-      "PrepareStatus": toPhaseStatus,
+      "PrepareStatus": (x: jsonP.JSONValue) => cmnP.readEnum<PhaseStatus>(x),
       "TotalDuration": "n",
       "TransferDuration": "n",
-      "TransferStatus": toPhaseStatus,
+      "TransferStatus": (x: jsonP.JSONValue) => cmnP.readEnum<PhaseStatus>(x),
       "VerifyDuration": "n",
-      "VerifyStatus": toPhaseStatus,
+      "VerifyStatus": (x: jsonP.JSONValue) => cmnP.readEnum<PhaseStatus>(x),
       "ErrorCode": "s",
       "ErrorDetail": "s",
     },
@@ -1674,14 +1607,7 @@ export type PhaseStatus =
 | "PENDING"
 | "SUCCESS"
 | "ERROR"
-;
-function toPhaseStatus(root: JSONValue): PhaseStatus | null {
-  return ( false
-    || root == "PENDING"
-    || root == "SUCCESS"
-    || root == "ERROR"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AgentListEntry {
@@ -1689,13 +1615,13 @@ export interface AgentListEntry {
   Name?: string | null;
   Status?: AgentStatus | null;
 }
-function toAgentListEntry(root: JSONValue): AgentListEntry {
-  return prt.readObj({
+function toAgentListEntry(root: jsonP.JSONValue): AgentListEntry {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AgentArn": "s",
       "Name": "s",
-      "Status": toAgentStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<AgentStatus>(x),
     },
   }, root);
 }
@@ -1705,8 +1631,8 @@ export interface LocationListEntry {
   LocationArn?: string | null;
   LocationUri?: string | null;
 }
-function toLocationListEntry(root: JSONValue): LocationListEntry {
-  return prt.readObj({
+function toLocationListEntry(root: jsonP.JSONValue): LocationListEntry {
+  return jsonP.readObj({
     required: {},
     optional: {
       "LocationArn": "s",
@@ -1720,12 +1646,12 @@ export interface TaskExecutionListEntry {
   TaskExecutionArn?: string | null;
   Status?: TaskExecutionStatus | null;
 }
-function toTaskExecutionListEntry(root: JSONValue): TaskExecutionListEntry {
-  return prt.readObj({
+function toTaskExecutionListEntry(root: jsonP.JSONValue): TaskExecutionListEntry {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TaskExecutionArn": "s",
-      "Status": toTaskExecutionStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<TaskExecutionStatus>(x),
     },
   }, root);
 }
@@ -1736,12 +1662,12 @@ export interface TaskListEntry {
   Status?: TaskStatus | null;
   Name?: string | null;
 }
-function toTaskListEntry(root: JSONValue): TaskListEntry {
-  return prt.readObj({
+function toTaskListEntry(root: jsonP.JSONValue): TaskListEntry {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TaskArn": "s",
-      "Status": toTaskStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<TaskStatus>(x),
       "Name": "s",
     },
   }, root);

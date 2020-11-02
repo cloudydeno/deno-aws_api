@@ -5,8 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 
 export default class ElasticBeanstalk {
   #client: ServiceClient;
@@ -51,7 +52,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "ApplyEnvironmentManagedAction",
     });
-    const xml = readXmlResult(await resp.text(), "ApplyEnvironmentManagedActionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ApplyEnvironmentManagedActionResult");
     return {
       ...xml.strings({
         optional: {"ActionId":true,"ActionDescription":true,"Status":true},
@@ -83,7 +84,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "CheckDNSAvailability",
     });
-    const xml = readXmlResult(await resp.text(), "CheckDNSAvailabilityResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CheckDNSAvailabilityResult");
     return {
       ...xml.strings({
         optional: {"FullyQualifiedCNAME":true},
@@ -99,12 +100,12 @@ export default class ElasticBeanstalk {
     const prefix = '';
     if ("ApplicationName" in params) body.append(prefix+"ApplicationName", (params["ApplicationName"] ?? '').toString());
     if ("GroupName" in params) body.append(prefix+"GroupName", (params["GroupName"] ?? '').toString());
-    if (params["VersionLabels"]) prt.appendList(body, prefix+"VersionLabels", params["VersionLabels"], {"entryPrefix":".member."})
+    if (params["VersionLabels"]) qsP.appendList(body, prefix+"VersionLabels", params["VersionLabels"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ComposeEnvironments",
     });
-    const xml = readXmlResult(await resp.text(), "ComposeEnvironmentsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ComposeEnvironmentsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -121,12 +122,12 @@ export default class ElasticBeanstalk {
     body.append(prefix+"ApplicationName", (params["ApplicationName"] ?? '').toString());
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     if (params["ResourceLifecycleConfig"] != null) ApplicationResourceLifecycleConfig_Serialize(body, prefix+"ResourceLifecycleConfig", params["ResourceLifecycleConfig"]);
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApplication",
     });
-    const xml = readXmlResult(await resp.text(), "CreateApplicationResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateApplicationResult");
     return {
       Application: xml.first("Application", false, ApplicationDescription_Parse),
     };
@@ -145,12 +146,12 @@ export default class ElasticBeanstalk {
     if (params["BuildConfiguration"] != null) BuildConfiguration_Serialize(body, prefix+"BuildConfiguration", params["BuildConfiguration"]);
     if ("AutoCreateApplication" in params) body.append(prefix+"AutoCreateApplication", (params["AutoCreateApplication"] ?? '').toString());
     if ("Process" in params) body.append(prefix+"Process", (params["Process"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApplicationVersion",
     });
-    const xml = readXmlResult(await resp.text(), "CreateApplicationVersionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateApplicationVersionResult");
     return {
       ApplicationVersion: xml.first("ApplicationVersion", false, ApplicationVersionDescription_Parse),
     };
@@ -168,13 +169,13 @@ export default class ElasticBeanstalk {
     if (params["SourceConfiguration"] != null) SourceConfiguration_Serialize(body, prefix+"SourceConfiguration", params["SourceConfiguration"]);
     if ("EnvironmentId" in params) body.append(prefix+"EnvironmentId", (params["EnvironmentId"] ?? '').toString());
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
-    if (params["OptionSettings"]) prt.appendList(body, prefix+"OptionSettings", params["OptionSettings"], {"appender":ConfigurationOptionSetting_Serialize,"entryPrefix":".member."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["OptionSettings"]) qsP.appendList(body, prefix+"OptionSettings", params["OptionSettings"], {"appender":ConfigurationOptionSetting_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateConfigurationTemplate",
     });
-    const xml = readXmlResult(await resp.text(), "CreateConfigurationTemplateResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateConfigurationTemplateResult");
     return ConfigurationSettingsDescription_Parse(xml);
   }
 
@@ -189,19 +190,19 @@ export default class ElasticBeanstalk {
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     if ("CNAMEPrefix" in params) body.append(prefix+"CNAMEPrefix", (params["CNAMEPrefix"] ?? '').toString());
     if (params["Tier"] != null) EnvironmentTier_Serialize(body, prefix+"Tier", params["Tier"]);
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     if ("VersionLabel" in params) body.append(prefix+"VersionLabel", (params["VersionLabel"] ?? '').toString());
     if ("TemplateName" in params) body.append(prefix+"TemplateName", (params["TemplateName"] ?? '').toString());
     if ("SolutionStackName" in params) body.append(prefix+"SolutionStackName", (params["SolutionStackName"] ?? '').toString());
     if ("PlatformArn" in params) body.append(prefix+"PlatformArn", (params["PlatformArn"] ?? '').toString());
-    if (params["OptionSettings"]) prt.appendList(body, prefix+"OptionSettings", params["OptionSettings"], {"appender":ConfigurationOptionSetting_Serialize,"entryPrefix":".member."})
-    if (params["OptionsToRemove"]) prt.appendList(body, prefix+"OptionsToRemove", params["OptionsToRemove"], {"appender":OptionSpecification_Serialize,"entryPrefix":".member."})
+    if (params["OptionSettings"]) qsP.appendList(body, prefix+"OptionSettings", params["OptionSettings"], {"appender":ConfigurationOptionSetting_Serialize,"entryPrefix":".member."})
+    if (params["OptionsToRemove"]) qsP.appendList(body, prefix+"OptionsToRemove", params["OptionsToRemove"], {"appender":OptionSpecification_Serialize,"entryPrefix":".member."})
     if ("OperationsRole" in params) body.append(prefix+"OperationsRole", (params["OperationsRole"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEnvironment",
     });
-    const xml = readXmlResult(await resp.text(), "CreateEnvironmentResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateEnvironmentResult");
     return EnvironmentDescription_Parse(xml);
   }
 
@@ -214,13 +215,13 @@ export default class ElasticBeanstalk {
     body.append(prefix+"PlatformVersion", (params["PlatformVersion"] ?? '').toString());
     S3Location_Serialize(body, prefix+"PlatformDefinitionBundle", params["PlatformDefinitionBundle"]);
     if ("EnvironmentName" in params) body.append(prefix+"EnvironmentName", (params["EnvironmentName"] ?? '').toString());
-    if (params["OptionSettings"]) prt.appendList(body, prefix+"OptionSettings", params["OptionSettings"], {"appender":ConfigurationOptionSetting_Serialize,"entryPrefix":".member."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["OptionSettings"]) qsP.appendList(body, prefix+"OptionSettings", params["OptionSettings"], {"appender":ConfigurationOptionSetting_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePlatformVersion",
     });
-    const xml = readXmlResult(await resp.text(), "CreatePlatformVersionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreatePlatformVersionResult");
     return {
       PlatformSummary: xml.first("PlatformSummary", false, PlatformSummary_Parse),
       Builder: xml.first("Builder", false, Builder_Parse),
@@ -234,7 +235,7 @@ export default class ElasticBeanstalk {
       abortSignal,
       action: "CreateStorageLocation",
     });
-    const xml = readXmlResult(await resp.text(), "CreateStorageLocationResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateStorageLocationResult");
     return xml.strings({
       optional: {"S3Bucket":true},
     });
@@ -303,7 +304,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "DeletePlatformVersion",
     });
-    const xml = readXmlResult(await resp.text(), "DeletePlatformVersionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeletePlatformVersionResult");
     return {
       PlatformSummary: xml.first("PlatformSummary", false, PlatformSummary_Parse),
     };
@@ -316,7 +317,7 @@ export default class ElasticBeanstalk {
       abortSignal,
       action: "DescribeAccountAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeAccountAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeAccountAttributesResult");
     return {
       ResourceQuotas: xml.first("ResourceQuotas", false, ResourceQuotas_Parse),
     };
@@ -328,14 +329,14 @@ export default class ElasticBeanstalk {
     const body = new URLSearchParams;
     const prefix = '';
     if ("ApplicationName" in params) body.append(prefix+"ApplicationName", (params["ApplicationName"] ?? '').toString());
-    if (params["VersionLabels"]) prt.appendList(body, prefix+"VersionLabels", params["VersionLabels"], {"entryPrefix":".member."})
+    if (params["VersionLabels"]) qsP.appendList(body, prefix+"VersionLabels", params["VersionLabels"], {"entryPrefix":".member."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeApplicationVersions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeApplicationVersionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeApplicationVersionsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -349,12 +350,12 @@ export default class ElasticBeanstalk {
   ): Promise<ApplicationDescriptionsMessage> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["ApplicationNames"]) prt.appendList(body, prefix+"ApplicationNames", params["ApplicationNames"], {"entryPrefix":".member."})
+    if (params["ApplicationNames"]) qsP.appendList(body, prefix+"ApplicationNames", params["ApplicationNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeApplications",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeApplicationsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeApplicationsResult");
     return {
       Applications: xml.getList("Applications", "member").map(ApplicationDescription_Parse),
     };
@@ -370,12 +371,12 @@ export default class ElasticBeanstalk {
     if ("EnvironmentName" in params) body.append(prefix+"EnvironmentName", (params["EnvironmentName"] ?? '').toString());
     if ("SolutionStackName" in params) body.append(prefix+"SolutionStackName", (params["SolutionStackName"] ?? '').toString());
     if ("PlatformArn" in params) body.append(prefix+"PlatformArn", (params["PlatformArn"] ?? '').toString());
-    if (params["Options"]) prt.appendList(body, prefix+"Options", params["Options"], {"appender":OptionSpecification_Serialize,"entryPrefix":".member."})
+    if (params["Options"]) qsP.appendList(body, prefix+"Options", params["Options"], {"appender":OptionSpecification_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConfigurationOptions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeConfigurationOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeConfigurationOptionsResult");
     return {
       ...xml.strings({
         optional: {"SolutionStackName":true,"PlatformArn":true},
@@ -396,7 +397,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "DescribeConfigurationSettings",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeConfigurationSettingsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeConfigurationSettingsResult");
     return {
       ConfigurationSettings: xml.getList("ConfigurationSettings", "member").map(ConfigurationSettingsDescription_Parse),
     };
@@ -409,12 +410,12 @@ export default class ElasticBeanstalk {
     const prefix = '';
     if ("EnvironmentName" in params) body.append(prefix+"EnvironmentName", (params["EnvironmentName"] ?? '').toString());
     if ("EnvironmentId" in params) body.append(prefix+"EnvironmentId", (params["EnvironmentId"] ?? '').toString());
-    if (params["AttributeNames"]) prt.appendList(body, prefix+"AttributeNames", params["AttributeNames"], {"entryPrefix":".member."})
+    if (params["AttributeNames"]) qsP.appendList(body, prefix+"AttributeNames", params["AttributeNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEnvironmentHealth",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEnvironmentHealthResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEnvironmentHealthResult");
     return {
       ...xml.strings({
         optional: {"EnvironmentName":true,"HealthStatus":true,"Color":true},
@@ -423,7 +424,7 @@ export default class ElasticBeanstalk {
       Causes: xml.getList("Causes", "member").map(x => x.content ?? ''),
       ApplicationMetrics: xml.first("ApplicationMetrics", false, ApplicationMetrics_Parse),
       InstancesHealth: xml.first("InstancesHealth", false, InstanceHealthSummary_Parse),
-      RefreshedAt: xml.first("RefreshedAt", false, x => parseTimestamp(x.content)),
+      RefreshedAt: xml.first("RefreshedAt", false, x => xmlP.parseTimestamp(x.content)),
     };
   }
 
@@ -440,7 +441,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "DescribeEnvironmentManagedActionHistory",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEnvironmentManagedActionHistoryResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEnvironmentManagedActionHistoryResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -461,7 +462,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "DescribeEnvironmentManagedActions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEnvironmentManagedActionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEnvironmentManagedActionsResult");
     return {
       ManagedActions: xml.getList("ManagedActions", "member").map(ManagedAction_Parse),
     };
@@ -478,7 +479,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "DescribeEnvironmentResources",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEnvironmentResourcesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEnvironmentResourcesResult");
     return {
       EnvironmentResources: xml.first("EnvironmentResources", false, EnvironmentResourceDescription_Parse),
     };
@@ -491,17 +492,17 @@ export default class ElasticBeanstalk {
     const prefix = '';
     if ("ApplicationName" in params) body.append(prefix+"ApplicationName", (params["ApplicationName"] ?? '').toString());
     if ("VersionLabel" in params) body.append(prefix+"VersionLabel", (params["VersionLabel"] ?? '').toString());
-    if (params["EnvironmentIds"]) prt.appendList(body, prefix+"EnvironmentIds", params["EnvironmentIds"], {"entryPrefix":".member."})
-    if (params["EnvironmentNames"]) prt.appendList(body, prefix+"EnvironmentNames", params["EnvironmentNames"], {"entryPrefix":".member."})
+    if (params["EnvironmentIds"]) qsP.appendList(body, prefix+"EnvironmentIds", params["EnvironmentIds"], {"entryPrefix":".member."})
+    if (params["EnvironmentNames"]) qsP.appendList(body, prefix+"EnvironmentNames", params["EnvironmentNames"], {"entryPrefix":".member."})
     if ("IncludeDeleted" in params) body.append(prefix+"IncludeDeleted", (params["IncludeDeleted"] ?? '').toString());
-    if ("IncludedDeletedBackTo" in params) body.append(prefix+"IncludedDeletedBackTo", prt.encodeDate_iso8601(params["IncludedDeletedBackTo"]));
+    if ("IncludedDeletedBackTo" in params) body.append(prefix+"IncludedDeletedBackTo", qsP.encodeDate_iso8601(params["IncludedDeletedBackTo"]));
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEnvironments",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEnvironmentsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEnvironmentsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -523,15 +524,15 @@ export default class ElasticBeanstalk {
     if ("PlatformArn" in params) body.append(prefix+"PlatformArn", (params["PlatformArn"] ?? '').toString());
     if ("RequestId" in params) body.append(prefix+"RequestId", (params["RequestId"] ?? '').toString());
     if ("Severity" in params) body.append(prefix+"Severity", (params["Severity"] ?? '').toString());
-    if ("StartTime" in params) body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
-    if ("EndTime" in params) body.append(prefix+"EndTime", prt.encodeDate_iso8601(params["EndTime"]));
+    if ("StartTime" in params) body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+    if ("EndTime" in params) body.append(prefix+"EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEvents",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEventsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEventsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -547,19 +548,19 @@ export default class ElasticBeanstalk {
     const prefix = '';
     if ("EnvironmentName" in params) body.append(prefix+"EnvironmentName", (params["EnvironmentName"] ?? '').toString());
     if ("EnvironmentId" in params) body.append(prefix+"EnvironmentId", (params["EnvironmentId"] ?? '').toString());
-    if (params["AttributeNames"]) prt.appendList(body, prefix+"AttributeNames", params["AttributeNames"], {"entryPrefix":".member."})
+    if (params["AttributeNames"]) qsP.appendList(body, prefix+"AttributeNames", params["AttributeNames"], {"entryPrefix":".member."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstancesHealth",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeInstancesHealthResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeInstancesHealthResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
       }),
       InstanceHealthList: xml.getList("InstanceHealthList", "member").map(SingleInstanceHealth_Parse),
-      RefreshedAt: xml.first("RefreshedAt", false, x => parseTimestamp(x.content)),
+      RefreshedAt: xml.first("RefreshedAt", false, x => xmlP.parseTimestamp(x.content)),
     };
   }
 
@@ -573,7 +574,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "DescribePlatformVersion",
     });
-    const xml = readXmlResult(await resp.text(), "DescribePlatformVersionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribePlatformVersionResult");
     return {
       PlatformDescription: xml.first("PlatformDescription", false, PlatformDescription_Parse),
     };
@@ -598,7 +599,7 @@ export default class ElasticBeanstalk {
       abortSignal,
       action: "ListAvailableSolutionStacks",
     });
-    const xml = readXmlResult(await resp.text(), "ListAvailableSolutionStacksResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListAvailableSolutionStacksResult");
     return {
       SolutionStacks: xml.getList("SolutionStacks", "member").map(x => x.content ?? ''),
       SolutionStackDetails: xml.getList("SolutionStackDetails", "member").map(SolutionStackDescription_Parse),
@@ -610,14 +611,14 @@ export default class ElasticBeanstalk {
   ): Promise<ListPlatformBranchesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":SearchFilter_Serialize,"entryPrefix":".member."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":SearchFilter_Serialize,"entryPrefix":".member."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPlatformBranches",
     });
-    const xml = readXmlResult(await resp.text(), "ListPlatformBranchesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListPlatformBranchesResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -631,14 +632,14 @@ export default class ElasticBeanstalk {
   ): Promise<ListPlatformVersionsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":PlatformFilter_Serialize,"entryPrefix":".member."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":PlatformFilter_Serialize,"entryPrefix":".member."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPlatformVersions",
     });
-    const xml = readXmlResult(await resp.text(), "ListPlatformVersionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListPlatformVersionsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -657,7 +658,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    const xml = readXmlResult(await resp.text(), "ListTagsForResourceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListTagsForResourceResult");
     return {
       ...xml.strings({
         optional: {"ResourceArn":true},
@@ -718,7 +719,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "RetrieveEnvironmentInfo",
     });
-    const xml = readXmlResult(await resp.text(), "RetrieveEnvironmentInfoResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RetrieveEnvironmentInfoResult");
     return {
       EnvironmentInfo: xml.getList("EnvironmentInfo", "member").map(EnvironmentInfoDescription_Parse),
     };
@@ -752,7 +753,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "TerminateEnvironment",
     });
-    const xml = readXmlResult(await resp.text(), "TerminateEnvironmentResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "TerminateEnvironmentResult");
     return EnvironmentDescription_Parse(xml);
   }
 
@@ -767,7 +768,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "UpdateApplication",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateApplicationResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateApplicationResult");
     return {
       Application: xml.first("Application", false, ApplicationDescription_Parse),
     };
@@ -784,7 +785,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "UpdateApplicationResourceLifecycle",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateApplicationResourceLifecycleResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateApplicationResourceLifecycleResult");
     return {
       ...xml.strings({
         optional: {"ApplicationName":true},
@@ -805,7 +806,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "UpdateApplicationVersion",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateApplicationVersionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateApplicationVersionResult");
     return {
       ApplicationVersion: xml.first("ApplicationVersion", false, ApplicationVersionDescription_Parse),
     };
@@ -819,13 +820,13 @@ export default class ElasticBeanstalk {
     body.append(prefix+"ApplicationName", (params["ApplicationName"] ?? '').toString());
     body.append(prefix+"TemplateName", (params["TemplateName"] ?? '').toString());
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
-    if (params["OptionSettings"]) prt.appendList(body, prefix+"OptionSettings", params["OptionSettings"], {"appender":ConfigurationOptionSetting_Serialize,"entryPrefix":".member."})
-    if (params["OptionsToRemove"]) prt.appendList(body, prefix+"OptionsToRemove", params["OptionsToRemove"], {"appender":OptionSpecification_Serialize,"entryPrefix":".member."})
+    if (params["OptionSettings"]) qsP.appendList(body, prefix+"OptionSettings", params["OptionSettings"], {"appender":ConfigurationOptionSetting_Serialize,"entryPrefix":".member."})
+    if (params["OptionsToRemove"]) qsP.appendList(body, prefix+"OptionsToRemove", params["OptionsToRemove"], {"appender":OptionSpecification_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateConfigurationTemplate",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateConfigurationTemplateResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateConfigurationTemplateResult");
     return ConfigurationSettingsDescription_Parse(xml);
   }
 
@@ -844,13 +845,13 @@ export default class ElasticBeanstalk {
     if ("TemplateName" in params) body.append(prefix+"TemplateName", (params["TemplateName"] ?? '').toString());
     if ("SolutionStackName" in params) body.append(prefix+"SolutionStackName", (params["SolutionStackName"] ?? '').toString());
     if ("PlatformArn" in params) body.append(prefix+"PlatformArn", (params["PlatformArn"] ?? '').toString());
-    if (params["OptionSettings"]) prt.appendList(body, prefix+"OptionSettings", params["OptionSettings"], {"appender":ConfigurationOptionSetting_Serialize,"entryPrefix":".member."})
-    if (params["OptionsToRemove"]) prt.appendList(body, prefix+"OptionsToRemove", params["OptionsToRemove"], {"appender":OptionSpecification_Serialize,"entryPrefix":".member."})
+    if (params["OptionSettings"]) qsP.appendList(body, prefix+"OptionSettings", params["OptionSettings"], {"appender":ConfigurationOptionSetting_Serialize,"entryPrefix":".member."})
+    if (params["OptionsToRemove"]) qsP.appendList(body, prefix+"OptionsToRemove", params["OptionsToRemove"], {"appender":OptionSpecification_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEnvironment",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateEnvironmentResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateEnvironmentResult");
     return EnvironmentDescription_Parse(xml);
   }
 
@@ -860,8 +861,8 @@ export default class ElasticBeanstalk {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceArn", (params["ResourceArn"] ?? '').toString());
-    if (params["TagsToAdd"]) prt.appendList(body, prefix+"TagsToAdd", params["TagsToAdd"], {"appender":Tag_Serialize,"entryPrefix":".member."})
-    if (params["TagsToRemove"]) prt.appendList(body, prefix+"TagsToRemove", params["TagsToRemove"], {"entryPrefix":".member."})
+    if (params["TagsToAdd"]) qsP.appendList(body, prefix+"TagsToAdd", params["TagsToAdd"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["TagsToRemove"]) qsP.appendList(body, prefix+"TagsToRemove", params["TagsToRemove"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTagsForResource",
@@ -876,12 +877,12 @@ export default class ElasticBeanstalk {
     body.append(prefix+"ApplicationName", (params["ApplicationName"] ?? '').toString());
     if ("TemplateName" in params) body.append(prefix+"TemplateName", (params["TemplateName"] ?? '').toString());
     if ("EnvironmentName" in params) body.append(prefix+"EnvironmentName", (params["EnvironmentName"] ?? '').toString());
-    if (params["OptionSettings"]) prt.appendList(body, prefix+"OptionSettings", params["OptionSettings"], {"appender":ConfigurationOptionSetting_Serialize,"entryPrefix":".member."})
+    if (params["OptionSettings"]) qsP.appendList(body, prefix+"OptionSettings", params["OptionSettings"], {"appender":ConfigurationOptionSetting_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ValidateConfigurationSettings",
     });
-    const xml = readXmlResult(await resp.text(), "ValidateConfigurationSettingsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ValidateConfigurationSettingsResult");
     return {
       Messages: xml.getList("Messages", "member").map(ValidationMessage_Parse),
     };
@@ -896,7 +897,7 @@ export default class ElasticBeanstalk {
     const errMessage = 'ResourceNotReady: Resource is not in the state EnvironmentExists';
     for (let i = 0; i < 20; i++) {
       const resp = await this.describeEnvironments(params);
-      const field = resp["Environments"].flatMap(x => x["Status"]);
+      const field = resp?.Environments?.flatMap(x => x?.Status);
       if (field.every(x => x === "Ready")) return resp;
       if (field.every(x => x === "Launching")) continue;
       await new Promise(r => setTimeout(r, 20000));
@@ -911,7 +912,7 @@ export default class ElasticBeanstalk {
     const errMessage = 'ResourceNotReady: Resource is not in the state EnvironmentUpdated';
     for (let i = 0; i < 20; i++) {
       const resp = await this.describeEnvironments(params);
-      const field = resp["Environments"].flatMap(x => x["Status"]);
+      const field = resp?.Environments?.flatMap(x => x?.Status);
       if (field.every(x => x === "Ready")) return resp;
       if (field.every(x => x === "Updating")) continue;
       await new Promise(r => setTimeout(r, 20000));
@@ -926,7 +927,7 @@ export default class ElasticBeanstalk {
     const errMessage = 'ResourceNotReady: Resource is not in the state EnvironmentTerminated';
     for (let i = 0; i < 20; i++) {
       const resp = await this.describeEnvironments(params);
-      const field = resp["Environments"].flatMap(x => x["Status"]);
+      const field = resp?.Environments?.flatMap(x => x?.Status);
       if (field.every(x => x === "Terminated")) return resp;
       if (field.every(x => x === "Terminating")) continue;
       await new Promise(r => setTimeout(r, 20000));
@@ -1326,14 +1327,14 @@ export interface ConfigurationSettingsDescription {
   DateUpdated?: Date | number | null;
   OptionSettings: ConfigurationOptionSetting[];
 }
-function ConfigurationSettingsDescription_Parse(node: XmlNode): ConfigurationSettingsDescription {
+function ConfigurationSettingsDescription_Parse(node: xmlP.XmlNode): ConfigurationSettingsDescription {
   return {
     ...node.strings({
       optional: {"SolutionStackName":true,"PlatformArn":true,"ApplicationName":true,"TemplateName":true,"Description":true,"EnvironmentName":true},
     }),
     DeploymentStatus: node.first("DeploymentStatus", false, x => (x.content ?? '') as ConfigurationDeploymentStatus),
-    DateCreated: node.first("DateCreated", false, x => parseTimestamp(x.content)),
-    DateUpdated: node.first("DateUpdated", false, x => parseTimestamp(x.content)),
+    DateCreated: node.first("DateCreated", false, x => xmlP.parseTimestamp(x.content)),
+    DateUpdated: node.first("DateUpdated", false, x => xmlP.parseTimestamp(x.content)),
     OptionSettings: node.getList("OptionSettings", "member").map(ConfigurationOptionSetting_Parse),
   };
 }
@@ -1362,13 +1363,13 @@ export interface EnvironmentDescription {
   EnvironmentArn?: string | null;
   OperationsRole?: string | null;
 }
-function EnvironmentDescription_Parse(node: XmlNode): EnvironmentDescription {
+function EnvironmentDescription_Parse(node: xmlP.XmlNode): EnvironmentDescription {
   return {
     ...node.strings({
       optional: {"EnvironmentName":true,"EnvironmentId":true,"ApplicationName":true,"VersionLabel":true,"SolutionStackName":true,"PlatformArn":true,"TemplateName":true,"Description":true,"EndpointURL":true,"CNAME":true,"EnvironmentArn":true,"OperationsRole":true},
     }),
-    DateCreated: node.first("DateCreated", false, x => parseTimestamp(x.content)),
-    DateUpdated: node.first("DateUpdated", false, x => parseTimestamp(x.content)),
+    DateCreated: node.first("DateCreated", false, x => xmlP.parseTimestamp(x.content)),
+    DateUpdated: node.first("DateUpdated", false, x => xmlP.parseTimestamp(x.content)),
     Status: node.first("Status", false, x => (x.content ?? '') as EnvironmentStatus),
     AbortableOperationInProgress: node.first("AbortableOperationInProgress", false, x => x.content === 'true'),
     Health: node.first("Health", false, x => (x.content ?? '') as EnvironmentHealth),
@@ -1518,7 +1519,7 @@ function ApplicationResourceLifecycleConfig_Serialize(body: URLSearchParams, pre
     if ("ServiceRole" in params) body.append(prefix+".ServiceRole", (params["ServiceRole"] ?? '').toString());
     if (params["VersionLifecycleConfig"] != null) ApplicationVersionLifecycleConfig_Serialize(body, prefix+".VersionLifecycleConfig", params["VersionLifecycleConfig"]);
 }
-function ApplicationResourceLifecycleConfig_Parse(node: XmlNode): ApplicationResourceLifecycleConfig {
+function ApplicationResourceLifecycleConfig_Parse(node: xmlP.XmlNode): ApplicationResourceLifecycleConfig {
   return {
     ...node.strings({
       optional: {"ServiceRole":true},
@@ -1536,7 +1537,7 @@ function ApplicationVersionLifecycleConfig_Serialize(body: URLSearchParams, pref
     if (params["MaxCountRule"] != null) MaxCountRule_Serialize(body, prefix+".MaxCountRule", params["MaxCountRule"]);
     if (params["MaxAgeRule"] != null) MaxAgeRule_Serialize(body, prefix+".MaxAgeRule", params["MaxAgeRule"]);
 }
-function ApplicationVersionLifecycleConfig_Parse(node: XmlNode): ApplicationVersionLifecycleConfig {
+function ApplicationVersionLifecycleConfig_Parse(node: xmlP.XmlNode): ApplicationVersionLifecycleConfig {
   return {
     MaxCountRule: node.first("MaxCountRule", false, MaxCountRule_Parse),
     MaxAgeRule: node.first("MaxAgeRule", false, MaxAgeRule_Parse),
@@ -1554,7 +1555,7 @@ function MaxCountRule_Serialize(body: URLSearchParams, prefix: string, params: M
     if ("MaxCount" in params) body.append(prefix+".MaxCount", (params["MaxCount"] ?? '').toString());
     if ("DeleteSourceFromS3" in params) body.append(prefix+".DeleteSourceFromS3", (params["DeleteSourceFromS3"] ?? '').toString());
 }
-function MaxCountRule_Parse(node: XmlNode): MaxCountRule {
+function MaxCountRule_Parse(node: xmlP.XmlNode): MaxCountRule {
   return {
     Enabled: node.first("Enabled", true, x => x.content === 'true'),
     MaxCount: node.first("MaxCount", false, x => parseInt(x.content ?? '0')),
@@ -1573,7 +1574,7 @@ function MaxAgeRule_Serialize(body: URLSearchParams, prefix: string, params: Max
     if ("MaxAgeInDays" in params) body.append(prefix+".MaxAgeInDays", (params["MaxAgeInDays"] ?? '').toString());
     if ("DeleteSourceFromS3" in params) body.append(prefix+".DeleteSourceFromS3", (params["DeleteSourceFromS3"] ?? '').toString());
 }
-function MaxAgeRule_Parse(node: XmlNode): MaxAgeRule {
+function MaxAgeRule_Parse(node: xmlP.XmlNode): MaxAgeRule {
   return {
     Enabled: node.first("Enabled", true, x => x.content === 'true'),
     MaxAgeInDays: node.first("MaxAgeInDays", false, x => parseInt(x.content ?? '0')),
@@ -1590,7 +1591,7 @@ function Tag_Serialize(body: URLSearchParams, prefix: string, params: Tag) {
     if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
     if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function Tag_Parse(node: XmlNode): Tag {
+function Tag_Parse(node: xmlP.XmlNode): Tag {
   return node.strings({
     optional: {"Key":true,"Value":true},
   });
@@ -1607,7 +1608,7 @@ function SourceBuildInformation_Serialize(body: URLSearchParams, prefix: string,
     body.append(prefix+".SourceRepository", (params["SourceRepository"] ?? '').toString());
     body.append(prefix+".SourceLocation", (params["SourceLocation"] ?? '').toString());
 }
-function SourceBuildInformation_Parse(node: XmlNode): SourceBuildInformation {
+function SourceBuildInformation_Parse(node: xmlP.XmlNode): SourceBuildInformation {
   return {
     ...node.strings({
       required: {"SourceLocation":true},
@@ -1621,17 +1622,13 @@ function SourceBuildInformation_Parse(node: XmlNode): SourceBuildInformation {
 export type SourceType =
 | "Git"
 | "Zip"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type SourceRepository =
 | "CodeCommit"
 | "S3"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface S3Location {
@@ -1642,7 +1639,7 @@ function S3Location_Serialize(body: URLSearchParams, prefix: string, params: S3L
     if ("S3Bucket" in params) body.append(prefix+".S3Bucket", (params["S3Bucket"] ?? '').toString());
     if ("S3Key" in params) body.append(prefix+".S3Key", (params["S3Key"] ?? '').toString());
 }
-function S3Location_Parse(node: XmlNode): S3Location {
+function S3Location_Parse(node: xmlP.XmlNode): S3Location {
   return node.strings({
     optional: {"S3Bucket":true,"S3Key":true},
   });
@@ -1669,8 +1666,7 @@ export type ComputeType =
 | "BUILD_GENERAL1_SMALL"
 | "BUILD_GENERAL1_MEDIUM"
 | "BUILD_GENERAL1_LARGE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface SourceConfiguration {
@@ -1695,7 +1691,7 @@ function ConfigurationOptionSetting_Serialize(body: URLSearchParams, prefix: str
     if ("OptionName" in params) body.append(prefix+".OptionName", (params["OptionName"] ?? '').toString());
     if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function ConfigurationOptionSetting_Parse(node: XmlNode): ConfigurationOptionSetting {
+function ConfigurationOptionSetting_Parse(node: xmlP.XmlNode): ConfigurationOptionSetting {
   return node.strings({
     optional: {"ResourceName":true,"Namespace":true,"OptionName":true,"Value":true},
   });
@@ -1712,7 +1708,7 @@ function EnvironmentTier_Serialize(body: URLSearchParams, prefix: string, params
     if ("Type" in params) body.append(prefix+".Type", (params["Type"] ?? '').toString());
     if ("Version" in params) body.append(prefix+".Version", (params["Version"] ?? '').toString());
 }
-function EnvironmentTier_Parse(node: XmlNode): EnvironmentTier {
+function EnvironmentTier_Parse(node: xmlP.XmlNode): EnvironmentTier {
   return node.strings({
     optional: {"Name":true,"Type":true,"Version":true},
   });
@@ -1740,8 +1736,7 @@ export type EnvironmentHealthAttribute =
 | "All"
 | "HealthStatus"
 | "RefreshedAt"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type ActionStatus =
@@ -1749,9 +1744,7 @@ export type ActionStatus =
 | "Pending"
 | "Running"
 | "Unknown"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type EventSeverity =
@@ -1761,9 +1754,7 @@ export type EventSeverity =
 | "WARN"
 | "ERROR"
 | "FATAL"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type InstancesHealthAttribute =
@@ -1778,8 +1769,7 @@ export type InstancesHealthAttribute =
 | "AvailabilityZone"
 | "InstanceType"
 | "All"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface SearchFilter {
@@ -1790,7 +1780,7 @@ export interface SearchFilter {
 function SearchFilter_Serialize(body: URLSearchParams, prefix: string, params: SearchFilter) {
     if ("Attribute" in params) body.append(prefix+".Attribute", (params["Attribute"] ?? '').toString());
     if ("Operator" in params) body.append(prefix+".Operator", (params["Operator"] ?? '').toString());
-    if (params["Values"]) prt.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
+    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
 }
 
 // refs: 1 - tags: input, named, interface
@@ -1802,24 +1792,21 @@ export interface PlatformFilter {
 function PlatformFilter_Serialize(body: URLSearchParams, prefix: string, params: PlatformFilter) {
     if ("Type" in params) body.append(prefix+".Type", (params["Type"] ?? '').toString());
     if ("Operator" in params) body.append(prefix+".Operator", (params["Operator"] ?? '').toString());
-    if (params["Values"]) prt.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
+    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
 }
 
 // refs: 3 - tags: input, named, enum, output
 export type EnvironmentInfoType =
 | "tail"
 | "bundle"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, enum
 export type ActionType =
 | "InstanceRefresh"
 | "PlatformUpdate"
 | "Unknown"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type EnvironmentStatus =
@@ -1831,8 +1818,7 @@ export type EnvironmentStatus =
 | "Ready"
 | "Terminating"
 | "Terminated"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, enum
 export type EnvironmentHealth =
@@ -1840,8 +1826,7 @@ export type EnvironmentHealth =
 | "Yellow"
 | "Red"
 | "Grey"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type EnvironmentHealthStatus =
@@ -1854,14 +1839,13 @@ export type EnvironmentHealthStatus =
 | "Degraded"
 | "Severe"
 | "Suspended"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface EnvironmentResourcesDescription {
   LoadBalancer?: LoadBalancerDescription | null;
 }
-function EnvironmentResourcesDescription_Parse(node: XmlNode): EnvironmentResourcesDescription {
+function EnvironmentResourcesDescription_Parse(node: xmlP.XmlNode): EnvironmentResourcesDescription {
   return {
     LoadBalancer: node.first("LoadBalancer", false, LoadBalancerDescription_Parse),
   };
@@ -1873,7 +1857,7 @@ export interface LoadBalancerDescription {
   Domain?: string | null;
   Listeners: Listener[];
 }
-function LoadBalancerDescription_Parse(node: XmlNode): LoadBalancerDescription {
+function LoadBalancerDescription_Parse(node: xmlP.XmlNode): LoadBalancerDescription {
   return {
     ...node.strings({
       optional: {"LoadBalancerName":true,"Domain":true},
@@ -1887,7 +1871,7 @@ export interface Listener {
   Protocol?: string | null;
   Port?: number | null;
 }
-function Listener_Parse(node: XmlNode): Listener {
+function Listener_Parse(node: xmlP.XmlNode): Listener {
   return {
     ...node.strings({
       optional: {"Protocol":true},
@@ -1901,7 +1885,7 @@ export interface EnvironmentLink {
   LinkName?: string | null;
   EnvironmentName?: string | null;
 }
-function EnvironmentLink_Parse(node: XmlNode): EnvironmentLink {
+function EnvironmentLink_Parse(node: xmlP.XmlNode): EnvironmentLink {
   return node.strings({
     optional: {"LinkName":true,"EnvironmentName":true},
   });
@@ -1918,13 +1902,13 @@ export interface ApplicationDescription {
   ConfigurationTemplates: string[];
   ResourceLifecycleConfig?: ApplicationResourceLifecycleConfig | null;
 }
-function ApplicationDescription_Parse(node: XmlNode): ApplicationDescription {
+function ApplicationDescription_Parse(node: xmlP.XmlNode): ApplicationDescription {
   return {
     ...node.strings({
       optional: {"ApplicationArn":true,"ApplicationName":true,"Description":true},
     }),
-    DateCreated: node.first("DateCreated", false, x => parseTimestamp(x.content)),
-    DateUpdated: node.first("DateUpdated", false, x => parseTimestamp(x.content)),
+    DateCreated: node.first("DateCreated", false, x => xmlP.parseTimestamp(x.content)),
+    DateUpdated: node.first("DateUpdated", false, x => xmlP.parseTimestamp(x.content)),
     Versions: node.getList("Versions", "member").map(x => x.content ?? ''),
     ConfigurationTemplates: node.getList("ConfigurationTemplates", "member").map(x => x.content ?? ''),
     ResourceLifecycleConfig: node.first("ResourceLifecycleConfig", false, ApplicationResourceLifecycleConfig_Parse),
@@ -1944,15 +1928,15 @@ export interface ApplicationVersionDescription {
   DateUpdated?: Date | number | null;
   Status?: ApplicationVersionStatus | null;
 }
-function ApplicationVersionDescription_Parse(node: XmlNode): ApplicationVersionDescription {
+function ApplicationVersionDescription_Parse(node: xmlP.XmlNode): ApplicationVersionDescription {
   return {
     ...node.strings({
       optional: {"ApplicationVersionArn":true,"ApplicationName":true,"Description":true,"VersionLabel":true,"BuildArn":true},
     }),
     SourceBuildInformation: node.first("SourceBuildInformation", false, SourceBuildInformation_Parse),
     SourceBundle: node.first("SourceBundle", false, S3Location_Parse),
-    DateCreated: node.first("DateCreated", false, x => parseTimestamp(x.content)),
-    DateUpdated: node.first("DateUpdated", false, x => parseTimestamp(x.content)),
+    DateCreated: node.first("DateCreated", false, x => xmlP.parseTimestamp(x.content)),
+    DateUpdated: node.first("DateUpdated", false, x => xmlP.parseTimestamp(x.content)),
     Status: node.first("Status", false, x => (x.content ?? '') as ApplicationVersionStatus),
   };
 }
@@ -1964,16 +1948,14 @@ export type ApplicationVersionStatus =
 | "Failed"
 | "Processing"
 | "Building"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type ConfigurationDeploymentStatus =
 | "deployed"
 | "pending"
 | "failed"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface PlatformSummary {
@@ -1990,7 +1972,7 @@ export interface PlatformSummary {
   PlatformBranchName?: string | null;
   PlatformBranchLifecycleState?: string | null;
 }
-function PlatformSummary_Parse(node: XmlNode): PlatformSummary {
+function PlatformSummary_Parse(node: xmlP.XmlNode): PlatformSummary {
   return {
     ...node.strings({
       optional: {"PlatformArn":true,"PlatformOwner":true,"PlatformCategory":true,"OperatingSystemName":true,"OperatingSystemVersion":true,"PlatformLifecycleState":true,"PlatformVersion":true,"PlatformBranchName":true,"PlatformBranchLifecycleState":true},
@@ -2008,14 +1990,13 @@ export type PlatformStatus =
 | "Ready"
 | "Deleting"
 | "Deleted"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Builder {
   ARN?: string | null;
 }
-function Builder_Parse(node: XmlNode): Builder {
+function Builder_Parse(node: xmlP.XmlNode): Builder {
   return node.strings({
     optional: {"ARN":true},
   });
@@ -2029,7 +2010,7 @@ export interface ResourceQuotas {
   ConfigurationTemplateQuota?: ResourceQuota | null;
   CustomPlatformQuota?: ResourceQuota | null;
 }
-function ResourceQuotas_Parse(node: XmlNode): ResourceQuotas {
+function ResourceQuotas_Parse(node: xmlP.XmlNode): ResourceQuotas {
   return {
     ApplicationQuota: node.first("ApplicationQuota", false, ResourceQuota_Parse),
     ApplicationVersionQuota: node.first("ApplicationVersionQuota", false, ResourceQuota_Parse),
@@ -2043,7 +2024,7 @@ function ResourceQuotas_Parse(node: XmlNode): ResourceQuotas {
 export interface ResourceQuota {
   Maximum?: number | null;
 }
-function ResourceQuota_Parse(node: XmlNode): ResourceQuota {
+function ResourceQuota_Parse(node: xmlP.XmlNode): ResourceQuota {
   return {
     Maximum: node.first("Maximum", false, x => parseInt(x.content ?? '0')),
   };
@@ -2063,7 +2044,7 @@ export interface ConfigurationOptionDescription {
   MaxLength?: number | null;
   Regex?: OptionRestrictionRegex | null;
 }
-function ConfigurationOptionDescription_Parse(node: XmlNode): ConfigurationOptionDescription {
+function ConfigurationOptionDescription_Parse(node: xmlP.XmlNode): ConfigurationOptionDescription {
   return {
     ...node.strings({
       optional: {"Namespace":true,"Name":true,"DefaultValue":true,"ChangeSeverity":true},
@@ -2082,15 +2063,14 @@ function ConfigurationOptionDescription_Parse(node: XmlNode): ConfigurationOptio
 export type ConfigurationOptionValueType =
 | "Scalar"
 | "List"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface OptionRestrictionRegex {
   Pattern?: string | null;
   Label?: string | null;
 }
-function OptionRestrictionRegex_Parse(node: XmlNode): OptionRestrictionRegex {
+function OptionRestrictionRegex_Parse(node: xmlP.XmlNode): OptionRestrictionRegex {
   return node.strings({
     optional: {"Pattern":true,"Label":true},
   });
@@ -2103,7 +2083,7 @@ export interface ApplicationMetrics {
   StatusCodes?: StatusCodes | null;
   Latency?: Latency | null;
 }
-function ApplicationMetrics_Parse(node: XmlNode): ApplicationMetrics {
+function ApplicationMetrics_Parse(node: xmlP.XmlNode): ApplicationMetrics {
   return {
     Duration: node.first("Duration", false, x => parseInt(x.content ?? '0')),
     RequestCount: node.first("RequestCount", false, x => parseInt(x.content ?? '0')),
@@ -2119,7 +2099,7 @@ export interface StatusCodes {
   Status4xx?: number | null;
   Status5xx?: number | null;
 }
-function StatusCodes_Parse(node: XmlNode): StatusCodes {
+function StatusCodes_Parse(node: xmlP.XmlNode): StatusCodes {
   return {
     Status2xx: node.first("Status2xx", false, x => parseInt(x.content ?? '0')),
     Status3xx: node.first("Status3xx", false, x => parseInt(x.content ?? '0')),
@@ -2139,7 +2119,7 @@ export interface Latency {
   P50?: number | null;
   P10?: number | null;
 }
-function Latency_Parse(node: XmlNode): Latency {
+function Latency_Parse(node: xmlP.XmlNode): Latency {
   return {
     P999: node.first("P999", false, x => parseFloat(x.content ?? '0')),
     P99: node.first("P99", false, x => parseFloat(x.content ?? '0')),
@@ -2163,7 +2143,7 @@ export interface InstanceHealthSummary {
   Degraded?: number | null;
   Severe?: number | null;
 }
-function InstanceHealthSummary_Parse(node: XmlNode): InstanceHealthSummary {
+function InstanceHealthSummary_Parse(node: xmlP.XmlNode): InstanceHealthSummary {
   return {
     NoData: node.first("NoData", false, x => parseInt(x.content ?? '0')),
     Unknown: node.first("Unknown", false, x => parseInt(x.content ?? '0')),
@@ -2187,7 +2167,7 @@ export interface ManagedActionHistoryItem {
   ExecutedTime?: Date | number | null;
   FinishedTime?: Date | number | null;
 }
-function ManagedActionHistoryItem_Parse(node: XmlNode): ManagedActionHistoryItem {
+function ManagedActionHistoryItem_Parse(node: xmlP.XmlNode): ManagedActionHistoryItem {
   return {
     ...node.strings({
       optional: {"ActionId":true,"ActionDescription":true,"FailureDescription":true},
@@ -2195,8 +2175,8 @@ function ManagedActionHistoryItem_Parse(node: XmlNode): ManagedActionHistoryItem
     ActionType: node.first("ActionType", false, x => (x.content ?? '') as ActionType),
     FailureType: node.first("FailureType", false, x => (x.content ?? '') as FailureType),
     Status: node.first("Status", false, x => (x.content ?? '') as ActionHistoryStatus),
-    ExecutedTime: node.first("ExecutedTime", false, x => parseTimestamp(x.content)),
-    FinishedTime: node.first("FinishedTime", false, x => parseTimestamp(x.content)),
+    ExecutedTime: node.first("ExecutedTime", false, x => xmlP.parseTimestamp(x.content)),
+    FinishedTime: node.first("FinishedTime", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -2209,16 +2189,14 @@ export type FailureType =
 | "InternalFailure"
 | "InvalidEnvironmentState"
 | "PermissionsError"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type ActionHistoryStatus =
 | "Completed"
 | "Failed"
 | "Unknown"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ManagedAction {
@@ -2228,14 +2206,14 @@ export interface ManagedAction {
   Status?: ActionStatus | null;
   WindowStartTime?: Date | number | null;
 }
-function ManagedAction_Parse(node: XmlNode): ManagedAction {
+function ManagedAction_Parse(node: xmlP.XmlNode): ManagedAction {
   return {
     ...node.strings({
       optional: {"ActionId":true,"ActionDescription":true},
     }),
     ActionType: node.first("ActionType", false, x => (x.content ?? '') as ActionType),
     Status: node.first("Status", false, x => (x.content ?? '') as ActionStatus),
-    WindowStartTime: node.first("WindowStartTime", false, x => parseTimestamp(x.content)),
+    WindowStartTime: node.first("WindowStartTime", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -2250,7 +2228,7 @@ export interface EnvironmentResourceDescription {
   Triggers: Trigger[];
   Queues: Queue[];
 }
-function EnvironmentResourceDescription_Parse(node: XmlNode): EnvironmentResourceDescription {
+function EnvironmentResourceDescription_Parse(node: xmlP.XmlNode): EnvironmentResourceDescription {
   return {
     ...node.strings({
       optional: {"EnvironmentName":true},
@@ -2269,7 +2247,7 @@ function EnvironmentResourceDescription_Parse(node: XmlNode): EnvironmentResourc
 export interface AutoScalingGroup {
   Name?: string | null;
 }
-function AutoScalingGroup_Parse(node: XmlNode): AutoScalingGroup {
+function AutoScalingGroup_Parse(node: xmlP.XmlNode): AutoScalingGroup {
   return node.strings({
     optional: {"Name":true},
   });
@@ -2279,7 +2257,7 @@ function AutoScalingGroup_Parse(node: XmlNode): AutoScalingGroup {
 export interface Instance {
   Id?: string | null;
 }
-function Instance_Parse(node: XmlNode): Instance {
+function Instance_Parse(node: xmlP.XmlNode): Instance {
   return node.strings({
     optional: {"Id":true},
   });
@@ -2289,7 +2267,7 @@ function Instance_Parse(node: XmlNode): Instance {
 export interface LaunchConfiguration {
   Name?: string | null;
 }
-function LaunchConfiguration_Parse(node: XmlNode): LaunchConfiguration {
+function LaunchConfiguration_Parse(node: xmlP.XmlNode): LaunchConfiguration {
   return node.strings({
     optional: {"Name":true},
   });
@@ -2299,7 +2277,7 @@ function LaunchConfiguration_Parse(node: XmlNode): LaunchConfiguration {
 export interface LaunchTemplate {
   Id?: string | null;
 }
-function LaunchTemplate_Parse(node: XmlNode): LaunchTemplate {
+function LaunchTemplate_Parse(node: xmlP.XmlNode): LaunchTemplate {
   return node.strings({
     optional: {"Id":true},
   });
@@ -2309,7 +2287,7 @@ function LaunchTemplate_Parse(node: XmlNode): LaunchTemplate {
 export interface LoadBalancer {
   Name?: string | null;
 }
-function LoadBalancer_Parse(node: XmlNode): LoadBalancer {
+function LoadBalancer_Parse(node: xmlP.XmlNode): LoadBalancer {
   return node.strings({
     optional: {"Name":true},
   });
@@ -2319,7 +2297,7 @@ function LoadBalancer_Parse(node: XmlNode): LoadBalancer {
 export interface Trigger {
   Name?: string | null;
 }
-function Trigger_Parse(node: XmlNode): Trigger {
+function Trigger_Parse(node: xmlP.XmlNode): Trigger {
   return node.strings({
     optional: {"Name":true},
   });
@@ -2330,7 +2308,7 @@ export interface Queue {
   Name?: string | null;
   URL?: string | null;
 }
-function Queue_Parse(node: XmlNode): Queue {
+function Queue_Parse(node: xmlP.XmlNode): Queue {
   return node.strings({
     optional: {"Name":true,"URL":true},
   });
@@ -2348,12 +2326,12 @@ export interface EventDescription {
   RequestId?: string | null;
   Severity?: EventSeverity | null;
 }
-function EventDescription_Parse(node: XmlNode): EventDescription {
+function EventDescription_Parse(node: xmlP.XmlNode): EventDescription {
   return {
     ...node.strings({
       optional: {"Message":true,"ApplicationName":true,"VersionLabel":true,"TemplateName":true,"EnvironmentName":true,"PlatformArn":true,"RequestId":true},
     }),
-    EventDate: node.first("EventDate", false, x => parseTimestamp(x.content)),
+    EventDate: node.first("EventDate", false, x => xmlP.parseTimestamp(x.content)),
     Severity: node.first("Severity", false, x => (x.content ?? '') as EventSeverity),
   };
 }
@@ -2371,13 +2349,13 @@ export interface SingleInstanceHealth {
   AvailabilityZone?: string | null;
   InstanceType?: string | null;
 }
-function SingleInstanceHealth_Parse(node: XmlNode): SingleInstanceHealth {
+function SingleInstanceHealth_Parse(node: xmlP.XmlNode): SingleInstanceHealth {
   return {
     ...node.strings({
       optional: {"InstanceId":true,"HealthStatus":true,"Color":true,"AvailabilityZone":true,"InstanceType":true},
     }),
     Causes: node.getList("Causes", "member").map(x => x.content ?? ''),
-    LaunchedAt: node.first("LaunchedAt", false, x => parseTimestamp(x.content)),
+    LaunchedAt: node.first("LaunchedAt", false, x => xmlP.parseTimestamp(x.content)),
     ApplicationMetrics: node.first("ApplicationMetrics", false, ApplicationMetrics_Parse),
     System: node.first("System", false, SystemStatus_Parse),
     Deployment: node.first("Deployment", false, Deployment_Parse),
@@ -2389,7 +2367,7 @@ export interface SystemStatus {
   CPUUtilization?: CPUUtilization | null;
   LoadAverage: number[];
 }
-function SystemStatus_Parse(node: XmlNode): SystemStatus {
+function SystemStatus_Parse(node: xmlP.XmlNode): SystemStatus {
   return {
     CPUUtilization: node.first("CPUUtilization", false, CPUUtilization_Parse),
     LoadAverage: node.getList("LoadAverage", "member").map(x => parseFloat(x.content ?? '0')),
@@ -2407,7 +2385,7 @@ export interface CPUUtilization {
   SoftIRQ?: number | null;
   Privileged?: number | null;
 }
-function CPUUtilization_Parse(node: XmlNode): CPUUtilization {
+function CPUUtilization_Parse(node: xmlP.XmlNode): CPUUtilization {
   return {
     User: node.first("User", false, x => parseFloat(x.content ?? '0')),
     Nice: node.first("Nice", false, x => parseFloat(x.content ?? '0')),
@@ -2427,13 +2405,13 @@ export interface Deployment {
   Status?: string | null;
   DeploymentTime?: Date | number | null;
 }
-function Deployment_Parse(node: XmlNode): Deployment {
+function Deployment_Parse(node: xmlP.XmlNode): Deployment {
   return {
     ...node.strings({
       optional: {"VersionLabel":true,"Status":true},
     }),
     DeploymentId: node.first("DeploymentId", false, x => parseInt(x.content ?? '0')),
-    DeploymentTime: node.first("DeploymentTime", false, x => parseTimestamp(x.content)),
+    DeploymentTime: node.first("DeploymentTime", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -2461,14 +2439,14 @@ export interface PlatformDescription {
   PlatformBranchName?: string | null;
   PlatformBranchLifecycleState?: string | null;
 }
-function PlatformDescription_Parse(node: XmlNode): PlatformDescription {
+function PlatformDescription_Parse(node: xmlP.XmlNode): PlatformDescription {
   return {
     ...node.strings({
       optional: {"PlatformArn":true,"PlatformOwner":true,"PlatformName":true,"PlatformVersion":true,"SolutionStackName":true,"PlatformCategory":true,"Description":true,"Maintainer":true,"OperatingSystemName":true,"OperatingSystemVersion":true,"PlatformLifecycleState":true,"PlatformBranchName":true,"PlatformBranchLifecycleState":true},
     }),
     PlatformStatus: node.first("PlatformStatus", false, x => (x.content ?? '') as PlatformStatus),
-    DateCreated: node.first("DateCreated", false, x => parseTimestamp(x.content)),
-    DateUpdated: node.first("DateUpdated", false, x => parseTimestamp(x.content)),
+    DateCreated: node.first("DateCreated", false, x => xmlP.parseTimestamp(x.content)),
+    DateUpdated: node.first("DateUpdated", false, x => xmlP.parseTimestamp(x.content)),
     ProgrammingLanguages: node.getList("ProgrammingLanguages", "member").map(PlatformProgrammingLanguage_Parse),
     Frameworks: node.getList("Frameworks", "member").map(PlatformFramework_Parse),
     CustomAmiList: node.getList("CustomAmiList", "member").map(CustomAmi_Parse),
@@ -2482,7 +2460,7 @@ export interface PlatformProgrammingLanguage {
   Name?: string | null;
   Version?: string | null;
 }
-function PlatformProgrammingLanguage_Parse(node: XmlNode): PlatformProgrammingLanguage {
+function PlatformProgrammingLanguage_Parse(node: xmlP.XmlNode): PlatformProgrammingLanguage {
   return node.strings({
     optional: {"Name":true,"Version":true},
   });
@@ -2493,7 +2471,7 @@ export interface PlatformFramework {
   Name?: string | null;
   Version?: string | null;
 }
-function PlatformFramework_Parse(node: XmlNode): PlatformFramework {
+function PlatformFramework_Parse(node: xmlP.XmlNode): PlatformFramework {
   return node.strings({
     optional: {"Name":true,"Version":true},
   });
@@ -2504,7 +2482,7 @@ export interface CustomAmi {
   VirtualizationType?: string | null;
   ImageId?: string | null;
 }
-function CustomAmi_Parse(node: XmlNode): CustomAmi {
+function CustomAmi_Parse(node: xmlP.XmlNode): CustomAmi {
   return node.strings({
     optional: {"VirtualizationType":true,"ImageId":true},
   });
@@ -2515,7 +2493,7 @@ export interface SolutionStackDescription {
   SolutionStackName?: string | null;
   PermittedFileTypes: string[];
 }
-function SolutionStackDescription_Parse(node: XmlNode): SolutionStackDescription {
+function SolutionStackDescription_Parse(node: xmlP.XmlNode): SolutionStackDescription {
   return {
     ...node.strings({
       optional: {"SolutionStackName":true},
@@ -2532,7 +2510,7 @@ export interface PlatformBranchSummary {
   BranchOrder?: number | null;
   SupportedTierList: string[];
 }
-function PlatformBranchSummary_Parse(node: XmlNode): PlatformBranchSummary {
+function PlatformBranchSummary_Parse(node: xmlP.XmlNode): PlatformBranchSummary {
   return {
     ...node.strings({
       optional: {"PlatformName":true,"BranchName":true,"LifecycleState":true},
@@ -2549,13 +2527,13 @@ export interface EnvironmentInfoDescription {
   SampleTimestamp?: Date | number | null;
   Message?: string | null;
 }
-function EnvironmentInfoDescription_Parse(node: XmlNode): EnvironmentInfoDescription {
+function EnvironmentInfoDescription_Parse(node: xmlP.XmlNode): EnvironmentInfoDescription {
   return {
     ...node.strings({
       optional: {"Ec2InstanceId":true,"Message":true},
     }),
     InfoType: node.first("InfoType", false, x => (x.content ?? '') as EnvironmentInfoType),
-    SampleTimestamp: node.first("SampleTimestamp", false, x => parseTimestamp(x.content)),
+    SampleTimestamp: node.first("SampleTimestamp", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -2566,7 +2544,7 @@ export interface ValidationMessage {
   Namespace?: string | null;
   OptionName?: string | null;
 }
-function ValidationMessage_Parse(node: XmlNode): ValidationMessage {
+function ValidationMessage_Parse(node: xmlP.XmlNode): ValidationMessage {
   return {
     ...node.strings({
       optional: {"Message":true,"Namespace":true,"OptionName":true},
@@ -2579,5 +2557,4 @@ function ValidationMessage_Parse(node: XmlNode): ValidationMessage {
 export type ValidationSeverity =
 | "error"
 | "warning"
-;
-
+| cmnP.UnexpectedEnumValue;

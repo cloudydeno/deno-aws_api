@@ -5,8 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 
 export default class ELBv2 {
   #client: ServiceClient;
@@ -32,12 +33,12 @@ export default class ELBv2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ListenerArn", (params["ListenerArn"] ?? '').toString());
-    if (params["Certificates"]) prt.appendList(body, prefix+"Certificates", params["Certificates"], {"appender":Certificate_Serialize,"entryPrefix":".member."})
+    if (params["Certificates"]) qsP.appendList(body, prefix+"Certificates", params["Certificates"], {"appender":Certificate_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddListenerCertificates",
     });
-    const xml = readXmlResult(await resp.text(), "AddListenerCertificatesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "AddListenerCertificatesResult");
     return {
       Certificates: xml.getList("Certificates", "member").map(Certificate_Parse),
     };
@@ -48,13 +49,13 @@ export default class ELBv2 {
   ): Promise<AddTagsOutput> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["ResourceArns"]) prt.appendList(body, prefix+"ResourceArns", params["ResourceArns"], {"entryPrefix":".member."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["ResourceArns"]) qsP.appendList(body, prefix+"ResourceArns", params["ResourceArns"], {"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTags",
     });
-    const xml = readXmlResult(await resp.text(), "AddTagsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "AddTagsResult");
     return {};
   }
 
@@ -67,15 +68,15 @@ export default class ELBv2 {
     body.append(prefix+"Protocol", (params["Protocol"] ?? '').toString());
     body.append(prefix+"Port", (params["Port"] ?? '').toString());
     if ("SslPolicy" in params) body.append(prefix+"SslPolicy", (params["SslPolicy"] ?? '').toString());
-    if (params["Certificates"]) prt.appendList(body, prefix+"Certificates", params["Certificates"], {"appender":Certificate_Serialize,"entryPrefix":".member."})
-    if (params["DefaultActions"]) prt.appendList(body, prefix+"DefaultActions", params["DefaultActions"], {"appender":Action_Serialize,"entryPrefix":".member."})
-    if (params["AlpnPolicy"]) prt.appendList(body, prefix+"AlpnPolicy", params["AlpnPolicy"], {"entryPrefix":".member."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Certificates"]) qsP.appendList(body, prefix+"Certificates", params["Certificates"], {"appender":Certificate_Serialize,"entryPrefix":".member."})
+    if (params["DefaultActions"]) qsP.appendList(body, prefix+"DefaultActions", params["DefaultActions"], {"appender":Action_Serialize,"entryPrefix":".member."})
+    if (params["AlpnPolicy"]) qsP.appendList(body, prefix+"AlpnPolicy", params["AlpnPolicy"], {"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateListener",
     });
-    const xml = readXmlResult(await resp.text(), "CreateListenerResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateListenerResult");
     return {
       Listeners: xml.getList("Listeners", "member").map(Listener_Parse),
     };
@@ -87,11 +88,11 @@ export default class ELBv2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"Name", (params["Name"] ?? '').toString());
-    if (params["Subnets"]) prt.appendList(body, prefix+"Subnets", params["Subnets"], {"entryPrefix":".member."})
-    if (params["SubnetMappings"]) prt.appendList(body, prefix+"SubnetMappings", params["SubnetMappings"], {"appender":SubnetMapping_Serialize,"entryPrefix":".member."})
-    if (params["SecurityGroups"]) prt.appendList(body, prefix+"SecurityGroups", params["SecurityGroups"], {"entryPrefix":".member."})
+    if (params["Subnets"]) qsP.appendList(body, prefix+"Subnets", params["Subnets"], {"entryPrefix":".member."})
+    if (params["SubnetMappings"]) qsP.appendList(body, prefix+"SubnetMappings", params["SubnetMappings"], {"appender":SubnetMapping_Serialize,"entryPrefix":".member."})
+    if (params["SecurityGroups"]) qsP.appendList(body, prefix+"SecurityGroups", params["SecurityGroups"], {"entryPrefix":".member."})
     if ("Scheme" in params) body.append(prefix+"Scheme", (params["Scheme"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     if ("Type" in params) body.append(prefix+"Type", (params["Type"] ?? '').toString());
     if ("IpAddressType" in params) body.append(prefix+"IpAddressType", (params["IpAddressType"] ?? '').toString());
     if ("CustomerOwnedIpv4Pool" in params) body.append(prefix+"CustomerOwnedIpv4Pool", (params["CustomerOwnedIpv4Pool"] ?? '').toString());
@@ -99,7 +100,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "CreateLoadBalancer",
     });
-    const xml = readXmlResult(await resp.text(), "CreateLoadBalancerResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateLoadBalancerResult");
     return {
       LoadBalancers: xml.getList("LoadBalancers", "member").map(LoadBalancer_Parse),
     };
@@ -111,15 +112,15 @@ export default class ELBv2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ListenerArn", (params["ListenerArn"] ?? '').toString());
-    if (params["Conditions"]) prt.appendList(body, prefix+"Conditions", params["Conditions"], {"appender":RuleCondition_Serialize,"entryPrefix":".member."})
+    if (params["Conditions"]) qsP.appendList(body, prefix+"Conditions", params["Conditions"], {"appender":RuleCondition_Serialize,"entryPrefix":".member."})
     body.append(prefix+"Priority", (params["Priority"] ?? '').toString());
-    if (params["Actions"]) prt.appendList(body, prefix+"Actions", params["Actions"], {"appender":Action_Serialize,"entryPrefix":".member."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Actions"]) qsP.appendList(body, prefix+"Actions", params["Actions"], {"appender":Action_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRule",
     });
-    const xml = readXmlResult(await resp.text(), "CreateRuleResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateRuleResult");
     return {
       Rules: xml.getList("Rules", "member").map(Rule_Parse),
     };
@@ -144,12 +145,12 @@ export default class ELBv2 {
     if ("UnhealthyThresholdCount" in params) body.append(prefix+"UnhealthyThresholdCount", (params["UnhealthyThresholdCount"] ?? '').toString());
     if (params["Matcher"] != null) Matcher_Serialize(body, prefix+"Matcher", params["Matcher"]);
     if ("TargetType" in params) body.append(prefix+"TargetType", (params["TargetType"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTargetGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateTargetGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateTargetGroupResult");
     return {
       TargetGroups: xml.getList("TargetGroups", "member").map(TargetGroup_Parse),
     };
@@ -165,7 +166,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "DeleteListener",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteListenerResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteListenerResult");
     return {};
   }
 
@@ -179,7 +180,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "DeleteLoadBalancer",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteLoadBalancerResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteLoadBalancerResult");
     return {};
   }
 
@@ -193,7 +194,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "DeleteRule",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteRuleResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteRuleResult");
     return {};
   }
 
@@ -207,7 +208,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "DeleteTargetGroup",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteTargetGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteTargetGroupResult");
     return {};
   }
 
@@ -217,12 +218,12 @@ export default class ELBv2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TargetGroupArn", (params["TargetGroupArn"] ?? '').toString());
-    if (params["Targets"]) prt.appendList(body, prefix+"Targets", params["Targets"], {"appender":TargetDescription_Serialize,"entryPrefix":".member."})
+    if (params["Targets"]) qsP.appendList(body, prefix+"Targets", params["Targets"], {"appender":TargetDescription_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterTargets",
     });
-    const xml = readXmlResult(await resp.text(), "DeregisterTargetsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeregisterTargetsResult");
     return {};
   }
 
@@ -237,7 +238,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "DescribeAccountLimits",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeAccountLimitsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeAccountLimitsResult");
     return {
       ...xml.strings({
         optional: {"NextMarker":true},
@@ -258,7 +259,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "DescribeListenerCertificates",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeListenerCertificatesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeListenerCertificatesResult");
     return {
       ...xml.strings({
         optional: {"NextMarker":true},
@@ -273,14 +274,14 @@ export default class ELBv2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("LoadBalancerArn" in params) body.append(prefix+"LoadBalancerArn", (params["LoadBalancerArn"] ?? '').toString());
-    if (params["ListenerArns"]) prt.appendList(body, prefix+"ListenerArns", params["ListenerArns"], {"entryPrefix":".member."})
+    if (params["ListenerArns"]) qsP.appendList(body, prefix+"ListenerArns", params["ListenerArns"], {"entryPrefix":".member."})
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("PageSize" in params) body.append(prefix+"PageSize", (params["PageSize"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeListeners",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeListenersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeListenersResult");
     return {
       ...xml.strings({
         optional: {"NextMarker":true},
@@ -299,7 +300,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "DescribeLoadBalancerAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeLoadBalancerAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeLoadBalancerAttributesResult");
     return {
       Attributes: xml.getList("Attributes", "member").map(LoadBalancerAttribute_Parse),
     };
@@ -310,15 +311,15 @@ export default class ELBv2 {
   ): Promise<DescribeLoadBalancersOutput> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["LoadBalancerArns"]) prt.appendList(body, prefix+"LoadBalancerArns", params["LoadBalancerArns"], {"entryPrefix":".member."})
-    if (params["Names"]) prt.appendList(body, prefix+"Names", params["Names"], {"entryPrefix":".member."})
+    if (params["LoadBalancerArns"]) qsP.appendList(body, prefix+"LoadBalancerArns", params["LoadBalancerArns"], {"entryPrefix":".member."})
+    if (params["Names"]) qsP.appendList(body, prefix+"Names", params["Names"], {"entryPrefix":".member."})
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("PageSize" in params) body.append(prefix+"PageSize", (params["PageSize"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLoadBalancers",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeLoadBalancersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeLoadBalancersResult");
     return {
       ...xml.strings({
         optional: {"NextMarker":true},
@@ -333,14 +334,14 @@ export default class ELBv2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("ListenerArn" in params) body.append(prefix+"ListenerArn", (params["ListenerArn"] ?? '').toString());
-    if (params["RuleArns"]) prt.appendList(body, prefix+"RuleArns", params["RuleArns"], {"entryPrefix":".member."})
+    if (params["RuleArns"]) qsP.appendList(body, prefix+"RuleArns", params["RuleArns"], {"entryPrefix":".member."})
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("PageSize" in params) body.append(prefix+"PageSize", (params["PageSize"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRules",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeRulesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeRulesResult");
     return {
       ...xml.strings({
         optional: {"NextMarker":true},
@@ -354,14 +355,14 @@ export default class ELBv2 {
   ): Promise<DescribeSSLPoliciesOutput> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Names"]) prt.appendList(body, prefix+"Names", params["Names"], {"entryPrefix":".member."})
+    if (params["Names"]) qsP.appendList(body, prefix+"Names", params["Names"], {"entryPrefix":".member."})
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("PageSize" in params) body.append(prefix+"PageSize", (params["PageSize"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSSLPolicies",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeSSLPoliciesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeSSLPoliciesResult");
     return {
       ...xml.strings({
         optional: {"NextMarker":true},
@@ -375,12 +376,12 @@ export default class ELBv2 {
   ): Promise<DescribeTagsOutput> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["ResourceArns"]) prt.appendList(body, prefix+"ResourceArns", params["ResourceArns"], {"entryPrefix":".member."})
+    if (params["ResourceArns"]) qsP.appendList(body, prefix+"ResourceArns", params["ResourceArns"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTags",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeTagsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeTagsResult");
     return {
       TagDescriptions: xml.getList("TagDescriptions", "member").map(TagDescription_Parse),
     };
@@ -396,7 +397,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "DescribeTargetGroupAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeTargetGroupAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeTargetGroupAttributesResult");
     return {
       Attributes: xml.getList("Attributes", "member").map(TargetGroupAttribute_Parse),
     };
@@ -408,15 +409,15 @@ export default class ELBv2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("LoadBalancerArn" in params) body.append(prefix+"LoadBalancerArn", (params["LoadBalancerArn"] ?? '').toString());
-    if (params["TargetGroupArns"]) prt.appendList(body, prefix+"TargetGroupArns", params["TargetGroupArns"], {"entryPrefix":".member."})
-    if (params["Names"]) prt.appendList(body, prefix+"Names", params["Names"], {"entryPrefix":".member."})
+    if (params["TargetGroupArns"]) qsP.appendList(body, prefix+"TargetGroupArns", params["TargetGroupArns"], {"entryPrefix":".member."})
+    if (params["Names"]) qsP.appendList(body, prefix+"Names", params["Names"], {"entryPrefix":".member."})
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("PageSize" in params) body.append(prefix+"PageSize", (params["PageSize"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTargetGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeTargetGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeTargetGroupsResult");
     return {
       ...xml.strings({
         optional: {"NextMarker":true},
@@ -431,12 +432,12 @@ export default class ELBv2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TargetGroupArn", (params["TargetGroupArn"] ?? '').toString());
-    if (params["Targets"]) prt.appendList(body, prefix+"Targets", params["Targets"], {"appender":TargetDescription_Serialize,"entryPrefix":".member."})
+    if (params["Targets"]) qsP.appendList(body, prefix+"Targets", params["Targets"], {"appender":TargetDescription_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTargetHealth",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeTargetHealthResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeTargetHealthResult");
     return {
       TargetHealthDescriptions: xml.getList("TargetHealthDescriptions", "member").map(TargetHealthDescription_Parse),
     };
@@ -451,14 +452,14 @@ export default class ELBv2 {
     if ("Port" in params) body.append(prefix+"Port", (params["Port"] ?? '').toString());
     if ("Protocol" in params) body.append(prefix+"Protocol", (params["Protocol"] ?? '').toString());
     if ("SslPolicy" in params) body.append(prefix+"SslPolicy", (params["SslPolicy"] ?? '').toString());
-    if (params["Certificates"]) prt.appendList(body, prefix+"Certificates", params["Certificates"], {"appender":Certificate_Serialize,"entryPrefix":".member."})
-    if (params["DefaultActions"]) prt.appendList(body, prefix+"DefaultActions", params["DefaultActions"], {"appender":Action_Serialize,"entryPrefix":".member."})
-    if (params["AlpnPolicy"]) prt.appendList(body, prefix+"AlpnPolicy", params["AlpnPolicy"], {"entryPrefix":".member."})
+    if (params["Certificates"]) qsP.appendList(body, prefix+"Certificates", params["Certificates"], {"appender":Certificate_Serialize,"entryPrefix":".member."})
+    if (params["DefaultActions"]) qsP.appendList(body, prefix+"DefaultActions", params["DefaultActions"], {"appender":Action_Serialize,"entryPrefix":".member."})
+    if (params["AlpnPolicy"]) qsP.appendList(body, prefix+"AlpnPolicy", params["AlpnPolicy"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyListener",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyListenerResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyListenerResult");
     return {
       Listeners: xml.getList("Listeners", "member").map(Listener_Parse),
     };
@@ -470,12 +471,12 @@ export default class ELBv2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerArn", (params["LoadBalancerArn"] ?? '').toString());
-    if (params["Attributes"]) prt.appendList(body, prefix+"Attributes", params["Attributes"], {"appender":LoadBalancerAttribute_Serialize,"entryPrefix":".member."})
+    if (params["Attributes"]) qsP.appendList(body, prefix+"Attributes", params["Attributes"], {"appender":LoadBalancerAttribute_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyLoadBalancerAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyLoadBalancerAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyLoadBalancerAttributesResult");
     return {
       Attributes: xml.getList("Attributes", "member").map(LoadBalancerAttribute_Parse),
     };
@@ -487,13 +488,13 @@ export default class ELBv2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"RuleArn", (params["RuleArn"] ?? '').toString());
-    if (params["Conditions"]) prt.appendList(body, prefix+"Conditions", params["Conditions"], {"appender":RuleCondition_Serialize,"entryPrefix":".member."})
-    if (params["Actions"]) prt.appendList(body, prefix+"Actions", params["Actions"], {"appender":Action_Serialize,"entryPrefix":".member."})
+    if (params["Conditions"]) qsP.appendList(body, prefix+"Conditions", params["Conditions"], {"appender":RuleCondition_Serialize,"entryPrefix":".member."})
+    if (params["Actions"]) qsP.appendList(body, prefix+"Actions", params["Actions"], {"appender":Action_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyRule",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyRuleResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyRuleResult");
     return {
       Rules: xml.getList("Rules", "member").map(Rule_Parse),
     };
@@ -518,7 +519,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "ModifyTargetGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyTargetGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyTargetGroupResult");
     return {
       TargetGroups: xml.getList("TargetGroups", "member").map(TargetGroup_Parse),
     };
@@ -530,12 +531,12 @@ export default class ELBv2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TargetGroupArn", (params["TargetGroupArn"] ?? '').toString());
-    if (params["Attributes"]) prt.appendList(body, prefix+"Attributes", params["Attributes"], {"appender":TargetGroupAttribute_Serialize,"entryPrefix":".member."})
+    if (params["Attributes"]) qsP.appendList(body, prefix+"Attributes", params["Attributes"], {"appender":TargetGroupAttribute_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyTargetGroupAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyTargetGroupAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyTargetGroupAttributesResult");
     return {
       Attributes: xml.getList("Attributes", "member").map(TargetGroupAttribute_Parse),
     };
@@ -547,12 +548,12 @@ export default class ELBv2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TargetGroupArn", (params["TargetGroupArn"] ?? '').toString());
-    if (params["Targets"]) prt.appendList(body, prefix+"Targets", params["Targets"], {"appender":TargetDescription_Serialize,"entryPrefix":".member."})
+    if (params["Targets"]) qsP.appendList(body, prefix+"Targets", params["Targets"], {"appender":TargetDescription_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterTargets",
     });
-    const xml = readXmlResult(await resp.text(), "RegisterTargetsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RegisterTargetsResult");
     return {};
   }
 
@@ -562,12 +563,12 @@ export default class ELBv2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ListenerArn", (params["ListenerArn"] ?? '').toString());
-    if (params["Certificates"]) prt.appendList(body, prefix+"Certificates", params["Certificates"], {"appender":Certificate_Serialize,"entryPrefix":".member."})
+    if (params["Certificates"]) qsP.appendList(body, prefix+"Certificates", params["Certificates"], {"appender":Certificate_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveListenerCertificates",
     });
-    const xml = readXmlResult(await resp.text(), "RemoveListenerCertificatesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RemoveListenerCertificatesResult");
     return {};
   }
 
@@ -576,13 +577,13 @@ export default class ELBv2 {
   ): Promise<RemoveTagsOutput> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["ResourceArns"]) prt.appendList(body, prefix+"ResourceArns", params["ResourceArns"], {"entryPrefix":".member."})
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
+    if (params["ResourceArns"]) qsP.appendList(body, prefix+"ResourceArns", params["ResourceArns"], {"entryPrefix":".member."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTags",
     });
-    const xml = readXmlResult(await resp.text(), "RemoveTagsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RemoveTagsResult");
     return {};
   }
 
@@ -597,7 +598,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "SetIpAddressType",
     });
-    const xml = readXmlResult(await resp.text(), "SetIpAddressTypeResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SetIpAddressTypeResult");
     return {
       IpAddressType: xml.first("IpAddressType", false, x => (x.content ?? '') as IpAddressType),
     };
@@ -608,12 +609,12 @@ export default class ELBv2 {
   ): Promise<SetRulePrioritiesOutput> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["RulePriorities"]) prt.appendList(body, prefix+"RulePriorities", params["RulePriorities"], {"appender":RulePriorityPair_Serialize,"entryPrefix":".member."})
+    if (params["RulePriorities"]) qsP.appendList(body, prefix+"RulePriorities", params["RulePriorities"], {"appender":RulePriorityPair_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetRulePriorities",
     });
-    const xml = readXmlResult(await resp.text(), "SetRulePrioritiesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SetRulePrioritiesResult");
     return {
       Rules: xml.getList("Rules", "member").map(Rule_Parse),
     };
@@ -625,12 +626,12 @@ export default class ELBv2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerArn", (params["LoadBalancerArn"] ?? '').toString());
-    if (params["SecurityGroups"]) prt.appendList(body, prefix+"SecurityGroups", params["SecurityGroups"], {"entryPrefix":".member."})
+    if (params["SecurityGroups"]) qsP.appendList(body, prefix+"SecurityGroups", params["SecurityGroups"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetSecurityGroups",
     });
-    const xml = readXmlResult(await resp.text(), "SetSecurityGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SetSecurityGroupsResult");
     return {
       SecurityGroupIds: xml.getList("SecurityGroupIds", "member").map(x => x.content ?? ''),
     };
@@ -642,13 +643,13 @@ export default class ELBv2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerArn", (params["LoadBalancerArn"] ?? '').toString());
-    if (params["Subnets"]) prt.appendList(body, prefix+"Subnets", params["Subnets"], {"entryPrefix":".member."})
-    if (params["SubnetMappings"]) prt.appendList(body, prefix+"SubnetMappings", params["SubnetMappings"], {"appender":SubnetMapping_Serialize,"entryPrefix":".member."})
+    if (params["Subnets"]) qsP.appendList(body, prefix+"Subnets", params["Subnets"], {"entryPrefix":".member."})
+    if (params["SubnetMappings"]) qsP.appendList(body, prefix+"SubnetMappings", params["SubnetMappings"], {"appender":SubnetMapping_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetSubnets",
     });
-    const xml = readXmlResult(await resp.text(), "SetSubnetsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SetSubnetsResult");
     return {
       AvailabilityZones: xml.getList("AvailabilityZones", "member").map(AvailabilityZone_Parse),
     };
@@ -681,7 +682,7 @@ export default class ELBv2 {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeLoadBalancers(params);
-        const field = resp["LoadBalancers"].flatMap(x => x["State"]?.["Code"]);
+        const field = resp?.LoadBalancers?.flatMap(x => x?.State?.Code);
         if (field.every(x => x === "active")) return resp;
         if (field.some(x => x === "provisioning")) continue;
       } catch (err) {
@@ -700,7 +701,7 @@ export default class ELBv2 {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeLoadBalancers(params);
-        if (resp["LoadBalancers"].flatMap(x => x["State"]?.["Code"]).every(x => x === "active")) continue;
+        if (resp?.LoadBalancers?.flatMap(x => x?.State?.Code).every(x => x === "active")) continue;
       } catch (err) {
         if (["LoadBalancerNotFound"].includes(err.code)) return err;
         throw err;
@@ -718,7 +719,7 @@ export default class ELBv2 {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeTargetHealth(params);
-        if (resp["TargetHealthDescriptions"].flatMap(x => x["TargetHealth"]?.["State"]).every(x => x === "healthy")) return resp;
+        if (resp?.TargetHealthDescriptions?.flatMap(x => x?.TargetHealth?.State).every(x => x === "healthy")) return resp;
       } catch (err) {
         if (!["InvalidInstance"].includes(err.code)) throw err;
       }
@@ -735,7 +736,7 @@ export default class ELBv2 {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeTargetHealth(params);
-        if (resp["TargetHealthDescriptions"].flatMap(x => x["TargetHealth"]?.["State"]).every(x => x === "unused")) return resp;
+        if (resp?.TargetHealthDescriptions?.flatMap(x => x?.TargetHealth?.State).every(x => x === "unused")) return resp;
       } catch (err) {
         if (["InvalidTarget"].includes(err.code)) return err;
         throw err;
@@ -1175,7 +1176,7 @@ function Certificate_Serialize(body: URLSearchParams, prefix: string, params: Ce
     if ("CertificateArn" in params) body.append(prefix+".CertificateArn", (params["CertificateArn"] ?? '').toString());
     if ("IsDefault" in params) body.append(prefix+".IsDefault", (params["IsDefault"] ?? '').toString());
 }
-function Certificate_Parse(node: XmlNode): Certificate {
+function Certificate_Parse(node: xmlP.XmlNode): Certificate {
   return {
     ...node.strings({
       optional: {"CertificateArn":true},
@@ -1193,7 +1194,7 @@ function Tag_Serialize(body: URLSearchParams, prefix: string, params: Tag) {
     body.append(prefix+".Key", (params["Key"] ?? '').toString());
     if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function Tag_Parse(node: XmlNode): Tag {
+function Tag_Parse(node: xmlP.XmlNode): Tag {
   return node.strings({
     required: {"Key":true},
     optional: {"Value":true},
@@ -1208,9 +1209,7 @@ export type ProtocolEnum =
 | "TLS"
 | "UDP"
 | "TCP_UDP"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 11 - tags: input, named, interface, output
 export interface Action {
@@ -1233,7 +1232,7 @@ function Action_Serialize(body: URLSearchParams, prefix: string, params: Action)
     if (params["FixedResponseConfig"] != null) FixedResponseActionConfig_Serialize(body, prefix+".FixedResponseConfig", params["FixedResponseConfig"]);
     if (params["ForwardConfig"] != null) ForwardActionConfig_Serialize(body, prefix+".ForwardConfig", params["ForwardConfig"]);
 }
-function Action_Parse(node: XmlNode): Action {
+function Action_Parse(node: xmlP.XmlNode): Action {
   return {
     ...node.strings({
       optional: {"TargetGroupArn":true},
@@ -1255,9 +1254,7 @@ export type ActionTypeEnum =
 | "authenticate-cognito"
 | "redirect"
 | "fixed-response"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 11 - tags: input, named, interface, output
 export interface AuthenticateOidcActionConfig {
@@ -1270,7 +1267,7 @@ export interface AuthenticateOidcActionConfig {
   SessionCookieName?: string | null;
   Scope?: string | null;
   SessionTimeout?: number | null;
-  AuthenticationRequestExtraParams: { [key: string]: string };
+  AuthenticationRequestExtraParams: { [key: string]: string | null | undefined };
   OnUnauthenticatedRequest?: AuthenticateOidcActionConditionalBehaviorEnum | null;
   UseExistingClientSecret?: boolean | null;
 }
@@ -1284,18 +1281,18 @@ function AuthenticateOidcActionConfig_Serialize(body: URLSearchParams, prefix: s
     if ("SessionCookieName" in params) body.append(prefix+".SessionCookieName", (params["SessionCookieName"] ?? '').toString());
     if ("Scope" in params) body.append(prefix+".Scope", (params["Scope"] ?? '').toString());
     if ("SessionTimeout" in params) body.append(prefix+".SessionTimeout", (params["SessionTimeout"] ?? '').toString());
-    if (params["AuthenticationRequestExtraParams"]) prt.appendMap(body, prefix+".AuthenticationRequestExtraParams", params["AuthenticationRequestExtraParams"], {"entryPrefix":".entry."})
+    if (params["AuthenticationRequestExtraParams"]) qsP.appendMap(body, prefix+".AuthenticationRequestExtraParams", params["AuthenticationRequestExtraParams"], {"entryPrefix":".entry."})
     if ("OnUnauthenticatedRequest" in params) body.append(prefix+".OnUnauthenticatedRequest", (params["OnUnauthenticatedRequest"] ?? '').toString());
     if ("UseExistingClientSecret" in params) body.append(prefix+".UseExistingClientSecret", (params["UseExistingClientSecret"] ?? '').toString());
 }
-function AuthenticateOidcActionConfig_Parse(node: XmlNode): AuthenticateOidcActionConfig {
+function AuthenticateOidcActionConfig_Parse(node: xmlP.XmlNode): AuthenticateOidcActionConfig {
   return {
     ...node.strings({
       required: {"Issuer":true,"AuthorizationEndpoint":true,"TokenEndpoint":true,"UserInfoEndpoint":true,"ClientId":true},
       optional: {"ClientSecret":true,"SessionCookieName":true,"Scope":true},
     }),
     SessionTimeout: node.first("SessionTimeout", false, x => parseInt(x.content ?? '0')),
-    AuthenticationRequestExtraParams: readXmlMap(node.getList("AuthenticationRequestExtraParams", "entry"), x => x.content ?? '', {}),
+    AuthenticationRequestExtraParams: xmlP.readXmlMap(node.getList("AuthenticationRequestExtraParams", "entry"), x => x.content ?? '', {}),
     OnUnauthenticatedRequest: node.first("OnUnauthenticatedRequest", false, x => (x.content ?? '') as AuthenticateOidcActionConditionalBehaviorEnum),
     UseExistingClientSecret: node.first("UseExistingClientSecret", false, x => x.content === 'true'),
   };
@@ -1306,9 +1303,7 @@ export type AuthenticateOidcActionConditionalBehaviorEnum =
 | "deny"
 | "allow"
 | "authenticate"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 11 - tags: input, named, interface, output
 export interface AuthenticateCognitoActionConfig {
@@ -1318,7 +1313,7 @@ export interface AuthenticateCognitoActionConfig {
   SessionCookieName?: string | null;
   Scope?: string | null;
   SessionTimeout?: number | null;
-  AuthenticationRequestExtraParams: { [key: string]: string };
+  AuthenticationRequestExtraParams: { [key: string]: string | null | undefined };
   OnUnauthenticatedRequest?: AuthenticateCognitoActionConditionalBehaviorEnum | null;
 }
 function AuthenticateCognitoActionConfig_Serialize(body: URLSearchParams, prefix: string, params: AuthenticateCognitoActionConfig) {
@@ -1328,17 +1323,17 @@ function AuthenticateCognitoActionConfig_Serialize(body: URLSearchParams, prefix
     if ("SessionCookieName" in params) body.append(prefix+".SessionCookieName", (params["SessionCookieName"] ?? '').toString());
     if ("Scope" in params) body.append(prefix+".Scope", (params["Scope"] ?? '').toString());
     if ("SessionTimeout" in params) body.append(prefix+".SessionTimeout", (params["SessionTimeout"] ?? '').toString());
-    if (params["AuthenticationRequestExtraParams"]) prt.appendMap(body, prefix+".AuthenticationRequestExtraParams", params["AuthenticationRequestExtraParams"], {"entryPrefix":".entry."})
+    if (params["AuthenticationRequestExtraParams"]) qsP.appendMap(body, prefix+".AuthenticationRequestExtraParams", params["AuthenticationRequestExtraParams"], {"entryPrefix":".entry."})
     if ("OnUnauthenticatedRequest" in params) body.append(prefix+".OnUnauthenticatedRequest", (params["OnUnauthenticatedRequest"] ?? '').toString());
 }
-function AuthenticateCognitoActionConfig_Parse(node: XmlNode): AuthenticateCognitoActionConfig {
+function AuthenticateCognitoActionConfig_Parse(node: xmlP.XmlNode): AuthenticateCognitoActionConfig {
   return {
     ...node.strings({
       required: {"UserPoolArn":true,"UserPoolClientId":true,"UserPoolDomain":true},
       optional: {"SessionCookieName":true,"Scope":true},
     }),
     SessionTimeout: node.first("SessionTimeout", false, x => parseInt(x.content ?? '0')),
-    AuthenticationRequestExtraParams: readXmlMap(node.getList("AuthenticationRequestExtraParams", "entry"), x => x.content ?? '', {}),
+    AuthenticationRequestExtraParams: xmlP.readXmlMap(node.getList("AuthenticationRequestExtraParams", "entry"), x => x.content ?? '', {}),
     OnUnauthenticatedRequest: node.first("OnUnauthenticatedRequest", false, x => (x.content ?? '') as AuthenticateCognitoActionConditionalBehaviorEnum),
   };
 }
@@ -1348,9 +1343,7 @@ export type AuthenticateCognitoActionConditionalBehaviorEnum =
 | "deny"
 | "allow"
 | "authenticate"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 11 - tags: input, named, interface, output
 export interface RedirectActionConfig {
@@ -1369,7 +1362,7 @@ function RedirectActionConfig_Serialize(body: URLSearchParams, prefix: string, p
     if ("Query" in params) body.append(prefix+".Query", (params["Query"] ?? '').toString());
     body.append(prefix+".StatusCode", (params["StatusCode"] ?? '').toString());
 }
-function RedirectActionConfig_Parse(node: XmlNode): RedirectActionConfig {
+function RedirectActionConfig_Parse(node: xmlP.XmlNode): RedirectActionConfig {
   return {
     ...node.strings({
       optional: {"Protocol":true,"Port":true,"Host":true,"Path":true,"Query":true},
@@ -1382,9 +1375,7 @@ function RedirectActionConfig_Parse(node: XmlNode): RedirectActionConfig {
 export type RedirectActionStatusCodeEnum =
 | "HTTP_301"
 | "HTTP_302"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 11 - tags: input, named, interface, output
 export interface FixedResponseActionConfig {
@@ -1397,7 +1388,7 @@ function FixedResponseActionConfig_Serialize(body: URLSearchParams, prefix: stri
     body.append(prefix+".StatusCode", (params["StatusCode"] ?? '').toString());
     if ("ContentType" in params) body.append(prefix+".ContentType", (params["ContentType"] ?? '').toString());
 }
-function FixedResponseActionConfig_Parse(node: XmlNode): FixedResponseActionConfig {
+function FixedResponseActionConfig_Parse(node: xmlP.XmlNode): FixedResponseActionConfig {
   return node.strings({
     required: {"StatusCode":true},
     optional: {"MessageBody":true,"ContentType":true},
@@ -1410,10 +1401,10 @@ export interface ForwardActionConfig {
   TargetGroupStickinessConfig?: TargetGroupStickinessConfig | null;
 }
 function ForwardActionConfig_Serialize(body: URLSearchParams, prefix: string, params: ForwardActionConfig) {
-    if (params["TargetGroups"]) prt.appendList(body, prefix+".TargetGroups", params["TargetGroups"], {"appender":TargetGroupTuple_Serialize,"entryPrefix":".member."})
+    if (params["TargetGroups"]) qsP.appendList(body, prefix+".TargetGroups", params["TargetGroups"], {"appender":TargetGroupTuple_Serialize,"entryPrefix":".member."})
     if (params["TargetGroupStickinessConfig"] != null) TargetGroupStickinessConfig_Serialize(body, prefix+".TargetGroupStickinessConfig", params["TargetGroupStickinessConfig"]);
 }
-function ForwardActionConfig_Parse(node: XmlNode): ForwardActionConfig {
+function ForwardActionConfig_Parse(node: xmlP.XmlNode): ForwardActionConfig {
   return {
     TargetGroups: node.getList("TargetGroups", "member").map(TargetGroupTuple_Parse),
     TargetGroupStickinessConfig: node.first("TargetGroupStickinessConfig", false, TargetGroupStickinessConfig_Parse),
@@ -1429,7 +1420,7 @@ function TargetGroupTuple_Serialize(body: URLSearchParams, prefix: string, param
     if ("TargetGroupArn" in params) body.append(prefix+".TargetGroupArn", (params["TargetGroupArn"] ?? '').toString());
     if ("Weight" in params) body.append(prefix+".Weight", (params["Weight"] ?? '').toString());
 }
-function TargetGroupTuple_Parse(node: XmlNode): TargetGroupTuple {
+function TargetGroupTuple_Parse(node: xmlP.XmlNode): TargetGroupTuple {
   return {
     ...node.strings({
       optional: {"TargetGroupArn":true},
@@ -1447,7 +1438,7 @@ function TargetGroupStickinessConfig_Serialize(body: URLSearchParams, prefix: st
     if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
     if ("DurationSeconds" in params) body.append(prefix+".DurationSeconds", (params["DurationSeconds"] ?? '').toString());
 }
-function TargetGroupStickinessConfig_Parse(node: XmlNode): TargetGroupStickinessConfig {
+function TargetGroupStickinessConfig_Parse(node: xmlP.XmlNode): TargetGroupStickinessConfig {
   return {
     Enabled: node.first("Enabled", false, x => x.content === 'true'),
     DurationSeconds: node.first("DurationSeconds", false, x => parseInt(x.content ?? '0')),
@@ -1470,25 +1461,19 @@ function SubnetMapping_Serialize(body: URLSearchParams, prefix: string, params: 
 export type LoadBalancerSchemeEnum =
 | "internet-facing"
 | "internal"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type LoadBalancerTypeEnum =
 | "application"
 | "network"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type IpAddressType =
 | "ipv4"
 | "dualstack"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface RuleCondition {
@@ -1503,7 +1488,7 @@ export interface RuleCondition {
 }
 function RuleCondition_Serialize(body: URLSearchParams, prefix: string, params: RuleCondition) {
     if ("Field" in params) body.append(prefix+".Field", (params["Field"] ?? '').toString());
-    if (params["Values"]) prt.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
+    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
     if (params["HostHeaderConfig"] != null) HostHeaderConditionConfig_Serialize(body, prefix+".HostHeaderConfig", params["HostHeaderConfig"]);
     if (params["PathPatternConfig"] != null) PathPatternConditionConfig_Serialize(body, prefix+".PathPatternConfig", params["PathPatternConfig"]);
     if (params["HttpHeaderConfig"] != null) HttpHeaderConditionConfig_Serialize(body, prefix+".HttpHeaderConfig", params["HttpHeaderConfig"]);
@@ -1511,7 +1496,7 @@ function RuleCondition_Serialize(body: URLSearchParams, prefix: string, params: 
     if (params["HttpRequestMethodConfig"] != null) HttpRequestMethodConditionConfig_Serialize(body, prefix+".HttpRequestMethodConfig", params["HttpRequestMethodConfig"]);
     if (params["SourceIpConfig"] != null) SourceIpConditionConfig_Serialize(body, prefix+".SourceIpConfig", params["SourceIpConfig"]);
 }
-function RuleCondition_Parse(node: XmlNode): RuleCondition {
+function RuleCondition_Parse(node: xmlP.XmlNode): RuleCondition {
   return {
     ...node.strings({
       optional: {"Field":true},
@@ -1531,9 +1516,9 @@ export interface HostHeaderConditionConfig {
   Values: string[];
 }
 function HostHeaderConditionConfig_Serialize(body: URLSearchParams, prefix: string, params: HostHeaderConditionConfig) {
-    if (params["Values"]) prt.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
+    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
 }
-function HostHeaderConditionConfig_Parse(node: XmlNode): HostHeaderConditionConfig {
+function HostHeaderConditionConfig_Parse(node: xmlP.XmlNode): HostHeaderConditionConfig {
   return {
     Values: node.getList("Values", "member").map(x => x.content ?? ''),
   };
@@ -1544,9 +1529,9 @@ export interface PathPatternConditionConfig {
   Values: string[];
 }
 function PathPatternConditionConfig_Serialize(body: URLSearchParams, prefix: string, params: PathPatternConditionConfig) {
-    if (params["Values"]) prt.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
+    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
 }
-function PathPatternConditionConfig_Parse(node: XmlNode): PathPatternConditionConfig {
+function PathPatternConditionConfig_Parse(node: xmlP.XmlNode): PathPatternConditionConfig {
   return {
     Values: node.getList("Values", "member").map(x => x.content ?? ''),
   };
@@ -1559,9 +1544,9 @@ export interface HttpHeaderConditionConfig {
 }
 function HttpHeaderConditionConfig_Serialize(body: URLSearchParams, prefix: string, params: HttpHeaderConditionConfig) {
     if ("HttpHeaderName" in params) body.append(prefix+".HttpHeaderName", (params["HttpHeaderName"] ?? '').toString());
-    if (params["Values"]) prt.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
+    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
 }
-function HttpHeaderConditionConfig_Parse(node: XmlNode): HttpHeaderConditionConfig {
+function HttpHeaderConditionConfig_Parse(node: xmlP.XmlNode): HttpHeaderConditionConfig {
   return {
     ...node.strings({
       optional: {"HttpHeaderName":true},
@@ -1575,9 +1560,9 @@ export interface QueryStringConditionConfig {
   Values: QueryStringKeyValuePair[];
 }
 function QueryStringConditionConfig_Serialize(body: URLSearchParams, prefix: string, params: QueryStringConditionConfig) {
-    if (params["Values"]) prt.appendList(body, prefix+".Values", params["Values"], {"appender":QueryStringKeyValuePair_Serialize,"entryPrefix":".member."})
+    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"appender":QueryStringKeyValuePair_Serialize,"entryPrefix":".member."})
 }
-function QueryStringConditionConfig_Parse(node: XmlNode): QueryStringConditionConfig {
+function QueryStringConditionConfig_Parse(node: xmlP.XmlNode): QueryStringConditionConfig {
   return {
     Values: node.getList("Values", "member").map(QueryStringKeyValuePair_Parse),
   };
@@ -1592,7 +1577,7 @@ function QueryStringKeyValuePair_Serialize(body: URLSearchParams, prefix: string
     if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
     if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function QueryStringKeyValuePair_Parse(node: XmlNode): QueryStringKeyValuePair {
+function QueryStringKeyValuePair_Parse(node: xmlP.XmlNode): QueryStringKeyValuePair {
   return node.strings({
     optional: {"Key":true,"Value":true},
   });
@@ -1603,9 +1588,9 @@ export interface HttpRequestMethodConditionConfig {
   Values: string[];
 }
 function HttpRequestMethodConditionConfig_Serialize(body: URLSearchParams, prefix: string, params: HttpRequestMethodConditionConfig) {
-    if (params["Values"]) prt.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
+    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
 }
-function HttpRequestMethodConditionConfig_Parse(node: XmlNode): HttpRequestMethodConditionConfig {
+function HttpRequestMethodConditionConfig_Parse(node: xmlP.XmlNode): HttpRequestMethodConditionConfig {
   return {
     Values: node.getList("Values", "member").map(x => x.content ?? ''),
   };
@@ -1616,9 +1601,9 @@ export interface SourceIpConditionConfig {
   Values: string[];
 }
 function SourceIpConditionConfig_Serialize(body: URLSearchParams, prefix: string, params: SourceIpConditionConfig) {
-    if (params["Values"]) prt.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
+    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
 }
-function SourceIpConditionConfig_Parse(node: XmlNode): SourceIpConditionConfig {
+function SourceIpConditionConfig_Parse(node: xmlP.XmlNode): SourceIpConditionConfig {
   return {
     Values: node.getList("Values", "member").map(x => x.content ?? ''),
   };
@@ -1631,7 +1616,7 @@ export interface Matcher {
 function Matcher_Serialize(body: URLSearchParams, prefix: string, params: Matcher) {
     body.append(prefix+".HttpCode", (params["HttpCode"] ?? '').toString());
 }
-function Matcher_Parse(node: XmlNode): Matcher {
+function Matcher_Parse(node: xmlP.XmlNode): Matcher {
   return node.strings({
     required: {"HttpCode":true},
   });
@@ -1642,9 +1627,7 @@ export type TargetTypeEnum =
 | "instance"
 | "ip"
 | "lambda"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface TargetDescription {
@@ -1657,7 +1640,7 @@ function TargetDescription_Serialize(body: URLSearchParams, prefix: string, para
     if ("Port" in params) body.append(prefix+".Port", (params["Port"] ?? '').toString());
     if ("AvailabilityZone" in params) body.append(prefix+".AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
 }
-function TargetDescription_Parse(node: XmlNode): TargetDescription {
+function TargetDescription_Parse(node: xmlP.XmlNode): TargetDescription {
   return {
     ...node.strings({
       required: {"Id":true},
@@ -1676,7 +1659,7 @@ function LoadBalancerAttribute_Serialize(body: URLSearchParams, prefix: string, 
     if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
     if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function LoadBalancerAttribute_Parse(node: XmlNode): LoadBalancerAttribute {
+function LoadBalancerAttribute_Parse(node: xmlP.XmlNode): LoadBalancerAttribute {
   return node.strings({
     optional: {"Key":true,"Value":true},
   });
@@ -1691,7 +1674,7 @@ function TargetGroupAttribute_Serialize(body: URLSearchParams, prefix: string, p
     if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
     if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function TargetGroupAttribute_Parse(node: XmlNode): TargetGroupAttribute {
+function TargetGroupAttribute_Parse(node: xmlP.XmlNode): TargetGroupAttribute {
   return node.strings({
     optional: {"Key":true,"Value":true},
   });
@@ -1718,7 +1701,7 @@ export interface Listener {
   DefaultActions: Action[];
   AlpnPolicy: string[];
 }
-function Listener_Parse(node: XmlNode): Listener {
+function Listener_Parse(node: xmlP.XmlNode): Listener {
   return {
     ...node.strings({
       optional: {"ListenerArn":true,"LoadBalancerArn":true,"SslPolicy":true},
@@ -1747,12 +1730,12 @@ export interface LoadBalancer {
   IpAddressType?: IpAddressType | null;
   CustomerOwnedIpv4Pool?: string | null;
 }
-function LoadBalancer_Parse(node: XmlNode): LoadBalancer {
+function LoadBalancer_Parse(node: xmlP.XmlNode): LoadBalancer {
   return {
     ...node.strings({
       optional: {"LoadBalancerArn":true,"DNSName":true,"CanonicalHostedZoneId":true,"LoadBalancerName":true,"VpcId":true,"CustomerOwnedIpv4Pool":true},
     }),
-    CreatedTime: node.first("CreatedTime", false, x => parseTimestamp(x.content)),
+    CreatedTime: node.first("CreatedTime", false, x => xmlP.parseTimestamp(x.content)),
     Scheme: node.first("Scheme", false, x => (x.content ?? '') as LoadBalancerSchemeEnum),
     State: node.first("State", false, LoadBalancerState_Parse),
     Type: node.first("Type", false, x => (x.content ?? '') as LoadBalancerTypeEnum),
@@ -1767,7 +1750,7 @@ export interface LoadBalancerState {
   Code?: LoadBalancerStateEnum | null;
   Reason?: string | null;
 }
-function LoadBalancerState_Parse(node: XmlNode): LoadBalancerState {
+function LoadBalancerState_Parse(node: xmlP.XmlNode): LoadBalancerState {
   return {
     ...node.strings({
       optional: {"Reason":true},
@@ -1782,8 +1765,7 @@ export type LoadBalancerStateEnum =
 | "provisioning"
 | "active_impaired"
 | "failed"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface AvailabilityZone {
@@ -1792,7 +1774,7 @@ export interface AvailabilityZone {
   OutpostId?: string | null;
   LoadBalancerAddresses: LoadBalancerAddress[];
 }
-function AvailabilityZone_Parse(node: XmlNode): AvailabilityZone {
+function AvailabilityZone_Parse(node: xmlP.XmlNode): AvailabilityZone {
   return {
     ...node.strings({
       optional: {"ZoneName":true,"SubnetId":true,"OutpostId":true},
@@ -1807,7 +1789,7 @@ export interface LoadBalancerAddress {
   AllocationId?: string | null;
   PrivateIPv4Address?: string | null;
 }
-function LoadBalancerAddress_Parse(node: XmlNode): LoadBalancerAddress {
+function LoadBalancerAddress_Parse(node: xmlP.XmlNode): LoadBalancerAddress {
   return node.strings({
     optional: {"IpAddress":true,"AllocationId":true,"PrivateIPv4Address":true},
   });
@@ -1821,7 +1803,7 @@ export interface Rule {
   Actions: Action[];
   IsDefault?: boolean | null;
 }
-function Rule_Parse(node: XmlNode): Rule {
+function Rule_Parse(node: xmlP.XmlNode): Rule {
   return {
     ...node.strings({
       optional: {"RuleArn":true,"Priority":true},
@@ -1851,7 +1833,7 @@ export interface TargetGroup {
   LoadBalancerArns: string[];
   TargetType?: TargetTypeEnum | null;
 }
-function TargetGroup_Parse(node: XmlNode): TargetGroup {
+function TargetGroup_Parse(node: xmlP.XmlNode): TargetGroup {
   return {
     ...node.strings({
       optional: {"TargetGroupArn":true,"TargetGroupName":true,"VpcId":true,"HealthCheckPort":true,"HealthCheckPath":true},
@@ -1875,7 +1857,7 @@ export interface Limit {
   Name?: string | null;
   Max?: string | null;
 }
-function Limit_Parse(node: XmlNode): Limit {
+function Limit_Parse(node: xmlP.XmlNode): Limit {
   return node.strings({
     optional: {"Name":true,"Max":true},
   });
@@ -1887,7 +1869,7 @@ export interface SslPolicy {
   Ciphers: Cipher[];
   Name?: string | null;
 }
-function SslPolicy_Parse(node: XmlNode): SslPolicy {
+function SslPolicy_Parse(node: xmlP.XmlNode): SslPolicy {
   return {
     ...node.strings({
       optional: {"Name":true},
@@ -1902,7 +1884,7 @@ export interface Cipher {
   Name?: string | null;
   Priority?: number | null;
 }
-function Cipher_Parse(node: XmlNode): Cipher {
+function Cipher_Parse(node: xmlP.XmlNode): Cipher {
   return {
     ...node.strings({
       optional: {"Name":true},
@@ -1916,7 +1898,7 @@ export interface TagDescription {
   ResourceArn?: string | null;
   Tags: Tag[];
 }
-function TagDescription_Parse(node: XmlNode): TagDescription {
+function TagDescription_Parse(node: xmlP.XmlNode): TagDescription {
   return {
     ...node.strings({
       optional: {"ResourceArn":true},
@@ -1931,7 +1913,7 @@ export interface TargetHealthDescription {
   HealthCheckPort?: string | null;
   TargetHealth?: TargetHealth | null;
 }
-function TargetHealthDescription_Parse(node: XmlNode): TargetHealthDescription {
+function TargetHealthDescription_Parse(node: xmlP.XmlNode): TargetHealthDescription {
   return {
     ...node.strings({
       optional: {"HealthCheckPort":true},
@@ -1947,7 +1929,7 @@ export interface TargetHealth {
   Reason?: TargetHealthReasonEnum | null;
   Description?: string | null;
 }
-function TargetHealth_Parse(node: XmlNode): TargetHealth {
+function TargetHealth_Parse(node: xmlP.XmlNode): TargetHealth {
   return {
     ...node.strings({
       optional: {"Description":true},
@@ -1965,8 +1947,7 @@ export type TargetHealthStateEnum =
 | "unused"
 | "draining"
 | "unavailable"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type TargetHealthReasonEnum =
@@ -1982,5 +1963,4 @@ export type TargetHealthReasonEnum =
 | "Target.IpUnusable"
 | "Target.HealthCheckDisabled"
 | "Elb.InternalError"
-;
-
+| cmnP.UnexpectedEnumValue;

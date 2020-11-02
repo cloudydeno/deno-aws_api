@@ -5,8 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 
 export default class RDS {
   #client: ServiceClient;
@@ -65,7 +66,7 @@ export default class RDS {
       abortSignal, body,
       action: "AddSourceIdentifierToSubscription",
     });
-    const xml = readXmlResult(await resp.text(), "AddSourceIdentifierToSubscriptionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "AddSourceIdentifierToSubscriptionResult");
     return {
       EventSubscription: xml.first("EventSubscription", false, EventSubscription_Parse),
     };
@@ -77,7 +78,7 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceName", (params["ResourceName"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTagsToResource",
@@ -96,7 +97,7 @@ export default class RDS {
       abortSignal, body,
       action: "ApplyPendingMaintenanceAction",
     });
-    const xml = readXmlResult(await resp.text(), "ApplyPendingMaintenanceActionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ApplyPendingMaintenanceActionResult");
     return {
       ResourcePendingMaintenanceActions: xml.first("ResourcePendingMaintenanceActions", false, ResourcePendingMaintenanceActions_Parse),
     };
@@ -116,7 +117,7 @@ export default class RDS {
       abortSignal, body,
       action: "AuthorizeDBSecurityGroupIngress",
     });
-    const xml = readXmlResult(await resp.text(), "AuthorizeDBSecurityGroupIngressResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "AuthorizeDBSecurityGroupIngressResult");
     return {
       DBSecurityGroup: xml.first("DBSecurityGroup", false, DBSecurityGroup_Parse),
     };
@@ -128,14 +129,14 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
-    body.append(prefix+"BacktrackTo", prt.encodeDate_iso8601(params["BacktrackTo"]));
+    body.append(prefix+"BacktrackTo", qsP.encodeDate_iso8601(params["BacktrackTo"]));
     if ("Force" in params) body.append(prefix+"Force", (params["Force"] ?? '').toString());
     if ("UseEarliestTimeOnPointInTimeUnavailable" in params) body.append(prefix+"UseEarliestTimeOnPointInTimeUnavailable", (params["UseEarliestTimeOnPointInTimeUnavailable"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BacktrackDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "BacktrackDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "BacktrackDBClusterResult");
     return DBClusterBacktrack_Parse(xml);
   }
 
@@ -149,7 +150,7 @@ export default class RDS {
       abortSignal, body,
       action: "CancelExportTask",
     });
-    const xml = readXmlResult(await resp.text(), "CancelExportTaskResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CancelExportTaskResult");
     return ExportTask_Parse(xml);
   }
 
@@ -161,12 +162,12 @@ export default class RDS {
     body.append(prefix+"SourceDBClusterParameterGroupIdentifier", (params["SourceDBClusterParameterGroupIdentifier"] ?? '').toString());
     body.append(prefix+"TargetDBClusterParameterGroupIdentifier", (params["TargetDBClusterParameterGroupIdentifier"] ?? '').toString());
     body.append(prefix+"TargetDBClusterParameterGroupDescription", (params["TargetDBClusterParameterGroupDescription"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CopyDBClusterParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CopyDBClusterParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CopyDBClusterParameterGroupResult");
     return {
       DBClusterParameterGroup: xml.first("DBClusterParameterGroup", false, DBClusterParameterGroup_Parse),
     };
@@ -182,13 +183,13 @@ export default class RDS {
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
     if ("PreSignedUrl" in params) body.append(prefix+"PreSignedUrl", (params["PreSignedUrl"] ?? '').toString());
     if ("CopyTags" in params) body.append(prefix+"CopyTags", (params["CopyTags"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("SourceRegion" in params) body.append(prefix+"SourceRegion", (params["SourceRegion"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CopyDBClusterSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "CopyDBClusterSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CopyDBClusterSnapshotResult");
     return {
       DBClusterSnapshot: xml.first("DBClusterSnapshot", false, DBClusterSnapshot_Parse),
     };
@@ -202,12 +203,12 @@ export default class RDS {
     body.append(prefix+"SourceDBParameterGroupIdentifier", (params["SourceDBParameterGroupIdentifier"] ?? '').toString());
     body.append(prefix+"TargetDBParameterGroupIdentifier", (params["TargetDBParameterGroupIdentifier"] ?? '').toString());
     body.append(prefix+"TargetDBParameterGroupDescription", (params["TargetDBParameterGroupDescription"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CopyDBParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CopyDBParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CopyDBParameterGroupResult");
     return {
       DBParameterGroup: xml.first("DBParameterGroup", false, DBParameterGroup_Parse),
     };
@@ -221,7 +222,7 @@ export default class RDS {
     body.append(prefix+"SourceDBSnapshotIdentifier", (params["SourceDBSnapshotIdentifier"] ?? '').toString());
     body.append(prefix+"TargetDBSnapshotIdentifier", (params["TargetDBSnapshotIdentifier"] ?? '').toString());
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("CopyTags" in params) body.append(prefix+"CopyTags", (params["CopyTags"] ?? '').toString());
     if ("PreSignedUrl" in params) body.append(prefix+"PreSignedUrl", (params["PreSignedUrl"] ?? '').toString());
     if ("OptionGroupName" in params) body.append(prefix+"OptionGroupName", (params["OptionGroupName"] ?? '').toString());
@@ -230,7 +231,7 @@ export default class RDS {
       abortSignal, body,
       action: "CopyDBSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "CopyDBSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CopyDBSnapshotResult");
     return {
       DBSnapshot: xml.first("DBSnapshot", false, DBSnapshot_Parse),
     };
@@ -244,12 +245,12 @@ export default class RDS {
     body.append(prefix+"SourceOptionGroupIdentifier", (params["SourceOptionGroupIdentifier"] ?? '').toString());
     body.append(prefix+"TargetOptionGroupIdentifier", (params["TargetOptionGroupIdentifier"] ?? '').toString());
     body.append(prefix+"TargetOptionGroupDescription", (params["TargetOptionGroupDescription"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CopyOptionGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CopyOptionGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CopyOptionGroupResult");
     return {
       OptionGroup: xml.first("OptionGroup", false, OptionGroup_Parse),
     };
@@ -268,7 +269,7 @@ export default class RDS {
       abortSignal, body,
       action: "CreateCustomAvailabilityZone",
     });
-    const xml = readXmlResult(await resp.text(), "CreateCustomAvailabilityZoneResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateCustomAvailabilityZoneResult");
     return {
       CustomAvailabilityZone: xml.first("CustomAvailabilityZone", false, CustomAvailabilityZone_Parse),
     };
@@ -279,13 +280,13 @@ export default class RDS {
   ): Promise<CreateDBClusterResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["AvailabilityZones"]) prt.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".AvailabilityZone."})
+    if (params["AvailabilityZones"]) qsP.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".AvailabilityZone."})
     if ("BackupRetentionPeriod" in params) body.append(prefix+"BackupRetentionPeriod", (params["BackupRetentionPeriod"] ?? '').toString());
     if ("CharacterSetName" in params) body.append(prefix+"CharacterSetName", (params["CharacterSetName"] ?? '').toString());
     if ("DatabaseName" in params) body.append(prefix+"DatabaseName", (params["DatabaseName"] ?? '').toString());
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     if ("DBClusterParameterGroupName" in params) body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
     if ("EngineVersion" in params) body.append(prefix+"EngineVersion", (params["EngineVersion"] ?? '').toString());
@@ -296,13 +297,13 @@ export default class RDS {
     if ("PreferredBackupWindow" in params) body.append(prefix+"PreferredBackupWindow", (params["PreferredBackupWindow"] ?? '').toString());
     if ("PreferredMaintenanceWindow" in params) body.append(prefix+"PreferredMaintenanceWindow", (params["PreferredMaintenanceWindow"] ?? '').toString());
     if ("ReplicationSourceIdentifier" in params) body.append(prefix+"ReplicationSourceIdentifier", (params["ReplicationSourceIdentifier"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("StorageEncrypted" in params) body.append(prefix+"StorageEncrypted", (params["StorageEncrypted"] ?? '').toString());
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
     if ("PreSignedUrl" in params) body.append(prefix+"PreSignedUrl", (params["PreSignedUrl"] ?? '').toString());
     if ("EnableIAMDatabaseAuthentication" in params) body.append(prefix+"EnableIAMDatabaseAuthentication", (params["EnableIAMDatabaseAuthentication"] ?? '').toString());
     if ("BacktrackWindow" in params) body.append(prefix+"BacktrackWindow", (params["BacktrackWindow"] ?? '').toString());
-    if (params["EnableCloudwatchLogsExports"]) prt.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
+    if (params["EnableCloudwatchLogsExports"]) qsP.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
     if ("EngineMode" in params) body.append(prefix+"EngineMode", (params["EngineMode"] ?? '').toString());
     if (params["ScalingConfiguration"] != null) ScalingConfiguration_Serialize(body, prefix+"ScalingConfiguration", params["ScalingConfiguration"]);
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
@@ -317,7 +318,7 @@ export default class RDS {
       abortSignal, body,
       action: "CreateDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -331,14 +332,14 @@ export default class RDS {
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     body.append(prefix+"DBClusterEndpointIdentifier", (params["DBClusterEndpointIdentifier"] ?? '').toString());
     body.append(prefix+"EndpointType", (params["EndpointType"] ?? '').toString());
-    if (params["StaticMembers"]) prt.appendList(body, prefix+"StaticMembers", params["StaticMembers"], {"entryPrefix":".member."})
-    if (params["ExcludedMembers"]) prt.appendList(body, prefix+"ExcludedMembers", params["ExcludedMembers"], {"entryPrefix":".member."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["StaticMembers"]) qsP.appendList(body, prefix+"StaticMembers", params["StaticMembers"], {"entryPrefix":".member."})
+    if (params["ExcludedMembers"]) qsP.appendList(body, prefix+"ExcludedMembers", params["ExcludedMembers"], {"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBClusterEndpoint",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBClusterEndpointResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBClusterEndpointResult");
     return DBClusterEndpoint_Parse(xml);
   }
 
@@ -350,12 +351,12 @@ export default class RDS {
     body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
     body.append(prefix+"DBParameterGroupFamily", (params["DBParameterGroupFamily"] ?? '').toString());
     body.append(prefix+"Description", (params["Description"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBClusterParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBClusterParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBClusterParameterGroupResult");
     return {
       DBClusterParameterGroup: xml.first("DBClusterParameterGroup", false, DBClusterParameterGroup_Parse),
     };
@@ -368,12 +369,12 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBClusterSnapshotIdentifier", (params["DBClusterSnapshotIdentifier"] ?? '').toString());
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBClusterSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBClusterSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBClusterSnapshotResult");
     return {
       DBClusterSnapshot: xml.first("DBClusterSnapshot", false, DBClusterSnapshot_Parse),
     };
@@ -391,8 +392,8 @@ export default class RDS {
     body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
     if ("MasterUsername" in params) body.append(prefix+"MasterUsername", (params["MasterUsername"] ?? '').toString());
     if ("MasterUserPassword" in params) body.append(prefix+"MasterUserPassword", (params["MasterUserPassword"] ?? '').toString());
-    if (params["DBSecurityGroups"]) prt.appendList(body, prefix+"DBSecurityGroups", params["DBSecurityGroups"], {"entryPrefix":".DBSecurityGroupName."})
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["DBSecurityGroups"]) qsP.appendList(body, prefix+"DBSecurityGroups", params["DBSecurityGroups"], {"entryPrefix":".DBSecurityGroupName."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("AvailabilityZone" in params) body.append(prefix+"AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     if ("PreferredMaintenanceWindow" in params) body.append(prefix+"PreferredMaintenanceWindow", (params["PreferredMaintenanceWindow"] ?? '').toString());
@@ -409,7 +410,7 @@ export default class RDS {
     if ("CharacterSetName" in params) body.append(prefix+"CharacterSetName", (params["CharacterSetName"] ?? '').toString());
     if ("NcharCharacterSetName" in params) body.append(prefix+"NcharCharacterSetName", (params["NcharCharacterSetName"] ?? '').toString());
     if ("PubliclyAccessible" in params) body.append(prefix+"PubliclyAccessible", (params["PubliclyAccessible"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("DBClusterIdentifier" in params) body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     if ("StorageType" in params) body.append(prefix+"StorageType", (params["StorageType"] ?? '').toString());
     if ("TdeCredentialArn" in params) body.append(prefix+"TdeCredentialArn", (params["TdeCredentialArn"] ?? '').toString());
@@ -427,15 +428,15 @@ export default class RDS {
     if ("EnablePerformanceInsights" in params) body.append(prefix+"EnablePerformanceInsights", (params["EnablePerformanceInsights"] ?? '').toString());
     if ("PerformanceInsightsKMSKeyId" in params) body.append(prefix+"PerformanceInsightsKMSKeyId", (params["PerformanceInsightsKMSKeyId"] ?? '').toString());
     if ("PerformanceInsightsRetentionPeriod" in params) body.append(prefix+"PerformanceInsightsRetentionPeriod", (params["PerformanceInsightsRetentionPeriod"] ?? '').toString());
-    if (params["EnableCloudwatchLogsExports"]) prt.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
-    if (params["ProcessorFeatures"]) prt.appendList(body, prefix+"ProcessorFeatures", params["ProcessorFeatures"], {"appender":ProcessorFeature_Serialize,"entryPrefix":".ProcessorFeature."})
+    if (params["EnableCloudwatchLogsExports"]) qsP.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
+    if (params["ProcessorFeatures"]) qsP.appendList(body, prefix+"ProcessorFeatures", params["ProcessorFeatures"], {"appender":ProcessorFeature_Serialize,"entryPrefix":".ProcessorFeature."})
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
     if ("MaxAllocatedStorage" in params) body.append(prefix+"MaxAllocatedStorage", (params["MaxAllocatedStorage"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBInstance",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBInstanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBInstanceResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -457,9 +458,9 @@ export default class RDS {
     if ("OptionGroupName" in params) body.append(prefix+"OptionGroupName", (params["OptionGroupName"] ?? '').toString());
     if ("DBParameterGroupName" in params) body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
     if ("PubliclyAccessible" in params) body.append(prefix+"PubliclyAccessible", (params["PubliclyAccessible"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("StorageType" in params) body.append(prefix+"StorageType", (params["StorageType"] ?? '').toString());
     if ("CopyTagsToSnapshot" in params) body.append(prefix+"CopyTagsToSnapshot", (params["CopyTagsToSnapshot"] ?? '').toString());
     if ("MonitoringInterval" in params) body.append(prefix+"MonitoringInterval", (params["MonitoringInterval"] ?? '').toString());
@@ -470,8 +471,8 @@ export default class RDS {
     if ("EnablePerformanceInsights" in params) body.append(prefix+"EnablePerformanceInsights", (params["EnablePerformanceInsights"] ?? '').toString());
     if ("PerformanceInsightsKMSKeyId" in params) body.append(prefix+"PerformanceInsightsKMSKeyId", (params["PerformanceInsightsKMSKeyId"] ?? '').toString());
     if ("PerformanceInsightsRetentionPeriod" in params) body.append(prefix+"PerformanceInsightsRetentionPeriod", (params["PerformanceInsightsRetentionPeriod"] ?? '').toString());
-    if (params["EnableCloudwatchLogsExports"]) prt.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
-    if (params["ProcessorFeatures"]) prt.appendList(body, prefix+"ProcessorFeatures", params["ProcessorFeatures"], {"appender":ProcessorFeature_Serialize,"entryPrefix":".ProcessorFeature."})
+    if (params["EnableCloudwatchLogsExports"]) qsP.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
+    if (params["ProcessorFeatures"]) qsP.appendList(body, prefix+"ProcessorFeatures", params["ProcessorFeatures"], {"appender":ProcessorFeature_Serialize,"entryPrefix":".ProcessorFeature."})
     if ("UseDefaultProcessorFeatures" in params) body.append(prefix+"UseDefaultProcessorFeatures", (params["UseDefaultProcessorFeatures"] ?? '').toString());
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
     if ("Domain" in params) body.append(prefix+"Domain", (params["Domain"] ?? '').toString());
@@ -482,7 +483,7 @@ export default class RDS {
       abortSignal, body,
       action: "CreateDBInstanceReadReplica",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBInstanceReadReplicaResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBInstanceReadReplicaResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -496,12 +497,12 @@ export default class RDS {
     body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
     body.append(prefix+"DBParameterGroupFamily", (params["DBParameterGroupFamily"] ?? '').toString());
     body.append(prefix+"Description", (params["Description"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBParameterGroupResult");
     return {
       DBParameterGroup: xml.first("DBParameterGroup", false, DBParameterGroup_Parse),
     };
@@ -514,19 +515,19 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBProxyName", (params["DBProxyName"] ?? '').toString());
     body.append(prefix+"EngineFamily", (params["EngineFamily"] ?? '').toString());
-    if (params["Auth"]) prt.appendList(body, prefix+"Auth", params["Auth"], {"appender":UserAuthConfig_Serialize,"entryPrefix":".member."})
+    if (params["Auth"]) qsP.appendList(body, prefix+"Auth", params["Auth"], {"appender":UserAuthConfig_Serialize,"entryPrefix":".member."})
     body.append(prefix+"RoleArn", (params["RoleArn"] ?? '').toString());
-    if (params["VpcSubnetIds"]) prt.appendList(body, prefix+"VpcSubnetIds", params["VpcSubnetIds"], {"entryPrefix":".member."})
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".member."})
+    if (params["VpcSubnetIds"]) qsP.appendList(body, prefix+"VpcSubnetIds", params["VpcSubnetIds"], {"entryPrefix":".member."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".member."})
     if ("RequireTLS" in params) body.append(prefix+"RequireTLS", (params["RequireTLS"] ?? '').toString());
     if ("IdleClientTimeout" in params) body.append(prefix+"IdleClientTimeout", (params["IdleClientTimeout"] ?? '').toString());
     if ("DebugLogging" in params) body.append(prefix+"DebugLogging", (params["DebugLogging"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBProxy",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBProxyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBProxyResult");
     return {
       DBProxy: xml.first("DBProxy", false, DBProxy_Parse),
     };
@@ -539,12 +540,12 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBSecurityGroupName", (params["DBSecurityGroupName"] ?? '').toString());
     body.append(prefix+"DBSecurityGroupDescription", (params["DBSecurityGroupDescription"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBSecurityGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBSecurityGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBSecurityGroupResult");
     return {
       DBSecurityGroup: xml.first("DBSecurityGroup", false, DBSecurityGroup_Parse),
     };
@@ -557,12 +558,12 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBSnapshotIdentifier", (params["DBSnapshotIdentifier"] ?? '').toString());
     body.append(prefix+"DBInstanceIdentifier", (params["DBInstanceIdentifier"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBSnapshotResult");
     return {
       DBSnapshot: xml.first("DBSnapshot", false, DBSnapshot_Parse),
     };
@@ -575,13 +576,13 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     body.append(prefix+"DBSubnetGroupDescription", (params["DBSubnetGroupDescription"] ?? '').toString());
-    if (params["SubnetIds"]) prt.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["SubnetIds"]) qsP.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBSubnetGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBSubnetGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBSubnetGroupResult");
     return {
       DBSubnetGroup: xml.first("DBSubnetGroup", false, DBSubnetGroup_Parse),
     };
@@ -595,15 +596,15 @@ export default class RDS {
     body.append(prefix+"SubscriptionName", (params["SubscriptionName"] ?? '').toString());
     body.append(prefix+"SnsTopicArn", (params["SnsTopicArn"] ?? '').toString());
     if ("SourceType" in params) body.append(prefix+"SourceType", (params["SourceType"] ?? '').toString());
-    if (params["EventCategories"]) prt.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
-    if (params["SourceIds"]) prt.appendList(body, prefix+"SourceIds", params["SourceIds"], {"entryPrefix":".SourceId."})
+    if (params["EventCategories"]) qsP.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
+    if (params["SourceIds"]) qsP.appendList(body, prefix+"SourceIds", params["SourceIds"], {"entryPrefix":".SourceId."})
     if ("Enabled" in params) body.append(prefix+"Enabled", (params["Enabled"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEventSubscription",
     });
-    const xml = readXmlResult(await resp.text(), "CreateEventSubscriptionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateEventSubscriptionResult");
     return {
       EventSubscription: xml.first("EventSubscription", false, EventSubscription_Parse),
     };
@@ -625,7 +626,7 @@ export default class RDS {
       abortSignal, body,
       action: "CreateGlobalCluster",
     });
-    const xml = readXmlResult(await resp.text(), "CreateGlobalClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateGlobalClusterResult");
     return {
       GlobalCluster: xml.first("GlobalCluster", false, GlobalCluster_Parse),
     };
@@ -640,12 +641,12 @@ export default class RDS {
     body.append(prefix+"EngineName", (params["EngineName"] ?? '').toString());
     body.append(prefix+"MajorEngineVersion", (params["MajorEngineVersion"] ?? '').toString());
     body.append(prefix+"OptionGroupDescription", (params["OptionGroupDescription"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateOptionGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateOptionGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateOptionGroupResult");
     return {
       OptionGroup: xml.first("OptionGroup", false, OptionGroup_Parse),
     };
@@ -661,7 +662,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteCustomAvailabilityZone",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteCustomAvailabilityZoneResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteCustomAvailabilityZoneResult");
     return {
       CustomAvailabilityZone: xml.first("CustomAvailabilityZone", false, CustomAvailabilityZone_Parse),
     };
@@ -679,7 +680,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -695,7 +696,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBClusterEndpoint",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteDBClusterEndpointResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDBClusterEndpointResult");
     return DBClusterEndpoint_Parse(xml);
   }
 
@@ -721,7 +722,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBClusterSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteDBClusterSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDBClusterSnapshotResult");
     return {
       DBClusterSnapshot: xml.first("DBClusterSnapshot", false, DBClusterSnapshot_Parse),
     };
@@ -740,7 +741,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBInstance",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteDBInstanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDBInstanceResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -756,7 +757,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBInstanceAutomatedBackup",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteDBInstanceAutomatedBackupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDBInstanceAutomatedBackupResult");
     return {
       DBInstanceAutomatedBackup: xml.first("DBInstanceAutomatedBackup", false, DBInstanceAutomatedBackup_Parse),
     };
@@ -784,7 +785,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBProxy",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteDBProxyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDBProxyResult");
     return {
       DBProxy: xml.first("DBProxy", false, DBProxy_Parse),
     };
@@ -812,7 +813,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteDBSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDBSnapshotResult");
     return {
       DBSnapshot: xml.first("DBSnapshot", false, DBSnapshot_Parse),
     };
@@ -840,7 +841,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteEventSubscription",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteEventSubscriptionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteEventSubscriptionResult");
     return {
       EventSubscription: xml.first("EventSubscription", false, EventSubscription_Parse),
     };
@@ -856,7 +857,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteGlobalCluster",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteGlobalClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteGlobalClusterResult");
     return {
       GlobalCluster: xml.first("GlobalCluster", false, GlobalCluster_Parse),
     };
@@ -872,7 +873,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteInstallationMedia",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteInstallationMediaResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteInstallationMediaResult");
     return InstallationMedia_Parse(xml);
   }
 
@@ -895,13 +896,13 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBProxyName", (params["DBProxyName"] ?? '').toString());
     if ("TargetGroupName" in params) body.append(prefix+"TargetGroupName", (params["TargetGroupName"] ?? '').toString());
-    if (params["DBInstanceIdentifiers"]) prt.appendList(body, prefix+"DBInstanceIdentifiers", params["DBInstanceIdentifiers"], {"entryPrefix":".member."})
-    if (params["DBClusterIdentifiers"]) prt.appendList(body, prefix+"DBClusterIdentifiers", params["DBClusterIdentifiers"], {"entryPrefix":".member."})
+    if (params["DBInstanceIdentifiers"]) qsP.appendList(body, prefix+"DBInstanceIdentifiers", params["DBInstanceIdentifiers"], {"entryPrefix":".member."})
+    if (params["DBClusterIdentifiers"]) qsP.appendList(body, prefix+"DBClusterIdentifiers", params["DBClusterIdentifiers"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterDBProxyTargets",
     });
-    const xml = readXmlResult(await resp.text(), "DeregisterDBProxyTargetsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeregisterDBProxyTargetsResult");
     return {};
   }
 
@@ -915,7 +916,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeAccountAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeAccountAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeAccountAttributesResult");
     return {
       AccountQuotas: xml.getList("AccountQuotas", "AccountQuota").map(AccountQuota_Parse),
     };
@@ -927,14 +928,14 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     if ("CertificateIdentifier" in params) body.append(prefix+"CertificateIdentifier", (params["CertificateIdentifier"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCertificates",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeCertificatesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeCertificatesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -949,14 +950,14 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     if ("CustomAvailabilityZoneId" in params) body.append(prefix+"CustomAvailabilityZoneId", (params["CustomAvailabilityZoneId"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCustomAvailabilityZones",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeCustomAvailabilityZonesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeCustomAvailabilityZonesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -972,14 +973,14 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     if ("BacktrackIdentifier" in params) body.append(prefix+"BacktrackIdentifier", (params["BacktrackIdentifier"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBClusterBacktracks",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBClusterBacktracksResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBClusterBacktracksResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -995,14 +996,14 @@ export default class RDS {
     const prefix = '';
     if ("DBClusterIdentifier" in params) body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     if ("DBClusterEndpointIdentifier" in params) body.append(prefix+"DBClusterEndpointIdentifier", (params["DBClusterEndpointIdentifier"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBClusterEndpoints",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBClusterEndpointsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBClusterEndpointsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1017,14 +1018,14 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DBClusterParameterGroupName" in params) body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBClusterParameterGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBClusterParameterGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBClusterParameterGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1040,14 +1041,14 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
     if ("Source" in params) body.append(prefix+"Source", (params["Source"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBClusterParameters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBClusterParametersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBClusterParametersResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1066,7 +1067,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeDBClusterSnapshotAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBClusterSnapshotAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBClusterSnapshotAttributesResult");
     return {
       DBClusterSnapshotAttributesResult: xml.first("DBClusterSnapshotAttributesResult", false, DBClusterSnapshotAttributesResult_Parse),
     };
@@ -1080,7 +1081,7 @@ export default class RDS {
     if ("DBClusterIdentifier" in params) body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     if ("DBClusterSnapshotIdentifier" in params) body.append(prefix+"DBClusterSnapshotIdentifier", (params["DBClusterSnapshotIdentifier"] ?? '').toString());
     if ("SnapshotType" in params) body.append(prefix+"SnapshotType", (params["SnapshotType"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("IncludeShared" in params) body.append(prefix+"IncludeShared", (params["IncludeShared"] ?? '').toString());
@@ -1089,7 +1090,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeDBClusterSnapshots",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBClusterSnapshotsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBClusterSnapshotsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1104,7 +1105,7 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DBClusterIdentifier" in params) body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("IncludeShared" in params) body.append(prefix+"IncludeShared", (params["IncludeShared"] ?? '').toString());
@@ -1112,7 +1113,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeDBClusters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBClustersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBClustersResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1129,7 +1130,7 @@ export default class RDS {
     if ("Engine" in params) body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
     if ("EngineVersion" in params) body.append(prefix+"EngineVersion", (params["EngineVersion"] ?? '').toString());
     if ("DBParameterGroupFamily" in params) body.append(prefix+"DBParameterGroupFamily", (params["DBParameterGroupFamily"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("DefaultOnly" in params) body.append(prefix+"DefaultOnly", (params["DefaultOnly"] ?? '').toString());
@@ -1140,7 +1141,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeDBEngineVersions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBEngineVersionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBEngineVersionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1156,14 +1157,14 @@ export default class RDS {
     const prefix = '';
     if ("DbiResourceId" in params) body.append(prefix+"DbiResourceId", (params["DbiResourceId"] ?? '').toString());
     if ("DBInstanceIdentifier" in params) body.append(prefix+"DBInstanceIdentifier", (params["DBInstanceIdentifier"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBInstanceAutomatedBackups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBInstanceAutomatedBackupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBInstanceAutomatedBackupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1178,14 +1179,14 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DBInstanceIdentifier" in params) body.append(prefix+"DBInstanceIdentifier", (params["DBInstanceIdentifier"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBInstances",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBInstancesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBInstancesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1203,14 +1204,14 @@ export default class RDS {
     if ("FilenameContains" in params) body.append(prefix+"FilenameContains", (params["FilenameContains"] ?? '').toString());
     if ("FileLastWritten" in params) body.append(prefix+"FileLastWritten", (params["FileLastWritten"] ?? '').toString());
     if ("FileSize" in params) body.append(prefix+"FileSize", (params["FileSize"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBLogFiles",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBLogFilesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBLogFilesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1225,14 +1226,14 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DBParameterGroupName" in params) body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBParameterGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBParameterGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBParameterGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1248,14 +1249,14 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
     if ("Source" in params) body.append(prefix+"Source", (params["Source"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBParameters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBParametersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBParametersResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1270,14 +1271,14 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DBProxyName" in params) body.append(prefix+"DBProxyName", (params["DBProxyName"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBProxies",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBProxiesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBProxiesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1293,14 +1294,14 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBProxyName", (params["DBProxyName"] ?? '').toString());
     if ("TargetGroupName" in params) body.append(prefix+"TargetGroupName", (params["TargetGroupName"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBProxyTargetGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBProxyTargetGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBProxyTargetGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1316,14 +1317,14 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBProxyName", (params["DBProxyName"] ?? '').toString());
     if ("TargetGroupName" in params) body.append(prefix+"TargetGroupName", (params["TargetGroupName"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBProxyTargets",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBProxyTargetsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBProxyTargetsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1338,14 +1339,14 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DBSecurityGroupName" in params) body.append(prefix+"DBSecurityGroupName", (params["DBSecurityGroupName"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBSecurityGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBSecurityGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBSecurityGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1364,7 +1365,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeDBSnapshotAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBSnapshotAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBSnapshotAttributesResult");
     return {
       DBSnapshotAttributesResult: xml.first("DBSnapshotAttributesResult", false, DBSnapshotAttributesResult_Parse),
     };
@@ -1378,7 +1379,7 @@ export default class RDS {
     if ("DBInstanceIdentifier" in params) body.append(prefix+"DBInstanceIdentifier", (params["DBInstanceIdentifier"] ?? '').toString());
     if ("DBSnapshotIdentifier" in params) body.append(prefix+"DBSnapshotIdentifier", (params["DBSnapshotIdentifier"] ?? '').toString());
     if ("SnapshotType" in params) body.append(prefix+"SnapshotType", (params["SnapshotType"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("IncludeShared" in params) body.append(prefix+"IncludeShared", (params["IncludeShared"] ?? '').toString());
@@ -1388,7 +1389,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeDBSnapshots",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBSnapshotsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBSnapshotsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1403,14 +1404,14 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBSubnetGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBSubnetGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBSubnetGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1425,14 +1426,14 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DBParameterGroupFamily", (params["DBParameterGroupFamily"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEngineDefaultClusterParameters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEngineDefaultClusterParametersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEngineDefaultClusterParametersResult");
     return {
       EngineDefaults: xml.first("EngineDefaults", false, EngineDefaults_Parse),
     };
@@ -1444,14 +1445,14 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DBParameterGroupFamily", (params["DBParameterGroupFamily"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEngineDefaultParameters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEngineDefaultParametersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEngineDefaultParametersResult");
     return {
       EngineDefaults: xml.first("EngineDefaults", false, EngineDefaults_Parse),
     };
@@ -1463,12 +1464,12 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     if ("SourceType" in params) body.append(prefix+"SourceType", (params["SourceType"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventCategories",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEventCategoriesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEventCategoriesResult");
     return {
       EventCategoriesMapList: xml.getList("EventCategoriesMapList", "EventCategoriesMap").map(EventCategoriesMap_Parse),
     };
@@ -1480,14 +1481,14 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     if ("SubscriptionName" in params) body.append(prefix+"SubscriptionName", (params["SubscriptionName"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventSubscriptions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEventSubscriptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEventSubscriptionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1503,18 +1504,18 @@ export default class RDS {
     const prefix = '';
     if ("SourceIdentifier" in params) body.append(prefix+"SourceIdentifier", (params["SourceIdentifier"] ?? '').toString());
     if ("SourceType" in params) body.append(prefix+"SourceType", (params["SourceType"] ?? '').toString());
-    if ("StartTime" in params) body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
-    if ("EndTime" in params) body.append(prefix+"EndTime", prt.encodeDate_iso8601(params["EndTime"]));
+    if ("StartTime" in params) body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+    if ("EndTime" in params) body.append(prefix+"EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
     if ("Duration" in params) body.append(prefix+"Duration", (params["Duration"] ?? '').toString());
-    if (params["EventCategories"]) prt.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["EventCategories"]) qsP.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEvents",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEventsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEventsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1530,14 +1531,14 @@ export default class RDS {
     const prefix = '';
     if ("ExportTaskIdentifier" in params) body.append(prefix+"ExportTaskIdentifier", (params["ExportTaskIdentifier"] ?? '').toString());
     if ("SourceArn" in params) body.append(prefix+"SourceArn", (params["SourceArn"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeExportTasks",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeExportTasksResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeExportTasksResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1552,14 +1553,14 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     if ("GlobalClusterIdentifier" in params) body.append(prefix+"GlobalClusterIdentifier", (params["GlobalClusterIdentifier"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGlobalClusters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeGlobalClustersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeGlobalClustersResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1574,14 +1575,14 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     if ("InstallationMediaId" in params) body.append(prefix+"InstallationMediaId", (params["InstallationMediaId"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstallationMedia",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeInstallationMediaResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeInstallationMediaResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1597,14 +1598,14 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"EngineName", (params["EngineName"] ?? '').toString());
     if ("MajorEngineVersion" in params) body.append(prefix+"MajorEngineVersion", (params["MajorEngineVersion"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOptionGroupOptions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeOptionGroupOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeOptionGroupOptionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1619,7 +1620,7 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     if ("OptionGroupName" in params) body.append(prefix+"OptionGroupName", (params["OptionGroupName"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("EngineName" in params) body.append(prefix+"EngineName", (params["EngineName"] ?? '').toString());
@@ -1628,7 +1629,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeOptionGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeOptionGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeOptionGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1648,14 +1649,14 @@ export default class RDS {
     if ("LicenseModel" in params) body.append(prefix+"LicenseModel", (params["LicenseModel"] ?? '').toString());
     if ("AvailabilityZoneGroup" in params) body.append(prefix+"AvailabilityZoneGroup", (params["AvailabilityZoneGroup"] ?? '').toString());
     if ("Vpc" in params) body.append(prefix+"Vpc", (params["Vpc"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOrderableDBInstanceOptions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeOrderableDBInstanceOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeOrderableDBInstanceOptionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1670,14 +1671,14 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     if ("ResourceIdentifier" in params) body.append(prefix+"ResourceIdentifier", (params["ResourceIdentifier"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePendingMaintenanceActions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribePendingMaintenanceActionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribePendingMaintenanceActionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1699,14 +1700,14 @@ export default class RDS {
     if ("OfferingType" in params) body.append(prefix+"OfferingType", (params["OfferingType"] ?? '').toString());
     if ("MultiAZ" in params) body.append(prefix+"MultiAZ", (params["MultiAZ"] ?? '').toString());
     if ("LeaseId" in params) body.append(prefix+"LeaseId", (params["LeaseId"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeReservedDBInstances",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeReservedDBInstancesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeReservedDBInstancesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1726,14 +1727,14 @@ export default class RDS {
     if ("ProductDescription" in params) body.append(prefix+"ProductDescription", (params["ProductDescription"] ?? '').toString());
     if ("OfferingType" in params) body.append(prefix+"OfferingType", (params["OfferingType"] ?? '').toString());
     if ("MultiAZ" in params) body.append(prefix+"MultiAZ", (params["MultiAZ"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeReservedDBInstancesOfferings",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeReservedDBInstancesOfferingsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeReservedDBInstancesOfferingsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1750,12 +1751,12 @@ export default class RDS {
     if ("RegionName" in params) body.append(prefix+"RegionName", (params["RegionName"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSourceRegions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeSourceRegionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeSourceRegionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1774,7 +1775,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeValidDBInstanceModifications",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeValidDBInstanceModificationsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeValidDBInstanceModificationsResult");
     return {
       ValidDBInstanceModificationsMessage: xml.first("ValidDBInstanceModificationsMessage", false, ValidDBInstanceModificationsMessage_Parse),
     };
@@ -1793,7 +1794,7 @@ export default class RDS {
       abortSignal, body,
       action: "DownloadDBLogFilePortion",
     });
-    const xml = readXmlResult(await resp.text(), "DownloadDBLogFilePortionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DownloadDBLogFilePortionResult");
     return {
       ...xml.strings({
         optional: {"LogFileData":true,"Marker":true},
@@ -1813,7 +1814,7 @@ export default class RDS {
       abortSignal, body,
       action: "FailoverDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "FailoverDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "FailoverDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -1833,7 +1834,7 @@ export default class RDS {
       abortSignal, body,
       action: "ImportInstallationMedia",
     });
-    const xml = readXmlResult(await resp.text(), "ImportInstallationMediaResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ImportInstallationMediaResult");
     return InstallationMedia_Parse(xml);
   }
 
@@ -1843,12 +1844,12 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceName", (params["ResourceName"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    const xml = readXmlResult(await resp.text(), "ListTagsForResourceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListTagsForResourceResult");
     return {
       TagList: xml.getList("TagList", "Tag").map(Tag_Parse),
     };
@@ -1865,7 +1866,7 @@ export default class RDS {
       abortSignal, body,
       action: "ModifyCertificates",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyCertificatesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyCertificatesResult");
     return {
       Certificate: xml.first("Certificate", false, Certificate_Parse),
     };
@@ -1884,7 +1885,7 @@ export default class RDS {
       abortSignal, body,
       action: "ModifyCurrentDBClusterCapacity",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyCurrentDBClusterCapacityResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyCurrentDBClusterCapacityResult");
     return {
       ...xml.strings({
         optional: {"DBClusterIdentifier":true,"TimeoutAction":true},
@@ -1905,7 +1906,7 @@ export default class RDS {
     if ("ApplyImmediately" in params) body.append(prefix+"ApplyImmediately", (params["ApplyImmediately"] ?? '').toString());
     if ("BackupRetentionPeriod" in params) body.append(prefix+"BackupRetentionPeriod", (params["BackupRetentionPeriod"] ?? '').toString());
     if ("DBClusterParameterGroupName" in params) body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("Port" in params) body.append(prefix+"Port", (params["Port"] ?? '').toString());
     if ("MasterUserPassword" in params) body.append(prefix+"MasterUserPassword", (params["MasterUserPassword"] ?? '').toString());
     if ("OptionGroupName" in params) body.append(prefix+"OptionGroupName", (params["OptionGroupName"] ?? '').toString());
@@ -1928,7 +1929,7 @@ export default class RDS {
       abortSignal, body,
       action: "ModifyDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -1941,13 +1942,13 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBClusterEndpointIdentifier", (params["DBClusterEndpointIdentifier"] ?? '').toString());
     if ("EndpointType" in params) body.append(prefix+"EndpointType", (params["EndpointType"] ?? '').toString());
-    if (params["StaticMembers"]) prt.appendList(body, prefix+"StaticMembers", params["StaticMembers"], {"entryPrefix":".member."})
-    if (params["ExcludedMembers"]) prt.appendList(body, prefix+"ExcludedMembers", params["ExcludedMembers"], {"entryPrefix":".member."})
+    if (params["StaticMembers"]) qsP.appendList(body, prefix+"StaticMembers", params["StaticMembers"], {"entryPrefix":".member."})
+    if (params["ExcludedMembers"]) qsP.appendList(body, prefix+"ExcludedMembers", params["ExcludedMembers"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDBClusterEndpoint",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBClusterEndpointResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBClusterEndpointResult");
     return DBClusterEndpoint_Parse(xml);
   }
 
@@ -1957,12 +1958,12 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDBClusterParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBClusterParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBClusterParameterGroupResult");
     return xml.strings({
       optional: {"DBClusterParameterGroupName":true},
     });
@@ -1975,13 +1976,13 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBClusterSnapshotIdentifier", (params["DBClusterSnapshotIdentifier"] ?? '').toString());
     body.append(prefix+"AttributeName", (params["AttributeName"] ?? '').toString());
-    if (params["ValuesToAdd"]) prt.appendList(body, prefix+"ValuesToAdd", params["ValuesToAdd"], {"entryPrefix":".AttributeValue."})
-    if (params["ValuesToRemove"]) prt.appendList(body, prefix+"ValuesToRemove", params["ValuesToRemove"], {"entryPrefix":".AttributeValue."})
+    if (params["ValuesToAdd"]) qsP.appendList(body, prefix+"ValuesToAdd", params["ValuesToAdd"], {"entryPrefix":".AttributeValue."})
+    if (params["ValuesToRemove"]) qsP.appendList(body, prefix+"ValuesToRemove", params["ValuesToRemove"], {"entryPrefix":".AttributeValue."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDBClusterSnapshotAttribute",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBClusterSnapshotAttributeResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBClusterSnapshotAttributeResult");
     return {
       DBClusterSnapshotAttributesResult: xml.first("DBClusterSnapshotAttributesResult", false, DBClusterSnapshotAttributesResult_Parse),
     };
@@ -1996,8 +1997,8 @@ export default class RDS {
     if ("AllocatedStorage" in params) body.append(prefix+"AllocatedStorage", (params["AllocatedStorage"] ?? '').toString());
     if ("DBInstanceClass" in params) body.append(prefix+"DBInstanceClass", (params["DBInstanceClass"] ?? '').toString());
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
-    if (params["DBSecurityGroups"]) prt.appendList(body, prefix+"DBSecurityGroups", params["DBSecurityGroups"], {"entryPrefix":".DBSecurityGroupName."})
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["DBSecurityGroups"]) qsP.appendList(body, prefix+"DBSecurityGroups", params["DBSecurityGroups"], {"entryPrefix":".DBSecurityGroupName."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("ApplyImmediately" in params) body.append(prefix+"ApplyImmediately", (params["ApplyImmediately"] ?? '').toString());
     if ("MasterUserPassword" in params) body.append(prefix+"MasterUserPassword", (params["MasterUserPassword"] ?? '').toString());
     if ("DBParameterGroupName" in params) body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
@@ -2029,7 +2030,7 @@ export default class RDS {
     if ("PerformanceInsightsKMSKeyId" in params) body.append(prefix+"PerformanceInsightsKMSKeyId", (params["PerformanceInsightsKMSKeyId"] ?? '').toString());
     if ("PerformanceInsightsRetentionPeriod" in params) body.append(prefix+"PerformanceInsightsRetentionPeriod", (params["PerformanceInsightsRetentionPeriod"] ?? '').toString());
     if (params["CloudwatchLogsExportConfiguration"] != null) CloudwatchLogsExportConfiguration_Serialize(body, prefix+"CloudwatchLogsExportConfiguration", params["CloudwatchLogsExportConfiguration"]);
-    if (params["ProcessorFeatures"]) prt.appendList(body, prefix+"ProcessorFeatures", params["ProcessorFeatures"], {"appender":ProcessorFeature_Serialize,"entryPrefix":".ProcessorFeature."})
+    if (params["ProcessorFeatures"]) qsP.appendList(body, prefix+"ProcessorFeatures", params["ProcessorFeatures"], {"appender":ProcessorFeature_Serialize,"entryPrefix":".ProcessorFeature."})
     if ("UseDefaultProcessorFeatures" in params) body.append(prefix+"UseDefaultProcessorFeatures", (params["UseDefaultProcessorFeatures"] ?? '').toString());
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
     if ("MaxAllocatedStorage" in params) body.append(prefix+"MaxAllocatedStorage", (params["MaxAllocatedStorage"] ?? '').toString());
@@ -2039,7 +2040,7 @@ export default class RDS {
       abortSignal, body,
       action: "ModifyDBInstance",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBInstanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBInstanceResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -2051,12 +2052,12 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDBParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBParameterGroupResult");
     return xml.strings({
       optional: {"DBParameterGroupName":true},
     });
@@ -2069,17 +2070,17 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBProxyName", (params["DBProxyName"] ?? '').toString());
     if ("NewDBProxyName" in params) body.append(prefix+"NewDBProxyName", (params["NewDBProxyName"] ?? '').toString());
-    if (params["Auth"]) prt.appendList(body, prefix+"Auth", params["Auth"], {"appender":UserAuthConfig_Serialize,"entryPrefix":".member."})
+    if (params["Auth"]) qsP.appendList(body, prefix+"Auth", params["Auth"], {"appender":UserAuthConfig_Serialize,"entryPrefix":".member."})
     if ("RequireTLS" in params) body.append(prefix+"RequireTLS", (params["RequireTLS"] ?? '').toString());
     if ("IdleClientTimeout" in params) body.append(prefix+"IdleClientTimeout", (params["IdleClientTimeout"] ?? '').toString());
     if ("DebugLogging" in params) body.append(prefix+"DebugLogging", (params["DebugLogging"] ?? '').toString());
     if ("RoleArn" in params) body.append(prefix+"RoleArn", (params["RoleArn"] ?? '').toString());
-    if (params["SecurityGroups"]) prt.appendList(body, prefix+"SecurityGroups", params["SecurityGroups"], {"entryPrefix":".member."})
+    if (params["SecurityGroups"]) qsP.appendList(body, prefix+"SecurityGroups", params["SecurityGroups"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDBProxy",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBProxyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBProxyResult");
     return {
       DBProxy: xml.first("DBProxy", false, DBProxy_Parse),
     };
@@ -2098,7 +2099,7 @@ export default class RDS {
       abortSignal, body,
       action: "ModifyDBProxyTargetGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBProxyTargetGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBProxyTargetGroupResult");
     return {
       DBProxyTargetGroup: xml.first("DBProxyTargetGroup", false, DBProxyTargetGroup_Parse),
     };
@@ -2116,7 +2117,7 @@ export default class RDS {
       abortSignal, body,
       action: "ModifyDBSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBSnapshotResult");
     return {
       DBSnapshot: xml.first("DBSnapshot", false, DBSnapshot_Parse),
     };
@@ -2129,13 +2130,13 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBSnapshotIdentifier", (params["DBSnapshotIdentifier"] ?? '').toString());
     body.append(prefix+"AttributeName", (params["AttributeName"] ?? '').toString());
-    if (params["ValuesToAdd"]) prt.appendList(body, prefix+"ValuesToAdd", params["ValuesToAdd"], {"entryPrefix":".AttributeValue."})
-    if (params["ValuesToRemove"]) prt.appendList(body, prefix+"ValuesToRemove", params["ValuesToRemove"], {"entryPrefix":".AttributeValue."})
+    if (params["ValuesToAdd"]) qsP.appendList(body, prefix+"ValuesToAdd", params["ValuesToAdd"], {"entryPrefix":".AttributeValue."})
+    if (params["ValuesToRemove"]) qsP.appendList(body, prefix+"ValuesToRemove", params["ValuesToRemove"], {"entryPrefix":".AttributeValue."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDBSnapshotAttribute",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBSnapshotAttributeResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBSnapshotAttributeResult");
     return {
       DBSnapshotAttributesResult: xml.first("DBSnapshotAttributesResult", false, DBSnapshotAttributesResult_Parse),
     };
@@ -2148,12 +2149,12 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     if ("DBSubnetGroupDescription" in params) body.append(prefix+"DBSubnetGroupDescription", (params["DBSubnetGroupDescription"] ?? '').toString());
-    if (params["SubnetIds"]) prt.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
+    if (params["SubnetIds"]) qsP.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDBSubnetGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBSubnetGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBSubnetGroupResult");
     return {
       DBSubnetGroup: xml.first("DBSubnetGroup", false, DBSubnetGroup_Parse),
     };
@@ -2167,13 +2168,13 @@ export default class RDS {
     body.append(prefix+"SubscriptionName", (params["SubscriptionName"] ?? '').toString());
     if ("SnsTopicArn" in params) body.append(prefix+"SnsTopicArn", (params["SnsTopicArn"] ?? '').toString());
     if ("SourceType" in params) body.append(prefix+"SourceType", (params["SourceType"] ?? '').toString());
-    if (params["EventCategories"]) prt.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
+    if (params["EventCategories"]) qsP.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
     if ("Enabled" in params) body.append(prefix+"Enabled", (params["Enabled"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyEventSubscription",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyEventSubscriptionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyEventSubscriptionResult");
     return {
       EventSubscription: xml.first("EventSubscription", false, EventSubscription_Parse),
     };
@@ -2191,7 +2192,7 @@ export default class RDS {
       abortSignal, body,
       action: "ModifyGlobalCluster",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyGlobalClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyGlobalClusterResult");
     return {
       GlobalCluster: xml.first("GlobalCluster", false, GlobalCluster_Parse),
     };
@@ -2203,14 +2204,14 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"OptionGroupName", (params["OptionGroupName"] ?? '').toString());
-    if (params["OptionsToInclude"]) prt.appendList(body, prefix+"OptionsToInclude", params["OptionsToInclude"], {"appender":OptionConfiguration_Serialize,"entryPrefix":".OptionConfiguration."})
-    if (params["OptionsToRemove"]) prt.appendList(body, prefix+"OptionsToRemove", params["OptionsToRemove"], {"entryPrefix":".member."})
+    if (params["OptionsToInclude"]) qsP.appendList(body, prefix+"OptionsToInclude", params["OptionsToInclude"], {"appender":OptionConfiguration_Serialize,"entryPrefix":".OptionConfiguration."})
+    if (params["OptionsToRemove"]) qsP.appendList(body, prefix+"OptionsToRemove", params["OptionsToRemove"], {"entryPrefix":".member."})
     if ("ApplyImmediately" in params) body.append(prefix+"ApplyImmediately", (params["ApplyImmediately"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyOptionGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyOptionGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyOptionGroupResult");
     return {
       OptionGroup: xml.first("OptionGroup", false, OptionGroup_Parse),
     };
@@ -2228,7 +2229,7 @@ export default class RDS {
       abortSignal, body,
       action: "PromoteReadReplica",
     });
-    const xml = readXmlResult(await resp.text(), "PromoteReadReplicaResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "PromoteReadReplicaResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -2244,7 +2245,7 @@ export default class RDS {
       abortSignal, body,
       action: "PromoteReadReplicaDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "PromoteReadReplicaDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "PromoteReadReplicaDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -2258,12 +2259,12 @@ export default class RDS {
     body.append(prefix+"ReservedDBInstancesOfferingId", (params["ReservedDBInstancesOfferingId"] ?? '').toString());
     if ("ReservedDBInstanceId" in params) body.append(prefix+"ReservedDBInstanceId", (params["ReservedDBInstanceId"] ?? '').toString());
     if ("DBInstanceCount" in params) body.append(prefix+"DBInstanceCount", (params["DBInstanceCount"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PurchaseReservedDBInstancesOffering",
     });
-    const xml = readXmlResult(await resp.text(), "PurchaseReservedDBInstancesOfferingResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "PurchaseReservedDBInstancesOfferingResult");
     return {
       ReservedDBInstance: xml.first("ReservedDBInstance", false, ReservedDBInstance_Parse),
     };
@@ -2280,7 +2281,7 @@ export default class RDS {
       abortSignal, body,
       action: "RebootDBInstance",
     });
-    const xml = readXmlResult(await resp.text(), "RebootDBInstanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RebootDBInstanceResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -2293,13 +2294,13 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBProxyName", (params["DBProxyName"] ?? '').toString());
     if ("TargetGroupName" in params) body.append(prefix+"TargetGroupName", (params["TargetGroupName"] ?? '').toString());
-    if (params["DBInstanceIdentifiers"]) prt.appendList(body, prefix+"DBInstanceIdentifiers", params["DBInstanceIdentifiers"], {"entryPrefix":".member."})
-    if (params["DBClusterIdentifiers"]) prt.appendList(body, prefix+"DBClusterIdentifiers", params["DBClusterIdentifiers"], {"entryPrefix":".member."})
+    if (params["DBInstanceIdentifiers"]) qsP.appendList(body, prefix+"DBInstanceIdentifiers", params["DBInstanceIdentifiers"], {"entryPrefix":".member."})
+    if (params["DBClusterIdentifiers"]) qsP.appendList(body, prefix+"DBClusterIdentifiers", params["DBClusterIdentifiers"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterDBProxyTargets",
     });
-    const xml = readXmlResult(await resp.text(), "RegisterDBProxyTargetsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RegisterDBProxyTargetsResult");
     return {
       DBProxyTargets: xml.getList("DBProxyTargets", "member").map(DBProxyTarget_Parse),
     };
@@ -2316,7 +2317,7 @@ export default class RDS {
       abortSignal, body,
       action: "RemoveFromGlobalCluster",
     });
-    const xml = readXmlResult(await resp.text(), "RemoveFromGlobalClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RemoveFromGlobalClusterResult");
     return {
       GlobalCluster: xml.first("GlobalCluster", false, GlobalCluster_Parse),
     };
@@ -2361,7 +2362,7 @@ export default class RDS {
       abortSignal, body,
       action: "RemoveSourceIdentifierFromSubscription",
     });
-    const xml = readXmlResult(await resp.text(), "RemoveSourceIdentifierFromSubscriptionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RemoveSourceIdentifierFromSubscriptionResult");
     return {
       EventSubscription: xml.first("EventSubscription", false, EventSubscription_Parse),
     };
@@ -2373,7 +2374,7 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceName", (params["ResourceName"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTagsFromResource",
@@ -2387,12 +2388,12 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
     if ("ResetAllParameters" in params) body.append(prefix+"ResetAllParameters", (params["ResetAllParameters"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResetDBClusterParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ResetDBClusterParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ResetDBClusterParameterGroupResult");
     return xml.strings({
       optional: {"DBClusterParameterGroupName":true},
     });
@@ -2405,12 +2406,12 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
     if ("ResetAllParameters" in params) body.append(prefix+"ResetAllParameters", (params["ResetAllParameters"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResetDBParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ResetDBParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ResetDBParameterGroupResult");
     return xml.strings({
       optional: {"DBParameterGroupName":true},
     });
@@ -2421,13 +2422,13 @@ export default class RDS {
   ): Promise<RestoreDBClusterFromS3Result> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["AvailabilityZones"]) prt.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".AvailabilityZone."})
+    if (params["AvailabilityZones"]) qsP.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".AvailabilityZone."})
     if ("BackupRetentionPeriod" in params) body.append(prefix+"BackupRetentionPeriod", (params["BackupRetentionPeriod"] ?? '').toString());
     if ("CharacterSetName" in params) body.append(prefix+"CharacterSetName", (params["CharacterSetName"] ?? '').toString());
     if ("DatabaseName" in params) body.append(prefix+"DatabaseName", (params["DatabaseName"] ?? '').toString());
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     if ("DBClusterParameterGroupName" in params) body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
     if ("EngineVersion" in params) body.append(prefix+"EngineVersion", (params["EngineVersion"] ?? '').toString());
@@ -2437,7 +2438,7 @@ export default class RDS {
     if ("OptionGroupName" in params) body.append(prefix+"OptionGroupName", (params["OptionGroupName"] ?? '').toString());
     if ("PreferredBackupWindow" in params) body.append(prefix+"PreferredBackupWindow", (params["PreferredBackupWindow"] ?? '').toString());
     if ("PreferredMaintenanceWindow" in params) body.append(prefix+"PreferredMaintenanceWindow", (params["PreferredMaintenanceWindow"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("StorageEncrypted" in params) body.append(prefix+"StorageEncrypted", (params["StorageEncrypted"] ?? '').toString());
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
     if ("EnableIAMDatabaseAuthentication" in params) body.append(prefix+"EnableIAMDatabaseAuthentication", (params["EnableIAMDatabaseAuthentication"] ?? '').toString());
@@ -2447,7 +2448,7 @@ export default class RDS {
     if ("S3Prefix" in params) body.append(prefix+"S3Prefix", (params["S3Prefix"] ?? '').toString());
     body.append(prefix+"S3IngestionRoleArn", (params["S3IngestionRoleArn"] ?? '').toString());
     if ("BacktrackWindow" in params) body.append(prefix+"BacktrackWindow", (params["BacktrackWindow"] ?? '').toString());
-    if (params["EnableCloudwatchLogsExports"]) prt.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
+    if (params["EnableCloudwatchLogsExports"]) qsP.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
     if ("CopyTagsToSnapshot" in params) body.append(prefix+"CopyTagsToSnapshot", (params["CopyTagsToSnapshot"] ?? '').toString());
     if ("Domain" in params) body.append(prefix+"Domain", (params["Domain"] ?? '').toString());
@@ -2456,7 +2457,7 @@ export default class RDS {
       abortSignal, body,
       action: "RestoreDBClusterFromS3",
     });
-    const xml = readXmlResult(await resp.text(), "RestoreDBClusterFromS3Result");
+    const xml = xmlP.readXmlResult(await resp.text(), "RestoreDBClusterFromS3Result");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -2467,7 +2468,7 @@ export default class RDS {
   ): Promise<RestoreDBClusterFromSnapshotResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["AvailabilityZones"]) prt.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".AvailabilityZone."})
+    if (params["AvailabilityZones"]) qsP.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".AvailabilityZone."})
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     body.append(prefix+"SnapshotIdentifier", (params["SnapshotIdentifier"] ?? '').toString());
     body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
@@ -2476,12 +2477,12 @@ export default class RDS {
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     if ("DatabaseName" in params) body.append(prefix+"DatabaseName", (params["DatabaseName"] ?? '').toString());
     if ("OptionGroupName" in params) body.append(prefix+"OptionGroupName", (params["OptionGroupName"] ?? '').toString());
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
     if ("EnableIAMDatabaseAuthentication" in params) body.append(prefix+"EnableIAMDatabaseAuthentication", (params["EnableIAMDatabaseAuthentication"] ?? '').toString());
     if ("BacktrackWindow" in params) body.append(prefix+"BacktrackWindow", (params["BacktrackWindow"] ?? '').toString());
-    if (params["EnableCloudwatchLogsExports"]) prt.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
+    if (params["EnableCloudwatchLogsExports"]) qsP.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
     if ("EngineMode" in params) body.append(prefix+"EngineMode", (params["EngineMode"] ?? '').toString());
     if (params["ScalingConfiguration"] != null) ScalingConfiguration_Serialize(body, prefix+"ScalingConfiguration", params["ScalingConfiguration"]);
     if ("DBClusterParameterGroupName" in params) body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
@@ -2493,7 +2494,7 @@ export default class RDS {
       abortSignal, body,
       action: "RestoreDBClusterFromSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "RestoreDBClusterFromSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RestoreDBClusterFromSnapshotResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -2507,17 +2508,17 @@ export default class RDS {
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     if ("RestoreType" in params) body.append(prefix+"RestoreType", (params["RestoreType"] ?? '').toString());
     body.append(prefix+"SourceDBClusterIdentifier", (params["SourceDBClusterIdentifier"] ?? '').toString());
-    if ("RestoreToTime" in params) body.append(prefix+"RestoreToTime", prt.encodeDate_iso8601(params["RestoreToTime"]));
+    if ("RestoreToTime" in params) body.append(prefix+"RestoreToTime", qsP.encodeDate_iso8601(params["RestoreToTime"]));
     if ("UseLatestRestorableTime" in params) body.append(prefix+"UseLatestRestorableTime", (params["UseLatestRestorableTime"] ?? '').toString());
     if ("Port" in params) body.append(prefix+"Port", (params["Port"] ?? '').toString());
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     if ("OptionGroupName" in params) body.append(prefix+"OptionGroupName", (params["OptionGroupName"] ?? '').toString());
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
     if ("EnableIAMDatabaseAuthentication" in params) body.append(prefix+"EnableIAMDatabaseAuthentication", (params["EnableIAMDatabaseAuthentication"] ?? '').toString());
     if ("BacktrackWindow" in params) body.append(prefix+"BacktrackWindow", (params["BacktrackWindow"] ?? '').toString());
-    if (params["EnableCloudwatchLogsExports"]) prt.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
+    if (params["EnableCloudwatchLogsExports"]) qsP.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
     if ("DBClusterParameterGroupName" in params) body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
     if ("CopyTagsToSnapshot" in params) body.append(prefix+"CopyTagsToSnapshot", (params["CopyTagsToSnapshot"] ?? '').toString());
@@ -2527,7 +2528,7 @@ export default class RDS {
       abortSignal, body,
       action: "RestoreDBClusterToPointInTime",
     });
-    const xml = readXmlResult(await resp.text(), "RestoreDBClusterToPointInTimeResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RestoreDBClusterToPointInTimeResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -2552,17 +2553,17 @@ export default class RDS {
     if ("Engine" in params) body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
     if ("Iops" in params) body.append(prefix+"Iops", (params["Iops"] ?? '').toString());
     if ("OptionGroupName" in params) body.append(prefix+"OptionGroupName", (params["OptionGroupName"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("StorageType" in params) body.append(prefix+"StorageType", (params["StorageType"] ?? '').toString());
     if ("TdeCredentialArn" in params) body.append(prefix+"TdeCredentialArn", (params["TdeCredentialArn"] ?? '').toString());
     if ("TdeCredentialPassword" in params) body.append(prefix+"TdeCredentialPassword", (params["TdeCredentialPassword"] ?? '').toString());
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("Domain" in params) body.append(prefix+"Domain", (params["Domain"] ?? '').toString());
     if ("CopyTagsToSnapshot" in params) body.append(prefix+"CopyTagsToSnapshot", (params["CopyTagsToSnapshot"] ?? '').toString());
     if ("DomainIAMRoleName" in params) body.append(prefix+"DomainIAMRoleName", (params["DomainIAMRoleName"] ?? '').toString());
     if ("EnableIAMDatabaseAuthentication" in params) body.append(prefix+"EnableIAMDatabaseAuthentication", (params["EnableIAMDatabaseAuthentication"] ?? '').toString());
-    if (params["EnableCloudwatchLogsExports"]) prt.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
-    if (params["ProcessorFeatures"]) prt.appendList(body, prefix+"ProcessorFeatures", params["ProcessorFeatures"], {"appender":ProcessorFeature_Serialize,"entryPrefix":".ProcessorFeature."})
+    if (params["EnableCloudwatchLogsExports"]) qsP.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
+    if (params["ProcessorFeatures"]) qsP.appendList(body, prefix+"ProcessorFeatures", params["ProcessorFeatures"], {"appender":ProcessorFeature_Serialize,"entryPrefix":".ProcessorFeature."})
     if ("UseDefaultProcessorFeatures" in params) body.append(prefix+"UseDefaultProcessorFeatures", (params["UseDefaultProcessorFeatures"] ?? '').toString());
     if ("DBParameterGroupName" in params) body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
@@ -2570,7 +2571,7 @@ export default class RDS {
       abortSignal, body,
       action: "RestoreDBInstanceFromDBSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "RestoreDBInstanceFromDBSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RestoreDBInstanceFromDBSnapshotResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -2588,8 +2589,8 @@ export default class RDS {
     body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
     if ("MasterUsername" in params) body.append(prefix+"MasterUsername", (params["MasterUsername"] ?? '').toString());
     if ("MasterUserPassword" in params) body.append(prefix+"MasterUserPassword", (params["MasterUserPassword"] ?? '').toString());
-    if (params["DBSecurityGroups"]) prt.appendList(body, prefix+"DBSecurityGroups", params["DBSecurityGroups"], {"entryPrefix":".DBSecurityGroupName."})
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["DBSecurityGroups"]) qsP.appendList(body, prefix+"DBSecurityGroups", params["DBSecurityGroups"], {"entryPrefix":".DBSecurityGroupName."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("AvailabilityZone" in params) body.append(prefix+"AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     if ("PreferredMaintenanceWindow" in params) body.append(prefix+"PreferredMaintenanceWindow", (params["PreferredMaintenanceWindow"] ?? '').toString());
@@ -2604,7 +2605,7 @@ export default class RDS {
     if ("Iops" in params) body.append(prefix+"Iops", (params["Iops"] ?? '').toString());
     if ("OptionGroupName" in params) body.append(prefix+"OptionGroupName", (params["OptionGroupName"] ?? '').toString());
     if ("PubliclyAccessible" in params) body.append(prefix+"PubliclyAccessible", (params["PubliclyAccessible"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("StorageType" in params) body.append(prefix+"StorageType", (params["StorageType"] ?? '').toString());
     if ("StorageEncrypted" in params) body.append(prefix+"StorageEncrypted", (params["StorageEncrypted"] ?? '').toString());
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
@@ -2620,8 +2621,8 @@ export default class RDS {
     if ("EnablePerformanceInsights" in params) body.append(prefix+"EnablePerformanceInsights", (params["EnablePerformanceInsights"] ?? '').toString());
     if ("PerformanceInsightsKMSKeyId" in params) body.append(prefix+"PerformanceInsightsKMSKeyId", (params["PerformanceInsightsKMSKeyId"] ?? '').toString());
     if ("PerformanceInsightsRetentionPeriod" in params) body.append(prefix+"PerformanceInsightsRetentionPeriod", (params["PerformanceInsightsRetentionPeriod"] ?? '').toString());
-    if (params["EnableCloudwatchLogsExports"]) prt.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
-    if (params["ProcessorFeatures"]) prt.appendList(body, prefix+"ProcessorFeatures", params["ProcessorFeatures"], {"appender":ProcessorFeature_Serialize,"entryPrefix":".ProcessorFeature."})
+    if (params["EnableCloudwatchLogsExports"]) qsP.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
+    if (params["ProcessorFeatures"]) qsP.appendList(body, prefix+"ProcessorFeatures", params["ProcessorFeatures"], {"appender":ProcessorFeature_Serialize,"entryPrefix":".ProcessorFeature."})
     if ("UseDefaultProcessorFeatures" in params) body.append(prefix+"UseDefaultProcessorFeatures", (params["UseDefaultProcessorFeatures"] ?? '').toString());
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
     if ("MaxAllocatedStorage" in params) body.append(prefix+"MaxAllocatedStorage", (params["MaxAllocatedStorage"] ?? '').toString());
@@ -2629,7 +2630,7 @@ export default class RDS {
       abortSignal, body,
       action: "RestoreDBInstanceFromS3",
     });
-    const xml = readXmlResult(await resp.text(), "RestoreDBInstanceFromS3Result");
+    const xml = xmlP.readXmlResult(await resp.text(), "RestoreDBInstanceFromS3Result");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -2642,7 +2643,7 @@ export default class RDS {
     const prefix = '';
     if ("SourceDBInstanceIdentifier" in params) body.append(prefix+"SourceDBInstanceIdentifier", (params["SourceDBInstanceIdentifier"] ?? '').toString());
     body.append(prefix+"TargetDBInstanceIdentifier", (params["TargetDBInstanceIdentifier"] ?? '').toString());
-    if ("RestoreTime" in params) body.append(prefix+"RestoreTime", prt.encodeDate_iso8601(params["RestoreTime"]));
+    if ("RestoreTime" in params) body.append(prefix+"RestoreTime", qsP.encodeDate_iso8601(params["RestoreTime"]));
     if ("UseLatestRestorableTime" in params) body.append(prefix+"UseLatestRestorableTime", (params["UseLatestRestorableTime"] ?? '').toString());
     if ("DBInstanceClass" in params) body.append(prefix+"DBInstanceClass", (params["DBInstanceClass"] ?? '').toString());
     if ("Port" in params) body.append(prefix+"Port", (params["Port"] ?? '').toString());
@@ -2657,16 +2658,16 @@ export default class RDS {
     if ("Iops" in params) body.append(prefix+"Iops", (params["Iops"] ?? '').toString());
     if ("OptionGroupName" in params) body.append(prefix+"OptionGroupName", (params["OptionGroupName"] ?? '').toString());
     if ("CopyTagsToSnapshot" in params) body.append(prefix+"CopyTagsToSnapshot", (params["CopyTagsToSnapshot"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("StorageType" in params) body.append(prefix+"StorageType", (params["StorageType"] ?? '').toString());
     if ("TdeCredentialArn" in params) body.append(prefix+"TdeCredentialArn", (params["TdeCredentialArn"] ?? '').toString());
     if ("TdeCredentialPassword" in params) body.append(prefix+"TdeCredentialPassword", (params["TdeCredentialPassword"] ?? '').toString());
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("Domain" in params) body.append(prefix+"Domain", (params["Domain"] ?? '').toString());
     if ("DomainIAMRoleName" in params) body.append(prefix+"DomainIAMRoleName", (params["DomainIAMRoleName"] ?? '').toString());
     if ("EnableIAMDatabaseAuthentication" in params) body.append(prefix+"EnableIAMDatabaseAuthentication", (params["EnableIAMDatabaseAuthentication"] ?? '').toString());
-    if (params["EnableCloudwatchLogsExports"]) prt.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
-    if (params["ProcessorFeatures"]) prt.appendList(body, prefix+"ProcessorFeatures", params["ProcessorFeatures"], {"appender":ProcessorFeature_Serialize,"entryPrefix":".ProcessorFeature."})
+    if (params["EnableCloudwatchLogsExports"]) qsP.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
+    if (params["ProcessorFeatures"]) qsP.appendList(body, prefix+"ProcessorFeatures", params["ProcessorFeatures"], {"appender":ProcessorFeature_Serialize,"entryPrefix":".ProcessorFeature."})
     if ("UseDefaultProcessorFeatures" in params) body.append(prefix+"UseDefaultProcessorFeatures", (params["UseDefaultProcessorFeatures"] ?? '').toString());
     if ("DBParameterGroupName" in params) body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
@@ -2676,7 +2677,7 @@ export default class RDS {
       abortSignal, body,
       action: "RestoreDBInstanceToPointInTime",
     });
-    const xml = readXmlResult(await resp.text(), "RestoreDBInstanceToPointInTimeResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RestoreDBInstanceToPointInTimeResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -2696,7 +2697,7 @@ export default class RDS {
       abortSignal, body,
       action: "RevokeDBSecurityGroupIngress",
     });
-    const xml = readXmlResult(await resp.text(), "RevokeDBSecurityGroupIngressResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RevokeDBSecurityGroupIngressResult");
     return {
       DBSecurityGroup: xml.first("DBSecurityGroup", false, DBSecurityGroup_Parse),
     };
@@ -2715,7 +2716,7 @@ export default class RDS {
       abortSignal, body,
       action: "StartActivityStream",
     });
-    const xml = readXmlResult(await resp.text(), "StartActivityStreamResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "StartActivityStreamResult");
     return {
       ...xml.strings({
         optional: {"KmsKeyId":true,"KinesisStreamName":true},
@@ -2736,7 +2737,7 @@ export default class RDS {
       abortSignal, body,
       action: "StartDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "StartDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "StartDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -2752,7 +2753,7 @@ export default class RDS {
       abortSignal, body,
       action: "StartDBInstance",
     });
-    const xml = readXmlResult(await resp.text(), "StartDBInstanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "StartDBInstanceResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -2769,12 +2770,12 @@ export default class RDS {
     body.append(prefix+"IamRoleArn", (params["IamRoleArn"] ?? '').toString());
     body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
     if ("S3Prefix" in params) body.append(prefix+"S3Prefix", (params["S3Prefix"] ?? '').toString());
-    if (params["ExportOnly"]) prt.appendList(body, prefix+"ExportOnly", params["ExportOnly"], {"entryPrefix":".member."})
+    if (params["ExportOnly"]) qsP.appendList(body, prefix+"ExportOnly", params["ExportOnly"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartExportTask",
     });
-    const xml = readXmlResult(await resp.text(), "StartExportTaskResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "StartExportTaskResult");
     return ExportTask_Parse(xml);
   }
 
@@ -2789,7 +2790,7 @@ export default class RDS {
       abortSignal, body,
       action: "StopActivityStream",
     });
-    const xml = readXmlResult(await resp.text(), "StopActivityStreamResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "StopActivityStreamResult");
     return {
       ...xml.strings({
         optional: {"KmsKeyId":true,"KinesisStreamName":true},
@@ -2808,7 +2809,7 @@ export default class RDS {
       abortSignal, body,
       action: "StopDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "StopDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "StopDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -2825,7 +2826,7 @@ export default class RDS {
       abortSignal, body,
       action: "StopDBInstance",
     });
-    const xml = readXmlResult(await resp.text(), "StopDBInstanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "StopDBInstanceResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -2840,7 +2841,7 @@ export default class RDS {
     const errMessage = 'ResourceNotReady: Resource is not in the state DBInstanceAvailable';
     for (let i = 0; i < 60; i++) {
       const resp = await this.describeDBInstances(params);
-      const field = resp["DBInstances"].flatMap(x => x["DBInstanceStatus"]);
+      const field = resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus);
       if (field.every(x => x === "available")) return resp;
       if (field.some(x => x === "deleted")) throw new Error(errMessage);
       if (field.some(x => x === "deleting")) throw new Error(errMessage);
@@ -2860,11 +2861,11 @@ export default class RDS {
     for (let i = 0; i < 60; i++) {
       try {
         const resp = await this.describeDBInstances(params);
-        if (resp["DBInstances"].length == 0) return resp;
-        if (resp["DBInstances"].flatMap(x => x["DBInstanceStatus"]).some(x => x === "creating")) throw new Error(errMessage);
-        if (resp["DBInstances"].flatMap(x => x["DBInstanceStatus"]).some(x => x === "modifying")) throw new Error(errMessage);
-        if (resp["DBInstances"].flatMap(x => x["DBInstanceStatus"]).some(x => x === "rebooting")) throw new Error(errMessage);
-        if (resp["DBInstances"].flatMap(x => x["DBInstanceStatus"]).some(x => x === "resetting-master-credentials")) throw new Error(errMessage);
+        if ((resp?.DBInstances || '').length == 0) return resp;
+        if (resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus).some(x => x === "creating")) throw new Error(errMessage);
+        if (resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus).some(x => x === "modifying")) throw new Error(errMessage);
+        if (resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus).some(x => x === "rebooting")) throw new Error(errMessage);
+        if (resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus).some(x => x === "resetting-master-credentials")) throw new Error(errMessage);
       } catch (err) {
         if (["DBInstanceNotFound"].includes(err.code)) return err;
         throw err;
@@ -2881,7 +2882,7 @@ export default class RDS {
     const errMessage = 'ResourceNotReady: Resource is not in the state DBSnapshotAvailable';
     for (let i = 0; i < 60; i++) {
       const resp = await this.describeDBSnapshots(params);
-      const field = resp["DBSnapshots"].flatMap(x => x["Status"]);
+      const field = resp?.DBSnapshots?.flatMap(x => x?.Status);
       if (field.every(x => x === "available")) return resp;
       if (field.some(x => x === "deleted")) throw new Error(errMessage);
       if (field.some(x => x === "deleting")) throw new Error(errMessage);
@@ -2901,11 +2902,11 @@ export default class RDS {
     for (let i = 0; i < 60; i++) {
       try {
         const resp = await this.describeDBSnapshots(params);
-        if (resp["DBSnapshots"].length == 0) return resp;
-        if (resp["DBSnapshots"].flatMap(x => x["Status"]).some(x => x === "creating")) throw new Error(errMessage);
-        if (resp["DBSnapshots"].flatMap(x => x["Status"]).some(x => x === "modifying")) throw new Error(errMessage);
-        if (resp["DBSnapshots"].flatMap(x => x["Status"]).some(x => x === "rebooting")) throw new Error(errMessage);
-        if (resp["DBSnapshots"].flatMap(x => x["Status"]).some(x => x === "resetting-master-credentials")) throw new Error(errMessage);
+        if ((resp?.DBSnapshots || '').length == 0) return resp;
+        if (resp?.DBSnapshots?.flatMap(x => x?.Status).some(x => x === "creating")) throw new Error(errMessage);
+        if (resp?.DBSnapshots?.flatMap(x => x?.Status).some(x => x === "modifying")) throw new Error(errMessage);
+        if (resp?.DBSnapshots?.flatMap(x => x?.Status).some(x => x === "rebooting")) throw new Error(errMessage);
+        if (resp?.DBSnapshots?.flatMap(x => x?.Status).some(x => x === "resetting-master-credentials")) throw new Error(errMessage);
       } catch (err) {
         if (["DBSnapshotNotFound"].includes(err.code)) return err;
         throw err;
@@ -2922,7 +2923,7 @@ export default class RDS {
     const errMessage = 'ResourceNotReady: Resource is not in the state DBClusterSnapshotAvailable';
     for (let i = 0; i < 60; i++) {
       const resp = await this.describeDBClusterSnapshots(params);
-      const field = resp["DBClusterSnapshots"].flatMap(x => x["Status"]);
+      const field = resp?.DBClusterSnapshots?.flatMap(x => x?.Status);
       if (field.every(x => x === "available")) return resp;
       if (field.some(x => x === "deleted")) throw new Error(errMessage);
       if (field.some(x => x === "deleting")) throw new Error(errMessage);
@@ -2942,11 +2943,11 @@ export default class RDS {
     for (let i = 0; i < 60; i++) {
       try {
         const resp = await this.describeDBClusterSnapshots(params);
-        if (resp["DBClusterSnapshots"].length == 0) return resp;
-        if (resp["DBClusterSnapshots"].flatMap(x => x["Status"]).some(x => x === "creating")) throw new Error(errMessage);
-        if (resp["DBClusterSnapshots"].flatMap(x => x["Status"]).some(x => x === "modifying")) throw new Error(errMessage);
-        if (resp["DBClusterSnapshots"].flatMap(x => x["Status"]).some(x => x === "rebooting")) throw new Error(errMessage);
-        if (resp["DBClusterSnapshots"].flatMap(x => x["Status"]).some(x => x === "resetting-master-credentials")) throw new Error(errMessage);
+        if ((resp?.DBClusterSnapshots || '').length == 0) return resp;
+        if (resp?.DBClusterSnapshots?.flatMap(x => x?.Status).some(x => x === "creating")) throw new Error(errMessage);
+        if (resp?.DBClusterSnapshots?.flatMap(x => x?.Status).some(x => x === "modifying")) throw new Error(errMessage);
+        if (resp?.DBClusterSnapshots?.flatMap(x => x?.Status).some(x => x === "rebooting")) throw new Error(errMessage);
+        if (resp?.DBClusterSnapshots?.flatMap(x => x?.Status).some(x => x === "resetting-master-credentials")) throw new Error(errMessage);
       } catch (err) {
         if (["DBClusterSnapshotNotFoundFault"].includes(err.code)) return err;
         throw err;
@@ -4306,14 +4307,14 @@ export interface DBClusterBacktrack {
   BacktrackRequestCreationTime?: Date | number | null;
   Status?: string | null;
 }
-function DBClusterBacktrack_Parse(node: XmlNode): DBClusterBacktrack {
+function DBClusterBacktrack_Parse(node: xmlP.XmlNode): DBClusterBacktrack {
   return {
     ...node.strings({
       optional: {"DBClusterIdentifier":true,"BacktrackIdentifier":true,"Status":true},
     }),
-    BacktrackTo: node.first("BacktrackTo", false, x => parseTimestamp(x.content)),
-    BacktrackedFrom: node.first("BacktrackedFrom", false, x => parseTimestamp(x.content)),
-    BacktrackRequestCreationTime: node.first("BacktrackRequestCreationTime", false, x => parseTimestamp(x.content)),
+    BacktrackTo: node.first("BacktrackTo", false, x => xmlP.parseTimestamp(x.content)),
+    BacktrackedFrom: node.first("BacktrackedFrom", false, x => xmlP.parseTimestamp(x.content)),
+    BacktrackRequestCreationTime: node.first("BacktrackRequestCreationTime", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4335,15 +4336,15 @@ export interface ExportTask {
   FailureCause?: string | null;
   WarningMessage?: string | null;
 }
-function ExportTask_Parse(node: XmlNode): ExportTask {
+function ExportTask_Parse(node: xmlP.XmlNode): ExportTask {
   return {
     ...node.strings({
       optional: {"ExportTaskIdentifier":true,"SourceArn":true,"S3Bucket":true,"S3Prefix":true,"IamRoleArn":true,"KmsKeyId":true,"Status":true,"FailureCause":true,"WarningMessage":true},
     }),
     ExportOnly: node.getList("ExportOnly", "member").map(x => x.content ?? ''),
-    SnapshotTime: node.first("SnapshotTime", false, x => parseTimestamp(x.content)),
-    TaskStartTime: node.first("TaskStartTime", false, x => parseTimestamp(x.content)),
-    TaskEndTime: node.first("TaskEndTime", false, x => parseTimestamp(x.content)),
+    SnapshotTime: node.first("SnapshotTime", false, x => xmlP.parseTimestamp(x.content)),
+    TaskStartTime: node.first("TaskStartTime", false, x => xmlP.parseTimestamp(x.content)),
+    TaskEndTime: node.first("TaskEndTime", false, x => xmlP.parseTimestamp(x.content)),
     PercentProgress: node.first("PercentProgress", false, x => parseInt(x.content ?? '0')),
     TotalExtractedDataInGB: node.first("TotalExtractedDataInGB", false, x => parseInt(x.content ?? '0')),
   };
@@ -4397,7 +4398,7 @@ export interface DBClusterEndpoint {
   ExcludedMembers: string[];
   DBClusterEndpointArn?: string | null;
 }
-function DBClusterEndpoint_Parse(node: XmlNode): DBClusterEndpoint {
+function DBClusterEndpoint_Parse(node: xmlP.XmlNode): DBClusterEndpoint {
   return {
     ...node.strings({
       optional: {"DBClusterEndpointIdentifier":true,"DBClusterIdentifier":true,"DBClusterEndpointResourceIdentifier":true,"Endpoint":true,"Status":true,"EndpointType":true,"CustomEndpointType":true,"DBClusterEndpointArn":true},
@@ -4523,7 +4524,7 @@ export interface InstallationMedia {
   Status?: string | null;
   FailureCause?: InstallationMediaFailureCause | null;
 }
-function InstallationMedia_Parse(node: XmlNode): InstallationMedia {
+function InstallationMedia_Parse(node: xmlP.XmlNode): InstallationMedia {
   return {
     ...node.strings({
       optional: {"InstallationMediaId":true,"CustomAvailabilityZoneId":true,"Engine":true,"EngineVersion":true,"EngineInstallationMediaPath":true,"OSInstallationMediaPath":true,"Status":true},
@@ -4974,7 +4975,7 @@ function Tag_Serialize(body: URLSearchParams, prefix: string, params: Tag) {
     if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
     if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function Tag_Parse(node: XmlNode): Tag {
+function Tag_Parse(node: xmlP.XmlNode): Tag {
   return node.strings({
     optional: {"Key":true,"Value":true},
   });
@@ -5005,7 +5006,7 @@ function ProcessorFeature_Serialize(body: URLSearchParams, prefix: string, param
     if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
     if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function ProcessorFeature_Parse(node: XmlNode): ProcessorFeature {
+function ProcessorFeature_Parse(node: xmlP.XmlNode): ProcessorFeature {
   return node.strings({
     optional: {"Name":true,"Value":true},
   });
@@ -5015,16 +5016,13 @@ function ProcessorFeature_Parse(node: XmlNode): ProcessorFeature {
 export type ReplicaMode =
 | "open-read-only"
 | "mounted"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type EngineFamily =
 | "MYSQL"
 | "POSTGRESQL"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface UserAuthConfig {
@@ -5045,17 +5043,13 @@ function UserAuthConfig_Serialize(body: URLSearchParams, prefix: string, params:
 // refs: 6 - tags: input, named, enum, output
 export type AuthScheme =
 | "SECRETS"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, enum, output
 export type IAMAuthMode =
 | "DISABLED"
 | "REQUIRED"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 36 - tags: input, named, interface
 export interface Filter {
@@ -5064,7 +5058,7 @@ export interface Filter {
 }
 function Filter_Serialize(body: URLSearchParams, prefix: string, params: Filter) {
     body.append(prefix+".Name", (params["Name"] ?? '').toString());
-    if (params["Values"]) prt.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".Value."})
+    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".Value."})
 }
 
 // refs: 2 - tags: input, named, enum, output
@@ -5075,9 +5069,7 @@ export type SourceType =
 | "db-snapshot"
 | "db-cluster"
 | "db-cluster-snapshot"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface CloudwatchLogsExportConfiguration {
@@ -5085,8 +5077,8 @@ export interface CloudwatchLogsExportConfiguration {
   DisableLogTypes?: string[] | null;
 }
 function CloudwatchLogsExportConfiguration_Serialize(body: URLSearchParams, prefix: string, params: CloudwatchLogsExportConfiguration) {
-    if (params["EnableLogTypes"]) prt.appendList(body, prefix+".EnableLogTypes", params["EnableLogTypes"], {"entryPrefix":".member."})
-    if (params["DisableLogTypes"]) prt.appendList(body, prefix+".DisableLogTypes", params["DisableLogTypes"], {"entryPrefix":".member."})
+    if (params["EnableLogTypes"]) qsP.appendList(body, prefix+".EnableLogTypes", params["EnableLogTypes"], {"entryPrefix":".member."})
+    if (params["DisableLogTypes"]) qsP.appendList(body, prefix+".DisableLogTypes", params["DisableLogTypes"], {"entryPrefix":".member."})
 }
 
 // refs: 8 - tags: input, named, interface, output
@@ -5114,9 +5106,9 @@ function Parameter_Serialize(body: URLSearchParams, prefix: string, params: Para
     if ("IsModifiable" in params) body.append(prefix+".IsModifiable", (params["IsModifiable"] ?? '').toString());
     if ("MinimumEngineVersion" in params) body.append(prefix+".MinimumEngineVersion", (params["MinimumEngineVersion"] ?? '').toString());
     if ("ApplyMethod" in params) body.append(prefix+".ApplyMethod", (params["ApplyMethod"] ?? '').toString());
-    if (params["SupportedEngineModes"]) prt.appendList(body, prefix+".SupportedEngineModes", params["SupportedEngineModes"], {"entryPrefix":".member."})
+    if (params["SupportedEngineModes"]) qsP.appendList(body, prefix+".SupportedEngineModes", params["SupportedEngineModes"], {"entryPrefix":".member."})
 }
-function Parameter_Parse(node: XmlNode): Parameter {
+function Parameter_Parse(node: xmlP.XmlNode): Parameter {
   return {
     ...node.strings({
       optional: {"ParameterName":true,"ParameterValue":true,"Description":true,"Source":true,"ApplyType":true,"DataType":true,"AllowedValues":true,"MinimumEngineVersion":true},
@@ -5131,9 +5123,7 @@ function Parameter_Parse(node: XmlNode): Parameter {
 export type ApplyMethod =
 | "immediate"
 | "pending-reboot"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ConnectionPoolConfiguration {
@@ -5147,7 +5137,7 @@ function ConnectionPoolConfiguration_Serialize(body: URLSearchParams, prefix: st
     if ("MaxConnectionsPercent" in params) body.append(prefix+".MaxConnectionsPercent", (params["MaxConnectionsPercent"] ?? '').toString());
     if ("MaxIdleConnectionsPercent" in params) body.append(prefix+".MaxIdleConnectionsPercent", (params["MaxIdleConnectionsPercent"] ?? '').toString());
     if ("ConnectionBorrowTimeout" in params) body.append(prefix+".ConnectionBorrowTimeout", (params["ConnectionBorrowTimeout"] ?? '').toString());
-    if (params["SessionPinningFilters"]) prt.appendList(body, prefix+".SessionPinningFilters", params["SessionPinningFilters"], {"entryPrefix":".member."})
+    if (params["SessionPinningFilters"]) qsP.appendList(body, prefix+".SessionPinningFilters", params["SessionPinningFilters"], {"entryPrefix":".member."})
     if ("InitQuery" in params) body.append(prefix+".InitQuery", (params["InitQuery"] ?? '').toString());
 }
 
@@ -5164,9 +5154,9 @@ function OptionConfiguration_Serialize(body: URLSearchParams, prefix: string, pa
     body.append(prefix+".OptionName", (params["OptionName"] ?? '').toString());
     if ("Port" in params) body.append(prefix+".Port", (params["Port"] ?? '').toString());
     if ("OptionVersion" in params) body.append(prefix+".OptionVersion", (params["OptionVersion"] ?? '').toString());
-    if (params["DBSecurityGroupMemberships"]) prt.appendList(body, prefix+".DBSecurityGroupMemberships", params["DBSecurityGroupMemberships"], {"entryPrefix":".DBSecurityGroupName."})
-    if (params["VpcSecurityGroupMemberships"]) prt.appendList(body, prefix+".VpcSecurityGroupMemberships", params["VpcSecurityGroupMemberships"], {"entryPrefix":".VpcSecurityGroupId."})
-    if (params["OptionSettings"]) prt.appendList(body, prefix+".OptionSettings", params["OptionSettings"], {"appender":OptionSetting_Serialize,"entryPrefix":".OptionSetting."})
+    if (params["DBSecurityGroupMemberships"]) qsP.appendList(body, prefix+".DBSecurityGroupMemberships", params["DBSecurityGroupMemberships"], {"entryPrefix":".DBSecurityGroupName."})
+    if (params["VpcSecurityGroupMemberships"]) qsP.appendList(body, prefix+".VpcSecurityGroupMemberships", params["VpcSecurityGroupMemberships"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["OptionSettings"]) qsP.appendList(body, prefix+".OptionSettings", params["OptionSettings"], {"appender":OptionSetting_Serialize,"entryPrefix":".OptionSetting."})
 }
 
 // refs: 5 - tags: input, named, interface, output
@@ -5192,7 +5182,7 @@ function OptionSetting_Serialize(body: URLSearchParams, prefix: string, params: 
     if ("IsModifiable" in params) body.append(prefix+".IsModifiable", (params["IsModifiable"] ?? '').toString());
     if ("IsCollection" in params) body.append(prefix+".IsCollection", (params["IsCollection"] ?? '').toString());
 }
-function OptionSetting_Parse(node: XmlNode): OptionSetting {
+function OptionSetting_Parse(node: xmlP.XmlNode): OptionSetting {
   return {
     ...node.strings({
       optional: {"Name":true,"Value":true,"DefaultValue":true,"Description":true,"ApplyType":true,"DataType":true,"AllowedValues":true},
@@ -5206,9 +5196,7 @@ function OptionSetting_Parse(node: XmlNode): OptionSetting {
 export type ActivityStreamMode =
 | "sync"
 | "async"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: output, named, interface
 export interface EventSubscription {
@@ -5223,7 +5211,7 @@ export interface EventSubscription {
   Enabled?: boolean | null;
   EventSubscriptionArn?: string | null;
 }
-function EventSubscription_Parse(node: XmlNode): EventSubscription {
+function EventSubscription_Parse(node: xmlP.XmlNode): EventSubscription {
   return {
     ...node.strings({
       optional: {"CustomerAwsId":true,"CustSubscriptionId":true,"SnsTopicArn":true,"Status":true,"SubscriptionCreationTime":true,"SourceType":true,"EventSubscriptionArn":true},
@@ -5239,7 +5227,7 @@ export interface ResourcePendingMaintenanceActions {
   ResourceIdentifier?: string | null;
   PendingMaintenanceActionDetails: PendingMaintenanceAction[];
 }
-function ResourcePendingMaintenanceActions_Parse(node: XmlNode): ResourcePendingMaintenanceActions {
+function ResourcePendingMaintenanceActions_Parse(node: xmlP.XmlNode): ResourcePendingMaintenanceActions {
   return {
     ...node.strings({
       optional: {"ResourceIdentifier":true},
@@ -5257,14 +5245,14 @@ export interface PendingMaintenanceAction {
   CurrentApplyDate?: Date | number | null;
   Description?: string | null;
 }
-function PendingMaintenanceAction_Parse(node: XmlNode): PendingMaintenanceAction {
+function PendingMaintenanceAction_Parse(node: xmlP.XmlNode): PendingMaintenanceAction {
   return {
     ...node.strings({
       optional: {"Action":true,"OptInStatus":true,"Description":true},
     }),
-    AutoAppliedAfterDate: node.first("AutoAppliedAfterDate", false, x => parseTimestamp(x.content)),
-    ForcedApplyDate: node.first("ForcedApplyDate", false, x => parseTimestamp(x.content)),
-    CurrentApplyDate: node.first("CurrentApplyDate", false, x => parseTimestamp(x.content)),
+    AutoAppliedAfterDate: node.first("AutoAppliedAfterDate", false, x => xmlP.parseTimestamp(x.content)),
+    ForcedApplyDate: node.first("ForcedApplyDate", false, x => xmlP.parseTimestamp(x.content)),
+    CurrentApplyDate: node.first("CurrentApplyDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -5278,7 +5266,7 @@ export interface DBSecurityGroup {
   IPRanges: IPRange[];
   DBSecurityGroupArn?: string | null;
 }
-function DBSecurityGroup_Parse(node: XmlNode): DBSecurityGroup {
+function DBSecurityGroup_Parse(node: xmlP.XmlNode): DBSecurityGroup {
   return {
     ...node.strings({
       optional: {"OwnerId":true,"DBSecurityGroupName":true,"DBSecurityGroupDescription":true,"VpcId":true,"DBSecurityGroupArn":true},
@@ -5295,7 +5283,7 @@ export interface EC2SecurityGroup {
   EC2SecurityGroupId?: string | null;
   EC2SecurityGroupOwnerId?: string | null;
 }
-function EC2SecurityGroup_Parse(node: XmlNode): EC2SecurityGroup {
+function EC2SecurityGroup_Parse(node: xmlP.XmlNode): EC2SecurityGroup {
   return node.strings({
     optional: {"Status":true,"EC2SecurityGroupName":true,"EC2SecurityGroupId":true,"EC2SecurityGroupOwnerId":true},
   });
@@ -5306,7 +5294,7 @@ export interface IPRange {
   Status?: string | null;
   CIDRIP?: string | null;
 }
-function IPRange_Parse(node: XmlNode): IPRange {
+function IPRange_Parse(node: xmlP.XmlNode): IPRange {
   return node.strings({
     optional: {"Status":true,"CIDRIP":true},
   });
@@ -5319,7 +5307,7 @@ export interface DBClusterParameterGroup {
   Description?: string | null;
   DBClusterParameterGroupArn?: string | null;
 }
-function DBClusterParameterGroup_Parse(node: XmlNode): DBClusterParameterGroup {
+function DBClusterParameterGroup_Parse(node: xmlP.XmlNode): DBClusterParameterGroup {
   return node.strings({
     optional: {"DBClusterParameterGroupName":true,"DBParameterGroupFamily":true,"Description":true,"DBClusterParameterGroupArn":true},
   });
@@ -5349,16 +5337,16 @@ export interface DBClusterSnapshot {
   IAMDatabaseAuthenticationEnabled?: boolean | null;
   TagList: Tag[];
 }
-function DBClusterSnapshot_Parse(node: XmlNode): DBClusterSnapshot {
+function DBClusterSnapshot_Parse(node: xmlP.XmlNode): DBClusterSnapshot {
   return {
     ...node.strings({
       optional: {"DBClusterSnapshotIdentifier":true,"DBClusterIdentifier":true,"Engine":true,"Status":true,"VpcId":true,"MasterUsername":true,"EngineVersion":true,"LicenseModel":true,"SnapshotType":true,"KmsKeyId":true,"DBClusterSnapshotArn":true,"SourceDBClusterSnapshotArn":true},
     }),
     AvailabilityZones: node.getList("AvailabilityZones", "AvailabilityZone").map(x => x.content ?? ''),
-    SnapshotCreateTime: node.first("SnapshotCreateTime", false, x => parseTimestamp(x.content)),
+    SnapshotCreateTime: node.first("SnapshotCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     AllocatedStorage: node.first("AllocatedStorage", false, x => parseInt(x.content ?? '0')),
     Port: node.first("Port", false, x => parseInt(x.content ?? '0')),
-    ClusterCreateTime: node.first("ClusterCreateTime", false, x => parseTimestamp(x.content)),
+    ClusterCreateTime: node.first("ClusterCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     PercentProgress: node.first("PercentProgress", false, x => parseInt(x.content ?? '0')),
     StorageEncrypted: node.first("StorageEncrypted", false, x => x.content === 'true'),
     IAMDatabaseAuthenticationEnabled: node.first("IAMDatabaseAuthenticationEnabled", false, x => x.content === 'true'),
@@ -5373,7 +5361,7 @@ export interface DBParameterGroup {
   Description?: string | null;
   DBParameterGroupArn?: string | null;
 }
-function DBParameterGroup_Parse(node: XmlNode): DBParameterGroup {
+function DBParameterGroup_Parse(node: xmlP.XmlNode): DBParameterGroup {
   return node.strings({
     optional: {"DBParameterGroupName":true,"DBParameterGroupFamily":true,"Description":true,"DBParameterGroupArn":true},
   });
@@ -5411,15 +5399,15 @@ export interface DBSnapshot {
   DbiResourceId?: string | null;
   TagList: Tag[];
 }
-function DBSnapshot_Parse(node: XmlNode): DBSnapshot {
+function DBSnapshot_Parse(node: xmlP.XmlNode): DBSnapshot {
   return {
     ...node.strings({
       optional: {"DBSnapshotIdentifier":true,"DBInstanceIdentifier":true,"Engine":true,"Status":true,"AvailabilityZone":true,"VpcId":true,"MasterUsername":true,"EngineVersion":true,"LicenseModel":true,"SnapshotType":true,"OptionGroupName":true,"SourceRegion":true,"SourceDBSnapshotIdentifier":true,"StorageType":true,"TdeCredentialArn":true,"KmsKeyId":true,"DBSnapshotArn":true,"Timezone":true,"DbiResourceId":true},
     }),
-    SnapshotCreateTime: node.first("SnapshotCreateTime", false, x => parseTimestamp(x.content)),
+    SnapshotCreateTime: node.first("SnapshotCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     AllocatedStorage: node.first("AllocatedStorage", false, x => parseInt(x.content ?? '0')),
     Port: node.first("Port", false, x => parseInt(x.content ?? '0')),
-    InstanceCreateTime: node.first("InstanceCreateTime", false, x => parseTimestamp(x.content)),
+    InstanceCreateTime: node.first("InstanceCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     Iops: node.first("Iops", false, x => parseInt(x.content ?? '0')),
     PercentProgress: node.first("PercentProgress", false, x => parseInt(x.content ?? '0')),
     Encrypted: node.first("Encrypted", false, x => x.content === 'true'),
@@ -5440,7 +5428,7 @@ export interface OptionGroup {
   VpcId?: string | null;
   OptionGroupArn?: string | null;
 }
-function OptionGroup_Parse(node: XmlNode): OptionGroup {
+function OptionGroup_Parse(node: xmlP.XmlNode): OptionGroup {
   return {
     ...node.strings({
       optional: {"OptionGroupName":true,"OptionGroupDescription":true,"EngineName":true,"MajorEngineVersion":true,"VpcId":true,"OptionGroupArn":true},
@@ -5462,7 +5450,7 @@ export interface Option {
   DBSecurityGroupMemberships: DBSecurityGroupMembership[];
   VpcSecurityGroupMemberships: VpcSecurityGroupMembership[];
 }
-function Option_Parse(node: XmlNode): Option {
+function Option_Parse(node: xmlP.XmlNode): Option {
   return {
     ...node.strings({
       optional: {"OptionName":true,"OptionDescription":true,"OptionVersion":true},
@@ -5481,7 +5469,7 @@ export interface DBSecurityGroupMembership {
   DBSecurityGroupName?: string | null;
   Status?: string | null;
 }
-function DBSecurityGroupMembership_Parse(node: XmlNode): DBSecurityGroupMembership {
+function DBSecurityGroupMembership_Parse(node: xmlP.XmlNode): DBSecurityGroupMembership {
   return node.strings({
     optional: {"DBSecurityGroupName":true,"Status":true},
   });
@@ -5492,7 +5480,7 @@ export interface VpcSecurityGroupMembership {
   VpcSecurityGroupId?: string | null;
   Status?: string | null;
 }
-function VpcSecurityGroupMembership_Parse(node: XmlNode): VpcSecurityGroupMembership {
+function VpcSecurityGroupMembership_Parse(node: xmlP.XmlNode): VpcSecurityGroupMembership {
   return node.strings({
     optional: {"VpcSecurityGroupId":true,"Status":true},
   });
@@ -5505,7 +5493,7 @@ export interface CustomAvailabilityZone {
   CustomAvailabilityZoneStatus?: string | null;
   VpnDetails?: VpnDetails | null;
 }
-function CustomAvailabilityZone_Parse(node: XmlNode): CustomAvailabilityZone {
+function CustomAvailabilityZone_Parse(node: xmlP.XmlNode): CustomAvailabilityZone {
   return {
     ...node.strings({
       optional: {"CustomAvailabilityZoneId":true,"CustomAvailabilityZoneName":true,"CustomAvailabilityZoneStatus":true},
@@ -5523,7 +5511,7 @@ export interface VpnDetails {
   VpnName?: string | null;
   VpnState?: string | null;
 }
-function VpnDetails_Parse(node: XmlNode): VpnDetails {
+function VpnDetails_Parse(node: xmlP.XmlNode): VpnDetails {
   return node.strings({
     optional: {"VpnId":true,"VpnTunnelOriginatorIP":true,"VpnGatewayIp":true,"VpnPSK":true,"VpnName":true,"VpnState":true},
   });
@@ -5587,7 +5575,7 @@ export interface DBCluster {
   GlobalWriteForwardingStatus?: WriteForwardingStatus | null;
   GlobalWriteForwardingRequested?: boolean | null;
 }
-function DBCluster_Parse(node: XmlNode): DBCluster {
+function DBCluster_Parse(node: xmlP.XmlNode): DBCluster {
   return {
     ...node.strings({
       optional: {"CharacterSetName":true,"DatabaseName":true,"DBClusterIdentifier":true,"DBClusterParameterGroup":true,"DBSubnetGroup":true,"Status":true,"PercentProgress":true,"Endpoint":true,"ReaderEndpoint":true,"Engine":true,"EngineVersion":true,"MasterUsername":true,"PreferredBackupWindow":true,"PreferredMaintenanceWindow":true,"ReplicationSourceIdentifier":true,"HostedZoneId":true,"KmsKeyId":true,"DbClusterResourceId":true,"DBClusterArn":true,"CloneGroupId":true,"EngineMode":true,"ActivityStreamKmsKeyId":true,"ActivityStreamKinesisStreamName":true},
@@ -5595,10 +5583,10 @@ function DBCluster_Parse(node: XmlNode): DBCluster {
     AllocatedStorage: node.first("AllocatedStorage", false, x => parseInt(x.content ?? '0')),
     AvailabilityZones: node.getList("AvailabilityZones", "AvailabilityZone").map(x => x.content ?? ''),
     BackupRetentionPeriod: node.first("BackupRetentionPeriod", false, x => parseInt(x.content ?? '0')),
-    EarliestRestorableTime: node.first("EarliestRestorableTime", false, x => parseTimestamp(x.content)),
+    EarliestRestorableTime: node.first("EarliestRestorableTime", false, x => xmlP.parseTimestamp(x.content)),
     CustomEndpoints: node.getList("CustomEndpoints", "member").map(x => x.content ?? ''),
     MultiAZ: node.first("MultiAZ", false, x => x.content === 'true'),
-    LatestRestorableTime: node.first("LatestRestorableTime", false, x => parseTimestamp(x.content)),
+    LatestRestorableTime: node.first("LatestRestorableTime", false, x => xmlP.parseTimestamp(x.content)),
     Port: node.first("Port", false, x => parseInt(x.content ?? '0')),
     DBClusterOptionGroupMemberships: node.getList("DBClusterOptionGroupMemberships", "DBClusterOptionGroup").map(DBClusterOptionGroupStatus_Parse),
     ReadReplicaIdentifiers: node.getList("ReadReplicaIdentifiers", "ReadReplicaIdentifier").map(x => x.content ?? ''),
@@ -5607,8 +5595,8 @@ function DBCluster_Parse(node: XmlNode): DBCluster {
     StorageEncrypted: node.first("StorageEncrypted", false, x => x.content === 'true'),
     AssociatedRoles: node.getList("AssociatedRoles", "DBClusterRole").map(DBClusterRole_Parse),
     IAMDatabaseAuthenticationEnabled: node.first("IAMDatabaseAuthenticationEnabled", false, x => x.content === 'true'),
-    ClusterCreateTime: node.first("ClusterCreateTime", false, x => parseTimestamp(x.content)),
-    EarliestBacktrackTime: node.first("EarliestBacktrackTime", false, x => parseTimestamp(x.content)),
+    ClusterCreateTime: node.first("ClusterCreateTime", false, x => xmlP.parseTimestamp(x.content)),
+    EarliestBacktrackTime: node.first("EarliestBacktrackTime", false, x => xmlP.parseTimestamp(x.content)),
     BacktrackWindow: node.first("BacktrackWindow", false, x => parseInt(x.content ?? '0')),
     BacktrackConsumedChangeRecords: node.first("BacktrackConsumedChangeRecords", false, x => parseInt(x.content ?? '0')),
     EnabledCloudwatchLogsExports: node.getList("EnabledCloudwatchLogsExports", "member").map(x => x.content ?? ''),
@@ -5632,7 +5620,7 @@ export interface DBClusterOptionGroupStatus {
   DBClusterOptionGroupName?: string | null;
   Status?: string | null;
 }
-function DBClusterOptionGroupStatus_Parse(node: XmlNode): DBClusterOptionGroupStatus {
+function DBClusterOptionGroupStatus_Parse(node: xmlP.XmlNode): DBClusterOptionGroupStatus {
   return node.strings({
     optional: {"DBClusterOptionGroupName":true,"Status":true},
   });
@@ -5645,7 +5633,7 @@ export interface DBClusterMember {
   DBClusterParameterGroupStatus?: string | null;
   PromotionTier?: number | null;
 }
-function DBClusterMember_Parse(node: XmlNode): DBClusterMember {
+function DBClusterMember_Parse(node: xmlP.XmlNode): DBClusterMember {
   return {
     ...node.strings({
       optional: {"DBInstanceIdentifier":true,"DBClusterParameterGroupStatus":true},
@@ -5661,7 +5649,7 @@ export interface DBClusterRole {
   Status?: string | null;
   FeatureName?: string | null;
 }
-function DBClusterRole_Parse(node: XmlNode): DBClusterRole {
+function DBClusterRole_Parse(node: xmlP.XmlNode): DBClusterRole {
   return node.strings({
     optional: {"RoleArn":true,"Status":true,"FeatureName":true},
   });
@@ -5675,7 +5663,7 @@ export interface ScalingConfigurationInfo {
   SecondsUntilAutoPause?: number | null;
   TimeoutAction?: string | null;
 }
-function ScalingConfigurationInfo_Parse(node: XmlNode): ScalingConfigurationInfo {
+function ScalingConfigurationInfo_Parse(node: xmlP.XmlNode): ScalingConfigurationInfo {
   return {
     ...node.strings({
       optional: {"TimeoutAction":true},
@@ -5693,8 +5681,7 @@ export type ActivityStreamStatus =
 | "starting"
 | "started"
 | "stopping"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 23 - tags: output, named, interface
 export interface DomainMembership {
@@ -5703,7 +5690,7 @@ export interface DomainMembership {
   FQDN?: string | null;
   IAMRoleName?: string | null;
 }
-function DomainMembership_Parse(node: XmlNode): DomainMembership {
+function DomainMembership_Parse(node: xmlP.XmlNode): DomainMembership {
   return node.strings({
     optional: {"Domain":true,"Status":true,"FQDN":true,"IAMRoleName":true},
   });
@@ -5716,8 +5703,7 @@ export type WriteForwardingStatus =
 | "enabling"
 | "disabling"
 | "unknown"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 12 - tags: output, named, interface
 export interface DBInstance {
@@ -5783,21 +5769,21 @@ export interface DBInstance {
   MaxAllocatedStorage?: number | null;
   TagList: Tag[];
 }
-function DBInstance_Parse(node: XmlNode): DBInstance {
+function DBInstance_Parse(node: xmlP.XmlNode): DBInstance {
   return {
     ...node.strings({
       optional: {"DBInstanceIdentifier":true,"DBInstanceClass":true,"Engine":true,"DBInstanceStatus":true,"MasterUsername":true,"DBName":true,"PreferredBackupWindow":true,"AvailabilityZone":true,"PreferredMaintenanceWindow":true,"EngineVersion":true,"ReadReplicaSourceDBInstanceIdentifier":true,"LicenseModel":true,"CharacterSetName":true,"NcharCharacterSetName":true,"SecondaryAvailabilityZone":true,"StorageType":true,"TdeCredentialArn":true,"DBClusterIdentifier":true,"KmsKeyId":true,"DbiResourceId":true,"CACertificateIdentifier":true,"EnhancedMonitoringResourceArn":true,"MonitoringRoleArn":true,"DBInstanceArn":true,"Timezone":true,"PerformanceInsightsKMSKeyId":true},
     }),
     Endpoint: node.first("Endpoint", false, Endpoint_Parse),
     AllocatedStorage: node.first("AllocatedStorage", false, x => parseInt(x.content ?? '0')),
-    InstanceCreateTime: node.first("InstanceCreateTime", false, x => parseTimestamp(x.content)),
+    InstanceCreateTime: node.first("InstanceCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     BackupRetentionPeriod: node.first("BackupRetentionPeriod", false, x => parseInt(x.content ?? '0')),
     DBSecurityGroups: node.getList("DBSecurityGroups", "DBSecurityGroup").map(DBSecurityGroupMembership_Parse),
     VpcSecurityGroups: node.getList("VpcSecurityGroups", "VpcSecurityGroupMembership").map(VpcSecurityGroupMembership_Parse),
     DBParameterGroups: node.getList("DBParameterGroups", "DBParameterGroup").map(DBParameterGroupStatus_Parse),
     DBSubnetGroup: node.first("DBSubnetGroup", false, DBSubnetGroup_Parse),
     PendingModifiedValues: node.first("PendingModifiedValues", false, PendingModifiedValues_Parse),
-    LatestRestorableTime: node.first("LatestRestorableTime", false, x => parseTimestamp(x.content)),
+    LatestRestorableTime: node.first("LatestRestorableTime", false, x => xmlP.parseTimestamp(x.content)),
     MultiAZ: node.first("MultiAZ", false, x => x.content === 'true'),
     AutoMinorVersionUpgrade: node.first("AutoMinorVersionUpgrade", false, x => x.content === 'true'),
     ReadReplicaDBInstanceIdentifiers: node.getList("ReadReplicaDBInstanceIdentifiers", "ReadReplicaDBInstanceIdentifier").map(x => x.content ?? ''),
@@ -5832,7 +5818,7 @@ export interface Endpoint {
   Port?: number | null;
   HostedZoneId?: string | null;
 }
-function Endpoint_Parse(node: XmlNode): Endpoint {
+function Endpoint_Parse(node: xmlP.XmlNode): Endpoint {
   return {
     ...node.strings({
       optional: {"Address":true,"HostedZoneId":true},
@@ -5846,7 +5832,7 @@ export interface DBParameterGroupStatus {
   DBParameterGroupName?: string | null;
   ParameterApplyStatus?: string | null;
 }
-function DBParameterGroupStatus_Parse(node: XmlNode): DBParameterGroupStatus {
+function DBParameterGroupStatus_Parse(node: xmlP.XmlNode): DBParameterGroupStatus {
   return node.strings({
     optional: {"DBParameterGroupName":true,"ParameterApplyStatus":true},
   });
@@ -5861,7 +5847,7 @@ export interface DBSubnetGroup {
   Subnets: Subnet[];
   DBSubnetGroupArn?: string | null;
 }
-function DBSubnetGroup_Parse(node: XmlNode): DBSubnetGroup {
+function DBSubnetGroup_Parse(node: xmlP.XmlNode): DBSubnetGroup {
   return {
     ...node.strings({
       optional: {"DBSubnetGroupName":true,"DBSubnetGroupDescription":true,"VpcId":true,"SubnetGroupStatus":true,"DBSubnetGroupArn":true},
@@ -5877,7 +5863,7 @@ export interface Subnet {
   SubnetOutpost?: Outpost | null;
   SubnetStatus?: string | null;
 }
-function Subnet_Parse(node: XmlNode): Subnet {
+function Subnet_Parse(node: xmlP.XmlNode): Subnet {
   return {
     ...node.strings({
       optional: {"SubnetIdentifier":true,"SubnetStatus":true},
@@ -5891,7 +5877,7 @@ function Subnet_Parse(node: XmlNode): Subnet {
 export interface AvailabilityZone {
   Name?: string | null;
 }
-function AvailabilityZone_Parse(node: XmlNode): AvailabilityZone {
+function AvailabilityZone_Parse(node: xmlP.XmlNode): AvailabilityZone {
   return node.strings({
     optional: {"Name":true},
   });
@@ -5901,7 +5887,7 @@ function AvailabilityZone_Parse(node: XmlNode): AvailabilityZone {
 export interface Outpost {
   Arn?: string | null;
 }
-function Outpost_Parse(node: XmlNode): Outpost {
+function Outpost_Parse(node: xmlP.XmlNode): Outpost {
   return node.strings({
     optional: {"Arn":true},
   });
@@ -5925,7 +5911,7 @@ export interface PendingModifiedValues {
   PendingCloudwatchLogsExports?: PendingCloudwatchLogsExports | null;
   ProcessorFeatures: ProcessorFeature[];
 }
-function PendingModifiedValues_Parse(node: XmlNode): PendingModifiedValues {
+function PendingModifiedValues_Parse(node: xmlP.XmlNode): PendingModifiedValues {
   return {
     ...node.strings({
       optional: {"DBInstanceClass":true,"MasterUserPassword":true,"EngineVersion":true,"LicenseModel":true,"DBInstanceIdentifier":true,"StorageType":true,"CACertificateIdentifier":true,"DBSubnetGroupName":true},
@@ -5945,7 +5931,7 @@ export interface PendingCloudwatchLogsExports {
   LogTypesToEnable: string[];
   LogTypesToDisable: string[];
 }
-function PendingCloudwatchLogsExports_Parse(node: XmlNode): PendingCloudwatchLogsExports {
+function PendingCloudwatchLogsExports_Parse(node: xmlP.XmlNode): PendingCloudwatchLogsExports {
   return {
     LogTypesToEnable: node.getList("LogTypesToEnable", "member").map(x => x.content ?? ''),
     LogTypesToDisable: node.getList("LogTypesToDisable", "member").map(x => x.content ?? ''),
@@ -5957,7 +5943,7 @@ export interface OptionGroupMembership {
   OptionGroupName?: string | null;
   Status?: string | null;
 }
-function OptionGroupMembership_Parse(node: XmlNode): OptionGroupMembership {
+function OptionGroupMembership_Parse(node: xmlP.XmlNode): OptionGroupMembership {
   return node.strings({
     optional: {"OptionGroupName":true,"Status":true},
   });
@@ -5970,7 +5956,7 @@ export interface DBInstanceStatusInfo {
   Status?: string | null;
   Message?: string | null;
 }
-function DBInstanceStatusInfo_Parse(node: XmlNode): DBInstanceStatusInfo {
+function DBInstanceStatusInfo_Parse(node: xmlP.XmlNode): DBInstanceStatusInfo {
   return {
     ...node.strings({
       optional: {"StatusType":true,"Status":true,"Message":true},
@@ -5985,7 +5971,7 @@ export interface DBInstanceRole {
   FeatureName?: string | null;
   Status?: string | null;
 }
-function DBInstanceRole_Parse(node: XmlNode): DBInstanceRole {
+function DBInstanceRole_Parse(node: xmlP.XmlNode): DBInstanceRole {
   return node.strings({
     optional: {"RoleArn":true,"FeatureName":true,"Status":true},
   });
@@ -6008,7 +5994,7 @@ export interface DBProxy {
   CreatedDate?: Date | number | null;
   UpdatedDate?: Date | number | null;
 }
-function DBProxy_Parse(node: XmlNode): DBProxy {
+function DBProxy_Parse(node: xmlP.XmlNode): DBProxy {
   return {
     ...node.strings({
       optional: {"DBProxyName":true,"DBProxyArn":true,"EngineFamily":true,"RoleArn":true,"Endpoint":true},
@@ -6020,8 +6006,8 @@ function DBProxy_Parse(node: XmlNode): DBProxy {
     RequireTLS: node.first("RequireTLS", false, x => x.content === 'true'),
     IdleClientTimeout: node.first("IdleClientTimeout", false, x => parseInt(x.content ?? '0')),
     DebugLogging: node.first("DebugLogging", false, x => x.content === 'true'),
-    CreatedDate: node.first("CreatedDate", false, x => parseTimestamp(x.content)),
-    UpdatedDate: node.first("UpdatedDate", false, x => parseTimestamp(x.content)),
+    CreatedDate: node.first("CreatedDate", false, x => xmlP.parseTimestamp(x.content)),
+    UpdatedDate: node.first("UpdatedDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -6036,8 +6022,7 @@ export type DBProxyStatus =
 | "suspended"
 | "suspending"
 | "reactivating"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface UserAuthConfigInfo {
@@ -6047,7 +6032,7 @@ export interface UserAuthConfigInfo {
   SecretArn?: string | null;
   IAMAuth?: IAMAuthMode | null;
 }
-function UserAuthConfigInfo_Parse(node: XmlNode): UserAuthConfigInfo {
+function UserAuthConfigInfo_Parse(node: xmlP.XmlNode): UserAuthConfigInfo {
   return {
     ...node.strings({
       optional: {"Description":true,"UserName":true,"SecretArn":true},
@@ -6070,7 +6055,7 @@ export interface GlobalCluster {
   DeletionProtection?: boolean | null;
   GlobalClusterMembers: GlobalClusterMember[];
 }
-function GlobalCluster_Parse(node: XmlNode): GlobalCluster {
+function GlobalCluster_Parse(node: xmlP.XmlNode): GlobalCluster {
   return {
     ...node.strings({
       optional: {"GlobalClusterIdentifier":true,"GlobalClusterResourceId":true,"GlobalClusterArn":true,"Status":true,"Engine":true,"EngineVersion":true,"DatabaseName":true},
@@ -6088,7 +6073,7 @@ export interface GlobalClusterMember {
   IsWriter?: boolean | null;
   GlobalWriteForwardingStatus?: WriteForwardingStatus | null;
 }
-function GlobalClusterMember_Parse(node: XmlNode): GlobalClusterMember {
+function GlobalClusterMember_Parse(node: xmlP.XmlNode): GlobalClusterMember {
   return {
     ...node.strings({
       optional: {"DBClusterArn":true},
@@ -6125,7 +6110,7 @@ export interface DBInstanceAutomatedBackup {
   Timezone?: string | null;
   IAMDatabaseAuthenticationEnabled?: boolean | null;
 }
-function DBInstanceAutomatedBackup_Parse(node: XmlNode): DBInstanceAutomatedBackup {
+function DBInstanceAutomatedBackup_Parse(node: xmlP.XmlNode): DBInstanceAutomatedBackup {
   return {
     ...node.strings({
       optional: {"DBInstanceArn":true,"DbiResourceId":true,"Region":true,"DBInstanceIdentifier":true,"Status":true,"AvailabilityZone":true,"VpcId":true,"MasterUsername":true,"Engine":true,"EngineVersion":true,"LicenseModel":true,"OptionGroupName":true,"TdeCredentialArn":true,"StorageType":true,"KmsKeyId":true,"Timezone":true},
@@ -6133,7 +6118,7 @@ function DBInstanceAutomatedBackup_Parse(node: XmlNode): DBInstanceAutomatedBack
     RestoreWindow: node.first("RestoreWindow", false, RestoreWindow_Parse),
     AllocatedStorage: node.first("AllocatedStorage", false, x => parseInt(x.content ?? '0')),
     Port: node.first("Port", false, x => parseInt(x.content ?? '0')),
-    InstanceCreateTime: node.first("InstanceCreateTime", false, x => parseTimestamp(x.content)),
+    InstanceCreateTime: node.first("InstanceCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     Iops: node.first("Iops", false, x => parseInt(x.content ?? '0')),
     Encrypted: node.first("Encrypted", false, x => x.content === 'true'),
     IAMDatabaseAuthenticationEnabled: node.first("IAMDatabaseAuthenticationEnabled", false, x => x.content === 'true'),
@@ -6145,10 +6130,10 @@ export interface RestoreWindow {
   EarliestTime?: Date | number | null;
   LatestTime?: Date | number | null;
 }
-function RestoreWindow_Parse(node: XmlNode): RestoreWindow {
+function RestoreWindow_Parse(node: xmlP.XmlNode): RestoreWindow {
   return {
-    EarliestTime: node.first("EarliestTime", false, x => parseTimestamp(x.content)),
-    LatestTime: node.first("LatestTime", false, x => parseTimestamp(x.content)),
+    EarliestTime: node.first("EarliestTime", false, x => xmlP.parseTimestamp(x.content)),
+    LatestTime: node.first("LatestTime", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -6156,7 +6141,7 @@ function RestoreWindow_Parse(node: XmlNode): RestoreWindow {
 export interface InstallationMediaFailureCause {
   Message?: string | null;
 }
-function InstallationMediaFailureCause_Parse(node: XmlNode): InstallationMediaFailureCause {
+function InstallationMediaFailureCause_Parse(node: xmlP.XmlNode): InstallationMediaFailureCause {
   return node.strings({
     optional: {"Message":true},
   });
@@ -6168,7 +6153,7 @@ export interface AccountQuota {
   Used?: number | null;
   Max?: number | null;
 }
-function AccountQuota_Parse(node: XmlNode): AccountQuota {
+function AccountQuota_Parse(node: xmlP.XmlNode): AccountQuota {
   return {
     ...node.strings({
       optional: {"AccountQuotaName":true},
@@ -6189,15 +6174,15 @@ export interface Certificate {
   CustomerOverride?: boolean | null;
   CustomerOverrideValidTill?: Date | number | null;
 }
-function Certificate_Parse(node: XmlNode): Certificate {
+function Certificate_Parse(node: xmlP.XmlNode): Certificate {
   return {
     ...node.strings({
       optional: {"CertificateIdentifier":true,"CertificateType":true,"Thumbprint":true,"CertificateArn":true},
     }),
-    ValidFrom: node.first("ValidFrom", false, x => parseTimestamp(x.content)),
-    ValidTill: node.first("ValidTill", false, x => parseTimestamp(x.content)),
+    ValidFrom: node.first("ValidFrom", false, x => xmlP.parseTimestamp(x.content)),
+    ValidTill: node.first("ValidTill", false, x => xmlP.parseTimestamp(x.content)),
     CustomerOverride: node.first("CustomerOverride", false, x => x.content === 'true'),
-    CustomerOverrideValidTill: node.first("CustomerOverrideValidTill", false, x => parseTimestamp(x.content)),
+    CustomerOverrideValidTill: node.first("CustomerOverrideValidTill", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -6206,7 +6191,7 @@ export interface DBClusterSnapshotAttributesResult {
   DBClusterSnapshotIdentifier?: string | null;
   DBClusterSnapshotAttributes: DBClusterSnapshotAttribute[];
 }
-function DBClusterSnapshotAttributesResult_Parse(node: XmlNode): DBClusterSnapshotAttributesResult {
+function DBClusterSnapshotAttributesResult_Parse(node: xmlP.XmlNode): DBClusterSnapshotAttributesResult {
   return {
     ...node.strings({
       optional: {"DBClusterSnapshotIdentifier":true},
@@ -6220,7 +6205,7 @@ export interface DBClusterSnapshotAttribute {
   AttributeName?: string | null;
   AttributeValues: string[];
 }
-function DBClusterSnapshotAttribute_Parse(node: XmlNode): DBClusterSnapshotAttribute {
+function DBClusterSnapshotAttribute_Parse(node: xmlP.XmlNode): DBClusterSnapshotAttribute {
   return {
     ...node.strings({
       optional: {"AttributeName":true},
@@ -6250,7 +6235,7 @@ export interface DBEngineVersion {
   SupportsParallelQuery?: boolean | null;
   SupportsGlobalDatabases?: boolean | null;
 }
-function DBEngineVersion_Parse(node: XmlNode): DBEngineVersion {
+function DBEngineVersion_Parse(node: xmlP.XmlNode): DBEngineVersion {
   return {
     ...node.strings({
       optional: {"Engine":true,"EngineVersion":true,"DBParameterGroupFamily":true,"DBEngineDescription":true,"DBEngineVersionDescription":true,"Status":true},
@@ -6275,7 +6260,7 @@ export interface CharacterSet {
   CharacterSetName?: string | null;
   CharacterSetDescription?: string | null;
 }
-function CharacterSet_Parse(node: XmlNode): CharacterSet {
+function CharacterSet_Parse(node: xmlP.XmlNode): CharacterSet {
   return node.strings({
     optional: {"CharacterSetName":true,"CharacterSetDescription":true},
   });
@@ -6289,7 +6274,7 @@ export interface UpgradeTarget {
   AutoUpgrade?: boolean | null;
   IsMajorVersionUpgrade?: boolean | null;
 }
-function UpgradeTarget_Parse(node: XmlNode): UpgradeTarget {
+function UpgradeTarget_Parse(node: xmlP.XmlNode): UpgradeTarget {
   return {
     ...node.strings({
       optional: {"Engine":true,"EngineVersion":true,"Description":true},
@@ -6303,7 +6288,7 @@ function UpgradeTarget_Parse(node: XmlNode): UpgradeTarget {
 export interface Timezone {
   TimezoneName?: string | null;
 }
-function Timezone_Parse(node: XmlNode): Timezone {
+function Timezone_Parse(node: xmlP.XmlNode): Timezone {
   return node.strings({
     optional: {"TimezoneName":true},
   });
@@ -6315,7 +6300,7 @@ export interface DescribeDBLogFilesDetails {
   LastWritten?: number | null;
   Size?: number | null;
 }
-function DescribeDBLogFilesDetails_Parse(node: XmlNode): DescribeDBLogFilesDetails {
+function DescribeDBLogFilesDetails_Parse(node: xmlP.XmlNode): DescribeDBLogFilesDetails {
   return {
     ...node.strings({
       optional: {"LogFileName":true},
@@ -6336,15 +6321,15 @@ export interface DBProxyTargetGroup {
   CreatedDate?: Date | number | null;
   UpdatedDate?: Date | number | null;
 }
-function DBProxyTargetGroup_Parse(node: XmlNode): DBProxyTargetGroup {
+function DBProxyTargetGroup_Parse(node: xmlP.XmlNode): DBProxyTargetGroup {
   return {
     ...node.strings({
       optional: {"DBProxyName":true,"TargetGroupName":true,"TargetGroupArn":true,"Status":true},
     }),
     IsDefault: node.first("IsDefault", false, x => x.content === 'true'),
     ConnectionPoolConfig: node.first("ConnectionPoolConfig", false, ConnectionPoolConfigurationInfo_Parse),
-    CreatedDate: node.first("CreatedDate", false, x => parseTimestamp(x.content)),
-    UpdatedDate: node.first("UpdatedDate", false, x => parseTimestamp(x.content)),
+    CreatedDate: node.first("CreatedDate", false, x => xmlP.parseTimestamp(x.content)),
+    UpdatedDate: node.first("UpdatedDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -6356,7 +6341,7 @@ export interface ConnectionPoolConfigurationInfo {
   SessionPinningFilters: string[];
   InitQuery?: string | null;
 }
-function ConnectionPoolConfigurationInfo_Parse(node: XmlNode): ConnectionPoolConfigurationInfo {
+function ConnectionPoolConfigurationInfo_Parse(node: xmlP.XmlNode): ConnectionPoolConfigurationInfo {
   return {
     ...node.strings({
       optional: {"InitQuery":true},
@@ -6378,7 +6363,7 @@ export interface DBProxyTarget {
   Type?: TargetType | null;
   TargetHealth?: TargetHealth | null;
 }
-function DBProxyTarget_Parse(node: XmlNode): DBProxyTarget {
+function DBProxyTarget_Parse(node: xmlP.XmlNode): DBProxyTarget {
   return {
     ...node.strings({
       optional: {"TargetArn":true,"Endpoint":true,"TrackedClusterId":true,"RdsResourceId":true},
@@ -6394,8 +6379,7 @@ export type TargetType =
 | "RDS_INSTANCE"
 | "RDS_SERVERLESS_ENDPOINT"
 | "TRACKED_CLUSTER"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface TargetHealth {
@@ -6403,7 +6387,7 @@ export interface TargetHealth {
   Reason?: TargetHealthReason | null;
   Description?: string | null;
 }
-function TargetHealth_Parse(node: XmlNode): TargetHealth {
+function TargetHealth_Parse(node: xmlP.XmlNode): TargetHealth {
   return {
     ...node.strings({
       optional: {"Description":true},
@@ -6418,8 +6402,7 @@ export type TargetState =
 | "REGISTERING"
 | "AVAILABLE"
 | "UNAVAILABLE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type TargetHealthReason =
@@ -6427,15 +6410,14 @@ export type TargetHealthReason =
 | "CONNECTION_FAILED"
 | "AUTH_FAILURE"
 | "PENDING_PROXY_CAPACITY"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface DBSnapshotAttributesResult {
   DBSnapshotIdentifier?: string | null;
   DBSnapshotAttributes: DBSnapshotAttribute[];
 }
-function DBSnapshotAttributesResult_Parse(node: XmlNode): DBSnapshotAttributesResult {
+function DBSnapshotAttributesResult_Parse(node: xmlP.XmlNode): DBSnapshotAttributesResult {
   return {
     ...node.strings({
       optional: {"DBSnapshotIdentifier":true},
@@ -6449,7 +6431,7 @@ export interface DBSnapshotAttribute {
   AttributeName?: string | null;
   AttributeValues: string[];
 }
-function DBSnapshotAttribute_Parse(node: XmlNode): DBSnapshotAttribute {
+function DBSnapshotAttribute_Parse(node: xmlP.XmlNode): DBSnapshotAttribute {
   return {
     ...node.strings({
       optional: {"AttributeName":true},
@@ -6464,7 +6446,7 @@ export interface EngineDefaults {
   Marker?: string | null;
   Parameters: Parameter[];
 }
-function EngineDefaults_Parse(node: XmlNode): EngineDefaults {
+function EngineDefaults_Parse(node: xmlP.XmlNode): EngineDefaults {
   return {
     ...node.strings({
       optional: {"DBParameterGroupFamily":true,"Marker":true},
@@ -6478,7 +6460,7 @@ export interface EventCategoriesMap {
   SourceType?: string | null;
   EventCategories: string[];
 }
-function EventCategoriesMap_Parse(node: XmlNode): EventCategoriesMap {
+function EventCategoriesMap_Parse(node: xmlP.XmlNode): EventCategoriesMap {
   return {
     ...node.strings({
       optional: {"SourceType":true},
@@ -6496,14 +6478,14 @@ export interface Event {
   Date?: Date | number | null;
   SourceArn?: string | null;
 }
-function Event_Parse(node: XmlNode): Event {
+function Event_Parse(node: xmlP.XmlNode): Event {
   return {
     ...node.strings({
       optional: {"SourceIdentifier":true,"Message":true,"SourceArn":true},
     }),
     SourceType: node.first("SourceType", false, x => (x.content ?? '') as SourceType),
     EventCategories: node.getList("EventCategories", "EventCategory").map(x => x.content ?? ''),
-    Date: node.first("Date", false, x => parseTimestamp(x.content)),
+    Date: node.first("Date", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -6526,7 +6508,7 @@ export interface OptionGroupOption {
   OptionGroupOptionSettings: OptionGroupOptionSetting[];
   OptionGroupOptionVersions: OptionVersion[];
 }
-function OptionGroupOption_Parse(node: XmlNode): OptionGroupOption {
+function OptionGroupOption_Parse(node: xmlP.XmlNode): OptionGroupOption {
   return {
     ...node.strings({
       optional: {"Name":true,"Description":true,"EngineName":true,"MajorEngineVersion":true,"MinimumRequiredMinorEngineVersion":true},
@@ -6556,7 +6538,7 @@ export interface OptionGroupOptionSetting {
   IsRequired?: boolean | null;
   MinimumEngineVersionPerAllowedValue: MinimumEngineVersionPerAllowedValue[];
 }
-function OptionGroupOptionSetting_Parse(node: XmlNode): OptionGroupOptionSetting {
+function OptionGroupOptionSetting_Parse(node: xmlP.XmlNode): OptionGroupOptionSetting {
   return {
     ...node.strings({
       optional: {"SettingName":true,"SettingDescription":true,"DefaultValue":true,"ApplyType":true,"AllowedValues":true},
@@ -6572,7 +6554,7 @@ export interface MinimumEngineVersionPerAllowedValue {
   AllowedValue?: string | null;
   MinimumEngineVersion?: string | null;
 }
-function MinimumEngineVersionPerAllowedValue_Parse(node: XmlNode): MinimumEngineVersionPerAllowedValue {
+function MinimumEngineVersionPerAllowedValue_Parse(node: xmlP.XmlNode): MinimumEngineVersionPerAllowedValue {
   return node.strings({
     optional: {"AllowedValue":true,"MinimumEngineVersion":true},
   });
@@ -6583,7 +6565,7 @@ export interface OptionVersion {
   Version?: string | null;
   IsDefault?: boolean | null;
 }
-function OptionVersion_Parse(node: XmlNode): OptionVersion {
+function OptionVersion_Parse(node: xmlP.XmlNode): OptionVersion {
   return {
     ...node.strings({
       optional: {"Version":true},
@@ -6622,7 +6604,7 @@ export interface OrderableDBInstanceOption {
   OutpostCapable?: boolean | null;
   SupportsGlobalDatabases?: boolean | null;
 }
-function OrderableDBInstanceOption_Parse(node: XmlNode): OrderableDBInstanceOption {
+function OrderableDBInstanceOption_Parse(node: xmlP.XmlNode): OrderableDBInstanceOption {
   return {
     ...node.strings({
       optional: {"Engine":true,"EngineVersion":true,"DBInstanceClass":true,"LicenseModel":true,"AvailabilityZoneGroup":true,"StorageType":true},
@@ -6657,7 +6639,7 @@ export interface AvailableProcessorFeature {
   DefaultValue?: string | null;
   AllowedValues?: string | null;
 }
-function AvailableProcessorFeature_Parse(node: XmlNode): AvailableProcessorFeature {
+function AvailableProcessorFeature_Parse(node: xmlP.XmlNode): AvailableProcessorFeature {
   return node.strings({
     optional: {"Name":true,"DefaultValue":true,"AllowedValues":true},
   });
@@ -6682,12 +6664,12 @@ export interface ReservedDBInstance {
   ReservedDBInstanceArn?: string | null;
   LeaseId?: string | null;
 }
-function ReservedDBInstance_Parse(node: XmlNode): ReservedDBInstance {
+function ReservedDBInstance_Parse(node: xmlP.XmlNode): ReservedDBInstance {
   return {
     ...node.strings({
       optional: {"ReservedDBInstanceId":true,"ReservedDBInstancesOfferingId":true,"DBInstanceClass":true,"CurrencyCode":true,"ProductDescription":true,"OfferingType":true,"State":true,"ReservedDBInstanceArn":true,"LeaseId":true},
     }),
-    StartTime: node.first("StartTime", false, x => parseTimestamp(x.content)),
+    StartTime: node.first("StartTime", false, x => xmlP.parseTimestamp(x.content)),
     Duration: node.first("Duration", false, x => parseInt(x.content ?? '0')),
     FixedPrice: node.first("FixedPrice", false, x => parseFloat(x.content ?? '0')),
     UsagePrice: node.first("UsagePrice", false, x => parseFloat(x.content ?? '0')),
@@ -6702,7 +6684,7 @@ export interface RecurringCharge {
   RecurringChargeAmount?: number | null;
   RecurringChargeFrequency?: string | null;
 }
-function RecurringCharge_Parse(node: XmlNode): RecurringCharge {
+function RecurringCharge_Parse(node: xmlP.XmlNode): RecurringCharge {
   return {
     ...node.strings({
       optional: {"RecurringChargeFrequency":true},
@@ -6724,7 +6706,7 @@ export interface ReservedDBInstancesOffering {
   MultiAZ?: boolean | null;
   RecurringCharges: RecurringCharge[];
 }
-function ReservedDBInstancesOffering_Parse(node: XmlNode): ReservedDBInstancesOffering {
+function ReservedDBInstancesOffering_Parse(node: xmlP.XmlNode): ReservedDBInstancesOffering {
   return {
     ...node.strings({
       optional: {"ReservedDBInstancesOfferingId":true,"DBInstanceClass":true,"CurrencyCode":true,"ProductDescription":true,"OfferingType":true},
@@ -6743,7 +6725,7 @@ export interface SourceRegion {
   Endpoint?: string | null;
   Status?: string | null;
 }
-function SourceRegion_Parse(node: XmlNode): SourceRegion {
+function SourceRegion_Parse(node: xmlP.XmlNode): SourceRegion {
   return node.strings({
     optional: {"RegionName":true,"Endpoint":true,"Status":true},
   });
@@ -6754,7 +6736,7 @@ export interface ValidDBInstanceModificationsMessage {
   Storage: ValidStorageOptions[];
   ValidProcessorFeatures: AvailableProcessorFeature[];
 }
-function ValidDBInstanceModificationsMessage_Parse(node: XmlNode): ValidDBInstanceModificationsMessage {
+function ValidDBInstanceModificationsMessage_Parse(node: xmlP.XmlNode): ValidDBInstanceModificationsMessage {
   return {
     Storage: node.getList("Storage", "ValidStorageOptions").map(ValidStorageOptions_Parse),
     ValidProcessorFeatures: node.getList("ValidProcessorFeatures", "AvailableProcessorFeature").map(AvailableProcessorFeature_Parse),
@@ -6769,7 +6751,7 @@ export interface ValidStorageOptions {
   IopsToStorageRatio: DoubleRange[];
   SupportsStorageAutoscaling?: boolean | null;
 }
-function ValidStorageOptions_Parse(node: XmlNode): ValidStorageOptions {
+function ValidStorageOptions_Parse(node: xmlP.XmlNode): ValidStorageOptions {
   return {
     ...node.strings({
       optional: {"StorageType":true},
@@ -6787,7 +6769,7 @@ export interface Range {
   To?: number | null;
   Step?: number | null;
 }
-function Range_Parse(node: XmlNode): Range {
+function Range_Parse(node: xmlP.XmlNode): Range {
   return {
     From: node.first("From", false, x => parseInt(x.content ?? '0')),
     To: node.first("To", false, x => parseInt(x.content ?? '0')),
@@ -6800,7 +6782,7 @@ export interface DoubleRange {
   From?: number | null;
   To?: number | null;
 }
-function DoubleRange_Parse(node: XmlNode): DoubleRange {
+function DoubleRange_Parse(node: xmlP.XmlNode): DoubleRange {
   return {
     From: node.first("From", false, x => parseFloat(x.content ?? '0')),
     To: node.first("To", false, x => parseFloat(x.content ?? '0')),

@@ -5,8 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 
 export default class AutoScaling {
   #client: ServiceClient;
@@ -30,7 +31,7 @@ export default class AutoScaling {
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["InstanceIds"]) prt.appendList(body, prefix+"InstanceIds", params["InstanceIds"], {"entryPrefix":".member."})
+    if (params["InstanceIds"]) qsP.appendList(body, prefix+"InstanceIds", params["InstanceIds"], {"entryPrefix":".member."})
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -44,12 +45,12 @@ export default class AutoScaling {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
-    if (params["TargetGroupARNs"]) prt.appendList(body, prefix+"TargetGroupARNs", params["TargetGroupARNs"], {"entryPrefix":".member."})
+    if (params["TargetGroupARNs"]) qsP.appendList(body, prefix+"TargetGroupARNs", params["TargetGroupARNs"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AttachLoadBalancerTargetGroups",
     });
-    const xml = readXmlResult(await resp.text(), "AttachLoadBalancerTargetGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "AttachLoadBalancerTargetGroupsResult");
     return {};
   }
 
@@ -59,12 +60,12 @@ export default class AutoScaling {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
-    if (params["LoadBalancerNames"]) prt.appendList(body, prefix+"LoadBalancerNames", params["LoadBalancerNames"], {"entryPrefix":".member."})
+    if (params["LoadBalancerNames"]) qsP.appendList(body, prefix+"LoadBalancerNames", params["LoadBalancerNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AttachLoadBalancers",
     });
-    const xml = readXmlResult(await resp.text(), "AttachLoadBalancersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "AttachLoadBalancersResult");
     return {};
   }
 
@@ -74,12 +75,12 @@ export default class AutoScaling {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
-    if (params["ScheduledActionNames"]) prt.appendList(body, prefix+"ScheduledActionNames", params["ScheduledActionNames"], {"entryPrefix":".member."})
+    if (params["ScheduledActionNames"]) qsP.appendList(body, prefix+"ScheduledActionNames", params["ScheduledActionNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDeleteScheduledAction",
     });
-    const xml = readXmlResult(await resp.text(), "BatchDeleteScheduledActionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "BatchDeleteScheduledActionResult");
     return {
       FailedScheduledActions: xml.getList("FailedScheduledActions", "member").map(FailedScheduledUpdateGroupActionRequest_Parse),
     };
@@ -91,12 +92,12 @@ export default class AutoScaling {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
-    if (params["ScheduledUpdateGroupActions"]) prt.appendList(body, prefix+"ScheduledUpdateGroupActions", params["ScheduledUpdateGroupActions"], {"appender":ScheduledUpdateGroupActionRequest_Serialize,"entryPrefix":".member."})
+    if (params["ScheduledUpdateGroupActions"]) qsP.appendList(body, prefix+"ScheduledUpdateGroupActions", params["ScheduledUpdateGroupActions"], {"appender":ScheduledUpdateGroupActionRequest_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchPutScheduledUpdateGroupAction",
     });
-    const xml = readXmlResult(await resp.text(), "BatchPutScheduledUpdateGroupActionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "BatchPutScheduledUpdateGroupActionResult");
     return {
       FailedScheduledUpdateGroupActions: xml.getList("FailedScheduledUpdateGroupActions", "member").map(FailedScheduledUpdateGroupActionRequest_Parse),
     };
@@ -112,7 +113,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "CancelInstanceRefresh",
     });
-    const xml = readXmlResult(await resp.text(), "CancelInstanceRefreshResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CancelInstanceRefreshResult");
     return xml.strings({
       optional: {"InstanceRefreshId":true},
     });
@@ -132,7 +133,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "CompleteLifecycleAction",
     });
-    const xml = readXmlResult(await resp.text(), "CompleteLifecycleActionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CompleteLifecycleActionResult");
     return {};
   }
 
@@ -150,17 +151,17 @@ export default class AutoScaling {
     body.append(prefix+"MaxSize", (params["MaxSize"] ?? '').toString());
     if ("DesiredCapacity" in params) body.append(prefix+"DesiredCapacity", (params["DesiredCapacity"] ?? '').toString());
     if ("DefaultCooldown" in params) body.append(prefix+"DefaultCooldown", (params["DefaultCooldown"] ?? '').toString());
-    if (params["AvailabilityZones"]) prt.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".member."})
-    if (params["LoadBalancerNames"]) prt.appendList(body, prefix+"LoadBalancerNames", params["LoadBalancerNames"], {"entryPrefix":".member."})
-    if (params["TargetGroupARNs"]) prt.appendList(body, prefix+"TargetGroupARNs", params["TargetGroupARNs"], {"entryPrefix":".member."})
+    if (params["AvailabilityZones"]) qsP.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".member."})
+    if (params["LoadBalancerNames"]) qsP.appendList(body, prefix+"LoadBalancerNames", params["LoadBalancerNames"], {"entryPrefix":".member."})
+    if (params["TargetGroupARNs"]) qsP.appendList(body, prefix+"TargetGroupARNs", params["TargetGroupARNs"], {"entryPrefix":".member."})
     if ("HealthCheckType" in params) body.append(prefix+"HealthCheckType", (params["HealthCheckType"] ?? '').toString());
     if ("HealthCheckGracePeriod" in params) body.append(prefix+"HealthCheckGracePeriod", (params["HealthCheckGracePeriod"] ?? '').toString());
     if ("PlacementGroup" in params) body.append(prefix+"PlacementGroup", (params["PlacementGroup"] ?? '').toString());
     if ("VPCZoneIdentifier" in params) body.append(prefix+"VPCZoneIdentifier", (params["VPCZoneIdentifier"] ?? '').toString());
-    if (params["TerminationPolicies"]) prt.appendList(body, prefix+"TerminationPolicies", params["TerminationPolicies"], {"entryPrefix":".member."})
+    if (params["TerminationPolicies"]) qsP.appendList(body, prefix+"TerminationPolicies", params["TerminationPolicies"], {"entryPrefix":".member."})
     if ("NewInstancesProtectedFromScaleIn" in params) body.append(prefix+"NewInstancesProtectedFromScaleIn", (params["NewInstancesProtectedFromScaleIn"] ?? '').toString());
-    if (params["LifecycleHookSpecificationList"]) prt.appendList(body, prefix+"LifecycleHookSpecificationList", params["LifecycleHookSpecificationList"], {"appender":LifecycleHookSpecification_Serialize,"entryPrefix":".member."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["LifecycleHookSpecificationList"]) qsP.appendList(body, prefix+"LifecycleHookSpecificationList", params["LifecycleHookSpecificationList"], {"appender":LifecycleHookSpecification_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     if ("ServiceLinkedRoleARN" in params) body.append(prefix+"ServiceLinkedRoleARN", (params["ServiceLinkedRoleARN"] ?? '').toString());
     if ("MaxInstanceLifetime" in params) body.append(prefix+"MaxInstanceLifetime", (params["MaxInstanceLifetime"] ?? '').toString());
     const resp = await this.#client.performRequest({
@@ -177,15 +178,15 @@ export default class AutoScaling {
     body.append(prefix+"LaunchConfigurationName", (params["LaunchConfigurationName"] ?? '').toString());
     if ("ImageId" in params) body.append(prefix+"ImageId", (params["ImageId"] ?? '').toString());
     if ("KeyName" in params) body.append(prefix+"KeyName", (params["KeyName"] ?? '').toString());
-    if (params["SecurityGroups"]) prt.appendList(body, prefix+"SecurityGroups", params["SecurityGroups"], {"entryPrefix":".member."})
+    if (params["SecurityGroups"]) qsP.appendList(body, prefix+"SecurityGroups", params["SecurityGroups"], {"entryPrefix":".member."})
     if ("ClassicLinkVPCId" in params) body.append(prefix+"ClassicLinkVPCId", (params["ClassicLinkVPCId"] ?? '').toString());
-    if (params["ClassicLinkVPCSecurityGroups"]) prt.appendList(body, prefix+"ClassicLinkVPCSecurityGroups", params["ClassicLinkVPCSecurityGroups"], {"entryPrefix":".member."})
+    if (params["ClassicLinkVPCSecurityGroups"]) qsP.appendList(body, prefix+"ClassicLinkVPCSecurityGroups", params["ClassicLinkVPCSecurityGroups"], {"entryPrefix":".member."})
     if ("UserData" in params) body.append(prefix+"UserData", (params["UserData"] ?? '').toString());
     if ("InstanceId" in params) body.append(prefix+"InstanceId", (params["InstanceId"] ?? '').toString());
     if ("InstanceType" in params) body.append(prefix+"InstanceType", (params["InstanceType"] ?? '').toString());
     if ("KernelId" in params) body.append(prefix+"KernelId", (params["KernelId"] ?? '').toString());
     if ("RamdiskId" in params) body.append(prefix+"RamdiskId", (params["RamdiskId"] ?? '').toString());
-    if (params["BlockDeviceMappings"]) prt.appendList(body, prefix+"BlockDeviceMappings", params["BlockDeviceMappings"], {"appender":BlockDeviceMapping_Serialize,"entryPrefix":".member."})
+    if (params["BlockDeviceMappings"]) qsP.appendList(body, prefix+"BlockDeviceMappings", params["BlockDeviceMappings"], {"appender":BlockDeviceMapping_Serialize,"entryPrefix":".member."})
     if (params["InstanceMonitoring"] != null) InstanceMonitoring_Serialize(body, prefix+"InstanceMonitoring", params["InstanceMonitoring"]);
     if ("SpotPrice" in params) body.append(prefix+"SpotPrice", (params["SpotPrice"] ?? '').toString());
     if ("IamInstanceProfile" in params) body.append(prefix+"IamInstanceProfile", (params["IamInstanceProfile"] ?? '').toString());
@@ -204,7 +205,7 @@ export default class AutoScaling {
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateOrUpdateTags",
@@ -247,7 +248,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "DeleteLifecycleHook",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteLifecycleHookResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteLifecycleHookResult");
     return {};
   }
 
@@ -295,7 +296,7 @@ export default class AutoScaling {
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTags",
@@ -309,7 +310,7 @@ export default class AutoScaling {
       abortSignal,
       action: "DescribeAccountLimits",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeAccountLimitsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeAccountLimitsResult");
     return {
       MaxNumberOfAutoScalingGroups: xml.first("MaxNumberOfAutoScalingGroups", false, x => parseInt(x.content ?? '0')),
       MaxNumberOfLaunchConfigurations: xml.first("MaxNumberOfLaunchConfigurations", false, x => parseInt(x.content ?? '0')),
@@ -325,7 +326,7 @@ export default class AutoScaling {
       abortSignal,
       action: "DescribeAdjustmentTypes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeAdjustmentTypesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeAdjustmentTypesResult");
     return {
       AdjustmentTypes: xml.getList("AdjustmentTypes", "member").map(AdjustmentType_Parse),
     };
@@ -336,14 +337,14 @@ export default class AutoScaling {
   ): Promise<AutoScalingGroupsType> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["AutoScalingGroupNames"]) prt.appendList(body, prefix+"AutoScalingGroupNames", params["AutoScalingGroupNames"], {"entryPrefix":".member."})
+    if (params["AutoScalingGroupNames"]) qsP.appendList(body, prefix+"AutoScalingGroupNames", params["AutoScalingGroupNames"], {"entryPrefix":".member."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAutoScalingGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeAutoScalingGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeAutoScalingGroupsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -357,14 +358,14 @@ export default class AutoScaling {
   ): Promise<AutoScalingInstancesType> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["InstanceIds"]) prt.appendList(body, prefix+"InstanceIds", params["InstanceIds"], {"entryPrefix":".member."})
+    if (params["InstanceIds"]) qsP.appendList(body, prefix+"InstanceIds", params["InstanceIds"], {"entryPrefix":".member."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAutoScalingInstances",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeAutoScalingInstancesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeAutoScalingInstancesResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -380,7 +381,7 @@ export default class AutoScaling {
       abortSignal,
       action: "DescribeAutoScalingNotificationTypes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeAutoScalingNotificationTypesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeAutoScalingNotificationTypesResult");
     return {
       AutoScalingNotificationTypes: xml.getList("AutoScalingNotificationTypes", "member").map(x => x.content ?? ''),
     };
@@ -392,14 +393,14 @@ export default class AutoScaling {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
-    if (params["InstanceRefreshIds"]) prt.appendList(body, prefix+"InstanceRefreshIds", params["InstanceRefreshIds"], {"entryPrefix":".member."})
+    if (params["InstanceRefreshIds"]) qsP.appendList(body, prefix+"InstanceRefreshIds", params["InstanceRefreshIds"], {"entryPrefix":".member."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstanceRefreshes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeInstanceRefreshesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeInstanceRefreshesResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -413,14 +414,14 @@ export default class AutoScaling {
   ): Promise<LaunchConfigurationsType> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["LaunchConfigurationNames"]) prt.appendList(body, prefix+"LaunchConfigurationNames", params["LaunchConfigurationNames"], {"entryPrefix":".member."})
+    if (params["LaunchConfigurationNames"]) qsP.appendList(body, prefix+"LaunchConfigurationNames", params["LaunchConfigurationNames"], {"entryPrefix":".member."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLaunchConfigurations",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeLaunchConfigurationsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeLaunchConfigurationsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -436,7 +437,7 @@ export default class AutoScaling {
       abortSignal,
       action: "DescribeLifecycleHookTypes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeLifecycleHookTypesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeLifecycleHookTypesResult");
     return {
       LifecycleHookTypes: xml.getList("LifecycleHookTypes", "member").map(x => x.content ?? ''),
     };
@@ -448,12 +449,12 @@ export default class AutoScaling {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
-    if (params["LifecycleHookNames"]) prt.appendList(body, prefix+"LifecycleHookNames", params["LifecycleHookNames"], {"entryPrefix":".member."})
+    if (params["LifecycleHookNames"]) qsP.appendList(body, prefix+"LifecycleHookNames", params["LifecycleHookNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLifecycleHooks",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeLifecycleHooksResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeLifecycleHooksResult");
     return {
       LifecycleHooks: xml.getList("LifecycleHooks", "member").map(LifecycleHook_Parse),
     };
@@ -471,7 +472,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "DescribeLoadBalancerTargetGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeLoadBalancerTargetGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeLoadBalancerTargetGroupsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -492,7 +493,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "DescribeLoadBalancers",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeLoadBalancersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeLoadBalancersResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -508,7 +509,7 @@ export default class AutoScaling {
       abortSignal,
       action: "DescribeMetricCollectionTypes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeMetricCollectionTypesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeMetricCollectionTypesResult");
     return {
       Metrics: xml.getList("Metrics", "member").map(MetricCollectionType_Parse),
       Granularities: xml.getList("Granularities", "member").map(MetricGranularityType_Parse),
@@ -520,14 +521,14 @@ export default class AutoScaling {
   ): Promise<DescribeNotificationConfigurationsAnswer> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["AutoScalingGroupNames"]) prt.appendList(body, prefix+"AutoScalingGroupNames", params["AutoScalingGroupNames"], {"entryPrefix":".member."})
+    if (params["AutoScalingGroupNames"]) qsP.appendList(body, prefix+"AutoScalingGroupNames", params["AutoScalingGroupNames"], {"entryPrefix":".member."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNotificationConfigurations",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeNotificationConfigurationsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeNotificationConfigurationsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -542,15 +543,15 @@ export default class AutoScaling {
     const body = new URLSearchParams;
     const prefix = '';
     if ("AutoScalingGroupName" in params) body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
-    if (params["PolicyNames"]) prt.appendList(body, prefix+"PolicyNames", params["PolicyNames"], {"entryPrefix":".member."})
-    if (params["PolicyTypes"]) prt.appendList(body, prefix+"PolicyTypes", params["PolicyTypes"], {"entryPrefix":".member."})
+    if (params["PolicyNames"]) qsP.appendList(body, prefix+"PolicyNames", params["PolicyNames"], {"entryPrefix":".member."})
+    if (params["PolicyTypes"]) qsP.appendList(body, prefix+"PolicyTypes", params["PolicyTypes"], {"entryPrefix":".member."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePolicies",
     });
-    const xml = readXmlResult(await resp.text(), "DescribePoliciesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribePoliciesResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -564,7 +565,7 @@ export default class AutoScaling {
   ): Promise<ActivitiesType> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["ActivityIds"]) prt.appendList(body, prefix+"ActivityIds", params["ActivityIds"], {"entryPrefix":".member."})
+    if (params["ActivityIds"]) qsP.appendList(body, prefix+"ActivityIds", params["ActivityIds"], {"entryPrefix":".member."})
     if ("AutoScalingGroupName" in params) body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
@@ -572,7 +573,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "DescribeScalingActivities",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeScalingActivitiesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeScalingActivitiesResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -588,7 +589,7 @@ export default class AutoScaling {
       abortSignal,
       action: "DescribeScalingProcessTypes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeScalingProcessTypesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeScalingProcessTypesResult");
     return {
       Processes: xml.getList("Processes", "member").map(ProcessType_Parse),
     };
@@ -600,16 +601,16 @@ export default class AutoScaling {
     const body = new URLSearchParams;
     const prefix = '';
     if ("AutoScalingGroupName" in params) body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
-    if (params["ScheduledActionNames"]) prt.appendList(body, prefix+"ScheduledActionNames", params["ScheduledActionNames"], {"entryPrefix":".member."})
-    if ("StartTime" in params) body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
-    if ("EndTime" in params) body.append(prefix+"EndTime", prt.encodeDate_iso8601(params["EndTime"]));
+    if (params["ScheduledActionNames"]) qsP.appendList(body, prefix+"ScheduledActionNames", params["ScheduledActionNames"], {"entryPrefix":".member."})
+    if ("StartTime" in params) body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+    if ("EndTime" in params) body.append(prefix+"EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeScheduledActions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeScheduledActionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeScheduledActionsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -623,14 +624,14 @@ export default class AutoScaling {
   ): Promise<TagsType> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".member."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".member."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTags",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeTagsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeTagsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -646,7 +647,7 @@ export default class AutoScaling {
       abortSignal,
       action: "DescribeTerminationPolicyTypes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeTerminationPolicyTypesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeTerminationPolicyTypesResult");
     return {
       TerminationPolicyTypes: xml.getList("TerminationPolicyTypes", "member").map(x => x.content ?? ''),
     };
@@ -657,14 +658,14 @@ export default class AutoScaling {
   ): Promise<DetachInstancesAnswer> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["InstanceIds"]) prt.appendList(body, prefix+"InstanceIds", params["InstanceIds"], {"entryPrefix":".member."})
+    if (params["InstanceIds"]) qsP.appendList(body, prefix+"InstanceIds", params["InstanceIds"], {"entryPrefix":".member."})
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
     body.append(prefix+"ShouldDecrementDesiredCapacity", (params["ShouldDecrementDesiredCapacity"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetachInstances",
     });
-    const xml = readXmlResult(await resp.text(), "DetachInstancesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DetachInstancesResult");
     return {
       Activities: xml.getList("Activities", "member").map(Activity_Parse),
     };
@@ -676,12 +677,12 @@ export default class AutoScaling {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
-    if (params["TargetGroupARNs"]) prt.appendList(body, prefix+"TargetGroupARNs", params["TargetGroupARNs"], {"entryPrefix":".member."})
+    if (params["TargetGroupARNs"]) qsP.appendList(body, prefix+"TargetGroupARNs", params["TargetGroupARNs"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetachLoadBalancerTargetGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DetachLoadBalancerTargetGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DetachLoadBalancerTargetGroupsResult");
     return {};
   }
 
@@ -691,12 +692,12 @@ export default class AutoScaling {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
-    if (params["LoadBalancerNames"]) prt.appendList(body, prefix+"LoadBalancerNames", params["LoadBalancerNames"], {"entryPrefix":".member."})
+    if (params["LoadBalancerNames"]) qsP.appendList(body, prefix+"LoadBalancerNames", params["LoadBalancerNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetachLoadBalancers",
     });
-    const xml = readXmlResult(await resp.text(), "DetachLoadBalancersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DetachLoadBalancersResult");
     return {};
   }
 
@@ -706,7 +707,7 @@ export default class AutoScaling {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
-    if (params["Metrics"]) prt.appendList(body, prefix+"Metrics", params["Metrics"], {"entryPrefix":".member."})
+    if (params["Metrics"]) qsP.appendList(body, prefix+"Metrics", params["Metrics"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableMetricsCollection",
@@ -719,7 +720,7 @@ export default class AutoScaling {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
-    if (params["Metrics"]) prt.appendList(body, prefix+"Metrics", params["Metrics"], {"entryPrefix":".member."})
+    if (params["Metrics"]) qsP.appendList(body, prefix+"Metrics", params["Metrics"], {"entryPrefix":".member."})
     body.append(prefix+"Granularity", (params["Granularity"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -732,14 +733,14 @@ export default class AutoScaling {
   ): Promise<EnterStandbyAnswer> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["InstanceIds"]) prt.appendList(body, prefix+"InstanceIds", params["InstanceIds"], {"entryPrefix":".member."})
+    if (params["InstanceIds"]) qsP.appendList(body, prefix+"InstanceIds", params["InstanceIds"], {"entryPrefix":".member."})
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
     body.append(prefix+"ShouldDecrementDesiredCapacity", (params["ShouldDecrementDesiredCapacity"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnterStandby",
     });
-    const xml = readXmlResult(await resp.text(), "EnterStandbyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "EnterStandbyResult");
     return {
       Activities: xml.getList("Activities", "member").map(Activity_Parse),
     };
@@ -766,13 +767,13 @@ export default class AutoScaling {
   ): Promise<ExitStandbyAnswer> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["InstanceIds"]) prt.appendList(body, prefix+"InstanceIds", params["InstanceIds"], {"entryPrefix":".member."})
+    if (params["InstanceIds"]) qsP.appendList(body, prefix+"InstanceIds", params["InstanceIds"], {"entryPrefix":".member."})
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExitStandby",
     });
-    const xml = readXmlResult(await resp.text(), "ExitStandbyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ExitStandbyResult");
     return {
       Activities: xml.getList("Activities", "member").map(Activity_Parse),
     };
@@ -795,7 +796,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "PutLifecycleHook",
     });
-    const xml = readXmlResult(await resp.text(), "PutLifecycleHookResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "PutLifecycleHookResult");
     return {};
   }
 
@@ -806,7 +807,7 @@ export default class AutoScaling {
     const prefix = '';
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
     body.append(prefix+"TopicARN", (params["TopicARN"] ?? '').toString());
-    if (params["NotificationTypes"]) prt.appendList(body, prefix+"NotificationTypes", params["NotificationTypes"], {"entryPrefix":".member."})
+    if (params["NotificationTypes"]) qsP.appendList(body, prefix+"NotificationTypes", params["NotificationTypes"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutNotificationConfiguration",
@@ -827,7 +828,7 @@ export default class AutoScaling {
     if ("ScalingAdjustment" in params) body.append(prefix+"ScalingAdjustment", (params["ScalingAdjustment"] ?? '').toString());
     if ("Cooldown" in params) body.append(prefix+"Cooldown", (params["Cooldown"] ?? '').toString());
     if ("MetricAggregationType" in params) body.append(prefix+"MetricAggregationType", (params["MetricAggregationType"] ?? '').toString());
-    if (params["StepAdjustments"]) prt.appendList(body, prefix+"StepAdjustments", params["StepAdjustments"], {"appender":StepAdjustment_Serialize,"entryPrefix":".member."})
+    if (params["StepAdjustments"]) qsP.appendList(body, prefix+"StepAdjustments", params["StepAdjustments"], {"appender":StepAdjustment_Serialize,"entryPrefix":".member."})
     if ("EstimatedInstanceWarmup" in params) body.append(prefix+"EstimatedInstanceWarmup", (params["EstimatedInstanceWarmup"] ?? '').toString());
     if (params["TargetTrackingConfiguration"] != null) TargetTrackingConfiguration_Serialize(body, prefix+"TargetTrackingConfiguration", params["TargetTrackingConfiguration"]);
     if ("Enabled" in params) body.append(prefix+"Enabled", (params["Enabled"] ?? '').toString());
@@ -835,7 +836,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "PutScalingPolicy",
     });
-    const xml = readXmlResult(await resp.text(), "PutScalingPolicyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "PutScalingPolicyResult");
     return {
       ...xml.strings({
         optional: {"PolicyARN":true},
@@ -851,9 +852,9 @@ export default class AutoScaling {
     const prefix = '';
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
     body.append(prefix+"ScheduledActionName", (params["ScheduledActionName"] ?? '').toString());
-    if ("Time" in params) body.append(prefix+"Time", prt.encodeDate_iso8601(params["Time"]));
-    if ("StartTime" in params) body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
-    if ("EndTime" in params) body.append(prefix+"EndTime", prt.encodeDate_iso8601(params["EndTime"]));
+    if ("Time" in params) body.append(prefix+"Time", qsP.encodeDate_iso8601(params["Time"]));
+    if ("StartTime" in params) body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+    if ("EndTime" in params) body.append(prefix+"EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
     if ("Recurrence" in params) body.append(prefix+"Recurrence", (params["Recurrence"] ?? '').toString());
     if ("MinSize" in params) body.append(prefix+"MinSize", (params["MinSize"] ?? '').toString());
     if ("MaxSize" in params) body.append(prefix+"MaxSize", (params["MaxSize"] ?? '').toString());
@@ -877,7 +878,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "RecordLifecycleActionHeartbeat",
     });
-    const xml = readXmlResult(await resp.text(), "RecordLifecycleActionHeartbeatResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RecordLifecycleActionHeartbeatResult");
     return {};
   }
 
@@ -887,7 +888,7 @@ export default class AutoScaling {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
-    if (params["ScalingProcesses"]) prt.appendList(body, prefix+"ScalingProcesses", params["ScalingProcesses"], {"entryPrefix":".member."})
+    if (params["ScalingProcesses"]) qsP.appendList(body, prefix+"ScalingProcesses", params["ScalingProcesses"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResumeProcesses",
@@ -927,14 +928,14 @@ export default class AutoScaling {
   ): Promise<SetInstanceProtectionAnswer> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["InstanceIds"]) prt.appendList(body, prefix+"InstanceIds", params["InstanceIds"], {"entryPrefix":".member."})
+    if (params["InstanceIds"]) qsP.appendList(body, prefix+"InstanceIds", params["InstanceIds"], {"entryPrefix":".member."})
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
     body.append(prefix+"ProtectedFromScaleIn", (params["ProtectedFromScaleIn"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetInstanceProtection",
     });
-    const xml = readXmlResult(await resp.text(), "SetInstanceProtectionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SetInstanceProtectionResult");
     return {};
   }
 
@@ -950,7 +951,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "StartInstanceRefresh",
     });
-    const xml = readXmlResult(await resp.text(), "StartInstanceRefreshResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "StartInstanceRefreshResult");
     return xml.strings({
       optional: {"InstanceRefreshId":true},
     });
@@ -962,7 +963,7 @@ export default class AutoScaling {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
-    if (params["ScalingProcesses"]) prt.appendList(body, prefix+"ScalingProcesses", params["ScalingProcesses"], {"entryPrefix":".member."})
+    if (params["ScalingProcesses"]) qsP.appendList(body, prefix+"ScalingProcesses", params["ScalingProcesses"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SuspendProcesses",
@@ -980,7 +981,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "TerminateInstanceInAutoScalingGroup",
     });
-    const xml = readXmlResult(await resp.text(), "TerminateInstanceInAutoScalingGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "TerminateInstanceInAutoScalingGroupResult");
     return {
       Activity: xml.first("Activity", false, Activity_Parse),
     };
@@ -999,12 +1000,12 @@ export default class AutoScaling {
     if ("MaxSize" in params) body.append(prefix+"MaxSize", (params["MaxSize"] ?? '').toString());
     if ("DesiredCapacity" in params) body.append(prefix+"DesiredCapacity", (params["DesiredCapacity"] ?? '').toString());
     if ("DefaultCooldown" in params) body.append(prefix+"DefaultCooldown", (params["DefaultCooldown"] ?? '').toString());
-    if (params["AvailabilityZones"]) prt.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".member."})
+    if (params["AvailabilityZones"]) qsP.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".member."})
     if ("HealthCheckType" in params) body.append(prefix+"HealthCheckType", (params["HealthCheckType"] ?? '').toString());
     if ("HealthCheckGracePeriod" in params) body.append(prefix+"HealthCheckGracePeriod", (params["HealthCheckGracePeriod"] ?? '').toString());
     if ("PlacementGroup" in params) body.append(prefix+"PlacementGroup", (params["PlacementGroup"] ?? '').toString());
     if ("VPCZoneIdentifier" in params) body.append(prefix+"VPCZoneIdentifier", (params["VPCZoneIdentifier"] ?? '').toString());
-    if (params["TerminationPolicies"]) prt.appendList(body, prefix+"TerminationPolicies", params["TerminationPolicies"], {"entryPrefix":".member."})
+    if (params["TerminationPolicies"]) qsP.appendList(body, prefix+"TerminationPolicies", params["TerminationPolicies"], {"entryPrefix":".member."})
     if ("NewInstancesProtectedFromScaleIn" in params) body.append(prefix+"NewInstancesProtectedFromScaleIn", (params["NewInstancesProtectedFromScaleIn"] ?? '').toString());
     if ("ServiceLinkedRoleARN" in params) body.append(prefix+"ServiceLinkedRoleARN", (params["ServiceLinkedRoleARN"] ?? '').toString());
     if ("MaxInstanceLifetime" in params) body.append(prefix+"MaxInstanceLifetime", (params["MaxInstanceLifetime"] ?? '').toString());
@@ -1620,8 +1621,8 @@ export interface ScheduledUpdateGroupActionRequest {
 }
 function ScheduledUpdateGroupActionRequest_Serialize(body: URLSearchParams, prefix: string, params: ScheduledUpdateGroupActionRequest) {
     body.append(prefix+".ScheduledActionName", (params["ScheduledActionName"] ?? '').toString());
-    if ("StartTime" in params) body.append(prefix+".StartTime", prt.encodeDate_iso8601(params["StartTime"]));
-    if ("EndTime" in params) body.append(prefix+".EndTime", prt.encodeDate_iso8601(params["EndTime"]));
+    if ("StartTime" in params) body.append(prefix+".StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+    if ("EndTime" in params) body.append(prefix+".EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
     if ("Recurrence" in params) body.append(prefix+".Recurrence", (params["Recurrence"] ?? '').toString());
     if ("MinSize" in params) body.append(prefix+".MinSize", (params["MinSize"] ?? '').toString());
     if ("MaxSize" in params) body.append(prefix+".MaxSize", (params["MaxSize"] ?? '').toString());
@@ -1639,7 +1640,7 @@ function LaunchTemplateSpecification_Serialize(body: URLSearchParams, prefix: st
     if ("LaunchTemplateName" in params) body.append(prefix+".LaunchTemplateName", (params["LaunchTemplateName"] ?? '').toString());
     if ("Version" in params) body.append(prefix+".Version", (params["Version"] ?? '').toString());
 }
-function LaunchTemplateSpecification_Parse(node: XmlNode): LaunchTemplateSpecification {
+function LaunchTemplateSpecification_Parse(node: xmlP.XmlNode): LaunchTemplateSpecification {
   return node.strings({
     optional: {"LaunchTemplateId":true,"LaunchTemplateName":true,"Version":true},
   });
@@ -1654,7 +1655,7 @@ function MixedInstancesPolicy_Serialize(body: URLSearchParams, prefix: string, p
     if (params["LaunchTemplate"] != null) LaunchTemplate_Serialize(body, prefix+".LaunchTemplate", params["LaunchTemplate"]);
     if (params["InstancesDistribution"] != null) InstancesDistribution_Serialize(body, prefix+".InstancesDistribution", params["InstancesDistribution"]);
 }
-function MixedInstancesPolicy_Parse(node: XmlNode): MixedInstancesPolicy {
+function MixedInstancesPolicy_Parse(node: xmlP.XmlNode): MixedInstancesPolicy {
   return {
     LaunchTemplate: node.first("LaunchTemplate", false, LaunchTemplate_Parse),
     InstancesDistribution: node.first("InstancesDistribution", false, InstancesDistribution_Parse),
@@ -1668,9 +1669,9 @@ export interface LaunchTemplate {
 }
 function LaunchTemplate_Serialize(body: URLSearchParams, prefix: string, params: LaunchTemplate) {
     if (params["LaunchTemplateSpecification"] != null) LaunchTemplateSpecification_Serialize(body, prefix+".LaunchTemplateSpecification", params["LaunchTemplateSpecification"]);
-    if (params["Overrides"]) prt.appendList(body, prefix+".Overrides", params["Overrides"], {"appender":LaunchTemplateOverrides_Serialize,"entryPrefix":".member."})
+    if (params["Overrides"]) qsP.appendList(body, prefix+".Overrides", params["Overrides"], {"appender":LaunchTemplateOverrides_Serialize,"entryPrefix":".member."})
 }
-function LaunchTemplate_Parse(node: XmlNode): LaunchTemplate {
+function LaunchTemplate_Parse(node: xmlP.XmlNode): LaunchTemplate {
   return {
     LaunchTemplateSpecification: node.first("LaunchTemplateSpecification", false, LaunchTemplateSpecification_Parse),
     Overrides: node.getList("Overrides", "member").map(LaunchTemplateOverrides_Parse),
@@ -1686,7 +1687,7 @@ function LaunchTemplateOverrides_Serialize(body: URLSearchParams, prefix: string
     if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
     if ("WeightedCapacity" in params) body.append(prefix+".WeightedCapacity", (params["WeightedCapacity"] ?? '').toString());
 }
-function LaunchTemplateOverrides_Parse(node: XmlNode): LaunchTemplateOverrides {
+function LaunchTemplateOverrides_Parse(node: xmlP.XmlNode): LaunchTemplateOverrides {
   return node.strings({
     optional: {"InstanceType":true,"WeightedCapacity":true},
   });
@@ -1709,7 +1710,7 @@ function InstancesDistribution_Serialize(body: URLSearchParams, prefix: string, 
     if ("SpotInstancePools" in params) body.append(prefix+".SpotInstancePools", (params["SpotInstancePools"] ?? '').toString());
     if ("SpotMaxPrice" in params) body.append(prefix+".SpotMaxPrice", (params["SpotMaxPrice"] ?? '').toString());
 }
-function InstancesDistribution_Parse(node: XmlNode): InstancesDistribution {
+function InstancesDistribution_Parse(node: xmlP.XmlNode): InstancesDistribution {
   return {
     ...node.strings({
       optional: {"OnDemandAllocationStrategy":true,"SpotAllocationStrategy":true,"SpotMaxPrice":true},
@@ -1769,7 +1770,7 @@ function BlockDeviceMapping_Serialize(body: URLSearchParams, prefix: string, par
     if (params["Ebs"] != null) Ebs_Serialize(body, prefix+".Ebs", params["Ebs"]);
     if ("NoDevice" in params) body.append(prefix+".NoDevice", (params["NoDevice"] ?? '').toString());
 }
-function BlockDeviceMapping_Parse(node: XmlNode): BlockDeviceMapping {
+function BlockDeviceMapping_Parse(node: xmlP.XmlNode): BlockDeviceMapping {
   return {
     ...node.strings({
       required: {"DeviceName":true},
@@ -1797,7 +1798,7 @@ function Ebs_Serialize(body: URLSearchParams, prefix: string, params: Ebs) {
     if ("Iops" in params) body.append(prefix+".Iops", (params["Iops"] ?? '').toString());
     if ("Encrypted" in params) body.append(prefix+".Encrypted", (params["Encrypted"] ?? '').toString());
 }
-function Ebs_Parse(node: XmlNode): Ebs {
+function Ebs_Parse(node: xmlP.XmlNode): Ebs {
   return {
     ...node.strings({
       optional: {"SnapshotId":true,"VolumeType":true},
@@ -1816,7 +1817,7 @@ export interface InstanceMonitoring {
 function InstanceMonitoring_Serialize(body: URLSearchParams, prefix: string, params: InstanceMonitoring) {
     if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
 }
-function InstanceMonitoring_Parse(node: XmlNode): InstanceMonitoring {
+function InstanceMonitoring_Parse(node: xmlP.XmlNode): InstanceMonitoring {
   return {
     Enabled: node.first("Enabled", false, x => x.content === 'true'),
   };
@@ -1833,7 +1834,7 @@ function InstanceMetadataOptions_Serialize(body: URLSearchParams, prefix: string
     if ("HttpPutResponseHopLimit" in params) body.append(prefix+".HttpPutResponseHopLimit", (params["HttpPutResponseHopLimit"] ?? '').toString());
     if ("HttpEndpoint" in params) body.append(prefix+".HttpEndpoint", (params["HttpEndpoint"] ?? '').toString());
 }
-function InstanceMetadataOptions_Parse(node: XmlNode): InstanceMetadataOptions {
+function InstanceMetadataOptions_Parse(node: xmlP.XmlNode): InstanceMetadataOptions {
   return {
     HttpTokens: node.first("HttpTokens", false, x => (x.content ?? '') as InstanceMetadataHttpTokensState),
     HttpPutResponseHopLimit: node.first("HttpPutResponseHopLimit", false, x => parseInt(x.content ?? '0')),
@@ -1845,17 +1846,13 @@ function InstanceMetadataOptions_Parse(node: XmlNode): InstanceMetadataOptions {
 export type InstanceMetadataHttpTokensState =
 | "optional"
 | "required"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type InstanceMetadataEndpointState =
 | "disabled"
 | "enabled"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface Filter {
@@ -1864,7 +1861,7 @@ export interface Filter {
 }
 function Filter_Serialize(body: URLSearchParams, prefix: string, params: Filter) {
     if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
-    if (params["Values"]) prt.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
+    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
 }
 
 // refs: 2 - tags: input, named, interface, output
@@ -1878,7 +1875,7 @@ function StepAdjustment_Serialize(body: URLSearchParams, prefix: string, params:
     if ("MetricIntervalUpperBound" in params) body.append(prefix+".MetricIntervalUpperBound", (params["MetricIntervalUpperBound"] ?? '').toString());
     body.append(prefix+".ScalingAdjustment", (params["ScalingAdjustment"] ?? '').toString());
 }
-function StepAdjustment_Parse(node: XmlNode): StepAdjustment {
+function StepAdjustment_Parse(node: xmlP.XmlNode): StepAdjustment {
   return {
     MetricIntervalLowerBound: node.first("MetricIntervalLowerBound", false, x => parseFloat(x.content ?? '0')),
     MetricIntervalUpperBound: node.first("MetricIntervalUpperBound", false, x => parseFloat(x.content ?? '0')),
@@ -1899,7 +1896,7 @@ function TargetTrackingConfiguration_Serialize(body: URLSearchParams, prefix: st
     body.append(prefix+".TargetValue", (params["TargetValue"] ?? '').toString());
     if ("DisableScaleIn" in params) body.append(prefix+".DisableScaleIn", (params["DisableScaleIn"] ?? '').toString());
 }
-function TargetTrackingConfiguration_Parse(node: XmlNode): TargetTrackingConfiguration {
+function TargetTrackingConfiguration_Parse(node: xmlP.XmlNode): TargetTrackingConfiguration {
   return {
     PredefinedMetricSpecification: node.first("PredefinedMetricSpecification", false, PredefinedMetricSpecification_Parse),
     CustomizedMetricSpecification: node.first("CustomizedMetricSpecification", false, CustomizedMetricSpecification_Parse),
@@ -1917,7 +1914,7 @@ function PredefinedMetricSpecification_Serialize(body: URLSearchParams, prefix: 
     body.append(prefix+".PredefinedMetricType", (params["PredefinedMetricType"] ?? '').toString());
     if ("ResourceLabel" in params) body.append(prefix+".ResourceLabel", (params["ResourceLabel"] ?? '').toString());
 }
-function PredefinedMetricSpecification_Parse(node: XmlNode): PredefinedMetricSpecification {
+function PredefinedMetricSpecification_Parse(node: xmlP.XmlNode): PredefinedMetricSpecification {
   return {
     ...node.strings({
       optional: {"ResourceLabel":true},
@@ -1932,9 +1929,7 @@ export type MetricType =
 | "ASGAverageNetworkIn"
 | "ASGAverageNetworkOut"
 | "ALBRequestCountPerTarget"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface CustomizedMetricSpecification {
@@ -1947,11 +1942,11 @@ export interface CustomizedMetricSpecification {
 function CustomizedMetricSpecification_Serialize(body: URLSearchParams, prefix: string, params: CustomizedMetricSpecification) {
     body.append(prefix+".MetricName", (params["MetricName"] ?? '').toString());
     body.append(prefix+".Namespace", (params["Namespace"] ?? '').toString());
-    if (params["Dimensions"]) prt.appendList(body, prefix+".Dimensions", params["Dimensions"], {"appender":MetricDimension_Serialize,"entryPrefix":".member."})
+    if (params["Dimensions"]) qsP.appendList(body, prefix+".Dimensions", params["Dimensions"], {"appender":MetricDimension_Serialize,"entryPrefix":".member."})
     body.append(prefix+".Statistic", (params["Statistic"] ?? '').toString());
     if ("Unit" in params) body.append(prefix+".Unit", (params["Unit"] ?? '').toString());
 }
-function CustomizedMetricSpecification_Parse(node: XmlNode): CustomizedMetricSpecification {
+function CustomizedMetricSpecification_Parse(node: xmlP.XmlNode): CustomizedMetricSpecification {
   return {
     ...node.strings({
       required: {"MetricName":true,"Namespace":true},
@@ -1971,7 +1966,7 @@ function MetricDimension_Serialize(body: URLSearchParams, prefix: string, params
     body.append(prefix+".Name", (params["Name"] ?? '').toString());
     body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function MetricDimension_Parse(node: XmlNode): MetricDimension {
+function MetricDimension_Parse(node: xmlP.XmlNode): MetricDimension {
   return node.strings({
     required: {"Name":true,"Value":true},
   });
@@ -1984,15 +1979,12 @@ export type MetricStatistic =
 | "Maximum"
 | "SampleCount"
 | "Sum"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type RefreshStrategy =
 | "Rolling"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface RefreshPreferences {
@@ -2010,7 +2002,7 @@ export interface FailedScheduledUpdateGroupActionRequest {
   ErrorCode?: string | null;
   ErrorMessage?: string | null;
 }
-function FailedScheduledUpdateGroupActionRequest_Parse(node: XmlNode): FailedScheduledUpdateGroupActionRequest {
+function FailedScheduledUpdateGroupActionRequest_Parse(node: xmlP.XmlNode): FailedScheduledUpdateGroupActionRequest {
   return node.strings({
     required: {"ScheduledActionName":true},
     optional: {"ErrorCode":true,"ErrorMessage":true},
@@ -2021,7 +2013,7 @@ function FailedScheduledUpdateGroupActionRequest_Parse(node: XmlNode): FailedSch
 export interface AdjustmentType {
   AdjustmentType?: string | null;
 }
-function AdjustmentType_Parse(node: XmlNode): AdjustmentType {
+function AdjustmentType_Parse(node: xmlP.XmlNode): AdjustmentType {
   return node.strings({
     optional: {"AdjustmentType":true},
   });
@@ -2056,7 +2048,7 @@ export interface AutoScalingGroup {
   ServiceLinkedRoleARN?: string | null;
   MaxInstanceLifetime?: number | null;
 }
-function AutoScalingGroup_Parse(node: XmlNode): AutoScalingGroup {
+function AutoScalingGroup_Parse(node: xmlP.XmlNode): AutoScalingGroup {
   return {
     ...node.strings({
       required: {"AutoScalingGroupName":true,"HealthCheckType":true},
@@ -2073,7 +2065,7 @@ function AutoScalingGroup_Parse(node: XmlNode): AutoScalingGroup {
     TargetGroupARNs: node.getList("TargetGroupARNs", "member").map(x => x.content ?? ''),
     HealthCheckGracePeriod: node.first("HealthCheckGracePeriod", false, x => parseInt(x.content ?? '0')),
     Instances: node.getList("Instances", "member").map(Instance_Parse),
-    CreatedTime: node.first("CreatedTime", true, x => parseTimestamp(x.content)),
+    CreatedTime: node.first("CreatedTime", true, x => xmlP.parseTimestamp(x.content)),
     SuspendedProcesses: node.getList("SuspendedProcesses", "member").map(SuspendedProcess_Parse),
     EnabledMetrics: node.getList("EnabledMetrics", "member").map(EnabledMetric_Parse),
     Tags: node.getList("Tags", "member").map(TagDescription_Parse),
@@ -2095,7 +2087,7 @@ export interface Instance {
   ProtectedFromScaleIn: boolean;
   WeightedCapacity?: string | null;
 }
-function Instance_Parse(node: XmlNode): Instance {
+function Instance_Parse(node: xmlP.XmlNode): Instance {
   return {
     ...node.strings({
       required: {"InstanceId":true,"AvailabilityZone":true,"HealthStatus":true},
@@ -2122,15 +2114,14 @@ export type LifecycleState =
 | "Detached"
 | "EnteringStandby"
 | "Standby"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface SuspendedProcess {
   ProcessName?: string | null;
   SuspensionReason?: string | null;
 }
-function SuspendedProcess_Parse(node: XmlNode): SuspendedProcess {
+function SuspendedProcess_Parse(node: xmlP.XmlNode): SuspendedProcess {
   return node.strings({
     optional: {"ProcessName":true,"SuspensionReason":true},
   });
@@ -2141,7 +2132,7 @@ export interface EnabledMetric {
   Metric?: string | null;
   Granularity?: string | null;
 }
-function EnabledMetric_Parse(node: XmlNode): EnabledMetric {
+function EnabledMetric_Parse(node: xmlP.XmlNode): EnabledMetric {
   return node.strings({
     optional: {"Metric":true,"Granularity":true},
   });
@@ -2155,7 +2146,7 @@ export interface TagDescription {
   Value?: string | null;
   PropagateAtLaunch?: boolean | null;
 }
-function TagDescription_Parse(node: XmlNode): TagDescription {
+function TagDescription_Parse(node: xmlP.XmlNode): TagDescription {
   return {
     ...node.strings({
       optional: {"ResourceId":true,"ResourceType":true,"Key":true,"Value":true},
@@ -2177,7 +2168,7 @@ export interface AutoScalingInstanceDetails {
   ProtectedFromScaleIn: boolean;
   WeightedCapacity?: string | null;
 }
-function AutoScalingInstanceDetails_Parse(node: XmlNode): AutoScalingInstanceDetails {
+function AutoScalingInstanceDetails_Parse(node: xmlP.XmlNode): AutoScalingInstanceDetails {
   return {
     ...node.strings({
       required: {"InstanceId":true,"AutoScalingGroupName":true,"AvailabilityZone":true,"LifecycleState":true,"HealthStatus":true},
@@ -2199,14 +2190,14 @@ export interface InstanceRefresh {
   PercentageComplete?: number | null;
   InstancesToUpdate?: number | null;
 }
-function InstanceRefresh_Parse(node: XmlNode): InstanceRefresh {
+function InstanceRefresh_Parse(node: xmlP.XmlNode): InstanceRefresh {
   return {
     ...node.strings({
       optional: {"InstanceRefreshId":true,"AutoScalingGroupName":true,"StatusReason":true},
     }),
     Status: node.first("Status", false, x => (x.content ?? '') as InstanceRefreshStatus),
-    StartTime: node.first("StartTime", false, x => parseTimestamp(x.content)),
-    EndTime: node.first("EndTime", false, x => parseTimestamp(x.content)),
+    StartTime: node.first("StartTime", false, x => xmlP.parseTimestamp(x.content)),
+    EndTime: node.first("EndTime", false, x => xmlP.parseTimestamp(x.content)),
     PercentageComplete: node.first("PercentageComplete", false, x => parseInt(x.content ?? '0')),
     InstancesToUpdate: node.first("InstancesToUpdate", false, x => parseInt(x.content ?? '0')),
   };
@@ -2220,8 +2211,7 @@ export type InstanceRefreshStatus =
 | "Failed"
 | "Cancelling"
 | "Cancelled"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface LaunchConfiguration {
@@ -2246,7 +2236,7 @@ export interface LaunchConfiguration {
   PlacementTenancy?: string | null;
   MetadataOptions?: InstanceMetadataOptions | null;
 }
-function LaunchConfiguration_Parse(node: XmlNode): LaunchConfiguration {
+function LaunchConfiguration_Parse(node: xmlP.XmlNode): LaunchConfiguration {
   return {
     ...node.strings({
       required: {"LaunchConfigurationName":true,"ImageId":true,"InstanceType":true},
@@ -2256,7 +2246,7 @@ function LaunchConfiguration_Parse(node: XmlNode): LaunchConfiguration {
     ClassicLinkVPCSecurityGroups: node.getList("ClassicLinkVPCSecurityGroups", "member").map(x => x.content ?? ''),
     BlockDeviceMappings: node.getList("BlockDeviceMappings", "member").map(BlockDeviceMapping_Parse),
     InstanceMonitoring: node.first("InstanceMonitoring", false, InstanceMonitoring_Parse),
-    CreatedTime: node.first("CreatedTime", true, x => parseTimestamp(x.content)),
+    CreatedTime: node.first("CreatedTime", true, x => xmlP.parseTimestamp(x.content)),
     EbsOptimized: node.first("EbsOptimized", false, x => x.content === 'true'),
     AssociatePublicIpAddress: node.first("AssociatePublicIpAddress", false, x => x.content === 'true'),
     MetadataOptions: node.first("MetadataOptions", false, InstanceMetadataOptions_Parse),
@@ -2275,7 +2265,7 @@ export interface LifecycleHook {
   GlobalTimeout?: number | null;
   DefaultResult?: string | null;
 }
-function LifecycleHook_Parse(node: XmlNode): LifecycleHook {
+function LifecycleHook_Parse(node: xmlP.XmlNode): LifecycleHook {
   return {
     ...node.strings({
       optional: {"LifecycleHookName":true,"AutoScalingGroupName":true,"LifecycleTransition":true,"NotificationTargetARN":true,"RoleARN":true,"NotificationMetadata":true,"DefaultResult":true},
@@ -2290,7 +2280,7 @@ export interface LoadBalancerTargetGroupState {
   LoadBalancerTargetGroupARN?: string | null;
   State?: string | null;
 }
-function LoadBalancerTargetGroupState_Parse(node: XmlNode): LoadBalancerTargetGroupState {
+function LoadBalancerTargetGroupState_Parse(node: xmlP.XmlNode): LoadBalancerTargetGroupState {
   return node.strings({
     optional: {"LoadBalancerTargetGroupARN":true,"State":true},
   });
@@ -2301,7 +2291,7 @@ export interface LoadBalancerState {
   LoadBalancerName?: string | null;
   State?: string | null;
 }
-function LoadBalancerState_Parse(node: XmlNode): LoadBalancerState {
+function LoadBalancerState_Parse(node: xmlP.XmlNode): LoadBalancerState {
   return node.strings({
     optional: {"LoadBalancerName":true,"State":true},
   });
@@ -2311,7 +2301,7 @@ function LoadBalancerState_Parse(node: XmlNode): LoadBalancerState {
 export interface MetricCollectionType {
   Metric?: string | null;
 }
-function MetricCollectionType_Parse(node: XmlNode): MetricCollectionType {
+function MetricCollectionType_Parse(node: xmlP.XmlNode): MetricCollectionType {
   return node.strings({
     optional: {"Metric":true},
   });
@@ -2321,7 +2311,7 @@ function MetricCollectionType_Parse(node: XmlNode): MetricCollectionType {
 export interface MetricGranularityType {
   Granularity?: string | null;
 }
-function MetricGranularityType_Parse(node: XmlNode): MetricGranularityType {
+function MetricGranularityType_Parse(node: xmlP.XmlNode): MetricGranularityType {
   return node.strings({
     optional: {"Granularity":true},
   });
@@ -2333,7 +2323,7 @@ export interface NotificationConfiguration {
   TopicARN?: string | null;
   NotificationType?: string | null;
 }
-function NotificationConfiguration_Parse(node: XmlNode): NotificationConfiguration {
+function NotificationConfiguration_Parse(node: xmlP.XmlNode): NotificationConfiguration {
   return node.strings({
     optional: {"AutoScalingGroupName":true,"TopicARN":true,"NotificationType":true},
   });
@@ -2357,7 +2347,7 @@ export interface ScalingPolicy {
   TargetTrackingConfiguration?: TargetTrackingConfiguration | null;
   Enabled?: boolean | null;
 }
-function ScalingPolicy_Parse(node: XmlNode): ScalingPolicy {
+function ScalingPolicy_Parse(node: xmlP.XmlNode): ScalingPolicy {
   return {
     ...node.strings({
       optional: {"AutoScalingGroupName":true,"PolicyName":true,"PolicyARN":true,"PolicyType":true,"AdjustmentType":true,"MetricAggregationType":true},
@@ -2379,7 +2369,7 @@ export interface Alarm {
   AlarmName?: string | null;
   AlarmARN?: string | null;
 }
-function Alarm_Parse(node: XmlNode): Alarm {
+function Alarm_Parse(node: xmlP.XmlNode): Alarm {
   return node.strings({
     optional: {"AlarmName":true,"AlarmARN":true},
   });
@@ -2398,14 +2388,14 @@ export interface Activity {
   Progress?: number | null;
   Details?: string | null;
 }
-function Activity_Parse(node: XmlNode): Activity {
+function Activity_Parse(node: xmlP.XmlNode): Activity {
   return {
     ...node.strings({
       required: {"ActivityId":true,"AutoScalingGroupName":true,"Cause":true},
       optional: {"Description":true,"StatusMessage":true,"Details":true},
     }),
-    StartTime: node.first("StartTime", true, x => parseTimestamp(x.content)),
-    EndTime: node.first("EndTime", false, x => parseTimestamp(x.content)),
+    StartTime: node.first("StartTime", true, x => xmlP.parseTimestamp(x.content)),
+    EndTime: node.first("EndTime", false, x => xmlP.parseTimestamp(x.content)),
     StatusCode: node.first("StatusCode", true, x => (x.content ?? '') as ScalingActivityStatusCode),
     Progress: node.first("Progress", false, x => parseInt(x.content ?? '0')),
   };
@@ -2425,14 +2415,13 @@ export type ScalingActivityStatusCode =
 | "Successful"
 | "Failed"
 | "Cancelled"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ProcessType {
   ProcessName: string;
 }
-function ProcessType_Parse(node: XmlNode): ProcessType {
+function ProcessType_Parse(node: xmlP.XmlNode): ProcessType {
   return node.strings({
     required: {"ProcessName":true},
   });
@@ -2451,14 +2440,14 @@ export interface ScheduledUpdateGroupAction {
   MaxSize?: number | null;
   DesiredCapacity?: number | null;
 }
-function ScheduledUpdateGroupAction_Parse(node: XmlNode): ScheduledUpdateGroupAction {
+function ScheduledUpdateGroupAction_Parse(node: xmlP.XmlNode): ScheduledUpdateGroupAction {
   return {
     ...node.strings({
       optional: {"AutoScalingGroupName":true,"ScheduledActionName":true,"ScheduledActionARN":true,"Recurrence":true},
     }),
-    Time: node.first("Time", false, x => parseTimestamp(x.content)),
-    StartTime: node.first("StartTime", false, x => parseTimestamp(x.content)),
-    EndTime: node.first("EndTime", false, x => parseTimestamp(x.content)),
+    Time: node.first("Time", false, x => xmlP.parseTimestamp(x.content)),
+    StartTime: node.first("StartTime", false, x => xmlP.parseTimestamp(x.content)),
+    EndTime: node.first("EndTime", false, x => xmlP.parseTimestamp(x.content)),
     MinSize: node.first("MinSize", false, x => parseInt(x.content ?? '0')),
     MaxSize: node.first("MaxSize", false, x => parseInt(x.content ?? '0')),
     DesiredCapacity: node.first("DesiredCapacity", false, x => parseInt(x.content ?? '0')),

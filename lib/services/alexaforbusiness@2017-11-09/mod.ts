@@ -5,10 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }
@@ -34,13 +33,14 @@ export default class AlexaForBusiness {
   async approveSkill(
     {abortSignal, ...params}: RequestConfig & ApproveSkillRequest,
   ): Promise<ApproveSkillResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SkillId: params["SkillId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ApproveSkill",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -49,13 +49,15 @@ export default class AlexaForBusiness {
   async associateContactWithAddressBook(
     {abortSignal, ...params}: RequestConfig & AssociateContactWithAddressBookRequest,
   ): Promise<AssociateContactWithAddressBookResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContactArn: params["ContactArn"],
+      AddressBookArn: params["AddressBookArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateContactWithAddressBook",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -64,13 +66,15 @@ export default class AlexaForBusiness {
   async associateDeviceWithNetworkProfile(
     {abortSignal, ...params}: RequestConfig & AssociateDeviceWithNetworkProfileRequest,
   ): Promise<AssociateDeviceWithNetworkProfileResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeviceArn: params["DeviceArn"],
+      NetworkProfileArn: params["NetworkProfileArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateDeviceWithNetworkProfile",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -79,13 +83,15 @@ export default class AlexaForBusiness {
   async associateDeviceWithRoom(
     {abortSignal, ...params}: RequestConfig & AssociateDeviceWithRoomRequest = {},
   ): Promise<AssociateDeviceWithRoomResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeviceArn: params["DeviceArn"],
+      RoomArn: params["RoomArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateDeviceWithRoom",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -94,13 +100,15 @@ export default class AlexaForBusiness {
   async associateSkillGroupWithRoom(
     {abortSignal, ...params}: RequestConfig & AssociateSkillGroupWithRoomRequest = {},
   ): Promise<AssociateSkillGroupWithRoomResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SkillGroupArn: params["SkillGroupArn"],
+      RoomArn: params["RoomArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateSkillGroupWithRoom",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -109,13 +117,15 @@ export default class AlexaForBusiness {
   async associateSkillWithSkillGroup(
     {abortSignal, ...params}: RequestConfig & AssociateSkillWithSkillGroupRequest,
   ): Promise<AssociateSkillWithSkillGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SkillGroupArn: params["SkillGroupArn"],
+      SkillId: params["SkillId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateSkillWithSkillGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -124,13 +134,14 @@ export default class AlexaForBusiness {
   async associateSkillWithUsers(
     {abortSignal, ...params}: RequestConfig & AssociateSkillWithUsersRequest,
   ): Promise<AssociateSkillWithUsersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SkillId: params["SkillId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateSkillWithUsers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -139,14 +150,16 @@ export default class AlexaForBusiness {
   async createAddressBook(
     {abortSignal, ...params}: RequestConfig & CreateAddressBookRequest,
   ): Promise<CreateAddressBookResponse> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Description: params["Description"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAddressBook",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AddressBookArn": "s",
@@ -157,17 +170,21 @@ export default class AlexaForBusiness {
   async createBusinessReportSchedule(
     {abortSignal, ...params}: RequestConfig & CreateBusinessReportScheduleRequest,
   ): Promise<CreateBusinessReportScheduleResponse> {
-    const body: JSONObject = {...params,
-    ContentRange: fromBusinessReportContentRange(params["ContentRange"]),
-    Recurrence: fromBusinessReportRecurrence(params["Recurrence"]),
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ScheduleName: params["ScheduleName"],
+      S3BucketName: params["S3BucketName"],
+      S3KeyPrefix: params["S3KeyPrefix"],
+      Format: params["Format"],
+      ContentRange: fromBusinessReportContentRange(params["ContentRange"]),
+      Recurrence: fromBusinessReportRecurrence(params["Recurrence"]),
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBusinessReportSchedule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ScheduleArn": "s",
@@ -178,17 +195,19 @@ export default class AlexaForBusiness {
   async createConferenceProvider(
     {abortSignal, ...params}: RequestConfig & CreateConferenceProviderRequest,
   ): Promise<CreateConferenceProviderResponse> {
-    const body: JSONObject = {...params,
-    IPDialIn: fromIPDialIn(params["IPDialIn"]),
-    PSTNDialIn: fromPSTNDialIn(params["PSTNDialIn"]),
-    MeetingSetting: fromMeetingSetting(params["MeetingSetting"]),
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConferenceProviderName: params["ConferenceProviderName"],
+      ConferenceProviderType: params["ConferenceProviderType"],
+      IPDialIn: fromIPDialIn(params["IPDialIn"]),
+      PSTNDialIn: fromPSTNDialIn(params["PSTNDialIn"]),
+      MeetingSetting: fromMeetingSetting(params["MeetingSetting"]),
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateConferenceProvider",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConferenceProviderArn": "s",
@@ -199,16 +218,20 @@ export default class AlexaForBusiness {
   async createContact(
     {abortSignal, ...params}: RequestConfig & CreateContactRequest,
   ): Promise<CreateContactResponse> {
-    const body: JSONObject = {...params,
-    PhoneNumbers: params["PhoneNumbers"]?.map(x => fromPhoneNumber(x)),
-    SipAddresses: params["SipAddresses"]?.map(x => fromSipAddress(x)),
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DisplayName: params["DisplayName"],
+      FirstName: params["FirstName"],
+      LastName: params["LastName"],
+      PhoneNumber: params["PhoneNumber"],
+      PhoneNumbers: params["PhoneNumbers"]?.map(x => fromPhoneNumber(x)),
+      SipAddresses: params["SipAddresses"]?.map(x => fromSipAddress(x)),
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateContact",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ContactArn": "s",
@@ -219,14 +242,16 @@ export default class AlexaForBusiness {
   async createGatewayGroup(
     {abortSignal, ...params}: RequestConfig & CreateGatewayGroupRequest,
   ): Promise<CreateGatewayGroupResponse> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Description: params["Description"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGatewayGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayGroupArn": "s",
@@ -237,14 +262,23 @@ export default class AlexaForBusiness {
   async createNetworkProfile(
     {abortSignal, ...params}: RequestConfig & CreateNetworkProfileRequest,
   ): Promise<CreateNetworkProfileResponse> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NetworkProfileName: params["NetworkProfileName"],
+      Description: params["Description"],
+      Ssid: params["Ssid"],
+      SecurityType: params["SecurityType"],
+      EapMethod: params["EapMethod"],
+      CurrentPassword: params["CurrentPassword"],
+      NextPassword: params["NextPassword"],
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+      TrustAnchors: params["TrustAnchors"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNetworkProfile",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NetworkProfileArn": "s",
@@ -255,16 +289,26 @@ export default class AlexaForBusiness {
   async createProfile(
     {abortSignal, ...params}: RequestConfig & CreateProfileRequest,
   ): Promise<CreateProfileResponse> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    MeetingRoomConfiguration: fromCreateMeetingRoomConfiguration(params["MeetingRoomConfiguration"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProfileName: params["ProfileName"],
+      Timezone: params["Timezone"],
+      Address: params["Address"],
+      DistanceUnit: params["DistanceUnit"],
+      TemperatureUnit: params["TemperatureUnit"],
+      WakeWord: params["WakeWord"],
+      Locale: params["Locale"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      SetupModeDisabled: params["SetupModeDisabled"],
+      MaxVolumeLimit: params["MaxVolumeLimit"],
+      PSTNEnabled: params["PSTNEnabled"],
+      MeetingRoomConfiguration: fromCreateMeetingRoomConfiguration(params["MeetingRoomConfiguration"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProfile",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ProfileArn": "s",
@@ -275,15 +319,19 @@ export default class AlexaForBusiness {
   async createRoom(
     {abortSignal, ...params}: RequestConfig & CreateRoomRequest,
   ): Promise<CreateRoomResponse> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      RoomName: params["RoomName"],
+      Description: params["Description"],
+      ProfileArn: params["ProfileArn"],
+      ProviderCalendarId: params["ProviderCalendarId"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRoom",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RoomArn": "s",
@@ -294,15 +342,17 @@ export default class AlexaForBusiness {
   async createSkillGroup(
     {abortSignal, ...params}: RequestConfig & CreateSkillGroupRequest,
   ): Promise<CreateSkillGroupResponse> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SkillGroupName: params["SkillGroupName"],
+      Description: params["Description"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSkillGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SkillGroupArn": "s",
@@ -313,15 +363,19 @@ export default class AlexaForBusiness {
   async createUser(
     {abortSignal, ...params}: RequestConfig & CreateUserRequest,
   ): Promise<CreateUserResponse> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserId: params["UserId"],
+      FirstName: params["FirstName"],
+      LastName: params["LastName"],
+      Email: params["Email"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUser",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserArn": "s",
@@ -332,13 +386,14 @@ export default class AlexaForBusiness {
   async deleteAddressBook(
     {abortSignal, ...params}: RequestConfig & DeleteAddressBookRequest,
   ): Promise<DeleteAddressBookResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AddressBookArn: params["AddressBookArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAddressBook",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -347,13 +402,14 @@ export default class AlexaForBusiness {
   async deleteBusinessReportSchedule(
     {abortSignal, ...params}: RequestConfig & DeleteBusinessReportScheduleRequest,
   ): Promise<DeleteBusinessReportScheduleResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ScheduleArn: params["ScheduleArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBusinessReportSchedule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -362,13 +418,14 @@ export default class AlexaForBusiness {
   async deleteConferenceProvider(
     {abortSignal, ...params}: RequestConfig & DeleteConferenceProviderRequest,
   ): Promise<DeleteConferenceProviderResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConferenceProviderArn: params["ConferenceProviderArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteConferenceProvider",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -377,13 +434,14 @@ export default class AlexaForBusiness {
   async deleteContact(
     {abortSignal, ...params}: RequestConfig & DeleteContactRequest,
   ): Promise<DeleteContactResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContactArn: params["ContactArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteContact",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -392,13 +450,14 @@ export default class AlexaForBusiness {
   async deleteDevice(
     {abortSignal, ...params}: RequestConfig & DeleteDeviceRequest,
   ): Promise<DeleteDeviceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeviceArn: params["DeviceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDevice",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -407,13 +466,15 @@ export default class AlexaForBusiness {
   async deleteDeviceUsageData(
     {abortSignal, ...params}: RequestConfig & DeleteDeviceUsageDataRequest,
   ): Promise<DeleteDeviceUsageDataResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeviceArn: params["DeviceArn"],
+      DeviceUsageType: params["DeviceUsageType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDeviceUsageData",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -422,13 +483,14 @@ export default class AlexaForBusiness {
   async deleteGatewayGroup(
     {abortSignal, ...params}: RequestConfig & DeleteGatewayGroupRequest,
   ): Promise<DeleteGatewayGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayGroupArn: params["GatewayGroupArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteGatewayGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -437,13 +499,14 @@ export default class AlexaForBusiness {
   async deleteNetworkProfile(
     {abortSignal, ...params}: RequestConfig & DeleteNetworkProfileRequest,
   ): Promise<DeleteNetworkProfileResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NetworkProfileArn: params["NetworkProfileArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteNetworkProfile",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -452,13 +515,14 @@ export default class AlexaForBusiness {
   async deleteProfile(
     {abortSignal, ...params}: RequestConfig & DeleteProfileRequest = {},
   ): Promise<DeleteProfileResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProfileArn: params["ProfileArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteProfile",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -467,13 +531,14 @@ export default class AlexaForBusiness {
   async deleteRoom(
     {abortSignal, ...params}: RequestConfig & DeleteRoomRequest = {},
   ): Promise<DeleteRoomResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RoomArn: params["RoomArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRoom",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -482,13 +547,16 @@ export default class AlexaForBusiness {
   async deleteRoomSkillParameter(
     {abortSignal, ...params}: RequestConfig & DeleteRoomSkillParameterRequest,
   ): Promise<DeleteRoomSkillParameterResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RoomArn: params["RoomArn"],
+      SkillId: params["SkillId"],
+      ParameterKey: params["ParameterKey"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRoomSkillParameter",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -497,13 +565,15 @@ export default class AlexaForBusiness {
   async deleteSkillAuthorization(
     {abortSignal, ...params}: RequestConfig & DeleteSkillAuthorizationRequest,
   ): Promise<DeleteSkillAuthorizationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SkillId: params["SkillId"],
+      RoomArn: params["RoomArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSkillAuthorization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -512,13 +582,14 @@ export default class AlexaForBusiness {
   async deleteSkillGroup(
     {abortSignal, ...params}: RequestConfig & DeleteSkillGroupRequest = {},
   ): Promise<DeleteSkillGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SkillGroupArn: params["SkillGroupArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSkillGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -527,13 +598,15 @@ export default class AlexaForBusiness {
   async deleteUser(
     {abortSignal, ...params}: RequestConfig & DeleteUserRequest,
   ): Promise<DeleteUserResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserArn: params["UserArn"],
+      EnrollmentId: params["EnrollmentId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUser",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -542,13 +615,15 @@ export default class AlexaForBusiness {
   async disassociateContactFromAddressBook(
     {abortSignal, ...params}: RequestConfig & DisassociateContactFromAddressBookRequest,
   ): Promise<DisassociateContactFromAddressBookResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContactArn: params["ContactArn"],
+      AddressBookArn: params["AddressBookArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateContactFromAddressBook",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -557,13 +632,14 @@ export default class AlexaForBusiness {
   async disassociateDeviceFromRoom(
     {abortSignal, ...params}: RequestConfig & DisassociateDeviceFromRoomRequest = {},
   ): Promise<DisassociateDeviceFromRoomResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeviceArn: params["DeviceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateDeviceFromRoom",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -572,13 +648,15 @@ export default class AlexaForBusiness {
   async disassociateSkillFromSkillGroup(
     {abortSignal, ...params}: RequestConfig & DisassociateSkillFromSkillGroupRequest,
   ): Promise<DisassociateSkillFromSkillGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SkillGroupArn: params["SkillGroupArn"],
+      SkillId: params["SkillId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateSkillFromSkillGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -587,13 +665,14 @@ export default class AlexaForBusiness {
   async disassociateSkillFromUsers(
     {abortSignal, ...params}: RequestConfig & DisassociateSkillFromUsersRequest,
   ): Promise<DisassociateSkillFromUsersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SkillId: params["SkillId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateSkillFromUsers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -602,13 +681,15 @@ export default class AlexaForBusiness {
   async disassociateSkillGroupFromRoom(
     {abortSignal, ...params}: RequestConfig & DisassociateSkillGroupFromRoomRequest = {},
   ): Promise<DisassociateSkillGroupFromRoomResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SkillGroupArn: params["SkillGroupArn"],
+      RoomArn: params["RoomArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateSkillGroupFromRoom",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -617,13 +698,14 @@ export default class AlexaForBusiness {
   async forgetSmartHomeAppliances(
     {abortSignal, ...params}: RequestConfig & ForgetSmartHomeAppliancesRequest,
   ): Promise<ForgetSmartHomeAppliancesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RoomArn: params["RoomArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ForgetSmartHomeAppliances",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -632,13 +714,14 @@ export default class AlexaForBusiness {
   async getAddressBook(
     {abortSignal, ...params}: RequestConfig & GetAddressBookRequest,
   ): Promise<GetAddressBookResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AddressBookArn: params["AddressBookArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAddressBook",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AddressBook": toAddressBook,
@@ -649,13 +732,13 @@ export default class AlexaForBusiness {
   async getConferencePreference(
     {abortSignal, ...params}: RequestConfig & GetConferencePreferenceRequest = {},
   ): Promise<GetConferencePreferenceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetConferencePreference",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Preference": toConferencePreference,
@@ -666,13 +749,14 @@ export default class AlexaForBusiness {
   async getConferenceProvider(
     {abortSignal, ...params}: RequestConfig & GetConferenceProviderRequest,
   ): Promise<GetConferenceProviderResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConferenceProviderArn: params["ConferenceProviderArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetConferenceProvider",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConferenceProvider": toConferenceProvider,
@@ -683,13 +767,14 @@ export default class AlexaForBusiness {
   async getContact(
     {abortSignal, ...params}: RequestConfig & GetContactRequest,
   ): Promise<GetContactResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContactArn: params["ContactArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetContact",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Contact": toContact,
@@ -700,13 +785,14 @@ export default class AlexaForBusiness {
   async getDevice(
     {abortSignal, ...params}: RequestConfig & GetDeviceRequest = {},
   ): Promise<GetDeviceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeviceArn: params["DeviceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDevice",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Device": toDevice,
@@ -717,13 +803,14 @@ export default class AlexaForBusiness {
   async getGateway(
     {abortSignal, ...params}: RequestConfig & GetGatewayRequest,
   ): Promise<GetGatewayResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayArn: params["GatewayArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetGateway",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Gateway": toGateway,
@@ -734,13 +821,14 @@ export default class AlexaForBusiness {
   async getGatewayGroup(
     {abortSignal, ...params}: RequestConfig & GetGatewayGroupRequest,
   ): Promise<GetGatewayGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayGroupArn: params["GatewayGroupArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetGatewayGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayGroup": toGatewayGroup,
@@ -751,13 +839,13 @@ export default class AlexaForBusiness {
   async getInvitationConfiguration(
     {abortSignal, ...params}: RequestConfig & GetInvitationConfigurationRequest = {},
   ): Promise<GetInvitationConfigurationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInvitationConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OrganizationName": "s",
@@ -770,13 +858,14 @@ export default class AlexaForBusiness {
   async getNetworkProfile(
     {abortSignal, ...params}: RequestConfig & GetNetworkProfileRequest,
   ): Promise<GetNetworkProfileResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NetworkProfileArn: params["NetworkProfileArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetNetworkProfile",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NetworkProfile": toNetworkProfile,
@@ -787,13 +876,14 @@ export default class AlexaForBusiness {
   async getProfile(
     {abortSignal, ...params}: RequestConfig & GetProfileRequest = {},
   ): Promise<GetProfileResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProfileArn: params["ProfileArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetProfile",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Profile": toProfile,
@@ -804,13 +894,14 @@ export default class AlexaForBusiness {
   async getRoom(
     {abortSignal, ...params}: RequestConfig & GetRoomRequest = {},
   ): Promise<GetRoomResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RoomArn: params["RoomArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRoom",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Room": toRoom,
@@ -821,13 +912,16 @@ export default class AlexaForBusiness {
   async getRoomSkillParameter(
     {abortSignal, ...params}: RequestConfig & GetRoomSkillParameterRequest,
   ): Promise<GetRoomSkillParameterResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RoomArn: params["RoomArn"],
+      SkillId: params["SkillId"],
+      ParameterKey: params["ParameterKey"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRoomSkillParameter",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RoomSkillParameter": toRoomSkillParameter,
@@ -838,13 +932,14 @@ export default class AlexaForBusiness {
   async getSkillGroup(
     {abortSignal, ...params}: RequestConfig & GetSkillGroupRequest = {},
   ): Promise<GetSkillGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SkillGroupArn: params["SkillGroupArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSkillGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SkillGroup": toSkillGroup,
@@ -855,13 +950,15 @@ export default class AlexaForBusiness {
   async listBusinessReportSchedules(
     {abortSignal, ...params}: RequestConfig & ListBusinessReportSchedulesRequest = {},
   ): Promise<ListBusinessReportSchedulesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListBusinessReportSchedules",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BusinessReportSchedules": [toBusinessReportSchedule],
@@ -873,13 +970,15 @@ export default class AlexaForBusiness {
   async listConferenceProviders(
     {abortSignal, ...params}: RequestConfig & ListConferenceProvidersRequest = {},
   ): Promise<ListConferenceProvidersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListConferenceProviders",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConferenceProviders": [toConferenceProvider],
@@ -891,13 +990,17 @@ export default class AlexaForBusiness {
   async listDeviceEvents(
     {abortSignal, ...params}: RequestConfig & ListDeviceEventsRequest,
   ): Promise<ListDeviceEventsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeviceArn: params["DeviceArn"],
+      EventType: params["EventType"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDeviceEvents",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DeviceEvents": [toDeviceEvent],
@@ -909,13 +1012,15 @@ export default class AlexaForBusiness {
   async listGatewayGroups(
     {abortSignal, ...params}: RequestConfig & ListGatewayGroupsRequest = {},
   ): Promise<ListGatewayGroupsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGatewayGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayGroups": [toGatewayGroupSummary],
@@ -927,13 +1032,16 @@ export default class AlexaForBusiness {
   async listGateways(
     {abortSignal, ...params}: RequestConfig & ListGatewaysRequest = {},
   ): Promise<ListGatewaysResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayGroupArn: params["GatewayGroupArn"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGateways",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Gateways": [toGatewaySummary],
@@ -945,13 +1053,18 @@ export default class AlexaForBusiness {
   async listSkills(
     {abortSignal, ...params}: RequestConfig & ListSkillsRequest = {},
   ): Promise<ListSkillsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SkillGroupArn: params["SkillGroupArn"],
+      EnablementType: params["EnablementType"],
+      SkillType: params["SkillType"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSkills",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SkillSummaries": [toSkillSummary],
@@ -963,13 +1076,15 @@ export default class AlexaForBusiness {
   async listSkillsStoreCategories(
     {abortSignal, ...params}: RequestConfig & ListSkillsStoreCategoriesRequest = {},
   ): Promise<ListSkillsStoreCategoriesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSkillsStoreCategories",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CategoryList": [toCategory],
@@ -981,13 +1096,16 @@ export default class AlexaForBusiness {
   async listSkillsStoreSkillsByCategory(
     {abortSignal, ...params}: RequestConfig & ListSkillsStoreSkillsByCategoryRequest,
   ): Promise<ListSkillsStoreSkillsByCategoryResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CategoryId: params["CategoryId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSkillsStoreSkillsByCategory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SkillsStoreSkills": [toSkillsStoreSkill],
@@ -999,13 +1117,16 @@ export default class AlexaForBusiness {
   async listSmartHomeAppliances(
     {abortSignal, ...params}: RequestConfig & ListSmartHomeAppliancesRequest,
   ): Promise<ListSmartHomeAppliancesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RoomArn: params["RoomArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSmartHomeAppliances",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SmartHomeAppliances": [toSmartHomeAppliance],
@@ -1017,13 +1138,16 @@ export default class AlexaForBusiness {
   async listTags(
     {abortSignal, ...params}: RequestConfig & ListTagsRequest,
   ): Promise<ListTagsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Arn: params["Arn"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -1035,14 +1159,14 @@ export default class AlexaForBusiness {
   async putConferencePreference(
     {abortSignal, ...params}: RequestConfig & PutConferencePreferenceRequest,
   ): Promise<PutConferencePreferenceResponse> {
-    const body: JSONObject = {...params,
-    ConferencePreference: fromConferencePreference(params["ConferencePreference"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConferencePreference: fromConferencePreference(params["ConferencePreference"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutConferencePreference",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1051,13 +1175,16 @@ export default class AlexaForBusiness {
   async putInvitationConfiguration(
     {abortSignal, ...params}: RequestConfig & PutInvitationConfigurationRequest,
   ): Promise<PutInvitationConfigurationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationName: params["OrganizationName"],
+      ContactEmail: params["ContactEmail"],
+      PrivateSkillIds: params["PrivateSkillIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutInvitationConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1066,14 +1193,16 @@ export default class AlexaForBusiness {
   async putRoomSkillParameter(
     {abortSignal, ...params}: RequestConfig & PutRoomSkillParameterRequest,
   ): Promise<PutRoomSkillParameterResponse> {
-    const body: JSONObject = {...params,
-    RoomSkillParameter: fromRoomSkillParameter(params["RoomSkillParameter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      RoomArn: params["RoomArn"],
+      SkillId: params["SkillId"],
+      RoomSkillParameter: fromRoomSkillParameter(params["RoomSkillParameter"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRoomSkillParameter",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1082,13 +1211,16 @@ export default class AlexaForBusiness {
   async putSkillAuthorization(
     {abortSignal, ...params}: RequestConfig & PutSkillAuthorizationRequest,
   ): Promise<PutSkillAuthorizationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AuthorizationResult: params["AuthorizationResult"],
+      SkillId: params["SkillId"],
+      RoomArn: params["RoomArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutSkillAuthorization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1097,13 +1229,19 @@ export default class AlexaForBusiness {
   async registerAVSDevice(
     {abortSignal, ...params}: RequestConfig & RegisterAVSDeviceRequest,
   ): Promise<RegisterAVSDeviceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClientId: params["ClientId"],
+      UserCode: params["UserCode"],
+      ProductId: params["ProductId"],
+      DeviceSerialNumber: params["DeviceSerialNumber"],
+      AmazonId: params["AmazonId"],
+      RoomArn: params["RoomArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterAVSDevice",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DeviceArn": "s",
@@ -1114,13 +1252,14 @@ export default class AlexaForBusiness {
   async rejectSkill(
     {abortSignal, ...params}: RequestConfig & RejectSkillRequest,
   ): Promise<RejectSkillResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SkillId: params["SkillId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RejectSkill",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1129,13 +1268,15 @@ export default class AlexaForBusiness {
   async resolveRoom(
     {abortSignal, ...params}: RequestConfig & ResolveRoomRequest,
   ): Promise<ResolveRoomResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserId: params["UserId"],
+      SkillId: params["SkillId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResolveRoom",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RoomArn": "s",
@@ -1148,13 +1289,15 @@ export default class AlexaForBusiness {
   async revokeInvitation(
     {abortSignal, ...params}: RequestConfig & RevokeInvitationRequest = {},
   ): Promise<RevokeInvitationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserArn: params["UserArn"],
+      EnrollmentId: params["EnrollmentId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RevokeInvitation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1163,15 +1306,17 @@ export default class AlexaForBusiness {
   async searchAddressBooks(
     {abortSignal, ...params}: RequestConfig & SearchAddressBooksRequest = {},
   ): Promise<SearchAddressBooksResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-    SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+      SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchAddressBooks",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AddressBooks": [toAddressBookData],
@@ -1184,15 +1329,17 @@ export default class AlexaForBusiness {
   async searchContacts(
     {abortSignal, ...params}: RequestConfig & SearchContactsRequest = {},
   ): Promise<SearchContactsResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-    SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+      SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchContacts",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Contacts": [toContactData],
@@ -1205,15 +1352,17 @@ export default class AlexaForBusiness {
   async searchDevices(
     {abortSignal, ...params}: RequestConfig & SearchDevicesRequest = {},
   ): Promise<SearchDevicesResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-    SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+      SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchDevices",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Devices": [toDeviceData],
@@ -1226,15 +1375,17 @@ export default class AlexaForBusiness {
   async searchNetworkProfiles(
     {abortSignal, ...params}: RequestConfig & SearchNetworkProfilesRequest = {},
   ): Promise<SearchNetworkProfilesResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-    SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+      SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchNetworkProfiles",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NetworkProfiles": [toNetworkProfileData],
@@ -1247,15 +1398,17 @@ export default class AlexaForBusiness {
   async searchProfiles(
     {abortSignal, ...params}: RequestConfig & SearchProfilesRequest = {},
   ): Promise<SearchProfilesResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-    SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+      SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchProfiles",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Profiles": [toProfileData],
@@ -1268,15 +1421,17 @@ export default class AlexaForBusiness {
   async searchRooms(
     {abortSignal, ...params}: RequestConfig & SearchRoomsRequest = {},
   ): Promise<SearchRoomsResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-    SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+      SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchRooms",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Rooms": [toRoomData],
@@ -1289,15 +1444,17 @@ export default class AlexaForBusiness {
   async searchSkillGroups(
     {abortSignal, ...params}: RequestConfig & SearchSkillGroupsRequest = {},
   ): Promise<SearchSkillGroupsResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-    SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+      SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchSkillGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SkillGroups": [toSkillGroupData],
@@ -1310,15 +1467,17 @@ export default class AlexaForBusiness {
   async searchUsers(
     {abortSignal, ...params}: RequestConfig & SearchUsersRequest = {},
   ): Promise<SearchUsersResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-    SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+      SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchUsers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Users": [toUserData],
@@ -1331,16 +1490,17 @@ export default class AlexaForBusiness {
   async sendAnnouncement(
     {abortSignal, ...params}: RequestConfig & SendAnnouncementRequest,
   ): Promise<SendAnnouncementResponse> {
-    const body: JSONObject = {...params,
-    RoomFilters: params["RoomFilters"]?.map(x => fromFilter(x)),
-    Content: fromContent(params["Content"]),
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      RoomFilters: params["RoomFilters"]?.map(x => fromFilter(x)),
+      Content: fromContent(params["Content"]),
+      TimeToLiveInSeconds: params["TimeToLiveInSeconds"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendAnnouncement",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AnnouncementArn": "s",
@@ -1351,13 +1511,14 @@ export default class AlexaForBusiness {
   async sendInvitation(
     {abortSignal, ...params}: RequestConfig & SendInvitationRequest = {},
   ): Promise<SendInvitationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserArn: params["UserArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendInvitation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1366,13 +1527,16 @@ export default class AlexaForBusiness {
   async startDeviceSync(
     {abortSignal, ...params}: RequestConfig & StartDeviceSyncRequest,
   ): Promise<StartDeviceSyncResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RoomArn: params["RoomArn"],
+      DeviceArn: params["DeviceArn"],
+      Features: params["Features"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartDeviceSync",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1381,13 +1545,14 @@ export default class AlexaForBusiness {
   async startSmartHomeApplianceDiscovery(
     {abortSignal, ...params}: RequestConfig & StartSmartHomeApplianceDiscoveryRequest,
   ): Promise<StartSmartHomeApplianceDiscoveryResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RoomArn: params["RoomArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartSmartHomeApplianceDiscovery",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1396,14 +1561,15 @@ export default class AlexaForBusiness {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Arn: params["Arn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1412,13 +1578,15 @@ export default class AlexaForBusiness {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Arn: params["Arn"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1427,13 +1595,16 @@ export default class AlexaForBusiness {
   async updateAddressBook(
     {abortSignal, ...params}: RequestConfig & UpdateAddressBookRequest,
   ): Promise<UpdateAddressBookResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AddressBookArn: params["AddressBookArn"],
+      Name: params["Name"],
+      Description: params["Description"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAddressBook",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1442,14 +1613,19 @@ export default class AlexaForBusiness {
   async updateBusinessReportSchedule(
     {abortSignal, ...params}: RequestConfig & UpdateBusinessReportScheduleRequest,
   ): Promise<UpdateBusinessReportScheduleResponse> {
-    const body: JSONObject = {...params,
-    Recurrence: fromBusinessReportRecurrence(params["Recurrence"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ScheduleArn: params["ScheduleArn"],
+      S3BucketName: params["S3BucketName"],
+      S3KeyPrefix: params["S3KeyPrefix"],
+      Format: params["Format"],
+      ScheduleName: params["ScheduleName"],
+      Recurrence: fromBusinessReportRecurrence(params["Recurrence"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateBusinessReportSchedule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1458,16 +1634,18 @@ export default class AlexaForBusiness {
   async updateConferenceProvider(
     {abortSignal, ...params}: RequestConfig & UpdateConferenceProviderRequest,
   ): Promise<UpdateConferenceProviderResponse> {
-    const body: JSONObject = {...params,
-    IPDialIn: fromIPDialIn(params["IPDialIn"]),
-    PSTNDialIn: fromPSTNDialIn(params["PSTNDialIn"]),
-    MeetingSetting: fromMeetingSetting(params["MeetingSetting"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConferenceProviderArn: params["ConferenceProviderArn"],
+      ConferenceProviderType: params["ConferenceProviderType"],
+      IPDialIn: fromIPDialIn(params["IPDialIn"]),
+      PSTNDialIn: fromPSTNDialIn(params["PSTNDialIn"]),
+      MeetingSetting: fromMeetingSetting(params["MeetingSetting"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateConferenceProvider",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1476,15 +1654,20 @@ export default class AlexaForBusiness {
   async updateContact(
     {abortSignal, ...params}: RequestConfig & UpdateContactRequest,
   ): Promise<UpdateContactResponse> {
-    const body: JSONObject = {...params,
-    PhoneNumbers: params["PhoneNumbers"]?.map(x => fromPhoneNumber(x)),
-    SipAddresses: params["SipAddresses"]?.map(x => fromSipAddress(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContactArn: params["ContactArn"],
+      DisplayName: params["DisplayName"],
+      FirstName: params["FirstName"],
+      LastName: params["LastName"],
+      PhoneNumber: params["PhoneNumber"],
+      PhoneNumbers: params["PhoneNumbers"]?.map(x => fromPhoneNumber(x)),
+      SipAddresses: params["SipAddresses"]?.map(x => fromSipAddress(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateContact",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1493,13 +1676,15 @@ export default class AlexaForBusiness {
   async updateDevice(
     {abortSignal, ...params}: RequestConfig & UpdateDeviceRequest = {},
   ): Promise<UpdateDeviceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeviceArn: params["DeviceArn"],
+      DeviceName: params["DeviceName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDevice",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1508,13 +1693,17 @@ export default class AlexaForBusiness {
   async updateGateway(
     {abortSignal, ...params}: RequestConfig & UpdateGatewayRequest,
   ): Promise<UpdateGatewayResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayArn: params["GatewayArn"],
+      Name: params["Name"],
+      Description: params["Description"],
+      SoftwareVersion: params["SoftwareVersion"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGateway",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1523,13 +1712,16 @@ export default class AlexaForBusiness {
   async updateGatewayGroup(
     {abortSignal, ...params}: RequestConfig & UpdateGatewayGroupRequest,
   ): Promise<UpdateGatewayGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayGroupArn: params["GatewayGroupArn"],
+      Name: params["Name"],
+      Description: params["Description"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGatewayGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1538,13 +1730,20 @@ export default class AlexaForBusiness {
   async updateNetworkProfile(
     {abortSignal, ...params}: RequestConfig & UpdateNetworkProfileRequest,
   ): Promise<UpdateNetworkProfileResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NetworkProfileArn: params["NetworkProfileArn"],
+      NetworkProfileName: params["NetworkProfileName"],
+      Description: params["Description"],
+      CurrentPassword: params["CurrentPassword"],
+      NextPassword: params["NextPassword"],
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+      TrustAnchors: params["TrustAnchors"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateNetworkProfile",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1553,14 +1752,26 @@ export default class AlexaForBusiness {
   async updateProfile(
     {abortSignal, ...params}: RequestConfig & UpdateProfileRequest = {},
   ): Promise<UpdateProfileResponse> {
-    const body: JSONObject = {...params,
-    MeetingRoomConfiguration: fromUpdateMeetingRoomConfiguration(params["MeetingRoomConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProfileArn: params["ProfileArn"],
+      ProfileName: params["ProfileName"],
+      IsDefault: params["IsDefault"],
+      Timezone: params["Timezone"],
+      Address: params["Address"],
+      DistanceUnit: params["DistanceUnit"],
+      TemperatureUnit: params["TemperatureUnit"],
+      WakeWord: params["WakeWord"],
+      Locale: params["Locale"],
+      SetupModeDisabled: params["SetupModeDisabled"],
+      MaxVolumeLimit: params["MaxVolumeLimit"],
+      PSTNEnabled: params["PSTNEnabled"],
+      MeetingRoomConfiguration: fromUpdateMeetingRoomConfiguration(params["MeetingRoomConfiguration"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateProfile",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1569,13 +1780,18 @@ export default class AlexaForBusiness {
   async updateRoom(
     {abortSignal, ...params}: RequestConfig & UpdateRoomRequest = {},
   ): Promise<UpdateRoomResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RoomArn: params["RoomArn"],
+      RoomName: params["RoomName"],
+      Description: params["Description"],
+      ProviderCalendarId: params["ProviderCalendarId"],
+      ProfileArn: params["ProfileArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRoom",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1584,13 +1800,16 @@ export default class AlexaForBusiness {
   async updateSkillGroup(
     {abortSignal, ...params}: RequestConfig & UpdateSkillGroupRequest = {},
   ): Promise<UpdateSkillGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SkillGroupArn: params["SkillGroupArn"],
+      SkillGroupName: params["SkillGroupName"],
+      Description: params["Description"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSkillGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -2007,7 +2226,7 @@ export interface PutRoomSkillParameterRequest {
 
 // refs: 1 - tags: named, input
 export interface PutSkillAuthorizationRequest {
-  AuthorizationResult: { [key: string]: string };
+  AuthorizationResult: { [key: string]: string | null | undefined };
   SkillId: string;
   RoomArn?: string | null;
 }
@@ -2692,28 +2911,22 @@ export interface UpdateSkillGroupResponse {
 export type BusinessReportFormat =
 | "CSV"
 | "CSV_ZIP"
-;
-
-function toBusinessReportFormat(root: JSONValue): BusinessReportFormat | null {
-  return ( false
-    || root == "CSV"
-    || root == "CSV_ZIP"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface BusinessReportContentRange {
   Interval: BusinessReportInterval;
 }
-function fromBusinessReportContentRange(input?: BusinessReportContentRange | null): JSONValue {
+function fromBusinessReportContentRange(input?: BusinessReportContentRange | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Interval: input["Interval"],
   }
 }
-function toBusinessReportContentRange(root: JSONValue): BusinessReportContentRange {
-  return prt.readObj({
+function toBusinessReportContentRange(root: jsonP.JSONValue): BusinessReportContentRange {
+  return jsonP.readObj({
     required: {
-      "Interval": toBusinessReportInterval,
+      "Interval": (x: jsonP.JSONValue) => cmnP.readEnum<BusinessReportInterval>(x),
     },
     optional: {},
   }, root);
@@ -2724,27 +2937,20 @@ export type BusinessReportInterval =
 | "ONE_DAY"
 | "ONE_WEEK"
 | "THIRTY_DAYS"
-;
-
-function toBusinessReportInterval(root: JSONValue): BusinessReportInterval | null {
-  return ( false
-    || root == "ONE_DAY"
-    || root == "ONE_WEEK"
-    || root == "THIRTY_DAYS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface BusinessReportRecurrence {
   StartDate?: string | null;
 }
-function fromBusinessReportRecurrence(input?: BusinessReportRecurrence | null): JSONValue {
+function fromBusinessReportRecurrence(input?: BusinessReportRecurrence | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    StartDate: input["StartDate"],
   }
 }
-function toBusinessReportRecurrence(root: JSONValue): BusinessReportRecurrence {
-  return prt.readObj({
+function toBusinessReportRecurrence(root: jsonP.JSONValue): BusinessReportRecurrence {
+  return jsonP.readObj({
     required: {},
     optional: {
       "StartDate": "s",
@@ -2757,13 +2963,15 @@ export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -2784,38 +2992,25 @@ export type ConferenceProviderType =
 | "WEBEX"
 | "ZOOM"
 | "CUSTOM"
-;
-
-function toConferenceProviderType(root: JSONValue): ConferenceProviderType | null {
-  return ( false
-    || root == "CHIME"
-    || root == "BLUEJEANS"
-    || root == "FUZE"
-    || root == "GOOGLE_HANGOUTS"
-    || root == "POLYCOM"
-    || root == "RINGCENTRAL"
-    || root == "SKYPE_FOR_BUSINESS"
-    || root == "WEBEX"
-    || root == "ZOOM"
-    || root == "CUSTOM"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface IPDialIn {
   Endpoint: string;
   CommsProtocol: CommsProtocol;
 }
-function fromIPDialIn(input?: IPDialIn | null): JSONValue {
+function fromIPDialIn(input?: IPDialIn | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Endpoint: input["Endpoint"],
+    CommsProtocol: input["CommsProtocol"],
   }
 }
-function toIPDialIn(root: JSONValue): IPDialIn {
-  return prt.readObj({
+function toIPDialIn(root: jsonP.JSONValue): IPDialIn {
+  return jsonP.readObj({
     required: {
       "Endpoint": "s",
-      "CommsProtocol": toCommsProtocol,
+      "CommsProtocol": (x: jsonP.JSONValue) => cmnP.readEnum<CommsProtocol>(x),
     },
     optional: {},
   }, root);
@@ -2826,15 +3021,7 @@ export type CommsProtocol =
 | "SIP"
 | "SIPS"
 | "H323"
-;
-
-function toCommsProtocol(root: JSONValue): CommsProtocol | null {
-  return ( false
-    || root == "SIP"
-    || root == "SIPS"
-    || root == "H323"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface PSTNDialIn {
@@ -2843,13 +3030,17 @@ export interface PSTNDialIn {
   OneClickIdDelay: string;
   OneClickPinDelay: string;
 }
-function fromPSTNDialIn(input?: PSTNDialIn | null): JSONValue {
+function fromPSTNDialIn(input?: PSTNDialIn | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CountryCode: input["CountryCode"],
+    PhoneNumber: input["PhoneNumber"],
+    OneClickIdDelay: input["OneClickIdDelay"],
+    OneClickPinDelay: input["OneClickPinDelay"],
   }
 }
-function toPSTNDialIn(root: JSONValue): PSTNDialIn {
-  return prt.readObj({
+function toPSTNDialIn(root: jsonP.JSONValue): PSTNDialIn {
+  return jsonP.readObj({
     required: {
       "CountryCode": "s",
       "PhoneNumber": "s",
@@ -2864,15 +3055,16 @@ function toPSTNDialIn(root: JSONValue): PSTNDialIn {
 export interface MeetingSetting {
   RequirePin: RequirePin;
 }
-function fromMeetingSetting(input?: MeetingSetting | null): JSONValue {
+function fromMeetingSetting(input?: MeetingSetting | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RequirePin: input["RequirePin"],
   }
 }
-function toMeetingSetting(root: JSONValue): MeetingSetting {
-  return prt.readObj({
+function toMeetingSetting(root: jsonP.JSONValue): MeetingSetting {
+  return jsonP.readObj({
     required: {
-      "RequirePin": toRequirePin,
+      "RequirePin": (x: jsonP.JSONValue) => cmnP.readEnum<RequirePin>(x),
     },
     optional: {},
   }, root);
@@ -2883,31 +3075,25 @@ export type RequirePin =
 | "YES"
 | "NO"
 | "OPTIONAL"
-;
-
-function toRequirePin(root: JSONValue): RequirePin | null {
-  return ( false
-    || root == "YES"
-    || root == "NO"
-    || root == "OPTIONAL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface PhoneNumber {
   Number: string;
   Type: PhoneNumberType;
 }
-function fromPhoneNumber(input?: PhoneNumber | null): JSONValue {
+function fromPhoneNumber(input?: PhoneNumber | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Number: input["Number"],
+    Type: input["Type"],
   }
 }
-function toPhoneNumber(root: JSONValue): PhoneNumber {
-  return prt.readObj({
+function toPhoneNumber(root: jsonP.JSONValue): PhoneNumber {
+  return jsonP.readObj({
     required: {
       "Number": "s",
-      "Type": toPhoneNumberType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<PhoneNumberType>(x),
     },
     optional: {},
   }, root);
@@ -2918,31 +3104,25 @@ export type PhoneNumberType =
 | "MOBILE"
 | "WORK"
 | "HOME"
-;
-
-function toPhoneNumberType(root: JSONValue): PhoneNumberType | null {
-  return ( false
-    || root == "MOBILE"
-    || root == "WORK"
-    || root == "HOME"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface SipAddress {
   Uri: string;
   Type: SipType;
 }
-function fromSipAddress(input?: SipAddress | null): JSONValue {
+function fromSipAddress(input?: SipAddress | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Uri: input["Uri"],
+    Type: input["Type"],
   }
 }
-function toSipAddress(root: JSONValue): SipAddress {
-  return prt.readObj({
+function toSipAddress(root: jsonP.JSONValue): SipAddress {
+  return jsonP.readObj({
     required: {
       "Uri": "s",
-      "Type": toSipType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<SipType>(x),
     },
     optional: {},
   }, root);
@@ -2951,13 +3131,7 @@ function toSipAddress(root: JSONValue): SipAddress {
 // refs: 4 - tags: input, named, enum, output
 export type SipType =
 | "WORK"
-;
-
-function toSipType(root: JSONValue): SipType | null {
-  return ( false
-    || root == "WORK"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type NetworkSecurityType =
@@ -2966,54 +3140,24 @@ export type NetworkSecurityType =
 | "WPA_PSK"
 | "WPA2_PSK"
 | "WPA2_ENTERPRISE"
-;
-
-function toNetworkSecurityType(root: JSONValue): NetworkSecurityType | null {
-  return ( false
-    || root == "OPEN"
-    || root == "WEP"
-    || root == "WPA_PSK"
-    || root == "WPA2_PSK"
-    || root == "WPA2_ENTERPRISE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type NetworkEapMethod =
 | "EAP_TLS"
-;
-
-function toNetworkEapMethod(root: JSONValue): NetworkEapMethod | null {
-  return ( false
-    || root == "EAP_TLS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type DistanceUnit =
 | "METRIC"
 | "IMPERIAL"
-;
-
-function toDistanceUnit(root: JSONValue): DistanceUnit | null {
-  return ( false
-    || root == "METRIC"
-    || root == "IMPERIAL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type TemperatureUnit =
 | "FAHRENHEIT"
 | "CELSIUS"
-;
-
-function toTemperatureUnit(root: JSONValue): TemperatureUnit | null {
-  return ( false
-    || root == "FAHRENHEIT"
-    || root == "CELSIUS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type WakeWord =
@@ -3021,16 +3165,7 @@ export type WakeWord =
 | "AMAZON"
 | "ECHO"
 | "COMPUTER"
-;
-
-function toWakeWord(root: JSONValue): WakeWord | null {
-  return ( false
-    || root == "ALEXA"
-    || root == "AMAZON"
-    || root == "ECHO"
-    || root == "COMPUTER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface CreateMeetingRoomConfiguration {
@@ -3039,9 +3174,10 @@ export interface CreateMeetingRoomConfiguration {
   InstantBooking?: CreateInstantBooking | null;
   RequireCheckIn?: CreateRequireCheckIn | null;
 }
-function fromCreateMeetingRoomConfiguration(input?: CreateMeetingRoomConfiguration | null): JSONValue {
+function fromCreateMeetingRoomConfiguration(input?: CreateMeetingRoomConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RoomUtilizationMetricsEnabled: input["RoomUtilizationMetricsEnabled"],
     EndOfMeetingReminder: fromCreateEndOfMeetingReminder(input["EndOfMeetingReminder"]),
     InstantBooking: fromCreateInstantBooking(input["InstantBooking"]),
     RequireCheckIn: fromCreateRequireCheckIn(input["RequireCheckIn"]),
@@ -3054,9 +3190,12 @@ export interface CreateEndOfMeetingReminder {
   ReminderType: EndOfMeetingReminderType;
   Enabled: boolean;
 }
-function fromCreateEndOfMeetingReminder(input?: CreateEndOfMeetingReminder | null): JSONValue {
+function fromCreateEndOfMeetingReminder(input?: CreateEndOfMeetingReminder | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ReminderAtMinutes: input["ReminderAtMinutes"],
+    ReminderType: input["ReminderType"],
+    Enabled: input["Enabled"],
   }
 }
 
@@ -3066,25 +3205,18 @@ export type EndOfMeetingReminderType =
 | "ANNOUNCEMENT_VARIABLE_TIME_LEFT"
 | "CHIME"
 | "KNOCK"
-;
-
-function toEndOfMeetingReminderType(root: JSONValue): EndOfMeetingReminderType | null {
-  return ( false
-    || root == "ANNOUNCEMENT_TIME_CHECK"
-    || root == "ANNOUNCEMENT_VARIABLE_TIME_LEFT"
-    || root == "CHIME"
-    || root == "KNOCK"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface CreateInstantBooking {
   DurationInMinutes: number;
   Enabled: boolean;
 }
-function fromCreateInstantBooking(input?: CreateInstantBooking | null): JSONValue {
+function fromCreateInstantBooking(input?: CreateInstantBooking | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DurationInMinutes: input["DurationInMinutes"],
+    Enabled: input["Enabled"],
   }
 }
 
@@ -3093,57 +3225,50 @@ export interface CreateRequireCheckIn {
   ReleaseAfterMinutes: number;
   Enabled: boolean;
 }
-function fromCreateRequireCheckIn(input?: CreateRequireCheckIn | null): JSONValue {
+function fromCreateRequireCheckIn(input?: CreateRequireCheckIn | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ReleaseAfterMinutes: input["ReleaseAfterMinutes"],
+    Enabled: input["Enabled"],
   }
 }
 
 // refs: 1 - tags: input, named, enum
 export type DeviceUsageType =
 | "VOICE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type DeviceEventType =
 | "CONNECTION_STATUS"
 | "DEVICE_STATUS"
-;
-
-function toDeviceEventType(root: JSONValue): DeviceEventType | null {
-  return ( false
-    || root == "CONNECTION_STATUS"
-    || root == "DEVICE_STATUS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type EnablementTypeFilter =
 | "ENABLED"
 | "PENDING"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type SkillTypeFilter =
 | "PUBLIC"
 | "PRIVATE"
 | "ALL"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface ConferencePreference {
   DefaultConferenceProviderArn?: string | null;
 }
-function fromConferencePreference(input?: ConferencePreference | null): JSONValue {
+function fromConferencePreference(input?: ConferencePreference | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DefaultConferenceProviderArn: input["DefaultConferenceProviderArn"],
   }
 }
-function toConferencePreference(root: JSONValue): ConferencePreference {
-  return prt.readObj({
+function toConferencePreference(root: jsonP.JSONValue): ConferencePreference {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DefaultConferenceProviderArn": "s",
@@ -3156,13 +3281,15 @@ export interface RoomSkillParameter {
   ParameterKey: string;
   ParameterValue: string;
 }
-function fromRoomSkillParameter(input?: RoomSkillParameter | null): JSONValue {
+function fromRoomSkillParameter(input?: RoomSkillParameter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ParameterKey: input["ParameterKey"],
+    ParameterValue: input["ParameterValue"],
   }
 }
-function toRoomSkillParameter(root: JSONValue): RoomSkillParameter {
-  return prt.readObj({
+function toRoomSkillParameter(root: jsonP.JSONValue): RoomSkillParameter {
+  return jsonP.readObj({
     required: {
       "ParameterKey": "s",
       "ParameterValue": "s",
@@ -3176,9 +3303,11 @@ export interface Filter {
   Key: string;
   Values: string[];
 }
-function fromFilter(input?: Filter | null): JSONValue {
+function fromFilter(input?: Filter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
   }
 }
 
@@ -3187,9 +3316,11 @@ export interface Sort {
   Key: string;
   Value: SortValue;
 }
-function fromSort(input?: Sort | null): JSONValue {
+function fromSort(input?: Sort | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
 
@@ -3197,8 +3328,7 @@ function fromSort(input?: Sort | null): JSONValue {
 export type SortValue =
 | "ASC"
 | "DESC"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface Content {
@@ -3206,9 +3336,9 @@ export interface Content {
   SsmlList?: Ssml[] | null;
   AudioList?: Audio[] | null;
 }
-function fromContent(input?: Content | null): JSONValue {
+function fromContent(input?: Content | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     TextList: input["TextList"]?.map(x => fromText(x)),
     SsmlList: input["SsmlList"]?.map(x => fromSsml(x)),
     AudioList: input["AudioList"]?.map(x => fromAudio(x)),
@@ -3220,26 +3350,29 @@ export interface Text {
   Locale: Locale;
   Value: string;
 }
-function fromText(input?: Text | null): JSONValue {
+function fromText(input?: Text | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Locale: input["Locale"],
+    Value: input["Value"],
   }
 }
 
 // refs: 3 - tags: input, named, enum
 export type Locale =
 | "en-US"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface Ssml {
   Locale: Locale;
   Value: string;
 }
-function fromSsml(input?: Ssml | null): JSONValue {
+function fromSsml(input?: Ssml | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Locale: input["Locale"],
+    Value: input["Value"],
   }
 }
 
@@ -3248,9 +3381,11 @@ export interface Audio {
   Locale: Locale;
   Location: string;
 }
-function fromAudio(input?: Audio | null): JSONValue {
+function fromAudio(input?: Audio | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Locale: input["Locale"],
+    Location: input["Location"],
   }
 }
 
@@ -3264,20 +3399,7 @@ export type Feature =
 | "NETWORK_PROFILE"
 | "SETTINGS"
 | "ALL"
-;
-
-function toFeature(root: JSONValue): Feature | null {
-  return ( false
-    || root == "BLUETOOTH"
-    || root == "VOLUME"
-    || root == "NOTIFICATIONS"
-    || root == "LISTS"
-    || root == "SKILLS"
-    || root == "NETWORK_PROFILE"
-    || root == "SETTINGS"
-    || root == "ALL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface UpdateMeetingRoomConfiguration {
@@ -3286,9 +3408,10 @@ export interface UpdateMeetingRoomConfiguration {
   InstantBooking?: UpdateInstantBooking | null;
   RequireCheckIn?: UpdateRequireCheckIn | null;
 }
-function fromUpdateMeetingRoomConfiguration(input?: UpdateMeetingRoomConfiguration | null): JSONValue {
+function fromUpdateMeetingRoomConfiguration(input?: UpdateMeetingRoomConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RoomUtilizationMetricsEnabled: input["RoomUtilizationMetricsEnabled"],
     EndOfMeetingReminder: fromUpdateEndOfMeetingReminder(input["EndOfMeetingReminder"]),
     InstantBooking: fromUpdateInstantBooking(input["InstantBooking"]),
     RequireCheckIn: fromUpdateRequireCheckIn(input["RequireCheckIn"]),
@@ -3301,9 +3424,12 @@ export interface UpdateEndOfMeetingReminder {
   ReminderType?: EndOfMeetingReminderType | null;
   Enabled?: boolean | null;
 }
-function fromUpdateEndOfMeetingReminder(input?: UpdateEndOfMeetingReminder | null): JSONValue {
+function fromUpdateEndOfMeetingReminder(input?: UpdateEndOfMeetingReminder | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ReminderAtMinutes: input["ReminderAtMinutes"],
+    ReminderType: input["ReminderType"],
+    Enabled: input["Enabled"],
   }
 }
 
@@ -3312,9 +3438,11 @@ export interface UpdateInstantBooking {
   DurationInMinutes?: number | null;
   Enabled?: boolean | null;
 }
-function fromUpdateInstantBooking(input?: UpdateInstantBooking | null): JSONValue {
+function fromUpdateInstantBooking(input?: UpdateInstantBooking | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DurationInMinutes: input["DurationInMinutes"],
+    Enabled: input["Enabled"],
   }
 }
 
@@ -3323,9 +3451,11 @@ export interface UpdateRequireCheckIn {
   ReleaseAfterMinutes?: number | null;
   Enabled?: boolean | null;
 }
-function fromUpdateRequireCheckIn(input?: UpdateRequireCheckIn | null): JSONValue {
+function fromUpdateRequireCheckIn(input?: UpdateRequireCheckIn | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ReleaseAfterMinutes: input["ReleaseAfterMinutes"],
+    Enabled: input["Enabled"],
   }
 }
 
@@ -3335,8 +3465,8 @@ export interface AddressBook {
   Name?: string | null;
   Description?: string | null;
 }
-function toAddressBook(root: JSONValue): AddressBook {
-  return prt.readObj({
+function toAddressBook(root: jsonP.JSONValue): AddressBook {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AddressBookArn": "s",
@@ -3355,13 +3485,13 @@ export interface ConferenceProvider {
   PSTNDialIn?: PSTNDialIn | null;
   MeetingSetting?: MeetingSetting | null;
 }
-function toConferenceProvider(root: JSONValue): ConferenceProvider {
-  return prt.readObj({
+function toConferenceProvider(root: jsonP.JSONValue): ConferenceProvider {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Arn": "s",
       "Name": "s",
-      "Type": toConferenceProviderType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<ConferenceProviderType>(x),
       "IPDialIn": toIPDialIn,
       "PSTNDialIn": toPSTNDialIn,
       "MeetingSetting": toMeetingSetting,
@@ -3379,8 +3509,8 @@ export interface Contact {
   PhoneNumbers?: PhoneNumber[] | null;
   SipAddresses?: SipAddress[] | null;
 }
-function toContact(root: JSONValue): Contact {
-  return prt.readObj({
+function toContact(root: jsonP.JSONValue): Contact {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ContactArn": "s",
@@ -3407,8 +3537,8 @@ export interface Device {
   DeviceStatusInfo?: DeviceStatusInfo | null;
   NetworkProfileInfo?: DeviceNetworkProfileInfo | null;
 }
-function toDevice(root: JSONValue): Device {
-  return prt.readObj({
+function toDevice(root: jsonP.JSONValue): Device {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DeviceArn": "s",
@@ -3418,7 +3548,7 @@ function toDevice(root: JSONValue): Device {
       "SoftwareVersion": "s",
       "MacAddress": "s",
       "RoomArn": "s",
-      "DeviceStatus": toDeviceStatus,
+      "DeviceStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceStatus>(x),
       "DeviceStatusInfo": toDeviceStatusInfo,
       "NetworkProfileInfo": toDeviceNetworkProfileInfo,
     },
@@ -3432,16 +3562,7 @@ export type DeviceStatus =
 | "WAS_OFFLINE"
 | "DEREGISTERED"
 | "FAILED"
-;
-function toDeviceStatus(root: JSONValue): DeviceStatus | null {
-  return ( false
-    || root == "READY"
-    || root == "PENDING"
-    || root == "WAS_OFFLINE"
-    || root == "DEREGISTERED"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface DeviceStatusInfo {
@@ -3449,12 +3570,12 @@ export interface DeviceStatusInfo {
   ConnectionStatus?: ConnectionStatus | null;
   ConnectionStatusUpdatedTime?: Date | number | null;
 }
-function toDeviceStatusInfo(root: JSONValue): DeviceStatusInfo {
-  return prt.readObj({
+function toDeviceStatusInfo(root: jsonP.JSONValue): DeviceStatusInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DeviceStatusDetails": [toDeviceStatusDetail],
-      "ConnectionStatus": toConnectionStatus,
+      "ConnectionStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ConnectionStatus>(x),
       "ConnectionStatusUpdatedTime": "d",
     },
   }, root);
@@ -3465,12 +3586,12 @@ export interface DeviceStatusDetail {
   Feature?: Feature | null;
   Code?: DeviceStatusDetailCode | null;
 }
-function toDeviceStatusDetail(root: JSONValue): DeviceStatusDetail {
-  return prt.readObj({
+function toDeviceStatusDetail(root: jsonP.JSONValue): DeviceStatusDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Feature": toFeature,
-      "Code": toDeviceStatusDetailCode,
+      "Feature": (x: jsonP.JSONValue) => cmnP.readEnum<Feature>(x),
+      "Code": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceStatusDetailCode>(x),
     },
   }, root);
 }
@@ -3494,40 +3615,13 @@ export type DeviceStatusDetailCode =
 | "PASSWORD_NOT_FOUND"
 | "PASSWORD_MANAGER_ACCESS_DENIED"
 | "CERTIFICATE_AUTHORITY_ACCESS_DENIED"
-;
-function toDeviceStatusDetailCode(root: JSONValue): DeviceStatusDetailCode | null {
-  return ( false
-    || root == "DEVICE_SOFTWARE_UPDATE_NEEDED"
-    || root == "DEVICE_WAS_OFFLINE"
-    || root == "CREDENTIALS_ACCESS_FAILURE"
-    || root == "TLS_VERSION_MISMATCH"
-    || root == "ASSOCIATION_REJECTION"
-    || root == "AUTHENTICATION_FAILURE"
-    || root == "DHCP_FAILURE"
-    || root == "INTERNET_UNAVAILABLE"
-    || root == "DNS_FAILURE"
-    || root == "UNKNOWN_FAILURE"
-    || root == "CERTIFICATE_ISSUING_LIMIT_EXCEEDED"
-    || root == "INVALID_CERTIFICATE_AUTHORITY"
-    || root == "NETWORK_PROFILE_NOT_FOUND"
-    || root == "INVALID_PASSWORD_STATE"
-    || root == "PASSWORD_NOT_FOUND"
-    || root == "PASSWORD_MANAGER_ACCESS_DENIED"
-    || root == "CERTIFICATE_AUTHORITY_ACCESS_DENIED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type ConnectionStatus =
 | "ONLINE"
 | "OFFLINE"
-;
-function toConnectionStatus(root: JSONValue): ConnectionStatus | null {
-  return ( false
-    || root == "ONLINE"
-    || root == "OFFLINE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface DeviceNetworkProfileInfo {
@@ -3535,8 +3629,8 @@ export interface DeviceNetworkProfileInfo {
   CertificateArn?: string | null;
   CertificateExpirationTime?: Date | number | null;
 }
-function toDeviceNetworkProfileInfo(root: JSONValue): DeviceNetworkProfileInfo {
-  return prt.readObj({
+function toDeviceNetworkProfileInfo(root: jsonP.JSONValue): DeviceNetworkProfileInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "NetworkProfileArn": "s",
@@ -3554,8 +3648,8 @@ export interface Gateway {
   GatewayGroupArn?: string | null;
   SoftwareVersion?: string | null;
 }
-function toGateway(root: JSONValue): Gateway {
-  return prt.readObj({
+function toGateway(root: jsonP.JSONValue): Gateway {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Arn": "s",
@@ -3573,8 +3667,8 @@ export interface GatewayGroup {
   Name?: string | null;
   Description?: string | null;
 }
-function toGatewayGroup(root: JSONValue): GatewayGroup {
-  return prt.readObj({
+function toGatewayGroup(root: jsonP.JSONValue): GatewayGroup {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Arn": "s",
@@ -3597,16 +3691,16 @@ export interface NetworkProfile {
   CertificateAuthorityArn?: string | null;
   TrustAnchors?: string[] | null;
 }
-function toNetworkProfile(root: JSONValue): NetworkProfile {
-  return prt.readObj({
+function toNetworkProfile(root: jsonP.JSONValue): NetworkProfile {
+  return jsonP.readObj({
     required: {},
     optional: {
       "NetworkProfileArn": "s",
       "NetworkProfileName": "s",
       "Description": "s",
       "Ssid": "s",
-      "SecurityType": toNetworkSecurityType,
-      "EapMethod": toNetworkEapMethod,
+      "SecurityType": (x: jsonP.JSONValue) => cmnP.readEnum<NetworkSecurityType>(x),
+      "EapMethod": (x: jsonP.JSONValue) => cmnP.readEnum<NetworkEapMethod>(x),
       "CurrentPassword": "s",
       "NextPassword": "s",
       "CertificateAuthorityArn": "s",
@@ -3632,8 +3726,8 @@ export interface Profile {
   AddressBookArn?: string | null;
   MeetingRoomConfiguration?: MeetingRoomConfiguration | null;
 }
-function toProfile(root: JSONValue): Profile {
-  return prt.readObj({
+function toProfile(root: jsonP.JSONValue): Profile {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ProfileArn": "s",
@@ -3641,9 +3735,9 @@ function toProfile(root: JSONValue): Profile {
       "IsDefault": "b",
       "Address": "s",
       "Timezone": "s",
-      "DistanceUnit": toDistanceUnit,
-      "TemperatureUnit": toTemperatureUnit,
-      "WakeWord": toWakeWord,
+      "DistanceUnit": (x: jsonP.JSONValue) => cmnP.readEnum<DistanceUnit>(x),
+      "TemperatureUnit": (x: jsonP.JSONValue) => cmnP.readEnum<TemperatureUnit>(x),
+      "WakeWord": (x: jsonP.JSONValue) => cmnP.readEnum<WakeWord>(x),
       "Locale": "s",
       "SetupModeDisabled": "b",
       "MaxVolumeLimit": "n",
@@ -3661,8 +3755,8 @@ export interface MeetingRoomConfiguration {
   InstantBooking?: InstantBooking | null;
   RequireCheckIn?: RequireCheckIn | null;
 }
-function toMeetingRoomConfiguration(root: JSONValue): MeetingRoomConfiguration {
-  return prt.readObj({
+function toMeetingRoomConfiguration(root: jsonP.JSONValue): MeetingRoomConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RoomUtilizationMetricsEnabled": "b",
@@ -3679,12 +3773,12 @@ export interface EndOfMeetingReminder {
   ReminderType?: EndOfMeetingReminderType | null;
   Enabled?: boolean | null;
 }
-function toEndOfMeetingReminder(root: JSONValue): EndOfMeetingReminder {
-  return prt.readObj({
+function toEndOfMeetingReminder(root: jsonP.JSONValue): EndOfMeetingReminder {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ReminderAtMinutes": ["n"],
-      "ReminderType": toEndOfMeetingReminderType,
+      "ReminderType": (x: jsonP.JSONValue) => cmnP.readEnum<EndOfMeetingReminderType>(x),
       "Enabled": "b",
     },
   }, root);
@@ -3695,8 +3789,8 @@ export interface InstantBooking {
   DurationInMinutes?: number | null;
   Enabled?: boolean | null;
 }
-function toInstantBooking(root: JSONValue): InstantBooking {
-  return prt.readObj({
+function toInstantBooking(root: jsonP.JSONValue): InstantBooking {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DurationInMinutes": "n",
@@ -3710,8 +3804,8 @@ export interface RequireCheckIn {
   ReleaseAfterMinutes?: number | null;
   Enabled?: boolean | null;
 }
-function toRequireCheckIn(root: JSONValue): RequireCheckIn {
-  return prt.readObj({
+function toRequireCheckIn(root: jsonP.JSONValue): RequireCheckIn {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ReleaseAfterMinutes": "n",
@@ -3728,8 +3822,8 @@ export interface Room {
   ProviderCalendarId?: string | null;
   ProfileArn?: string | null;
 }
-function toRoom(root: JSONValue): Room {
-  return prt.readObj({
+function toRoom(root: jsonP.JSONValue): Room {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RoomArn": "s",
@@ -3747,8 +3841,8 @@ export interface SkillGroup {
   SkillGroupName?: string | null;
   Description?: string | null;
 }
-function toSkillGroup(root: JSONValue): SkillGroup {
-  return prt.readObj({
+function toSkillGroup(root: jsonP.JSONValue): SkillGroup {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SkillGroupArn": "s",
@@ -3769,15 +3863,15 @@ export interface BusinessReportSchedule {
   Recurrence?: BusinessReportRecurrence | null;
   LastBusinessReport?: BusinessReport | null;
 }
-function toBusinessReportSchedule(root: JSONValue): BusinessReportSchedule {
-  return prt.readObj({
+function toBusinessReportSchedule(root: jsonP.JSONValue): BusinessReportSchedule {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ScheduleArn": "s",
       "ScheduleName": "s",
       "S3BucketName": "s",
       "S3KeyPrefix": "s",
-      "Format": toBusinessReportFormat,
+      "Format": (x: jsonP.JSONValue) => cmnP.readEnum<BusinessReportFormat>(x),
       "ContentRange": toBusinessReportContentRange,
       "Recurrence": toBusinessReportRecurrence,
       "LastBusinessReport": toBusinessReport,
@@ -3793,12 +3887,12 @@ export interface BusinessReport {
   DeliveryTime?: Date | number | null;
   DownloadUrl?: string | null;
 }
-function toBusinessReport(root: JSONValue): BusinessReport {
-  return prt.readObj({
+function toBusinessReport(root: jsonP.JSONValue): BusinessReport {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Status": toBusinessReportStatus,
-      "FailureCode": toBusinessReportFailureCode,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<BusinessReportStatus>(x),
+      "FailureCode": (x: jsonP.JSONValue) => cmnP.readEnum<BusinessReportFailureCode>(x),
       "S3Location": toBusinessReportS3Location,
       "DeliveryTime": "d",
       "DownloadUrl": "s",
@@ -3811,36 +3905,22 @@ export type BusinessReportStatus =
 | "RUNNING"
 | "SUCCEEDED"
 | "FAILED"
-;
-function toBusinessReportStatus(root: JSONValue): BusinessReportStatus | null {
-  return ( false
-    || root == "RUNNING"
-    || root == "SUCCEEDED"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type BusinessReportFailureCode =
 | "ACCESS_DENIED"
 | "NO_SUCH_BUCKET"
 | "INTERNAL_FAILURE"
-;
-function toBusinessReportFailureCode(root: JSONValue): BusinessReportFailureCode | null {
-  return ( false
-    || root == "ACCESS_DENIED"
-    || root == "NO_SUCH_BUCKET"
-    || root == "INTERNAL_FAILURE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface BusinessReportS3Location {
   Path?: string | null;
   BucketName?: string | null;
 }
-function toBusinessReportS3Location(root: JSONValue): BusinessReportS3Location {
-  return prt.readObj({
+function toBusinessReportS3Location(root: jsonP.JSONValue): BusinessReportS3Location {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Path": "s",
@@ -3855,11 +3935,11 @@ export interface DeviceEvent {
   Value?: string | null;
   Timestamp?: Date | number | null;
 }
-function toDeviceEvent(root: JSONValue): DeviceEvent {
-  return prt.readObj({
+function toDeviceEvent(root: jsonP.JSONValue): DeviceEvent {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Type": toDeviceEventType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceEventType>(x),
       "Value": "s",
       "Timestamp": "d",
     },
@@ -3872,8 +3952,8 @@ export interface GatewayGroupSummary {
   Name?: string | null;
   Description?: string | null;
 }
-function toGatewayGroupSummary(root: JSONValue): GatewayGroupSummary {
-  return prt.readObj({
+function toGatewayGroupSummary(root: jsonP.JSONValue): GatewayGroupSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Arn": "s",
@@ -3891,8 +3971,8 @@ export interface GatewaySummary {
   GatewayGroupArn?: string | null;
   SoftwareVersion?: string | null;
 }
-function toGatewaySummary(root: JSONValue): GatewaySummary {
-  return prt.readObj({
+function toGatewaySummary(root: jsonP.JSONValue): GatewaySummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Arn": "s",
@@ -3912,15 +3992,15 @@ export interface SkillSummary {
   EnablementType?: EnablementType | null;
   SkillType?: SkillType | null;
 }
-function toSkillSummary(root: JSONValue): SkillSummary {
-  return prt.readObj({
+function toSkillSummary(root: jsonP.JSONValue): SkillSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SkillId": "s",
       "SkillName": "s",
       "SupportsLinking": "b",
-      "EnablementType": toEnablementType,
-      "SkillType": toSkillType,
+      "EnablementType": (x: jsonP.JSONValue) => cmnP.readEnum<EnablementType>(x),
+      "SkillType": (x: jsonP.JSONValue) => cmnP.readEnum<SkillType>(x),
     },
   }, root);
 }
@@ -3929,33 +4009,21 @@ function toSkillSummary(root: JSONValue): SkillSummary {
 export type EnablementType =
 | "ENABLED"
 | "PENDING"
-;
-function toEnablementType(root: JSONValue): EnablementType | null {
-  return ( false
-    || root == "ENABLED"
-    || root == "PENDING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type SkillType =
 | "PUBLIC"
 | "PRIVATE"
-;
-function toSkillType(root: JSONValue): SkillType | null {
-  return ( false
-    || root == "PUBLIC"
-    || root == "PRIVATE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Category {
   CategoryId?: number | null;
   CategoryName?: string | null;
 }
-function toCategory(root: JSONValue): Category {
-  return prt.readObj({
+function toCategory(root: jsonP.JSONValue): Category {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CategoryId": "n",
@@ -3974,8 +4042,8 @@ export interface SkillsStoreSkill {
   SkillDetails?: SkillDetails | null;
   SupportsLinking?: boolean | null;
 }
-function toSkillsStoreSkill(root: JSONValue): SkillsStoreSkill {
-  return prt.readObj({
+function toSkillsStoreSkill(root: jsonP.JSONValue): SkillsStoreSkill {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SkillId": "s",
@@ -3999,11 +4067,11 @@ export interface SkillDetails {
   BulletPoints?: string[] | null;
   NewInThisVersionBulletPoints?: string[] | null;
   SkillTypes?: string[] | null;
-  Reviews?: { [key: string]: string } | null;
+  Reviews?: { [key: string]: string | null | undefined } | null;
   DeveloperInfo?: DeveloperInfo | null;
 }
-function toSkillDetails(root: JSONValue): SkillDetails {
-  return prt.readObj({
+function toSkillDetails(root: jsonP.JSONValue): SkillDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ProductDescription": "s",
@@ -4014,7 +4082,7 @@ function toSkillDetails(root: JSONValue): SkillDetails {
       "BulletPoints": ["s"],
       "NewInThisVersionBulletPoints": ["s"],
       "SkillTypes": ["s"],
-      "Reviews": x => prt.readMap(String, String, x),
+      "Reviews": x => jsonP.readMap(String, String, x),
       "DeveloperInfo": toDeveloperInfo,
     },
   }, root);
@@ -4027,8 +4095,8 @@ export interface DeveloperInfo {
   Email?: string | null;
   Url?: string | null;
 }
-function toDeveloperInfo(root: JSONValue): DeveloperInfo {
-  return prt.readObj({
+function toDeveloperInfo(root: jsonP.JSONValue): DeveloperInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DeveloperName": "s",
@@ -4045,8 +4113,8 @@ export interface SmartHomeAppliance {
   Description?: string | null;
   ManufacturerName?: string | null;
 }
-function toSmartHomeAppliance(root: JSONValue): SmartHomeAppliance {
-  return prt.readObj({
+function toSmartHomeAppliance(root: jsonP.JSONValue): SmartHomeAppliance {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FriendlyName": "s",
@@ -4062,8 +4130,8 @@ export interface AddressBookData {
   Name?: string | null;
   Description?: string | null;
 }
-function toAddressBookData(root: JSONValue): AddressBookData {
-  return prt.readObj({
+function toAddressBookData(root: jsonP.JSONValue): AddressBookData {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AddressBookArn": "s",
@@ -4083,8 +4151,8 @@ export interface ContactData {
   PhoneNumbers?: PhoneNumber[] | null;
   SipAddresses?: SipAddress[] | null;
 }
-function toContactData(root: JSONValue): ContactData {
-  return prt.readObj({
+function toContactData(root: jsonP.JSONValue): ContactData {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ContactArn": "s",
@@ -4114,8 +4182,8 @@ export interface DeviceData {
   DeviceStatusInfo?: DeviceStatusInfo | null;
   CreatedTime?: Date | number | null;
 }
-function toDeviceData(root: JSONValue): DeviceData {
-  return prt.readObj({
+function toDeviceData(root: jsonP.JSONValue): DeviceData {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DeviceArn": "s",
@@ -4124,7 +4192,7 @@ function toDeviceData(root: JSONValue): DeviceData {
       "DeviceName": "s",
       "SoftwareVersion": "s",
       "MacAddress": "s",
-      "DeviceStatus": toDeviceStatus,
+      "DeviceStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceStatus>(x),
       "NetworkProfileArn": "s",
       "NetworkProfileName": "s",
       "RoomArn": "s",
@@ -4145,16 +4213,16 @@ export interface NetworkProfileData {
   EapMethod?: NetworkEapMethod | null;
   CertificateAuthorityArn?: string | null;
 }
-function toNetworkProfileData(root: JSONValue): NetworkProfileData {
-  return prt.readObj({
+function toNetworkProfileData(root: jsonP.JSONValue): NetworkProfileData {
+  return jsonP.readObj({
     required: {},
     optional: {
       "NetworkProfileArn": "s",
       "NetworkProfileName": "s",
       "Description": "s",
       "Ssid": "s",
-      "SecurityType": toNetworkSecurityType,
-      "EapMethod": toNetworkEapMethod,
+      "SecurityType": (x: jsonP.JSONValue) => cmnP.readEnum<NetworkSecurityType>(x),
+      "EapMethod": (x: jsonP.JSONValue) => cmnP.readEnum<NetworkEapMethod>(x),
       "CertificateAuthorityArn": "s",
     },
   }, root);
@@ -4172,8 +4240,8 @@ export interface ProfileData {
   WakeWord?: WakeWord | null;
   Locale?: string | null;
 }
-function toProfileData(root: JSONValue): ProfileData {
-  return prt.readObj({
+function toProfileData(root: jsonP.JSONValue): ProfileData {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ProfileArn": "s",
@@ -4181,9 +4249,9 @@ function toProfileData(root: JSONValue): ProfileData {
       "IsDefault": "b",
       "Address": "s",
       "Timezone": "s",
-      "DistanceUnit": toDistanceUnit,
-      "TemperatureUnit": toTemperatureUnit,
-      "WakeWord": toWakeWord,
+      "DistanceUnit": (x: jsonP.JSONValue) => cmnP.readEnum<DistanceUnit>(x),
+      "TemperatureUnit": (x: jsonP.JSONValue) => cmnP.readEnum<TemperatureUnit>(x),
+      "WakeWord": (x: jsonP.JSONValue) => cmnP.readEnum<WakeWord>(x),
       "Locale": "s",
     },
   }, root);
@@ -4198,8 +4266,8 @@ export interface RoomData {
   ProfileArn?: string | null;
   ProfileName?: string | null;
 }
-function toRoomData(root: JSONValue): RoomData {
-  return prt.readObj({
+function toRoomData(root: jsonP.JSONValue): RoomData {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RoomArn": "s",
@@ -4218,8 +4286,8 @@ export interface SkillGroupData {
   SkillGroupName?: string | null;
   Description?: string | null;
 }
-function toSkillGroupData(root: JSONValue): SkillGroupData {
-  return prt.readObj({
+function toSkillGroupData(root: jsonP.JSONValue): SkillGroupData {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SkillGroupArn": "s",
@@ -4238,15 +4306,15 @@ export interface UserData {
   EnrollmentStatus?: EnrollmentStatus | null;
   EnrollmentId?: string | null;
 }
-function toUserData(root: JSONValue): UserData {
-  return prt.readObj({
+function toUserData(root: jsonP.JSONValue): UserData {
+  return jsonP.readObj({
     required: {},
     optional: {
       "UserArn": "s",
       "FirstName": "s",
       "LastName": "s",
       "Email": "s",
-      "EnrollmentStatus": toEnrollmentStatus,
+      "EnrollmentStatus": (x: jsonP.JSONValue) => cmnP.readEnum<EnrollmentStatus>(x),
       "EnrollmentId": "s",
     },
   }, root);
@@ -4259,13 +4327,4 @@ export type EnrollmentStatus =
 | "REGISTERED"
 | "DISASSOCIATING"
 | "DEREGISTERING"
-;
-function toEnrollmentStatus(root: JSONValue): EnrollmentStatus | null {
-  return ( false
-    || root == "INITIALIZED"
-    || root == "PENDING"
-    || root == "REGISTERED"
-    || root == "DISASSOCIATING"
-    || root == "DEREGISTERING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;

@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class CloudHSM {
   #client: ServiceClient;
@@ -30,14 +30,15 @@ export default class CloudHSM {
   async addTagsToResource(
     {abortSignal, ...params}: RequestConfig & AddTagsToResourceRequest,
   ): Promise<AddTagsToResourceResponse> {
-    const body: JSONObject = {...params,
-    TagList: params["TagList"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      TagList: params["TagList"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTagsToResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Status": "s",
       },
@@ -48,13 +49,14 @@ export default class CloudHSM {
   async createHapg(
     {abortSignal, ...params}: RequestConfig & CreateHapgRequest,
   ): Promise<CreateHapgResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Label: params["Label"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHapg",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "HapgArn": "s",
@@ -65,13 +67,21 @@ export default class CloudHSM {
   async createHsm(
     {abortSignal, ...params}: RequestConfig & CreateHsmRequest,
   ): Promise<CreateHsmResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SubnetId: params["SubnetId"],
+      SshKey: params["SshKey"],
+      EniIp: params["EniIp"],
+      IamRoleArn: params["IamRoleArn"],
+      ExternalId: params["ExternalId"],
+      SubscriptionType: params["SubscriptionType"],
+      ClientToken: params["ClientToken"],
+      SyslogIp: params["SyslogIp"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHsm",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "HsmArn": "s",
@@ -82,13 +92,15 @@ export default class CloudHSM {
   async createLunaClient(
     {abortSignal, ...params}: RequestConfig & CreateLunaClientRequest,
   ): Promise<CreateLunaClientResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Label: params["Label"],
+      Certificate: params["Certificate"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLunaClient",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ClientArn": "s",
@@ -99,13 +111,14 @@ export default class CloudHSM {
   async deleteHapg(
     {abortSignal, ...params}: RequestConfig & DeleteHapgRequest,
   ): Promise<DeleteHapgResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HapgArn: params["HapgArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteHapg",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Status": "s",
       },
@@ -116,13 +129,14 @@ export default class CloudHSM {
   async deleteHsm(
     {abortSignal, ...params}: RequestConfig & DeleteHsmRequest,
   ): Promise<DeleteHsmResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HsmArn: params["HsmArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteHsm",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Status": "s",
       },
@@ -133,13 +147,14 @@ export default class CloudHSM {
   async deleteLunaClient(
     {abortSignal, ...params}: RequestConfig & DeleteLunaClientRequest,
   ): Promise<DeleteLunaClientResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClientArn: params["ClientArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLunaClient",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Status": "s",
       },
@@ -150,13 +165,14 @@ export default class CloudHSM {
   async describeHapg(
     {abortSignal, ...params}: RequestConfig & DescribeHapgRequest,
   ): Promise<DescribeHapgResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HapgArn: params["HapgArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeHapg",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "HapgArn": "s",
@@ -167,7 +183,7 @@ export default class CloudHSM {
         "Label": "s",
         "LastModifiedTimestamp": "s",
         "PartitionSerialList": ["s"],
-        "State": toCloudHsmObjectState,
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<CloudHsmObjectState>(x),
       },
     }, await resp.json());
   }
@@ -175,22 +191,24 @@ export default class CloudHSM {
   async describeHsm(
     {abortSignal, ...params}: RequestConfig & DescribeHsmRequest = {},
   ): Promise<DescribeHsmResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HsmArn: params["HsmArn"],
+      HsmSerialNumber: params["HsmSerialNumber"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeHsm",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "HsmArn": "s",
-        "Status": toHsmStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<HsmStatus>(x),
         "StatusDetails": "s",
         "AvailabilityZone": "s",
         "EniId": "s",
         "EniIp": "s",
-        "SubscriptionType": toSubscriptionType,
+        "SubscriptionType": (x: jsonP.JSONValue) => cmnP.readEnum<SubscriptionType>(x),
         "SubscriptionStartDate": "s",
         "SubscriptionEndDate": "s",
         "VpcId": "s",
@@ -212,13 +230,15 @@ export default class CloudHSM {
   async describeLunaClient(
     {abortSignal, ...params}: RequestConfig & DescribeLunaClientRequest = {},
   ): Promise<DescribeLunaClientResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClientArn: params["ClientArn"],
+      CertificateFingerprint: params["CertificateFingerprint"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLunaClient",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ClientArn": "s",
@@ -233,13 +253,16 @@ export default class CloudHSM {
   async getConfig(
     {abortSignal, ...params}: RequestConfig & GetConfigRequest,
   ): Promise<GetConfigResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClientArn: params["ClientArn"],
+      ClientVersion: params["ClientVersion"],
+      HapgList: params["HapgList"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConfigType": "s",
@@ -252,13 +275,13 @@ export default class CloudHSM {
   async listAvailableZones(
     {abortSignal, ...params}: RequestConfig & ListAvailableZonesRequest = {},
   ): Promise<ListAvailableZonesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAvailableZones",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AZList": ["s"],
@@ -269,13 +292,14 @@ export default class CloudHSM {
   async listHapgs(
     {abortSignal, ...params}: RequestConfig & ListHapgsRequest = {},
   ): Promise<ListHapgsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListHapgs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "HapgList": ["s"],
       },
@@ -288,13 +312,14 @@ export default class CloudHSM {
   async listHsms(
     {abortSignal, ...params}: RequestConfig & ListHsmsRequest = {},
   ): Promise<ListHsmsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListHsms",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "HsmList": ["s"],
@@ -306,13 +331,14 @@ export default class CloudHSM {
   async listLunaClients(
     {abortSignal, ...params}: RequestConfig & ListLunaClientsRequest = {},
   ): Promise<ListLunaClientsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLunaClients",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ClientList": ["s"],
       },
@@ -325,13 +351,14 @@ export default class CloudHSM {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "TagList": [toTag],
       },
@@ -342,13 +369,16 @@ export default class CloudHSM {
   async modifyHapg(
     {abortSignal, ...params}: RequestConfig & ModifyHapgRequest,
   ): Promise<ModifyHapgResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HapgArn: params["HapgArn"],
+      Label: params["Label"],
+      PartitionSerialList: params["PartitionSerialList"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyHapg",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "HapgArn": "s",
@@ -359,13 +389,19 @@ export default class CloudHSM {
   async modifyHsm(
     {abortSignal, ...params}: RequestConfig & ModifyHsmRequest,
   ): Promise<ModifyHsmResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HsmArn: params["HsmArn"],
+      SubnetId: params["SubnetId"],
+      EniIp: params["EniIp"],
+      IamRoleArn: params["IamRoleArn"],
+      ExternalId: params["ExternalId"],
+      SyslogIp: params["SyslogIp"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyHsm",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "HsmArn": "s",
@@ -376,13 +412,15 @@ export default class CloudHSM {
   async modifyLunaClient(
     {abortSignal, ...params}: RequestConfig & ModifyLunaClientRequest,
   ): Promise<ModifyLunaClientResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClientArn: params["ClientArn"],
+      Certificate: params["Certificate"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyLunaClient",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ClientArn": "s",
@@ -393,13 +431,15 @@ export default class CloudHSM {
   async removeTagsFromResource(
     {abortSignal, ...params}: RequestConfig & RemoveTagsFromResourceRequest,
   ): Promise<RemoveTagsFromResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      TagKeyList: params["TagKeyList"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTagsFromResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Status": "s",
       },
@@ -672,13 +712,15 @@ export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -690,34 +732,20 @@ function toTag(root: JSONValue): Tag {
 // refs: 2 - tags: input, named, enum, output
 export type SubscriptionType =
 | "PRODUCTION"
-;
-
-function toSubscriptionType(root: JSONValue): SubscriptionType | null {
-  return ( false
-    || root == "PRODUCTION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ClientVersion =
 | "5.1"
 | "5.3"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type CloudHsmObjectState =
 | "READY"
 | "UPDATING"
 | "DEGRADED"
-;
-function toCloudHsmObjectState(root: JSONValue): CloudHsmObjectState | null {
-  return ( false
-    || root == "READY"
-    || root == "UPDATING"
-    || root == "DEGRADED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type HsmStatus =
@@ -728,15 +756,4 @@ export type HsmStatus =
 | "TERMINATING"
 | "TERMINATED"
 | "DEGRADED"
-;
-function toHsmStatus(root: JSONValue): HsmStatus | null {
-  return ( false
-    || root == "PENDING"
-    || root == "RUNNING"
-    || root == "UPDATING"
-    || root == "SUSPENDED"
-    || root == "TERMINATING"
-    || root == "TERMINATED"
-    || root == "DEGRADED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;

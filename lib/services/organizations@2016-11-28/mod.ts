@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class Organizations {
   #client: ServiceClient;
@@ -30,13 +30,14 @@ export default class Organizations {
   async acceptHandshake(
     {abortSignal, ...params}: RequestConfig & AcceptHandshakeRequest,
   ): Promise<AcceptHandshakeResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HandshakeId: params["HandshakeId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcceptHandshake",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Handshake": toHandshake,
@@ -47,8 +48,10 @@ export default class Organizations {
   async attachPolicy(
     {abortSignal, ...params}: RequestConfig & AttachPolicyRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PolicyId: params["PolicyId"],
+      TargetId: params["TargetId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AttachPolicy",
@@ -58,13 +61,14 @@ export default class Organizations {
   async cancelHandshake(
     {abortSignal, ...params}: RequestConfig & CancelHandshakeRequest,
   ): Promise<CancelHandshakeResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HandshakeId: params["HandshakeId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelHandshake",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Handshake": toHandshake,
@@ -75,14 +79,18 @@ export default class Organizations {
   async createAccount(
     {abortSignal, ...params}: RequestConfig & CreateAccountRequest,
   ): Promise<CreateAccountResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Email: params["Email"],
+      AccountName: params["AccountName"],
+      RoleName: params["RoleName"],
+      IamUserAccessToBilling: params["IamUserAccessToBilling"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAccount",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CreateAccountStatus": toCreateAccountStatus,
@@ -93,14 +101,18 @@ export default class Organizations {
   async createGovCloudAccount(
     {abortSignal, ...params}: RequestConfig & CreateGovCloudAccountRequest,
   ): Promise<CreateGovCloudAccountResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Email: params["Email"],
+      AccountName: params["AccountName"],
+      RoleName: params["RoleName"],
+      IamUserAccessToBilling: params["IamUserAccessToBilling"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGovCloudAccount",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CreateAccountStatus": toCreateAccountStatus,
@@ -111,13 +123,14 @@ export default class Organizations {
   async createOrganization(
     {abortSignal, ...params}: RequestConfig & CreateOrganizationRequest = {},
   ): Promise<CreateOrganizationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FeatureSet: params["FeatureSet"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateOrganization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Organization": toOrganization,
@@ -128,14 +141,16 @@ export default class Organizations {
   async createOrganizationalUnit(
     {abortSignal, ...params}: RequestConfig & CreateOrganizationalUnitRequest,
   ): Promise<CreateOrganizationalUnitResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ParentId: params["ParentId"],
+      Name: params["Name"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateOrganizationalUnit",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OrganizationalUnit": toOrganizationalUnit,
@@ -146,14 +161,18 @@ export default class Organizations {
   async createPolicy(
     {abortSignal, ...params}: RequestConfig & CreatePolicyRequest,
   ): Promise<CreatePolicyResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Content: params["Content"],
+      Description: params["Description"],
+      Name: params["Name"],
+      Type: params["Type"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Policy": toPolicy,
@@ -164,13 +183,14 @@ export default class Organizations {
   async declineHandshake(
     {abortSignal, ...params}: RequestConfig & DeclineHandshakeRequest,
   ): Promise<DeclineHandshakeResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HandshakeId: params["HandshakeId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeclineHandshake",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Handshake": toHandshake,
@@ -190,8 +210,9 @@ export default class Organizations {
   async deleteOrganizationalUnit(
     {abortSignal, ...params}: RequestConfig & DeleteOrganizationalUnitRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationalUnitId: params["OrganizationalUnitId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteOrganizationalUnit",
@@ -201,8 +222,9 @@ export default class Organizations {
   async deletePolicy(
     {abortSignal, ...params}: RequestConfig & DeletePolicyRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PolicyId: params["PolicyId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePolicy",
@@ -212,8 +234,10 @@ export default class Organizations {
   async deregisterDelegatedAdministrator(
     {abortSignal, ...params}: RequestConfig & DeregisterDelegatedAdministratorRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      ServicePrincipal: params["ServicePrincipal"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterDelegatedAdministrator",
@@ -223,13 +247,14 @@ export default class Organizations {
   async describeAccount(
     {abortSignal, ...params}: RequestConfig & DescribeAccountRequest,
   ): Promise<DescribeAccountResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccount",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Account": toAccount,
@@ -240,13 +265,14 @@ export default class Organizations {
   async describeCreateAccountStatus(
     {abortSignal, ...params}: RequestConfig & DescribeCreateAccountStatusRequest,
   ): Promise<DescribeCreateAccountStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CreateAccountRequestId: params["CreateAccountRequestId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCreateAccountStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CreateAccountStatus": toCreateAccountStatus,
@@ -257,13 +283,15 @@ export default class Organizations {
   async describeEffectivePolicy(
     {abortSignal, ...params}: RequestConfig & DescribeEffectivePolicyRequest,
   ): Promise<DescribeEffectivePolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PolicyType: params["PolicyType"],
+      TargetId: params["TargetId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEffectivePolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EffectivePolicy": toEffectivePolicy,
@@ -274,13 +302,14 @@ export default class Organizations {
   async describeHandshake(
     {abortSignal, ...params}: RequestConfig & DescribeHandshakeRequest,
   ): Promise<DescribeHandshakeResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HandshakeId: params["HandshakeId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeHandshake",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Handshake": toHandshake,
@@ -295,7 +324,7 @@ export default class Organizations {
       abortSignal,
       action: "DescribeOrganization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Organization": toOrganization,
@@ -306,13 +335,14 @@ export default class Organizations {
   async describeOrganizationalUnit(
     {abortSignal, ...params}: RequestConfig & DescribeOrganizationalUnitRequest,
   ): Promise<DescribeOrganizationalUnitResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationalUnitId: params["OrganizationalUnitId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOrganizationalUnit",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OrganizationalUnit": toOrganizationalUnit,
@@ -323,13 +353,14 @@ export default class Organizations {
   async describePolicy(
     {abortSignal, ...params}: RequestConfig & DescribePolicyRequest,
   ): Promise<DescribePolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PolicyId: params["PolicyId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Policy": toPolicy,
@@ -340,8 +371,10 @@ export default class Organizations {
   async detachPolicy(
     {abortSignal, ...params}: RequestConfig & DetachPolicyRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PolicyId: params["PolicyId"],
+      TargetId: params["TargetId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetachPolicy",
@@ -351,8 +384,9 @@ export default class Organizations {
   async disableAWSServiceAccess(
     {abortSignal, ...params}: RequestConfig & DisableAWSServiceAccessRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServicePrincipal: params["ServicePrincipal"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableAWSServiceAccess",
@@ -362,13 +396,15 @@ export default class Organizations {
   async disablePolicyType(
     {abortSignal, ...params}: RequestConfig & DisablePolicyTypeRequest,
   ): Promise<DisablePolicyTypeResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RootId: params["RootId"],
+      PolicyType: params["PolicyType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisablePolicyType",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Root": toRoot,
@@ -379,8 +415,9 @@ export default class Organizations {
   async enableAWSServiceAccess(
     {abortSignal, ...params}: RequestConfig & EnableAWSServiceAccessRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServicePrincipal: params["ServicePrincipal"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableAWSServiceAccess",
@@ -390,13 +427,13 @@ export default class Organizations {
   async enableAllFeatures(
     {abortSignal, ...params}: RequestConfig & EnableAllFeaturesRequest = {},
   ): Promise<EnableAllFeaturesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableAllFeatures",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Handshake": toHandshake,
@@ -407,13 +444,15 @@ export default class Organizations {
   async enablePolicyType(
     {abortSignal, ...params}: RequestConfig & EnablePolicyTypeRequest,
   ): Promise<EnablePolicyTypeResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RootId: params["RootId"],
+      PolicyType: params["PolicyType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnablePolicyType",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Root": toRoot,
@@ -424,15 +463,16 @@ export default class Organizations {
   async inviteAccountToOrganization(
     {abortSignal, ...params}: RequestConfig & InviteAccountToOrganizationRequest,
   ): Promise<InviteAccountToOrganizationResponse> {
-    const body: JSONObject = {...params,
-    Target: fromHandshakeParty(params["Target"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Target: fromHandshakeParty(params["Target"]),
+      Notes: params["Notes"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "InviteAccountToOrganization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Handshake": toHandshake,
@@ -452,13 +492,15 @@ export default class Organizations {
   async listAWSServiceAccessForOrganization(
     {abortSignal, ...params}: RequestConfig & ListAWSServiceAccessForOrganizationRequest = {},
   ): Promise<ListAWSServiceAccessForOrganizationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAWSServiceAccessForOrganization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EnabledServicePrincipals": [toEnabledServicePrincipal],
@@ -470,13 +512,15 @@ export default class Organizations {
   async listAccounts(
     {abortSignal, ...params}: RequestConfig & ListAccountsRequest = {},
   ): Promise<ListAccountsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAccounts",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Accounts": [toAccount],
@@ -488,13 +532,16 @@ export default class Organizations {
   async listAccountsForParent(
     {abortSignal, ...params}: RequestConfig & ListAccountsForParentRequest,
   ): Promise<ListAccountsForParentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ParentId: params["ParentId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAccountsForParent",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Accounts": [toAccount],
@@ -506,13 +553,17 @@ export default class Organizations {
   async listChildren(
     {abortSignal, ...params}: RequestConfig & ListChildrenRequest,
   ): Promise<ListChildrenResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ParentId: params["ParentId"],
+      ChildType: params["ChildType"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListChildren",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Children": [toChild],
@@ -524,13 +575,16 @@ export default class Organizations {
   async listCreateAccountStatus(
     {abortSignal, ...params}: RequestConfig & ListCreateAccountStatusRequest = {},
   ): Promise<ListCreateAccountStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      States: params["States"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCreateAccountStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CreateAccountStatuses": [toCreateAccountStatus],
@@ -542,13 +596,16 @@ export default class Organizations {
   async listDelegatedAdministrators(
     {abortSignal, ...params}: RequestConfig & ListDelegatedAdministratorsRequest = {},
   ): Promise<ListDelegatedAdministratorsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServicePrincipal: params["ServicePrincipal"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDelegatedAdministrators",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DelegatedAdministrators": [toDelegatedAdministrator],
@@ -560,13 +617,16 @@ export default class Organizations {
   async listDelegatedServicesForAccount(
     {abortSignal, ...params}: RequestConfig & ListDelegatedServicesForAccountRequest,
   ): Promise<ListDelegatedServicesForAccountResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDelegatedServicesForAccount",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DelegatedServices": [toDelegatedService],
@@ -578,14 +638,16 @@ export default class Organizations {
   async listHandshakesForAccount(
     {abortSignal, ...params}: RequestConfig & ListHandshakesForAccountRequest = {},
   ): Promise<ListHandshakesForAccountResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromHandshakeFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filter: fromHandshakeFilter(params["Filter"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListHandshakesForAccount",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Handshakes": [toHandshake],
@@ -597,14 +659,16 @@ export default class Organizations {
   async listHandshakesForOrganization(
     {abortSignal, ...params}: RequestConfig & ListHandshakesForOrganizationRequest = {},
   ): Promise<ListHandshakesForOrganizationResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromHandshakeFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filter: fromHandshakeFilter(params["Filter"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListHandshakesForOrganization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Handshakes": [toHandshake],
@@ -616,13 +680,16 @@ export default class Organizations {
   async listOrganizationalUnitsForParent(
     {abortSignal, ...params}: RequestConfig & ListOrganizationalUnitsForParentRequest,
   ): Promise<ListOrganizationalUnitsForParentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ParentId: params["ParentId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListOrganizationalUnitsForParent",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OrganizationalUnits": [toOrganizationalUnit],
@@ -634,13 +701,16 @@ export default class Organizations {
   async listParents(
     {abortSignal, ...params}: RequestConfig & ListParentsRequest,
   ): Promise<ListParentsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ChildId: params["ChildId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListParents",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Parents": [toParent],
@@ -652,13 +722,16 @@ export default class Organizations {
   async listPolicies(
     {abortSignal, ...params}: RequestConfig & ListPoliciesRequest,
   ): Promise<ListPoliciesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filter: params["Filter"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPolicies",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Policies": [toPolicySummary],
@@ -670,13 +743,17 @@ export default class Organizations {
   async listPoliciesForTarget(
     {abortSignal, ...params}: RequestConfig & ListPoliciesForTargetRequest,
   ): Promise<ListPoliciesForTargetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TargetId: params["TargetId"],
+      Filter: params["Filter"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPoliciesForTarget",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Policies": [toPolicySummary],
@@ -688,13 +765,15 @@ export default class Organizations {
   async listRoots(
     {abortSignal, ...params}: RequestConfig & ListRootsRequest = {},
   ): Promise<ListRootsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRoots",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Roots": [toRoot],
@@ -706,13 +785,15 @@ export default class Organizations {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -724,13 +805,16 @@ export default class Organizations {
   async listTargetsForPolicy(
     {abortSignal, ...params}: RequestConfig & ListTargetsForPolicyRequest,
   ): Promise<ListTargetsForPolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PolicyId: params["PolicyId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTargetsForPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Targets": [toPolicyTargetSummary],
@@ -742,8 +826,11 @@ export default class Organizations {
   async moveAccount(
     {abortSignal, ...params}: RequestConfig & MoveAccountRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      SourceParentId: params["SourceParentId"],
+      DestinationParentId: params["DestinationParentId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MoveAccount",
@@ -753,8 +840,10 @@ export default class Organizations {
   async registerDelegatedAdministrator(
     {abortSignal, ...params}: RequestConfig & RegisterDelegatedAdministratorRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      ServicePrincipal: params["ServicePrincipal"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterDelegatedAdministrator",
@@ -764,8 +853,9 @@ export default class Organizations {
   async removeAccountFromOrganization(
     {abortSignal, ...params}: RequestConfig & RemoveAccountFromOrganizationRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveAccountFromOrganization",
@@ -775,9 +865,10 @@ export default class Organizations {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -787,8 +878,10 @@ export default class Organizations {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -798,13 +891,15 @@ export default class Organizations {
   async updateOrganizationalUnit(
     {abortSignal, ...params}: RequestConfig & UpdateOrganizationalUnitRequest,
   ): Promise<UpdateOrganizationalUnitResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationalUnitId: params["OrganizationalUnitId"],
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateOrganizationalUnit",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OrganizationalUnit": toOrganizationalUnit,
@@ -815,13 +910,17 @@ export default class Organizations {
   async updatePolicy(
     {abortSignal, ...params}: RequestConfig & UpdatePolicyRequest,
   ): Promise<UpdatePolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PolicyId: params["PolicyId"],
+      Name: params["Name"],
+      Description: params["Description"],
+      Content: params["Content"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Policy": toPolicy,
@@ -1336,21 +1435,22 @@ export interface UpdatePolicyResponse {
 export type IAMUserAccessToBilling =
 | "ALLOW"
 | "DENY"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -1363,14 +1463,7 @@ function toTag(root: JSONValue): Tag {
 export type OrganizationFeatureSet =
 | "ALL"
 | "CONSOLIDATED_BILLING"
-;
-
-function toOrganizationFeatureSet(root: JSONValue): OrganizationFeatureSet | null {
-  return ( false
-    || root == "ALL"
-    || root == "CONSOLIDATED_BILLING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 15 - tags: input, named, enum, output
 export type PolicyType =
@@ -1378,47 +1471,32 @@ export type PolicyType =
 | "TAG_POLICY"
 | "BACKUP_POLICY"
 | "AISERVICES_OPT_OUT_POLICY"
-;
-
-function toPolicyType(root: JSONValue): PolicyType | null {
-  return ( false
-    || root == "SERVICE_CONTROL_POLICY"
-    || root == "TAG_POLICY"
-    || root == "BACKUP_POLICY"
-    || root == "AISERVICES_OPT_OUT_POLICY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type EffectivePolicyType =
 | "TAG_POLICY"
 | "BACKUP_POLICY"
 | "AISERVICES_OPT_OUT_POLICY"
-;
-
-function toEffectivePolicyType(root: JSONValue): EffectivePolicyType | null {
-  return ( false
-    || root == "TAG_POLICY"
-    || root == "BACKUP_POLICY"
-    || root == "AISERVICES_OPT_OUT_POLICY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 9 - tags: input, named, interface, output
 export interface HandshakeParty {
   Id: string;
   Type: HandshakePartyType;
 }
-function fromHandshakeParty(input?: HandshakeParty | null): JSONValue {
+function fromHandshakeParty(input?: HandshakeParty | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Id: input["Id"],
+    Type: input["Type"],
   }
 }
-function toHandshakeParty(root: JSONValue): HandshakeParty {
-  return prt.readObj({
+function toHandshakeParty(root: jsonP.JSONValue): HandshakeParty {
+  return jsonP.readObj({
     required: {
       "Id": "s",
-      "Type": toHandshakePartyType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<HandshakePartyType>(x),
     },
     optional: {},
   }, root);
@@ -1429,52 +1507,31 @@ export type HandshakePartyType =
 | "ACCOUNT"
 | "ORGANIZATION"
 | "EMAIL"
-;
-
-function toHandshakePartyType(root: JSONValue): HandshakePartyType | null {
-  return ( false
-    || root == "ACCOUNT"
-    || root == "ORGANIZATION"
-    || root == "EMAIL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type ChildType =
 | "ACCOUNT"
 | "ORGANIZATIONAL_UNIT"
-;
-
-function toChildType(root: JSONValue): ChildType | null {
-  return ( false
-    || root == "ACCOUNT"
-    || root == "ORGANIZATIONAL_UNIT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type CreateAccountState =
 | "IN_PROGRESS"
 | "SUCCEEDED"
 | "FAILED"
-;
-
-function toCreateAccountState(root: JSONValue): CreateAccountState | null {
-  return ( false
-    || root == "IN_PROGRESS"
-    || root == "SUCCEEDED"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface HandshakeFilter {
   ActionType?: ActionType | null;
   ParentHandshakeId?: string | null;
 }
-function fromHandshakeFilter(input?: HandshakeFilter | null): JSONValue {
+function fromHandshakeFilter(input?: HandshakeFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ActionType: input["ActionType"],
+    ParentHandshakeId: input["ParentHandshakeId"],
   }
 }
 
@@ -1484,16 +1541,7 @@ export type ActionType =
 | "ENABLE_ALL_FEATURES"
 | "APPROVE_ALL_FEATURES"
 | "ADD_ORGANIZATIONS_SERVICE_LINKED_ROLE"
-;
-
-function toActionType(root: JSONValue): ActionType | null {
-  return ( false
-    || root == "INVITE"
-    || root == "ENABLE_ALL_FEATURES"
-    || root == "APPROVE_ALL_FEATURES"
-    || root == "ADD_ORGANIZATIONS_SERVICE_LINKED_ROLE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: output, named, interface
 export interface Handshake {
@@ -1506,17 +1554,17 @@ export interface Handshake {
   Action?: ActionType | null;
   Resources?: HandshakeResource[] | null;
 }
-function toHandshake(root: JSONValue): Handshake {
-  return prt.readObj({
+function toHandshake(root: jsonP.JSONValue): Handshake {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "Arn": "s",
       "Parties": [toHandshakeParty],
-      "State": toHandshakeState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<HandshakeState>(x),
       "RequestedTimestamp": "d",
       "ExpirationTimestamp": "d",
-      "Action": toActionType,
+      "Action": (x: jsonP.JSONValue) => cmnP.readEnum<ActionType>(x),
       "Resources": [toHandshakeResource],
     },
   }, root);
@@ -1530,17 +1578,7 @@ export type HandshakeState =
 | "ACCEPTED"
 | "DECLINED"
 | "EXPIRED"
-;
-function toHandshakeState(root: JSONValue): HandshakeState | null {
-  return ( false
-    || root == "REQUESTED"
-    || root == "OPEN"
-    || root == "CANCELED"
-    || root == "ACCEPTED"
-    || root == "DECLINED"
-    || root == "EXPIRED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: output, named, interface, recursive
 export interface HandshakeResource {
@@ -1548,12 +1586,12 @@ export interface HandshakeResource {
   Type?: HandshakeResourceType | null;
   Resources?: HandshakeResource[] | null;
 }
-function toHandshakeResource(root: JSONValue): HandshakeResource {
-  return prt.readObj({
+function toHandshakeResource(root: jsonP.JSONValue): HandshakeResource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Value": "s",
-      "Type": toHandshakeResourceType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<HandshakeResourceType>(x),
       "Resources": [toHandshakeResource],
     },
   }, root);
@@ -1569,19 +1607,7 @@ export type HandshakeResourceType =
 | "MASTER_NAME"
 | "NOTES"
 | "PARENT_HANDSHAKE"
-;
-function toHandshakeResourceType(root: JSONValue): HandshakeResourceType | null {
-  return ( false
-    || root == "ACCOUNT"
-    || root == "ORGANIZATION"
-    || root == "ORGANIZATION_FEATURE_SET"
-    || root == "EMAIL"
-    || root == "MASTER_EMAIL"
-    || root == "MASTER_NAME"
-    || root == "NOTES"
-    || root == "PARENT_HANDSHAKE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface CreateAccountStatus {
@@ -1594,18 +1620,18 @@ export interface CreateAccountStatus {
   GovCloudAccountId?: string | null;
   FailureReason?: CreateAccountFailureReason | null;
 }
-function toCreateAccountStatus(root: JSONValue): CreateAccountStatus {
-  return prt.readObj({
+function toCreateAccountStatus(root: jsonP.JSONValue): CreateAccountStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "AccountName": "s",
-      "State": toCreateAccountState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<CreateAccountState>(x),
       "RequestedTimestamp": "d",
       "CompletedTimestamp": "d",
       "AccountId": "s",
       "GovCloudAccountId": "s",
-      "FailureReason": toCreateAccountFailureReason,
+      "FailureReason": (x: jsonP.JSONValue) => cmnP.readEnum<CreateAccountFailureReason>(x),
     },
   }, root);
 }
@@ -1621,20 +1647,7 @@ export type CreateAccountFailureReason =
 | "GOVCLOUD_ACCOUNT_ALREADY_EXISTS"
 | "MISSING_BUSINESS_VALIDATION"
 | "MISSING_PAYMENT_INSTRUMENT"
-;
-function toCreateAccountFailureReason(root: JSONValue): CreateAccountFailureReason | null {
-  return ( false
-    || root == "ACCOUNT_LIMIT_EXCEEDED"
-    || root == "EMAIL_ALREADY_EXISTS"
-    || root == "INVALID_ADDRESS"
-    || root == "INVALID_EMAIL"
-    || root == "CONCURRENT_ACCOUNT_MODIFICATION"
-    || root == "INTERNAL_FAILURE"
-    || root == "GOVCLOUD_ACCOUNT_ALREADY_EXISTS"
-    || root == "MISSING_BUSINESS_VALIDATION"
-    || root == "MISSING_PAYMENT_INSTRUMENT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface Organization {
@@ -1646,13 +1659,13 @@ export interface Organization {
   MasterAccountEmail?: string | null;
   AvailablePolicyTypes?: PolicyTypeSummary[] | null;
 }
-function toOrganization(root: JSONValue): Organization {
-  return prt.readObj({
+function toOrganization(root: jsonP.JSONValue): Organization {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "Arn": "s",
-      "FeatureSet": toOrganizationFeatureSet,
+      "FeatureSet": (x: jsonP.JSONValue) => cmnP.readEnum<OrganizationFeatureSet>(x),
       "MasterAccountArn": "s",
       "MasterAccountId": "s",
       "MasterAccountEmail": "s",
@@ -1666,12 +1679,12 @@ export interface PolicyTypeSummary {
   Type?: PolicyType | null;
   Status?: PolicyTypeStatus | null;
 }
-function toPolicyTypeSummary(root: JSONValue): PolicyTypeSummary {
-  return prt.readObj({
+function toPolicyTypeSummary(root: jsonP.JSONValue): PolicyTypeSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Type": toPolicyType,
-      "Status": toPolicyTypeStatus,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<PolicyType>(x),
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<PolicyTypeStatus>(x),
     },
   }, root);
 }
@@ -1681,14 +1694,7 @@ export type PolicyTypeStatus =
 | "ENABLED"
 | "PENDING_ENABLE"
 | "PENDING_DISABLE"
-;
-function toPolicyTypeStatus(root: JSONValue): PolicyTypeStatus | null {
-  return ( false
-    || root == "ENABLED"
-    || root == "PENDING_ENABLE"
-    || root == "PENDING_DISABLE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface OrganizationalUnit {
@@ -1696,8 +1702,8 @@ export interface OrganizationalUnit {
   Arn?: string | null;
   Name?: string | null;
 }
-function toOrganizationalUnit(root: JSONValue): OrganizationalUnit {
-  return prt.readObj({
+function toOrganizationalUnit(root: jsonP.JSONValue): OrganizationalUnit {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
@@ -1712,8 +1718,8 @@ export interface Policy {
   PolicySummary?: PolicySummary | null;
   Content?: string | null;
 }
-function toPolicy(root: JSONValue): Policy {
-  return prt.readObj({
+function toPolicy(root: jsonP.JSONValue): Policy {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PolicySummary": toPolicySummary,
@@ -1731,15 +1737,15 @@ export interface PolicySummary {
   Type?: PolicyType | null;
   AwsManaged?: boolean | null;
 }
-function toPolicySummary(root: JSONValue): PolicySummary {
-  return prt.readObj({
+function toPolicySummary(root: jsonP.JSONValue): PolicySummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "Arn": "s",
       "Name": "s",
       "Description": "s",
-      "Type": toPolicyType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<PolicyType>(x),
       "AwsManaged": "b",
     },
   }, root);
@@ -1755,16 +1761,16 @@ export interface Account {
   JoinedMethod?: AccountJoinedMethod | null;
   JoinedTimestamp?: Date | number | null;
 }
-function toAccount(root: JSONValue): Account {
-  return prt.readObj({
+function toAccount(root: jsonP.JSONValue): Account {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "Arn": "s",
       "Email": "s",
       "Name": "s",
-      "Status": toAccountStatus,
-      "JoinedMethod": toAccountJoinedMethod,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<AccountStatus>(x),
+      "JoinedMethod": (x: jsonP.JSONValue) => cmnP.readEnum<AccountJoinedMethod>(x),
       "JoinedTimestamp": "d",
     },
   }, root);
@@ -1774,25 +1780,13 @@ function toAccount(root: JSONValue): Account {
 export type AccountStatus =
 | "ACTIVE"
 | "SUSPENDED"
-;
-function toAccountStatus(root: JSONValue): AccountStatus | null {
-  return ( false
-    || root == "ACTIVE"
-    || root == "SUSPENDED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, enum
 export type AccountJoinedMethod =
 | "INVITED"
 | "CREATED"
-;
-function toAccountJoinedMethod(root: JSONValue): AccountJoinedMethod | null {
-  return ( false
-    || root == "INVITED"
-    || root == "CREATED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface EffectivePolicy {
@@ -1801,14 +1795,14 @@ export interface EffectivePolicy {
   TargetId?: string | null;
   PolicyType?: EffectivePolicyType | null;
 }
-function toEffectivePolicy(root: JSONValue): EffectivePolicy {
-  return prt.readObj({
+function toEffectivePolicy(root: jsonP.JSONValue): EffectivePolicy {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PolicyContent": "s",
       "LastUpdatedTimestamp": "d",
       "TargetId": "s",
-      "PolicyType": toEffectivePolicyType,
+      "PolicyType": (x: jsonP.JSONValue) => cmnP.readEnum<EffectivePolicyType>(x),
     },
   }, root);
 }
@@ -1820,8 +1814,8 @@ export interface Root {
   Name?: string | null;
   PolicyTypes?: PolicyTypeSummary[] | null;
 }
-function toRoot(root: JSONValue): Root {
-  return prt.readObj({
+function toRoot(root: jsonP.JSONValue): Root {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
@@ -1837,8 +1831,8 @@ export interface EnabledServicePrincipal {
   ServicePrincipal?: string | null;
   DateEnabled?: Date | number | null;
 }
-function toEnabledServicePrincipal(root: JSONValue): EnabledServicePrincipal {
-  return prt.readObj({
+function toEnabledServicePrincipal(root: jsonP.JSONValue): EnabledServicePrincipal {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ServicePrincipal": "s",
@@ -1852,12 +1846,12 @@ export interface Child {
   Id?: string | null;
   Type?: ChildType | null;
 }
-function toChild(root: JSONValue): Child {
-  return prt.readObj({
+function toChild(root: jsonP.JSONValue): Child {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
-      "Type": toChildType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<ChildType>(x),
     },
   }, root);
 }
@@ -1873,16 +1867,16 @@ export interface DelegatedAdministrator {
   JoinedTimestamp?: Date | number | null;
   DelegationEnabledDate?: Date | number | null;
 }
-function toDelegatedAdministrator(root: JSONValue): DelegatedAdministrator {
-  return prt.readObj({
+function toDelegatedAdministrator(root: jsonP.JSONValue): DelegatedAdministrator {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "Arn": "s",
       "Email": "s",
       "Name": "s",
-      "Status": toAccountStatus,
-      "JoinedMethod": toAccountJoinedMethod,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<AccountStatus>(x),
+      "JoinedMethod": (x: jsonP.JSONValue) => cmnP.readEnum<AccountJoinedMethod>(x),
       "JoinedTimestamp": "d",
       "DelegationEnabledDate": "d",
     },
@@ -1894,8 +1888,8 @@ export interface DelegatedService {
   ServicePrincipal?: string | null;
   DelegationEnabledDate?: Date | number | null;
 }
-function toDelegatedService(root: JSONValue): DelegatedService {
-  return prt.readObj({
+function toDelegatedService(root: jsonP.JSONValue): DelegatedService {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ServicePrincipal": "s",
@@ -1909,12 +1903,12 @@ export interface Parent {
   Id?: string | null;
   Type?: ParentType | null;
 }
-function toParent(root: JSONValue): Parent {
-  return prt.readObj({
+function toParent(root: jsonP.JSONValue): Parent {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
-      "Type": toParentType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<ParentType>(x),
     },
   }, root);
 }
@@ -1923,13 +1917,7 @@ function toParent(root: JSONValue): Parent {
 export type ParentType =
 | "ROOT"
 | "ORGANIZATIONAL_UNIT"
-;
-function toParentType(root: JSONValue): ParentType | null {
-  return ( false
-    || root == "ROOT"
-    || root == "ORGANIZATIONAL_UNIT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface PolicyTargetSummary {
@@ -1938,14 +1926,14 @@ export interface PolicyTargetSummary {
   Name?: string | null;
   Type?: TargetType | null;
 }
-function toPolicyTargetSummary(root: JSONValue): PolicyTargetSummary {
-  return prt.readObj({
+function toPolicyTargetSummary(root: jsonP.JSONValue): PolicyTargetSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TargetId": "s",
       "Arn": "s",
       "Name": "s",
-      "Type": toTargetType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<TargetType>(x),
     },
   }, root);
 }
@@ -1955,11 +1943,4 @@ export type TargetType =
 | "ACCOUNT"
 | "ORGANIZATIONAL_UNIT"
 | "ROOT"
-;
-function toTargetType(root: JSONValue): TargetType | null {
-  return ( false
-    || root == "ACCOUNT"
-    || root == "ORGANIZATIONAL_UNIT"
-    || root == "ROOT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;

@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class DynamoDB {
   #client: ServiceClient;
@@ -30,18 +30,18 @@ export default class DynamoDB {
   async batchGetItem(
     {abortSignal, ...params}: RequestConfig & BatchGetItemInput,
   ): Promise<BatchGetItemOutput> {
-    const body: JSONObject = {...params,
-    RequestItems: prt.serializeMap(params["RequestItems"], x => fromKeysAndAttributes(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      RequestItems: jsonP.serializeMap(params["RequestItems"], x => fromKeysAndAttributes(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetItem",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Responses": x => prt.readMap(String, toBatchResponse, x),
-        "UnprocessedKeys": x => prt.readMap(String, toKeysAndAttributes, x),
+        "Responses": x => jsonP.readMap(String, toBatchResponse, x),
+        "UnprocessedKeys": x => jsonP.readMap(String, toKeysAndAttributes, x),
       },
     }, await resp.json());
   }
@@ -49,18 +49,18 @@ export default class DynamoDB {
   async batchWriteItem(
     {abortSignal, ...params}: RequestConfig & BatchWriteItemInput,
   ): Promise<BatchWriteItemOutput> {
-    const body: JSONObject = {...params,
-    RequestItems: prt.serializeMap(params["RequestItems"], x => x.map(fromWriteRequest)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      RequestItems: jsonP.serializeMap(params["RequestItems"], x => x?.map(fromWriteRequest)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchWriteItem",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Responses": x => prt.readMap(String, toBatchWriteResponse, x),
-        "UnprocessedItems": x => prt.readMap(String, l => Array.isArray(l) ? l.map(toWriteRequest) : [], x),
+        "Responses": x => jsonP.readMap(String, toBatchWriteResponse, x),
+        "UnprocessedItems": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(toWriteRequest) : [], x),
       },
     }, await resp.json());
   }
@@ -68,15 +68,16 @@ export default class DynamoDB {
   async createTable(
     {abortSignal, ...params}: RequestConfig & CreateTableInput,
   ): Promise<CreateTableOutput> {
-    const body: JSONObject = {...params,
-    KeySchema: fromKeySchema(params["KeySchema"]),
-    ProvisionedThroughput: fromProvisionedThroughput(params["ProvisionedThroughput"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      KeySchema: fromKeySchema(params["KeySchema"]),
+      ProvisionedThroughput: fromProvisionedThroughput(params["ProvisionedThroughput"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTable",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TableDescription": toTableDescription,
@@ -87,18 +88,20 @@ export default class DynamoDB {
   async deleteItem(
     {abortSignal, ...params}: RequestConfig & DeleteItemInput,
   ): Promise<DeleteItemOutput> {
-    const body: JSONObject = {...params,
-    Key: fromKey(params["Key"]),
-    Expected: prt.serializeMap(params["Expected"], x => fromExpectedAttributeValue(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      Key: fromKey(params["Key"]),
+      Expected: jsonP.serializeMap(params["Expected"], x => fromExpectedAttributeValue(x)),
+      ReturnValues: params["ReturnValues"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteItem",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Attributes": x => prt.readMap(String, toAttributeValue, x),
+        "Attributes": x => jsonP.readMap(String, toAttributeValue, x),
         "ConsumedCapacityUnits": "n",
       },
     }, await resp.json());
@@ -107,13 +110,14 @@ export default class DynamoDB {
   async deleteTable(
     {abortSignal, ...params}: RequestConfig & DeleteTableInput,
   ): Promise<DeleteTableOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTable",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TableDescription": toTableDescription,
@@ -124,13 +128,14 @@ export default class DynamoDB {
   async describeTable(
     {abortSignal, ...params}: RequestConfig & DescribeTableInput,
   ): Promise<DescribeTableOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTable",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Table": toTableDescription,
@@ -141,17 +146,20 @@ export default class DynamoDB {
   async getItem(
     {abortSignal, ...params}: RequestConfig & GetItemInput,
   ): Promise<GetItemOutput> {
-    const body: JSONObject = {...params,
-    Key: fromKey(params["Key"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      Key: fromKey(params["Key"]),
+      AttributesToGet: params["AttributesToGet"],
+      ConsistentRead: params["ConsistentRead"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetItem",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Item": x => prt.readMap(String, toAttributeValue, x),
+        "Item": x => jsonP.readMap(String, toAttributeValue, x),
         "ConsumedCapacityUnits": "n",
       },
     }, await resp.json());
@@ -160,13 +168,15 @@ export default class DynamoDB {
   async listTables(
     {abortSignal, ...params}: RequestConfig & ListTablesInput = {},
   ): Promise<ListTablesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ExclusiveStartTableName: params["ExclusiveStartTableName"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTables",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TableNames": ["s"],
@@ -178,18 +188,20 @@ export default class DynamoDB {
   async putItem(
     {abortSignal, ...params}: RequestConfig & PutItemInput,
   ): Promise<PutItemOutput> {
-    const body: JSONObject = {...params,
-    Item: prt.serializeMap(params["Item"], x => fromAttributeValue(x)),
-    Expected: prt.serializeMap(params["Expected"], x => fromExpectedAttributeValue(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      Item: jsonP.serializeMap(params["Item"], x => fromAttributeValue(x)),
+      Expected: jsonP.serializeMap(params["Expected"], x => fromExpectedAttributeValue(x)),
+      ReturnValues: params["ReturnValues"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutItem",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Attributes": x => prt.readMap(String, toAttributeValue, x),
+        "Attributes": x => jsonP.readMap(String, toAttributeValue, x),
         "ConsumedCapacityUnits": "n",
       },
     }, await resp.json());
@@ -198,19 +210,25 @@ export default class DynamoDB {
   async query(
     {abortSignal, ...params}: RequestConfig & QueryInput,
   ): Promise<QueryOutput> {
-    const body: JSONObject = {...params,
-    HashKeyValue: fromAttributeValue(params["HashKeyValue"]),
-    RangeKeyCondition: fromCondition(params["RangeKeyCondition"]),
-    ExclusiveStartKey: fromKey(params["ExclusiveStartKey"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      AttributesToGet: params["AttributesToGet"],
+      Limit: params["Limit"],
+      ConsistentRead: params["ConsistentRead"],
+      Count: params["Count"],
+      HashKeyValue: fromAttributeValue(params["HashKeyValue"]),
+      RangeKeyCondition: fromCondition(params["RangeKeyCondition"]),
+      ScanIndexForward: params["ScanIndexForward"],
+      ExclusiveStartKey: fromKey(params["ExclusiveStartKey"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Query",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Items": [x => prt.readMap(String, toAttributeValue, x)],
+        "Items": [x => jsonP.readMap(String, toAttributeValue, x)],
         "Count": "n",
         "LastEvaluatedKey": toKey,
         "ConsumedCapacityUnits": "n",
@@ -221,18 +239,22 @@ export default class DynamoDB {
   async scan(
     {abortSignal, ...params}: RequestConfig & ScanInput,
   ): Promise<ScanOutput> {
-    const body: JSONObject = {...params,
-    ScanFilter: prt.serializeMap(params["ScanFilter"], x => fromCondition(x)),
-    ExclusiveStartKey: fromKey(params["ExclusiveStartKey"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      AttributesToGet: params["AttributesToGet"],
+      Limit: params["Limit"],
+      Count: params["Count"],
+      ScanFilter: jsonP.serializeMap(params["ScanFilter"], x => fromCondition(x)),
+      ExclusiveStartKey: fromKey(params["ExclusiveStartKey"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Scan",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Items": [x => prt.readMap(String, toAttributeValue, x)],
+        "Items": [x => jsonP.readMap(String, toAttributeValue, x)],
         "Count": "n",
         "ScannedCount": "n",
         "LastEvaluatedKey": toKey,
@@ -244,19 +266,21 @@ export default class DynamoDB {
   async updateItem(
     {abortSignal, ...params}: RequestConfig & UpdateItemInput,
   ): Promise<UpdateItemOutput> {
-    const body: JSONObject = {...params,
-    Key: fromKey(params["Key"]),
-    AttributeUpdates: prt.serializeMap(params["AttributeUpdates"], x => fromAttributeValueUpdate(x)),
-    Expected: prt.serializeMap(params["Expected"], x => fromExpectedAttributeValue(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      Key: fromKey(params["Key"]),
+      AttributeUpdates: jsonP.serializeMap(params["AttributeUpdates"], x => fromAttributeValueUpdate(x)),
+      Expected: jsonP.serializeMap(params["Expected"], x => fromExpectedAttributeValue(x)),
+      ReturnValues: params["ReturnValues"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateItem",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Attributes": x => prt.readMap(String, toAttributeValue, x),
+        "Attributes": x => jsonP.readMap(String, toAttributeValue, x),
         "ConsumedCapacityUnits": "n",
       },
     }, await resp.json());
@@ -265,14 +289,15 @@ export default class DynamoDB {
   async updateTable(
     {abortSignal, ...params}: RequestConfig & UpdateTableInput,
   ): Promise<UpdateTableOutput> {
-    const body: JSONObject = {...params,
-    ProvisionedThroughput: fromProvisionedThroughput(params["ProvisionedThroughput"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      ProvisionedThroughput: fromProvisionedThroughput(params["ProvisionedThroughput"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTable",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TableDescription": toTableDescription,
@@ -290,7 +315,7 @@ export default class DynamoDB {
     for (let i = 0; i < 25; i++) {
       try {
         const resp = await this.describeTable(params);
-        if (resp["Table"]?.["TableStatus"] === "ACTIVE") return resp;
+        if (resp?.Table?.TableStatus === "ACTIVE") return resp;
       } catch (err) {
         if (!["ResourceNotFoundException"].includes(err.code)) throw err;
       }
@@ -320,12 +345,12 @@ export default class DynamoDB {
 
 // refs: 1 - tags: named, input
 export interface BatchGetItemInput {
-  RequestItems: { [key: string]: KeysAndAttributes };
+  RequestItems: { [key: string]: KeysAndAttributes | null | undefined };
 }
 
 // refs: 1 - tags: named, input
 export interface BatchWriteItemInput {
-  RequestItems: { [key: string]: WriteRequest[] };
+  RequestItems: { [key: string]: WriteRequest[] | null | undefined };
 }
 
 // refs: 1 - tags: named, input
@@ -339,7 +364,7 @@ export interface CreateTableInput {
 export interface DeleteItemInput {
   TableName: string;
   Key: Key;
-  Expected?: { [key: string]: ExpectedAttributeValue } | null;
+  Expected?: { [key: string]: ExpectedAttributeValue | null | undefined } | null;
   ReturnValues?: ReturnValue | null;
 }
 
@@ -370,8 +395,8 @@ export interface ListTablesInput {
 // refs: 1 - tags: named, input
 export interface PutItemInput {
   TableName: string;
-  Item: { [key: string]: AttributeValue };
-  Expected?: { [key: string]: ExpectedAttributeValue } | null;
+  Item: { [key: string]: AttributeValue | null | undefined };
+  Expected?: { [key: string]: ExpectedAttributeValue | null | undefined } | null;
   ReturnValues?: ReturnValue | null;
 }
 
@@ -394,7 +419,7 @@ export interface ScanInput {
   AttributesToGet?: string[] | null;
   Limit?: number | null;
   Count?: boolean | null;
-  ScanFilter?: { [key: string]: Condition } | null;
+  ScanFilter?: { [key: string]: Condition | null | undefined } | null;
   ExclusiveStartKey?: Key | null;
 }
 
@@ -402,8 +427,8 @@ export interface ScanInput {
 export interface UpdateItemInput {
   TableName: string;
   Key: Key;
-  AttributeUpdates: { [key: string]: AttributeValueUpdate };
-  Expected?: { [key: string]: ExpectedAttributeValue } | null;
+  AttributeUpdates: { [key: string]: AttributeValueUpdate | null | undefined };
+  Expected?: { [key: string]: ExpectedAttributeValue | null | undefined } | null;
   ReturnValues?: ReturnValue | null;
 }
 
@@ -415,14 +440,14 @@ export interface UpdateTableInput {
 
 // refs: 1 - tags: named, output
 export interface BatchGetItemOutput {
-  Responses?: { [key: string]: BatchResponse } | null;
-  UnprocessedKeys?: { [key: string]: KeysAndAttributes } | null;
+  Responses?: { [key: string]: BatchResponse | null | undefined } | null;
+  UnprocessedKeys?: { [key: string]: KeysAndAttributes | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output
 export interface BatchWriteItemOutput {
-  Responses?: { [key: string]: BatchWriteResponse } | null;
-  UnprocessedItems?: { [key: string]: WriteRequest[] } | null;
+  Responses?: { [key: string]: BatchWriteResponse | null | undefined } | null;
+  UnprocessedItems?: { [key: string]: WriteRequest[] | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output
@@ -432,7 +457,7 @@ export interface CreateTableOutput {
 
 // refs: 1 - tags: named, output
 export interface DeleteItemOutput {
-  Attributes?: { [key: string]: AttributeValue } | null;
+  Attributes?: { [key: string]: AttributeValue | null | undefined } | null;
   ConsumedCapacityUnits?: number | null;
 }
 
@@ -448,7 +473,7 @@ export interface DescribeTableOutput {
 
 // refs: 1 - tags: named, output
 export interface GetItemOutput {
-  Item?: { [key: string]: AttributeValue } | null;
+  Item?: { [key: string]: AttributeValue | null | undefined } | null;
   ConsumedCapacityUnits?: number | null;
 }
 
@@ -460,13 +485,13 @@ export interface ListTablesOutput {
 
 // refs: 1 - tags: named, output
 export interface PutItemOutput {
-  Attributes?: { [key: string]: AttributeValue } | null;
+  Attributes?: { [key: string]: AttributeValue | null | undefined } | null;
   ConsumedCapacityUnits?: number | null;
 }
 
 // refs: 1 - tags: named, output
 export interface QueryOutput {
-  Items?: ({ [key: string]: AttributeValue })[] | null;
+  Items?: ({ [key: string]: AttributeValue | null | undefined })[] | null;
   Count?: number | null;
   LastEvaluatedKey?: Key | null;
   ConsumedCapacityUnits?: number | null;
@@ -474,7 +499,7 @@ export interface QueryOutput {
 
 // refs: 1 - tags: named, output
 export interface ScanOutput {
-  Items?: ({ [key: string]: AttributeValue })[] | null;
+  Items?: ({ [key: string]: AttributeValue | null | undefined })[] | null;
   Count?: number | null;
   ScannedCount?: number | null;
   LastEvaluatedKey?: Key | null;
@@ -483,7 +508,7 @@ export interface ScanOutput {
 
 // refs: 1 - tags: named, output
 export interface UpdateItemOutput {
-  Attributes?: { [key: string]: AttributeValue } | null;
+  Attributes?: { [key: string]: AttributeValue | null | undefined } | null;
   ConsumedCapacityUnits?: number | null;
 }
 
@@ -498,14 +523,16 @@ export interface KeysAndAttributes {
   AttributesToGet?: string[] | null;
   ConsistentRead?: boolean | null;
 }
-function fromKeysAndAttributes(input?: KeysAndAttributes | null): JSONValue {
+function fromKeysAndAttributes(input?: KeysAndAttributes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Keys: input["Keys"]?.map(x => fromKey(x)),
+    AttributesToGet: input["AttributesToGet"],
+    ConsistentRead: input["ConsistentRead"],
   }
 }
-function toKeysAndAttributes(root: JSONValue): KeysAndAttributes {
-  return prt.readObj({
+function toKeysAndAttributes(root: jsonP.JSONValue): KeysAndAttributes {
+  return jsonP.readObj({
     required: {
       "Keys": [toKey],
     },
@@ -521,15 +548,15 @@ export interface Key {
   HashKeyElement: AttributeValue;
   RangeKeyElement?: AttributeValue | null;
 }
-function fromKey(input?: Key | null): JSONValue {
+function fromKey(input?: Key | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     HashKeyElement: fromAttributeValue(input["HashKeyElement"]),
     RangeKeyElement: fromAttributeValue(input["RangeKeyElement"]),
   }
 }
-function toKey(root: JSONValue): Key {
-  return prt.readObj({
+function toKey(root: jsonP.JSONValue): Key {
+  return jsonP.readObj({
     required: {
       "HashKeyElement": toAttributeValue,
     },
@@ -548,15 +575,19 @@ export interface AttributeValue {
   NS?: string[] | null;
   BS?: (Uint8Array | string)[] | null;
 }
-function fromAttributeValue(input?: AttributeValue | null): JSONValue {
+function fromAttributeValue(input?: AttributeValue | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    B: prt.serializeBlob(input["B"]),
-    BS: input["BS"]?.map(x => prt.serializeBlob(x)),
+  return {
+    S: input["S"],
+    N: input["N"],
+    B: jsonP.serializeBlob(input["B"]),
+    SS: input["SS"],
+    NS: input["NS"],
+    BS: input["BS"]?.map(x => jsonP.serializeBlob(x)),
   }
 }
-function toAttributeValue(root: JSONValue): AttributeValue {
-  return prt.readObj({
+function toAttributeValue(root: jsonP.JSONValue): AttributeValue {
+  return jsonP.readObj({
     required: {},
     optional: {
       "S": "s",
@@ -574,15 +605,15 @@ export interface WriteRequest {
   PutRequest?: PutRequest | null;
   DeleteRequest?: DeleteRequest | null;
 }
-function fromWriteRequest(input?: WriteRequest | null): JSONValue {
+function fromWriteRequest(input?: WriteRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     PutRequest: fromPutRequest(input["PutRequest"]),
     DeleteRequest: fromDeleteRequest(input["DeleteRequest"]),
   }
 }
-function toWriteRequest(root: JSONValue): WriteRequest {
-  return prt.readObj({
+function toWriteRequest(root: jsonP.JSONValue): WriteRequest {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PutRequest": toPutRequest,
@@ -593,18 +624,18 @@ function toWriteRequest(root: JSONValue): WriteRequest {
 
 // refs: 2 - tags: input, named, interface, output
 export interface PutRequest {
-  Item: { [key: string]: AttributeValue };
+  Item: { [key: string]: AttributeValue | null | undefined };
 }
-function fromPutRequest(input?: PutRequest | null): JSONValue {
+function fromPutRequest(input?: PutRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Item: prt.serializeMap(input["Item"], x => fromAttributeValue(x)),
+  return {
+    Item: jsonP.serializeMap(input["Item"], x => fromAttributeValue(x)),
   }
 }
-function toPutRequest(root: JSONValue): PutRequest {
-  return prt.readObj({
+function toPutRequest(root: jsonP.JSONValue): PutRequest {
+  return jsonP.readObj({
     required: {
-      "Item": x => prt.readMap(String, toAttributeValue, x),
+      "Item": x => jsonP.readMap(String, toAttributeValue, x),
     },
     optional: {},
   }, root);
@@ -614,14 +645,14 @@ function toPutRequest(root: JSONValue): PutRequest {
 export interface DeleteRequest {
   Key: Key;
 }
-function fromDeleteRequest(input?: DeleteRequest | null): JSONValue {
+function fromDeleteRequest(input?: DeleteRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Key: fromKey(input["Key"]),
   }
 }
-function toDeleteRequest(root: JSONValue): DeleteRequest {
-  return prt.readObj({
+function toDeleteRequest(root: jsonP.JSONValue): DeleteRequest {
+  return jsonP.readObj({
     required: {
       "Key": toKey,
     },
@@ -634,15 +665,15 @@ export interface KeySchema {
   HashKeyElement: KeySchemaElement;
   RangeKeyElement?: KeySchemaElement | null;
 }
-function fromKeySchema(input?: KeySchema | null): JSONValue {
+function fromKeySchema(input?: KeySchema | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     HashKeyElement: fromKeySchemaElement(input["HashKeyElement"]),
     RangeKeyElement: fromKeySchemaElement(input["RangeKeyElement"]),
   }
 }
-function toKeySchema(root: JSONValue): KeySchema {
-  return prt.readObj({
+function toKeySchema(root: jsonP.JSONValue): KeySchema {
+  return jsonP.readObj({
     required: {
       "HashKeyElement": toKeySchemaElement,
     },
@@ -657,16 +688,18 @@ export interface KeySchemaElement {
   AttributeName: string;
   AttributeType: ScalarAttributeType;
 }
-function fromKeySchemaElement(input?: KeySchemaElement | null): JSONValue {
+function fromKeySchemaElement(input?: KeySchemaElement | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AttributeName: input["AttributeName"],
+    AttributeType: input["AttributeType"],
   }
 }
-function toKeySchemaElement(root: JSONValue): KeySchemaElement {
-  return prt.readObj({
+function toKeySchemaElement(root: jsonP.JSONValue): KeySchemaElement {
+  return jsonP.readObj({
     required: {
       "AttributeName": "s",
-      "AttributeType": toScalarAttributeType,
+      "AttributeType": (x: jsonP.JSONValue) => cmnP.readEnum<ScalarAttributeType>(x),
     },
     optional: {},
   }, root);
@@ -677,24 +710,18 @@ export type ScalarAttributeType =
 | "S"
 | "N"
 | "B"
-;
-
-function toScalarAttributeType(root: JSONValue): ScalarAttributeType | null {
-  return ( false
-    || root == "S"
-    || root == "N"
-    || root == "B"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface ProvisionedThroughput {
   ReadCapacityUnits: number;
   WriteCapacityUnits: number;
 }
-function fromProvisionedThroughput(input?: ProvisionedThroughput | null): JSONValue {
+function fromProvisionedThroughput(input?: ProvisionedThroughput | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ReadCapacityUnits: input["ReadCapacityUnits"],
+    WriteCapacityUnits: input["WriteCapacityUnits"],
   }
 }
 
@@ -703,10 +730,11 @@ export interface ExpectedAttributeValue {
   Value?: AttributeValue | null;
   Exists?: boolean | null;
 }
-function fromExpectedAttributeValue(input?: ExpectedAttributeValue | null): JSONValue {
+function fromExpectedAttributeValue(input?: ExpectedAttributeValue | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Value: fromAttributeValue(input["Value"]),
+    Exists: input["Exists"],
   }
 }
 
@@ -717,18 +745,18 @@ export type ReturnValue =
 | "UPDATED_OLD"
 | "ALL_NEW"
 | "UPDATED_NEW"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface Condition {
   AttributeValueList?: AttributeValue[] | null;
   ComparisonOperator: ComparisonOperator;
 }
-function fromCondition(input?: Condition | null): JSONValue {
+function fromCondition(input?: Condition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     AttributeValueList: input["AttributeValueList"]?.map(x => fromAttributeValue(x)),
+    ComparisonOperator: input["ComparisonOperator"],
   }
 }
 
@@ -747,18 +775,18 @@ export type ComparisonOperator =
 | "CONTAINS"
 | "NOT_CONTAINS"
 | "BEGINS_WITH"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface AttributeValueUpdate {
   Value?: AttributeValue | null;
   Action?: AttributeAction | null;
 }
-function fromAttributeValueUpdate(input?: AttributeValueUpdate | null): JSONValue {
+function fromAttributeValueUpdate(input?: AttributeValueUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Value: fromAttributeValue(input["Value"]),
+    Action: input["Action"],
   }
 }
 
@@ -767,19 +795,18 @@ export type AttributeAction =
 | "ADD"
 | "PUT"
 | "DELETE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface BatchResponse {
-  Items?: ({ [key: string]: AttributeValue })[] | null;
+  Items?: ({ [key: string]: AttributeValue | null | undefined })[] | null;
   ConsumedCapacityUnits?: number | null;
 }
-function toBatchResponse(root: JSONValue): BatchResponse {
-  return prt.readObj({
+function toBatchResponse(root: jsonP.JSONValue): BatchResponse {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Items": [x => prt.readMap(String, toAttributeValue, x)],
+      "Items": [x => jsonP.readMap(String, toAttributeValue, x)],
       "ConsumedCapacityUnits": "n",
     },
   }, root);
@@ -789,8 +816,8 @@ function toBatchResponse(root: JSONValue): BatchResponse {
 export interface BatchWriteResponse {
   ConsumedCapacityUnits?: number | null;
 }
-function toBatchWriteResponse(root: JSONValue): BatchWriteResponse {
-  return prt.readObj({
+function toBatchWriteResponse(root: jsonP.JSONValue): BatchWriteResponse {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ConsumedCapacityUnits": "n",
@@ -808,13 +835,13 @@ export interface TableDescription {
   TableSizeBytes?: number | null;
   ItemCount?: number | null;
 }
-function toTableDescription(root: JSONValue): TableDescription {
-  return prt.readObj({
+function toTableDescription(root: jsonP.JSONValue): TableDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TableName": "s",
       "KeySchema": toKeySchema,
-      "TableStatus": toTableStatus,
+      "TableStatus": (x: jsonP.JSONValue) => cmnP.readEnum<TableStatus>(x),
       "CreationDateTime": "d",
       "ProvisionedThroughput": toProvisionedThroughputDescription,
       "TableSizeBytes": "n",
@@ -829,15 +856,7 @@ export type TableStatus =
 | "UPDATING"
 | "DELETING"
 | "ACTIVE"
-;
-function toTableStatus(root: JSONValue): TableStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "UPDATING"
-    || root == "DELETING"
-    || root == "ACTIVE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface ProvisionedThroughputDescription {
@@ -847,8 +866,8 @@ export interface ProvisionedThroughputDescription {
   ReadCapacityUnits?: number | null;
   WriteCapacityUnits?: number | null;
 }
-function toProvisionedThroughputDescription(root: JSONValue): ProvisionedThroughputDescription {
-  return prt.readObj({
+function toProvisionedThroughputDescription(root: jsonP.JSONValue): ProvisionedThroughputDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "LastIncreaseDateTime": "d",

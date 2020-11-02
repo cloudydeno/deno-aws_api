@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class Cloud9 {
   #client: ServiceClient;
@@ -29,14 +29,22 @@ export default class Cloud9 {
   async createEnvironmentEC2(
     {abortSignal, ...params}: RequestConfig & CreateEnvironmentEC2Request,
   ): Promise<CreateEnvironmentEC2Result> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      description: params["description"],
+      clientRequestToken: params["clientRequestToken"],
+      instanceType: params["instanceType"],
+      subnetId: params["subnetId"],
+      automaticStopTimeMinutes: params["automaticStopTimeMinutes"],
+      ownerArn: params["ownerArn"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+      connectionType: params["connectionType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEnvironmentEC2",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "environmentId": "s",
@@ -47,13 +55,16 @@ export default class Cloud9 {
   async createEnvironmentMembership(
     {abortSignal, ...params}: RequestConfig & CreateEnvironmentMembershipRequest,
   ): Promise<CreateEnvironmentMembershipResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      environmentId: params["environmentId"],
+      userArn: params["userArn"],
+      permissions: params["permissions"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEnvironmentMembership",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "membership": toEnvironmentMember,
@@ -64,13 +75,14 @@ export default class Cloud9 {
   async deleteEnvironment(
     {abortSignal, ...params}: RequestConfig & DeleteEnvironmentRequest,
   ): Promise<DeleteEnvironmentResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      environmentId: params["environmentId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEnvironment",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -79,13 +91,15 @@ export default class Cloud9 {
   async deleteEnvironmentMembership(
     {abortSignal, ...params}: RequestConfig & DeleteEnvironmentMembershipRequest,
   ): Promise<DeleteEnvironmentMembershipResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      environmentId: params["environmentId"],
+      userArn: params["userArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEnvironmentMembership",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -94,13 +108,18 @@ export default class Cloud9 {
   async describeEnvironmentMemberships(
     {abortSignal, ...params}: RequestConfig & DescribeEnvironmentMembershipsRequest = {},
   ): Promise<DescribeEnvironmentMembershipsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      userArn: params["userArn"],
+      environmentId: params["environmentId"],
+      permissions: params["permissions"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEnvironmentMemberships",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "memberships": [toEnvironmentMember],
@@ -112,16 +131,17 @@ export default class Cloud9 {
   async describeEnvironmentStatus(
     {abortSignal, ...params}: RequestConfig & DescribeEnvironmentStatusRequest,
   ): Promise<DescribeEnvironmentStatusResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      environmentId: params["environmentId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEnvironmentStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "status": toEnvironmentStatus,
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<EnvironmentStatus>(x),
         "message": "s",
       },
     }, await resp.json());
@@ -130,13 +150,14 @@ export default class Cloud9 {
   async describeEnvironments(
     {abortSignal, ...params}: RequestConfig & DescribeEnvironmentsRequest,
   ): Promise<DescribeEnvironmentsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      environmentIds: params["environmentIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEnvironments",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "environments": [toEnvironment],
@@ -147,13 +168,15 @@ export default class Cloud9 {
   async listEnvironments(
     {abortSignal, ...params}: RequestConfig & ListEnvironmentsRequest = {},
   ): Promise<ListEnvironmentsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEnvironments",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "nextToken": "s",
@@ -165,13 +188,14 @@ export default class Cloud9 {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -182,14 +206,15 @@ export default class Cloud9 {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -198,13 +223,15 @@ export default class Cloud9 {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -213,13 +240,16 @@ export default class Cloud9 {
   async updateEnvironment(
     {abortSignal, ...params}: RequestConfig & UpdateEnvironmentRequest,
   ): Promise<UpdateEnvironmentResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      environmentId: params["environmentId"],
+      name: params["name"],
+      description: params["description"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEnvironment",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -228,13 +258,16 @@ export default class Cloud9 {
   async updateEnvironmentMembership(
     {abortSignal, ...params}: RequestConfig & UpdateEnvironmentMembershipRequest,
   ): Promise<UpdateEnvironmentMembershipResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      environmentId: params["environmentId"],
+      userArn: params["userArn"],
+      permissions: params["permissions"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEnvironmentMembership",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "membership": toEnvironmentMember,
@@ -399,13 +432,15 @@ export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -418,36 +453,20 @@ function toTag(root: JSONValue): Tag {
 export type ConnectionType =
 | "CONNECT_SSH"
 | "CONNECT_SSM"
-;
-
-function toConnectionType(root: JSONValue): ConnectionType | null {
-  return ( false
-    || root == "CONNECT_SSH"
-    || root == "CONNECT_SSM"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
 export type MemberPermissions =
 | "read-write"
 | "read-only"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type Permissions =
 | "owner"
 | "read-write"
 | "read-only"
-;
-
-function toPermissions(root: JSONValue): Permissions | null {
-  return ( false
-    || root == "owner"
-    || root == "read-write"
-    || root == "read-only"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface EnvironmentMember {
@@ -457,11 +476,11 @@ export interface EnvironmentMember {
   environmentId?: string | null;
   lastAccess?: Date | number | null;
 }
-function toEnvironmentMember(root: JSONValue): EnvironmentMember {
-  return prt.readObj({
+function toEnvironmentMember(root: jsonP.JSONValue): EnvironmentMember {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "permissions": toPermissions,
+      "permissions": (x: jsonP.JSONValue) => cmnP.readEnum<Permissions>(x),
       "userId": "s",
       "userArn": "s",
       "environmentId": "s",
@@ -479,18 +498,7 @@ export type EnvironmentStatus =
 | "stopping"
 | "stopped"
 | "deleting"
-;
-function toEnvironmentStatus(root: JSONValue): EnvironmentStatus | null {
-  return ( false
-    || root == "error"
-    || root == "creating"
-    || root == "connecting"
-    || root == "ready"
-    || root == "stopping"
-    || root == "stopped"
-    || root == "deleting"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Environment {
@@ -503,15 +511,15 @@ export interface Environment {
   ownerArn?: string | null;
   lifecycle?: EnvironmentLifecycle | null;
 }
-function toEnvironment(root: JSONValue): Environment {
-  return prt.readObj({
+function toEnvironment(root: jsonP.JSONValue): Environment {
+  return jsonP.readObj({
     required: {},
     optional: {
       "id": "s",
       "name": "s",
       "description": "s",
-      "type": toEnvironmentType,
-      "connectionType": toConnectionType,
+      "type": (x: jsonP.JSONValue) => cmnP.readEnum<EnvironmentType>(x),
+      "connectionType": (x: jsonP.JSONValue) => cmnP.readEnum<ConnectionType>(x),
       "arn": "s",
       "ownerArn": "s",
       "lifecycle": toEnvironmentLifecycle,
@@ -523,13 +531,7 @@ function toEnvironment(root: JSONValue): Environment {
 export type EnvironmentType =
 | "ssh"
 | "ec2"
-;
-function toEnvironmentType(root: JSONValue): EnvironmentType | null {
-  return ( false
-    || root == "ssh"
-    || root == "ec2"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface EnvironmentLifecycle {
@@ -537,11 +539,11 @@ export interface EnvironmentLifecycle {
   reason?: string | null;
   failureResource?: string | null;
 }
-function toEnvironmentLifecycle(root: JSONValue): EnvironmentLifecycle {
-  return prt.readObj({
+function toEnvironmentLifecycle(root: jsonP.JSONValue): EnvironmentLifecycle {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "status": toEnvironmentLifecycleStatus,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<EnvironmentLifecycleStatus>(x),
       "reason": "s",
       "failureResource": "s",
     },
@@ -555,13 +557,4 @@ export type EnvironmentLifecycleStatus =
 | "CREATE_FAILED"
 | "DELETING"
 | "DELETE_FAILED"
-;
-function toEnvironmentLifecycleStatus(root: JSONValue): EnvironmentLifecycleStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "CREATED"
-    || root == "CREATE_FAILED"
-    || root == "DELETING"
-    || root == "DELETE_FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;

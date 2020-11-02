@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class WAFV2 {
   #client: ServiceClient;
@@ -30,13 +30,15 @@ export default class WAFV2 {
   async associateWebACL(
     {abortSignal, ...params}: RequestConfig & AssociateWebACLRequest,
   ): Promise<AssociateWebACLResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WebACLArn: params["WebACLArn"],
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateWebACL",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -45,14 +47,15 @@ export default class WAFV2 {
   async checkCapacity(
     {abortSignal, ...params}: RequestConfig & CheckCapacityRequest,
   ): Promise<CheckCapacityResponse> {
-    const body: JSONObject = {...params,
-    Rules: params["Rules"]?.map(x => fromRule(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Scope: params["Scope"],
+      Rules: params["Rules"]?.map(x => fromRule(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CheckCapacity",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Capacity": "n",
@@ -63,14 +66,19 @@ export default class WAFV2 {
   async createIPSet(
     {abortSignal, ...params}: RequestConfig & CreateIPSetRequest,
   ): Promise<CreateIPSetResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Scope: params["Scope"],
+      Description: params["Description"],
+      IPAddressVersion: params["IPAddressVersion"],
+      Addresses: params["Addresses"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateIPSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Summary": toIPSetSummary,
@@ -81,15 +89,18 @@ export default class WAFV2 {
   async createRegexPatternSet(
     {abortSignal, ...params}: RequestConfig & CreateRegexPatternSetRequest,
   ): Promise<CreateRegexPatternSetResponse> {
-    const body: JSONObject = {...params,
-    RegularExpressionList: params["RegularExpressionList"]?.map(x => fromRegex(x)),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Scope: params["Scope"],
+      Description: params["Description"],
+      RegularExpressionList: params["RegularExpressionList"]?.map(x => fromRegex(x)),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRegexPatternSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Summary": toRegexPatternSetSummary,
@@ -100,16 +111,20 @@ export default class WAFV2 {
   async createRuleGroup(
     {abortSignal, ...params}: RequestConfig & CreateRuleGroupRequest,
   ): Promise<CreateRuleGroupResponse> {
-    const body: JSONObject = {...params,
-    Rules: params["Rules"]?.map(x => fromRule(x)),
-    VisibilityConfig: fromVisibilityConfig(params["VisibilityConfig"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Scope: params["Scope"],
+      Capacity: params["Capacity"],
+      Description: params["Description"],
+      Rules: params["Rules"]?.map(x => fromRule(x)),
+      VisibilityConfig: fromVisibilityConfig(params["VisibilityConfig"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRuleGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Summary": toRuleGroupSummary,
@@ -120,17 +135,20 @@ export default class WAFV2 {
   async createWebACL(
     {abortSignal, ...params}: RequestConfig & CreateWebACLRequest,
   ): Promise<CreateWebACLResponse> {
-    const body: JSONObject = {...params,
-    DefaultAction: fromDefaultAction(params["DefaultAction"]),
-    Rules: params["Rules"]?.map(x => fromRule(x)),
-    VisibilityConfig: fromVisibilityConfig(params["VisibilityConfig"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Scope: params["Scope"],
+      DefaultAction: fromDefaultAction(params["DefaultAction"]),
+      Description: params["Description"],
+      Rules: params["Rules"]?.map(x => fromRule(x)),
+      VisibilityConfig: fromVisibilityConfig(params["VisibilityConfig"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWebACL",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Summary": toWebACLSummary,
@@ -141,13 +159,15 @@ export default class WAFV2 {
   async deleteFirewallManagerRuleGroups(
     {abortSignal, ...params}: RequestConfig & DeleteFirewallManagerRuleGroupsRequest,
   ): Promise<DeleteFirewallManagerRuleGroupsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WebACLArn: params["WebACLArn"],
+      WebACLLockToken: params["WebACLLockToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFirewallManagerRuleGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextWebACLLockToken": "s",
@@ -158,13 +178,17 @@ export default class WAFV2 {
   async deleteIPSet(
     {abortSignal, ...params}: RequestConfig & DeleteIPSetRequest,
   ): Promise<DeleteIPSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Scope: params["Scope"],
+      Id: params["Id"],
+      LockToken: params["LockToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteIPSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -173,13 +197,14 @@ export default class WAFV2 {
   async deleteLoggingConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteLoggingConfigurationRequest,
   ): Promise<DeleteLoggingConfigurationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLoggingConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -188,13 +213,14 @@ export default class WAFV2 {
   async deletePermissionPolicy(
     {abortSignal, ...params}: RequestConfig & DeletePermissionPolicyRequest,
   ): Promise<DeletePermissionPolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePermissionPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -203,13 +229,17 @@ export default class WAFV2 {
   async deleteRegexPatternSet(
     {abortSignal, ...params}: RequestConfig & DeleteRegexPatternSetRequest,
   ): Promise<DeleteRegexPatternSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Scope: params["Scope"],
+      Id: params["Id"],
+      LockToken: params["LockToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRegexPatternSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -218,13 +248,17 @@ export default class WAFV2 {
   async deleteRuleGroup(
     {abortSignal, ...params}: RequestConfig & DeleteRuleGroupRequest,
   ): Promise<DeleteRuleGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Scope: params["Scope"],
+      Id: params["Id"],
+      LockToken: params["LockToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRuleGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -233,13 +267,17 @@ export default class WAFV2 {
   async deleteWebACL(
     {abortSignal, ...params}: RequestConfig & DeleteWebACLRequest,
   ): Promise<DeleteWebACLResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Scope: params["Scope"],
+      Id: params["Id"],
+      LockToken: params["LockToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteWebACL",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -248,13 +286,16 @@ export default class WAFV2 {
   async describeManagedRuleGroup(
     {abortSignal, ...params}: RequestConfig & DescribeManagedRuleGroupRequest,
   ): Promise<DescribeManagedRuleGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VendorName: params["VendorName"],
+      Name: params["Name"],
+      Scope: params["Scope"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeManagedRuleGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Capacity": "n",
@@ -266,13 +307,14 @@ export default class WAFV2 {
   async disassociateWebACL(
     {abortSignal, ...params}: RequestConfig & DisassociateWebACLRequest,
   ): Promise<DisassociateWebACLResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateWebACL",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -281,13 +323,16 @@ export default class WAFV2 {
   async getIPSet(
     {abortSignal, ...params}: RequestConfig & GetIPSetRequest,
   ): Promise<GetIPSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Scope: params["Scope"],
+      Id: params["Id"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetIPSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "IPSet": toIPSet,
@@ -299,13 +344,14 @@ export default class WAFV2 {
   async getLoggingConfiguration(
     {abortSignal, ...params}: RequestConfig & GetLoggingConfigurationRequest,
   ): Promise<GetLoggingConfigurationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetLoggingConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LoggingConfiguration": toLoggingConfiguration,
@@ -316,13 +362,14 @@ export default class WAFV2 {
   async getPermissionPolicy(
     {abortSignal, ...params}: RequestConfig & GetPermissionPolicyRequest,
   ): Promise<GetPermissionPolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPermissionPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Policy": "s",
@@ -333,13 +380,17 @@ export default class WAFV2 {
   async getRateBasedStatementManagedKeys(
     {abortSignal, ...params}: RequestConfig & GetRateBasedStatementManagedKeysRequest,
   ): Promise<GetRateBasedStatementManagedKeysResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Scope: params["Scope"],
+      WebACLName: params["WebACLName"],
+      WebACLId: params["WebACLId"],
+      RuleName: params["RuleName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRateBasedStatementManagedKeys",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ManagedKeysIPV4": toRateBasedStatementManagedKeysIPSet,
@@ -351,13 +402,16 @@ export default class WAFV2 {
   async getRegexPatternSet(
     {abortSignal, ...params}: RequestConfig & GetRegexPatternSetRequest,
   ): Promise<GetRegexPatternSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Scope: params["Scope"],
+      Id: params["Id"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRegexPatternSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RegexPatternSet": toRegexPatternSet,
@@ -369,13 +423,16 @@ export default class WAFV2 {
   async getRuleGroup(
     {abortSignal, ...params}: RequestConfig & GetRuleGroupRequest,
   ): Promise<GetRuleGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Scope: params["Scope"],
+      Id: params["Id"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRuleGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RuleGroup": toRuleGroup,
@@ -387,14 +444,18 @@ export default class WAFV2 {
   async getSampledRequests(
     {abortSignal, ...params}: RequestConfig & GetSampledRequestsRequest,
   ): Promise<GetSampledRequestsResponse> {
-    const body: JSONObject = {...params,
-    TimeWindow: fromTimeWindow(params["TimeWindow"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      WebAclArn: params["WebAclArn"],
+      RuleMetricName: params["RuleMetricName"],
+      Scope: params["Scope"],
+      TimeWindow: fromTimeWindow(params["TimeWindow"]),
+      MaxItems: params["MaxItems"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSampledRequests",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SampledRequests": [toSampledHTTPRequest],
@@ -407,13 +468,16 @@ export default class WAFV2 {
   async getWebACL(
     {abortSignal, ...params}: RequestConfig & GetWebACLRequest,
   ): Promise<GetWebACLResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Scope: params["Scope"],
+      Id: params["Id"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetWebACL",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WebACL": toWebACL,
@@ -425,13 +489,14 @@ export default class WAFV2 {
   async getWebACLForResource(
     {abortSignal, ...params}: RequestConfig & GetWebACLForResourceRequest,
   ): Promise<GetWebACLForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetWebACLForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WebACL": toWebACL,
@@ -442,13 +507,16 @@ export default class WAFV2 {
   async listAvailableManagedRuleGroups(
     {abortSignal, ...params}: RequestConfig & ListAvailableManagedRuleGroupsRequest,
   ): Promise<ListAvailableManagedRuleGroupsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Scope: params["Scope"],
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAvailableManagedRuleGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -460,13 +528,16 @@ export default class WAFV2 {
   async listIPSets(
     {abortSignal, ...params}: RequestConfig & ListIPSetsRequest,
   ): Promise<ListIPSetsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Scope: params["Scope"],
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListIPSets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -478,13 +549,16 @@ export default class WAFV2 {
   async listLoggingConfigurations(
     {abortSignal, ...params}: RequestConfig & ListLoggingConfigurationsRequest = {},
   ): Promise<ListLoggingConfigurationsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Scope: params["Scope"],
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLoggingConfigurations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LoggingConfigurations": [toLoggingConfiguration],
@@ -496,13 +570,16 @@ export default class WAFV2 {
   async listRegexPatternSets(
     {abortSignal, ...params}: RequestConfig & ListRegexPatternSetsRequest,
   ): Promise<ListRegexPatternSetsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Scope: params["Scope"],
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRegexPatternSets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -514,13 +591,15 @@ export default class WAFV2 {
   async listResourcesForWebACL(
     {abortSignal, ...params}: RequestConfig & ListResourcesForWebACLRequest,
   ): Promise<ListResourcesForWebACLResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WebACLArn: params["WebACLArn"],
+      ResourceType: params["ResourceType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResourcesForWebACL",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResourceArns": ["s"],
@@ -531,13 +610,16 @@ export default class WAFV2 {
   async listRuleGroups(
     {abortSignal, ...params}: RequestConfig & ListRuleGroupsRequest,
   ): Promise<ListRuleGroupsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Scope: params["Scope"],
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRuleGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -549,13 +631,16 @@ export default class WAFV2 {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+      ResourceARN: params["ResourceARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -567,13 +652,16 @@ export default class WAFV2 {
   async listWebACLs(
     {abortSignal, ...params}: RequestConfig & ListWebACLsRequest,
   ): Promise<ListWebACLsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Scope: params["Scope"],
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWebACLs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -585,14 +673,14 @@ export default class WAFV2 {
   async putLoggingConfiguration(
     {abortSignal, ...params}: RequestConfig & PutLoggingConfigurationRequest,
   ): Promise<PutLoggingConfigurationResponse> {
-    const body: JSONObject = {...params,
-    LoggingConfiguration: fromLoggingConfiguration(params["LoggingConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      LoggingConfiguration: fromLoggingConfiguration(params["LoggingConfiguration"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutLoggingConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LoggingConfiguration": toLoggingConfiguration,
@@ -603,13 +691,15 @@ export default class WAFV2 {
   async putPermissionPolicy(
     {abortSignal, ...params}: RequestConfig & PutPermissionPolicyRequest,
   ): Promise<PutPermissionPolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      Policy: params["Policy"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutPermissionPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -618,14 +708,15 @@ export default class WAFV2 {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -634,13 +725,15 @@ export default class WAFV2 {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -649,13 +742,19 @@ export default class WAFV2 {
   async updateIPSet(
     {abortSignal, ...params}: RequestConfig & UpdateIPSetRequest,
   ): Promise<UpdateIPSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Scope: params["Scope"],
+      Id: params["Id"],
+      Description: params["Description"],
+      Addresses: params["Addresses"],
+      LockToken: params["LockToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateIPSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextLockToken": "s",
@@ -666,14 +765,19 @@ export default class WAFV2 {
   async updateRegexPatternSet(
     {abortSignal, ...params}: RequestConfig & UpdateRegexPatternSetRequest,
   ): Promise<UpdateRegexPatternSetResponse> {
-    const body: JSONObject = {...params,
-    RegularExpressionList: params["RegularExpressionList"]?.map(x => fromRegex(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Scope: params["Scope"],
+      Id: params["Id"],
+      Description: params["Description"],
+      RegularExpressionList: params["RegularExpressionList"]?.map(x => fromRegex(x)),
+      LockToken: params["LockToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRegexPatternSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextLockToken": "s",
@@ -684,15 +788,20 @@ export default class WAFV2 {
   async updateRuleGroup(
     {abortSignal, ...params}: RequestConfig & UpdateRuleGroupRequest,
   ): Promise<UpdateRuleGroupResponse> {
-    const body: JSONObject = {...params,
-    Rules: params["Rules"]?.map(x => fromRule(x)),
-    VisibilityConfig: fromVisibilityConfig(params["VisibilityConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Scope: params["Scope"],
+      Id: params["Id"],
+      Description: params["Description"],
+      Rules: params["Rules"]?.map(x => fromRule(x)),
+      VisibilityConfig: fromVisibilityConfig(params["VisibilityConfig"]),
+      LockToken: params["LockToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRuleGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextLockToken": "s",
@@ -703,16 +812,21 @@ export default class WAFV2 {
   async updateWebACL(
     {abortSignal, ...params}: RequestConfig & UpdateWebACLRequest,
   ): Promise<UpdateWebACLResponse> {
-    const body: JSONObject = {...params,
-    DefaultAction: fromDefaultAction(params["DefaultAction"]),
-    Rules: params["Rules"]?.map(x => fromRule(x)),
-    VisibilityConfig: fromVisibilityConfig(params["VisibilityConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Scope: params["Scope"],
+      Id: params["Id"],
+      DefaultAction: fromDefaultAction(params["DefaultAction"]),
+      Description: params["Description"],
+      Rules: params["Rules"]?.map(x => fromRule(x)),
+      VisibilityConfig: fromVisibilityConfig(params["VisibilityConfig"]),
+      LockToken: params["LockToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateWebACL",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextLockToken": "s",
@@ -1224,8 +1338,7 @@ export interface UpdateWebACLResponse {
 export type Scope =
 | "CLOUDFRONT"
 | "REGIONAL"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: input, named, interface, output
 export interface Rule {
@@ -1236,17 +1349,19 @@ export interface Rule {
   OverrideAction?: OverrideAction | null;
   VisibilityConfig: VisibilityConfig;
 }
-function fromRule(input?: Rule | null): JSONValue {
+function fromRule(input?: Rule | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Priority: input["Priority"],
     Statement: fromStatement(input["Statement"]),
     Action: fromRuleAction(input["Action"]),
     OverrideAction: fromOverrideAction(input["OverrideAction"]),
     VisibilityConfig: fromVisibilityConfig(input["VisibilityConfig"]),
   }
 }
-function toRule(root: JSONValue): Rule {
-  return prt.readObj({
+function toRule(root: jsonP.JSONValue): Rule {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "Priority": "n",
@@ -1276,9 +1391,9 @@ export interface Statement {
   NotStatement?: NotStatement | null;
   ManagedRuleGroupStatement?: ManagedRuleGroupStatement | null;
 }
-function fromStatement(input?: Statement | null): JSONValue {
+function fromStatement(input?: Statement | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     ByteMatchStatement: fromByteMatchStatement(input["ByteMatchStatement"]),
     SqliMatchStatement: fromSqliMatchStatement(input["SqliMatchStatement"]),
     XssMatchStatement: fromXssMatchStatement(input["XssMatchStatement"]),
@@ -1294,8 +1409,8 @@ function fromStatement(input?: Statement | null): JSONValue {
     ManagedRuleGroupStatement: fromManagedRuleGroupStatement(input["ManagedRuleGroupStatement"]),
   }
 }
-function toStatement(root: JSONValue): Statement {
-  return prt.readObj({
+function toStatement(root: jsonP.JSONValue): Statement {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ByteMatchStatement": toByteMatchStatement,
@@ -1322,21 +1437,22 @@ export interface ByteMatchStatement {
   TextTransformations: TextTransformation[];
   PositionalConstraint: PositionalConstraint;
 }
-function fromByteMatchStatement(input?: ByteMatchStatement | null): JSONValue {
+function fromByteMatchStatement(input?: ByteMatchStatement | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    SearchString: prt.serializeBlob(input["SearchString"]),
+  return {
+    SearchString: jsonP.serializeBlob(input["SearchString"]),
     FieldToMatch: fromFieldToMatch(input["FieldToMatch"]),
     TextTransformations: input["TextTransformations"]?.map(x => fromTextTransformation(x)),
+    PositionalConstraint: input["PositionalConstraint"],
   }
 }
-function toByteMatchStatement(root: JSONValue): ByteMatchStatement {
-  return prt.readObj({
+function toByteMatchStatement(root: jsonP.JSONValue): ByteMatchStatement {
+  return jsonP.readObj({
     required: {
       "SearchString": "a",
       "FieldToMatch": toFieldToMatch,
       "TextTransformations": [toTextTransformation],
-      "PositionalConstraint": toPositionalConstraint,
+      "PositionalConstraint": (x: jsonP.JSONValue) => cmnP.readEnum<PositionalConstraint>(x),
     },
     optional: {},
   }, root);
@@ -1352,9 +1468,9 @@ export interface FieldToMatch {
   Body?: Body | null;
   Method?: Method | null;
 }
-function fromFieldToMatch(input?: FieldToMatch | null): JSONValue {
+function fromFieldToMatch(input?: FieldToMatch | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     SingleHeader: fromSingleHeader(input["SingleHeader"]),
     SingleQueryArgument: fromSingleQueryArgument(input["SingleQueryArgument"]),
     AllQueryArguments: fromAllQueryArguments(input["AllQueryArguments"]),
@@ -1364,8 +1480,8 @@ function fromFieldToMatch(input?: FieldToMatch | null): JSONValue {
     Method: fromMethod(input["Method"]),
   }
 }
-function toFieldToMatch(root: JSONValue): FieldToMatch {
-  return prt.readObj({
+function toFieldToMatch(root: jsonP.JSONValue): FieldToMatch {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SingleHeader": toSingleHeader,
@@ -1383,13 +1499,14 @@ function toFieldToMatch(root: JSONValue): FieldToMatch {
 export interface SingleHeader {
   Name: string;
 }
-function fromSingleHeader(input?: SingleHeader | null): JSONValue {
+function fromSingleHeader(input?: SingleHeader | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
   }
 }
-function toSingleHeader(root: JSONValue): SingleHeader {
-  return prt.readObj({
+function toSingleHeader(root: jsonP.JSONValue): SingleHeader {
+  return jsonP.readObj({
     required: {
       "Name": "s",
     },
@@ -1401,13 +1518,14 @@ function toSingleHeader(root: JSONValue): SingleHeader {
 export interface SingleQueryArgument {
   Name: string;
 }
-function fromSingleQueryArgument(input?: SingleQueryArgument | null): JSONValue {
+function fromSingleQueryArgument(input?: SingleQueryArgument | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
   }
 }
-function toSingleQueryArgument(root: JSONValue): SingleQueryArgument {
-  return prt.readObj({
+function toSingleQueryArgument(root: jsonP.JSONValue): SingleQueryArgument {
+  return jsonP.readObj({
     required: {
       "Name": "s",
     },
@@ -1418,13 +1536,13 @@ function toSingleQueryArgument(root: JSONValue): SingleQueryArgument {
 // refs: 44 - tags: input, named, interface, output
 export interface AllQueryArguments {
 }
-function fromAllQueryArguments(input?: AllQueryArguments | null): JSONValue {
+function fromAllQueryArguments(input?: AllQueryArguments | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
   }
 }
-function toAllQueryArguments(root: JSONValue): AllQueryArguments {
-  return prt.readObj({
+function toAllQueryArguments(root: jsonP.JSONValue): AllQueryArguments {
+  return jsonP.readObj({
     required: {},
     optional: {},
   }, root);
@@ -1433,13 +1551,13 @@ function toAllQueryArguments(root: JSONValue): AllQueryArguments {
 // refs: 44 - tags: input, named, interface, output
 export interface UriPath {
 }
-function fromUriPath(input?: UriPath | null): JSONValue {
+function fromUriPath(input?: UriPath | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
   }
 }
-function toUriPath(root: JSONValue): UriPath {
-  return prt.readObj({
+function toUriPath(root: jsonP.JSONValue): UriPath {
+  return jsonP.readObj({
     required: {},
     optional: {},
   }, root);
@@ -1448,13 +1566,13 @@ function toUriPath(root: JSONValue): UriPath {
 // refs: 44 - tags: input, named, interface, output
 export interface QueryString {
 }
-function fromQueryString(input?: QueryString | null): JSONValue {
+function fromQueryString(input?: QueryString | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
   }
 }
-function toQueryString(root: JSONValue): QueryString {
-  return prt.readObj({
+function toQueryString(root: jsonP.JSONValue): QueryString {
+  return jsonP.readObj({
     required: {},
     optional: {},
   }, root);
@@ -1463,13 +1581,13 @@ function toQueryString(root: JSONValue): QueryString {
 // refs: 44 - tags: input, named, interface, output
 export interface Body {
 }
-function fromBody(input?: Body | null): JSONValue {
+function fromBody(input?: Body | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
   }
 }
-function toBody(root: JSONValue): Body {
-  return prt.readObj({
+function toBody(root: jsonP.JSONValue): Body {
+  return jsonP.readObj({
     required: {},
     optional: {},
   }, root);
@@ -1478,13 +1596,13 @@ function toBody(root: JSONValue): Body {
 // refs: 44 - tags: input, named, interface, output
 export interface Method {
 }
-function fromMethod(input?: Method | null): JSONValue {
+function fromMethod(input?: Method | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
   }
 }
-function toMethod(root: JSONValue): Method {
-  return prt.readObj({
+function toMethod(root: jsonP.JSONValue): Method {
+  return jsonP.readObj({
     required: {},
     optional: {},
   }, root);
@@ -1495,16 +1613,18 @@ export interface TextTransformation {
   Priority: number;
   Type: TextTransformationType;
 }
-function fromTextTransformation(input?: TextTransformation | null): JSONValue {
+function fromTextTransformation(input?: TextTransformation | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Priority: input["Priority"],
+    Type: input["Type"],
   }
 }
-function toTextTransformation(root: JSONValue): TextTransformation {
-  return prt.readObj({
+function toTextTransformation(root: jsonP.JSONValue): TextTransformation {
+  return jsonP.readObj({
     required: {
       "Priority": "n",
-      "Type": toTextTransformationType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<TextTransformationType>(x),
     },
     optional: {},
   }, root);
@@ -1518,18 +1638,7 @@ export type TextTransformationType =
 | "LOWERCASE"
 | "CMD_LINE"
 | "URL_DECODE"
-;
-
-function toTextTransformationType(root: JSONValue): TextTransformationType | null {
-  return ( false
-    || root == "NONE"
-    || root == "COMPRESS_WHITE_SPACE"
-    || root == "HTML_ENTITY_DECODE"
-    || root == "LOWERCASE"
-    || root == "CMD_LINE"
-    || root == "URL_DECODE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: input, named, enum, output
 export type PositionalConstraint =
@@ -1538,32 +1647,22 @@ export type PositionalConstraint =
 | "ENDS_WITH"
 | "CONTAINS"
 | "CONTAINS_WORD"
-;
-
-function toPositionalConstraint(root: JSONValue): PositionalConstraint | null {
-  return ( false
-    || root == "EXACTLY"
-    || root == "STARTS_WITH"
-    || root == "ENDS_WITH"
-    || root == "CONTAINS"
-    || root == "CONTAINS_WORD"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: input, named, interface, output
 export interface SqliMatchStatement {
   FieldToMatch: FieldToMatch;
   TextTransformations: TextTransformation[];
 }
-function fromSqliMatchStatement(input?: SqliMatchStatement | null): JSONValue {
+function fromSqliMatchStatement(input?: SqliMatchStatement | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     FieldToMatch: fromFieldToMatch(input["FieldToMatch"]),
     TextTransformations: input["TextTransformations"]?.map(x => fromTextTransformation(x)),
   }
 }
-function toSqliMatchStatement(root: JSONValue): SqliMatchStatement {
-  return prt.readObj({
+function toSqliMatchStatement(root: jsonP.JSONValue): SqliMatchStatement {
+  return jsonP.readObj({
     required: {
       "FieldToMatch": toFieldToMatch,
       "TextTransformations": [toTextTransformation],
@@ -1577,15 +1676,15 @@ export interface XssMatchStatement {
   FieldToMatch: FieldToMatch;
   TextTransformations: TextTransformation[];
 }
-function fromXssMatchStatement(input?: XssMatchStatement | null): JSONValue {
+function fromXssMatchStatement(input?: XssMatchStatement | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     FieldToMatch: fromFieldToMatch(input["FieldToMatch"]),
     TextTransformations: input["TextTransformations"]?.map(x => fromTextTransformation(x)),
   }
 }
-function toXssMatchStatement(root: JSONValue): XssMatchStatement {
-  return prt.readObj({
+function toXssMatchStatement(root: jsonP.JSONValue): XssMatchStatement {
+  return jsonP.readObj({
     required: {
       "FieldToMatch": toFieldToMatch,
       "TextTransformations": [toTextTransformation],
@@ -1601,18 +1700,20 @@ export interface SizeConstraintStatement {
   Size: number;
   TextTransformations: TextTransformation[];
 }
-function fromSizeConstraintStatement(input?: SizeConstraintStatement | null): JSONValue {
+function fromSizeConstraintStatement(input?: SizeConstraintStatement | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     FieldToMatch: fromFieldToMatch(input["FieldToMatch"]),
+    ComparisonOperator: input["ComparisonOperator"],
+    Size: input["Size"],
     TextTransformations: input["TextTransformations"]?.map(x => fromTextTransformation(x)),
   }
 }
-function toSizeConstraintStatement(root: JSONValue): SizeConstraintStatement {
-  return prt.readObj({
+function toSizeConstraintStatement(root: jsonP.JSONValue): SizeConstraintStatement {
+  return jsonP.readObj({
     required: {
       "FieldToMatch": toFieldToMatch,
-      "ComparisonOperator": toComparisonOperator,
+      "ComparisonOperator": (x: jsonP.JSONValue) => cmnP.readEnum<ComparisonOperator>(x),
       "Size": "n",
       "TextTransformations": [toTextTransformation],
     },
@@ -1628,35 +1729,25 @@ export type ComparisonOperator =
 | "LT"
 | "GE"
 | "GT"
-;
-
-function toComparisonOperator(root: JSONValue): ComparisonOperator | null {
-  return ( false
-    || root == "EQ"
-    || root == "NE"
-    || root == "LE"
-    || root == "LT"
-    || root == "GE"
-    || root == "GT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: input, named, interface, output
 export interface GeoMatchStatement {
   CountryCodes?: CountryCode[] | null;
   ForwardedIPConfig?: ForwardedIPConfig | null;
 }
-function fromGeoMatchStatement(input?: GeoMatchStatement | null): JSONValue {
+function fromGeoMatchStatement(input?: GeoMatchStatement | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CountryCodes: input["CountryCodes"],
     ForwardedIPConfig: fromForwardedIPConfig(input["ForwardedIPConfig"]),
   }
 }
-function toGeoMatchStatement(root: JSONValue): GeoMatchStatement {
-  return prt.readObj({
+function toGeoMatchStatement(root: jsonP.JSONValue): GeoMatchStatement {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "CountryCodes": [toCountryCode],
+      "CountryCodes": [(x: jsonP.JSONValue) => cmnP.readEnum<CountryCode>(x)],
       "ForwardedIPConfig": toForwardedIPConfig,
     },
   }, root);
@@ -1913,277 +2004,25 @@ export type CountryCode =
 | "YE"
 | "ZM"
 | "ZW"
-;
-
-function toCountryCode(root: JSONValue): CountryCode | null {
-  return ( false
-    || root == "AF"
-    || root == "AX"
-    || root == "AL"
-    || root == "DZ"
-    || root == "AS"
-    || root == "AD"
-    || root == "AO"
-    || root == "AI"
-    || root == "AQ"
-    || root == "AG"
-    || root == "AR"
-    || root == "AM"
-    || root == "AW"
-    || root == "AU"
-    || root == "AT"
-    || root == "AZ"
-    || root == "BS"
-    || root == "BH"
-    || root == "BD"
-    || root == "BB"
-    || root == "BY"
-    || root == "BE"
-    || root == "BZ"
-    || root == "BJ"
-    || root == "BM"
-    || root == "BT"
-    || root == "BO"
-    || root == "BQ"
-    || root == "BA"
-    || root == "BW"
-    || root == "BV"
-    || root == "BR"
-    || root == "IO"
-    || root == "BN"
-    || root == "BG"
-    || root == "BF"
-    || root == "BI"
-    || root == "KH"
-    || root == "CM"
-    || root == "CA"
-    || root == "CV"
-    || root == "KY"
-    || root == "CF"
-    || root == "TD"
-    || root == "CL"
-    || root == "CN"
-    || root == "CX"
-    || root == "CC"
-    || root == "CO"
-    || root == "KM"
-    || root == "CG"
-    || root == "CD"
-    || root == "CK"
-    || root == "CR"
-    || root == "CI"
-    || root == "HR"
-    || root == "CU"
-    || root == "CW"
-    || root == "CY"
-    || root == "CZ"
-    || root == "DK"
-    || root == "DJ"
-    || root == "DM"
-    || root == "DO"
-    || root == "EC"
-    || root == "EG"
-    || root == "SV"
-    || root == "GQ"
-    || root == "ER"
-    || root == "EE"
-    || root == "ET"
-    || root == "FK"
-    || root == "FO"
-    || root == "FJ"
-    || root == "FI"
-    || root == "FR"
-    || root == "GF"
-    || root == "PF"
-    || root == "TF"
-    || root == "GA"
-    || root == "GM"
-    || root == "GE"
-    || root == "DE"
-    || root == "GH"
-    || root == "GI"
-    || root == "GR"
-    || root == "GL"
-    || root == "GD"
-    || root == "GP"
-    || root == "GU"
-    || root == "GT"
-    || root == "GG"
-    || root == "GN"
-    || root == "GW"
-    || root == "GY"
-    || root == "HT"
-    || root == "HM"
-    || root == "VA"
-    || root == "HN"
-    || root == "HK"
-    || root == "HU"
-    || root == "IS"
-    || root == "IN"
-    || root == "ID"
-    || root == "IR"
-    || root == "IQ"
-    || root == "IE"
-    || root == "IM"
-    || root == "IL"
-    || root == "IT"
-    || root == "JM"
-    || root == "JP"
-    || root == "JE"
-    || root == "JO"
-    || root == "KZ"
-    || root == "KE"
-    || root == "KI"
-    || root == "KP"
-    || root == "KR"
-    || root == "KW"
-    || root == "KG"
-    || root == "LA"
-    || root == "LV"
-    || root == "LB"
-    || root == "LS"
-    || root == "LR"
-    || root == "LY"
-    || root == "LI"
-    || root == "LT"
-    || root == "LU"
-    || root == "MO"
-    || root == "MK"
-    || root == "MG"
-    || root == "MW"
-    || root == "MY"
-    || root == "MV"
-    || root == "ML"
-    || root == "MT"
-    || root == "MH"
-    || root == "MQ"
-    || root == "MR"
-    || root == "MU"
-    || root == "YT"
-    || root == "MX"
-    || root == "FM"
-    || root == "MD"
-    || root == "MC"
-    || root == "MN"
-    || root == "ME"
-    || root == "MS"
-    || root == "MA"
-    || root == "MZ"
-    || root == "MM"
-    || root == "NA"
-    || root == "NR"
-    || root == "NP"
-    || root == "NL"
-    || root == "NC"
-    || root == "NZ"
-    || root == "NI"
-    || root == "NE"
-    || root == "NG"
-    || root == "NU"
-    || root == "NF"
-    || root == "MP"
-    || root == "NO"
-    || root == "OM"
-    || root == "PK"
-    || root == "PW"
-    || root == "PS"
-    || root == "PA"
-    || root == "PG"
-    || root == "PY"
-    || root == "PE"
-    || root == "PH"
-    || root == "PN"
-    || root == "PL"
-    || root == "PT"
-    || root == "PR"
-    || root == "QA"
-    || root == "RE"
-    || root == "RO"
-    || root == "RU"
-    || root == "RW"
-    || root == "BL"
-    || root == "SH"
-    || root == "KN"
-    || root == "LC"
-    || root == "MF"
-    || root == "PM"
-    || root == "VC"
-    || root == "WS"
-    || root == "SM"
-    || root == "ST"
-    || root == "SA"
-    || root == "SN"
-    || root == "RS"
-    || root == "SC"
-    || root == "SL"
-    || root == "SG"
-    || root == "SX"
-    || root == "SK"
-    || root == "SI"
-    || root == "SB"
-    || root == "SO"
-    || root == "ZA"
-    || root == "GS"
-    || root == "SS"
-    || root == "ES"
-    || root == "LK"
-    || root == "SD"
-    || root == "SR"
-    || root == "SJ"
-    || root == "SZ"
-    || root == "SE"
-    || root == "CH"
-    || root == "SY"
-    || root == "TW"
-    || root == "TJ"
-    || root == "TZ"
-    || root == "TH"
-    || root == "TL"
-    || root == "TG"
-    || root == "TK"
-    || root == "TO"
-    || root == "TT"
-    || root == "TN"
-    || root == "TR"
-    || root == "TM"
-    || root == "TC"
-    || root == "TV"
-    || root == "UG"
-    || root == "UA"
-    || root == "AE"
-    || root == "GB"
-    || root == "US"
-    || root == "UM"
-    || root == "UY"
-    || root == "UZ"
-    || root == "VU"
-    || root == "VE"
-    || root == "VN"
-    || root == "VG"
-    || root == "VI"
-    || root == "WF"
-    || root == "EH"
-    || root == "YE"
-    || root == "ZM"
-    || root == "ZW"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 16 - tags: input, named, interface, output
 export interface ForwardedIPConfig {
   HeaderName: string;
   FallbackBehavior: FallbackBehavior;
 }
-function fromForwardedIPConfig(input?: ForwardedIPConfig | null): JSONValue {
+function fromForwardedIPConfig(input?: ForwardedIPConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    HeaderName: input["HeaderName"],
+    FallbackBehavior: input["FallbackBehavior"],
   }
 }
-function toForwardedIPConfig(root: JSONValue): ForwardedIPConfig {
-  return prt.readObj({
+function toForwardedIPConfig(root: jsonP.JSONValue): ForwardedIPConfig {
+  return jsonP.readObj({
     required: {
       "HeaderName": "s",
-      "FallbackBehavior": toFallbackBehavior,
+      "FallbackBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<FallbackBehavior>(x),
     },
     optional: {},
   }, root);
@@ -2193,28 +2032,22 @@ function toForwardedIPConfig(root: JSONValue): ForwardedIPConfig {
 export type FallbackBehavior =
 | "MATCH"
 | "NO_MATCH"
-;
-
-function toFallbackBehavior(root: JSONValue): FallbackBehavior | null {
-  return ( false
-    || root == "MATCH"
-    || root == "NO_MATCH"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 12 - tags: input, named, interface, output
 export interface RuleGroupReferenceStatement {
   ARN: string;
   ExcludedRules?: ExcludedRule[] | null;
 }
-function fromRuleGroupReferenceStatement(input?: RuleGroupReferenceStatement | null): JSONValue {
+function fromRuleGroupReferenceStatement(input?: RuleGroupReferenceStatement | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ARN: input["ARN"],
     ExcludedRules: input["ExcludedRules"]?.map(x => fromExcludedRule(x)),
   }
 }
-function toRuleGroupReferenceStatement(root: JSONValue): RuleGroupReferenceStatement {
-  return prt.readObj({
+function toRuleGroupReferenceStatement(root: jsonP.JSONValue): RuleGroupReferenceStatement {
+  return jsonP.readObj({
     required: {
       "ARN": "s",
     },
@@ -2228,13 +2061,14 @@ function toRuleGroupReferenceStatement(root: JSONValue): RuleGroupReferenceState
 export interface ExcludedRule {
   Name: string;
 }
-function fromExcludedRule(input?: ExcludedRule | null): JSONValue {
+function fromExcludedRule(input?: ExcludedRule | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
   }
 }
-function toExcludedRule(root: JSONValue): ExcludedRule {
-  return prt.readObj({
+function toExcludedRule(root: jsonP.JSONValue): ExcludedRule {
+  return jsonP.readObj({
     required: {
       "Name": "s",
     },
@@ -2247,14 +2081,15 @@ export interface IPSetReferenceStatement {
   ARN: string;
   IPSetForwardedIPConfig?: IPSetForwardedIPConfig | null;
 }
-function fromIPSetReferenceStatement(input?: IPSetReferenceStatement | null): JSONValue {
+function fromIPSetReferenceStatement(input?: IPSetReferenceStatement | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ARN: input["ARN"],
     IPSetForwardedIPConfig: fromIPSetForwardedIPConfig(input["IPSetForwardedIPConfig"]),
   }
 }
-function toIPSetReferenceStatement(root: JSONValue): IPSetReferenceStatement {
-  return prt.readObj({
+function toIPSetReferenceStatement(root: jsonP.JSONValue): IPSetReferenceStatement {
+  return jsonP.readObj({
     required: {
       "ARN": "s",
     },
@@ -2270,17 +2105,20 @@ export interface IPSetForwardedIPConfig {
   FallbackBehavior: FallbackBehavior;
   Position: ForwardedIPPosition;
 }
-function fromIPSetForwardedIPConfig(input?: IPSetForwardedIPConfig | null): JSONValue {
+function fromIPSetForwardedIPConfig(input?: IPSetForwardedIPConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    HeaderName: input["HeaderName"],
+    FallbackBehavior: input["FallbackBehavior"],
+    Position: input["Position"],
   }
 }
-function toIPSetForwardedIPConfig(root: JSONValue): IPSetForwardedIPConfig {
-  return prt.readObj({
+function toIPSetForwardedIPConfig(root: jsonP.JSONValue): IPSetForwardedIPConfig {
+  return jsonP.readObj({
     required: {
       "HeaderName": "s",
-      "FallbackBehavior": toFallbackBehavior,
-      "Position": toForwardedIPPosition,
+      "FallbackBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<FallbackBehavior>(x),
+      "Position": (x: jsonP.JSONValue) => cmnP.readEnum<ForwardedIPPosition>(x),
     },
     optional: {},
   }, root);
@@ -2291,15 +2129,7 @@ export type ForwardedIPPosition =
 | "FIRST"
 | "LAST"
 | "ANY"
-;
-
-function toForwardedIPPosition(root: JSONValue): ForwardedIPPosition | null {
-  return ( false
-    || root == "FIRST"
-    || root == "LAST"
-    || root == "ANY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: input, named, interface, output
 export interface RegexPatternSetReferenceStatement {
@@ -2307,15 +2137,16 @@ export interface RegexPatternSetReferenceStatement {
   FieldToMatch: FieldToMatch;
   TextTransformations: TextTransformation[];
 }
-function fromRegexPatternSetReferenceStatement(input?: RegexPatternSetReferenceStatement | null): JSONValue {
+function fromRegexPatternSetReferenceStatement(input?: RegexPatternSetReferenceStatement | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ARN: input["ARN"],
     FieldToMatch: fromFieldToMatch(input["FieldToMatch"]),
     TextTransformations: input["TextTransformations"]?.map(x => fromTextTransformation(x)),
   }
 }
-function toRegexPatternSetReferenceStatement(root: JSONValue): RegexPatternSetReferenceStatement {
-  return prt.readObj({
+function toRegexPatternSetReferenceStatement(root: jsonP.JSONValue): RegexPatternSetReferenceStatement {
+  return jsonP.readObj({
     required: {
       "ARN": "s",
       "FieldToMatch": toFieldToMatch,
@@ -2332,18 +2163,20 @@ export interface RateBasedStatement {
   ScopeDownStatement?: Statement | null;
   ForwardedIPConfig?: ForwardedIPConfig | null;
 }
-function fromRateBasedStatement(input?: RateBasedStatement | null): JSONValue {
+function fromRateBasedStatement(input?: RateBasedStatement | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Limit: input["Limit"],
+    AggregateKeyType: input["AggregateKeyType"],
     ScopeDownStatement: fromStatement(input["ScopeDownStatement"]),
     ForwardedIPConfig: fromForwardedIPConfig(input["ForwardedIPConfig"]),
   }
 }
-function toRateBasedStatement(root: JSONValue): RateBasedStatement {
-  return prt.readObj({
+function toRateBasedStatement(root: jsonP.JSONValue): RateBasedStatement {
+  return jsonP.readObj({
     required: {
       "Limit": "n",
-      "AggregateKeyType": toRateBasedStatementAggregateKeyType,
+      "AggregateKeyType": (x: jsonP.JSONValue) => cmnP.readEnum<RateBasedStatementAggregateKeyType>(x),
     },
     optional: {
       "ScopeDownStatement": toStatement,
@@ -2356,27 +2189,20 @@ function toRateBasedStatement(root: JSONValue): RateBasedStatement {
 export type RateBasedStatementAggregateKeyType =
 | "IP"
 | "FORWARDED_IP"
-;
-
-function toRateBasedStatementAggregateKeyType(root: JSONValue): RateBasedStatementAggregateKeyType | null {
-  return ( false
-    || root == "IP"
-    || root == "FORWARDED_IP"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: input, named, interface, output
 export interface AndStatement {
   Statements: Statement[];
 }
-function fromAndStatement(input?: AndStatement | null): JSONValue {
+function fromAndStatement(input?: AndStatement | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Statements: input["Statements"]?.map(x => fromStatement(x)),
   }
 }
-function toAndStatement(root: JSONValue): AndStatement {
-  return prt.readObj({
+function toAndStatement(root: jsonP.JSONValue): AndStatement {
+  return jsonP.readObj({
     required: {
       "Statements": [toStatement],
     },
@@ -2388,14 +2214,14 @@ function toAndStatement(root: JSONValue): AndStatement {
 export interface OrStatement {
   Statements: Statement[];
 }
-function fromOrStatement(input?: OrStatement | null): JSONValue {
+function fromOrStatement(input?: OrStatement | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Statements: input["Statements"]?.map(x => fromStatement(x)),
   }
 }
-function toOrStatement(root: JSONValue): OrStatement {
-  return prt.readObj({
+function toOrStatement(root: jsonP.JSONValue): OrStatement {
+  return jsonP.readObj({
     required: {
       "Statements": [toStatement],
     },
@@ -2407,14 +2233,14 @@ function toOrStatement(root: JSONValue): OrStatement {
 export interface NotStatement {
   Statement: Statement;
 }
-function fromNotStatement(input?: NotStatement | null): JSONValue {
+function fromNotStatement(input?: NotStatement | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Statement: fromStatement(input["Statement"]),
   }
 }
-function toNotStatement(root: JSONValue): NotStatement {
-  return prt.readObj({
+function toNotStatement(root: jsonP.JSONValue): NotStatement {
+  return jsonP.readObj({
     required: {
       "Statement": toStatement,
     },
@@ -2428,14 +2254,16 @@ export interface ManagedRuleGroupStatement {
   Name: string;
   ExcludedRules?: ExcludedRule[] | null;
 }
-function fromManagedRuleGroupStatement(input?: ManagedRuleGroupStatement | null): JSONValue {
+function fromManagedRuleGroupStatement(input?: ManagedRuleGroupStatement | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    VendorName: input["VendorName"],
+    Name: input["Name"],
     ExcludedRules: input["ExcludedRules"]?.map(x => fromExcludedRule(x)),
   }
 }
-function toManagedRuleGroupStatement(root: JSONValue): ManagedRuleGroupStatement {
-  return prt.readObj({
+function toManagedRuleGroupStatement(root: jsonP.JSONValue): ManagedRuleGroupStatement {
+  return jsonP.readObj({
     required: {
       "VendorName": "s",
       "Name": "s",
@@ -2452,16 +2280,16 @@ export interface RuleAction {
   Allow?: AllowAction | null;
   Count?: CountAction | null;
 }
-function fromRuleAction(input?: RuleAction | null): JSONValue {
+function fromRuleAction(input?: RuleAction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Block: fromBlockAction(input["Block"]),
     Allow: fromAllowAction(input["Allow"]),
     Count: fromCountAction(input["Count"]),
   }
 }
-function toRuleAction(root: JSONValue): RuleAction {
-  return prt.readObj({
+function toRuleAction(root: jsonP.JSONValue): RuleAction {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Block": toBlockAction,
@@ -2474,13 +2302,13 @@ function toRuleAction(root: JSONValue): RuleAction {
 // refs: 13 - tags: input, named, interface, output
 export interface BlockAction {
 }
-function fromBlockAction(input?: BlockAction | null): JSONValue {
+function fromBlockAction(input?: BlockAction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
   }
 }
-function toBlockAction(root: JSONValue): BlockAction {
-  return prt.readObj({
+function toBlockAction(root: jsonP.JSONValue): BlockAction {
+  return jsonP.readObj({
     required: {},
     optional: {},
   }, root);
@@ -2489,13 +2317,13 @@ function toBlockAction(root: JSONValue): BlockAction {
 // refs: 13 - tags: input, named, interface, output
 export interface AllowAction {
 }
-function fromAllowAction(input?: AllowAction | null): JSONValue {
+function fromAllowAction(input?: AllowAction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
   }
 }
-function toAllowAction(root: JSONValue): AllowAction {
-  return prt.readObj({
+function toAllowAction(root: jsonP.JSONValue): AllowAction {
+  return jsonP.readObj({
     required: {},
     optional: {},
   }, root);
@@ -2504,13 +2332,13 @@ function toAllowAction(root: JSONValue): AllowAction {
 // refs: 21 - tags: input, named, interface, output
 export interface CountAction {
 }
-function fromCountAction(input?: CountAction | null): JSONValue {
+function fromCountAction(input?: CountAction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
   }
 }
-function toCountAction(root: JSONValue): CountAction {
-  return prt.readObj({
+function toCountAction(root: jsonP.JSONValue): CountAction {
+  return jsonP.readObj({
     required: {},
     optional: {},
   }, root);
@@ -2521,15 +2349,15 @@ export interface OverrideAction {
   Count?: CountAction | null;
   None?: NoneAction | null;
 }
-function fromOverrideAction(input?: OverrideAction | null): JSONValue {
+function fromOverrideAction(input?: OverrideAction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Count: fromCountAction(input["Count"]),
     None: fromNoneAction(input["None"]),
   }
 }
-function toOverrideAction(root: JSONValue): OverrideAction {
-  return prt.readObj({
+function toOverrideAction(root: jsonP.JSONValue): OverrideAction {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Count": toCountAction,
@@ -2541,13 +2369,13 @@ function toOverrideAction(root: JSONValue): OverrideAction {
 // refs: 12 - tags: input, named, interface, output
 export interface NoneAction {
 }
-function fromNoneAction(input?: NoneAction | null): JSONValue {
+function fromNoneAction(input?: NoneAction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
   }
 }
-function toNoneAction(root: JSONValue): NoneAction {
-  return prt.readObj({
+function toNoneAction(root: jsonP.JSONValue): NoneAction {
+  return jsonP.readObj({
     required: {},
     optional: {},
   }, root);
@@ -2559,13 +2387,16 @@ export interface VisibilityConfig {
   CloudWatchMetricsEnabled: boolean;
   MetricName: string;
 }
-function fromVisibilityConfig(input?: VisibilityConfig | null): JSONValue {
+function fromVisibilityConfig(input?: VisibilityConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SampledRequestsEnabled: input["SampledRequestsEnabled"],
+    CloudWatchMetricsEnabled: input["CloudWatchMetricsEnabled"],
+    MetricName: input["MetricName"],
   }
 }
-function toVisibilityConfig(root: JSONValue): VisibilityConfig {
-  return prt.readObj({
+function toVisibilityConfig(root: jsonP.JSONValue): VisibilityConfig {
+  return jsonP.readObj({
     required: {
       "SampledRequestsEnabled": "b",
       "CloudWatchMetricsEnabled": "b",
@@ -2579,27 +2410,22 @@ function toVisibilityConfig(root: JSONValue): VisibilityConfig {
 export type IPAddressVersion =
 | "IPV4"
 | "IPV6"
-;
-
-function toIPAddressVersion(root: JSONValue): IPAddressVersion | null {
-  return ( false
-    || root == "IPV4"
-    || root == "IPV6"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -2612,13 +2438,14 @@ function toTag(root: JSONValue): Tag {
 export interface Regex {
   RegexString?: string | null;
 }
-function fromRegex(input?: Regex | null): JSONValue {
+function fromRegex(input?: Regex | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RegexString: input["RegexString"],
   }
 }
-function toRegex(root: JSONValue): Regex {
-  return prt.readObj({
+function toRegex(root: jsonP.JSONValue): Regex {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RegexString": "s",
@@ -2631,15 +2458,15 @@ export interface DefaultAction {
   Block?: BlockAction | null;
   Allow?: AllowAction | null;
 }
-function fromDefaultAction(input?: DefaultAction | null): JSONValue {
+function fromDefaultAction(input?: DefaultAction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Block: fromBlockAction(input["Block"]),
     Allow: fromAllowAction(input["Allow"]),
   }
 }
-function toDefaultAction(root: JSONValue): DefaultAction {
-  return prt.readObj({
+function toDefaultAction(root: jsonP.JSONValue): DefaultAction {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Block": toBlockAction,
@@ -2653,15 +2480,15 @@ export interface TimeWindow {
   StartTime: Date | number;
   EndTime: Date | number;
 }
-function fromTimeWindow(input?: TimeWindow | null): JSONValue {
+function fromTimeWindow(input?: TimeWindow | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    StartTime: prt.serializeDate_unixTimestamp(input["StartTime"]),
-    EndTime: prt.serializeDate_unixTimestamp(input["EndTime"]),
+  return {
+    StartTime: jsonP.serializeDate_unixTimestamp(input["StartTime"]),
+    EndTime: jsonP.serializeDate_unixTimestamp(input["EndTime"]),
   }
 }
-function toTimeWindow(root: JSONValue): TimeWindow {
-  return prt.readObj({
+function toTimeWindow(root: jsonP.JSONValue): TimeWindow {
+  return jsonP.readObj({
     required: {
       "StartTime": "d",
       "EndTime": "d",
@@ -2675,8 +2502,7 @@ export type ResourceType =
 | "APPLICATION_LOAD_BALANCER"
 | "API_GATEWAY"
 | "APPSYNC"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface LoggingConfiguration {
@@ -2685,14 +2511,17 @@ export interface LoggingConfiguration {
   RedactedFields?: FieldToMatch[] | null;
   ManagedByFirewallManager?: boolean | null;
 }
-function fromLoggingConfiguration(input?: LoggingConfiguration | null): JSONValue {
+function fromLoggingConfiguration(input?: LoggingConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ResourceArn: input["ResourceArn"],
+    LogDestinationConfigs: input["LogDestinationConfigs"],
     RedactedFields: input["RedactedFields"]?.map(x => fromFieldToMatch(x)),
+    ManagedByFirewallManager: input["ManagedByFirewallManager"],
   }
 }
-function toLoggingConfiguration(root: JSONValue): LoggingConfiguration {
-  return prt.readObj({
+function toLoggingConfiguration(root: jsonP.JSONValue): LoggingConfiguration {
+  return jsonP.readObj({
     required: {
       "ResourceArn": "s",
       "LogDestinationConfigs": ["s"],
@@ -2712,8 +2541,8 @@ export interface IPSetSummary {
   LockToken?: string | null;
   ARN?: string | null;
 }
-function toIPSetSummary(root: JSONValue): IPSetSummary {
-  return prt.readObj({
+function toIPSetSummary(root: jsonP.JSONValue): IPSetSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -2733,8 +2562,8 @@ export interface RegexPatternSetSummary {
   LockToken?: string | null;
   ARN?: string | null;
 }
-function toRegexPatternSetSummary(root: JSONValue): RegexPatternSetSummary {
-  return prt.readObj({
+function toRegexPatternSetSummary(root: jsonP.JSONValue): RegexPatternSetSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -2754,8 +2583,8 @@ export interface RuleGroupSummary {
   LockToken?: string | null;
   ARN?: string | null;
 }
-function toRuleGroupSummary(root: JSONValue): RuleGroupSummary {
-  return prt.readObj({
+function toRuleGroupSummary(root: jsonP.JSONValue): RuleGroupSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -2775,8 +2604,8 @@ export interface WebACLSummary {
   LockToken?: string | null;
   ARN?: string | null;
 }
-function toWebACLSummary(root: JSONValue): WebACLSummary {
-  return prt.readObj({
+function toWebACLSummary(root: jsonP.JSONValue): WebACLSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -2793,8 +2622,8 @@ export interface RuleSummary {
   Name?: string | null;
   Action?: RuleAction | null;
 }
-function toRuleSummary(root: JSONValue): RuleSummary {
-  return prt.readObj({
+function toRuleSummary(root: jsonP.JSONValue): RuleSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -2812,13 +2641,13 @@ export interface IPSet {
   IPAddressVersion: IPAddressVersion;
   Addresses: string[];
 }
-function toIPSet(root: JSONValue): IPSet {
-  return prt.readObj({
+function toIPSet(root: jsonP.JSONValue): IPSet {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "Id": "s",
       "ARN": "s",
-      "IPAddressVersion": toIPAddressVersion,
+      "IPAddressVersion": (x: jsonP.JSONValue) => cmnP.readEnum<IPAddressVersion>(x),
       "Addresses": ["s"],
     },
     optional: {
@@ -2832,11 +2661,11 @@ export interface RateBasedStatementManagedKeysIPSet {
   IPAddressVersion?: IPAddressVersion | null;
   Addresses?: string[] | null;
 }
-function toRateBasedStatementManagedKeysIPSet(root: JSONValue): RateBasedStatementManagedKeysIPSet {
-  return prt.readObj({
+function toRateBasedStatementManagedKeysIPSet(root: jsonP.JSONValue): RateBasedStatementManagedKeysIPSet {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "IPAddressVersion": toIPAddressVersion,
+      "IPAddressVersion": (x: jsonP.JSONValue) => cmnP.readEnum<IPAddressVersion>(x),
       "Addresses": ["s"],
     },
   }, root);
@@ -2850,8 +2679,8 @@ export interface RegexPatternSet {
   Description?: string | null;
   RegularExpressionList?: Regex[] | null;
 }
-function toRegexPatternSet(root: JSONValue): RegexPatternSet {
-  return prt.readObj({
+function toRegexPatternSet(root: jsonP.JSONValue): RegexPatternSet {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -2873,8 +2702,8 @@ export interface RuleGroup {
   Rules?: Rule[] | null;
   VisibilityConfig: VisibilityConfig;
 }
-function toRuleGroup(root: JSONValue): RuleGroup {
-  return prt.readObj({
+function toRuleGroup(root: jsonP.JSONValue): RuleGroup {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "Id": "s",
@@ -2897,8 +2726,8 @@ export interface SampledHTTPRequest {
   Action?: string | null;
   RuleNameWithinRuleGroup?: string | null;
 }
-function toSampledHTTPRequest(root: JSONValue): SampledHTTPRequest {
-  return prt.readObj({
+function toSampledHTTPRequest(root: jsonP.JSONValue): SampledHTTPRequest {
+  return jsonP.readObj({
     required: {
       "Request": toHTTPRequest,
       "Weight": "n",
@@ -2920,8 +2749,8 @@ export interface HTTPRequest {
   HTTPVersion?: string | null;
   Headers?: HTTPHeader[] | null;
 }
-function toHTTPRequest(root: JSONValue): HTTPRequest {
-  return prt.readObj({
+function toHTTPRequest(root: jsonP.JSONValue): HTTPRequest {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ClientIP": "s",
@@ -2939,8 +2768,8 @@ export interface HTTPHeader {
   Name?: string | null;
   Value?: string | null;
 }
-function toHTTPHeader(root: JSONValue): HTTPHeader {
-  return prt.readObj({
+function toHTTPHeader(root: jsonP.JSONValue): HTTPHeader {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -2963,8 +2792,8 @@ export interface WebACL {
   PostProcessFirewallManagerRuleGroups?: FirewallManagerRuleGroup[] | null;
   ManagedByFirewallManager?: boolean | null;
 }
-function toWebACL(root: JSONValue): WebACL {
-  return prt.readObj({
+function toWebACL(root: jsonP.JSONValue): WebACL {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "Id": "s",
@@ -2991,8 +2820,8 @@ export interface FirewallManagerRuleGroup {
   OverrideAction: OverrideAction;
   VisibilityConfig: VisibilityConfig;
 }
-function toFirewallManagerRuleGroup(root: JSONValue): FirewallManagerRuleGroup {
-  return prt.readObj({
+function toFirewallManagerRuleGroup(root: jsonP.JSONValue): FirewallManagerRuleGroup {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "Priority": "n",
@@ -3009,8 +2838,8 @@ export interface FirewallManagerStatement {
   ManagedRuleGroupStatement?: ManagedRuleGroupStatement | null;
   RuleGroupReferenceStatement?: RuleGroupReferenceStatement | null;
 }
-function toFirewallManagerStatement(root: JSONValue): FirewallManagerStatement {
-  return prt.readObj({
+function toFirewallManagerStatement(root: jsonP.JSONValue): FirewallManagerStatement {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ManagedRuleGroupStatement": toManagedRuleGroupStatement,
@@ -3025,8 +2854,8 @@ export interface ManagedRuleGroupSummary {
   Name?: string | null;
   Description?: string | null;
 }
-function toManagedRuleGroupSummary(root: JSONValue): ManagedRuleGroupSummary {
-  return prt.readObj({
+function toManagedRuleGroupSummary(root: jsonP.JSONValue): ManagedRuleGroupSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "VendorName": "s",
@@ -3041,8 +2870,8 @@ export interface TagInfoForResource {
   ResourceARN?: string | null;
   TagList?: Tag[] | null;
 }
-function toTagInfoForResource(root: JSONValue): TagInfoForResource {
-  return prt.readObj({
+function toTagInfoForResource(root: jsonP.JSONValue): TagInfoForResource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ResourceARN": "s",

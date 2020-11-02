@@ -5,10 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }
@@ -36,14 +35,16 @@ export default class Kendra {
   async batchDeleteDocument(
     {abortSignal, ...params}: RequestConfig & BatchDeleteDocumentRequest,
   ): Promise<BatchDeleteDocumentResponse> {
-    const body: JSONObject = {...params,
-    DataSourceSyncJobMetricTarget: fromDataSourceSyncJobMetricTarget(params["DataSourceSyncJobMetricTarget"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      IndexId: params["IndexId"],
+      DocumentIdList: params["DocumentIdList"],
+      DataSourceSyncJobMetricTarget: fromDataSourceSyncJobMetricTarget(params["DataSourceSyncJobMetricTarget"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDeleteDocument",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FailedDocuments": [toBatchDeleteDocumentResponseFailedDocument],
@@ -54,14 +55,16 @@ export default class Kendra {
   async batchPutDocument(
     {abortSignal, ...params}: RequestConfig & BatchPutDocumentRequest,
   ): Promise<BatchPutDocumentResponse> {
-    const body: JSONObject = {...params,
-    Documents: params["Documents"]?.map(x => fromDocument(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      IndexId: params["IndexId"],
+      RoleArn: params["RoleArn"],
+      Documents: params["Documents"]?.map(x => fromDocument(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchPutDocument",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FailedDocuments": [toBatchPutDocumentResponseFailedDocument],
@@ -72,16 +75,22 @@ export default class Kendra {
   async createDataSource(
     {abortSignal, ...params}: RequestConfig & CreateDataSourceRequest,
   ): Promise<CreateDataSourceResponse> {
-    const body: JSONObject = {...params,
-    Configuration: fromDataSourceConfiguration(params["Configuration"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      IndexId: params["IndexId"],
+      Type: params["Type"],
+      Configuration: fromDataSourceConfiguration(params["Configuration"]),
+      Description: params["Description"],
+      Schedule: params["Schedule"],
+      RoleArn: params["RoleArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDataSource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Id": "s",
       },
@@ -92,16 +101,21 @@ export default class Kendra {
   async createFaq(
     {abortSignal, ...params}: RequestConfig & CreateFaqRequest,
   ): Promise<CreateFaqResponse> {
-    const body: JSONObject = {...params,
-    S3Path: fromS3Path(params["S3Path"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      IndexId: params["IndexId"],
+      Name: params["Name"],
+      Description: params["Description"],
+      S3Path: fromS3Path(params["S3Path"]),
+      RoleArn: params["RoleArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      FileFormat: params["FileFormat"],
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFaq",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Id": "s",
@@ -112,16 +126,20 @@ export default class Kendra {
   async createIndex(
     {abortSignal, ...params}: RequestConfig & CreateIndexRequest,
   ): Promise<CreateIndexResponse> {
-    const body: JSONObject = {...params,
-    ServerSideEncryptionConfiguration: fromServerSideEncryptionConfiguration(params["ServerSideEncryptionConfiguration"]),
-    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Edition: params["Edition"],
+      RoleArn: params["RoleArn"],
+      ServerSideEncryptionConfiguration: fromServerSideEncryptionConfiguration(params["ServerSideEncryptionConfiguration"]),
+      Description: params["Description"],
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateIndex",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Id": "s",
@@ -132,8 +150,10 @@ export default class Kendra {
   async deleteDataSource(
     {abortSignal, ...params}: RequestConfig & DeleteDataSourceRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Id: params["Id"],
+      IndexId: params["IndexId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDataSource",
@@ -143,8 +163,10 @@ export default class Kendra {
   async deleteFaq(
     {abortSignal, ...params}: RequestConfig & DeleteFaqRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Id: params["Id"],
+      IndexId: params["IndexId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFaq",
@@ -154,8 +176,9 @@ export default class Kendra {
   async deleteIndex(
     {abortSignal, ...params}: RequestConfig & DeleteIndexRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Id: params["Id"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteIndex",
@@ -165,24 +188,26 @@ export default class Kendra {
   async describeDataSource(
     {abortSignal, ...params}: RequestConfig & DescribeDataSourceRequest,
   ): Promise<DescribeDataSourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Id: params["Id"],
+      IndexId: params["IndexId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDataSource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Id": "s",
         "IndexId": "s",
         "Name": "s",
-        "Type": toDataSourceType,
+        "Type": (x: jsonP.JSONValue) => cmnP.readEnum<DataSourceType>(x),
         "Configuration": toDataSourceConfiguration,
         "CreatedAt": "d",
         "UpdatedAt": "d",
         "Description": "s",
-        "Status": toDataSourceStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<DataSourceStatus>(x),
         "Schedule": "s",
         "RoleArn": "s",
         "ErrorMessage": "s",
@@ -193,13 +218,15 @@ export default class Kendra {
   async describeFaq(
     {abortSignal, ...params}: RequestConfig & DescribeFaqRequest,
   ): Promise<DescribeFaqResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Id: params["Id"],
+      IndexId: params["IndexId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFaq",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Id": "s",
@@ -209,10 +236,10 @@ export default class Kendra {
         "CreatedAt": "d",
         "UpdatedAt": "d",
         "S3Path": toS3Path,
-        "Status": toFaqStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<FaqStatus>(x),
         "RoleArn": "s",
         "ErrorMessage": "s",
-        "FileFormat": toFaqFileFormat,
+        "FileFormat": (x: jsonP.JSONValue) => cmnP.readEnum<FaqFileFormat>(x),
       },
     }, await resp.json());
   }
@@ -220,21 +247,22 @@ export default class Kendra {
   async describeIndex(
     {abortSignal, ...params}: RequestConfig & DescribeIndexRequest,
   ): Promise<DescribeIndexResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Id: params["Id"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeIndex",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Name": "s",
         "Id": "s",
-        "Edition": toIndexEdition,
+        "Edition": (x: jsonP.JSONValue) => cmnP.readEnum<IndexEdition>(x),
         "RoleArn": "s",
         "ServerSideEncryptionConfiguration": toServerSideEncryptionConfiguration,
-        "Status": toIndexStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<IndexStatus>(x),
         "Description": "s",
         "CreatedAt": "d",
         "UpdatedAt": "d",
@@ -249,14 +277,19 @@ export default class Kendra {
   async listDataSourceSyncJobs(
     {abortSignal, ...params}: RequestConfig & ListDataSourceSyncJobsRequest,
   ): Promise<ListDataSourceSyncJobsResponse> {
-    const body: JSONObject = {...params,
-    StartTimeFilter: fromTimeRange(params["StartTimeFilter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Id: params["Id"],
+      IndexId: params["IndexId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      StartTimeFilter: fromTimeRange(params["StartTimeFilter"]),
+      StatusFilter: params["StatusFilter"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDataSourceSyncJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "History": [toDataSourceSyncJob],
@@ -268,13 +301,16 @@ export default class Kendra {
   async listDataSources(
     {abortSignal, ...params}: RequestConfig & ListDataSourcesRequest,
   ): Promise<ListDataSourcesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      IndexId: params["IndexId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDataSources",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SummaryItems": [toDataSourceSummary],
@@ -286,13 +322,16 @@ export default class Kendra {
   async listFaqs(
     {abortSignal, ...params}: RequestConfig & ListFaqsRequest,
   ): Promise<ListFaqsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      IndexId: params["IndexId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFaqs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -304,13 +343,15 @@ export default class Kendra {
   async listIndices(
     {abortSignal, ...params}: RequestConfig & ListIndicesRequest = {},
   ): Promise<ListIndicesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListIndices",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "IndexConfigurationSummaryItems": [toIndexConfigurationSummary],
@@ -322,13 +363,14 @@ export default class Kendra {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -339,16 +381,22 @@ export default class Kendra {
   async query(
     {abortSignal, ...params}: RequestConfig & QueryRequest,
   ): Promise<QueryResult> {
-    const body: JSONObject = {...params,
-    AttributeFilter: fromAttributeFilter(params["AttributeFilter"]),
-    Facets: params["Facets"]?.map(x => fromFacet(x)),
-    SortingConfiguration: fromSortingConfiguration(params["SortingConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      IndexId: params["IndexId"],
+      QueryText: params["QueryText"],
+      AttributeFilter: fromAttributeFilter(params["AttributeFilter"]),
+      Facets: params["Facets"]?.map(x => fromFacet(x)),
+      RequestedDocumentAttributes: params["RequestedDocumentAttributes"],
+      QueryResultTypeFilter: params["QueryResultTypeFilter"],
+      PageNumber: params["PageNumber"],
+      PageSize: params["PageSize"],
+      SortingConfiguration: fromSortingConfiguration(params["SortingConfiguration"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Query",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "QueryId": "s",
@@ -362,13 +410,15 @@ export default class Kendra {
   async startDataSourceSyncJob(
     {abortSignal, ...params}: RequestConfig & StartDataSourceSyncJobRequest,
   ): Promise<StartDataSourceSyncJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Id: params["Id"],
+      IndexId: params["IndexId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartDataSourceSyncJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ExecutionId": "s",
@@ -379,8 +429,10 @@ export default class Kendra {
   async stopDataSourceSyncJob(
     {abortSignal, ...params}: RequestConfig & StopDataSourceSyncJobRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Id: params["Id"],
+      IndexId: params["IndexId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopDataSourceSyncJob",
@@ -390,10 +442,12 @@ export default class Kendra {
   async submitFeedback(
     {abortSignal, ...params}: RequestConfig & SubmitFeedbackRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    ClickFeedbackItems: params["ClickFeedbackItems"]?.map(x => fromClickFeedback(x)),
-    RelevanceFeedbackItems: params["RelevanceFeedbackItems"]?.map(x => fromRelevanceFeedback(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      IndexId: params["IndexId"],
+      QueryId: params["QueryId"],
+      ClickFeedbackItems: params["ClickFeedbackItems"]?.map(x => fromClickFeedback(x)),
+      RelevanceFeedbackItems: params["RelevanceFeedbackItems"]?.map(x => fromRelevanceFeedback(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SubmitFeedback",
@@ -403,14 +457,15 @@ export default class Kendra {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -419,13 +474,15 @@ export default class Kendra {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -434,9 +491,15 @@ export default class Kendra {
   async updateDataSource(
     {abortSignal, ...params}: RequestConfig & UpdateDataSourceRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    Configuration: fromDataSourceConfiguration(params["Configuration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Id: params["Id"],
+      Name: params["Name"],
+      IndexId: params["IndexId"],
+      Configuration: fromDataSourceConfiguration(params["Configuration"]),
+      Description: params["Description"],
+      Schedule: params["Schedule"],
+      RoleArn: params["RoleArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDataSource",
@@ -446,10 +509,14 @@ export default class Kendra {
   async updateIndex(
     {abortSignal, ...params}: RequestConfig & UpdateIndexRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    DocumentMetadataConfigurationUpdates: params["DocumentMetadataConfigurationUpdates"]?.map(x => fromDocumentMetadataConfiguration(x)),
-    CapacityUnits: fromCapacityUnitsConfiguration(params["CapacityUnits"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Id: params["Id"],
+      Name: params["Name"],
+      RoleArn: params["RoleArn"],
+      Description: params["Description"],
+      DocumentMetadataConfigurationUpdates: params["DocumentMetadataConfigurationUpdates"]?.map(x => fromDocumentMetadataConfiguration(x)),
+      CapacityUnits: fromCapacityUnitsConfiguration(params["CapacityUnits"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateIndex",
@@ -771,9 +838,11 @@ export interface DataSourceSyncJobMetricTarget {
   DataSourceId: string;
   DataSourceSyncJobId: string;
 }
-function fromDataSourceSyncJobMetricTarget(input?: DataSourceSyncJobMetricTarget | null): JSONValue {
+function fromDataSourceSyncJobMetricTarget(input?: DataSourceSyncJobMetricTarget | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DataSourceId: input["DataSourceId"],
+    DataSourceSyncJobId: input["DataSourceSyncJobId"],
   }
 }
 
@@ -787,13 +856,16 @@ export interface Document {
   AccessControlList?: Principal[] | null;
   ContentType?: ContentType | null;
 }
-function fromDocument(input?: Document | null): JSONValue {
+function fromDocument(input?: Document | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Blob: prt.serializeBlob(input["Blob"]),
+  return {
+    Id: input["Id"],
+    Title: input["Title"],
+    Blob: jsonP.serializeBlob(input["Blob"]),
     S3Path: fromS3Path(input["S3Path"]),
     Attributes: input["Attributes"]?.map(x => fromDocumentAttribute(x)),
     AccessControlList: input["AccessControlList"]?.map(x => fromPrincipal(x)),
+    ContentType: input["ContentType"],
   }
 }
 
@@ -802,13 +874,15 @@ export interface S3Path {
   Bucket: string;
   Key: string;
 }
-function fromS3Path(input?: S3Path | null): JSONValue {
+function fromS3Path(input?: S3Path | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Bucket: input["Bucket"],
+    Key: input["Key"],
   }
 }
-function toS3Path(root: JSONValue): S3Path {
-  return prt.readObj({
+function toS3Path(root: jsonP.JSONValue): S3Path {
+  return jsonP.readObj({
     required: {
       "Bucket": "s",
       "Key": "s",
@@ -822,14 +896,15 @@ export interface DocumentAttribute {
   Key: string;
   Value: DocumentAttributeValue;
 }
-function fromDocumentAttribute(input?: DocumentAttribute | null): JSONValue {
+function fromDocumentAttribute(input?: DocumentAttribute | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
     Value: fromDocumentAttributeValue(input["Value"]),
   }
 }
-function toDocumentAttribute(root: JSONValue): DocumentAttribute {
-  return prt.readObj({
+function toDocumentAttribute(root: jsonP.JSONValue): DocumentAttribute {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": toDocumentAttributeValue,
@@ -845,14 +920,17 @@ export interface DocumentAttributeValue {
   LongValue?: number | null;
   DateValue?: Date | number | null;
 }
-function fromDocumentAttributeValue(input?: DocumentAttributeValue | null): JSONValue {
+function fromDocumentAttributeValue(input?: DocumentAttributeValue | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    DateValue: prt.serializeDate_unixTimestamp(input["DateValue"]),
+  return {
+    StringValue: input["StringValue"],
+    StringListValue: input["StringListValue"],
+    LongValue: input["LongValue"],
+    DateValue: jsonP.serializeDate_unixTimestamp(input["DateValue"]),
   }
 }
-function toDocumentAttributeValue(root: JSONValue): DocumentAttributeValue {
-  return prt.readObj({
+function toDocumentAttributeValue(root: jsonP.JSONValue): DocumentAttributeValue {
+  return jsonP.readObj({
     required: {},
     optional: {
       "StringValue": "s",
@@ -869,9 +947,12 @@ export interface Principal {
   Type: PrincipalType;
   Access: ReadAccessType;
 }
-function fromPrincipal(input?: Principal | null): JSONValue {
+function fromPrincipal(input?: Principal | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Type: input["Type"],
+    Access: input["Access"],
   }
 }
 
@@ -879,15 +960,13 @@ function fromPrincipal(input?: Principal | null): JSONValue {
 export type PrincipalType =
 | "USER"
 | "GROUP"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ReadAccessType =
 | "ALLOW"
 | "DENY"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ContentType =
@@ -896,8 +975,7 @@ export type ContentType =
 | "MS_WORD"
 | "PLAIN_TEXT"
 | "PPT"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type DataSourceType =
@@ -909,20 +987,7 @@ export type DataSourceType =
 | "SERVICENOW"
 | "CUSTOM"
 | "CONFLUENCE"
-;
-
-function toDataSourceType(root: JSONValue): DataSourceType | null {
-  return ( false
-    || root == "S3"
-    || root == "SHAREPOINT"
-    || root == "DATABASE"
-    || root == "SALESFORCE"
-    || root == "ONEDRIVE"
-    || root == "SERVICENOW"
-    || root == "CUSTOM"
-    || root == "CONFLUENCE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface DataSourceConfiguration {
@@ -934,9 +999,9 @@ export interface DataSourceConfiguration {
   ServiceNowConfiguration?: ServiceNowConfiguration | null;
   ConfluenceConfiguration?: ConfluenceConfiguration | null;
 }
-function fromDataSourceConfiguration(input?: DataSourceConfiguration | null): JSONValue {
+function fromDataSourceConfiguration(input?: DataSourceConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     S3Configuration: fromS3DataSourceConfiguration(input["S3Configuration"]),
     SharePointConfiguration: fromSharePointConfiguration(input["SharePointConfiguration"]),
     DatabaseConfiguration: fromDatabaseConfiguration(input["DatabaseConfiguration"]),
@@ -946,8 +1011,8 @@ function fromDataSourceConfiguration(input?: DataSourceConfiguration | null): JS
     ConfluenceConfiguration: fromConfluenceConfiguration(input["ConfluenceConfiguration"]),
   }
 }
-function toDataSourceConfiguration(root: JSONValue): DataSourceConfiguration {
-  return prt.readObj({
+function toDataSourceConfiguration(root: jsonP.JSONValue): DataSourceConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "S3Configuration": toS3DataSourceConfiguration,
@@ -970,15 +1035,19 @@ export interface S3DataSourceConfiguration {
   DocumentsMetadataConfiguration?: DocumentsMetadataConfiguration | null;
   AccessControlListConfiguration?: AccessControlListConfiguration | null;
 }
-function fromS3DataSourceConfiguration(input?: S3DataSourceConfiguration | null): JSONValue {
+function fromS3DataSourceConfiguration(input?: S3DataSourceConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    BucketName: input["BucketName"],
+    InclusionPrefixes: input["InclusionPrefixes"],
+    InclusionPatterns: input["InclusionPatterns"],
+    ExclusionPatterns: input["ExclusionPatterns"],
     DocumentsMetadataConfiguration: fromDocumentsMetadataConfiguration(input["DocumentsMetadataConfiguration"]),
     AccessControlListConfiguration: fromAccessControlListConfiguration(input["AccessControlListConfiguration"]),
   }
 }
-function toS3DataSourceConfiguration(root: JSONValue): S3DataSourceConfiguration {
-  return prt.readObj({
+function toS3DataSourceConfiguration(root: jsonP.JSONValue): S3DataSourceConfiguration {
+  return jsonP.readObj({
     required: {
       "BucketName": "s",
     },
@@ -996,13 +1065,14 @@ function toS3DataSourceConfiguration(root: JSONValue): S3DataSourceConfiguration
 export interface DocumentsMetadataConfiguration {
   S3Prefix?: string | null;
 }
-function fromDocumentsMetadataConfiguration(input?: DocumentsMetadataConfiguration | null): JSONValue {
+function fromDocumentsMetadataConfiguration(input?: DocumentsMetadataConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Prefix: input["S3Prefix"],
   }
 }
-function toDocumentsMetadataConfiguration(root: JSONValue): DocumentsMetadataConfiguration {
-  return prt.readObj({
+function toDocumentsMetadataConfiguration(root: jsonP.JSONValue): DocumentsMetadataConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "S3Prefix": "s",
@@ -1014,13 +1084,14 @@ function toDocumentsMetadataConfiguration(root: JSONValue): DocumentsMetadataCon
 export interface AccessControlListConfiguration {
   KeyPath?: string | null;
 }
-function fromAccessControlListConfiguration(input?: AccessControlListConfiguration | null): JSONValue {
+function fromAccessControlListConfiguration(input?: AccessControlListConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    KeyPath: input["KeyPath"],
   }
 }
-function toAccessControlListConfiguration(root: JSONValue): AccessControlListConfiguration {
-  return prt.readObj({
+function toAccessControlListConfiguration(root: jsonP.JSONValue): AccessControlListConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "KeyPath": "s",
@@ -1041,17 +1112,25 @@ export interface SharePointConfiguration {
   FieldMappings?: DataSourceToIndexFieldMapping[] | null;
   DocumentTitleFieldName?: string | null;
 }
-function fromSharePointConfiguration(input?: SharePointConfiguration | null): JSONValue {
+function fromSharePointConfiguration(input?: SharePointConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SharePointVersion: input["SharePointVersion"],
+    Urls: input["Urls"],
+    SecretArn: input["SecretArn"],
+    CrawlAttachments: input["CrawlAttachments"],
+    UseChangeLog: input["UseChangeLog"],
+    InclusionPatterns: input["InclusionPatterns"],
+    ExclusionPatterns: input["ExclusionPatterns"],
     VpcConfiguration: fromDataSourceVpcConfiguration(input["VpcConfiguration"]),
     FieldMappings: input["FieldMappings"]?.map(x => fromDataSourceToIndexFieldMapping(x)),
+    DocumentTitleFieldName: input["DocumentTitleFieldName"],
   }
 }
-function toSharePointConfiguration(root: JSONValue): SharePointConfiguration {
-  return prt.readObj({
+function toSharePointConfiguration(root: jsonP.JSONValue): SharePointConfiguration {
+  return jsonP.readObj({
     required: {
-      "SharePointVersion": toSharePointVersion,
+      "SharePointVersion": (x: jsonP.JSONValue) => cmnP.readEnum<SharePointVersion>(x),
       "Urls": ["s"],
       "SecretArn": "s",
     },
@@ -1070,26 +1149,22 @@ function toSharePointConfiguration(root: JSONValue): SharePointConfiguration {
 // refs: 3 - tags: input, named, enum, output
 export type SharePointVersion =
 | "SHAREPOINT_ONLINE"
-;
-
-function toSharePointVersion(root: JSONValue): SharePointVersion | null {
-  return ( false
-    || root == "SHAREPOINT_ONLINE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 9 - tags: input, named, interface, output
 export interface DataSourceVpcConfiguration {
   SubnetIds: string[];
   SecurityGroupIds: string[];
 }
-function fromDataSourceVpcConfiguration(input?: DataSourceVpcConfiguration | null): JSONValue {
+function fromDataSourceVpcConfiguration(input?: DataSourceVpcConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SubnetIds: input["SubnetIds"],
+    SecurityGroupIds: input["SecurityGroupIds"],
   }
 }
-function toDataSourceVpcConfiguration(root: JSONValue): DataSourceVpcConfiguration {
-  return prt.readObj({
+function toDataSourceVpcConfiguration(root: jsonP.JSONValue): DataSourceVpcConfiguration {
+  return jsonP.readObj({
     required: {
       "SubnetIds": ["s"],
       "SecurityGroupIds": ["s"],
@@ -1104,13 +1179,16 @@ export interface DataSourceToIndexFieldMapping {
   DateFieldFormat?: string | null;
   IndexFieldName: string;
 }
-function fromDataSourceToIndexFieldMapping(input?: DataSourceToIndexFieldMapping | null): JSONValue {
+function fromDataSourceToIndexFieldMapping(input?: DataSourceToIndexFieldMapping | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DataSourceFieldName: input["DataSourceFieldName"],
+    DateFieldFormat: input["DateFieldFormat"],
+    IndexFieldName: input["IndexFieldName"],
   }
 }
-function toDataSourceToIndexFieldMapping(root: JSONValue): DataSourceToIndexFieldMapping {
-  return prt.readObj({
+function toDataSourceToIndexFieldMapping(root: jsonP.JSONValue): DataSourceToIndexFieldMapping {
+  return jsonP.readObj({
     required: {
       "DataSourceFieldName": "s",
       "IndexFieldName": "s",
@@ -1130,9 +1208,10 @@ export interface DatabaseConfiguration {
   AclConfiguration?: AclConfiguration | null;
   SqlConfiguration?: SqlConfiguration | null;
 }
-function fromDatabaseConfiguration(input?: DatabaseConfiguration | null): JSONValue {
+function fromDatabaseConfiguration(input?: DatabaseConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DatabaseEngineType: input["DatabaseEngineType"],
     ConnectionConfiguration: fromConnectionConfiguration(input["ConnectionConfiguration"]),
     VpcConfiguration: fromDataSourceVpcConfiguration(input["VpcConfiguration"]),
     ColumnConfiguration: fromColumnConfiguration(input["ColumnConfiguration"]),
@@ -1140,10 +1219,10 @@ function fromDatabaseConfiguration(input?: DatabaseConfiguration | null): JSONVa
     SqlConfiguration: fromSqlConfiguration(input["SqlConfiguration"]),
   }
 }
-function toDatabaseConfiguration(root: JSONValue): DatabaseConfiguration {
-  return prt.readObj({
+function toDatabaseConfiguration(root: jsonP.JSONValue): DatabaseConfiguration {
+  return jsonP.readObj({
     required: {
-      "DatabaseEngineType": toDatabaseEngineType,
+      "DatabaseEngineType": (x: jsonP.JSONValue) => cmnP.readEnum<DatabaseEngineType>(x),
       "ConnectionConfiguration": toConnectionConfiguration,
       "ColumnConfiguration": toColumnConfiguration,
     },
@@ -1161,16 +1240,7 @@ export type DatabaseEngineType =
 | "RDS_AURORA_POSTGRESQL"
 | "RDS_MYSQL"
 | "RDS_POSTGRESQL"
-;
-
-function toDatabaseEngineType(root: JSONValue): DatabaseEngineType | null {
-  return ( false
-    || root == "RDS_AURORA_MYSQL"
-    || root == "RDS_AURORA_POSTGRESQL"
-    || root == "RDS_MYSQL"
-    || root == "RDS_POSTGRESQL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface ConnectionConfiguration {
@@ -1180,13 +1250,18 @@ export interface ConnectionConfiguration {
   TableName: string;
   SecretArn: string;
 }
-function fromConnectionConfiguration(input?: ConnectionConfiguration | null): JSONValue {
+function fromConnectionConfiguration(input?: ConnectionConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DatabaseHost: input["DatabaseHost"],
+    DatabasePort: input["DatabasePort"],
+    DatabaseName: input["DatabaseName"],
+    TableName: input["TableName"],
+    SecretArn: input["SecretArn"],
   }
 }
-function toConnectionConfiguration(root: JSONValue): ConnectionConfiguration {
-  return prt.readObj({
+function toConnectionConfiguration(root: jsonP.JSONValue): ConnectionConfiguration {
+  return jsonP.readObj({
     required: {
       "DatabaseHost": "s",
       "DatabasePort": "n",
@@ -1206,14 +1281,18 @@ export interface ColumnConfiguration {
   FieldMappings?: DataSourceToIndexFieldMapping[] | null;
   ChangeDetectingColumns: string[];
 }
-function fromColumnConfiguration(input?: ColumnConfiguration | null): JSONValue {
+function fromColumnConfiguration(input?: ColumnConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DocumentIdColumnName: input["DocumentIdColumnName"],
+    DocumentDataColumnName: input["DocumentDataColumnName"],
+    DocumentTitleColumnName: input["DocumentTitleColumnName"],
     FieldMappings: input["FieldMappings"]?.map(x => fromDataSourceToIndexFieldMapping(x)),
+    ChangeDetectingColumns: input["ChangeDetectingColumns"],
   }
 }
-function toColumnConfiguration(root: JSONValue): ColumnConfiguration {
-  return prt.readObj({
+function toColumnConfiguration(root: jsonP.JSONValue): ColumnConfiguration {
+  return jsonP.readObj({
     required: {
       "DocumentIdColumnName": "s",
       "DocumentDataColumnName": "s",
@@ -1230,13 +1309,14 @@ function toColumnConfiguration(root: JSONValue): ColumnConfiguration {
 export interface AclConfiguration {
   AllowedGroupsColumnName: string;
 }
-function fromAclConfiguration(input?: AclConfiguration | null): JSONValue {
+function fromAclConfiguration(input?: AclConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AllowedGroupsColumnName: input["AllowedGroupsColumnName"],
   }
 }
-function toAclConfiguration(root: JSONValue): AclConfiguration {
-  return prt.readObj({
+function toAclConfiguration(root: jsonP.JSONValue): AclConfiguration {
+  return jsonP.readObj({
     required: {
       "AllowedGroupsColumnName": "s",
     },
@@ -1248,16 +1328,17 @@ function toAclConfiguration(root: JSONValue): AclConfiguration {
 export interface SqlConfiguration {
   QueryIdentifiersEnclosingOption?: QueryIdentifiersEnclosingOption | null;
 }
-function fromSqlConfiguration(input?: SqlConfiguration | null): JSONValue {
+function fromSqlConfiguration(input?: SqlConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    QueryIdentifiersEnclosingOption: input["QueryIdentifiersEnclosingOption"],
   }
 }
-function toSqlConfiguration(root: JSONValue): SqlConfiguration {
-  return prt.readObj({
+function toSqlConfiguration(root: jsonP.JSONValue): SqlConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "QueryIdentifiersEnclosingOption": toQueryIdentifiersEnclosingOption,
+      "QueryIdentifiersEnclosingOption": (x: jsonP.JSONValue) => cmnP.readEnum<QueryIdentifiersEnclosingOption>(x),
     },
   }, root);
 }
@@ -1266,14 +1347,7 @@ function toSqlConfiguration(root: JSONValue): SqlConfiguration {
 export type QueryIdentifiersEnclosingOption =
 | "DOUBLE_QUOTES"
 | "NONE"
-;
-
-function toQueryIdentifiersEnclosingOption(root: JSONValue): QueryIdentifiersEnclosingOption | null {
-  return ( false
-    || root == "DOUBLE_QUOTES"
-    || root == "NONE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface SalesforceConfiguration {
@@ -1287,17 +1361,22 @@ export interface SalesforceConfiguration {
   IncludeAttachmentFilePatterns?: string[] | null;
   ExcludeAttachmentFilePatterns?: string[] | null;
 }
-function fromSalesforceConfiguration(input?: SalesforceConfiguration | null): JSONValue {
+function fromSalesforceConfiguration(input?: SalesforceConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ServerUrl: input["ServerUrl"],
+    SecretArn: input["SecretArn"],
     StandardObjectConfigurations: input["StandardObjectConfigurations"]?.map(x => fromSalesforceStandardObjectConfiguration(x)),
     KnowledgeArticleConfiguration: fromSalesforceKnowledgeArticleConfiguration(input["KnowledgeArticleConfiguration"]),
     ChatterFeedConfiguration: fromSalesforceChatterFeedConfiguration(input["ChatterFeedConfiguration"]),
+    CrawlAttachments: input["CrawlAttachments"],
     StandardObjectAttachmentConfiguration: fromSalesforceStandardObjectAttachmentConfiguration(input["StandardObjectAttachmentConfiguration"]),
+    IncludeAttachmentFilePatterns: input["IncludeAttachmentFilePatterns"],
+    ExcludeAttachmentFilePatterns: input["ExcludeAttachmentFilePatterns"],
   }
 }
-function toSalesforceConfiguration(root: JSONValue): SalesforceConfiguration {
-  return prt.readObj({
+function toSalesforceConfiguration(root: jsonP.JSONValue): SalesforceConfiguration {
+  return jsonP.readObj({
     required: {
       "ServerUrl": "s",
       "SecretArn": "s",
@@ -1321,16 +1400,19 @@ export interface SalesforceStandardObjectConfiguration {
   DocumentTitleFieldName?: string | null;
   FieldMappings?: DataSourceToIndexFieldMapping[] | null;
 }
-function fromSalesforceStandardObjectConfiguration(input?: SalesforceStandardObjectConfiguration | null): JSONValue {
+function fromSalesforceStandardObjectConfiguration(input?: SalesforceStandardObjectConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    DocumentDataFieldName: input["DocumentDataFieldName"],
+    DocumentTitleFieldName: input["DocumentTitleFieldName"],
     FieldMappings: input["FieldMappings"]?.map(x => fromDataSourceToIndexFieldMapping(x)),
   }
 }
-function toSalesforceStandardObjectConfiguration(root: JSONValue): SalesforceStandardObjectConfiguration {
-  return prt.readObj({
+function toSalesforceStandardObjectConfiguration(root: jsonP.JSONValue): SalesforceStandardObjectConfiguration {
+  return jsonP.readObj({
     required: {
-      "Name": toSalesforceStandardObjectName,
+      "Name": (x: jsonP.JSONValue) => cmnP.readEnum<SalesforceStandardObjectName>(x),
       "DocumentDataFieldName": "s",
     },
     optional: {
@@ -1359,29 +1441,7 @@ export type SalesforceStandardObjectName =
 | "SOLUTION"
 | "TASK"
 | "USER"
-;
-
-function toSalesforceStandardObjectName(root: JSONValue): SalesforceStandardObjectName | null {
-  return ( false
-    || root == "ACCOUNT"
-    || root == "CAMPAIGN"
-    || root == "CASE"
-    || root == "CONTACT"
-    || root == "CONTRACT"
-    || root == "DOCUMENT"
-    || root == "GROUP"
-    || root == "IDEA"
-    || root == "LEAD"
-    || root == "OPPORTUNITY"
-    || root == "PARTNER"
-    || root == "PRICEBOOK"
-    || root == "PRODUCT"
-    || root == "PROFILE"
-    || root == "SOLUTION"
-    || root == "TASK"
-    || root == "USER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface SalesforceKnowledgeArticleConfiguration {
@@ -1389,17 +1449,18 @@ export interface SalesforceKnowledgeArticleConfiguration {
   StandardKnowledgeArticleTypeConfiguration?: SalesforceStandardKnowledgeArticleTypeConfiguration | null;
   CustomKnowledgeArticleTypeConfigurations?: SalesforceCustomKnowledgeArticleTypeConfiguration[] | null;
 }
-function fromSalesforceKnowledgeArticleConfiguration(input?: SalesforceKnowledgeArticleConfiguration | null): JSONValue {
+function fromSalesforceKnowledgeArticleConfiguration(input?: SalesforceKnowledgeArticleConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    IncludedStates: input["IncludedStates"],
     StandardKnowledgeArticleTypeConfiguration: fromSalesforceStandardKnowledgeArticleTypeConfiguration(input["StandardKnowledgeArticleTypeConfiguration"]),
     CustomKnowledgeArticleTypeConfigurations: input["CustomKnowledgeArticleTypeConfigurations"]?.map(x => fromSalesforceCustomKnowledgeArticleTypeConfiguration(x)),
   }
 }
-function toSalesforceKnowledgeArticleConfiguration(root: JSONValue): SalesforceKnowledgeArticleConfiguration {
-  return prt.readObj({
+function toSalesforceKnowledgeArticleConfiguration(root: jsonP.JSONValue): SalesforceKnowledgeArticleConfiguration {
+  return jsonP.readObj({
     required: {
-      "IncludedStates": [toSalesforceKnowledgeArticleState],
+      "IncludedStates": [(x: jsonP.JSONValue) => cmnP.readEnum<SalesforceKnowledgeArticleState>(x)],
     },
     optional: {
       "StandardKnowledgeArticleTypeConfiguration": toSalesforceStandardKnowledgeArticleTypeConfiguration,
@@ -1413,15 +1474,7 @@ export type SalesforceKnowledgeArticleState =
 | "DRAFT"
 | "PUBLISHED"
 | "ARCHIVED"
-;
-
-function toSalesforceKnowledgeArticleState(root: JSONValue): SalesforceKnowledgeArticleState | null {
-  return ( false
-    || root == "DRAFT"
-    || root == "PUBLISHED"
-    || root == "ARCHIVED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface SalesforceStandardKnowledgeArticleTypeConfiguration {
@@ -1429,14 +1482,16 @@ export interface SalesforceStandardKnowledgeArticleTypeConfiguration {
   DocumentTitleFieldName?: string | null;
   FieldMappings?: DataSourceToIndexFieldMapping[] | null;
 }
-function fromSalesforceStandardKnowledgeArticleTypeConfiguration(input?: SalesforceStandardKnowledgeArticleTypeConfiguration | null): JSONValue {
+function fromSalesforceStandardKnowledgeArticleTypeConfiguration(input?: SalesforceStandardKnowledgeArticleTypeConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DocumentDataFieldName: input["DocumentDataFieldName"],
+    DocumentTitleFieldName: input["DocumentTitleFieldName"],
     FieldMappings: input["FieldMappings"]?.map(x => fromDataSourceToIndexFieldMapping(x)),
   }
 }
-function toSalesforceStandardKnowledgeArticleTypeConfiguration(root: JSONValue): SalesforceStandardKnowledgeArticleTypeConfiguration {
-  return prt.readObj({
+function toSalesforceStandardKnowledgeArticleTypeConfiguration(root: jsonP.JSONValue): SalesforceStandardKnowledgeArticleTypeConfiguration {
+  return jsonP.readObj({
     required: {
       "DocumentDataFieldName": "s",
     },
@@ -1454,14 +1509,17 @@ export interface SalesforceCustomKnowledgeArticleTypeConfiguration {
   DocumentTitleFieldName?: string | null;
   FieldMappings?: DataSourceToIndexFieldMapping[] | null;
 }
-function fromSalesforceCustomKnowledgeArticleTypeConfiguration(input?: SalesforceCustomKnowledgeArticleTypeConfiguration | null): JSONValue {
+function fromSalesforceCustomKnowledgeArticleTypeConfiguration(input?: SalesforceCustomKnowledgeArticleTypeConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    DocumentDataFieldName: input["DocumentDataFieldName"],
+    DocumentTitleFieldName: input["DocumentTitleFieldName"],
     FieldMappings: input["FieldMappings"]?.map(x => fromDataSourceToIndexFieldMapping(x)),
   }
 }
-function toSalesforceCustomKnowledgeArticleTypeConfiguration(root: JSONValue): SalesforceCustomKnowledgeArticleTypeConfiguration {
-  return prt.readObj({
+function toSalesforceCustomKnowledgeArticleTypeConfiguration(root: jsonP.JSONValue): SalesforceCustomKnowledgeArticleTypeConfiguration {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "DocumentDataFieldName": "s",
@@ -1480,21 +1538,24 @@ export interface SalesforceChatterFeedConfiguration {
   FieldMappings?: DataSourceToIndexFieldMapping[] | null;
   IncludeFilterTypes?: SalesforceChatterFeedIncludeFilterType[] | null;
 }
-function fromSalesforceChatterFeedConfiguration(input?: SalesforceChatterFeedConfiguration | null): JSONValue {
+function fromSalesforceChatterFeedConfiguration(input?: SalesforceChatterFeedConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DocumentDataFieldName: input["DocumentDataFieldName"],
+    DocumentTitleFieldName: input["DocumentTitleFieldName"],
     FieldMappings: input["FieldMappings"]?.map(x => fromDataSourceToIndexFieldMapping(x)),
+    IncludeFilterTypes: input["IncludeFilterTypes"],
   }
 }
-function toSalesforceChatterFeedConfiguration(root: JSONValue): SalesforceChatterFeedConfiguration {
-  return prt.readObj({
+function toSalesforceChatterFeedConfiguration(root: jsonP.JSONValue): SalesforceChatterFeedConfiguration {
+  return jsonP.readObj({
     required: {
       "DocumentDataFieldName": "s",
     },
     optional: {
       "DocumentTitleFieldName": "s",
       "FieldMappings": [toDataSourceToIndexFieldMapping],
-      "IncludeFilterTypes": [toSalesforceChatterFeedIncludeFilterType],
+      "IncludeFilterTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<SalesforceChatterFeedIncludeFilterType>(x)],
     },
   }, root);
 }
@@ -1503,28 +1564,22 @@ function toSalesforceChatterFeedConfiguration(root: JSONValue): SalesforceChatte
 export type SalesforceChatterFeedIncludeFilterType =
 | "ACTIVE_USER"
 | "STANDARD_USER"
-;
-
-function toSalesforceChatterFeedIncludeFilterType(root: JSONValue): SalesforceChatterFeedIncludeFilterType | null {
-  return ( false
-    || root == "ACTIVE_USER"
-    || root == "STANDARD_USER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface SalesforceStandardObjectAttachmentConfiguration {
   DocumentTitleFieldName?: string | null;
   FieldMappings?: DataSourceToIndexFieldMapping[] | null;
 }
-function fromSalesforceStandardObjectAttachmentConfiguration(input?: SalesforceStandardObjectAttachmentConfiguration | null): JSONValue {
+function fromSalesforceStandardObjectAttachmentConfiguration(input?: SalesforceStandardObjectAttachmentConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DocumentTitleFieldName: input["DocumentTitleFieldName"],
     FieldMappings: input["FieldMappings"]?.map(x => fromDataSourceToIndexFieldMapping(x)),
   }
 }
-function toSalesforceStandardObjectAttachmentConfiguration(root: JSONValue): SalesforceStandardObjectAttachmentConfiguration {
-  return prt.readObj({
+function toSalesforceStandardObjectAttachmentConfiguration(root: jsonP.JSONValue): SalesforceStandardObjectAttachmentConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DocumentTitleFieldName": "s",
@@ -1542,15 +1597,19 @@ export interface OneDriveConfiguration {
   ExclusionPatterns?: string[] | null;
   FieldMappings?: DataSourceToIndexFieldMapping[] | null;
 }
-function fromOneDriveConfiguration(input?: OneDriveConfiguration | null): JSONValue {
+function fromOneDriveConfiguration(input?: OneDriveConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    TenantDomain: input["TenantDomain"],
+    SecretArn: input["SecretArn"],
     OneDriveUsers: fromOneDriveUsers(input["OneDriveUsers"]),
+    InclusionPatterns: input["InclusionPatterns"],
+    ExclusionPatterns: input["ExclusionPatterns"],
     FieldMappings: input["FieldMappings"]?.map(x => fromDataSourceToIndexFieldMapping(x)),
   }
 }
-function toOneDriveConfiguration(root: JSONValue): OneDriveConfiguration {
-  return prt.readObj({
+function toOneDriveConfiguration(root: jsonP.JSONValue): OneDriveConfiguration {
+  return jsonP.readObj({
     required: {
       "TenantDomain": "s",
       "SecretArn": "s",
@@ -1569,14 +1628,15 @@ export interface OneDriveUsers {
   OneDriveUserList?: string[] | null;
   OneDriveUserS3Path?: S3Path | null;
 }
-function fromOneDriveUsers(input?: OneDriveUsers | null): JSONValue {
+function fromOneDriveUsers(input?: OneDriveUsers | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    OneDriveUserList: input["OneDriveUserList"],
     OneDriveUserS3Path: fromS3Path(input["OneDriveUserS3Path"]),
   }
 }
-function toOneDriveUsers(root: JSONValue): OneDriveUsers {
-  return prt.readObj({
+function toOneDriveUsers(root: jsonP.JSONValue): OneDriveUsers {
+  return jsonP.readObj({
     required: {},
     optional: {
       "OneDriveUserList": ["s"],
@@ -1593,19 +1653,22 @@ export interface ServiceNowConfiguration {
   KnowledgeArticleConfiguration?: ServiceNowKnowledgeArticleConfiguration | null;
   ServiceCatalogConfiguration?: ServiceNowServiceCatalogConfiguration | null;
 }
-function fromServiceNowConfiguration(input?: ServiceNowConfiguration | null): JSONValue {
+function fromServiceNowConfiguration(input?: ServiceNowConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    HostUrl: input["HostUrl"],
+    SecretArn: input["SecretArn"],
+    ServiceNowBuildVersion: input["ServiceNowBuildVersion"],
     KnowledgeArticleConfiguration: fromServiceNowKnowledgeArticleConfiguration(input["KnowledgeArticleConfiguration"]),
     ServiceCatalogConfiguration: fromServiceNowServiceCatalogConfiguration(input["ServiceCatalogConfiguration"]),
   }
 }
-function toServiceNowConfiguration(root: JSONValue): ServiceNowConfiguration {
-  return prt.readObj({
+function toServiceNowConfiguration(root: jsonP.JSONValue): ServiceNowConfiguration {
+  return jsonP.readObj({
     required: {
       "HostUrl": "s",
       "SecretArn": "s",
-      "ServiceNowBuildVersion": toServiceNowBuildVersionType,
+      "ServiceNowBuildVersion": (x: jsonP.JSONValue) => cmnP.readEnum<ServiceNowBuildVersionType>(x),
     },
     optional: {
       "KnowledgeArticleConfiguration": toServiceNowKnowledgeArticleConfiguration,
@@ -1618,14 +1681,7 @@ function toServiceNowConfiguration(root: JSONValue): ServiceNowConfiguration {
 export type ServiceNowBuildVersionType =
 | "LONDON"
 | "OTHERS"
-;
-
-function toServiceNowBuildVersionType(root: JSONValue): ServiceNowBuildVersionType | null {
-  return ( false
-    || root == "LONDON"
-    || root == "OTHERS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface ServiceNowKnowledgeArticleConfiguration {
@@ -1636,14 +1692,19 @@ export interface ServiceNowKnowledgeArticleConfiguration {
   DocumentTitleFieldName?: string | null;
   FieldMappings?: DataSourceToIndexFieldMapping[] | null;
 }
-function fromServiceNowKnowledgeArticleConfiguration(input?: ServiceNowKnowledgeArticleConfiguration | null): JSONValue {
+function fromServiceNowKnowledgeArticleConfiguration(input?: ServiceNowKnowledgeArticleConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CrawlAttachments: input["CrawlAttachments"],
+    IncludeAttachmentFilePatterns: input["IncludeAttachmentFilePatterns"],
+    ExcludeAttachmentFilePatterns: input["ExcludeAttachmentFilePatterns"],
+    DocumentDataFieldName: input["DocumentDataFieldName"],
+    DocumentTitleFieldName: input["DocumentTitleFieldName"],
     FieldMappings: input["FieldMappings"]?.map(x => fromDataSourceToIndexFieldMapping(x)),
   }
 }
-function toServiceNowKnowledgeArticleConfiguration(root: JSONValue): ServiceNowKnowledgeArticleConfiguration {
-  return prt.readObj({
+function toServiceNowKnowledgeArticleConfiguration(root: jsonP.JSONValue): ServiceNowKnowledgeArticleConfiguration {
+  return jsonP.readObj({
     required: {
       "DocumentDataFieldName": "s",
     },
@@ -1666,14 +1727,19 @@ export interface ServiceNowServiceCatalogConfiguration {
   DocumentTitleFieldName?: string | null;
   FieldMappings?: DataSourceToIndexFieldMapping[] | null;
 }
-function fromServiceNowServiceCatalogConfiguration(input?: ServiceNowServiceCatalogConfiguration | null): JSONValue {
+function fromServiceNowServiceCatalogConfiguration(input?: ServiceNowServiceCatalogConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CrawlAttachments: input["CrawlAttachments"],
+    IncludeAttachmentFilePatterns: input["IncludeAttachmentFilePatterns"],
+    ExcludeAttachmentFilePatterns: input["ExcludeAttachmentFilePatterns"],
+    DocumentDataFieldName: input["DocumentDataFieldName"],
+    DocumentTitleFieldName: input["DocumentTitleFieldName"],
     FieldMappings: input["FieldMappings"]?.map(x => fromDataSourceToIndexFieldMapping(x)),
   }
 }
-function toServiceNowServiceCatalogConfiguration(root: JSONValue): ServiceNowServiceCatalogConfiguration {
-  return prt.readObj({
+function toServiceNowServiceCatalogConfiguration(root: jsonP.JSONValue): ServiceNowServiceCatalogConfiguration {
+  return jsonP.readObj({
     required: {
       "DocumentDataFieldName": "s",
     },
@@ -1700,22 +1766,27 @@ export interface ConfluenceConfiguration {
   InclusionPatterns?: string[] | null;
   ExclusionPatterns?: string[] | null;
 }
-function fromConfluenceConfiguration(input?: ConfluenceConfiguration | null): JSONValue {
+function fromConfluenceConfiguration(input?: ConfluenceConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ServerUrl: input["ServerUrl"],
+    SecretArn: input["SecretArn"],
+    Version: input["Version"],
     SpaceConfiguration: fromConfluenceSpaceConfiguration(input["SpaceConfiguration"]),
     PageConfiguration: fromConfluencePageConfiguration(input["PageConfiguration"]),
     BlogConfiguration: fromConfluenceBlogConfiguration(input["BlogConfiguration"]),
     AttachmentConfiguration: fromConfluenceAttachmentConfiguration(input["AttachmentConfiguration"]),
     VpcConfiguration: fromDataSourceVpcConfiguration(input["VpcConfiguration"]),
+    InclusionPatterns: input["InclusionPatterns"],
+    ExclusionPatterns: input["ExclusionPatterns"],
   }
 }
-function toConfluenceConfiguration(root: JSONValue): ConfluenceConfiguration {
-  return prt.readObj({
+function toConfluenceConfiguration(root: jsonP.JSONValue): ConfluenceConfiguration {
+  return jsonP.readObj({
     required: {
       "ServerUrl": "s",
       "SecretArn": "s",
-      "Version": toConfluenceVersion,
+      "Version": (x: jsonP.JSONValue) => cmnP.readEnum<ConfluenceVersion>(x),
     },
     optional: {
       "SpaceConfiguration": toConfluenceSpaceConfiguration,
@@ -1732,13 +1803,7 @@ function toConfluenceConfiguration(root: JSONValue): ConfluenceConfiguration {
 // refs: 3 - tags: input, named, enum, output
 export type ConfluenceVersion =
 | "SERVER"
-;
-
-function toConfluenceVersion(root: JSONValue): ConfluenceVersion | null {
-  return ( false
-    || root == "SERVER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface ConfluenceSpaceConfiguration {
@@ -1748,14 +1813,18 @@ export interface ConfluenceSpaceConfiguration {
   ExcludeSpaces?: string[] | null;
   SpaceFieldMappings?: ConfluenceSpaceToIndexFieldMapping[] | null;
 }
-function fromConfluenceSpaceConfiguration(input?: ConfluenceSpaceConfiguration | null): JSONValue {
+function fromConfluenceSpaceConfiguration(input?: ConfluenceSpaceConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CrawlPersonalSpaces: input["CrawlPersonalSpaces"],
+    CrawlArchivedSpaces: input["CrawlArchivedSpaces"],
+    IncludeSpaces: input["IncludeSpaces"],
+    ExcludeSpaces: input["ExcludeSpaces"],
     SpaceFieldMappings: input["SpaceFieldMappings"]?.map(x => fromConfluenceSpaceToIndexFieldMapping(x)),
   }
 }
-function toConfluenceSpaceConfiguration(root: JSONValue): ConfluenceSpaceConfiguration {
-  return prt.readObj({
+function toConfluenceSpaceConfiguration(root: jsonP.JSONValue): ConfluenceSpaceConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CrawlPersonalSpaces": "b",
@@ -1773,16 +1842,19 @@ export interface ConfluenceSpaceToIndexFieldMapping {
   DateFieldFormat?: string | null;
   IndexFieldName?: string | null;
 }
-function fromConfluenceSpaceToIndexFieldMapping(input?: ConfluenceSpaceToIndexFieldMapping | null): JSONValue {
+function fromConfluenceSpaceToIndexFieldMapping(input?: ConfluenceSpaceToIndexFieldMapping | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DataSourceFieldName: input["DataSourceFieldName"],
+    DateFieldFormat: input["DateFieldFormat"],
+    IndexFieldName: input["IndexFieldName"],
   }
 }
-function toConfluenceSpaceToIndexFieldMapping(root: JSONValue): ConfluenceSpaceToIndexFieldMapping {
-  return prt.readObj({
+function toConfluenceSpaceToIndexFieldMapping(root: jsonP.JSONValue): ConfluenceSpaceToIndexFieldMapping {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "DataSourceFieldName": toConfluenceSpaceFieldName,
+      "DataSourceFieldName": (x: jsonP.JSONValue) => cmnP.readEnum<ConfluenceSpaceFieldName>(x),
       "DateFieldFormat": "s",
       "IndexFieldName": "s",
     },
@@ -1795,29 +1867,20 @@ export type ConfluenceSpaceFieldName =
 | "ITEM_TYPE"
 | "SPACE_KEY"
 | "URL"
-;
-
-function toConfluenceSpaceFieldName(root: JSONValue): ConfluenceSpaceFieldName | null {
-  return ( false
-    || root == "DISPLAY_URL"
-    || root == "ITEM_TYPE"
-    || root == "SPACE_KEY"
-    || root == "URL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface ConfluencePageConfiguration {
   PageFieldMappings?: ConfluencePageToIndexFieldMapping[] | null;
 }
-function fromConfluencePageConfiguration(input?: ConfluencePageConfiguration | null): JSONValue {
+function fromConfluencePageConfiguration(input?: ConfluencePageConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     PageFieldMappings: input["PageFieldMappings"]?.map(x => fromConfluencePageToIndexFieldMapping(x)),
   }
 }
-function toConfluencePageConfiguration(root: JSONValue): ConfluencePageConfiguration {
-  return prt.readObj({
+function toConfluencePageConfiguration(root: jsonP.JSONValue): ConfluencePageConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PageFieldMappings": [toConfluencePageToIndexFieldMapping],
@@ -1831,16 +1894,19 @@ export interface ConfluencePageToIndexFieldMapping {
   DateFieldFormat?: string | null;
   IndexFieldName?: string | null;
 }
-function fromConfluencePageToIndexFieldMapping(input?: ConfluencePageToIndexFieldMapping | null): JSONValue {
+function fromConfluencePageToIndexFieldMapping(input?: ConfluencePageToIndexFieldMapping | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DataSourceFieldName: input["DataSourceFieldName"],
+    DateFieldFormat: input["DateFieldFormat"],
+    IndexFieldName: input["IndexFieldName"],
   }
 }
-function toConfluencePageToIndexFieldMapping(root: JSONValue): ConfluencePageToIndexFieldMapping {
-  return prt.readObj({
+function toConfluencePageToIndexFieldMapping(root: jsonP.JSONValue): ConfluencePageToIndexFieldMapping {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "DataSourceFieldName": toConfluencePageFieldName,
+      "DataSourceFieldName": (x: jsonP.JSONValue) => cmnP.readEnum<ConfluencePageFieldName>(x),
       "DateFieldFormat": "s",
       "IndexFieldName": "s",
     },
@@ -1861,37 +1927,20 @@ export type ConfluencePageFieldName =
 | "SPACE_NAME"
 | "URL"
 | "VERSION"
-;
-
-function toConfluencePageFieldName(root: JSONValue): ConfluencePageFieldName | null {
-  return ( false
-    || root == "AUTHOR"
-    || root == "CONTENT_STATUS"
-    || root == "CREATED_DATE"
-    || root == "DISPLAY_URL"
-    || root == "ITEM_TYPE"
-    || root == "LABELS"
-    || root == "MODIFIED_DATE"
-    || root == "PARENT_ID"
-    || root == "SPACE_KEY"
-    || root == "SPACE_NAME"
-    || root == "URL"
-    || root == "VERSION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface ConfluenceBlogConfiguration {
   BlogFieldMappings?: ConfluenceBlogToIndexFieldMapping[] | null;
 }
-function fromConfluenceBlogConfiguration(input?: ConfluenceBlogConfiguration | null): JSONValue {
+function fromConfluenceBlogConfiguration(input?: ConfluenceBlogConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     BlogFieldMappings: input["BlogFieldMappings"]?.map(x => fromConfluenceBlogToIndexFieldMapping(x)),
   }
 }
-function toConfluenceBlogConfiguration(root: JSONValue): ConfluenceBlogConfiguration {
-  return prt.readObj({
+function toConfluenceBlogConfiguration(root: jsonP.JSONValue): ConfluenceBlogConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "BlogFieldMappings": [toConfluenceBlogToIndexFieldMapping],
@@ -1905,16 +1954,19 @@ export interface ConfluenceBlogToIndexFieldMapping {
   DateFieldFormat?: string | null;
   IndexFieldName?: string | null;
 }
-function fromConfluenceBlogToIndexFieldMapping(input?: ConfluenceBlogToIndexFieldMapping | null): JSONValue {
+function fromConfluenceBlogToIndexFieldMapping(input?: ConfluenceBlogToIndexFieldMapping | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DataSourceFieldName: input["DataSourceFieldName"],
+    DateFieldFormat: input["DateFieldFormat"],
+    IndexFieldName: input["IndexFieldName"],
   }
 }
-function toConfluenceBlogToIndexFieldMapping(root: JSONValue): ConfluenceBlogToIndexFieldMapping {
-  return prt.readObj({
+function toConfluenceBlogToIndexFieldMapping(root: jsonP.JSONValue): ConfluenceBlogToIndexFieldMapping {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "DataSourceFieldName": toConfluenceBlogFieldName,
+      "DataSourceFieldName": (x: jsonP.JSONValue) => cmnP.readEnum<ConfluenceBlogFieldName>(x),
       "DateFieldFormat": "s",
       "IndexFieldName": "s",
     },
@@ -1932,35 +1984,22 @@ export type ConfluenceBlogFieldName =
 | "SPACE_NAME"
 | "URL"
 | "VERSION"
-;
-
-function toConfluenceBlogFieldName(root: JSONValue): ConfluenceBlogFieldName | null {
-  return ( false
-    || root == "AUTHOR"
-    || root == "DISPLAY_URL"
-    || root == "ITEM_TYPE"
-    || root == "LABELS"
-    || root == "PUBLISH_DATE"
-    || root == "SPACE_KEY"
-    || root == "SPACE_NAME"
-    || root == "URL"
-    || root == "VERSION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface ConfluenceAttachmentConfiguration {
   CrawlAttachments?: boolean | null;
   AttachmentFieldMappings?: ConfluenceAttachmentToIndexFieldMapping[] | null;
 }
-function fromConfluenceAttachmentConfiguration(input?: ConfluenceAttachmentConfiguration | null): JSONValue {
+function fromConfluenceAttachmentConfiguration(input?: ConfluenceAttachmentConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CrawlAttachments: input["CrawlAttachments"],
     AttachmentFieldMappings: input["AttachmentFieldMappings"]?.map(x => fromConfluenceAttachmentToIndexFieldMapping(x)),
   }
 }
-function toConfluenceAttachmentConfiguration(root: JSONValue): ConfluenceAttachmentConfiguration {
-  return prt.readObj({
+function toConfluenceAttachmentConfiguration(root: jsonP.JSONValue): ConfluenceAttachmentConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CrawlAttachments": "b",
@@ -1975,16 +2014,19 @@ export interface ConfluenceAttachmentToIndexFieldMapping {
   DateFieldFormat?: string | null;
   IndexFieldName?: string | null;
 }
-function fromConfluenceAttachmentToIndexFieldMapping(input?: ConfluenceAttachmentToIndexFieldMapping | null): JSONValue {
+function fromConfluenceAttachmentToIndexFieldMapping(input?: ConfluenceAttachmentToIndexFieldMapping | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DataSourceFieldName: input["DataSourceFieldName"],
+    DateFieldFormat: input["DateFieldFormat"],
+    IndexFieldName: input["IndexFieldName"],
   }
 }
-function toConfluenceAttachmentToIndexFieldMapping(root: JSONValue): ConfluenceAttachmentToIndexFieldMapping {
-  return prt.readObj({
+function toConfluenceAttachmentToIndexFieldMapping(root: jsonP.JSONValue): ConfluenceAttachmentToIndexFieldMapping {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "DataSourceFieldName": toConfluenceAttachmentFieldName,
+      "DataSourceFieldName": (x: jsonP.JSONValue) => cmnP.readEnum<ConfluenceAttachmentFieldName>(x),
       "DateFieldFormat": "s",
       "IndexFieldName": "s",
     },
@@ -2004,36 +2046,22 @@ export type ConfluenceAttachmentFieldName =
 | "SPACE_NAME"
 | "URL"
 | "VERSION"
-;
-
-function toConfluenceAttachmentFieldName(root: JSONValue): ConfluenceAttachmentFieldName | null {
-  return ( false
-    || root == "AUTHOR"
-    || root == "CONTENT_TYPE"
-    || root == "CREATED_DATE"
-    || root == "DISPLAY_URL"
-    || root == "FILE_SIZE"
-    || root == "ITEM_TYPE"
-    || root == "PARENT_ID"
-    || root == "SPACE_KEY"
-    || root == "SPACE_NAME"
-    || root == "URL"
-    || root == "VERSION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -2047,40 +2075,26 @@ export type FaqFileFormat =
 | "CSV"
 | "CSV_WITH_HEADER"
 | "JSON"
-;
-
-function toFaqFileFormat(root: JSONValue): FaqFileFormat | null {
-  return ( false
-    || root == "CSV"
-    || root == "CSV_WITH_HEADER"
-    || root == "JSON"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type IndexEdition =
 | "DEVELOPER_EDITION"
 | "ENTERPRISE_EDITION"
-;
-
-function toIndexEdition(root: JSONValue): IndexEdition | null {
-  return ( false
-    || root == "DEVELOPER_EDITION"
-    || root == "ENTERPRISE_EDITION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface ServerSideEncryptionConfiguration {
   KmsKeyId?: string | null;
 }
-function fromServerSideEncryptionConfiguration(input?: ServerSideEncryptionConfiguration | null): JSONValue {
+function fromServerSideEncryptionConfiguration(input?: ServerSideEncryptionConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    KmsKeyId: input["KmsKeyId"],
   }
 }
-function toServerSideEncryptionConfiguration(root: JSONValue): ServerSideEncryptionConfiguration {
-  return prt.readObj({
+function toServerSideEncryptionConfiguration(root: jsonP.JSONValue): ServerSideEncryptionConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "KmsKeyId": "s",
@@ -2093,11 +2107,11 @@ export interface TimeRange {
   StartTime?: Date | number | null;
   EndTime?: Date | number | null;
 }
-function fromTimeRange(input?: TimeRange | null): JSONValue {
+function fromTimeRange(input?: TimeRange | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    StartTime: prt.serializeDate_unixTimestamp(input["StartTime"]),
-    EndTime: prt.serializeDate_unixTimestamp(input["EndTime"]),
+  return {
+    StartTime: jsonP.serializeDate_unixTimestamp(input["StartTime"]),
+    EndTime: jsonP.serializeDate_unixTimestamp(input["EndTime"]),
   }
 }
 
@@ -2110,19 +2124,7 @@ export type DataSourceSyncJobStatus =
 | "STOPPING"
 | "ABORTED"
 | "SYNCING_INDEXING"
-;
-
-function toDataSourceSyncJobStatus(root: JSONValue): DataSourceSyncJobStatus | null {
-  return ( false
-    || root == "FAILED"
-    || root == "SUCCEEDED"
-    || root == "SYNCING"
-    || root == "INCOMPLETE"
-    || root == "STOPPING"
-    || root == "ABORTED"
-    || root == "SYNCING_INDEXING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, recursed, recursive
 export interface AttributeFilter {
@@ -2137,9 +2139,9 @@ export interface AttributeFilter {
   LessThan?: DocumentAttribute | null;
   LessThanOrEquals?: DocumentAttribute | null;
 }
-function fromAttributeFilter(input?: AttributeFilter | null): JSONValue {
+function fromAttributeFilter(input?: AttributeFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     AndAllFilters: input["AndAllFilters"]?.map(x => fromAttributeFilter(x)),
     OrAllFilters: input["OrAllFilters"]?.map(x => fromAttributeFilter(x)),
     NotFilter: fromAttributeFilter(input["NotFilter"]),
@@ -2157,9 +2159,10 @@ function fromAttributeFilter(input?: AttributeFilter | null): JSONValue {
 export interface Facet {
   DocumentAttributeKey?: string | null;
 }
-function fromFacet(input?: Facet | null): JSONValue {
+function fromFacet(input?: Facet | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DocumentAttributeKey: input["DocumentAttributeKey"],
   }
 }
 
@@ -2168,24 +2171,18 @@ export type QueryResultType =
 | "DOCUMENT"
 | "QUESTION_ANSWER"
 | "ANSWER"
-;
-
-function toQueryResultType(root: JSONValue): QueryResultType | null {
-  return ( false
-    || root == "DOCUMENT"
-    || root == "QUESTION_ANSWER"
-    || root == "ANSWER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface SortingConfiguration {
   DocumentAttributeKey: string;
   SortOrder: SortOrder;
 }
-function fromSortingConfiguration(input?: SortingConfiguration | null): JSONValue {
+function fromSortingConfiguration(input?: SortingConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DocumentAttributeKey: input["DocumentAttributeKey"],
+    SortOrder: input["SortOrder"],
   }
 }
 
@@ -2193,18 +2190,18 @@ function fromSortingConfiguration(input?: SortingConfiguration | null): JSONValu
 export type SortOrder =
 | "DESC"
 | "ASC"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ClickFeedback {
   ResultId: string;
   ClickTime: Date | number;
 }
-function fromClickFeedback(input?: ClickFeedback | null): JSONValue {
+function fromClickFeedback(input?: ClickFeedback | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    ClickTime: prt.serializeDate_unixTimestamp(input["ClickTime"]),
+  return {
+    ResultId: input["ResultId"],
+    ClickTime: jsonP.serializeDate_unixTimestamp(input["ClickTime"]),
   }
 }
 
@@ -2213,9 +2210,11 @@ export interface RelevanceFeedback {
   ResultId: string;
   RelevanceValue: RelevanceType;
 }
-function fromRelevanceFeedback(input?: RelevanceFeedback | null): JSONValue {
+function fromRelevanceFeedback(input?: RelevanceFeedback | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ResultId: input["ResultId"],
+    RelevanceValue: input["RelevanceValue"],
   }
 }
 
@@ -2223,8 +2222,7 @@ function fromRelevanceFeedback(input?: RelevanceFeedback | null): JSONValue {
 export type RelevanceType =
 | "RELEVANT"
 | "NOT_RELEVANT"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface DocumentMetadataConfiguration {
@@ -2233,18 +2231,20 @@ export interface DocumentMetadataConfiguration {
   Relevance?: Relevance | null;
   Search?: Search | null;
 }
-function fromDocumentMetadataConfiguration(input?: DocumentMetadataConfiguration | null): JSONValue {
+function fromDocumentMetadataConfiguration(input?: DocumentMetadataConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Type: input["Type"],
     Relevance: fromRelevance(input["Relevance"]),
     Search: fromSearch(input["Search"]),
   }
 }
-function toDocumentMetadataConfiguration(root: JSONValue): DocumentMetadataConfiguration {
-  return prt.readObj({
+function toDocumentMetadataConfiguration(root: jsonP.JSONValue): DocumentMetadataConfiguration {
+  return jsonP.readObj({
     required: {
       "Name": "s",
-      "Type": toDocumentAttributeValueType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentAttributeValueType>(x),
     },
     optional: {
       "Relevance": toRelevance,
@@ -2259,16 +2259,7 @@ export type DocumentAttributeValueType =
 | "STRING_LIST_VALUE"
 | "LONG_VALUE"
 | "DATE_VALUE"
-;
-
-function toDocumentAttributeValueType(root: JSONValue): DocumentAttributeValueType | null {
-  return ( false
-    || root == "STRING_VALUE"
-    || root == "STRING_LIST_VALUE"
-    || root == "LONG_VALUE"
-    || root == "DATE_VALUE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface Relevance {
@@ -2276,22 +2267,27 @@ export interface Relevance {
   Importance?: number | null;
   Duration?: string | null;
   RankOrder?: Order | null;
-  ValueImportanceMap?: { [key: string]: number } | null;
+  ValueImportanceMap?: { [key: string]: number | null | undefined } | null;
 }
-function fromRelevance(input?: Relevance | null): JSONValue {
+function fromRelevance(input?: Relevance | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Freshness: input["Freshness"],
+    Importance: input["Importance"],
+    Duration: input["Duration"],
+    RankOrder: input["RankOrder"],
+    ValueImportanceMap: input["ValueImportanceMap"],
   }
 }
-function toRelevance(root: JSONValue): Relevance {
-  return prt.readObj({
+function toRelevance(root: jsonP.JSONValue): Relevance {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Freshness": "b",
       "Importance": "n",
       "Duration": "s",
-      "RankOrder": toOrder,
-      "ValueImportanceMap": x => prt.readMap(String, Number, x),
+      "RankOrder": (x: jsonP.JSONValue) => cmnP.readEnum<Order>(x),
+      "ValueImportanceMap": x => jsonP.readMap(String, Number, x),
     },
   }, root);
 }
@@ -2300,14 +2296,7 @@ function toRelevance(root: JSONValue): Relevance {
 export type Order =
 | "ASCENDING"
 | "DESCENDING"
-;
-
-function toOrder(root: JSONValue): Order | null {
-  return ( false
-    || root == "ASCENDING"
-    || root == "DESCENDING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface Search {
@@ -2316,13 +2305,17 @@ export interface Search {
   Displayable?: boolean | null;
   Sortable?: boolean | null;
 }
-function fromSearch(input?: Search | null): JSONValue {
+function fromSearch(input?: Search | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Facetable: input["Facetable"],
+    Searchable: input["Searchable"],
+    Displayable: input["Displayable"],
+    Sortable: input["Sortable"],
   }
 }
-function toSearch(root: JSONValue): Search {
-  return prt.readObj({
+function toSearch(root: jsonP.JSONValue): Search {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Facetable": "b",
@@ -2338,13 +2331,15 @@ export interface CapacityUnitsConfiguration {
   StorageCapacityUnits: number;
   QueryCapacityUnits: number;
 }
-function fromCapacityUnitsConfiguration(input?: CapacityUnitsConfiguration | null): JSONValue {
+function fromCapacityUnitsConfiguration(input?: CapacityUnitsConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    StorageCapacityUnits: input["StorageCapacityUnits"],
+    QueryCapacityUnits: input["QueryCapacityUnits"],
   }
 }
-function toCapacityUnitsConfiguration(root: JSONValue): CapacityUnitsConfiguration {
-  return prt.readObj({
+function toCapacityUnitsConfiguration(root: jsonP.JSONValue): CapacityUnitsConfiguration {
+  return jsonP.readObj({
     required: {
       "StorageCapacityUnits": "n",
       "QueryCapacityUnits": "n",
@@ -2359,12 +2354,12 @@ export interface BatchDeleteDocumentResponseFailedDocument {
   ErrorCode?: ErrorCode | null;
   ErrorMessage?: string | null;
 }
-function toBatchDeleteDocumentResponseFailedDocument(root: JSONValue): BatchDeleteDocumentResponseFailedDocument {
-  return prt.readObj({
+function toBatchDeleteDocumentResponseFailedDocument(root: jsonP.JSONValue): BatchDeleteDocumentResponseFailedDocument {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
-      "ErrorCode": toErrorCode,
+      "ErrorCode": (x: jsonP.JSONValue) => cmnP.readEnum<ErrorCode>(x),
       "ErrorMessage": "s",
     },
   }, root);
@@ -2374,13 +2369,7 @@ function toBatchDeleteDocumentResponseFailedDocument(root: JSONValue): BatchDele
 export type ErrorCode =
 | "InternalError"
 | "InvalidRequest"
-;
-function toErrorCode(root: JSONValue): ErrorCode | null {
-  return ( false
-    || root == "InternalError"
-    || root == "InvalidRequest"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface BatchPutDocumentResponseFailedDocument {
@@ -2388,12 +2377,12 @@ export interface BatchPutDocumentResponseFailedDocument {
   ErrorCode?: ErrorCode | null;
   ErrorMessage?: string | null;
 }
-function toBatchPutDocumentResponseFailedDocument(root: JSONValue): BatchPutDocumentResponseFailedDocument {
-  return prt.readObj({
+function toBatchPutDocumentResponseFailedDocument(root: jsonP.JSONValue): BatchPutDocumentResponseFailedDocument {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
-      "ErrorCode": toErrorCode,
+      "ErrorCode": (x: jsonP.JSONValue) => cmnP.readEnum<ErrorCode>(x),
       "ErrorMessage": "s",
     },
   }, root);
@@ -2406,16 +2395,7 @@ export type DataSourceStatus =
 | "FAILED"
 | "UPDATING"
 | "ACTIVE"
-;
-function toDataSourceStatus(root: JSONValue): DataSourceStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "DELETING"
-    || root == "FAILED"
-    || root == "UPDATING"
-    || root == "ACTIVE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type FaqStatus =
@@ -2424,16 +2404,7 @@ export type FaqStatus =
 | "ACTIVE"
 | "DELETING"
 | "FAILED"
-;
-function toFaqStatus(root: JSONValue): FaqStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "UPDATING"
-    || root == "ACTIVE"
-    || root == "DELETING"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type IndexStatus =
@@ -2443,25 +2414,15 @@ export type IndexStatus =
 | "FAILED"
 | "UPDATING"
 | "SYSTEM_UPDATING"
-;
-function toIndexStatus(root: JSONValue): IndexStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "ACTIVE"
-    || root == "DELETING"
-    || root == "FAILED"
-    || root == "UPDATING"
-    || root == "SYSTEM_UPDATING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface IndexStatistics {
   FaqStatistics: FaqStatistics;
   TextDocumentStatistics: TextDocumentStatistics;
 }
-function toIndexStatistics(root: JSONValue): IndexStatistics {
-  return prt.readObj({
+function toIndexStatistics(root: jsonP.JSONValue): IndexStatistics {
+  return jsonP.readObj({
     required: {
       "FaqStatistics": toFaqStatistics,
       "TextDocumentStatistics": toTextDocumentStatistics,
@@ -2474,8 +2435,8 @@ function toIndexStatistics(root: JSONValue): IndexStatistics {
 export interface FaqStatistics {
   IndexedQuestionAnswersCount: number;
 }
-function toFaqStatistics(root: JSONValue): FaqStatistics {
-  return prt.readObj({
+function toFaqStatistics(root: jsonP.JSONValue): FaqStatistics {
+  return jsonP.readObj({
     required: {
       "IndexedQuestionAnswersCount": "n",
     },
@@ -2488,8 +2449,8 @@ export interface TextDocumentStatistics {
   IndexedTextDocumentsCount: number;
   IndexedTextBytes: number;
 }
-function toTextDocumentStatistics(root: JSONValue): TextDocumentStatistics {
-  return prt.readObj({
+function toTextDocumentStatistics(root: jsonP.JSONValue): TextDocumentStatistics {
+  return jsonP.readObj({
     required: {
       "IndexedTextDocumentsCount": "n",
       "IndexedTextBytes": "n",
@@ -2509,16 +2470,16 @@ export interface DataSourceSyncJob {
   DataSourceErrorCode?: string | null;
   Metrics?: DataSourceSyncJobMetrics | null;
 }
-function toDataSourceSyncJob(root: JSONValue): DataSourceSyncJob {
-  return prt.readObj({
+function toDataSourceSyncJob(root: jsonP.JSONValue): DataSourceSyncJob {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ExecutionId": "s",
       "StartTime": "d",
       "EndTime": "d",
-      "Status": toDataSourceSyncJobStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<DataSourceSyncJobStatus>(x),
       "ErrorMessage": "s",
-      "ErrorCode": toErrorCode,
+      "ErrorCode": (x: jsonP.JSONValue) => cmnP.readEnum<ErrorCode>(x),
       "DataSourceErrorCode": "s",
       "Metrics": toDataSourceSyncJobMetrics,
     },
@@ -2533,8 +2494,8 @@ export interface DataSourceSyncJobMetrics {
   DocumentsFailed?: string | null;
   DocumentsScanned?: string | null;
 }
-function toDataSourceSyncJobMetrics(root: JSONValue): DataSourceSyncJobMetrics {
-  return prt.readObj({
+function toDataSourceSyncJobMetrics(root: jsonP.JSONValue): DataSourceSyncJobMetrics {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DocumentsAdded": "s",
@@ -2555,16 +2516,16 @@ export interface DataSourceSummary {
   UpdatedAt?: Date | number | null;
   Status?: DataSourceStatus | null;
 }
-function toDataSourceSummary(root: JSONValue): DataSourceSummary {
-  return prt.readObj({
+function toDataSourceSummary(root: jsonP.JSONValue): DataSourceSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
       "Id": "s",
-      "Type": toDataSourceType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<DataSourceType>(x),
       "CreatedAt": "d",
       "UpdatedAt": "d",
-      "Status": toDataSourceStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<DataSourceStatus>(x),
     },
   }, root);
 }
@@ -2578,16 +2539,16 @@ export interface FaqSummary {
   UpdatedAt?: Date | number | null;
   FileFormat?: FaqFileFormat | null;
 }
-function toFaqSummary(root: JSONValue): FaqSummary {
-  return prt.readObj({
+function toFaqSummary(root: jsonP.JSONValue): FaqSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "Name": "s",
-      "Status": toFaqStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<FaqStatus>(x),
       "CreatedAt": "d",
       "UpdatedAt": "d",
-      "FileFormat": toFaqFileFormat,
+      "FileFormat": (x: jsonP.JSONValue) => cmnP.readEnum<FaqFileFormat>(x),
     },
   }, root);
 }
@@ -2601,17 +2562,17 @@ export interface IndexConfigurationSummary {
   UpdatedAt: Date | number;
   Status: IndexStatus;
 }
-function toIndexConfigurationSummary(root: JSONValue): IndexConfigurationSummary {
-  return prt.readObj({
+function toIndexConfigurationSummary(root: jsonP.JSONValue): IndexConfigurationSummary {
+  return jsonP.readObj({
     required: {
       "CreatedAt": "d",
       "UpdatedAt": "d",
-      "Status": toIndexStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<IndexStatus>(x),
     },
     optional: {
       "Name": "s",
       "Id": "s",
-      "Edition": toIndexEdition,
+      "Edition": (x: jsonP.JSONValue) => cmnP.readEnum<IndexEdition>(x),
     },
   }, root);
 }
@@ -2628,12 +2589,12 @@ export interface QueryResultItem {
   DocumentAttributes?: DocumentAttribute[] | null;
   ScoreAttributes?: ScoreAttributes | null;
 }
-function toQueryResultItem(root: JSONValue): QueryResultItem {
-  return prt.readObj({
+function toQueryResultItem(root: jsonP.JSONValue): QueryResultItem {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
-      "Type": toQueryResultType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<QueryResultType>(x),
       "AdditionalAttributes": [toAdditionalResultAttribute],
       "DocumentId": "s",
       "DocumentTitle": toTextWithHighlights,
@@ -2651,11 +2612,11 @@ export interface AdditionalResultAttribute {
   ValueType: AdditionalResultAttributeValueType;
   Value: AdditionalResultAttributeValue;
 }
-function toAdditionalResultAttribute(root: JSONValue): AdditionalResultAttribute {
-  return prt.readObj({
+function toAdditionalResultAttribute(root: jsonP.JSONValue): AdditionalResultAttribute {
+  return jsonP.readObj({
     required: {
       "Key": "s",
-      "ValueType": toAdditionalResultAttributeValueType,
+      "ValueType": (x: jsonP.JSONValue) => cmnP.readEnum<AdditionalResultAttributeValueType>(x),
       "Value": toAdditionalResultAttributeValue,
     },
     optional: {},
@@ -2665,19 +2626,14 @@ function toAdditionalResultAttribute(root: JSONValue): AdditionalResultAttribute
 // refs: 1 - tags: output, named, enum
 export type AdditionalResultAttributeValueType =
 | "TEXT_WITH_HIGHLIGHTS_VALUE"
-;
-function toAdditionalResultAttributeValueType(root: JSONValue): AdditionalResultAttributeValueType | null {
-  return ( false
-    || root == "TEXT_WITH_HIGHLIGHTS_VALUE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AdditionalResultAttributeValue {
   TextWithHighlightsValue?: TextWithHighlights | null;
 }
-function toAdditionalResultAttributeValue(root: JSONValue): AdditionalResultAttributeValue {
-  return prt.readObj({
+function toAdditionalResultAttributeValue(root: jsonP.JSONValue): AdditionalResultAttributeValue {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TextWithHighlightsValue": toTextWithHighlights,
@@ -2690,8 +2646,8 @@ export interface TextWithHighlights {
   Text?: string | null;
   Highlights?: Highlight[] | null;
 }
-function toTextWithHighlights(root: JSONValue): TextWithHighlights {
-  return prt.readObj({
+function toTextWithHighlights(root: jsonP.JSONValue): TextWithHighlights {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Text": "s",
@@ -2706,8 +2662,8 @@ export interface Highlight {
   EndOffset: number;
   TopAnswer?: boolean | null;
 }
-function toHighlight(root: JSONValue): Highlight {
-  return prt.readObj({
+function toHighlight(root: jsonP.JSONValue): Highlight {
+  return jsonP.readObj({
     required: {
       "BeginOffset": "n",
       "EndOffset": "n",
@@ -2722,11 +2678,11 @@ function toHighlight(root: JSONValue): Highlight {
 export interface ScoreAttributes {
   ScoreConfidence?: ScoreConfidence | null;
 }
-function toScoreAttributes(root: JSONValue): ScoreAttributes {
-  return prt.readObj({
+function toScoreAttributes(root: jsonP.JSONValue): ScoreAttributes {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "ScoreConfidence": toScoreConfidence,
+      "ScoreConfidence": (x: jsonP.JSONValue) => cmnP.readEnum<ScoreConfidence>(x),
     },
   }, root);
 }
@@ -2737,15 +2693,7 @@ export type ScoreConfidence =
 | "HIGH"
 | "MEDIUM"
 | "LOW"
-;
-function toScoreConfidence(root: JSONValue): ScoreConfidence | null {
-  return ( false
-    || root == "VERY_HIGH"
-    || root == "HIGH"
-    || root == "MEDIUM"
-    || root == "LOW"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface FacetResult {
@@ -2753,12 +2701,12 @@ export interface FacetResult {
   DocumentAttributeValueType?: DocumentAttributeValueType | null;
   DocumentAttributeValueCountPairs?: DocumentAttributeValueCountPair[] | null;
 }
-function toFacetResult(root: JSONValue): FacetResult {
-  return prt.readObj({
+function toFacetResult(root: jsonP.JSONValue): FacetResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DocumentAttributeKey": "s",
-      "DocumentAttributeValueType": toDocumentAttributeValueType,
+      "DocumentAttributeValueType": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentAttributeValueType>(x),
       "DocumentAttributeValueCountPairs": [toDocumentAttributeValueCountPair],
     },
   }, root);
@@ -2769,8 +2717,8 @@ export interface DocumentAttributeValueCountPair {
   DocumentAttributeValue?: DocumentAttributeValue | null;
   Count?: number | null;
 }
-function toDocumentAttributeValueCountPair(root: JSONValue): DocumentAttributeValueCountPair {
-  return prt.readObj({
+function toDocumentAttributeValueCountPair(root: jsonP.JSONValue): DocumentAttributeValueCountPair {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DocumentAttributeValue": toDocumentAttributeValue,

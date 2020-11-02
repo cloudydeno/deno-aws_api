@@ -5,10 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }
@@ -34,13 +33,14 @@ export default class Athena {
   async batchGetNamedQuery(
     {abortSignal, ...params}: RequestConfig & BatchGetNamedQueryInput,
   ): Promise<BatchGetNamedQueryOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NamedQueryIds: params["NamedQueryIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetNamedQuery",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NamedQueries": [toNamedQuery],
@@ -52,13 +52,14 @@ export default class Athena {
   async batchGetQueryExecution(
     {abortSignal, ...params}: RequestConfig & BatchGetQueryExecutionInput,
   ): Promise<BatchGetQueryExecutionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      QueryExecutionIds: params["QueryExecutionIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetQueryExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "QueryExecutions": [toQueryExecution],
@@ -70,14 +71,18 @@ export default class Athena {
   async createDataCatalog(
     {abortSignal, ...params}: RequestConfig & CreateDataCatalogInput,
   ): Promise<CreateDataCatalogOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Type: params["Type"],
+      Description: params["Description"],
+      Parameters: params["Parameters"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDataCatalog",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -86,14 +91,19 @@ export default class Athena {
   async createNamedQuery(
     {abortSignal, ...params}: RequestConfig & CreateNamedQueryInput,
   ): Promise<CreateNamedQueryOutput> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Description: params["Description"],
+      Database: params["Database"],
+      QueryString: params["QueryString"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      WorkGroup: params["WorkGroup"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNamedQuery",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NamedQueryId": "s",
@@ -104,15 +114,17 @@ export default class Athena {
   async createWorkGroup(
     {abortSignal, ...params}: RequestConfig & CreateWorkGroupInput,
   ): Promise<CreateWorkGroupOutput> {
-    const body: JSONObject = {...params,
-    Configuration: fromWorkGroupConfiguration(params["Configuration"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Configuration: fromWorkGroupConfiguration(params["Configuration"]),
+      Description: params["Description"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWorkGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -121,13 +133,14 @@ export default class Athena {
   async deleteDataCatalog(
     {abortSignal, ...params}: RequestConfig & DeleteDataCatalogInput,
   ): Promise<DeleteDataCatalogOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDataCatalog",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -136,14 +149,14 @@ export default class Athena {
   async deleteNamedQuery(
     {abortSignal, ...params}: RequestConfig & DeleteNamedQueryInput,
   ): Promise<DeleteNamedQueryOutput> {
-    const body: JSONObject = {...params,
-    NamedQueryId: params["NamedQueryId"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NamedQueryId: params["NamedQueryId"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteNamedQuery",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -152,13 +165,15 @@ export default class Athena {
   async deleteWorkGroup(
     {abortSignal, ...params}: RequestConfig & DeleteWorkGroupInput,
   ): Promise<DeleteWorkGroupOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkGroup: params["WorkGroup"],
+      RecursiveDeleteOption: params["RecursiveDeleteOption"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteWorkGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -167,13 +182,14 @@ export default class Athena {
   async getDataCatalog(
     {abortSignal, ...params}: RequestConfig & GetDataCatalogInput,
   ): Promise<GetDataCatalogOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDataCatalog",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DataCatalog": toDataCatalog,
@@ -184,13 +200,15 @@ export default class Athena {
   async getDatabase(
     {abortSignal, ...params}: RequestConfig & GetDatabaseInput,
   ): Promise<GetDatabaseOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CatalogName: params["CatalogName"],
+      DatabaseName: params["DatabaseName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDatabase",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Database": toDatabase,
@@ -201,13 +219,14 @@ export default class Athena {
   async getNamedQuery(
     {abortSignal, ...params}: RequestConfig & GetNamedQueryInput,
   ): Promise<GetNamedQueryOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NamedQueryId: params["NamedQueryId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetNamedQuery",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NamedQuery": toNamedQuery,
@@ -218,13 +237,14 @@ export default class Athena {
   async getQueryExecution(
     {abortSignal, ...params}: RequestConfig & GetQueryExecutionInput,
   ): Promise<GetQueryExecutionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      QueryExecutionId: params["QueryExecutionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetQueryExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "QueryExecution": toQueryExecution,
@@ -235,13 +255,16 @@ export default class Athena {
   async getQueryResults(
     {abortSignal, ...params}: RequestConfig & GetQueryResultsInput,
   ): Promise<GetQueryResultsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      QueryExecutionId: params["QueryExecutionId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetQueryResults",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UpdateCount": "n",
@@ -254,13 +277,16 @@ export default class Athena {
   async getTableMetadata(
     {abortSignal, ...params}: RequestConfig & GetTableMetadataInput,
   ): Promise<GetTableMetadataOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CatalogName: params["CatalogName"],
+      DatabaseName: params["DatabaseName"],
+      TableName: params["TableName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTableMetadata",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TableMetadata": toTableMetadata,
@@ -271,13 +297,14 @@ export default class Athena {
   async getWorkGroup(
     {abortSignal, ...params}: RequestConfig & GetWorkGroupInput,
   ): Promise<GetWorkGroupOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkGroup: params["WorkGroup"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetWorkGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WorkGroup": toWorkGroup,
@@ -288,13 +315,15 @@ export default class Athena {
   async listDataCatalogs(
     {abortSignal, ...params}: RequestConfig & ListDataCatalogsInput = {},
   ): Promise<ListDataCatalogsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDataCatalogs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DataCatalogsSummary": [toDataCatalogSummary],
@@ -306,13 +335,16 @@ export default class Athena {
   async listDatabases(
     {abortSignal, ...params}: RequestConfig & ListDatabasesInput,
   ): Promise<ListDatabasesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CatalogName: params["CatalogName"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDatabases",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DatabaseList": [toDatabase],
@@ -324,13 +356,16 @@ export default class Athena {
   async listNamedQueries(
     {abortSignal, ...params}: RequestConfig & ListNamedQueriesInput = {},
   ): Promise<ListNamedQueriesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      WorkGroup: params["WorkGroup"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListNamedQueries",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NamedQueryIds": ["s"],
@@ -342,13 +377,16 @@ export default class Athena {
   async listQueryExecutions(
     {abortSignal, ...params}: RequestConfig & ListQueryExecutionsInput = {},
   ): Promise<ListQueryExecutionsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      WorkGroup: params["WorkGroup"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListQueryExecutions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "QueryExecutionIds": ["s"],
@@ -360,13 +398,18 @@ export default class Athena {
   async listTableMetadata(
     {abortSignal, ...params}: RequestConfig & ListTableMetadataInput,
   ): Promise<ListTableMetadataOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CatalogName: params["CatalogName"],
+      DatabaseName: params["DatabaseName"],
+      Expression: params["Expression"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTableMetadata",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TableMetadataList": [toTableMetadata],
@@ -378,13 +421,16 @@ export default class Athena {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceInput,
   ): Promise<ListTagsForResourceOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -396,13 +442,15 @@ export default class Athena {
   async listWorkGroups(
     {abortSignal, ...params}: RequestConfig & ListWorkGroupsInput = {},
   ): Promise<ListWorkGroupsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWorkGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WorkGroups": [toWorkGroupSummary],
@@ -414,16 +462,18 @@ export default class Athena {
   async startQueryExecution(
     {abortSignal, ...params}: RequestConfig & StartQueryExecutionInput,
   ): Promise<StartQueryExecutionOutput> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    QueryExecutionContext: fromQueryExecutionContext(params["QueryExecutionContext"]),
-    ResultConfiguration: fromResultConfiguration(params["ResultConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      QueryString: params["QueryString"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      QueryExecutionContext: fromQueryExecutionContext(params["QueryExecutionContext"]),
+      ResultConfiguration: fromResultConfiguration(params["ResultConfiguration"]),
+      WorkGroup: params["WorkGroup"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartQueryExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "QueryExecutionId": "s",
@@ -434,14 +484,14 @@ export default class Athena {
   async stopQueryExecution(
     {abortSignal, ...params}: RequestConfig & StopQueryExecutionInput,
   ): Promise<StopQueryExecutionOutput> {
-    const body: JSONObject = {...params,
-    QueryExecutionId: params["QueryExecutionId"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      QueryExecutionId: params["QueryExecutionId"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopQueryExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -450,14 +500,15 @@ export default class Athena {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceInput,
   ): Promise<TagResourceOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -466,13 +517,15 @@ export default class Athena {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceInput,
   ): Promise<UntagResourceOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -481,13 +534,17 @@ export default class Athena {
   async updateDataCatalog(
     {abortSignal, ...params}: RequestConfig & UpdateDataCatalogInput,
   ): Promise<UpdateDataCatalogOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Type: params["Type"],
+      Description: params["Description"],
+      Parameters: params["Parameters"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDataCatalog",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -496,14 +553,17 @@ export default class Athena {
   async updateWorkGroup(
     {abortSignal, ...params}: RequestConfig & UpdateWorkGroupInput,
   ): Promise<UpdateWorkGroupOutput> {
-    const body: JSONObject = {...params,
-    ConfigurationUpdates: fromWorkGroupConfigurationUpdates(params["ConfigurationUpdates"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkGroup: params["WorkGroup"],
+      Description: params["Description"],
+      ConfigurationUpdates: fromWorkGroupConfigurationUpdates(params["ConfigurationUpdates"]),
+      State: params["State"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateWorkGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -526,7 +586,7 @@ export interface CreateDataCatalogInput {
   Name: string;
   Type: DataCatalogType;
   Description?: string | null;
-  Parameters?: { [key: string]: string } | null;
+  Parameters?: { [key: string]: string | null | undefined } | null;
   Tags?: Tag[] | null;
 }
 
@@ -684,7 +744,7 @@ export interface UpdateDataCatalogInput {
   Name: string;
   Type: DataCatalogType;
   Description?: string | null;
-  Parameters?: { [key: string]: string } | null;
+  Parameters?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -841,28 +901,22 @@ export type DataCatalogType =
 | "LAMBDA"
 | "GLUE"
 | "HIVE"
-;
-
-function toDataCatalogType(root: JSONValue): DataCatalogType | null {
-  return ( false
-    || root == "LAMBDA"
-    || root == "GLUE"
-    || root == "HIVE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface Tag {
   Key?: string | null;
   Value?: string | null;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Key": "s",
@@ -879,14 +933,18 @@ export interface WorkGroupConfiguration {
   BytesScannedCutoffPerQuery?: number | null;
   RequesterPaysEnabled?: boolean | null;
 }
-function fromWorkGroupConfiguration(input?: WorkGroupConfiguration | null): JSONValue {
+function fromWorkGroupConfiguration(input?: WorkGroupConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     ResultConfiguration: fromResultConfiguration(input["ResultConfiguration"]),
+    EnforceWorkGroupConfiguration: input["EnforceWorkGroupConfiguration"],
+    PublishCloudWatchMetricsEnabled: input["PublishCloudWatchMetricsEnabled"],
+    BytesScannedCutoffPerQuery: input["BytesScannedCutoffPerQuery"],
+    RequesterPaysEnabled: input["RequesterPaysEnabled"],
   }
 }
-function toWorkGroupConfiguration(root: JSONValue): WorkGroupConfiguration {
-  return prt.readObj({
+function toWorkGroupConfiguration(root: jsonP.JSONValue): WorkGroupConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ResultConfiguration": toResultConfiguration,
@@ -903,14 +961,15 @@ export interface ResultConfiguration {
   OutputLocation?: string | null;
   EncryptionConfiguration?: EncryptionConfiguration | null;
 }
-function fromResultConfiguration(input?: ResultConfiguration | null): JSONValue {
+function fromResultConfiguration(input?: ResultConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    OutputLocation: input["OutputLocation"],
     EncryptionConfiguration: fromEncryptionConfiguration(input["EncryptionConfiguration"]),
   }
 }
-function toResultConfiguration(root: JSONValue): ResultConfiguration {
-  return prt.readObj({
+function toResultConfiguration(root: jsonP.JSONValue): ResultConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "OutputLocation": "s",
@@ -924,15 +983,17 @@ export interface EncryptionConfiguration {
   EncryptionOption: EncryptionOption;
   KmsKey?: string | null;
 }
-function fromEncryptionConfiguration(input?: EncryptionConfiguration | null): JSONValue {
+function fromEncryptionConfiguration(input?: EncryptionConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    EncryptionOption: input["EncryptionOption"],
+    KmsKey: input["KmsKey"],
   }
 }
-function toEncryptionConfiguration(root: JSONValue): EncryptionConfiguration {
-  return prt.readObj({
+function toEncryptionConfiguration(root: jsonP.JSONValue): EncryptionConfiguration {
+  return jsonP.readObj({
     required: {
-      "EncryptionOption": toEncryptionOption,
+      "EncryptionOption": (x: jsonP.JSONValue) => cmnP.readEnum<EncryptionOption>(x),
     },
     optional: {
       "KmsKey": "s",
@@ -945,28 +1006,22 @@ export type EncryptionOption =
 | "SSE_S3"
 | "SSE_KMS"
 | "CSE_KMS"
-;
-
-function toEncryptionOption(root: JSONValue): EncryptionOption | null {
-  return ( false
-    || root == "SSE_S3"
-    || root == "SSE_KMS"
-    || root == "CSE_KMS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface QueryExecutionContext {
   Database?: string | null;
   Catalog?: string | null;
 }
-function fromQueryExecutionContext(input?: QueryExecutionContext | null): JSONValue {
+function fromQueryExecutionContext(input?: QueryExecutionContext | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Database: input["Database"],
+    Catalog: input["Catalog"],
   }
 }
-function toQueryExecutionContext(root: JSONValue): QueryExecutionContext {
-  return prt.readObj({
+function toQueryExecutionContext(root: jsonP.JSONValue): QueryExecutionContext {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Database": "s",
@@ -984,10 +1039,15 @@ export interface WorkGroupConfigurationUpdates {
   RemoveBytesScannedCutoffPerQuery?: boolean | null;
   RequesterPaysEnabled?: boolean | null;
 }
-function fromWorkGroupConfigurationUpdates(input?: WorkGroupConfigurationUpdates | null): JSONValue {
+function fromWorkGroupConfigurationUpdates(input?: WorkGroupConfigurationUpdates | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    EnforceWorkGroupConfiguration: input["EnforceWorkGroupConfiguration"],
     ResultConfigurationUpdates: fromResultConfigurationUpdates(input["ResultConfigurationUpdates"]),
+    PublishCloudWatchMetricsEnabled: input["PublishCloudWatchMetricsEnabled"],
+    BytesScannedCutoffPerQuery: input["BytesScannedCutoffPerQuery"],
+    RemoveBytesScannedCutoffPerQuery: input["RemoveBytesScannedCutoffPerQuery"],
+    RequesterPaysEnabled: input["RequesterPaysEnabled"],
   }
 }
 
@@ -998,10 +1058,13 @@ export interface ResultConfigurationUpdates {
   EncryptionConfiguration?: EncryptionConfiguration | null;
   RemoveEncryptionConfiguration?: boolean | null;
 }
-function fromResultConfigurationUpdates(input?: ResultConfigurationUpdates | null): JSONValue {
+function fromResultConfigurationUpdates(input?: ResultConfigurationUpdates | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    OutputLocation: input["OutputLocation"],
+    RemoveOutputLocation: input["RemoveOutputLocation"],
     EncryptionConfiguration: fromEncryptionConfiguration(input["EncryptionConfiguration"]),
+    RemoveEncryptionConfiguration: input["RemoveEncryptionConfiguration"],
   }
 }
 
@@ -1009,14 +1072,7 @@ function fromResultConfigurationUpdates(input?: ResultConfigurationUpdates | nul
 export type WorkGroupState =
 | "ENABLED"
 | "DISABLED"
-;
-
-function toWorkGroupState(root: JSONValue): WorkGroupState | null {
-  return ( false
-    || root == "ENABLED"
-    || root == "DISABLED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface NamedQuery {
@@ -1027,8 +1083,8 @@ export interface NamedQuery {
   NamedQueryId?: string | null;
   WorkGroup?: string | null;
 }
-function toNamedQuery(root: JSONValue): NamedQuery {
-  return prt.readObj({
+function toNamedQuery(root: jsonP.JSONValue): NamedQuery {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "Database": "s",
@@ -1048,8 +1104,8 @@ export interface UnprocessedNamedQueryId {
   ErrorCode?: string | null;
   ErrorMessage?: string | null;
 }
-function toUnprocessedNamedQueryId(root: JSONValue): UnprocessedNamedQueryId {
-  return prt.readObj({
+function toUnprocessedNamedQueryId(root: jsonP.JSONValue): UnprocessedNamedQueryId {
+  return jsonP.readObj({
     required: {},
     optional: {
       "NamedQueryId": "s",
@@ -1070,13 +1126,13 @@ export interface QueryExecution {
   Statistics?: QueryExecutionStatistics | null;
   WorkGroup?: string | null;
 }
-function toQueryExecution(root: JSONValue): QueryExecution {
-  return prt.readObj({
+function toQueryExecution(root: jsonP.JSONValue): QueryExecution {
+  return jsonP.readObj({
     required: {},
     optional: {
       "QueryExecutionId": "s",
       "Query": "s",
-      "StatementType": toStatementType,
+      "StatementType": (x: jsonP.JSONValue) => cmnP.readEnum<StatementType>(x),
       "ResultConfiguration": toResultConfiguration,
       "QueryExecutionContext": toQueryExecutionContext,
       "Status": toQueryExecutionStatus,
@@ -1091,14 +1147,7 @@ export type StatementType =
 | "DDL"
 | "DML"
 | "UTILITY"
-;
-function toStatementType(root: JSONValue): StatementType | null {
-  return ( false
-    || root == "DDL"
-    || root == "DML"
-    || root == "UTILITY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface QueryExecutionStatus {
@@ -1107,11 +1156,11 @@ export interface QueryExecutionStatus {
   SubmissionDateTime?: Date | number | null;
   CompletionDateTime?: Date | number | null;
 }
-function toQueryExecutionStatus(root: JSONValue): QueryExecutionStatus {
-  return prt.readObj({
+function toQueryExecutionStatus(root: jsonP.JSONValue): QueryExecutionStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "State": toQueryExecutionState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<QueryExecutionState>(x),
       "StateChangeReason": "s",
       "SubmissionDateTime": "d",
       "CompletionDateTime": "d",
@@ -1126,16 +1175,7 @@ export type QueryExecutionState =
 | "SUCCEEDED"
 | "FAILED"
 | "CANCELLED"
-;
-function toQueryExecutionState(root: JSONValue): QueryExecutionState | null {
-  return ( false
-    || root == "QUEUED"
-    || root == "RUNNING"
-    || root == "SUCCEEDED"
-    || root == "FAILED"
-    || root == "CANCELLED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface QueryExecutionStatistics {
@@ -1147,8 +1187,8 @@ export interface QueryExecutionStatistics {
   QueryPlanningTimeInMillis?: number | null;
   ServiceProcessingTimeInMillis?: number | null;
 }
-function toQueryExecutionStatistics(root: JSONValue): QueryExecutionStatistics {
-  return prt.readObj({
+function toQueryExecutionStatistics(root: jsonP.JSONValue): QueryExecutionStatistics {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EngineExecutionTimeInMillis": "n",
@@ -1168,8 +1208,8 @@ export interface UnprocessedQueryExecutionId {
   ErrorCode?: string | null;
   ErrorMessage?: string | null;
 }
-function toUnprocessedQueryExecutionId(root: JSONValue): UnprocessedQueryExecutionId {
-  return prt.readObj({
+function toUnprocessedQueryExecutionId(root: jsonP.JSONValue): UnprocessedQueryExecutionId {
+  return jsonP.readObj({
     required: {},
     optional: {
       "QueryExecutionId": "s",
@@ -1184,17 +1224,17 @@ export interface DataCatalog {
   Name: string;
   Description?: string | null;
   Type: DataCatalogType;
-  Parameters?: { [key: string]: string } | null;
+  Parameters?: { [key: string]: string | null | undefined } | null;
 }
-function toDataCatalog(root: JSONValue): DataCatalog {
-  return prt.readObj({
+function toDataCatalog(root: jsonP.JSONValue): DataCatalog {
+  return jsonP.readObj({
     required: {
       "Name": "s",
-      "Type": toDataCatalogType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<DataCatalogType>(x),
     },
     optional: {
       "Description": "s",
-      "Parameters": x => prt.readMap(String, String, x),
+      "Parameters": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -1203,16 +1243,16 @@ function toDataCatalog(root: JSONValue): DataCatalog {
 export interface Database {
   Name: string;
   Description?: string | null;
-  Parameters?: { [key: string]: string } | null;
+  Parameters?: { [key: string]: string | null | undefined } | null;
 }
-function toDatabase(root: JSONValue): Database {
-  return prt.readObj({
+function toDatabase(root: jsonP.JSONValue): Database {
+  return jsonP.readObj({
     required: {
       "Name": "s",
     },
     optional: {
       "Description": "s",
-      "Parameters": x => prt.readMap(String, String, x),
+      "Parameters": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -1222,8 +1262,8 @@ export interface ResultSet {
   Rows?: Row[] | null;
   ResultSetMetadata?: ResultSetMetadata | null;
 }
-function toResultSet(root: JSONValue): ResultSet {
-  return prt.readObj({
+function toResultSet(root: jsonP.JSONValue): ResultSet {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Rows": [toRow],
@@ -1236,8 +1276,8 @@ function toResultSet(root: JSONValue): ResultSet {
 export interface Row {
   Data?: Datum[] | null;
 }
-function toRow(root: JSONValue): Row {
-  return prt.readObj({
+function toRow(root: jsonP.JSONValue): Row {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Data": [toDatum],
@@ -1249,8 +1289,8 @@ function toRow(root: JSONValue): Row {
 export interface Datum {
   VarCharValue?: string | null;
 }
-function toDatum(root: JSONValue): Datum {
-  return prt.readObj({
+function toDatum(root: jsonP.JSONValue): Datum {
+  return jsonP.readObj({
     required: {},
     optional: {
       "VarCharValue": "s",
@@ -1262,8 +1302,8 @@ function toDatum(root: JSONValue): Datum {
 export interface ResultSetMetadata {
   ColumnInfo?: ColumnInfo[] | null;
 }
-function toResultSetMetadata(root: JSONValue): ResultSetMetadata {
-  return prt.readObj({
+function toResultSetMetadata(root: jsonP.JSONValue): ResultSetMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ColumnInfo": [toColumnInfo],
@@ -1284,8 +1324,8 @@ export interface ColumnInfo {
   Nullable?: ColumnNullable | null;
   CaseSensitive?: boolean | null;
 }
-function toColumnInfo(root: JSONValue): ColumnInfo {
-  return prt.readObj({
+function toColumnInfo(root: jsonP.JSONValue): ColumnInfo {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "Type": "s",
@@ -1297,7 +1337,7 @@ function toColumnInfo(root: JSONValue): ColumnInfo {
       "Label": "s",
       "Precision": "n",
       "Scale": "n",
-      "Nullable": toColumnNullable,
+      "Nullable": (x: jsonP.JSONValue) => cmnP.readEnum<ColumnNullable>(x),
       "CaseSensitive": "b",
     },
   }, root);
@@ -1308,14 +1348,7 @@ export type ColumnNullable =
 | "NOT_NULL"
 | "NULLABLE"
 | "UNKNOWN"
-;
-function toColumnNullable(root: JSONValue): ColumnNullable | null {
-  return ( false
-    || root == "NOT_NULL"
-    || root == "NULLABLE"
-    || root == "UNKNOWN"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface TableMetadata {
@@ -1325,10 +1358,10 @@ export interface TableMetadata {
   TableType?: string | null;
   Columns?: Column[] | null;
   PartitionKeys?: Column[] | null;
-  Parameters?: { [key: string]: string } | null;
+  Parameters?: { [key: string]: string | null | undefined } | null;
 }
-function toTableMetadata(root: JSONValue): TableMetadata {
-  return prt.readObj({
+function toTableMetadata(root: jsonP.JSONValue): TableMetadata {
+  return jsonP.readObj({
     required: {
       "Name": "s",
     },
@@ -1338,7 +1371,7 @@ function toTableMetadata(root: JSONValue): TableMetadata {
       "TableType": "s",
       "Columns": [toColumn],
       "PartitionKeys": [toColumn],
-      "Parameters": x => prt.readMap(String, String, x),
+      "Parameters": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -1349,8 +1382,8 @@ export interface Column {
   Type?: string | null;
   Comment?: string | null;
 }
-function toColumn(root: JSONValue): Column {
-  return prt.readObj({
+function toColumn(root: jsonP.JSONValue): Column {
+  return jsonP.readObj({
     required: {
       "Name": "s",
     },
@@ -1369,13 +1402,13 @@ export interface WorkGroup {
   Description?: string | null;
   CreationTime?: Date | number | null;
 }
-function toWorkGroup(root: JSONValue): WorkGroup {
-  return prt.readObj({
+function toWorkGroup(root: jsonP.JSONValue): WorkGroup {
+  return jsonP.readObj({
     required: {
       "Name": "s",
     },
     optional: {
-      "State": toWorkGroupState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<WorkGroupState>(x),
       "Configuration": toWorkGroupConfiguration,
       "Description": "s",
       "CreationTime": "d",
@@ -1388,12 +1421,12 @@ export interface DataCatalogSummary {
   CatalogName?: string | null;
   Type?: DataCatalogType | null;
 }
-function toDataCatalogSummary(root: JSONValue): DataCatalogSummary {
-  return prt.readObj({
+function toDataCatalogSummary(root: jsonP.JSONValue): DataCatalogSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CatalogName": "s",
-      "Type": toDataCatalogType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<DataCatalogType>(x),
     },
   }, root);
 }
@@ -1405,12 +1438,12 @@ export interface WorkGroupSummary {
   Description?: string | null;
   CreationTime?: Date | number | null;
 }
-function toWorkGroupSummary(root: JSONValue): WorkGroupSummary {
-  return prt.readObj({
+function toWorkGroupSummary(root: jsonP.JSONValue): WorkGroupSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
-      "State": toWorkGroupState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<WorkGroupState>(x),
       "Description": "s",
       "CreationTime": "d",
     },

@@ -5,8 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 
 export default class ImportExport {
   #client: ServiceClient;
@@ -38,7 +39,7 @@ export default class ImportExport {
       action: "CancelJob",
       requestUri: "/?Operation=CancelJob",
     });
-    const xml = readXmlResult(await resp.text(), "CancelJobResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CancelJobResult");
     return {
       Success: xml.first("Success", false, x => x.content === 'true'),
     };
@@ -59,7 +60,7 @@ export default class ImportExport {
       action: "CreateJob",
       requestUri: "/?Operation=CreateJob",
     });
-    const xml = readXmlResult(await resp.text(), "CreateJobResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateJobResult");
     return {
       ...xml.strings({
         optional: {"JobId":true,"Signature":true,"SignatureFileContents":true,"WarningMessage":true},
@@ -74,7 +75,7 @@ export default class ImportExport {
   ): Promise<GetShippingLabelOutput> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["jobIds"]) prt.appendList(body, prefix+"jobIds", params["jobIds"], {"entryPrefix":".member."})
+    if (params["jobIds"]) qsP.appendList(body, prefix+"jobIds", params["jobIds"], {"entryPrefix":".member."})
     if ("name" in params) body.append(prefix+"name", (params["name"] ?? '').toString());
     if ("company" in params) body.append(prefix+"company", (params["company"] ?? '').toString());
     if ("phoneNumber" in params) body.append(prefix+"phoneNumber", (params["phoneNumber"] ?? '').toString());
@@ -91,7 +92,7 @@ export default class ImportExport {
       action: "GetShippingLabel",
       requestUri: "/?Operation=GetShippingLabel",
     });
-    const xml = readXmlResult(await resp.text(), "GetShippingLabelResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetShippingLabelResult");
     return xml.strings({
       optional: {"ShippingLabelURL":true,"Warning":true},
     });
@@ -109,14 +110,14 @@ export default class ImportExport {
       action: "GetStatus",
       requestUri: "/?Operation=GetStatus",
     });
-    const xml = readXmlResult(await resp.text(), "GetStatusResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetStatusResult");
     return {
       ...xml.strings({
         optional: {"JobId":true,"LocationCode":true,"LocationMessage":true,"ProgressCode":true,"ProgressMessage":true,"Carrier":true,"TrackingNumber":true,"LogBucket":true,"LogKey":true,"Signature":true,"SignatureFileContents":true,"CurrentManifest":true},
       }),
       JobType: xml.first("JobType", false, x => (x.content ?? '') as JobType),
       ErrorCount: xml.first("ErrorCount", false, x => parseInt(x.content ?? '0')),
-      CreationDate: xml.first("CreationDate", false, x => parseTimestamp(x.content)),
+      CreationDate: xml.first("CreationDate", false, x => xmlP.parseTimestamp(x.content)),
       ArtifactList: xml.getList("ArtifactList", "member").map(Artifact_Parse),
     };
   }
@@ -134,7 +135,7 @@ export default class ImportExport {
       action: "ListJobs",
       requestUri: "/?Operation=ListJobs",
     });
-    const xml = readXmlResult(await resp.text(), "ListJobsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListJobsResult");
     return {
       Jobs: xml.getList("Jobs", "member").map(Job_Parse),
       IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
@@ -156,7 +157,7 @@ export default class ImportExport {
       action: "UpdateJob",
       requestUri: "/?Operation=UpdateJob",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateJobResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateJobResult");
     return {
       ...xml.strings({
         optional: {"WarningMessage":true},
@@ -279,16 +280,14 @@ export interface UpdateJobOutput {
 export type JobType =
 | "Import"
 | "Export"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface Artifact {
   Description?: string | null;
   URL?: string | null;
 }
-function Artifact_Parse(node: XmlNode): Artifact {
+function Artifact_Parse(node: xmlP.XmlNode): Artifact {
   return node.strings({
     optional: {"Description":true,"URL":true},
   });
@@ -301,12 +300,12 @@ export interface Job {
   IsCanceled?: boolean | null;
   JobType?: JobType | null;
 }
-function Job_Parse(node: XmlNode): Job {
+function Job_Parse(node: xmlP.XmlNode): Job {
   return {
     ...node.strings({
       optional: {"JobId":true},
     }),
-    CreationDate: node.first("CreationDate", false, x => parseTimestamp(x.content)),
+    CreationDate: node.first("CreationDate", false, x => xmlP.parseTimestamp(x.content)),
     IsCanceled: node.first("IsCanceled", false, x => x.content === 'true'),
     JobType: node.first("JobType", false, x => (x.content ?? '') as JobType),
   };

@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class TimestreamWrite {
   #client: ServiceClient;
@@ -31,14 +31,16 @@ export default class TimestreamWrite {
   async createDatabase(
     {abortSignal, ...params}: RequestConfig & CreateDatabaseRequest,
   ): Promise<CreateDatabaseResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatabaseName: params["DatabaseName"],
+      KmsKeyId: params["KmsKeyId"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDatabase",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Database": toDatabase,
@@ -49,15 +51,17 @@ export default class TimestreamWrite {
   async createTable(
     {abortSignal, ...params}: RequestConfig & CreateTableRequest,
   ): Promise<CreateTableResponse> {
-    const body: JSONObject = {...params,
-    RetentionProperties: fromRetentionProperties(params["RetentionProperties"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatabaseName: params["DatabaseName"],
+      TableName: params["TableName"],
+      RetentionProperties: fromRetentionProperties(params["RetentionProperties"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTable",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Table": toTable,
@@ -68,8 +72,9 @@ export default class TimestreamWrite {
   async deleteDatabase(
     {abortSignal, ...params}: RequestConfig & DeleteDatabaseRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatabaseName: params["DatabaseName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDatabase",
@@ -79,8 +84,10 @@ export default class TimestreamWrite {
   async deleteTable(
     {abortSignal, ...params}: RequestConfig & DeleteTableRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatabaseName: params["DatabaseName"],
+      TableName: params["TableName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTable",
@@ -90,13 +97,14 @@ export default class TimestreamWrite {
   async describeDatabase(
     {abortSignal, ...params}: RequestConfig & DescribeDatabaseRequest,
   ): Promise<DescribeDatabaseResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatabaseName: params["DatabaseName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDatabase",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Database": toDatabase,
@@ -107,13 +115,13 @@ export default class TimestreamWrite {
   async describeEndpoints(
     {abortSignal, ...params}: RequestConfig & DescribeEndpointsRequest = {},
   ): Promise<DescribeEndpointsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEndpoints",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Endpoints": [toEndpoint],
       },
@@ -124,13 +132,15 @@ export default class TimestreamWrite {
   async describeTable(
     {abortSignal, ...params}: RequestConfig & DescribeTableRequest,
   ): Promise<DescribeTableResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatabaseName: params["DatabaseName"],
+      TableName: params["TableName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTable",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Table": toTable,
@@ -141,13 +151,15 @@ export default class TimestreamWrite {
   async listDatabases(
     {abortSignal, ...params}: RequestConfig & ListDatabasesRequest = {},
   ): Promise<ListDatabasesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDatabases",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Databases": [toDatabase],
@@ -159,13 +171,16 @@ export default class TimestreamWrite {
   async listTables(
     {abortSignal, ...params}: RequestConfig & ListTablesRequest = {},
   ): Promise<ListTablesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatabaseName: params["DatabaseName"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTables",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tables": [toTable],
@@ -177,13 +192,14 @@ export default class TimestreamWrite {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -194,14 +210,15 @@ export default class TimestreamWrite {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -210,13 +227,15 @@ export default class TimestreamWrite {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -225,13 +244,15 @@ export default class TimestreamWrite {
   async updateDatabase(
     {abortSignal, ...params}: RequestConfig & UpdateDatabaseRequest,
   ): Promise<UpdateDatabaseResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatabaseName: params["DatabaseName"],
+      KmsKeyId: params["KmsKeyId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDatabase",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Database": toDatabase,
@@ -242,14 +263,16 @@ export default class TimestreamWrite {
   async updateTable(
     {abortSignal, ...params}: RequestConfig & UpdateTableRequest,
   ): Promise<UpdateTableResponse> {
-    const body: JSONObject = {...params,
-    RetentionProperties: fromRetentionProperties(params["RetentionProperties"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatabaseName: params["DatabaseName"],
+      TableName: params["TableName"],
+      RetentionProperties: fromRetentionProperties(params["RetentionProperties"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTable",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Table": toTable,
@@ -260,10 +283,12 @@ export default class TimestreamWrite {
   async writeRecords(
     {abortSignal, ...params}: RequestConfig & WriteRecordsRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    CommonAttributes: fromRecord(params["CommonAttributes"]),
-    Records: params["Records"]?.map(x => fromRecord(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatabaseName: params["DatabaseName"],
+      TableName: params["TableName"],
+      CommonAttributes: fromRecord(params["CommonAttributes"]),
+      Records: params["Records"]?.map(x => fromRecord(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "WriteRecords",
@@ -429,13 +454,15 @@ export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -449,13 +476,15 @@ export interface RetentionProperties {
   MemoryStoreRetentionPeriodInHours: number;
   MagneticStoreRetentionPeriodInDays: number;
 }
-function fromRetentionProperties(input?: RetentionProperties | null): JSONValue {
+function fromRetentionProperties(input?: RetentionProperties | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MemoryStoreRetentionPeriodInHours: input["MemoryStoreRetentionPeriodInHours"],
+    MagneticStoreRetentionPeriodInDays: input["MagneticStoreRetentionPeriodInDays"],
   }
 }
-function toRetentionProperties(root: JSONValue): RetentionProperties {
-  return prt.readObj({
+function toRetentionProperties(root: jsonP.JSONValue): RetentionProperties {
+  return jsonP.readObj({
     required: {
       "MemoryStoreRetentionPeriodInHours": "n",
       "MagneticStoreRetentionPeriodInDays": "n",
@@ -473,10 +502,15 @@ export interface Record {
   Time?: string | null;
   TimeUnit?: TimeUnit | null;
 }
-function fromRecord(input?: Record | null): JSONValue {
+function fromRecord(input?: Record | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Dimensions: input["Dimensions"]?.map(x => fromDimension(x)),
+    MeasureName: input["MeasureName"],
+    MeasureValue: input["MeasureValue"],
+    MeasureValueType: input["MeasureValueType"],
+    Time: input["Time"],
+    TimeUnit: input["TimeUnit"],
   }
 }
 
@@ -486,17 +520,19 @@ export interface Dimension {
   Value: string;
   DimensionValueType?: DimensionValueType | null;
 }
-function fromDimension(input?: Dimension | null): JSONValue {
+function fromDimension(input?: Dimension | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Value: input["Value"],
+    DimensionValueType: input["DimensionValueType"],
   }
 }
 
 // refs: 2 - tags: input, named, enum
 export type DimensionValueType =
 | "VARCHAR"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
 export type MeasureValueType =
@@ -504,8 +540,7 @@ export type MeasureValueType =
 | "BIGINT"
 | "VARCHAR"
 | "BOOLEAN"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
 export type TimeUnit =
@@ -513,8 +548,7 @@ export type TimeUnit =
 | "SECONDS"
 | "MICROSECONDS"
 | "NANOSECONDS"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface Database {
@@ -525,8 +559,8 @@ export interface Database {
   CreationTime?: Date | number | null;
   LastUpdatedTime?: Date | number | null;
 }
-function toDatabase(root: JSONValue): Database {
-  return prt.readObj({
+function toDatabase(root: jsonP.JSONValue): Database {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Arn": "s",
@@ -549,14 +583,14 @@ export interface Table {
   CreationTime?: Date | number | null;
   LastUpdatedTime?: Date | number | null;
 }
-function toTable(root: JSONValue): Table {
-  return prt.readObj({
+function toTable(root: jsonP.JSONValue): Table {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Arn": "s",
       "TableName": "s",
       "DatabaseName": "s",
-      "TableStatus": toTableStatus,
+      "TableStatus": (x: jsonP.JSONValue) => cmnP.readEnum<TableStatus>(x),
       "RetentionProperties": toRetentionProperties,
       "CreationTime": "d",
       "LastUpdatedTime": "d",
@@ -568,21 +602,15 @@ function toTable(root: JSONValue): Table {
 export type TableStatus =
 | "ACTIVE"
 | "DELETING"
-;
-function toTableStatus(root: JSONValue): TableStatus | null {
-  return ( false
-    || root == "ACTIVE"
-    || root == "DELETING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Endpoint {
   Address: string;
   CachePeriodInMinutes: number;
 }
-function toEndpoint(root: JSONValue): Endpoint {
-  return prt.readObj({
+function toEndpoint(root: jsonP.JSONValue): Endpoint {
+  return jsonP.readObj({
     required: {
       "Address": "s",
       "CachePeriodInMinutes": "n",

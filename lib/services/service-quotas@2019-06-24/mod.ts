@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class ServiceQuotas {
   #client: ServiceClient;
@@ -29,13 +29,13 @@ export default class ServiceQuotas {
   async associateServiceQuotaTemplate(
     {abortSignal, ...params}: RequestConfig & AssociateServiceQuotaTemplateRequest = {},
   ): Promise<AssociateServiceQuotaTemplateResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateServiceQuotaTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -44,13 +44,16 @@ export default class ServiceQuotas {
   async deleteServiceQuotaIncreaseRequestFromTemplate(
     {abortSignal, ...params}: RequestConfig & DeleteServiceQuotaIncreaseRequestFromTemplateRequest,
   ): Promise<DeleteServiceQuotaIncreaseRequestFromTemplateResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceCode: params["ServiceCode"],
+      QuotaCode: params["QuotaCode"],
+      AwsRegion: params["AwsRegion"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteServiceQuotaIncreaseRequestFromTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -59,13 +62,13 @@ export default class ServiceQuotas {
   async disassociateServiceQuotaTemplate(
     {abortSignal, ...params}: RequestConfig & DisassociateServiceQuotaTemplateRequest = {},
   ): Promise<DisassociateServiceQuotaTemplateResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateServiceQuotaTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -74,13 +77,15 @@ export default class ServiceQuotas {
   async getAWSDefaultServiceQuota(
     {abortSignal, ...params}: RequestConfig & GetAWSDefaultServiceQuotaRequest,
   ): Promise<GetAWSDefaultServiceQuotaResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceCode: params["ServiceCode"],
+      QuotaCode: params["QuotaCode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAWSDefaultServiceQuota",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Quota": toServiceQuota,
@@ -91,16 +96,16 @@ export default class ServiceQuotas {
   async getAssociationForServiceQuotaTemplate(
     {abortSignal, ...params}: RequestConfig & GetAssociationForServiceQuotaTemplateRequest = {},
   ): Promise<GetAssociationForServiceQuotaTemplateResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAssociationForServiceQuotaTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "ServiceQuotaTemplateAssociationStatus": toServiceQuotaTemplateAssociationStatus,
+        "ServiceQuotaTemplateAssociationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ServiceQuotaTemplateAssociationStatus>(x),
       },
     }, await resp.json());
   }
@@ -108,13 +113,14 @@ export default class ServiceQuotas {
   async getRequestedServiceQuotaChange(
     {abortSignal, ...params}: RequestConfig & GetRequestedServiceQuotaChangeRequest,
   ): Promise<GetRequestedServiceQuotaChangeResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RequestId: params["RequestId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRequestedServiceQuotaChange",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RequestedQuota": toRequestedServiceQuotaChange,
@@ -125,13 +131,15 @@ export default class ServiceQuotas {
   async getServiceQuota(
     {abortSignal, ...params}: RequestConfig & GetServiceQuotaRequest,
   ): Promise<GetServiceQuotaResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceCode: params["ServiceCode"],
+      QuotaCode: params["QuotaCode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetServiceQuota",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Quota": toServiceQuota,
@@ -142,13 +150,16 @@ export default class ServiceQuotas {
   async getServiceQuotaIncreaseRequestFromTemplate(
     {abortSignal, ...params}: RequestConfig & GetServiceQuotaIncreaseRequestFromTemplateRequest,
   ): Promise<GetServiceQuotaIncreaseRequestFromTemplateResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceCode: params["ServiceCode"],
+      QuotaCode: params["QuotaCode"],
+      AwsRegion: params["AwsRegion"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetServiceQuotaIncreaseRequestFromTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ServiceQuotaIncreaseRequestInTemplate": toServiceQuotaIncreaseRequestInTemplate,
@@ -159,13 +170,16 @@ export default class ServiceQuotas {
   async listAWSDefaultServiceQuotas(
     {abortSignal, ...params}: RequestConfig & ListAWSDefaultServiceQuotasRequest,
   ): Promise<ListAWSDefaultServiceQuotasResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceCode: params["ServiceCode"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAWSDefaultServiceQuotas",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -177,13 +191,17 @@ export default class ServiceQuotas {
   async listRequestedServiceQuotaChangeHistory(
     {abortSignal, ...params}: RequestConfig & ListRequestedServiceQuotaChangeHistoryRequest = {},
   ): Promise<ListRequestedServiceQuotaChangeHistoryResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceCode: params["ServiceCode"],
+      Status: params["Status"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRequestedServiceQuotaChangeHistory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -195,13 +213,18 @@ export default class ServiceQuotas {
   async listRequestedServiceQuotaChangeHistoryByQuota(
     {abortSignal, ...params}: RequestConfig & ListRequestedServiceQuotaChangeHistoryByQuotaRequest,
   ): Promise<ListRequestedServiceQuotaChangeHistoryByQuotaResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceCode: params["ServiceCode"],
+      QuotaCode: params["QuotaCode"],
+      Status: params["Status"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRequestedServiceQuotaChangeHistoryByQuota",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -213,13 +236,17 @@ export default class ServiceQuotas {
   async listServiceQuotaIncreaseRequestsInTemplate(
     {abortSignal, ...params}: RequestConfig & ListServiceQuotaIncreaseRequestsInTemplateRequest = {},
   ): Promise<ListServiceQuotaIncreaseRequestsInTemplateResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceCode: params["ServiceCode"],
+      AwsRegion: params["AwsRegion"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListServiceQuotaIncreaseRequestsInTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ServiceQuotaIncreaseRequestInTemplateList": [toServiceQuotaIncreaseRequestInTemplate],
@@ -231,13 +258,16 @@ export default class ServiceQuotas {
   async listServiceQuotas(
     {abortSignal, ...params}: RequestConfig & ListServiceQuotasRequest,
   ): Promise<ListServiceQuotasResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceCode: params["ServiceCode"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListServiceQuotas",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -249,13 +279,15 @@ export default class ServiceQuotas {
   async listServices(
     {abortSignal, ...params}: RequestConfig & ListServicesRequest = {},
   ): Promise<ListServicesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListServices",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -267,13 +299,17 @@ export default class ServiceQuotas {
   async putServiceQuotaIncreaseRequestIntoTemplate(
     {abortSignal, ...params}: RequestConfig & PutServiceQuotaIncreaseRequestIntoTemplateRequest,
   ): Promise<PutServiceQuotaIncreaseRequestIntoTemplateResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      QuotaCode: params["QuotaCode"],
+      ServiceCode: params["ServiceCode"],
+      AwsRegion: params["AwsRegion"],
+      DesiredValue: params["DesiredValue"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutServiceQuotaIncreaseRequestIntoTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ServiceQuotaIncreaseRequestInTemplate": toServiceQuotaIncreaseRequestInTemplate,
@@ -284,13 +320,16 @@ export default class ServiceQuotas {
   async requestServiceQuotaIncrease(
     {abortSignal, ...params}: RequestConfig & RequestServiceQuotaIncreaseRequest,
   ): Promise<RequestServiceQuotaIncreaseResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceCode: params["ServiceCode"],
+      QuotaCode: params["QuotaCode"],
+      DesiredValue: params["DesiredValue"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RequestServiceQuotaIncrease",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RequestedQuota": toRequestedServiceQuotaChange,
@@ -493,17 +532,7 @@ export type RequestStatus =
 | "APPROVED"
 | "DENIED"
 | "CASE_CLOSED"
-;
-
-function toRequestStatus(root: JSONValue): RequestStatus | null {
-  return ( false
-    || root == "PENDING"
-    || root == "CASE_OPENED"
-    || root == "APPROVED"
-    || root == "DENIED"
-    || root == "CASE_CLOSED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface ServiceQuota {
@@ -520,8 +549,8 @@ export interface ServiceQuota {
   Period?: QuotaPeriod | null;
   ErrorReason?: ErrorReason | null;
 }
-function toServiceQuota(root: JSONValue): ServiceQuota {
-  return prt.readObj({
+function toServiceQuota(root: jsonP.JSONValue): ServiceQuota {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ServiceCode": "s",
@@ -544,16 +573,16 @@ function toServiceQuota(root: JSONValue): ServiceQuota {
 export interface MetricInfo {
   MetricNamespace?: string | null;
   MetricName?: string | null;
-  MetricDimensions?: { [key: string]: string } | null;
+  MetricDimensions?: { [key: string]: string | null | undefined } | null;
   MetricStatisticRecommendation?: string | null;
 }
-function toMetricInfo(root: JSONValue): MetricInfo {
-  return prt.readObj({
+function toMetricInfo(root: jsonP.JSONValue): MetricInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MetricNamespace": "s",
       "MetricName": "s",
-      "MetricDimensions": x => prt.readMap(String, String, x),
+      "MetricDimensions": x => jsonP.readMap(String, String, x),
       "MetricStatisticRecommendation": "s",
     },
   }, root);
@@ -564,12 +593,12 @@ export interface QuotaPeriod {
   PeriodValue?: number | null;
   PeriodUnit?: PeriodUnit | null;
 }
-function toQuotaPeriod(root: JSONValue): QuotaPeriod {
-  return prt.readObj({
+function toQuotaPeriod(root: jsonP.JSONValue): QuotaPeriod {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PeriodValue": "n",
-      "PeriodUnit": toPeriodUnit,
+      "PeriodUnit": (x: jsonP.JSONValue) => cmnP.readEnum<PeriodUnit>(x),
     },
   }, root);
 }
@@ -583,29 +612,18 @@ export type PeriodUnit =
 | "HOUR"
 | "DAY"
 | "WEEK"
-;
-function toPeriodUnit(root: JSONValue): PeriodUnit | null {
-  return ( false
-    || root == "MICROSECOND"
-    || root == "MILLISECOND"
-    || root == "SECOND"
-    || root == "MINUTE"
-    || root == "HOUR"
-    || root == "DAY"
-    || root == "WEEK"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface ErrorReason {
   ErrorCode?: ErrorCode | null;
   ErrorMessage?: string | null;
 }
-function toErrorReason(root: JSONValue): ErrorReason {
-  return prt.readObj({
+function toErrorReason(root: jsonP.JSONValue): ErrorReason {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "ErrorCode": toErrorCode,
+      "ErrorCode": (x: jsonP.JSONValue) => cmnP.readEnum<ErrorCode>(x),
       "ErrorMessage": "s",
     },
   }, root);
@@ -617,27 +635,13 @@ export type ErrorCode =
 | "DEPENDENCY_THROTTLING_ERROR"
 | "DEPENDENCY_SERVICE_ERROR"
 | "SERVICE_QUOTA_NOT_AVAILABLE_ERROR"
-;
-function toErrorCode(root: JSONValue): ErrorCode | null {
-  return ( false
-    || root == "DEPENDENCY_ACCESS_DENIED_ERROR"
-    || root == "DEPENDENCY_THROTTLING_ERROR"
-    || root == "DEPENDENCY_SERVICE_ERROR"
-    || root == "SERVICE_QUOTA_NOT_AVAILABLE_ERROR"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type ServiceQuotaTemplateAssociationStatus =
 | "ASSOCIATED"
 | "DISASSOCIATED"
-;
-function toServiceQuotaTemplateAssociationStatus(root: JSONValue): ServiceQuotaTemplateAssociationStatus | null {
-  return ( false
-    || root == "ASSOCIATED"
-    || root == "DISASSOCIATED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface RequestedServiceQuotaChange {
@@ -656,8 +660,8 @@ export interface RequestedServiceQuotaChange {
   GlobalQuota?: boolean | null;
   Unit?: string | null;
 }
-function toRequestedServiceQuotaChange(root: JSONValue): RequestedServiceQuotaChange {
-  return prt.readObj({
+function toRequestedServiceQuotaChange(root: jsonP.JSONValue): RequestedServiceQuotaChange {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
@@ -667,7 +671,7 @@ function toRequestedServiceQuotaChange(root: JSONValue): RequestedServiceQuotaCh
       "QuotaCode": "s",
       "QuotaName": "s",
       "DesiredValue": "n",
-      "Status": toRequestStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<RequestStatus>(x),
       "Created": "d",
       "LastUpdated": "d",
       "Requester": "s",
@@ -689,8 +693,8 @@ export interface ServiceQuotaIncreaseRequestInTemplate {
   Unit?: string | null;
   GlobalQuota?: boolean | null;
 }
-function toServiceQuotaIncreaseRequestInTemplate(root: JSONValue): ServiceQuotaIncreaseRequestInTemplate {
-  return prt.readObj({
+function toServiceQuotaIncreaseRequestInTemplate(root: jsonP.JSONValue): ServiceQuotaIncreaseRequestInTemplate {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ServiceCode": "s",
@@ -710,8 +714,8 @@ export interface ServiceInfo {
   ServiceCode?: string | null;
   ServiceName?: string | null;
 }
-function toServiceInfo(root: JSONValue): ServiceInfo {
-  return prt.readObj({
+function toServiceInfo(root: jsonP.JSONValue): ServiceInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ServiceCode": "s",

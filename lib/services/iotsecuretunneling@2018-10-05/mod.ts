@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class IoTSecureTunneling {
   #client: ServiceClient;
@@ -30,13 +30,15 @@ export default class IoTSecureTunneling {
   async closeTunnel(
     {abortSignal, ...params}: RequestConfig & CloseTunnelRequest,
   ): Promise<CloseTunnelResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      tunnelId: params["tunnelId"],
+      delete: params["delete"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CloseTunnel",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -45,13 +47,14 @@ export default class IoTSecureTunneling {
   async describeTunnel(
     {abortSignal, ...params}: RequestConfig & DescribeTunnelRequest,
   ): Promise<DescribeTunnelResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      tunnelId: params["tunnelId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTunnel",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "tunnel": toTunnel,
@@ -62,13 +65,14 @@ export default class IoTSecureTunneling {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceArn: params["resourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "tags": [toTag],
@@ -79,13 +83,16 @@ export default class IoTSecureTunneling {
   async listTunnels(
     {abortSignal, ...params}: RequestConfig & ListTunnelsRequest = {},
   ): Promise<ListTunnelsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      thingName: params["thingName"],
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTunnels",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "tunnelSummaries": [toTunnelSummary],
@@ -97,16 +104,17 @@ export default class IoTSecureTunneling {
   async openTunnel(
     {abortSignal, ...params}: RequestConfig & OpenTunnelRequest = {},
   ): Promise<OpenTunnelResponse> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-    destinationConfig: fromDestinationConfig(params["destinationConfig"]),
-    timeoutConfig: fromTimeoutConfig(params["timeoutConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      description: params["description"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+      destinationConfig: fromDestinationConfig(params["destinationConfig"]),
+      timeoutConfig: fromTimeoutConfig(params["timeoutConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "OpenTunnel",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "tunnelId": "s",
@@ -120,14 +128,15 @@ export default class IoTSecureTunneling {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceArn: params["resourceArn"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -136,13 +145,15 @@ export default class IoTSecureTunneling {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceArn: params["resourceArn"],
+      tagKeys: params["tagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -234,13 +245,15 @@ export interface Tag {
   key: string;
   value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    key: input["key"],
+    value: input["value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "key": "s",
       "value": "s",
@@ -254,13 +267,15 @@ export interface DestinationConfig {
   thingName: string;
   services: string[];
 }
-function fromDestinationConfig(input?: DestinationConfig | null): JSONValue {
+function fromDestinationConfig(input?: DestinationConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    thingName: input["thingName"],
+    services: input["services"],
   }
 }
-function toDestinationConfig(root: JSONValue): DestinationConfig {
-  return prt.readObj({
+function toDestinationConfig(root: jsonP.JSONValue): DestinationConfig {
+  return jsonP.readObj({
     required: {
       "thingName": "s",
       "services": ["s"],
@@ -273,13 +288,14 @@ function toDestinationConfig(root: JSONValue): DestinationConfig {
 export interface TimeoutConfig {
   maxLifetimeTimeoutMinutes?: number | null;
 }
-function fromTimeoutConfig(input?: TimeoutConfig | null): JSONValue {
+function fromTimeoutConfig(input?: TimeoutConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    maxLifetimeTimeoutMinutes: input["maxLifetimeTimeoutMinutes"],
   }
 }
-function toTimeoutConfig(root: JSONValue): TimeoutConfig {
-  return prt.readObj({
+function toTimeoutConfig(root: jsonP.JSONValue): TimeoutConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "maxLifetimeTimeoutMinutes": "n",
@@ -301,13 +317,13 @@ export interface Tunnel {
   createdAt?: Date | number | null;
   lastUpdatedAt?: Date | number | null;
 }
-function toTunnel(root: JSONValue): Tunnel {
-  return prt.readObj({
+function toTunnel(root: jsonP.JSONValue): Tunnel {
+  return jsonP.readObj({
     required: {},
     optional: {
       "tunnelId": "s",
       "tunnelArn": "s",
-      "status": toTunnelStatus,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<TunnelStatus>(x),
       "sourceConnectionState": toConnectionState,
       "destinationConnectionState": toConnectionState,
       "description": "s",
@@ -324,24 +340,18 @@ function toTunnel(root: JSONValue): Tunnel {
 export type TunnelStatus =
 | "OPEN"
 | "CLOSED"
-;
-function toTunnelStatus(root: JSONValue): TunnelStatus | null {
-  return ( false
-    || root == "OPEN"
-    || root == "CLOSED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ConnectionState {
   status?: ConnectionStatus | null;
   lastUpdatedAt?: Date | number | null;
 }
-function toConnectionState(root: JSONValue): ConnectionState {
-  return prt.readObj({
+function toConnectionState(root: jsonP.JSONValue): ConnectionState {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "status": toConnectionStatus,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<ConnectionStatus>(x),
       "lastUpdatedAt": "d",
     },
   }, root);
@@ -351,13 +361,7 @@ function toConnectionState(root: JSONValue): ConnectionState {
 export type ConnectionStatus =
 | "CONNECTED"
 | "DISCONNECTED"
-;
-function toConnectionStatus(root: JSONValue): ConnectionStatus | null {
-  return ( false
-    || root == "CONNECTED"
-    || root == "DISCONNECTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface TunnelSummary {
@@ -368,13 +372,13 @@ export interface TunnelSummary {
   createdAt?: Date | number | null;
   lastUpdatedAt?: Date | number | null;
 }
-function toTunnelSummary(root: JSONValue): TunnelSummary {
-  return prt.readObj({
+function toTunnelSummary(root: jsonP.JSONValue): TunnelSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "tunnelId": "s",
       "tunnelArn": "s",
-      "status": toTunnelStatus,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<TunnelStatus>(x),
       "description": "s",
       "createdAt": "d",
       "lastUpdatedAt": "d",

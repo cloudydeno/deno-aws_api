@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class OpsWorksCM {
   #client: ServiceClient;
@@ -31,14 +31,16 @@ export default class OpsWorksCM {
   async associateNode(
     {abortSignal, ...params}: RequestConfig & AssociateNodeRequest,
   ): Promise<AssociateNodeResponse> {
-    const body: JSONObject = {...params,
-    EngineAttributes: params["EngineAttributes"]?.map(x => fromEngineAttribute(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServerName: params["ServerName"],
+      NodeName: params["NodeName"],
+      EngineAttributes: params["EngineAttributes"]?.map(x => fromEngineAttribute(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateNode",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NodeAssociationStatusToken": "s",
@@ -49,14 +51,16 @@ export default class OpsWorksCM {
   async createBackup(
     {abortSignal, ...params}: RequestConfig & CreateBackupRequest,
   ): Promise<CreateBackupResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServerName: params["ServerName"],
+      Description: params["Description"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBackup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Backup": toBackup,
@@ -67,15 +71,34 @@ export default class OpsWorksCM {
   async createServer(
     {abortSignal, ...params}: RequestConfig & CreateServerRequest,
   ): Promise<CreateServerResponse> {
-    const body: JSONObject = {...params,
-    EngineAttributes: params["EngineAttributes"]?.map(x => fromEngineAttribute(x)),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AssociatePublicIpAddress: params["AssociatePublicIpAddress"],
+      CustomDomain: params["CustomDomain"],
+      CustomCertificate: params["CustomCertificate"],
+      CustomPrivateKey: params["CustomPrivateKey"],
+      DisableAutomatedBackup: params["DisableAutomatedBackup"],
+      Engine: params["Engine"],
+      EngineModel: params["EngineModel"],
+      EngineVersion: params["EngineVersion"],
+      EngineAttributes: params["EngineAttributes"]?.map(x => fromEngineAttribute(x)),
+      BackupRetentionCount: params["BackupRetentionCount"],
+      ServerName: params["ServerName"],
+      InstanceProfileArn: params["InstanceProfileArn"],
+      InstanceType: params["InstanceType"],
+      KeyPair: params["KeyPair"],
+      PreferredMaintenanceWindow: params["PreferredMaintenanceWindow"],
+      PreferredBackupWindow: params["PreferredBackupWindow"],
+      SecurityGroupIds: params["SecurityGroupIds"],
+      ServiceRoleArn: params["ServiceRoleArn"],
+      SubnetIds: params["SubnetIds"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      BackupId: params["BackupId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateServer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Server": toServer,
@@ -86,13 +109,14 @@ export default class OpsWorksCM {
   async deleteBackup(
     {abortSignal, ...params}: RequestConfig & DeleteBackupRequest,
   ): Promise<DeleteBackupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      BackupId: params["BackupId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBackup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -101,13 +125,14 @@ export default class OpsWorksCM {
   async deleteServer(
     {abortSignal, ...params}: RequestConfig & DeleteServerRequest,
   ): Promise<DeleteServerResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServerName: params["ServerName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteServer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -116,13 +141,13 @@ export default class OpsWorksCM {
   async describeAccountAttributes(
     {abortSignal, ...params}: RequestConfig & DescribeAccountAttributesRequest = {},
   ): Promise<DescribeAccountAttributesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccountAttributes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Attributes": [toAccountAttribute],
@@ -133,13 +158,17 @@ export default class OpsWorksCM {
   async describeBackups(
     {abortSignal, ...params}: RequestConfig & DescribeBackupsRequest = {},
   ): Promise<DescribeBackupsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      BackupId: params["BackupId"],
+      ServerName: params["ServerName"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBackups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Backups": [toBackup],
@@ -151,13 +180,16 @@ export default class OpsWorksCM {
   async describeEvents(
     {abortSignal, ...params}: RequestConfig & DescribeEventsRequest,
   ): Promise<DescribeEventsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServerName: params["ServerName"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEvents",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ServerEvents": [toServerEvent],
@@ -169,16 +201,18 @@ export default class OpsWorksCM {
   async describeNodeAssociationStatus(
     {abortSignal, ...params}: RequestConfig & DescribeNodeAssociationStatusRequest,
   ): Promise<DescribeNodeAssociationStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NodeAssociationStatusToken: params["NodeAssociationStatusToken"],
+      ServerName: params["ServerName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNodeAssociationStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "NodeAssociationStatus": toNodeAssociationStatus,
+        "NodeAssociationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<NodeAssociationStatus>(x),
         "EngineAttributes": [toEngineAttribute],
       },
     }, await resp.json());
@@ -187,13 +221,16 @@ export default class OpsWorksCM {
   async describeServers(
     {abortSignal, ...params}: RequestConfig & DescribeServersRequest = {},
   ): Promise<DescribeServersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServerName: params["ServerName"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeServers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Servers": [toServer],
@@ -205,14 +242,16 @@ export default class OpsWorksCM {
   async disassociateNode(
     {abortSignal, ...params}: RequestConfig & DisassociateNodeRequest,
   ): Promise<DisassociateNodeResponse> {
-    const body: JSONObject = {...params,
-    EngineAttributes: params["EngineAttributes"]?.map(x => fromEngineAttribute(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServerName: params["ServerName"],
+      NodeName: params["NodeName"],
+      EngineAttributes: params["EngineAttributes"]?.map(x => fromEngineAttribute(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateNode",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NodeAssociationStatusToken": "s",
@@ -223,14 +262,16 @@ export default class OpsWorksCM {
   async exportServerEngineAttribute(
     {abortSignal, ...params}: RequestConfig & ExportServerEngineAttributeRequest,
   ): Promise<ExportServerEngineAttributeResponse> {
-    const body: JSONObject = {...params,
-    InputAttributes: params["InputAttributes"]?.map(x => fromEngineAttribute(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ExportAttributeName: params["ExportAttributeName"],
+      ServerName: params["ServerName"],
+      InputAttributes: params["InputAttributes"]?.map(x => fromEngineAttribute(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExportServerEngineAttribute",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EngineAttribute": toEngineAttribute,
@@ -242,13 +283,16 @@ export default class OpsWorksCM {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -260,13 +304,17 @@ export default class OpsWorksCM {
   async restoreServer(
     {abortSignal, ...params}: RequestConfig & RestoreServerRequest,
   ): Promise<RestoreServerResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      BackupId: params["BackupId"],
+      ServerName: params["ServerName"],
+      InstanceType: params["InstanceType"],
+      KeyPair: params["KeyPair"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreServer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -275,14 +323,15 @@ export default class OpsWorksCM {
   async startMaintenance(
     {abortSignal, ...params}: RequestConfig & StartMaintenanceRequest,
   ): Promise<StartMaintenanceResponse> {
-    const body: JSONObject = {...params,
-    EngineAttributes: params["EngineAttributes"]?.map(x => fromEngineAttribute(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServerName: params["ServerName"],
+      EngineAttributes: params["EngineAttributes"]?.map(x => fromEngineAttribute(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartMaintenance",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Server": toServer,
@@ -293,14 +342,15 @@ export default class OpsWorksCM {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -309,13 +359,15 @@ export default class OpsWorksCM {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -324,13 +376,18 @@ export default class OpsWorksCM {
   async updateServer(
     {abortSignal, ...params}: RequestConfig & UpdateServerRequest,
   ): Promise<UpdateServerResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DisableAutomatedBackup: params["DisableAutomatedBackup"],
+      BackupRetentionCount: params["BackupRetentionCount"],
+      ServerName: params["ServerName"],
+      PreferredMaintenanceWindow: params["PreferredMaintenanceWindow"],
+      PreferredBackupWindow: params["PreferredBackupWindow"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateServer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Server": toServer,
@@ -341,13 +398,16 @@ export default class OpsWorksCM {
   async updateServerEngineAttributes(
     {abortSignal, ...params}: RequestConfig & UpdateServerEngineAttributesRequest,
   ): Promise<UpdateServerEngineAttributesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServerName: params["ServerName"],
+      AttributeName: params["AttributeName"],
+      AttributeValue: params["AttributeValue"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateServerEngineAttributes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Server": toServer,
@@ -367,7 +427,7 @@ export default class OpsWorksCM {
     const errMessage = 'ResourceNotReady: Resource is not in the state NodeAssociated';
     for (let i = 0; i < 15; i++) {
       const resp = await this.describeNodeAssociationStatus(params);
-      const field = resp["NodeAssociationStatus"];
+      const field = resp?.NodeAssociationStatus;
       if (field === "SUCCESS") return resp;
       if (field === "FAILED") throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
@@ -622,13 +682,15 @@ export interface EngineAttribute {
   Name?: string | null;
   Value?: string | null;
 }
-function fromEngineAttribute(input?: EngineAttribute | null): JSONValue {
+function fromEngineAttribute(input?: EngineAttribute | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Value: input["Value"],
   }
 }
-function toEngineAttribute(root: JSONValue): EngineAttribute {
-  return prt.readObj({
+function toEngineAttribute(root: jsonP.JSONValue): EngineAttribute {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -642,13 +704,15 @@ export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -684,13 +748,13 @@ export interface Backup {
   ToolsVersion?: string | null;
   UserArn?: string | null;
 }
-function toBackup(root: JSONValue): Backup {
-  return prt.readObj({
+function toBackup(root: jsonP.JSONValue): Backup {
+  return jsonP.readObj({
     required: {},
     optional: {
       "BackupArn": "s",
       "BackupId": "s",
-      "BackupType": toBackupType,
+      "BackupType": (x: jsonP.JSONValue) => cmnP.readEnum<BackupType>(x),
       "CreatedAt": "d",
       "Description": "s",
       "Engine": "s",
@@ -707,7 +771,7 @@ function toBackup(root: JSONValue): Backup {
       "SecurityGroupIds": ["s"],
       "ServerName": "s",
       "ServiceRoleArn": "s",
-      "Status": toBackupStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<BackupStatus>(x),
       "StatusDescription": "s",
       "SubnetIds": ["s"],
       "ToolsVersion": "s",
@@ -720,13 +784,7 @@ function toBackup(root: JSONValue): Backup {
 export type BackupType =
 | "AUTOMATED"
 | "MANUAL"
-;
-function toBackupType(root: JSONValue): BackupType | null {
-  return ( false
-    || root == "AUTOMATED"
-    || root == "MANUAL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type BackupStatus =
@@ -734,15 +792,7 @@ export type BackupStatus =
 | "OK"
 | "FAILED"
 | "DELETING"
-;
-function toBackupStatus(root: JSONValue): BackupStatus | null {
-  return ( false
-    || root == "IN_PROGRESS"
-    || root == "OK"
-    || root == "FAILED"
-    || root == "DELETING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, interface
 export interface Server {
@@ -771,8 +821,8 @@ export interface Server {
   SubnetIds?: string[] | null;
   ServerArn?: string | null;
 }
-function toServer(root: JSONValue): Server {
-  return prt.readObj({
+function toServer(root: jsonP.JSONValue): Server {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AssociatePublicIpAddress": "b",
@@ -790,12 +840,12 @@ function toServer(root: JSONValue): Server {
       "InstanceProfileArn": "s",
       "InstanceType": "s",
       "KeyPair": "s",
-      "MaintenanceStatus": toMaintenanceStatus,
+      "MaintenanceStatus": (x: jsonP.JSONValue) => cmnP.readEnum<MaintenanceStatus>(x),
       "PreferredMaintenanceWindow": "s",
       "PreferredBackupWindow": "s",
       "SecurityGroupIds": ["s"],
       "ServiceRoleArn": "s",
-      "Status": toServerStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ServerStatus>(x),
       "StatusReason": "s",
       "SubnetIds": ["s"],
       "ServerArn": "s",
@@ -807,13 +857,7 @@ function toServer(root: JSONValue): Server {
 export type MaintenanceStatus =
 | "SUCCESS"
 | "FAILED"
-;
-function toMaintenanceStatus(root: JSONValue): MaintenanceStatus | null {
-  return ( false
-    || root == "SUCCESS"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, enum
 export type ServerStatus =
@@ -830,24 +874,7 @@ export type ServerStatus =
 | "UNDER_MAINTENANCE"
 | "UNHEALTHY"
 | "TERMINATED"
-;
-function toServerStatus(root: JSONValue): ServerStatus | null {
-  return ( false
-    || root == "BACKING_UP"
-    || root == "CONNECTION_LOST"
-    || root == "CREATING"
-    || root == "DELETING"
-    || root == "MODIFYING"
-    || root == "FAILED"
-    || root == "HEALTHY"
-    || root == "RUNNING"
-    || root == "RESTORING"
-    || root == "SETUP"
-    || root == "UNDER_MAINTENANCE"
-    || root == "UNHEALTHY"
-    || root == "TERMINATED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AccountAttribute {
@@ -855,8 +882,8 @@ export interface AccountAttribute {
   Maximum?: number | null;
   Used?: number | null;
 }
-function toAccountAttribute(root: JSONValue): AccountAttribute {
-  return prt.readObj({
+function toAccountAttribute(root: jsonP.JSONValue): AccountAttribute {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -873,8 +900,8 @@ export interface ServerEvent {
   Message?: string | null;
   LogUrl?: string | null;
 }
-function toServerEvent(root: JSONValue): ServerEvent {
-  return prt.readObj({
+function toServerEvent(root: jsonP.JSONValue): ServerEvent {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CreatedAt": "d",
@@ -890,11 +917,4 @@ export type NodeAssociationStatus =
 | "SUCCESS"
 | "FAILED"
 | "IN_PROGRESS"
-;
-function toNodeAssociationStatus(root: JSONValue): NodeAssociationStatus | null {
-  return ( false
-    || root == "SUCCESS"
-    || root == "FAILED"
-    || root == "IN_PROGRESS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;

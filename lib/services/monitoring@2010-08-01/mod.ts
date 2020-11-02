@@ -5,9 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
-
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 import * as Base64 from "https://deno.land/x/base64@v0.2.1/mod.ts";
 
 export default class CloudWatch {
@@ -33,7 +33,7 @@ export default class CloudWatch {
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["AlarmNames"]) prt.appendList(body, prefix+"AlarmNames", params["AlarmNames"], {"entryPrefix":".member."})
+    if (params["AlarmNames"]) qsP.appendList(body, prefix+"AlarmNames", params["AlarmNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAlarms",
@@ -47,13 +47,13 @@ export default class CloudWatch {
     const prefix = '';
     body.append(prefix+"Namespace", (params["Namespace"] ?? '').toString());
     body.append(prefix+"MetricName", (params["MetricName"] ?? '').toString());
-    if (params["Dimensions"]) prt.appendList(body, prefix+"Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
+    if (params["Dimensions"]) qsP.appendList(body, prefix+"Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
     body.append(prefix+"Stat", (params["Stat"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAnomalyDetector",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteAnomalyDetectorResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteAnomalyDetectorResult");
     return {};
   }
 
@@ -62,12 +62,12 @@ export default class CloudWatch {
   ): Promise<DeleteDashboardsOutput> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["DashboardNames"]) prt.appendList(body, prefix+"DashboardNames", params["DashboardNames"], {"entryPrefix":".member."})
+    if (params["DashboardNames"]) qsP.appendList(body, prefix+"DashboardNames", params["DashboardNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDashboards",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteDashboardsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDashboardsResult");
     return {};
   }
 
@@ -76,12 +76,12 @@ export default class CloudWatch {
   ): Promise<DeleteInsightRulesOutput> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["RuleNames"]) prt.appendList(body, prefix+"RuleNames", params["RuleNames"], {"entryPrefix":".member."})
+    if (params["RuleNames"]) qsP.appendList(body, prefix+"RuleNames", params["RuleNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteInsightRules",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteInsightRulesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteInsightRulesResult");
     return {
       Failures: xml.getList("Failures", "member").map(PartialFailure_Parse),
     };
@@ -93,10 +93,10 @@ export default class CloudWatch {
     const body = new URLSearchParams;
     const prefix = '';
     if ("AlarmName" in params) body.append(prefix+"AlarmName", (params["AlarmName"] ?? '').toString());
-    if (params["AlarmTypes"]) prt.appendList(body, prefix+"AlarmTypes", params["AlarmTypes"], {"entryPrefix":".member."})
+    if (params["AlarmTypes"]) qsP.appendList(body, prefix+"AlarmTypes", params["AlarmTypes"], {"entryPrefix":".member."})
     if ("HistoryItemType" in params) body.append(prefix+"HistoryItemType", (params["HistoryItemType"] ?? '').toString());
-    if ("StartDate" in params) body.append(prefix+"StartDate", prt.encodeDate_iso8601(params["StartDate"]));
-    if ("EndDate" in params) body.append(prefix+"EndDate", prt.encodeDate_iso8601(params["EndDate"]));
+    if ("StartDate" in params) body.append(prefix+"StartDate", qsP.encodeDate_iso8601(params["StartDate"]));
+    if ("EndDate" in params) body.append(prefix+"EndDate", qsP.encodeDate_iso8601(params["EndDate"]));
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("ScanBy" in params) body.append(prefix+"ScanBy", (params["ScanBy"] ?? '').toString());
@@ -104,7 +104,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "DescribeAlarmHistory",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeAlarmHistoryResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeAlarmHistoryResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -118,9 +118,9 @@ export default class CloudWatch {
   ): Promise<DescribeAlarmsOutput> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["AlarmNames"]) prt.appendList(body, prefix+"AlarmNames", params["AlarmNames"], {"entryPrefix":".member."})
+    if (params["AlarmNames"]) qsP.appendList(body, prefix+"AlarmNames", params["AlarmNames"], {"entryPrefix":".member."})
     if ("AlarmNamePrefix" in params) body.append(prefix+"AlarmNamePrefix", (params["AlarmNamePrefix"] ?? '').toString());
-    if (params["AlarmTypes"]) prt.appendList(body, prefix+"AlarmTypes", params["AlarmTypes"], {"entryPrefix":".member."})
+    if (params["AlarmTypes"]) qsP.appendList(body, prefix+"AlarmTypes", params["AlarmTypes"], {"entryPrefix":".member."})
     if ("ChildrenOfAlarmName" in params) body.append(prefix+"ChildrenOfAlarmName", (params["ChildrenOfAlarmName"] ?? '').toString());
     if ("ParentsOfAlarmName" in params) body.append(prefix+"ParentsOfAlarmName", (params["ParentsOfAlarmName"] ?? '').toString());
     if ("StateValue" in params) body.append(prefix+"StateValue", (params["StateValue"] ?? '').toString());
@@ -131,7 +131,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "DescribeAlarms",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeAlarmsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeAlarmsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -150,14 +150,14 @@ export default class CloudWatch {
     body.append(prefix+"Namespace", (params["Namespace"] ?? '').toString());
     if ("Statistic" in params) body.append(prefix+"Statistic", (params["Statistic"] ?? '').toString());
     if ("ExtendedStatistic" in params) body.append(prefix+"ExtendedStatistic", (params["ExtendedStatistic"] ?? '').toString());
-    if (params["Dimensions"]) prt.appendList(body, prefix+"Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
+    if (params["Dimensions"]) qsP.appendList(body, prefix+"Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
     if ("Period" in params) body.append(prefix+"Period", (params["Period"] ?? '').toString());
     if ("Unit" in params) body.append(prefix+"Unit", (params["Unit"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAlarmsForMetric",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeAlarmsForMetricResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeAlarmsForMetricResult");
     return {
       MetricAlarms: xml.getList("MetricAlarms", "member").map(MetricAlarm_Parse),
     };
@@ -172,12 +172,12 @@ export default class CloudWatch {
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("Namespace" in params) body.append(prefix+"Namespace", (params["Namespace"] ?? '').toString());
     if ("MetricName" in params) body.append(prefix+"MetricName", (params["MetricName"] ?? '').toString());
-    if (params["Dimensions"]) prt.appendList(body, prefix+"Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
+    if (params["Dimensions"]) qsP.appendList(body, prefix+"Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAnomalyDetectors",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeAnomalyDetectorsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeAnomalyDetectorsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -197,7 +197,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "DescribeInsightRules",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeInsightRulesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeInsightRulesResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -211,7 +211,7 @@ export default class CloudWatch {
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["AlarmNames"]) prt.appendList(body, prefix+"AlarmNames", params["AlarmNames"], {"entryPrefix":".member."})
+    if (params["AlarmNames"]) qsP.appendList(body, prefix+"AlarmNames", params["AlarmNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableAlarmActions",
@@ -223,12 +223,12 @@ export default class CloudWatch {
   ): Promise<DisableInsightRulesOutput> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["RuleNames"]) prt.appendList(body, prefix+"RuleNames", params["RuleNames"], {"entryPrefix":".member."})
+    if (params["RuleNames"]) qsP.appendList(body, prefix+"RuleNames", params["RuleNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableInsightRules",
     });
-    const xml = readXmlResult(await resp.text(), "DisableInsightRulesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DisableInsightRulesResult");
     return {
       Failures: xml.getList("Failures", "member").map(PartialFailure_Parse),
     };
@@ -239,7 +239,7 @@ export default class CloudWatch {
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["AlarmNames"]) prt.appendList(body, prefix+"AlarmNames", params["AlarmNames"], {"entryPrefix":".member."})
+    if (params["AlarmNames"]) qsP.appendList(body, prefix+"AlarmNames", params["AlarmNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableAlarmActions",
@@ -251,12 +251,12 @@ export default class CloudWatch {
   ): Promise<EnableInsightRulesOutput> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["RuleNames"]) prt.appendList(body, prefix+"RuleNames", params["RuleNames"], {"entryPrefix":".member."})
+    if (params["RuleNames"]) qsP.appendList(body, prefix+"RuleNames", params["RuleNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableInsightRules",
     });
-    const xml = readXmlResult(await resp.text(), "EnableInsightRulesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "EnableInsightRulesResult");
     return {
       Failures: xml.getList("Failures", "member").map(PartialFailure_Parse),
     };
@@ -272,7 +272,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "GetDashboard",
     });
-    const xml = readXmlResult(await resp.text(), "GetDashboardResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetDashboardResult");
     return xml.strings({
       optional: {"DashboardArn":true,"DashboardBody":true,"DashboardName":true},
     });
@@ -284,17 +284,17 @@ export default class CloudWatch {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"RuleName", (params["RuleName"] ?? '').toString());
-    body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
-    body.append(prefix+"EndTime", prt.encodeDate_iso8601(params["EndTime"]));
+    body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+    body.append(prefix+"EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
     body.append(prefix+"Period", (params["Period"] ?? '').toString());
     if ("MaxContributorCount" in params) body.append(prefix+"MaxContributorCount", (params["MaxContributorCount"] ?? '').toString());
-    if (params["Metrics"]) prt.appendList(body, prefix+"Metrics", params["Metrics"], {"entryPrefix":".member."})
+    if (params["Metrics"]) qsP.appendList(body, prefix+"Metrics", params["Metrics"], {"entryPrefix":".member."})
     if ("OrderBy" in params) body.append(prefix+"OrderBy", (params["OrderBy"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInsightRuleReport",
     });
-    const xml = readXmlResult(await resp.text(), "GetInsightRuleReportResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetInsightRuleReportResult");
     return {
       ...xml.strings({
         optional: {"AggregationStatistic":true},
@@ -312,9 +312,9 @@ export default class CloudWatch {
   ): Promise<GetMetricDataOutput> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["MetricDataQueries"]) prt.appendList(body, prefix+"MetricDataQueries", params["MetricDataQueries"], {"appender":MetricDataQuery_Serialize,"entryPrefix":".member."})
-    body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
-    body.append(prefix+"EndTime", prt.encodeDate_iso8601(params["EndTime"]));
+    if (params["MetricDataQueries"]) qsP.appendList(body, prefix+"MetricDataQueries", params["MetricDataQueries"], {"appender":MetricDataQuery_Serialize,"entryPrefix":".member."})
+    body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+    body.append(prefix+"EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("ScanBy" in params) body.append(prefix+"ScanBy", (params["ScanBy"] ?? '').toString());
     if ("MaxDatapoints" in params) body.append(prefix+"MaxDatapoints", (params["MaxDatapoints"] ?? '').toString());
@@ -322,7 +322,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "GetMetricData",
     });
-    const xml = readXmlResult(await resp.text(), "GetMetricDataResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetMetricDataResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -339,18 +339,18 @@ export default class CloudWatch {
     const prefix = '';
     body.append(prefix+"Namespace", (params["Namespace"] ?? '').toString());
     body.append(prefix+"MetricName", (params["MetricName"] ?? '').toString());
-    if (params["Dimensions"]) prt.appendList(body, prefix+"Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
-    body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
-    body.append(prefix+"EndTime", prt.encodeDate_iso8601(params["EndTime"]));
+    if (params["Dimensions"]) qsP.appendList(body, prefix+"Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
+    body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+    body.append(prefix+"EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
     body.append(prefix+"Period", (params["Period"] ?? '').toString());
-    if (params["Statistics"]) prt.appendList(body, prefix+"Statistics", params["Statistics"], {"entryPrefix":".member."})
-    if (params["ExtendedStatistics"]) prt.appendList(body, prefix+"ExtendedStatistics", params["ExtendedStatistics"], {"entryPrefix":".member."})
+    if (params["Statistics"]) qsP.appendList(body, prefix+"Statistics", params["Statistics"], {"entryPrefix":".member."})
+    if (params["ExtendedStatistics"]) qsP.appendList(body, prefix+"ExtendedStatistics", params["ExtendedStatistics"], {"entryPrefix":".member."})
     if ("Unit" in params) body.append(prefix+"Unit", (params["Unit"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMetricStatistics",
     });
-    const xml = readXmlResult(await resp.text(), "GetMetricStatisticsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetMetricStatisticsResult");
     return {
       ...xml.strings({
         optional: {"Label":true},
@@ -370,7 +370,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "GetMetricWidgetImage",
     });
-    const xml = readXmlResult(await resp.text(), "GetMetricWidgetImageResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetMetricWidgetImageResult");
     return {
       MetricWidgetImage: xml.first("MetricWidgetImage", false, x => Base64.toUint8Array(x.content ?? '')),
     };
@@ -387,7 +387,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "ListDashboards",
     });
-    const xml = readXmlResult(await resp.text(), "ListDashboardsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListDashboardsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -403,14 +403,14 @@ export default class CloudWatch {
     const prefix = '';
     if ("Namespace" in params) body.append(prefix+"Namespace", (params["Namespace"] ?? '').toString());
     if ("MetricName" in params) body.append(prefix+"MetricName", (params["MetricName"] ?? '').toString());
-    if (params["Dimensions"]) prt.appendList(body, prefix+"Dimensions", params["Dimensions"], {"appender":DimensionFilter_Serialize,"entryPrefix":".member."})
+    if (params["Dimensions"]) qsP.appendList(body, prefix+"Dimensions", params["Dimensions"], {"appender":DimensionFilter_Serialize,"entryPrefix":".member."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("RecentlyActive" in params) body.append(prefix+"RecentlyActive", (params["RecentlyActive"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListMetrics",
     });
-    const xml = readXmlResult(await resp.text(), "ListMetricsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListMetricsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -429,7 +429,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    const xml = readXmlResult(await resp.text(), "ListTagsForResourceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListTagsForResourceResult");
     return {
       Tags: xml.getList("Tags", "member").map(Tag_Parse),
     };
@@ -442,14 +442,14 @@ export default class CloudWatch {
     const prefix = '';
     body.append(prefix+"Namespace", (params["Namespace"] ?? '').toString());
     body.append(prefix+"MetricName", (params["MetricName"] ?? '').toString());
-    if (params["Dimensions"]) prt.appendList(body, prefix+"Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
+    if (params["Dimensions"]) qsP.appendList(body, prefix+"Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
     body.append(prefix+"Stat", (params["Stat"] ?? '').toString());
     if (params["Configuration"] != null) AnomalyDetectorConfiguration_Serialize(body, prefix+"Configuration", params["Configuration"]);
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAnomalyDetector",
     });
-    const xml = readXmlResult(await resp.text(), "PutAnomalyDetectorResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "PutAnomalyDetectorResult");
     return {};
   }
 
@@ -459,13 +459,13 @@ export default class CloudWatch {
     const body = new URLSearchParams;
     const prefix = '';
     if ("ActionsEnabled" in params) body.append(prefix+"ActionsEnabled", (params["ActionsEnabled"] ?? '').toString());
-    if (params["AlarmActions"]) prt.appendList(body, prefix+"AlarmActions", params["AlarmActions"], {"entryPrefix":".member."})
+    if (params["AlarmActions"]) qsP.appendList(body, prefix+"AlarmActions", params["AlarmActions"], {"entryPrefix":".member."})
     if ("AlarmDescription" in params) body.append(prefix+"AlarmDescription", (params["AlarmDescription"] ?? '').toString());
     body.append(prefix+"AlarmName", (params["AlarmName"] ?? '').toString());
     body.append(prefix+"AlarmRule", (params["AlarmRule"] ?? '').toString());
-    if (params["InsufficientDataActions"]) prt.appendList(body, prefix+"InsufficientDataActions", params["InsufficientDataActions"], {"entryPrefix":".member."})
-    if (params["OKActions"]) prt.appendList(body, prefix+"OKActions", params["OKActions"], {"entryPrefix":".member."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["InsufficientDataActions"]) qsP.appendList(body, prefix+"InsufficientDataActions", params["InsufficientDataActions"], {"entryPrefix":".member."})
+    if (params["OKActions"]) qsP.appendList(body, prefix+"OKActions", params["OKActions"], {"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutCompositeAlarm",
@@ -483,7 +483,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "PutDashboard",
     });
-    const xml = readXmlResult(await resp.text(), "PutDashboardResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "PutDashboardResult");
     return {
       DashboardValidationMessages: xml.getList("DashboardValidationMessages", "member").map(DashboardValidationMessage_Parse),
     };
@@ -497,12 +497,12 @@ export default class CloudWatch {
     body.append(prefix+"RuleName", (params["RuleName"] ?? '').toString());
     if ("RuleState" in params) body.append(prefix+"RuleState", (params["RuleState"] ?? '').toString());
     body.append(prefix+"RuleDefinition", (params["RuleDefinition"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutInsightRule",
     });
-    const xml = readXmlResult(await resp.text(), "PutInsightRuleResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "PutInsightRuleResult");
     return {};
   }
 
@@ -514,14 +514,14 @@ export default class CloudWatch {
     body.append(prefix+"AlarmName", (params["AlarmName"] ?? '').toString());
     if ("AlarmDescription" in params) body.append(prefix+"AlarmDescription", (params["AlarmDescription"] ?? '').toString());
     if ("ActionsEnabled" in params) body.append(prefix+"ActionsEnabled", (params["ActionsEnabled"] ?? '').toString());
-    if (params["OKActions"]) prt.appendList(body, prefix+"OKActions", params["OKActions"], {"entryPrefix":".member."})
-    if (params["AlarmActions"]) prt.appendList(body, prefix+"AlarmActions", params["AlarmActions"], {"entryPrefix":".member."})
-    if (params["InsufficientDataActions"]) prt.appendList(body, prefix+"InsufficientDataActions", params["InsufficientDataActions"], {"entryPrefix":".member."})
+    if (params["OKActions"]) qsP.appendList(body, prefix+"OKActions", params["OKActions"], {"entryPrefix":".member."})
+    if (params["AlarmActions"]) qsP.appendList(body, prefix+"AlarmActions", params["AlarmActions"], {"entryPrefix":".member."})
+    if (params["InsufficientDataActions"]) qsP.appendList(body, prefix+"InsufficientDataActions", params["InsufficientDataActions"], {"entryPrefix":".member."})
     if ("MetricName" in params) body.append(prefix+"MetricName", (params["MetricName"] ?? '').toString());
     if ("Namespace" in params) body.append(prefix+"Namespace", (params["Namespace"] ?? '').toString());
     if ("Statistic" in params) body.append(prefix+"Statistic", (params["Statistic"] ?? '').toString());
     if ("ExtendedStatistic" in params) body.append(prefix+"ExtendedStatistic", (params["ExtendedStatistic"] ?? '').toString());
-    if (params["Dimensions"]) prt.appendList(body, prefix+"Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
+    if (params["Dimensions"]) qsP.appendList(body, prefix+"Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
     if ("Period" in params) body.append(prefix+"Period", (params["Period"] ?? '').toString());
     if ("Unit" in params) body.append(prefix+"Unit", (params["Unit"] ?? '').toString());
     body.append(prefix+"EvaluationPeriods", (params["EvaluationPeriods"] ?? '').toString());
@@ -530,8 +530,8 @@ export default class CloudWatch {
     body.append(prefix+"ComparisonOperator", (params["ComparisonOperator"] ?? '').toString());
     if ("TreatMissingData" in params) body.append(prefix+"TreatMissingData", (params["TreatMissingData"] ?? '').toString());
     if ("EvaluateLowSampleCountPercentile" in params) body.append(prefix+"EvaluateLowSampleCountPercentile", (params["EvaluateLowSampleCountPercentile"] ?? '').toString());
-    if (params["Metrics"]) prt.appendList(body, prefix+"Metrics", params["Metrics"], {"appender":MetricDataQuery_Serialize,"entryPrefix":".member."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Metrics"]) qsP.appendList(body, prefix+"Metrics", params["Metrics"], {"appender":MetricDataQuery_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     if ("ThresholdMetricId" in params) body.append(prefix+"ThresholdMetricId", (params["ThresholdMetricId"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -545,7 +545,7 @@ export default class CloudWatch {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"Namespace", (params["Namespace"] ?? '').toString());
-    if (params["MetricData"]) prt.appendList(body, prefix+"MetricData", params["MetricData"], {"appender":MetricDatum_Serialize,"entryPrefix":".member."})
+    if (params["MetricData"]) qsP.appendList(body, prefix+"MetricData", params["MetricData"], {"appender":MetricDatum_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutMetricData",
@@ -573,12 +573,12 @@ export default class CloudWatch {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceARN", (params["ResourceARN"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    const xml = readXmlResult(await resp.text(), "TagResourceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "TagResourceResult");
     return {};
   }
 
@@ -588,12 +588,12 @@ export default class CloudWatch {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceARN", (params["ResourceARN"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    const xml = readXmlResult(await resp.text(), "UntagResourceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UntagResourceResult");
     return {};
   }
 
@@ -606,7 +606,7 @@ export default class CloudWatch {
     const errMessage = 'ResourceNotReady: Resource is not in the state AlarmExists';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeAlarms(params);
-      if (resp["MetricAlarms"].length > 0) return resp;
+      if ((resp?.MetricAlarms || '').length > 0) return resp;
       await new Promise(r => setTimeout(r, 5000));
     }
     throw new Error(errMessage);
@@ -619,7 +619,7 @@ export default class CloudWatch {
     const errMessage = 'ResourceNotReady: Resource is not in the state CompositeAlarmExists';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeAlarms(params);
-      if (resp["CompositeAlarms"].length > 0) return resp;
+      if ((resp?.CompositeAlarms || '').length > 0) return resp;
       await new Promise(r => setTimeout(r, 5000));
     }
     throw new Error(errMessage);
@@ -1008,7 +1008,7 @@ function Dimension_Serialize(body: URLSearchParams, prefix: string, params: Dime
     body.append(prefix+".Name", (params["Name"] ?? '').toString());
     body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function Dimension_Parse(node: XmlNode): Dimension {
+function Dimension_Parse(node: xmlP.XmlNode): Dimension {
   return node.strings({
     required: {"Name":true,"Value":true},
   });
@@ -1018,34 +1018,27 @@ function Dimension_Parse(node: XmlNode): Dimension {
 export type AlarmType =
 | "CompositeAlarm"
 | "MetricAlarm"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type HistoryItemType =
 | "ConfigurationUpdate"
 | "StateUpdate"
 | "Action"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
 export type ScanBy =
 | "TimestampDescending"
 | "TimestampAscending"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type StateValue =
 | "OK"
 | "ALARM"
 | "INSUFFICIENT_DATA"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type Statistic =
@@ -1054,9 +1047,7 @@ export type Statistic =
 | "Sum"
 | "Minimum"
 | "Maximum"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 11 - tags: input, named, enum, output
 export type StandardUnit =
@@ -1087,9 +1078,7 @@ export type StandardUnit =
 | "Terabits/Second"
 | "Count/Second"
 | "None"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface MetricDataQuery {
@@ -1108,7 +1097,7 @@ function MetricDataQuery_Serialize(body: URLSearchParams, prefix: string, params
     if ("ReturnData" in params) body.append(prefix+".ReturnData", (params["ReturnData"] ?? '').toString());
     if ("Period" in params) body.append(prefix+".Period", (params["Period"] ?? '').toString());
 }
-function MetricDataQuery_Parse(node: XmlNode): MetricDataQuery {
+function MetricDataQuery_Parse(node: xmlP.XmlNode): MetricDataQuery {
   return {
     ...node.strings({
       required: {"Id":true},
@@ -1133,7 +1122,7 @@ function MetricStat_Serialize(body: URLSearchParams, prefix: string, params: Met
     body.append(prefix+".Stat", (params["Stat"] ?? '').toString());
     if ("Unit" in params) body.append(prefix+".Unit", (params["Unit"] ?? '').toString());
 }
-function MetricStat_Parse(node: XmlNode): MetricStat {
+function MetricStat_Parse(node: xmlP.XmlNode): MetricStat {
   return {
     ...node.strings({
       required: {"Stat":true},
@@ -1153,9 +1142,9 @@ export interface Metric {
 function Metric_Serialize(body: URLSearchParams, prefix: string, params: Metric) {
     if ("Namespace" in params) body.append(prefix+".Namespace", (params["Namespace"] ?? '').toString());
     if ("MetricName" in params) body.append(prefix+".MetricName", (params["MetricName"] ?? '').toString());
-    if (params["Dimensions"]) prt.appendList(body, prefix+".Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
+    if (params["Dimensions"]) qsP.appendList(body, prefix+".Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
 }
-function Metric_Parse(node: XmlNode): Metric {
+function Metric_Parse(node: xmlP.XmlNode): Metric {
   return {
     ...node.strings({
       optional: {"Namespace":true,"MetricName":true},
@@ -1177,8 +1166,7 @@ function DimensionFilter_Serialize(body: URLSearchParams, prefix: string, params
 // refs: 1 - tags: input, named, enum
 export type RecentlyActive =
 | "PT3H"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface AnomalyDetectorConfiguration {
@@ -1186,10 +1174,10 @@ export interface AnomalyDetectorConfiguration {
   MetricTimezone?: string | null;
 }
 function AnomalyDetectorConfiguration_Serialize(body: URLSearchParams, prefix: string, params: AnomalyDetectorConfiguration) {
-    if (params["ExcludedTimeRanges"]) prt.appendList(body, prefix+".ExcludedTimeRanges", params["ExcludedTimeRanges"], {"appender":Range_Serialize,"entryPrefix":".member."})
+    if (params["ExcludedTimeRanges"]) qsP.appendList(body, prefix+".ExcludedTimeRanges", params["ExcludedTimeRanges"], {"appender":Range_Serialize,"entryPrefix":".member."})
     if ("MetricTimezone" in params) body.append(prefix+".MetricTimezone", (params["MetricTimezone"] ?? '').toString());
 }
-function AnomalyDetectorConfiguration_Parse(node: XmlNode): AnomalyDetectorConfiguration {
+function AnomalyDetectorConfiguration_Parse(node: xmlP.XmlNode): AnomalyDetectorConfiguration {
   return {
     ...node.strings({
       optional: {"MetricTimezone":true},
@@ -1204,13 +1192,13 @@ export interface Range {
   EndTime: Date | number;
 }
 function Range_Serialize(body: URLSearchParams, prefix: string, params: Range) {
-    body.append(prefix+".StartTime", prt.encodeDate_iso8601(params["StartTime"]));
-    body.append(prefix+".EndTime", prt.encodeDate_iso8601(params["EndTime"]));
+    body.append(prefix+".StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+    body.append(prefix+".EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
 }
-function Range_Parse(node: XmlNode): Range {
+function Range_Parse(node: xmlP.XmlNode): Range {
   return {
-    StartTime: node.first("StartTime", true, x => parseTimestamp(x.content)),
-    EndTime: node.first("EndTime", true, x => parseTimestamp(x.content)),
+    StartTime: node.first("StartTime", true, x => xmlP.parseTimestamp(x.content)),
+    EndTime: node.first("EndTime", true, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -1223,7 +1211,7 @@ function Tag_Serialize(body: URLSearchParams, prefix: string, params: Tag) {
     body.append(prefix+".Key", (params["Key"] ?? '').toString());
     body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function Tag_Parse(node: XmlNode): Tag {
+function Tag_Parse(node: xmlP.XmlNode): Tag {
   return node.strings({
     required: {"Key":true,"Value":true},
   });
@@ -1238,9 +1226,7 @@ export type ComparisonOperator =
 | "LessThanLowerOrGreaterThanUpperThreshold"
 | "LessThanLowerThreshold"
 | "GreaterThanUpperThreshold"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface MetricDatum {
@@ -1256,12 +1242,12 @@ export interface MetricDatum {
 }
 function MetricDatum_Serialize(body: URLSearchParams, prefix: string, params: MetricDatum) {
     body.append(prefix+".MetricName", (params["MetricName"] ?? '').toString());
-    if (params["Dimensions"]) prt.appendList(body, prefix+".Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
-    if ("Timestamp" in params) body.append(prefix+".Timestamp", prt.encodeDate_iso8601(params["Timestamp"]));
+    if (params["Dimensions"]) qsP.appendList(body, prefix+".Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
+    if ("Timestamp" in params) body.append(prefix+".Timestamp", qsP.encodeDate_iso8601(params["Timestamp"]));
     if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
     if (params["StatisticValues"] != null) StatisticSet_Serialize(body, prefix+".StatisticValues", params["StatisticValues"]);
-    if (params["Values"]) prt.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
-    if (params["Counts"]) prt.appendList(body, prefix+".Counts", params["Counts"], {"entryPrefix":".member."})
+    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
+    if (params["Counts"]) qsP.appendList(body, prefix+".Counts", params["Counts"], {"entryPrefix":".member."})
     if ("Unit" in params) body.append(prefix+".Unit", (params["Unit"] ?? '').toString());
     if ("StorageResolution" in params) body.append(prefix+".StorageResolution", (params["StorageResolution"] ?? '').toString());
 }
@@ -1287,7 +1273,7 @@ export interface PartialFailure {
   FailureCode?: string | null;
   FailureDescription?: string | null;
 }
-function PartialFailure_Parse(node: XmlNode): PartialFailure {
+function PartialFailure_Parse(node: xmlP.XmlNode): PartialFailure {
   return node.strings({
     optional: {"FailureResource":true,"ExceptionType":true,"FailureCode":true,"FailureDescription":true},
   });
@@ -1302,13 +1288,13 @@ export interface AlarmHistoryItem {
   HistorySummary?: string | null;
   HistoryData?: string | null;
 }
-function AlarmHistoryItem_Parse(node: XmlNode): AlarmHistoryItem {
+function AlarmHistoryItem_Parse(node: xmlP.XmlNode): AlarmHistoryItem {
   return {
     ...node.strings({
       optional: {"AlarmName":true,"HistorySummary":true,"HistoryData":true},
     }),
     AlarmType: node.first("AlarmType", false, x => (x.content ?? '') as AlarmType),
-    Timestamp: node.first("Timestamp", false, x => parseTimestamp(x.content)),
+    Timestamp: node.first("Timestamp", false, x => xmlP.parseTimestamp(x.content)),
     HistoryItemType: node.first("HistoryItemType", false, x => (x.content ?? '') as HistoryItemType),
   };
 }
@@ -1329,17 +1315,17 @@ export interface CompositeAlarm {
   StateUpdatedTimestamp?: Date | number | null;
   StateValue?: StateValue | null;
 }
-function CompositeAlarm_Parse(node: XmlNode): CompositeAlarm {
+function CompositeAlarm_Parse(node: xmlP.XmlNode): CompositeAlarm {
   return {
     ...node.strings({
       optional: {"AlarmArn":true,"AlarmDescription":true,"AlarmName":true,"AlarmRule":true,"StateReason":true,"StateReasonData":true},
     }),
     ActionsEnabled: node.first("ActionsEnabled", false, x => x.content === 'true'),
     AlarmActions: node.getList("AlarmActions", "member").map(x => x.content ?? ''),
-    AlarmConfigurationUpdatedTimestamp: node.first("AlarmConfigurationUpdatedTimestamp", false, x => parseTimestamp(x.content)),
+    AlarmConfigurationUpdatedTimestamp: node.first("AlarmConfigurationUpdatedTimestamp", false, x => xmlP.parseTimestamp(x.content)),
     InsufficientDataActions: node.getList("InsufficientDataActions", "member").map(x => x.content ?? ''),
     OKActions: node.getList("OKActions", "member").map(x => x.content ?? ''),
-    StateUpdatedTimestamp: node.first("StateUpdatedTimestamp", false, x => parseTimestamp(x.content)),
+    StateUpdatedTimestamp: node.first("StateUpdatedTimestamp", false, x => xmlP.parseTimestamp(x.content)),
     StateValue: node.first("StateValue", false, x => (x.content ?? '') as StateValue),
   };
 }
@@ -1374,18 +1360,18 @@ export interface MetricAlarm {
   Metrics: MetricDataQuery[];
   ThresholdMetricId?: string | null;
 }
-function MetricAlarm_Parse(node: XmlNode): MetricAlarm {
+function MetricAlarm_Parse(node: xmlP.XmlNode): MetricAlarm {
   return {
     ...node.strings({
       optional: {"AlarmName":true,"AlarmArn":true,"AlarmDescription":true,"StateReason":true,"StateReasonData":true,"MetricName":true,"Namespace":true,"ExtendedStatistic":true,"TreatMissingData":true,"EvaluateLowSampleCountPercentile":true,"ThresholdMetricId":true},
     }),
-    AlarmConfigurationUpdatedTimestamp: node.first("AlarmConfigurationUpdatedTimestamp", false, x => parseTimestamp(x.content)),
+    AlarmConfigurationUpdatedTimestamp: node.first("AlarmConfigurationUpdatedTimestamp", false, x => xmlP.parseTimestamp(x.content)),
     ActionsEnabled: node.first("ActionsEnabled", false, x => x.content === 'true'),
     OKActions: node.getList("OKActions", "member").map(x => x.content ?? ''),
     AlarmActions: node.getList("AlarmActions", "member").map(x => x.content ?? ''),
     InsufficientDataActions: node.getList("InsufficientDataActions", "member").map(x => x.content ?? ''),
     StateValue: node.first("StateValue", false, x => (x.content ?? '') as StateValue),
-    StateUpdatedTimestamp: node.first("StateUpdatedTimestamp", false, x => parseTimestamp(x.content)),
+    StateUpdatedTimestamp: node.first("StateUpdatedTimestamp", false, x => xmlP.parseTimestamp(x.content)),
     Statistic: node.first("Statistic", false, x => (x.content ?? '') as Statistic),
     Dimensions: node.getList("Dimensions", "member").map(Dimension_Parse),
     Period: node.first("Period", false, x => parseInt(x.content ?? '0')),
@@ -1407,7 +1393,7 @@ export interface AnomalyDetector {
   Configuration?: AnomalyDetectorConfiguration | null;
   StateValue?: AnomalyDetectorStateValue | null;
 }
-function AnomalyDetector_Parse(node: XmlNode): AnomalyDetector {
+function AnomalyDetector_Parse(node: xmlP.XmlNode): AnomalyDetector {
   return {
     ...node.strings({
       optional: {"Namespace":true,"MetricName":true,"Stat":true},
@@ -1423,8 +1409,7 @@ export type AnomalyDetectorStateValue =
 | "PENDING_TRAINING"
 | "TRAINED_INSUFFICIENT_DATA"
 | "TRAINED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface InsightRule {
@@ -1433,7 +1418,7 @@ export interface InsightRule {
   Schema: string;
   Definition: string;
 }
-function InsightRule_Parse(node: XmlNode): InsightRule {
+function InsightRule_Parse(node: xmlP.XmlNode): InsightRule {
   return node.strings({
     required: {"Name":true,"State":true,"Schema":true,"Definition":true},
   });
@@ -1445,7 +1430,7 @@ export interface InsightRuleContributor {
   ApproximateAggregateValue: number;
   Datapoints: InsightRuleContributorDatapoint[];
 }
-function InsightRuleContributor_Parse(node: XmlNode): InsightRuleContributor {
+function InsightRuleContributor_Parse(node: xmlP.XmlNode): InsightRuleContributor {
   return {
     Keys: node.getList("Keys", "member").map(x => x.content ?? ''),
     ApproximateAggregateValue: node.first("ApproximateAggregateValue", true, x => parseFloat(x.content ?? '0')),
@@ -1458,9 +1443,9 @@ export interface InsightRuleContributorDatapoint {
   Timestamp: Date | number;
   ApproximateValue: number;
 }
-function InsightRuleContributorDatapoint_Parse(node: XmlNode): InsightRuleContributorDatapoint {
+function InsightRuleContributorDatapoint_Parse(node: xmlP.XmlNode): InsightRuleContributorDatapoint {
   return {
-    Timestamp: node.first("Timestamp", true, x => parseTimestamp(x.content)),
+    Timestamp: node.first("Timestamp", true, x => xmlP.parseTimestamp(x.content)),
     ApproximateValue: node.first("ApproximateValue", true, x => parseFloat(x.content ?? '0')),
   };
 }
@@ -1476,9 +1461,9 @@ export interface InsightRuleMetricDatapoint {
   Minimum?: number | null;
   Maximum?: number | null;
 }
-function InsightRuleMetricDatapoint_Parse(node: XmlNode): InsightRuleMetricDatapoint {
+function InsightRuleMetricDatapoint_Parse(node: xmlP.XmlNode): InsightRuleMetricDatapoint {
   return {
-    Timestamp: node.first("Timestamp", true, x => parseTimestamp(x.content)),
+    Timestamp: node.first("Timestamp", true, x => xmlP.parseTimestamp(x.content)),
     UniqueContributors: node.first("UniqueContributors", false, x => parseFloat(x.content ?? '0')),
     MaxContributorValue: node.first("MaxContributorValue", false, x => parseFloat(x.content ?? '0')),
     SampleCount: node.first("SampleCount", false, x => parseFloat(x.content ?? '0')),
@@ -1498,12 +1483,12 @@ export interface MetricDataResult {
   StatusCode?: StatusCode | null;
   Messages: MessageData[];
 }
-function MetricDataResult_Parse(node: XmlNode): MetricDataResult {
+function MetricDataResult_Parse(node: xmlP.XmlNode): MetricDataResult {
   return {
     ...node.strings({
       optional: {"Id":true,"Label":true},
     }),
-    Timestamps: node.getList("Timestamps", "member").map(x => parseTimestamp(x.content)),
+    Timestamps: node.getList("Timestamps", "member").map(x => xmlP.parseTimestamp(x.content)),
     Values: node.getList("Values", "member").map(x => parseFloat(x.content ?? '0')),
     StatusCode: node.first("StatusCode", false, x => (x.content ?? '') as StatusCode),
     Messages: node.getList("Messages", "member").map(MessageData_Parse),
@@ -1515,15 +1500,14 @@ export type StatusCode =
 | "Complete"
 | "InternalError"
 | "PartialData"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface MessageData {
   Code?: string | null;
   Value?: string | null;
 }
-function MessageData_Parse(node: XmlNode): MessageData {
+function MessageData_Parse(node: xmlP.XmlNode): MessageData {
   return node.strings({
     optional: {"Code":true,"Value":true},
   });
@@ -1538,18 +1522,18 @@ export interface Datapoint {
   Minimum?: number | null;
   Maximum?: number | null;
   Unit?: StandardUnit | null;
-  ExtendedStatistics: { [key: string]: number };
+  ExtendedStatistics: { [key: string]: number | null | undefined };
 }
-function Datapoint_Parse(node: XmlNode): Datapoint {
+function Datapoint_Parse(node: xmlP.XmlNode): Datapoint {
   return {
-    Timestamp: node.first("Timestamp", false, x => parseTimestamp(x.content)),
+    Timestamp: node.first("Timestamp", false, x => xmlP.parseTimestamp(x.content)),
     SampleCount: node.first("SampleCount", false, x => parseFloat(x.content ?? '0')),
     Average: node.first("Average", false, x => parseFloat(x.content ?? '0')),
     Sum: node.first("Sum", false, x => parseFloat(x.content ?? '0')),
     Minimum: node.first("Minimum", false, x => parseFloat(x.content ?? '0')),
     Maximum: node.first("Maximum", false, x => parseFloat(x.content ?? '0')),
     Unit: node.first("Unit", false, x => (x.content ?? '') as StandardUnit),
-    ExtendedStatistics: readXmlMap(node.getList("ExtendedStatistics", "entry"), x => parseFloat(x.content ?? '0'), {}),
+    ExtendedStatistics: xmlP.readXmlMap(node.getList("ExtendedStatistics", "entry"), x => parseFloat(x.content ?? '0'), {}),
   };
 }
 
@@ -1560,12 +1544,12 @@ export interface DashboardEntry {
   LastModified?: Date | number | null;
   Size?: number | null;
 }
-function DashboardEntry_Parse(node: XmlNode): DashboardEntry {
+function DashboardEntry_Parse(node: xmlP.XmlNode): DashboardEntry {
   return {
     ...node.strings({
       optional: {"DashboardName":true,"DashboardArn":true},
     }),
-    LastModified: node.first("LastModified", false, x => parseTimestamp(x.content)),
+    LastModified: node.first("LastModified", false, x => xmlP.parseTimestamp(x.content)),
     Size: node.first("Size", false, x => parseInt(x.content ?? '0')),
   };
 }
@@ -1575,7 +1559,7 @@ export interface DashboardValidationMessage {
   DataPath?: string | null;
   Message?: string | null;
 }
-function DashboardValidationMessage_Parse(node: XmlNode): DashboardValidationMessage {
+function DashboardValidationMessage_Parse(node: xmlP.XmlNode): DashboardValidationMessage {
   return node.strings({
     optional: {"DataPath":true,"Message":true},
   });

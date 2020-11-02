@@ -5,10 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }
@@ -36,14 +35,15 @@ export default class SageMaker {
   async addTags(
     {abortSignal, ...params}: RequestConfig & AddTagsInput,
   ): Promise<AddTagsOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -54,13 +54,15 @@ export default class SageMaker {
   async associateTrialComponent(
     {abortSignal, ...params}: RequestConfig & AssociateTrialComponentRequest,
   ): Promise<AssociateTrialComponentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrialComponentName: params["TrialComponentName"],
+      TrialName: params["TrialName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateTrialComponent",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TrialComponentArn": "s",
@@ -72,16 +74,19 @@ export default class SageMaker {
   async createAlgorithm(
     {abortSignal, ...params}: RequestConfig & CreateAlgorithmInput,
   ): Promise<CreateAlgorithmOutput> {
-    const body: JSONObject = {...params,
-    TrainingSpecification: fromTrainingSpecification(params["TrainingSpecification"]),
-    InferenceSpecification: fromInferenceSpecification(params["InferenceSpecification"]),
-    ValidationSpecification: fromAlgorithmValidationSpecification(params["ValidationSpecification"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AlgorithmName: params["AlgorithmName"],
+      AlgorithmDescription: params["AlgorithmDescription"],
+      TrainingSpecification: fromTrainingSpecification(params["TrainingSpecification"]),
+      InferenceSpecification: fromInferenceSpecification(params["InferenceSpecification"]),
+      ValidationSpecification: fromAlgorithmValidationSpecification(params["ValidationSpecification"]),
+      CertifyForMarketplace: params["CertifyForMarketplace"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAlgorithm",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "AlgorithmArn": "s",
       },
@@ -92,15 +97,19 @@ export default class SageMaker {
   async createApp(
     {abortSignal, ...params}: RequestConfig & CreateAppRequest,
   ): Promise<CreateAppResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-    ResourceSpec: fromResourceSpec(params["ResourceSpec"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainId: params["DomainId"],
+      UserProfileName: params["UserProfileName"],
+      AppType: params["AppType"],
+      AppName: params["AppName"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      ResourceSpec: fromResourceSpec(params["ResourceSpec"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApp",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AppArn": "s",
@@ -111,15 +120,16 @@ export default class SageMaker {
   async createAppImageConfig(
     {abortSignal, ...params}: RequestConfig & CreateAppImageConfigRequest,
   ): Promise<CreateAppImageConfigResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-    KernelGatewayImageConfig: fromKernelGatewayImageConfig(params["KernelGatewayImageConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AppImageConfigName: params["AppImageConfigName"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      KernelGatewayImageConfig: fromKernelGatewayImageConfig(params["KernelGatewayImageConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAppImageConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AppImageConfigArn": "s",
@@ -130,18 +140,22 @@ export default class SageMaker {
   async createAutoMLJob(
     {abortSignal, ...params}: RequestConfig & CreateAutoMLJobRequest,
   ): Promise<CreateAutoMLJobResponse> {
-    const body: JSONObject = {...params,
-    InputDataConfig: params["InputDataConfig"]?.map(x => fromAutoMLChannel(x)),
-    OutputDataConfig: fromAutoMLOutputDataConfig(params["OutputDataConfig"]),
-    AutoMLJobObjective: fromAutoMLJobObjective(params["AutoMLJobObjective"]),
-    AutoMLJobConfig: fromAutoMLJobConfig(params["AutoMLJobConfig"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AutoMLJobName: params["AutoMLJobName"],
+      InputDataConfig: params["InputDataConfig"]?.map(x => fromAutoMLChannel(x)),
+      OutputDataConfig: fromAutoMLOutputDataConfig(params["OutputDataConfig"]),
+      ProblemType: params["ProblemType"],
+      AutoMLJobObjective: fromAutoMLJobObjective(params["AutoMLJobObjective"]),
+      AutoMLJobConfig: fromAutoMLJobConfig(params["AutoMLJobConfig"]),
+      RoleArn: params["RoleArn"],
+      GenerateCandidateDefinitionsOnly: params["GenerateCandidateDefinitionsOnly"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAutoMLJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "AutoMLJobArn": "s",
       },
@@ -152,14 +166,15 @@ export default class SageMaker {
   async createCodeRepository(
     {abortSignal, ...params}: RequestConfig & CreateCodeRepositoryInput,
   ): Promise<CreateCodeRepositoryOutput> {
-    const body: JSONObject = {...params,
-    GitConfig: fromGitConfig(params["GitConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CodeRepositoryName: params["CodeRepositoryName"],
+      GitConfig: fromGitConfig(params["GitConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCodeRepository",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "CodeRepositoryArn": "s",
       },
@@ -170,17 +185,19 @@ export default class SageMaker {
   async createCompilationJob(
     {abortSignal, ...params}: RequestConfig & CreateCompilationJobRequest,
   ): Promise<CreateCompilationJobResponse> {
-    const body: JSONObject = {...params,
-    InputConfig: fromInputConfig(params["InputConfig"]),
-    OutputConfig: fromOutputConfig(params["OutputConfig"]),
-    StoppingCondition: fromStoppingCondition(params["StoppingCondition"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CompilationJobName: params["CompilationJobName"],
+      RoleArn: params["RoleArn"],
+      InputConfig: fromInputConfig(params["InputConfig"]),
+      OutputConfig: fromOutputConfig(params["OutputConfig"]),
+      StoppingCondition: fromStoppingCondition(params["StoppingCondition"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCompilationJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "CompilationJobArn": "s",
       },
@@ -191,15 +208,21 @@ export default class SageMaker {
   async createDomain(
     {abortSignal, ...params}: RequestConfig & CreateDomainRequest,
   ): Promise<CreateDomainResponse> {
-    const body: JSONObject = {...params,
-    DefaultUserSettings: fromUserSettings(params["DefaultUserSettings"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+      AuthMode: params["AuthMode"],
+      DefaultUserSettings: fromUserSettings(params["DefaultUserSettings"]),
+      SubnetIds: params["SubnetIds"],
+      VpcId: params["VpcId"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      AppNetworkAccessType: params["AppNetworkAccessType"],
+      HomeEfsFileSystemKmsKeyId: params["HomeEfsFileSystemKmsKeyId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDomain",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DomainArn": "s",
@@ -211,14 +234,16 @@ export default class SageMaker {
   async createEndpoint(
     {abortSignal, ...params}: RequestConfig & CreateEndpointInput,
   ): Promise<CreateEndpointOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      EndpointName: params["EndpointName"],
+      EndpointConfigName: params["EndpointConfigName"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEndpoint",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "EndpointArn": "s",
       },
@@ -229,16 +254,18 @@ export default class SageMaker {
   async createEndpointConfig(
     {abortSignal, ...params}: RequestConfig & CreateEndpointConfigInput,
   ): Promise<CreateEndpointConfigOutput> {
-    const body: JSONObject = {...params,
-    ProductionVariants: params["ProductionVariants"]?.map(x => fromProductionVariant(x)),
-    DataCaptureConfig: fromDataCaptureConfig(params["DataCaptureConfig"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      EndpointConfigName: params["EndpointConfigName"],
+      ProductionVariants: params["ProductionVariants"]?.map(x => fromProductionVariant(x)),
+      DataCaptureConfig: fromDataCaptureConfig(params["DataCaptureConfig"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      KmsKeyId: params["KmsKeyId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEndpointConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "EndpointConfigArn": "s",
       },
@@ -249,14 +276,17 @@ export default class SageMaker {
   async createExperiment(
     {abortSignal, ...params}: RequestConfig & CreateExperimentRequest,
   ): Promise<CreateExperimentResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ExperimentName: params["ExperimentName"],
+      DisplayName: params["DisplayName"],
+      Description: params["Description"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateExperiment",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ExperimentArn": "s",
@@ -267,18 +297,20 @@ export default class SageMaker {
   async createFlowDefinition(
     {abortSignal, ...params}: RequestConfig & CreateFlowDefinitionRequest,
   ): Promise<CreateFlowDefinitionResponse> {
-    const body: JSONObject = {...params,
-    HumanLoopRequestSource: fromHumanLoopRequestSource(params["HumanLoopRequestSource"]),
-    HumanLoopActivationConfig: fromHumanLoopActivationConfig(params["HumanLoopActivationConfig"]),
-    HumanLoopConfig: fromHumanLoopConfig(params["HumanLoopConfig"]),
-    OutputConfig: fromFlowDefinitionOutputConfig(params["OutputConfig"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      FlowDefinitionName: params["FlowDefinitionName"],
+      HumanLoopRequestSource: fromHumanLoopRequestSource(params["HumanLoopRequestSource"]),
+      HumanLoopActivationConfig: fromHumanLoopActivationConfig(params["HumanLoopActivationConfig"]),
+      HumanLoopConfig: fromHumanLoopConfig(params["HumanLoopConfig"]),
+      OutputConfig: fromFlowDefinitionOutputConfig(params["OutputConfig"]),
+      RoleArn: params["RoleArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFlowDefinition",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "FlowDefinitionArn": "s",
       },
@@ -289,15 +321,16 @@ export default class SageMaker {
   async createHumanTaskUi(
     {abortSignal, ...params}: RequestConfig & CreateHumanTaskUiRequest,
   ): Promise<CreateHumanTaskUiResponse> {
-    const body: JSONObject = {...params,
-    UiTemplate: fromUiTemplate(params["UiTemplate"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      HumanTaskUiName: params["HumanTaskUiName"],
+      UiTemplate: fromUiTemplate(params["UiTemplate"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHumanTaskUi",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "HumanTaskUiArn": "s",
       },
@@ -308,18 +341,19 @@ export default class SageMaker {
   async createHyperParameterTuningJob(
     {abortSignal, ...params}: RequestConfig & CreateHyperParameterTuningJobRequest,
   ): Promise<CreateHyperParameterTuningJobResponse> {
-    const body: JSONObject = {...params,
-    HyperParameterTuningJobConfig: fromHyperParameterTuningJobConfig(params["HyperParameterTuningJobConfig"]),
-    TrainingJobDefinition: fromHyperParameterTrainingJobDefinition(params["TrainingJobDefinition"]),
-    TrainingJobDefinitions: params["TrainingJobDefinitions"]?.map(x => fromHyperParameterTrainingJobDefinition(x)),
-    WarmStartConfig: fromHyperParameterTuningJobWarmStartConfig(params["WarmStartConfig"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      HyperParameterTuningJobName: params["HyperParameterTuningJobName"],
+      HyperParameterTuningJobConfig: fromHyperParameterTuningJobConfig(params["HyperParameterTuningJobConfig"]),
+      TrainingJobDefinition: fromHyperParameterTrainingJobDefinition(params["TrainingJobDefinition"]),
+      TrainingJobDefinitions: params["TrainingJobDefinitions"]?.map(x => fromHyperParameterTrainingJobDefinition(x)),
+      WarmStartConfig: fromHyperParameterTuningJobWarmStartConfig(params["WarmStartConfig"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHyperParameterTuningJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "HyperParameterTuningJobArn": "s",
       },
@@ -330,14 +364,18 @@ export default class SageMaker {
   async createImage(
     {abortSignal, ...params}: RequestConfig & CreateImageRequest,
   ): Promise<CreateImageResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Description: params["Description"],
+      DisplayName: params["DisplayName"],
+      ImageName: params["ImageName"],
+      RoleArn: params["RoleArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateImage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ImageArn": "s",
@@ -348,14 +386,16 @@ export default class SageMaker {
   async createImageVersion(
     {abortSignal, ...params}: RequestConfig & CreateImageVersionRequest,
   ): Promise<CreateImageVersionResponse> {
-    const body: JSONObject = {...params,
-    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      BaseImage: params["BaseImage"],
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+      ImageName: params["ImageName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateImageVersion",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ImageVersionArn": "s",
@@ -366,19 +406,23 @@ export default class SageMaker {
   async createLabelingJob(
     {abortSignal, ...params}: RequestConfig & CreateLabelingJobRequest,
   ): Promise<CreateLabelingJobResponse> {
-    const body: JSONObject = {...params,
-    InputConfig: fromLabelingJobInputConfig(params["InputConfig"]),
-    OutputConfig: fromLabelingJobOutputConfig(params["OutputConfig"]),
-    StoppingConditions: fromLabelingJobStoppingConditions(params["StoppingConditions"]),
-    LabelingJobAlgorithmsConfig: fromLabelingJobAlgorithmsConfig(params["LabelingJobAlgorithmsConfig"]),
-    HumanTaskConfig: fromHumanTaskConfig(params["HumanTaskConfig"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      LabelingJobName: params["LabelingJobName"],
+      LabelAttributeName: params["LabelAttributeName"],
+      InputConfig: fromLabelingJobInputConfig(params["InputConfig"]),
+      OutputConfig: fromLabelingJobOutputConfig(params["OutputConfig"]),
+      RoleArn: params["RoleArn"],
+      LabelCategoryConfigS3Uri: params["LabelCategoryConfigS3Uri"],
+      StoppingConditions: fromLabelingJobStoppingConditions(params["StoppingConditions"]),
+      LabelingJobAlgorithmsConfig: fromLabelingJobAlgorithmsConfig(params["LabelingJobAlgorithmsConfig"]),
+      HumanTaskConfig: fromHumanTaskConfig(params["HumanTaskConfig"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLabelingJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "LabelingJobArn": "s",
       },
@@ -389,17 +433,20 @@ export default class SageMaker {
   async createModel(
     {abortSignal, ...params}: RequestConfig & CreateModelInput,
   ): Promise<CreateModelOutput> {
-    const body: JSONObject = {...params,
-    PrimaryContainer: fromContainerDefinition(params["PrimaryContainer"]),
-    Containers: params["Containers"]?.map(x => fromContainerDefinition(x)),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-    VpcConfig: fromVpcConfig(params["VpcConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ModelName: params["ModelName"],
+      PrimaryContainer: fromContainerDefinition(params["PrimaryContainer"]),
+      Containers: params["Containers"]?.map(x => fromContainerDefinition(x)),
+      ExecutionRoleArn: params["ExecutionRoleArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      VpcConfig: fromVpcConfig(params["VpcConfig"]),
+      EnableNetworkIsolation: params["EnableNetworkIsolation"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateModel",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ModelArn": "s",
       },
@@ -410,16 +457,19 @@ export default class SageMaker {
   async createModelPackage(
     {abortSignal, ...params}: RequestConfig & CreateModelPackageInput = {},
   ): Promise<CreateModelPackageOutput> {
-    const body: JSONObject = {...params,
-    InferenceSpecification: fromInferenceSpecification(params["InferenceSpecification"]),
-    ValidationSpecification: fromModelPackageValidationSpecification(params["ValidationSpecification"]),
-    SourceAlgorithmSpecification: fromSourceAlgorithmSpecification(params["SourceAlgorithmSpecification"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ModelPackageName: params["ModelPackageName"],
+      ModelPackageDescription: params["ModelPackageDescription"],
+      InferenceSpecification: fromInferenceSpecification(params["InferenceSpecification"]),
+      ValidationSpecification: fromModelPackageValidationSpecification(params["ValidationSpecification"]),
+      SourceAlgorithmSpecification: fromSourceAlgorithmSpecification(params["SourceAlgorithmSpecification"]),
+      CertifyForMarketplace: params["CertifyForMarketplace"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateModelPackage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ModelPackageArn": "s",
       },
@@ -430,15 +480,16 @@ export default class SageMaker {
   async createMonitoringSchedule(
     {abortSignal, ...params}: RequestConfig & CreateMonitoringScheduleRequest,
   ): Promise<CreateMonitoringScheduleResponse> {
-    const body: JSONObject = {...params,
-    MonitoringScheduleConfig: fromMonitoringScheduleConfig(params["MonitoringScheduleConfig"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      MonitoringScheduleName: params["MonitoringScheduleName"],
+      MonitoringScheduleConfig: fromMonitoringScheduleConfig(params["MonitoringScheduleConfig"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMonitoringSchedule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "MonitoringScheduleArn": "s",
       },
@@ -449,14 +500,27 @@ export default class SageMaker {
   async createNotebookInstance(
     {abortSignal, ...params}: RequestConfig & CreateNotebookInstanceInput,
   ): Promise<CreateNotebookInstanceOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NotebookInstanceName: params["NotebookInstanceName"],
+      InstanceType: params["InstanceType"],
+      SubnetId: params["SubnetId"],
+      SecurityGroupIds: params["SecurityGroupIds"],
+      RoleArn: params["RoleArn"],
+      KmsKeyId: params["KmsKeyId"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      LifecycleConfigName: params["LifecycleConfigName"],
+      DirectInternetAccess: params["DirectInternetAccess"],
+      VolumeSizeInGB: params["VolumeSizeInGB"],
+      AcceleratorTypes: params["AcceleratorTypes"],
+      DefaultCodeRepository: params["DefaultCodeRepository"],
+      AdditionalCodeRepositories: params["AdditionalCodeRepositories"],
+      RootAccess: params["RootAccess"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNotebookInstance",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NotebookInstanceArn": "s",
@@ -467,15 +531,16 @@ export default class SageMaker {
   async createNotebookInstanceLifecycleConfig(
     {abortSignal, ...params}: RequestConfig & CreateNotebookInstanceLifecycleConfigInput,
   ): Promise<CreateNotebookInstanceLifecycleConfigOutput> {
-    const body: JSONObject = {...params,
-    OnCreate: params["OnCreate"]?.map(x => fromNotebookInstanceLifecycleHook(x)),
-    OnStart: params["OnStart"]?.map(x => fromNotebookInstanceLifecycleHook(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NotebookInstanceLifecycleConfigName: params["NotebookInstanceLifecycleConfigName"],
+      OnCreate: params["OnCreate"]?.map(x => fromNotebookInstanceLifecycleHook(x)),
+      OnStart: params["OnStart"]?.map(x => fromNotebookInstanceLifecycleHook(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNotebookInstanceLifecycleConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NotebookInstanceLifecycleConfigArn": "s",
@@ -486,13 +551,16 @@ export default class SageMaker {
   async createPresignedDomainUrl(
     {abortSignal, ...params}: RequestConfig & CreatePresignedDomainUrlRequest,
   ): Promise<CreatePresignedDomainUrlResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainId: params["DomainId"],
+      UserProfileName: params["UserProfileName"],
+      SessionExpirationDurationInSeconds: params["SessionExpirationDurationInSeconds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePresignedDomainUrl",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AuthorizedUrl": "s",
@@ -503,13 +571,15 @@ export default class SageMaker {
   async createPresignedNotebookInstanceUrl(
     {abortSignal, ...params}: RequestConfig & CreatePresignedNotebookInstanceUrlInput,
   ): Promise<CreatePresignedNotebookInstanceUrlOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NotebookInstanceName: params["NotebookInstanceName"],
+      SessionExpirationDurationInSeconds: params["SessionExpirationDurationInSeconds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePresignedNotebookInstanceUrl",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AuthorizedUrl": "s",
@@ -520,21 +590,24 @@ export default class SageMaker {
   async createProcessingJob(
     {abortSignal, ...params}: RequestConfig & CreateProcessingJobRequest,
   ): Promise<CreateProcessingJobResponse> {
-    const body: JSONObject = {...params,
-    ProcessingInputs: params["ProcessingInputs"]?.map(x => fromProcessingInput(x)),
-    ProcessingOutputConfig: fromProcessingOutputConfig(params["ProcessingOutputConfig"]),
-    ProcessingResources: fromProcessingResources(params["ProcessingResources"]),
-    StoppingCondition: fromProcessingStoppingCondition(params["StoppingCondition"]),
-    AppSpecification: fromAppSpecification(params["AppSpecification"]),
-    NetworkConfig: fromNetworkConfig(params["NetworkConfig"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-    ExperimentConfig: fromExperimentConfig(params["ExperimentConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProcessingInputs: params["ProcessingInputs"]?.map(x => fromProcessingInput(x)),
+      ProcessingOutputConfig: fromProcessingOutputConfig(params["ProcessingOutputConfig"]),
+      ProcessingJobName: params["ProcessingJobName"],
+      ProcessingResources: fromProcessingResources(params["ProcessingResources"]),
+      StoppingCondition: fromProcessingStoppingCondition(params["StoppingCondition"]),
+      AppSpecification: fromAppSpecification(params["AppSpecification"]),
+      Environment: params["Environment"],
+      NetworkConfig: fromNetworkConfig(params["NetworkConfig"]),
+      RoleArn: params["RoleArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      ExperimentConfig: fromExperimentConfig(params["ExperimentConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProcessingJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ProcessingJobArn": "s",
       },
@@ -545,25 +618,31 @@ export default class SageMaker {
   async createTrainingJob(
     {abortSignal, ...params}: RequestConfig & CreateTrainingJobRequest,
   ): Promise<CreateTrainingJobResponse> {
-    const body: JSONObject = {...params,
-    AlgorithmSpecification: fromAlgorithmSpecification(params["AlgorithmSpecification"]),
-    InputDataConfig: params["InputDataConfig"]?.map(x => fromChannel(x)),
-    OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
-    ResourceConfig: fromResourceConfig(params["ResourceConfig"]),
-    VpcConfig: fromVpcConfig(params["VpcConfig"]),
-    StoppingCondition: fromStoppingCondition(params["StoppingCondition"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-    CheckpointConfig: fromCheckpointConfig(params["CheckpointConfig"]),
-    DebugHookConfig: fromDebugHookConfig(params["DebugHookConfig"]),
-    DebugRuleConfigurations: params["DebugRuleConfigurations"]?.map(x => fromDebugRuleConfiguration(x)),
-    TensorBoardOutputConfig: fromTensorBoardOutputConfig(params["TensorBoardOutputConfig"]),
-    ExperimentConfig: fromExperimentConfig(params["ExperimentConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrainingJobName: params["TrainingJobName"],
+      HyperParameters: params["HyperParameters"],
+      AlgorithmSpecification: fromAlgorithmSpecification(params["AlgorithmSpecification"]),
+      RoleArn: params["RoleArn"],
+      InputDataConfig: params["InputDataConfig"]?.map(x => fromChannel(x)),
+      OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
+      ResourceConfig: fromResourceConfig(params["ResourceConfig"]),
+      VpcConfig: fromVpcConfig(params["VpcConfig"]),
+      StoppingCondition: fromStoppingCondition(params["StoppingCondition"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      EnableNetworkIsolation: params["EnableNetworkIsolation"],
+      EnableInterContainerTrafficEncryption: params["EnableInterContainerTrafficEncryption"],
+      EnableManagedSpotTraining: params["EnableManagedSpotTraining"],
+      CheckpointConfig: fromCheckpointConfig(params["CheckpointConfig"]),
+      DebugHookConfig: fromDebugHookConfig(params["DebugHookConfig"]),
+      DebugRuleConfigurations: params["DebugRuleConfigurations"]?.map(x => fromDebugRuleConfiguration(x)),
+      TensorBoardOutputConfig: fromTensorBoardOutputConfig(params["TensorBoardOutputConfig"]),
+      ExperimentConfig: fromExperimentConfig(params["ExperimentConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTrainingJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "TrainingJobArn": "s",
       },
@@ -574,20 +653,26 @@ export default class SageMaker {
   async createTransformJob(
     {abortSignal, ...params}: RequestConfig & CreateTransformJobRequest,
   ): Promise<CreateTransformJobResponse> {
-    const body: JSONObject = {...params,
-    ModelClientConfig: fromModelClientConfig(params["ModelClientConfig"]),
-    TransformInput: fromTransformInput(params["TransformInput"]),
-    TransformOutput: fromTransformOutput(params["TransformOutput"]),
-    TransformResources: fromTransformResources(params["TransformResources"]),
-    DataProcessing: fromDataProcessing(params["DataProcessing"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-    ExperimentConfig: fromExperimentConfig(params["ExperimentConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TransformJobName: params["TransformJobName"],
+      ModelName: params["ModelName"],
+      MaxConcurrentTransforms: params["MaxConcurrentTransforms"],
+      ModelClientConfig: fromModelClientConfig(params["ModelClientConfig"]),
+      MaxPayloadInMB: params["MaxPayloadInMB"],
+      BatchStrategy: params["BatchStrategy"],
+      Environment: params["Environment"],
+      TransformInput: fromTransformInput(params["TransformInput"]),
+      TransformOutput: fromTransformOutput(params["TransformOutput"]),
+      TransformResources: fromTransformResources(params["TransformResources"]),
+      DataProcessing: fromDataProcessing(params["DataProcessing"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      ExperimentConfig: fromExperimentConfig(params["ExperimentConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTransformJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "TransformJobArn": "s",
       },
@@ -598,14 +683,17 @@ export default class SageMaker {
   async createTrial(
     {abortSignal, ...params}: RequestConfig & CreateTrialRequest,
   ): Promise<CreateTrialResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrialName: params["TrialName"],
+      DisplayName: params["DisplayName"],
+      ExperimentName: params["ExperimentName"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTrial",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TrialArn": "s",
@@ -616,20 +704,22 @@ export default class SageMaker {
   async createTrialComponent(
     {abortSignal, ...params}: RequestConfig & CreateTrialComponentRequest,
   ): Promise<CreateTrialComponentResponse> {
-    const body: JSONObject = {...params,
-    Status: fromTrialComponentStatus(params["Status"]),
-    StartTime: prt.serializeDate_unixTimestamp(params["StartTime"]),
-    EndTime: prt.serializeDate_unixTimestamp(params["EndTime"]),
-    Parameters: prt.serializeMap(params["Parameters"], x => fromTrialComponentParameterValue(x)),
-    InputArtifacts: prt.serializeMap(params["InputArtifacts"], x => fromTrialComponentArtifact(x)),
-    OutputArtifacts: prt.serializeMap(params["OutputArtifacts"], x => fromTrialComponentArtifact(x)),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrialComponentName: params["TrialComponentName"],
+      DisplayName: params["DisplayName"],
+      Status: fromTrialComponentStatus(params["Status"]),
+      StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
+      EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
+      Parameters: jsonP.serializeMap(params["Parameters"], x => fromTrialComponentParameterValue(x)),
+      InputArtifacts: jsonP.serializeMap(params["InputArtifacts"], x => fromTrialComponentArtifact(x)),
+      OutputArtifacts: jsonP.serializeMap(params["OutputArtifacts"], x => fromTrialComponentArtifact(x)),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTrialComponent",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TrialComponentArn": "s",
@@ -640,15 +730,19 @@ export default class SageMaker {
   async createUserProfile(
     {abortSignal, ...params}: RequestConfig & CreateUserProfileRequest,
   ): Promise<CreateUserProfileResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-    UserSettings: fromUserSettings(params["UserSettings"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainId: params["DomainId"],
+      UserProfileName: params["UserProfileName"],
+      SingleSignOnUserIdentifier: params["SingleSignOnUserIdentifier"],
+      SingleSignOnUserValue: params["SingleSignOnUserValue"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      UserSettings: fromUserSettings(params["UserSettings"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUserProfile",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserProfileArn": "s",
@@ -659,17 +753,18 @@ export default class SageMaker {
   async createWorkforce(
     {abortSignal, ...params}: RequestConfig & CreateWorkforceRequest,
   ): Promise<CreateWorkforceResponse> {
-    const body: JSONObject = {...params,
-    CognitoConfig: fromCognitoConfig(params["CognitoConfig"]),
-    OidcConfig: fromOidcConfig(params["OidcConfig"]),
-    SourceIpConfig: fromSourceIpConfig(params["SourceIpConfig"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CognitoConfig: fromCognitoConfig(params["CognitoConfig"]),
+      OidcConfig: fromOidcConfig(params["OidcConfig"]),
+      SourceIpConfig: fromSourceIpConfig(params["SourceIpConfig"]),
+      WorkforceName: params["WorkforceName"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWorkforce",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "WorkforceArn": "s",
       },
@@ -680,16 +775,19 @@ export default class SageMaker {
   async createWorkteam(
     {abortSignal, ...params}: RequestConfig & CreateWorkteamRequest,
   ): Promise<CreateWorkteamResponse> {
-    const body: JSONObject = {...params,
-    MemberDefinitions: params["MemberDefinitions"]?.map(x => fromMemberDefinition(x)),
-    NotificationConfiguration: fromNotificationConfiguration(params["NotificationConfiguration"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkteamName: params["WorkteamName"],
+      WorkforceName: params["WorkforceName"],
+      MemberDefinitions: params["MemberDefinitions"]?.map(x => fromMemberDefinition(x)),
+      Description: params["Description"],
+      NotificationConfiguration: fromNotificationConfiguration(params["NotificationConfiguration"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWorkteam",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WorkteamArn": "s",
@@ -700,8 +798,9 @@ export default class SageMaker {
   async deleteAlgorithm(
     {abortSignal, ...params}: RequestConfig & DeleteAlgorithmInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AlgorithmName: params["AlgorithmName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAlgorithm",
@@ -711,8 +810,12 @@ export default class SageMaker {
   async deleteApp(
     {abortSignal, ...params}: RequestConfig & DeleteAppRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainId: params["DomainId"],
+      UserProfileName: params["UserProfileName"],
+      AppType: params["AppType"],
+      AppName: params["AppName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteApp",
@@ -722,8 +825,9 @@ export default class SageMaker {
   async deleteAppImageConfig(
     {abortSignal, ...params}: RequestConfig & DeleteAppImageConfigRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AppImageConfigName: params["AppImageConfigName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAppImageConfig",
@@ -733,8 +837,9 @@ export default class SageMaker {
   async deleteCodeRepository(
     {abortSignal, ...params}: RequestConfig & DeleteCodeRepositoryInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CodeRepositoryName: params["CodeRepositoryName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCodeRepository",
@@ -744,9 +849,10 @@ export default class SageMaker {
   async deleteDomain(
     {abortSignal, ...params}: RequestConfig & DeleteDomainRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    RetentionPolicy: fromRetentionPolicy(params["RetentionPolicy"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainId: params["DomainId"],
+      RetentionPolicy: fromRetentionPolicy(params["RetentionPolicy"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDomain",
@@ -756,8 +862,9 @@ export default class SageMaker {
   async deleteEndpoint(
     {abortSignal, ...params}: RequestConfig & DeleteEndpointInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      EndpointName: params["EndpointName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEndpoint",
@@ -767,8 +874,9 @@ export default class SageMaker {
   async deleteEndpointConfig(
     {abortSignal, ...params}: RequestConfig & DeleteEndpointConfigInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      EndpointConfigName: params["EndpointConfigName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEndpointConfig",
@@ -778,13 +886,14 @@ export default class SageMaker {
   async deleteExperiment(
     {abortSignal, ...params}: RequestConfig & DeleteExperimentRequest,
   ): Promise<DeleteExperimentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ExperimentName: params["ExperimentName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteExperiment",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ExperimentArn": "s",
@@ -795,13 +904,14 @@ export default class SageMaker {
   async deleteFlowDefinition(
     {abortSignal, ...params}: RequestConfig & DeleteFlowDefinitionRequest,
   ): Promise<DeleteFlowDefinitionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FlowDefinitionName: params["FlowDefinitionName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFlowDefinition",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -810,13 +920,14 @@ export default class SageMaker {
   async deleteHumanTaskUi(
     {abortSignal, ...params}: RequestConfig & DeleteHumanTaskUiRequest,
   ): Promise<DeleteHumanTaskUiResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HumanTaskUiName: params["HumanTaskUiName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteHumanTaskUi",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -825,13 +936,14 @@ export default class SageMaker {
   async deleteImage(
     {abortSignal, ...params}: RequestConfig & DeleteImageRequest,
   ): Promise<DeleteImageResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ImageName: params["ImageName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteImage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -840,13 +952,15 @@ export default class SageMaker {
   async deleteImageVersion(
     {abortSignal, ...params}: RequestConfig & DeleteImageVersionRequest,
   ): Promise<DeleteImageVersionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ImageName: params["ImageName"],
+      Version: params["Version"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteImageVersion",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -855,8 +969,9 @@ export default class SageMaker {
   async deleteModel(
     {abortSignal, ...params}: RequestConfig & DeleteModelInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ModelName: params["ModelName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteModel",
@@ -866,8 +981,9 @@ export default class SageMaker {
   async deleteModelPackage(
     {abortSignal, ...params}: RequestConfig & DeleteModelPackageInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ModelPackageName: params["ModelPackageName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteModelPackage",
@@ -877,8 +993,9 @@ export default class SageMaker {
   async deleteMonitoringSchedule(
     {abortSignal, ...params}: RequestConfig & DeleteMonitoringScheduleRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MonitoringScheduleName: params["MonitoringScheduleName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMonitoringSchedule",
@@ -888,8 +1005,9 @@ export default class SageMaker {
   async deleteNotebookInstance(
     {abortSignal, ...params}: RequestConfig & DeleteNotebookInstanceInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NotebookInstanceName: params["NotebookInstanceName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteNotebookInstance",
@@ -899,8 +1017,9 @@ export default class SageMaker {
   async deleteNotebookInstanceLifecycleConfig(
     {abortSignal, ...params}: RequestConfig & DeleteNotebookInstanceLifecycleConfigInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NotebookInstanceLifecycleConfigName: params["NotebookInstanceLifecycleConfigName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteNotebookInstanceLifecycleConfig",
@@ -910,13 +1029,15 @@ export default class SageMaker {
   async deleteTags(
     {abortSignal, ...params}: RequestConfig & DeleteTagsInput,
   ): Promise<DeleteTagsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -925,13 +1046,14 @@ export default class SageMaker {
   async deleteTrial(
     {abortSignal, ...params}: RequestConfig & DeleteTrialRequest,
   ): Promise<DeleteTrialResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrialName: params["TrialName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTrial",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TrialArn": "s",
@@ -942,13 +1064,14 @@ export default class SageMaker {
   async deleteTrialComponent(
     {abortSignal, ...params}: RequestConfig & DeleteTrialComponentRequest,
   ): Promise<DeleteTrialComponentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrialComponentName: params["TrialComponentName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTrialComponent",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TrialComponentArn": "s",
@@ -959,8 +1082,10 @@ export default class SageMaker {
   async deleteUserProfile(
     {abortSignal, ...params}: RequestConfig & DeleteUserProfileRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainId: params["DomainId"],
+      UserProfileName: params["UserProfileName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUserProfile",
@@ -970,13 +1095,14 @@ export default class SageMaker {
   async deleteWorkforce(
     {abortSignal, ...params}: RequestConfig & DeleteWorkforceRequest,
   ): Promise<DeleteWorkforceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkforceName: params["WorkforceName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteWorkforce",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -985,13 +1111,14 @@ export default class SageMaker {
   async deleteWorkteam(
     {abortSignal, ...params}: RequestConfig & DeleteWorkteamRequest,
   ): Promise<DeleteWorkteamResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkteamName: params["WorkteamName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteWorkteam",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Success": "b",
       },
@@ -1002,19 +1129,20 @@ export default class SageMaker {
   async describeAlgorithm(
     {abortSignal, ...params}: RequestConfig & DescribeAlgorithmInput,
   ): Promise<DescribeAlgorithmOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AlgorithmName: params["AlgorithmName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAlgorithm",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "AlgorithmName": "s",
         "AlgorithmArn": "s",
         "CreationTime": "d",
         "TrainingSpecification": toTrainingSpecification,
-        "AlgorithmStatus": toAlgorithmStatus,
+        "AlgorithmStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AlgorithmStatus>(x),
         "AlgorithmStatusDetails": toAlgorithmStatusDetails,
       },
       optional: {
@@ -1030,21 +1158,25 @@ export default class SageMaker {
   async describeApp(
     {abortSignal, ...params}: RequestConfig & DescribeAppRequest,
   ): Promise<DescribeAppResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainId: params["DomainId"],
+      UserProfileName: params["UserProfileName"],
+      AppType: params["AppType"],
+      AppName: params["AppName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeApp",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AppArn": "s",
-        "AppType": toAppType,
+        "AppType": (x: jsonP.JSONValue) => cmnP.readEnum<AppType>(x),
         "AppName": "s",
         "DomainId": "s",
         "UserProfileName": "s",
-        "Status": toAppStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<AppStatus>(x),
         "LastHealthCheckTimestamp": "d",
         "LastUserActivityTimestamp": "d",
         "CreationTime": "d",
@@ -1057,13 +1189,14 @@ export default class SageMaker {
   async describeAppImageConfig(
     {abortSignal, ...params}: RequestConfig & DescribeAppImageConfigRequest,
   ): Promise<DescribeAppImageConfigResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AppImageConfigName: params["AppImageConfigName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAppImageConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AppImageConfigArn": "s",
@@ -1078,13 +1211,14 @@ export default class SageMaker {
   async describeAutoMLJob(
     {abortSignal, ...params}: RequestConfig & DescribeAutoMLJobRequest,
   ): Promise<DescribeAutoMLJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AutoMLJobName: params["AutoMLJobName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAutoMLJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "AutoMLJobName": "s",
         "AutoMLJobArn": "s",
@@ -1093,12 +1227,12 @@ export default class SageMaker {
         "RoleArn": "s",
         "CreationTime": "d",
         "LastModifiedTime": "d",
-        "AutoMLJobStatus": toAutoMLJobStatus,
-        "AutoMLJobSecondaryStatus": toAutoMLJobSecondaryStatus,
+        "AutoMLJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AutoMLJobStatus>(x),
+        "AutoMLJobSecondaryStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AutoMLJobSecondaryStatus>(x),
       },
       optional: {
         "AutoMLJobObjective": toAutoMLJobObjective,
-        "ProblemType": toProblemType,
+        "ProblemType": (x: jsonP.JSONValue) => cmnP.readEnum<ProblemType>(x),
         "AutoMLJobConfig": toAutoMLJobConfig,
         "EndTime": "d",
         "FailureReason": "s",
@@ -1113,13 +1247,14 @@ export default class SageMaker {
   async describeCodeRepository(
     {abortSignal, ...params}: RequestConfig & DescribeCodeRepositoryInput,
   ): Promise<DescribeCodeRepositoryOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CodeRepositoryName: params["CodeRepositoryName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCodeRepository",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "CodeRepositoryName": "s",
         "CodeRepositoryArn": "s",
@@ -1135,17 +1270,18 @@ export default class SageMaker {
   async describeCompilationJob(
     {abortSignal, ...params}: RequestConfig & DescribeCompilationJobRequest,
   ): Promise<DescribeCompilationJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CompilationJobName: params["CompilationJobName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCompilationJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "CompilationJobName": "s",
         "CompilationJobArn": "s",
-        "CompilationJobStatus": toCompilationJobStatus,
+        "CompilationJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<CompilationJobStatus>(x),
         "StoppingCondition": toStoppingCondition,
         "CreationTime": "d",
         "LastModifiedTime": "d",
@@ -1165,13 +1301,14 @@ export default class SageMaker {
   async describeDomain(
     {abortSignal, ...params}: RequestConfig & DescribeDomainRequest,
   ): Promise<DescribeDomainResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainId: params["DomainId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDomain",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DomainArn": "s",
@@ -1179,13 +1316,13 @@ export default class SageMaker {
         "DomainName": "s",
         "HomeEfsFileSystemId": "s",
         "SingleSignOnManagedApplicationInstanceId": "s",
-        "Status": toDomainStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<DomainStatus>(x),
         "CreationTime": "d",
         "LastModifiedTime": "d",
         "FailureReason": "s",
-        "AuthMode": toAuthMode,
+        "AuthMode": (x: jsonP.JSONValue) => cmnP.readEnum<AuthMode>(x),
         "DefaultUserSettings": toUserSettings,
-        "AppNetworkAccessType": toAppNetworkAccessType,
+        "AppNetworkAccessType": (x: jsonP.JSONValue) => cmnP.readEnum<AppNetworkAccessType>(x),
         "HomeEfsFileSystemKmsKeyId": "s",
         "SubnetIds": ["s"],
         "Url": "s",
@@ -1197,18 +1334,19 @@ export default class SageMaker {
   async describeEndpoint(
     {abortSignal, ...params}: RequestConfig & DescribeEndpointInput,
   ): Promise<DescribeEndpointOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      EndpointName: params["EndpointName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEndpoint",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "EndpointName": "s",
         "EndpointArn": "s",
         "EndpointConfigName": "s",
-        "EndpointStatus": toEndpointStatus,
+        "EndpointStatus": (x: jsonP.JSONValue) => cmnP.readEnum<EndpointStatus>(x),
         "CreationTime": "d",
         "LastModifiedTime": "d",
       },
@@ -1223,13 +1361,14 @@ export default class SageMaker {
   async describeEndpointConfig(
     {abortSignal, ...params}: RequestConfig & DescribeEndpointConfigInput,
   ): Promise<DescribeEndpointConfigOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      EndpointConfigName: params["EndpointConfigName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEndpointConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "EndpointConfigName": "s",
         "EndpointConfigArn": "s",
@@ -1246,13 +1385,14 @@ export default class SageMaker {
   async describeExperiment(
     {abortSignal, ...params}: RequestConfig & DescribeExperimentRequest,
   ): Promise<DescribeExperimentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ExperimentName: params["ExperimentName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeExperiment",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ExperimentName": "s",
@@ -1271,17 +1411,18 @@ export default class SageMaker {
   async describeFlowDefinition(
     {abortSignal, ...params}: RequestConfig & DescribeFlowDefinitionRequest,
   ): Promise<DescribeFlowDefinitionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FlowDefinitionName: params["FlowDefinitionName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFlowDefinition",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "FlowDefinitionArn": "s",
         "FlowDefinitionName": "s",
-        "FlowDefinitionStatus": toFlowDefinitionStatus,
+        "FlowDefinitionStatus": (x: jsonP.JSONValue) => cmnP.readEnum<FlowDefinitionStatus>(x),
         "CreationTime": "d",
         "HumanLoopConfig": toHumanLoopConfig,
         "OutputConfig": toFlowDefinitionOutputConfig,
@@ -1298,13 +1439,14 @@ export default class SageMaker {
   async describeHumanTaskUi(
     {abortSignal, ...params}: RequestConfig & DescribeHumanTaskUiRequest,
   ): Promise<DescribeHumanTaskUiResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HumanTaskUiName: params["HumanTaskUiName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeHumanTaskUi",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "HumanTaskUiArn": "s",
         "HumanTaskUiName": "s",
@@ -1312,7 +1454,7 @@ export default class SageMaker {
         "UiTemplate": toUiTemplateInfo,
       },
       optional: {
-        "HumanTaskUiStatus": toHumanTaskUiStatus,
+        "HumanTaskUiStatus": (x: jsonP.JSONValue) => cmnP.readEnum<HumanTaskUiStatus>(x),
       },
     }, await resp.json());
   }
@@ -1320,18 +1462,19 @@ export default class SageMaker {
   async describeHyperParameterTuningJob(
     {abortSignal, ...params}: RequestConfig & DescribeHyperParameterTuningJobRequest,
   ): Promise<DescribeHyperParameterTuningJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HyperParameterTuningJobName: params["HyperParameterTuningJobName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeHyperParameterTuningJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "HyperParameterTuningJobName": "s",
         "HyperParameterTuningJobArn": "s",
         "HyperParameterTuningJobConfig": toHyperParameterTuningJobConfig,
-        "HyperParameterTuningJobStatus": toHyperParameterTuningJobStatus,
+        "HyperParameterTuningJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<HyperParameterTuningJobStatus>(x),
         "CreationTime": "d",
         "TrainingJobStatusCounters": toTrainingJobStatusCounters,
         "ObjectiveStatusCounters": toObjectiveStatusCounters,
@@ -1352,13 +1495,14 @@ export default class SageMaker {
   async describeImage(
     {abortSignal, ...params}: RequestConfig & DescribeImageRequest,
   ): Promise<DescribeImageResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ImageName: params["ImageName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeImage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CreationTime": "d",
@@ -1367,7 +1511,7 @@ export default class SageMaker {
         "FailureReason": "s",
         "ImageArn": "s",
         "ImageName": "s",
-        "ImageStatus": toImageStatus,
+        "ImageStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ImageStatus>(x),
         "LastModifiedTime": "d",
         "RoleArn": "s",
       },
@@ -1377,13 +1521,15 @@ export default class SageMaker {
   async describeImageVersion(
     {abortSignal, ...params}: RequestConfig & DescribeImageVersionRequest,
   ): Promise<DescribeImageVersionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ImageName: params["ImageName"],
+      Version: params["Version"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeImageVersion",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BaseImage": "s",
@@ -1392,7 +1538,7 @@ export default class SageMaker {
         "FailureReason": "s",
         "ImageArn": "s",
         "ImageVersionArn": "s",
-        "ImageVersionStatus": toImageVersionStatus,
+        "ImageVersionStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ImageVersionStatus>(x),
         "LastModifiedTime": "d",
         "Version": "n",
       },
@@ -1402,15 +1548,16 @@ export default class SageMaker {
   async describeLabelingJob(
     {abortSignal, ...params}: RequestConfig & DescribeLabelingJobRequest,
   ): Promise<DescribeLabelingJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      LabelingJobName: params["LabelingJobName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLabelingJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
-        "LabelingJobStatus": toLabelingJobStatus,
+        "LabelingJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<LabelingJobStatus>(x),
         "LabelCounters": toLabelCounters,
         "CreationTime": "d",
         "LastModifiedTime": "d",
@@ -1437,13 +1584,14 @@ export default class SageMaker {
   async describeModel(
     {abortSignal, ...params}: RequestConfig & DescribeModelInput,
   ): Promise<DescribeModelOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ModelName: params["ModelName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeModel",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ModelName": "s",
         "ExecutionRoleArn": "s",
@@ -1462,18 +1610,19 @@ export default class SageMaker {
   async describeModelPackage(
     {abortSignal, ...params}: RequestConfig & DescribeModelPackageInput,
   ): Promise<DescribeModelPackageOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ModelPackageName: params["ModelPackageName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeModelPackage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ModelPackageName": "s",
         "ModelPackageArn": "s",
         "CreationTime": "d",
-        "ModelPackageStatus": toModelPackageStatus,
+        "ModelPackageStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ModelPackageStatus>(x),
         "ModelPackageStatusDetails": toModelPackageStatusDetails,
       },
       optional: {
@@ -1489,17 +1638,18 @@ export default class SageMaker {
   async describeMonitoringSchedule(
     {abortSignal, ...params}: RequestConfig & DescribeMonitoringScheduleRequest,
   ): Promise<DescribeMonitoringScheduleResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MonitoringScheduleName: params["MonitoringScheduleName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMonitoringSchedule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "MonitoringScheduleArn": "s",
         "MonitoringScheduleName": "s",
-        "MonitoringScheduleStatus": toScheduleStatus,
+        "MonitoringScheduleStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ScheduleStatus>(x),
         "CreationTime": "d",
         "LastModifiedTime": "d",
         "MonitoringScheduleConfig": toMonitoringScheduleConfig,
@@ -1515,21 +1665,22 @@ export default class SageMaker {
   async describeNotebookInstance(
     {abortSignal, ...params}: RequestConfig & DescribeNotebookInstanceInput,
   ): Promise<DescribeNotebookInstanceOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NotebookInstanceName: params["NotebookInstanceName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNotebookInstance",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NotebookInstanceArn": "s",
         "NotebookInstanceName": "s",
-        "NotebookInstanceStatus": toNotebookInstanceStatus,
+        "NotebookInstanceStatus": (x: jsonP.JSONValue) => cmnP.readEnum<NotebookInstanceStatus>(x),
         "FailureReason": "s",
         "Url": "s",
-        "InstanceType": toInstanceType,
+        "InstanceType": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceType>(x),
         "SubnetId": "s",
         "SecurityGroups": ["s"],
         "RoleArn": "s",
@@ -1538,12 +1689,12 @@ export default class SageMaker {
         "LastModifiedTime": "d",
         "CreationTime": "d",
         "NotebookInstanceLifecycleConfigName": "s",
-        "DirectInternetAccess": toDirectInternetAccess,
+        "DirectInternetAccess": (x: jsonP.JSONValue) => cmnP.readEnum<DirectInternetAccess>(x),
         "VolumeSizeInGB": "n",
-        "AcceleratorTypes": [toNotebookInstanceAcceleratorType],
+        "AcceleratorTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<NotebookInstanceAcceleratorType>(x)],
         "DefaultCodeRepository": "s",
         "AdditionalCodeRepositories": ["s"],
-        "RootAccess": toRootAccess,
+        "RootAccess": (x: jsonP.JSONValue) => cmnP.readEnum<RootAccess>(x),
       },
     }, await resp.json());
   }
@@ -1551,13 +1702,14 @@ export default class SageMaker {
   async describeNotebookInstanceLifecycleConfig(
     {abortSignal, ...params}: RequestConfig & DescribeNotebookInstanceLifecycleConfigInput,
   ): Promise<DescribeNotebookInstanceLifecycleConfigOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NotebookInstanceLifecycleConfigName: params["NotebookInstanceLifecycleConfigName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNotebookInstanceLifecycleConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NotebookInstanceLifecycleConfigArn": "s",
@@ -1573,26 +1725,27 @@ export default class SageMaker {
   async describeProcessingJob(
     {abortSignal, ...params}: RequestConfig & DescribeProcessingJobRequest,
   ): Promise<DescribeProcessingJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProcessingJobName: params["ProcessingJobName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeProcessingJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ProcessingJobName": "s",
         "ProcessingResources": toProcessingResources,
         "AppSpecification": toAppSpecification,
         "ProcessingJobArn": "s",
-        "ProcessingJobStatus": toProcessingJobStatus,
+        "ProcessingJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ProcessingJobStatus>(x),
         "CreationTime": "d",
       },
       optional: {
         "ProcessingInputs": [toProcessingInput],
         "ProcessingOutputConfig": toProcessingOutputConfig,
         "StoppingCondition": toProcessingStoppingCondition,
-        "Environment": x => prt.readMap(String, String, x),
+        "Environment": x => jsonP.readMap(String, String, x),
         "NetworkConfig": toNetworkConfig,
         "RoleArn": "s",
         "ExperimentConfig": toExperimentConfig,
@@ -1611,13 +1764,14 @@ export default class SageMaker {
   async describeSubscribedWorkteam(
     {abortSignal, ...params}: RequestConfig & DescribeSubscribedWorkteamRequest,
   ): Promise<DescribeSubscribedWorkteamResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkteamArn: params["WorkteamArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSubscribedWorkteam",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "SubscribedWorkteam": toSubscribedWorkteam,
       },
@@ -1628,19 +1782,20 @@ export default class SageMaker {
   async describeTrainingJob(
     {abortSignal, ...params}: RequestConfig & DescribeTrainingJobRequest,
   ): Promise<DescribeTrainingJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrainingJobName: params["TrainingJobName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrainingJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "TrainingJobName": "s",
         "TrainingJobArn": "s",
         "ModelArtifacts": toModelArtifacts,
-        "TrainingJobStatus": toTrainingJobStatus,
-        "SecondaryStatus": toSecondaryStatus,
+        "TrainingJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<TrainingJobStatus>(x),
+        "SecondaryStatus": (x: jsonP.JSONValue) => cmnP.readEnum<SecondaryStatus>(x),
         "AlgorithmSpecification": toAlgorithmSpecification,
         "ResourceConfig": toResourceConfig,
         "StoppingCondition": toStoppingCondition,
@@ -1651,7 +1806,7 @@ export default class SageMaker {
         "LabelingJobArn": "s",
         "AutoMLJobArn": "s",
         "FailureReason": "s",
-        "HyperParameters": x => prt.readMap(String, String, x),
+        "HyperParameters": x => jsonP.readMap(String, String, x),
         "RoleArn": "s",
         "InputDataConfig": [toChannel],
         "OutputDataConfig": toOutputDataConfig,
@@ -1679,17 +1834,18 @@ export default class SageMaker {
   async describeTransformJob(
     {abortSignal, ...params}: RequestConfig & DescribeTransformJobRequest,
   ): Promise<DescribeTransformJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TransformJobName: params["TransformJobName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTransformJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "TransformJobName": "s",
         "TransformJobArn": "s",
-        "TransformJobStatus": toTransformJobStatus,
+        "TransformJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<TransformJobStatus>(x),
         "ModelName": "s",
         "TransformInput": toTransformInput,
         "TransformResources": toTransformResources,
@@ -1700,8 +1856,8 @@ export default class SageMaker {
         "MaxConcurrentTransforms": "n",
         "ModelClientConfig": toModelClientConfig,
         "MaxPayloadInMB": "n",
-        "BatchStrategy": toBatchStrategy,
-        "Environment": x => prt.readMap(String, String, x),
+        "BatchStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<BatchStrategy>(x),
+        "Environment": x => jsonP.readMap(String, String, x),
         "TransformOutput": toTransformOutput,
         "TransformStartTime": "d",
         "TransformEndTime": "d",
@@ -1716,13 +1872,14 @@ export default class SageMaker {
   async describeTrial(
     {abortSignal, ...params}: RequestConfig & DescribeTrialRequest,
   ): Promise<DescribeTrialResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrialName: params["TrialName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrial",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TrialName": "s",
@@ -1741,13 +1898,14 @@ export default class SageMaker {
   async describeTrialComponent(
     {abortSignal, ...params}: RequestConfig & DescribeTrialComponentRequest,
   ): Promise<DescribeTrialComponentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrialComponentName: params["TrialComponentName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrialComponent",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TrialComponentName": "s",
@@ -1761,9 +1919,9 @@ export default class SageMaker {
         "CreatedBy": toUserContext,
         "LastModifiedTime": "d",
         "LastModifiedBy": toUserContext,
-        "Parameters": x => prt.readMap(String, toTrialComponentParameterValue, x),
-        "InputArtifacts": x => prt.readMap(String, toTrialComponentArtifact, x),
-        "OutputArtifacts": x => prt.readMap(String, toTrialComponentArtifact, x),
+        "Parameters": x => jsonP.readMap(String, toTrialComponentParameterValue, x),
+        "InputArtifacts": x => jsonP.readMap(String, toTrialComponentArtifact, x),
+        "OutputArtifacts": x => jsonP.readMap(String, toTrialComponentArtifact, x),
         "Metrics": [toTrialComponentMetricSummary],
       },
     }, await resp.json());
@@ -1772,20 +1930,22 @@ export default class SageMaker {
   async describeUserProfile(
     {abortSignal, ...params}: RequestConfig & DescribeUserProfileRequest,
   ): Promise<DescribeUserProfileResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainId: params["DomainId"],
+      UserProfileName: params["UserProfileName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUserProfile",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DomainId": "s",
         "UserProfileArn": "s",
         "UserProfileName": "s",
         "HomeEfsFileSystemUid": "s",
-        "Status": toUserProfileStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<UserProfileStatus>(x),
         "LastModifiedTime": "d",
         "CreationTime": "d",
         "FailureReason": "s",
@@ -1799,13 +1959,14 @@ export default class SageMaker {
   async describeWorkforce(
     {abortSignal, ...params}: RequestConfig & DescribeWorkforceRequest,
   ): Promise<DescribeWorkforceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkforceName: params["WorkforceName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorkforce",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Workforce": toWorkforce,
       },
@@ -1816,13 +1977,14 @@ export default class SageMaker {
   async describeWorkteam(
     {abortSignal, ...params}: RequestConfig & DescribeWorkteamRequest,
   ): Promise<DescribeWorkteamResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkteamName: params["WorkteamName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorkteam",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Workteam": toWorkteam,
       },
@@ -1833,13 +1995,15 @@ export default class SageMaker {
   async disassociateTrialComponent(
     {abortSignal, ...params}: RequestConfig & DisassociateTrialComponentRequest,
   ): Promise<DisassociateTrialComponentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrialComponentName: params["TrialComponentName"],
+      TrialName: params["TrialName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateTrialComponent",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TrialComponentArn": "s",
@@ -1851,14 +2015,15 @@ export default class SageMaker {
   async getSearchSuggestions(
     {abortSignal, ...params}: RequestConfig & GetSearchSuggestionsRequest,
   ): Promise<GetSearchSuggestionsResponse> {
-    const body: JSONObject = {...params,
-    SuggestionQuery: fromSuggestionQuery(params["SuggestionQuery"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Resource: params["Resource"],
+      SuggestionQuery: fromSuggestionQuery(params["SuggestionQuery"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSearchSuggestions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PropertyNameSuggestions": [toPropertyNameSuggestion],
@@ -1869,15 +2034,20 @@ export default class SageMaker {
   async listAlgorithms(
     {abortSignal, ...params}: RequestConfig & ListAlgorithmsInput = {},
   ): Promise<ListAlgorithmsOutput> {
-    const body: JSONObject = {...params,
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      MaxResults: params["MaxResults"],
+      NameContains: params["NameContains"],
+      NextToken: params["NextToken"],
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAlgorithms",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "AlgorithmSummaryList": [toAlgorithmSummary],
       },
@@ -1890,17 +2060,22 @@ export default class SageMaker {
   async listAppImageConfigs(
     {abortSignal, ...params}: RequestConfig & ListAppImageConfigsRequest = {},
   ): Promise<ListAppImageConfigsResponse> {
-    const body: JSONObject = {...params,
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    ModifiedTimeBefore: prt.serializeDate_unixTimestamp(params["ModifiedTimeBefore"]),
-    ModifiedTimeAfter: prt.serializeDate_unixTimestamp(params["ModifiedTimeAfter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      NameContains: params["NameContains"],
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      ModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["ModifiedTimeBefore"]),
+      ModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["ModifiedTimeAfter"]),
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAppImageConfigs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -1912,13 +2087,19 @@ export default class SageMaker {
   async listApps(
     {abortSignal, ...params}: RequestConfig & ListAppsRequest = {},
   ): Promise<ListAppsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      SortOrder: params["SortOrder"],
+      SortBy: params["SortBy"],
+      DomainIdEquals: params["DomainIdEquals"],
+      UserProfileNameEquals: params["UserProfileNameEquals"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListApps",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Apps": [toAppDetails],
@@ -1930,17 +2111,23 @@ export default class SageMaker {
   async listAutoMLJobs(
     {abortSignal, ...params}: RequestConfig & ListAutoMLJobsRequest = {},
   ): Promise<ListAutoMLJobsResponse> {
-    const body: JSONObject = {...params,
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-    LastModifiedTimeAfter: prt.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
-    LastModifiedTimeBefore: prt.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
+      LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
+      NameContains: params["NameContains"],
+      StatusEquals: params["StatusEquals"],
+      SortOrder: params["SortOrder"],
+      SortBy: params["SortBy"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAutoMLJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "AutoMLJobSummaries": [toAutoMLJobSummary],
       },
@@ -1953,13 +2140,20 @@ export default class SageMaker {
   async listCandidatesForAutoMLJob(
     {abortSignal, ...params}: RequestConfig & ListCandidatesForAutoMLJobRequest,
   ): Promise<ListCandidatesForAutoMLJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AutoMLJobName: params["AutoMLJobName"],
+      StatusEquals: params["StatusEquals"],
+      CandidateNameEquals: params["CandidateNameEquals"],
+      SortOrder: params["SortOrder"],
+      SortBy: params["SortBy"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCandidatesForAutoMLJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Candidates": [toAutoMLCandidate],
       },
@@ -1972,17 +2166,22 @@ export default class SageMaker {
   async listCodeRepositories(
     {abortSignal, ...params}: RequestConfig & ListCodeRepositoriesInput = {},
   ): Promise<ListCodeRepositoriesOutput> {
-    const body: JSONObject = {...params,
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-    LastModifiedTimeAfter: prt.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
-    LastModifiedTimeBefore: prt.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
+      LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
+      MaxResults: params["MaxResults"],
+      NameContains: params["NameContains"],
+      NextToken: params["NextToken"],
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCodeRepositories",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "CodeRepositorySummaryList": [toCodeRepositorySummary],
       },
@@ -1995,17 +2194,23 @@ export default class SageMaker {
   async listCompilationJobs(
     {abortSignal, ...params}: RequestConfig & ListCompilationJobsRequest = {},
   ): Promise<ListCompilationJobsResponse> {
-    const body: JSONObject = {...params,
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-    LastModifiedTimeAfter: prt.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
-    LastModifiedTimeBefore: prt.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
+      LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
+      NameContains: params["NameContains"],
+      StatusEquals: params["StatusEquals"],
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCompilationJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "CompilationJobSummaries": [toCompilationJobSummary],
       },
@@ -2018,13 +2223,15 @@ export default class SageMaker {
   async listDomains(
     {abortSignal, ...params}: RequestConfig & ListDomainsRequest = {},
   ): Promise<ListDomainsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDomains",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Domains": [toDomainDetails],
@@ -2036,15 +2243,20 @@ export default class SageMaker {
   async listEndpointConfigs(
     {abortSignal, ...params}: RequestConfig & ListEndpointConfigsInput = {},
   ): Promise<ListEndpointConfigsOutput> {
-    const body: JSONObject = {...params,
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      NameContains: params["NameContains"],
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEndpointConfigs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "EndpointConfigs": [toEndpointConfigSummary],
       },
@@ -2057,17 +2269,23 @@ export default class SageMaker {
   async listEndpoints(
     {abortSignal, ...params}: RequestConfig & ListEndpointsInput = {},
   ): Promise<ListEndpointsOutput> {
-    const body: JSONObject = {...params,
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    LastModifiedTimeBefore: prt.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
-    LastModifiedTimeAfter: prt.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      NameContains: params["NameContains"],
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
+      LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
+      StatusEquals: params["StatusEquals"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEndpoints",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Endpoints": [toEndpointSummary],
       },
@@ -2080,15 +2298,19 @@ export default class SageMaker {
   async listExperiments(
     {abortSignal, ...params}: RequestConfig & ListExperimentsRequest = {},
   ): Promise<ListExperimentsResponse> {
-    const body: JSONObject = {...params,
-    CreatedAfter: prt.serializeDate_unixTimestamp(params["CreatedAfter"]),
-    CreatedBefore: prt.serializeDate_unixTimestamp(params["CreatedBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CreatedAfter: jsonP.serializeDate_unixTimestamp(params["CreatedAfter"]),
+      CreatedBefore: jsonP.serializeDate_unixTimestamp(params["CreatedBefore"]),
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListExperiments",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ExperimentSummaries": [toExperimentSummary],
@@ -2100,15 +2322,18 @@ export default class SageMaker {
   async listFlowDefinitions(
     {abortSignal, ...params}: RequestConfig & ListFlowDefinitionsRequest = {},
   ): Promise<ListFlowDefinitionsResponse> {
-    const body: JSONObject = {...params,
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      SortOrder: params["SortOrder"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFlowDefinitions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "FlowDefinitionSummaries": [toFlowDefinitionSummary],
       },
@@ -2121,15 +2346,18 @@ export default class SageMaker {
   async listHumanTaskUis(
     {abortSignal, ...params}: RequestConfig & ListHumanTaskUisRequest = {},
   ): Promise<ListHumanTaskUisResponse> {
-    const body: JSONObject = {...params,
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      SortOrder: params["SortOrder"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListHumanTaskUis",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "HumanTaskUiSummaries": [toHumanTaskUiSummary],
       },
@@ -2142,17 +2370,23 @@ export default class SageMaker {
   async listHyperParameterTuningJobs(
     {abortSignal, ...params}: RequestConfig & ListHyperParameterTuningJobsRequest = {},
   ): Promise<ListHyperParameterTuningJobsResponse> {
-    const body: JSONObject = {...params,
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-    LastModifiedTimeAfter: prt.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
-    LastModifiedTimeBefore: prt.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+      NameContains: params["NameContains"],
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
+      LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
+      StatusEquals: params["StatusEquals"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListHyperParameterTuningJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "HyperParameterTuningJobSummaries": [toHyperParameterTuningJobSummary],
       },
@@ -2165,17 +2399,22 @@ export default class SageMaker {
   async listImageVersions(
     {abortSignal, ...params}: RequestConfig & ListImageVersionsRequest,
   ): Promise<ListImageVersionsResponse> {
-    const body: JSONObject = {...params,
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-    LastModifiedTimeAfter: prt.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
-    LastModifiedTimeBefore: prt.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      ImageName: params["ImageName"],
+      LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
+      LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListImageVersions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ImageVersions": [toImageVersion],
@@ -2187,17 +2426,22 @@ export default class SageMaker {
   async listImages(
     {abortSignal, ...params}: RequestConfig & ListImagesRequest = {},
   ): Promise<ListImagesResponse> {
-    const body: JSONObject = {...params,
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-    LastModifiedTimeAfter: prt.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
-    LastModifiedTimeBefore: prt.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
+      LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
+      MaxResults: params["MaxResults"],
+      NameContains: params["NameContains"],
+      NextToken: params["NextToken"],
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListImages",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Images": [toImage],
@@ -2209,17 +2453,23 @@ export default class SageMaker {
   async listLabelingJobs(
     {abortSignal, ...params}: RequestConfig & ListLabelingJobsRequest = {},
   ): Promise<ListLabelingJobsResponse> {
-    const body: JSONObject = {...params,
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-    LastModifiedTimeAfter: prt.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
-    LastModifiedTimeBefore: prt.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
+      LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      NameContains: params["NameContains"],
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+      StatusEquals: params["StatusEquals"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLabelingJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LabelingJobSummaryList": [toLabelingJobSummary],
@@ -2231,15 +2481,21 @@ export default class SageMaker {
   async listLabelingJobsForWorkteam(
     {abortSignal, ...params}: RequestConfig & ListLabelingJobsForWorkteamRequest,
   ): Promise<ListLabelingJobsForWorkteamResponse> {
-    const body: JSONObject = {...params,
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkteamArn: params["WorkteamArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      JobReferenceCodeContains: params["JobReferenceCodeContains"],
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLabelingJobsForWorkteam",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "LabelingJobSummaryList": [toLabelingJobForWorkteamSummary],
       },
@@ -2252,15 +2508,20 @@ export default class SageMaker {
   async listModelPackages(
     {abortSignal, ...params}: RequestConfig & ListModelPackagesInput = {},
   ): Promise<ListModelPackagesOutput> {
-    const body: JSONObject = {...params,
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      MaxResults: params["MaxResults"],
+      NameContains: params["NameContains"],
+      NextToken: params["NextToken"],
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListModelPackages",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ModelPackageSummaryList": [toModelPackageSummary],
       },
@@ -2273,15 +2534,20 @@ export default class SageMaker {
   async listModels(
     {abortSignal, ...params}: RequestConfig & ListModelsInput = {},
   ): Promise<ListModelsOutput> {
-    const body: JSONObject = {...params,
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      NameContains: params["NameContains"],
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListModels",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Models": [toModelSummary],
       },
@@ -2294,19 +2560,26 @@ export default class SageMaker {
   async listMonitoringExecutions(
     {abortSignal, ...params}: RequestConfig & ListMonitoringExecutionsRequest = {},
   ): Promise<ListMonitoringExecutionsResponse> {
-    const body: JSONObject = {...params,
-    ScheduledTimeBefore: prt.serializeDate_unixTimestamp(params["ScheduledTimeBefore"]),
-    ScheduledTimeAfter: prt.serializeDate_unixTimestamp(params["ScheduledTimeAfter"]),
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    LastModifiedTimeBefore: prt.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
-    LastModifiedTimeAfter: prt.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      MonitoringScheduleName: params["MonitoringScheduleName"],
+      EndpointName: params["EndpointName"],
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      ScheduledTimeBefore: jsonP.serializeDate_unixTimestamp(params["ScheduledTimeBefore"]),
+      ScheduledTimeAfter: jsonP.serializeDate_unixTimestamp(params["ScheduledTimeAfter"]),
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
+      LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
+      StatusEquals: params["StatusEquals"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListMonitoringExecutions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "MonitoringExecutionSummaries": [toMonitoringExecutionSummary],
       },
@@ -2319,17 +2592,24 @@ export default class SageMaker {
   async listMonitoringSchedules(
     {abortSignal, ...params}: RequestConfig & ListMonitoringSchedulesRequest = {},
   ): Promise<ListMonitoringSchedulesResponse> {
-    const body: JSONObject = {...params,
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    LastModifiedTimeBefore: prt.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
-    LastModifiedTimeAfter: prt.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      EndpointName: params["EndpointName"],
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      NameContains: params["NameContains"],
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
+      LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
+      StatusEquals: params["StatusEquals"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListMonitoringSchedules",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "MonitoringScheduleSummaries": [toMonitoringScheduleSummary],
       },
@@ -2342,17 +2622,22 @@ export default class SageMaker {
   async listNotebookInstanceLifecycleConfigs(
     {abortSignal, ...params}: RequestConfig & ListNotebookInstanceLifecycleConfigsInput = {},
   ): Promise<ListNotebookInstanceLifecycleConfigsOutput> {
-    const body: JSONObject = {...params,
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    LastModifiedTimeBefore: prt.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
-    LastModifiedTimeAfter: prt.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+      NameContains: params["NameContains"],
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
+      LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListNotebookInstanceLifecycleConfigs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -2364,17 +2649,26 @@ export default class SageMaker {
   async listNotebookInstances(
     {abortSignal, ...params}: RequestConfig & ListNotebookInstancesInput = {},
   ): Promise<ListNotebookInstancesOutput> {
-    const body: JSONObject = {...params,
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    LastModifiedTimeBefore: prt.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
-    LastModifiedTimeAfter: prt.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+      NameContains: params["NameContains"],
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
+      LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
+      StatusEquals: params["StatusEquals"],
+      NotebookInstanceLifecycleConfigNameContains: params["NotebookInstanceLifecycleConfigNameContains"],
+      DefaultCodeRepositoryContains: params["DefaultCodeRepositoryContains"],
+      AdditionalCodeRepositoryEquals: params["AdditionalCodeRepositoryEquals"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListNotebookInstances",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -2386,17 +2680,23 @@ export default class SageMaker {
   async listProcessingJobs(
     {abortSignal, ...params}: RequestConfig & ListProcessingJobsRequest = {},
   ): Promise<ListProcessingJobsResponse> {
-    const body: JSONObject = {...params,
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-    LastModifiedTimeAfter: prt.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
-    LastModifiedTimeBefore: prt.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
+      LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
+      NameContains: params["NameContains"],
+      StatusEquals: params["StatusEquals"],
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListProcessingJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ProcessingJobSummaries": [toProcessingJobSummary],
       },
@@ -2409,13 +2709,16 @@ export default class SageMaker {
   async listSubscribedWorkteams(
     {abortSignal, ...params}: RequestConfig & ListSubscribedWorkteamsRequest = {},
   ): Promise<ListSubscribedWorkteamsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NameContains: params["NameContains"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSubscribedWorkteams",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "SubscribedWorkteams": [toSubscribedWorkteam],
       },
@@ -2428,13 +2731,16 @@ export default class SageMaker {
   async listTags(
     {abortSignal, ...params}: RequestConfig & ListTagsInput,
   ): Promise<ListTagsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -2446,17 +2752,23 @@ export default class SageMaker {
   async listTrainingJobs(
     {abortSignal, ...params}: RequestConfig & ListTrainingJobsRequest = {},
   ): Promise<ListTrainingJobsResponse> {
-    const body: JSONObject = {...params,
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-    LastModifiedTimeAfter: prt.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
-    LastModifiedTimeBefore: prt.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
+      LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
+      NameContains: params["NameContains"],
+      StatusEquals: params["StatusEquals"],
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTrainingJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "TrainingJobSummaries": [toTrainingJobSummary],
       },
@@ -2469,13 +2781,19 @@ export default class SageMaker {
   async listTrainingJobsForHyperParameterTuningJob(
     {abortSignal, ...params}: RequestConfig & ListTrainingJobsForHyperParameterTuningJobRequest,
   ): Promise<ListTrainingJobsForHyperParameterTuningJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HyperParameterTuningJobName: params["HyperParameterTuningJobName"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      StatusEquals: params["StatusEquals"],
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTrainingJobsForHyperParameterTuningJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "TrainingJobSummaries": [toHyperParameterTrainingJobSummary],
       },
@@ -2488,17 +2806,23 @@ export default class SageMaker {
   async listTransformJobs(
     {abortSignal, ...params}: RequestConfig & ListTransformJobsRequest = {},
   ): Promise<ListTransformJobsResponse> {
-    const body: JSONObject = {...params,
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
-    LastModifiedTimeAfter: prt.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
-    LastModifiedTimeBefore: prt.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
+      CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
+      LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
+      LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
+      NameContains: params["NameContains"],
+      StatusEquals: params["StatusEquals"],
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTransformJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "TransformJobSummaries": [toTransformJobSummary],
       },
@@ -2511,15 +2835,22 @@ export default class SageMaker {
   async listTrialComponents(
     {abortSignal, ...params}: RequestConfig & ListTrialComponentsRequest = {},
   ): Promise<ListTrialComponentsResponse> {
-    const body: JSONObject = {...params,
-    CreatedAfter: prt.serializeDate_unixTimestamp(params["CreatedAfter"]),
-    CreatedBefore: prt.serializeDate_unixTimestamp(params["CreatedBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ExperimentName: params["ExperimentName"],
+      TrialName: params["TrialName"],
+      SourceArn: params["SourceArn"],
+      CreatedAfter: jsonP.serializeDate_unixTimestamp(params["CreatedAfter"]),
+      CreatedBefore: jsonP.serializeDate_unixTimestamp(params["CreatedBefore"]),
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTrialComponents",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TrialComponentSummaries": [toTrialComponentSummary],
@@ -2531,15 +2862,21 @@ export default class SageMaker {
   async listTrials(
     {abortSignal, ...params}: RequestConfig & ListTrialsRequest = {},
   ): Promise<ListTrialsResponse> {
-    const body: JSONObject = {...params,
-    CreatedAfter: prt.serializeDate_unixTimestamp(params["CreatedAfter"]),
-    CreatedBefore: prt.serializeDate_unixTimestamp(params["CreatedBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ExperimentName: params["ExperimentName"],
+      TrialComponentName: params["TrialComponentName"],
+      CreatedAfter: jsonP.serializeDate_unixTimestamp(params["CreatedAfter"]),
+      CreatedBefore: jsonP.serializeDate_unixTimestamp(params["CreatedBefore"]),
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTrials",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TrialSummaries": [toTrialSummary],
@@ -2551,13 +2888,19 @@ export default class SageMaker {
   async listUserProfiles(
     {abortSignal, ...params}: RequestConfig & ListUserProfilesRequest = {},
   ): Promise<ListUserProfilesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      SortOrder: params["SortOrder"],
+      SortBy: params["SortBy"],
+      DomainIdEquals: params["DomainIdEquals"],
+      UserProfileNameContains: params["UserProfileNameContains"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUserProfiles",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserProfiles": [toUserProfileDetails],
@@ -2569,13 +2912,18 @@ export default class SageMaker {
   async listWorkforces(
     {abortSignal, ...params}: RequestConfig & ListWorkforcesRequest = {},
   ): Promise<ListWorkforcesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+      NameContains: params["NameContains"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWorkforces",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Workforces": [toWorkforce],
       },
@@ -2588,13 +2936,18 @@ export default class SageMaker {
   async listWorkteams(
     {abortSignal, ...params}: RequestConfig & ListWorkteamsRequest = {},
   ): Promise<ListWorkteamsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+      NameContains: params["NameContains"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWorkteams",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Workteams": [toWorkteam],
       },
@@ -2607,15 +2960,17 @@ export default class SageMaker {
   async renderUiTemplate(
     {abortSignal, ...params}: RequestConfig & RenderUiTemplateRequest,
   ): Promise<RenderUiTemplateResponse> {
-    const body: JSONObject = {...params,
-    UiTemplate: fromUiTemplate(params["UiTemplate"]),
-    Task: fromRenderableTask(params["Task"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UiTemplate: fromUiTemplate(params["UiTemplate"]),
+      Task: fromRenderableTask(params["Task"]),
+      RoleArn: params["RoleArn"],
+      HumanTaskUiArn: params["HumanTaskUiArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RenderUiTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "RenderedContent": "s",
         "Errors": [toRenderingError],
@@ -2627,14 +2982,19 @@ export default class SageMaker {
   async search(
     {abortSignal, ...params}: RequestConfig & SearchRequest,
   ): Promise<SearchResponse> {
-    const body: JSONObject = {...params,
-    SearchExpression: fromSearchExpression(params["SearchExpression"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Resource: params["Resource"],
+      SearchExpression: fromSearchExpression(params["SearchExpression"]),
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Search",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Results": [toSearchRecord],
@@ -2646,8 +3006,9 @@ export default class SageMaker {
   async startMonitoringSchedule(
     {abortSignal, ...params}: RequestConfig & StartMonitoringScheduleRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MonitoringScheduleName: params["MonitoringScheduleName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartMonitoringSchedule",
@@ -2657,8 +3018,9 @@ export default class SageMaker {
   async startNotebookInstance(
     {abortSignal, ...params}: RequestConfig & StartNotebookInstanceInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NotebookInstanceName: params["NotebookInstanceName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartNotebookInstance",
@@ -2668,8 +3030,9 @@ export default class SageMaker {
   async stopAutoMLJob(
     {abortSignal, ...params}: RequestConfig & StopAutoMLJobRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AutoMLJobName: params["AutoMLJobName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopAutoMLJob",
@@ -2679,8 +3042,9 @@ export default class SageMaker {
   async stopCompilationJob(
     {abortSignal, ...params}: RequestConfig & StopCompilationJobRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CompilationJobName: params["CompilationJobName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopCompilationJob",
@@ -2690,8 +3054,9 @@ export default class SageMaker {
   async stopHyperParameterTuningJob(
     {abortSignal, ...params}: RequestConfig & StopHyperParameterTuningJobRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HyperParameterTuningJobName: params["HyperParameterTuningJobName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopHyperParameterTuningJob",
@@ -2701,8 +3066,9 @@ export default class SageMaker {
   async stopLabelingJob(
     {abortSignal, ...params}: RequestConfig & StopLabelingJobRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      LabelingJobName: params["LabelingJobName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopLabelingJob",
@@ -2712,8 +3078,9 @@ export default class SageMaker {
   async stopMonitoringSchedule(
     {abortSignal, ...params}: RequestConfig & StopMonitoringScheduleRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MonitoringScheduleName: params["MonitoringScheduleName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopMonitoringSchedule",
@@ -2723,8 +3090,9 @@ export default class SageMaker {
   async stopNotebookInstance(
     {abortSignal, ...params}: RequestConfig & StopNotebookInstanceInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NotebookInstanceName: params["NotebookInstanceName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopNotebookInstance",
@@ -2734,8 +3102,9 @@ export default class SageMaker {
   async stopProcessingJob(
     {abortSignal, ...params}: RequestConfig & StopProcessingJobRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProcessingJobName: params["ProcessingJobName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopProcessingJob",
@@ -2745,8 +3114,9 @@ export default class SageMaker {
   async stopTrainingJob(
     {abortSignal, ...params}: RequestConfig & StopTrainingJobRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrainingJobName: params["TrainingJobName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopTrainingJob",
@@ -2756,8 +3126,9 @@ export default class SageMaker {
   async stopTransformJob(
     {abortSignal, ...params}: RequestConfig & StopTransformJobRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TransformJobName: params["TransformJobName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopTransformJob",
@@ -2767,14 +3138,15 @@ export default class SageMaker {
   async updateAppImageConfig(
     {abortSignal, ...params}: RequestConfig & UpdateAppImageConfigRequest,
   ): Promise<UpdateAppImageConfigResponse> {
-    const body: JSONObject = {...params,
-    KernelGatewayImageConfig: fromKernelGatewayImageConfig(params["KernelGatewayImageConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AppImageConfigName: params["AppImageConfigName"],
+      KernelGatewayImageConfig: fromKernelGatewayImageConfig(params["KernelGatewayImageConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAppImageConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AppImageConfigArn": "s",
@@ -2785,14 +3157,15 @@ export default class SageMaker {
   async updateCodeRepository(
     {abortSignal, ...params}: RequestConfig & UpdateCodeRepositoryInput,
   ): Promise<UpdateCodeRepositoryOutput> {
-    const body: JSONObject = {...params,
-    GitConfig: fromGitConfigForUpdate(params["GitConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CodeRepositoryName: params["CodeRepositoryName"],
+      GitConfig: fromGitConfigForUpdate(params["GitConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateCodeRepository",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "CodeRepositoryArn": "s",
       },
@@ -2803,14 +3176,15 @@ export default class SageMaker {
   async updateDomain(
     {abortSignal, ...params}: RequestConfig & UpdateDomainRequest,
   ): Promise<UpdateDomainResponse> {
-    const body: JSONObject = {...params,
-    DefaultUserSettings: fromUserSettings(params["DefaultUserSettings"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainId: params["DomainId"],
+      DefaultUserSettings: fromUserSettings(params["DefaultUserSettings"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDomain",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DomainArn": "s",
@@ -2821,14 +3195,17 @@ export default class SageMaker {
   async updateEndpoint(
     {abortSignal, ...params}: RequestConfig & UpdateEndpointInput,
   ): Promise<UpdateEndpointOutput> {
-    const body: JSONObject = {...params,
-    ExcludeRetainedVariantProperties: params["ExcludeRetainedVariantProperties"]?.map(x => fromVariantProperty(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      EndpointName: params["EndpointName"],
+      EndpointConfigName: params["EndpointConfigName"],
+      RetainAllVariantProperties: params["RetainAllVariantProperties"],
+      ExcludeRetainedVariantProperties: params["ExcludeRetainedVariantProperties"]?.map(x => fromVariantProperty(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEndpoint",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "EndpointArn": "s",
       },
@@ -2839,14 +3216,15 @@ export default class SageMaker {
   async updateEndpointWeightsAndCapacities(
     {abortSignal, ...params}: RequestConfig & UpdateEndpointWeightsAndCapacitiesInput,
   ): Promise<UpdateEndpointWeightsAndCapacitiesOutput> {
-    const body: JSONObject = {...params,
-    DesiredWeightsAndCapacities: params["DesiredWeightsAndCapacities"]?.map(x => fromDesiredWeightAndCapacity(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      EndpointName: params["EndpointName"],
+      DesiredWeightsAndCapacities: params["DesiredWeightsAndCapacities"]?.map(x => fromDesiredWeightAndCapacity(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEndpointWeightsAndCapacities",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "EndpointArn": "s",
       },
@@ -2857,13 +3235,16 @@ export default class SageMaker {
   async updateExperiment(
     {abortSignal, ...params}: RequestConfig & UpdateExperimentRequest,
   ): Promise<UpdateExperimentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ExperimentName: params["ExperimentName"],
+      DisplayName: params["DisplayName"],
+      Description: params["Description"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateExperiment",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ExperimentArn": "s",
@@ -2874,13 +3255,18 @@ export default class SageMaker {
   async updateImage(
     {abortSignal, ...params}: RequestConfig & UpdateImageRequest,
   ): Promise<UpdateImageResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeleteProperties: params["DeleteProperties"],
+      Description: params["Description"],
+      DisplayName: params["DisplayName"],
+      ImageName: params["ImageName"],
+      RoleArn: params["RoleArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateImage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ImageArn": "s",
@@ -2891,14 +3277,15 @@ export default class SageMaker {
   async updateMonitoringSchedule(
     {abortSignal, ...params}: RequestConfig & UpdateMonitoringScheduleRequest,
   ): Promise<UpdateMonitoringScheduleResponse> {
-    const body: JSONObject = {...params,
-    MonitoringScheduleConfig: fromMonitoringScheduleConfig(params["MonitoringScheduleConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      MonitoringScheduleName: params["MonitoringScheduleName"],
+      MonitoringScheduleConfig: fromMonitoringScheduleConfig(params["MonitoringScheduleConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMonitoringSchedule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "MonitoringScheduleArn": "s",
       },
@@ -2909,13 +3296,26 @@ export default class SageMaker {
   async updateNotebookInstance(
     {abortSignal, ...params}: RequestConfig & UpdateNotebookInstanceInput,
   ): Promise<UpdateNotebookInstanceOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NotebookInstanceName: params["NotebookInstanceName"],
+      InstanceType: params["InstanceType"],
+      RoleArn: params["RoleArn"],
+      LifecycleConfigName: params["LifecycleConfigName"],
+      DisassociateLifecycleConfig: params["DisassociateLifecycleConfig"],
+      VolumeSizeInGB: params["VolumeSizeInGB"],
+      DefaultCodeRepository: params["DefaultCodeRepository"],
+      AdditionalCodeRepositories: params["AdditionalCodeRepositories"],
+      AcceleratorTypes: params["AcceleratorTypes"],
+      DisassociateAcceleratorTypes: params["DisassociateAcceleratorTypes"],
+      DisassociateDefaultCodeRepository: params["DisassociateDefaultCodeRepository"],
+      DisassociateAdditionalCodeRepositories: params["DisassociateAdditionalCodeRepositories"],
+      RootAccess: params["RootAccess"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateNotebookInstance",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -2924,15 +3324,16 @@ export default class SageMaker {
   async updateNotebookInstanceLifecycleConfig(
     {abortSignal, ...params}: RequestConfig & UpdateNotebookInstanceLifecycleConfigInput,
   ): Promise<UpdateNotebookInstanceLifecycleConfigOutput> {
-    const body: JSONObject = {...params,
-    OnCreate: params["OnCreate"]?.map(x => fromNotebookInstanceLifecycleHook(x)),
-    OnStart: params["OnStart"]?.map(x => fromNotebookInstanceLifecycleHook(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NotebookInstanceLifecycleConfigName: params["NotebookInstanceLifecycleConfigName"],
+      OnCreate: params["OnCreate"]?.map(x => fromNotebookInstanceLifecycleHook(x)),
+      OnStart: params["OnStart"]?.map(x => fromNotebookInstanceLifecycleHook(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateNotebookInstanceLifecycleConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -2941,13 +3342,15 @@ export default class SageMaker {
   async updateTrial(
     {abortSignal, ...params}: RequestConfig & UpdateTrialRequest,
   ): Promise<UpdateTrialResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrialName: params["TrialName"],
+      DisplayName: params["DisplayName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTrial",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TrialArn": "s",
@@ -2958,19 +3361,24 @@ export default class SageMaker {
   async updateTrialComponent(
     {abortSignal, ...params}: RequestConfig & UpdateTrialComponentRequest,
   ): Promise<UpdateTrialComponentResponse> {
-    const body: JSONObject = {...params,
-    Status: fromTrialComponentStatus(params["Status"]),
-    StartTime: prt.serializeDate_unixTimestamp(params["StartTime"]),
-    EndTime: prt.serializeDate_unixTimestamp(params["EndTime"]),
-    Parameters: prt.serializeMap(params["Parameters"], x => fromTrialComponentParameterValue(x)),
-    InputArtifacts: prt.serializeMap(params["InputArtifacts"], x => fromTrialComponentArtifact(x)),
-    OutputArtifacts: prt.serializeMap(params["OutputArtifacts"], x => fromTrialComponentArtifact(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrialComponentName: params["TrialComponentName"],
+      DisplayName: params["DisplayName"],
+      Status: fromTrialComponentStatus(params["Status"]),
+      StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
+      EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
+      Parameters: jsonP.serializeMap(params["Parameters"], x => fromTrialComponentParameterValue(x)),
+      ParametersToRemove: params["ParametersToRemove"],
+      InputArtifacts: jsonP.serializeMap(params["InputArtifacts"], x => fromTrialComponentArtifact(x)),
+      InputArtifactsToRemove: params["InputArtifactsToRemove"],
+      OutputArtifacts: jsonP.serializeMap(params["OutputArtifacts"], x => fromTrialComponentArtifact(x)),
+      OutputArtifactsToRemove: params["OutputArtifactsToRemove"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTrialComponent",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TrialComponentArn": "s",
@@ -2981,14 +3389,16 @@ export default class SageMaker {
   async updateUserProfile(
     {abortSignal, ...params}: RequestConfig & UpdateUserProfileRequest,
   ): Promise<UpdateUserProfileResponse> {
-    const body: JSONObject = {...params,
-    UserSettings: fromUserSettings(params["UserSettings"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainId: params["DomainId"],
+      UserProfileName: params["UserProfileName"],
+      UserSettings: fromUserSettings(params["UserSettings"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUserProfile",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserProfileArn": "s",
@@ -2999,15 +3409,16 @@ export default class SageMaker {
   async updateWorkforce(
     {abortSignal, ...params}: RequestConfig & UpdateWorkforceRequest,
   ): Promise<UpdateWorkforceResponse> {
-    const body: JSONObject = {...params,
-    SourceIpConfig: fromSourceIpConfig(params["SourceIpConfig"]),
-    OidcConfig: fromOidcConfig(params["OidcConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkforceName: params["WorkforceName"],
+      SourceIpConfig: fromSourceIpConfig(params["SourceIpConfig"]),
+      OidcConfig: fromOidcConfig(params["OidcConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateWorkforce",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Workforce": toWorkforce,
       },
@@ -3018,15 +3429,17 @@ export default class SageMaker {
   async updateWorkteam(
     {abortSignal, ...params}: RequestConfig & UpdateWorkteamRequest,
   ): Promise<UpdateWorkteamResponse> {
-    const body: JSONObject = {...params,
-    MemberDefinitions: params["MemberDefinitions"]?.map(x => fromMemberDefinition(x)),
-    NotificationConfiguration: fromNotificationConfiguration(params["NotificationConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkteamName: params["WorkteamName"],
+      MemberDefinitions: params["MemberDefinitions"]?.map(x => fromMemberDefinition(x)),
+      Description: params["Description"],
+      NotificationConfiguration: fromNotificationConfiguration(params["NotificationConfiguration"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateWorkteam",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Workteam": toWorkteam,
       },
@@ -3043,7 +3456,7 @@ export default class SageMaker {
     const errMessage = 'ResourceNotReady: Resource is not in the state NotebookInstanceInService';
     for (let i = 0; i < 60; i++) {
       const resp = await this.describeNotebookInstance(params);
-      const field = resp["NotebookInstanceStatus"];
+      const field = resp?.NotebookInstanceStatus;
       if (field === "InService") return resp;
       if (field === "Failed") throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 30000));
@@ -3058,7 +3471,7 @@ export default class SageMaker {
     const errMessage = 'ResourceNotReady: Resource is not in the state NotebookInstanceStopped';
     for (let i = 0; i < 60; i++) {
       const resp = await this.describeNotebookInstance(params);
-      const field = resp["NotebookInstanceStatus"];
+      const field = resp?.NotebookInstanceStatus;
       if (field === "Stopped") return resp;
       if (field === "Failed") throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 30000));
@@ -3074,7 +3487,7 @@ export default class SageMaker {
     for (let i = 0; i < 60; i++) {
       try {
         const resp = await this.describeNotebookInstance(params);
-        if (resp["NotebookInstanceStatus"] === "Failed") throw new Error(errMessage);
+        if (resp?.NotebookInstanceStatus === "Failed") throw new Error(errMessage);
       } catch (err) {
         if (["ValidationException"].includes(err.code)) return err;
         throw err;
@@ -3092,7 +3505,7 @@ export default class SageMaker {
     for (let i = 0; i < 180; i++) {
       try {
         const resp = await this.describeTrainingJob(params);
-        const field = resp["TrainingJobStatus"];
+        const field = resp?.TrainingJobStatus;
         if (field === "Completed") return resp;
         if (field === "Stopped") return resp;
         if (field === "Failed") throw new Error(errMessage);
@@ -3113,7 +3526,7 @@ export default class SageMaker {
     for (let i = 0; i < 120; i++) {
       try {
         const resp = await this.describeEndpoint(params);
-        const field = resp["EndpointStatus"];
+        const field = resp?.EndpointStatus;
         if (field === "InService") return resp;
         if (field === "Failed") throw new Error(errMessage);
       } catch (err) {
@@ -3133,7 +3546,7 @@ export default class SageMaker {
     for (let i = 0; i < 60; i++) {
       try {
         const resp = await this.describeEndpoint(params);
-        if (resp["EndpointStatus"] === "Failed") throw new Error(errMessage);
+        if (resp?.EndpointStatus === "Failed") throw new Error(errMessage);
       } catch (err) {
         if (["ValidationException"].includes(err.code)) return err;
         throw err;
@@ -3151,7 +3564,7 @@ export default class SageMaker {
     for (let i = 0; i < 60; i++) {
       try {
         const resp = await this.describeTransformJob(params);
-        const field = resp["TransformJobStatus"];
+        const field = resp?.TransformJobStatus;
         if (field === "Completed") return resp;
         if (field === "Stopped") return resp;
         if (field === "Failed") throw new Error(errMessage);
@@ -3172,7 +3585,7 @@ export default class SageMaker {
     for (let i = 0; i < 60; i++) {
       try {
         const resp = await this.describeProcessingJob(params);
-        const field = resp["ProcessingJobStatus"];
+        const field = resp?.ProcessingJobStatus;
         if (field === "Completed") return resp;
         if (field === "Stopped") return resp;
         if (field === "Failed") throw new Error(errMessage);
@@ -3423,7 +3836,7 @@ export interface CreateProcessingJobRequest {
   ProcessingResources: ProcessingResources;
   StoppingCondition?: ProcessingStoppingCondition | null;
   AppSpecification: AppSpecification;
-  Environment?: { [key: string]: string } | null;
+  Environment?: { [key: string]: string | null | undefined } | null;
   NetworkConfig?: NetworkConfig | null;
   RoleArn: string;
   Tags?: Tag[] | null;
@@ -3433,7 +3846,7 @@ export interface CreateProcessingJobRequest {
 // refs: 1 - tags: named, input
 export interface CreateTrainingJobRequest {
   TrainingJobName: string;
-  HyperParameters?: { [key: string]: string } | null;
+  HyperParameters?: { [key: string]: string | null | undefined } | null;
   AlgorithmSpecification: AlgorithmSpecification;
   RoleArn: string;
   InputDataConfig?: Channel[] | null;
@@ -3460,7 +3873,7 @@ export interface CreateTransformJobRequest {
   ModelClientConfig?: ModelClientConfig | null;
   MaxPayloadInMB?: number | null;
   BatchStrategy?: BatchStrategy | null;
-  Environment?: { [key: string]: string } | null;
+  Environment?: { [key: string]: string | null | undefined } | null;
   TransformInput: TransformInput;
   TransformOutput: TransformOutput;
   TransformResources: TransformResources;
@@ -3484,9 +3897,9 @@ export interface CreateTrialComponentRequest {
   Status?: TrialComponentStatus | null;
   StartTime?: Date | number | null;
   EndTime?: Date | number | null;
-  Parameters?: { [key: string]: TrialComponentParameterValue } | null;
-  InputArtifacts?: { [key: string]: TrialComponentArtifact } | null;
-  OutputArtifacts?: { [key: string]: TrialComponentArtifact } | null;
+  Parameters?: { [key: string]: TrialComponentParameterValue | null | undefined } | null;
+  InputArtifacts?: { [key: string]: TrialComponentArtifact | null | undefined } | null;
+  OutputArtifacts?: { [key: string]: TrialComponentArtifact | null | undefined } | null;
   Tags?: Tag[] | null;
 }
 
@@ -4386,11 +4799,11 @@ export interface UpdateTrialComponentRequest {
   Status?: TrialComponentStatus | null;
   StartTime?: Date | number | null;
   EndTime?: Date | number | null;
-  Parameters?: { [key: string]: TrialComponentParameterValue } | null;
+  Parameters?: { [key: string]: TrialComponentParameterValue | null | undefined } | null;
   ParametersToRemove?: string[] | null;
-  InputArtifacts?: { [key: string]: TrialComponentArtifact } | null;
+  InputArtifacts?: { [key: string]: TrialComponentArtifact | null | undefined } | null;
   InputArtifactsToRemove?: string[] | null;
-  OutputArtifacts?: { [key: string]: TrialComponentArtifact } | null;
+  OutputArtifacts?: { [key: string]: TrialComponentArtifact | null | undefined } | null;
   OutputArtifactsToRemove?: string[] | null;
 }
 
@@ -4941,7 +5354,7 @@ export interface DescribeProcessingJobResponse {
   ProcessingResources: ProcessingResources;
   StoppingCondition?: ProcessingStoppingCondition | null;
   AppSpecification: AppSpecification;
-  Environment?: { [key: string]: string } | null;
+  Environment?: { [key: string]: string | null | undefined } | null;
   NetworkConfig?: NetworkConfig | null;
   RoleArn?: string | null;
   ExperimentConfig?: ExperimentConfig | null;
@@ -4974,7 +5387,7 @@ export interface DescribeTrainingJobResponse {
   TrainingJobStatus: TrainingJobStatus;
   SecondaryStatus: SecondaryStatus;
   FailureReason?: string | null;
-  HyperParameters?: { [key: string]: string } | null;
+  HyperParameters?: { [key: string]: string | null | undefined } | null;
   AlgorithmSpecification: AlgorithmSpecification;
   RoleArn?: string | null;
   InputDataConfig?: Channel[] | null;
@@ -5012,7 +5425,7 @@ export interface DescribeTransformJobResponse {
   ModelClientConfig?: ModelClientConfig | null;
   MaxPayloadInMB?: number | null;
   BatchStrategy?: BatchStrategy | null;
-  Environment?: { [key: string]: string } | null;
+  Environment?: { [key: string]: string | null | undefined } | null;
   TransformInput: TransformInput;
   TransformOutput?: TransformOutput | null;
   TransformResources: TransformResources;
@@ -5051,9 +5464,9 @@ export interface DescribeTrialComponentResponse {
   CreatedBy?: UserContext | null;
   LastModifiedTime?: Date | number | null;
   LastModifiedBy?: UserContext | null;
-  Parameters?: { [key: string]: TrialComponentParameterValue } | null;
-  InputArtifacts?: { [key: string]: TrialComponentArtifact } | null;
-  OutputArtifacts?: { [key: string]: TrialComponentArtifact } | null;
+  Parameters?: { [key: string]: TrialComponentParameterValue | null | undefined } | null;
+  InputArtifacts?: { [key: string]: TrialComponentArtifact | null | undefined } | null;
+  OutputArtifacts?: { [key: string]: TrialComponentArtifact | null | undefined } | null;
   Metrics?: TrialComponentMetricSummary[] | null;
 }
 
@@ -5393,13 +5806,15 @@ export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -5419,20 +5834,24 @@ export interface TrainingSpecification {
   TrainingChannels: ChannelSpecification[];
   SupportedTuningJobObjectiveMetrics?: HyperParameterTuningJobObjective[] | null;
 }
-function fromTrainingSpecification(input?: TrainingSpecification | null): JSONValue {
+function fromTrainingSpecification(input?: TrainingSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    TrainingImage: input["TrainingImage"],
+    TrainingImageDigest: input["TrainingImageDigest"],
     SupportedHyperParameters: input["SupportedHyperParameters"]?.map(x => fromHyperParameterSpecification(x)),
+    SupportedTrainingInstanceTypes: input["SupportedTrainingInstanceTypes"],
+    SupportsDistributedTraining: input["SupportsDistributedTraining"],
     MetricDefinitions: input["MetricDefinitions"]?.map(x => fromMetricDefinition(x)),
     TrainingChannels: input["TrainingChannels"]?.map(x => fromChannelSpecification(x)),
     SupportedTuningJobObjectiveMetrics: input["SupportedTuningJobObjectiveMetrics"]?.map(x => fromHyperParameterTuningJobObjective(x)),
   }
 }
-function toTrainingSpecification(root: JSONValue): TrainingSpecification {
-  return prt.readObj({
+function toTrainingSpecification(root: jsonP.JSONValue): TrainingSpecification {
+  return jsonP.readObj({
     required: {
       "TrainingImage": "s",
-      "SupportedTrainingInstanceTypes": [toTrainingInstanceType],
+      "SupportedTrainingInstanceTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<TrainingInstanceType>(x)],
       "TrainingChannels": [toChannelSpecification],
     },
     optional: {
@@ -5455,17 +5874,23 @@ export interface HyperParameterSpecification {
   IsRequired?: boolean | null;
   DefaultValue?: string | null;
 }
-function fromHyperParameterSpecification(input?: HyperParameterSpecification | null): JSONValue {
+function fromHyperParameterSpecification(input?: HyperParameterSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Description: input["Description"],
+    Type: input["Type"],
     Range: fromParameterRange(input["Range"]),
+    IsTunable: input["IsTunable"],
+    IsRequired: input["IsRequired"],
+    DefaultValue: input["DefaultValue"],
   }
 }
-function toHyperParameterSpecification(root: JSONValue): HyperParameterSpecification {
-  return prt.readObj({
+function toHyperParameterSpecification(root: jsonP.JSONValue): HyperParameterSpecification {
+  return jsonP.readObj({
     required: {
       "Name": "s",
-      "Type": toParameterType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<ParameterType>(x),
     },
     optional: {
       "Description": "s",
@@ -5483,16 +5908,7 @@ export type ParameterType =
 | "Continuous"
 | "Categorical"
 | "FreeText"
-;
-
-function toParameterType(root: JSONValue): ParameterType | null {
-  return ( false
-    || root == "Integer"
-    || root == "Continuous"
-    || root == "Categorical"
-    || root == "FreeText"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface ParameterRange {
@@ -5500,16 +5916,16 @@ export interface ParameterRange {
   ContinuousParameterRangeSpecification?: ContinuousParameterRangeSpecification | null;
   CategoricalParameterRangeSpecification?: CategoricalParameterRangeSpecification | null;
 }
-function fromParameterRange(input?: ParameterRange | null): JSONValue {
+function fromParameterRange(input?: ParameterRange | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     IntegerParameterRangeSpecification: fromIntegerParameterRangeSpecification(input["IntegerParameterRangeSpecification"]),
     ContinuousParameterRangeSpecification: fromContinuousParameterRangeSpecification(input["ContinuousParameterRangeSpecification"]),
     CategoricalParameterRangeSpecification: fromCategoricalParameterRangeSpecification(input["CategoricalParameterRangeSpecification"]),
   }
 }
-function toParameterRange(root: JSONValue): ParameterRange {
-  return prt.readObj({
+function toParameterRange(root: jsonP.JSONValue): ParameterRange {
+  return jsonP.readObj({
     required: {},
     optional: {
       "IntegerParameterRangeSpecification": toIntegerParameterRangeSpecification,
@@ -5524,13 +5940,15 @@ export interface IntegerParameterRangeSpecification {
   MinValue: string;
   MaxValue: string;
 }
-function fromIntegerParameterRangeSpecification(input?: IntegerParameterRangeSpecification | null): JSONValue {
+function fromIntegerParameterRangeSpecification(input?: IntegerParameterRangeSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MinValue: input["MinValue"],
+    MaxValue: input["MaxValue"],
   }
 }
-function toIntegerParameterRangeSpecification(root: JSONValue): IntegerParameterRangeSpecification {
-  return prt.readObj({
+function toIntegerParameterRangeSpecification(root: jsonP.JSONValue): IntegerParameterRangeSpecification {
+  return jsonP.readObj({
     required: {
       "MinValue": "s",
       "MaxValue": "s",
@@ -5544,13 +5962,15 @@ export interface ContinuousParameterRangeSpecification {
   MinValue: string;
   MaxValue: string;
 }
-function fromContinuousParameterRangeSpecification(input?: ContinuousParameterRangeSpecification | null): JSONValue {
+function fromContinuousParameterRangeSpecification(input?: ContinuousParameterRangeSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MinValue: input["MinValue"],
+    MaxValue: input["MaxValue"],
   }
 }
-function toContinuousParameterRangeSpecification(root: JSONValue): ContinuousParameterRangeSpecification {
-  return prt.readObj({
+function toContinuousParameterRangeSpecification(root: jsonP.JSONValue): ContinuousParameterRangeSpecification {
+  return jsonP.readObj({
     required: {
       "MinValue": "s",
       "MaxValue": "s",
@@ -5563,13 +5983,14 @@ function toContinuousParameterRangeSpecification(root: JSONValue): ContinuousPar
 export interface CategoricalParameterRangeSpecification {
   Values: string[];
 }
-function fromCategoricalParameterRangeSpecification(input?: CategoricalParameterRangeSpecification | null): JSONValue {
+function fromCategoricalParameterRangeSpecification(input?: CategoricalParameterRangeSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Values: input["Values"],
   }
 }
-function toCategoricalParameterRangeSpecification(root: JSONValue): CategoricalParameterRangeSpecification {
-  return prt.readObj({
+function toCategoricalParameterRangeSpecification(root: jsonP.JSONValue): CategoricalParameterRangeSpecification {
+  return jsonP.readObj({
     required: {
       "Values": ["s"],
     },
@@ -5618,64 +6039,22 @@ export type TrainingInstanceType =
 | "ml.c5n.4xlarge"
 | "ml.c5n.9xlarge"
 | "ml.c5n.18xlarge"
-;
-
-function toTrainingInstanceType(root: JSONValue): TrainingInstanceType | null {
-  return ( false
-    || root == "ml.m4.xlarge"
-    || root == "ml.m4.2xlarge"
-    || root == "ml.m4.4xlarge"
-    || root == "ml.m4.10xlarge"
-    || root == "ml.m4.16xlarge"
-    || root == "ml.g4dn.xlarge"
-    || root == "ml.g4dn.2xlarge"
-    || root == "ml.g4dn.4xlarge"
-    || root == "ml.g4dn.8xlarge"
-    || root == "ml.g4dn.12xlarge"
-    || root == "ml.g4dn.16xlarge"
-    || root == "ml.m5.large"
-    || root == "ml.m5.xlarge"
-    || root == "ml.m5.2xlarge"
-    || root == "ml.m5.4xlarge"
-    || root == "ml.m5.12xlarge"
-    || root == "ml.m5.24xlarge"
-    || root == "ml.c4.xlarge"
-    || root == "ml.c4.2xlarge"
-    || root == "ml.c4.4xlarge"
-    || root == "ml.c4.8xlarge"
-    || root == "ml.p2.xlarge"
-    || root == "ml.p2.8xlarge"
-    || root == "ml.p2.16xlarge"
-    || root == "ml.p3.2xlarge"
-    || root == "ml.p3.8xlarge"
-    || root == "ml.p3.16xlarge"
-    || root == "ml.p3dn.24xlarge"
-    || root == "ml.p4d.24xlarge"
-    || root == "ml.c5.xlarge"
-    || root == "ml.c5.2xlarge"
-    || root == "ml.c5.4xlarge"
-    || root == "ml.c5.9xlarge"
-    || root == "ml.c5.18xlarge"
-    || root == "ml.c5n.xlarge"
-    || root == "ml.c5n.2xlarge"
-    || root == "ml.c5n.4xlarge"
-    || root == "ml.c5n.9xlarge"
-    || root == "ml.c5n.18xlarge"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, interface, output
 export interface MetricDefinition {
   Name: string;
   Regex: string;
 }
-function fromMetricDefinition(input?: MetricDefinition | null): JSONValue {
+function fromMetricDefinition(input?: MetricDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Regex: input["Regex"],
   }
 }
-function toMetricDefinition(root: JSONValue): MetricDefinition {
-  return prt.readObj({
+function toMetricDefinition(root: jsonP.JSONValue): MetricDefinition {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "Regex": "s",
@@ -5693,22 +6072,28 @@ export interface ChannelSpecification {
   SupportedCompressionTypes?: CompressionType[] | null;
   SupportedInputModes: TrainingInputMode[];
 }
-function fromChannelSpecification(input?: ChannelSpecification | null): JSONValue {
+function fromChannelSpecification(input?: ChannelSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Description: input["Description"],
+    IsRequired: input["IsRequired"],
+    SupportedContentTypes: input["SupportedContentTypes"],
+    SupportedCompressionTypes: input["SupportedCompressionTypes"],
+    SupportedInputModes: input["SupportedInputModes"],
   }
 }
-function toChannelSpecification(root: JSONValue): ChannelSpecification {
-  return prt.readObj({
+function toChannelSpecification(root: jsonP.JSONValue): ChannelSpecification {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "SupportedContentTypes": ["s"],
-      "SupportedInputModes": [toTrainingInputMode],
+      "SupportedInputModes": [(x: jsonP.JSONValue) => cmnP.readEnum<TrainingInputMode>(x)],
     },
     optional: {
       "Description": "s",
       "IsRequired": "b",
-      "SupportedCompressionTypes": [toCompressionType],
+      "SupportedCompressionTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<CompressionType>(x)],
     },
   }, root);
 }
@@ -5717,42 +6102,30 @@ function toChannelSpecification(root: JSONValue): ChannelSpecification {
 export type CompressionType =
 | "None"
 | "Gzip"
-;
-
-function toCompressionType(root: JSONValue): CompressionType | null {
-  return ( false
-    || root == "None"
-    || root == "Gzip"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 22 - tags: input, named, enum, output
 export type TrainingInputMode =
 | "Pipe"
 | "File"
-;
-
-function toTrainingInputMode(root: JSONValue): TrainingInputMode | null {
-  return ( false
-    || root == "Pipe"
-    || root == "File"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: input, named, interface, output
 export interface HyperParameterTuningJobObjective {
   Type: HyperParameterTuningJobObjectiveType;
   MetricName: string;
 }
-function fromHyperParameterTuningJobObjective(input?: HyperParameterTuningJobObjective | null): JSONValue {
+function fromHyperParameterTuningJobObjective(input?: HyperParameterTuningJobObjective | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Type: input["Type"],
+    MetricName: input["MetricName"],
   }
 }
-function toHyperParameterTuningJobObjective(root: JSONValue): HyperParameterTuningJobObjective {
-  return prt.readObj({
+function toHyperParameterTuningJobObjective(root: jsonP.JSONValue): HyperParameterTuningJobObjective {
+  return jsonP.readObj({
     required: {
-      "Type": toHyperParameterTuningJobObjectiveType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<HyperParameterTuningJobObjectiveType>(x),
       "MetricName": "s",
     },
     optional: {},
@@ -5763,14 +6136,7 @@ function toHyperParameterTuningJobObjective(root: JSONValue): HyperParameterTuni
 export type HyperParameterTuningJobObjectiveType =
 | "Maximize"
 | "Minimize"
-;
-
-function toHyperParameterTuningJobObjectiveType(root: JSONValue): HyperParameterTuningJobObjectiveType | null {
-  return ( false
-    || root == "Maximize"
-    || root == "Minimize"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface InferenceSpecification {
@@ -5780,18 +6146,22 @@ export interface InferenceSpecification {
   SupportedContentTypes: string[];
   SupportedResponseMIMETypes: string[];
 }
-function fromInferenceSpecification(input?: InferenceSpecification | null): JSONValue {
+function fromInferenceSpecification(input?: InferenceSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Containers: input["Containers"]?.map(x => fromModelPackageContainerDefinition(x)),
+    SupportedTransformInstanceTypes: input["SupportedTransformInstanceTypes"],
+    SupportedRealtimeInferenceInstanceTypes: input["SupportedRealtimeInferenceInstanceTypes"],
+    SupportedContentTypes: input["SupportedContentTypes"],
+    SupportedResponseMIMETypes: input["SupportedResponseMIMETypes"],
   }
 }
-function toInferenceSpecification(root: JSONValue): InferenceSpecification {
-  return prt.readObj({
+function toInferenceSpecification(root: jsonP.JSONValue): InferenceSpecification {
+  return jsonP.readObj({
     required: {
       "Containers": [toModelPackageContainerDefinition],
-      "SupportedTransformInstanceTypes": [toTransformInstanceType],
-      "SupportedRealtimeInferenceInstanceTypes": [toProductionVariantInstanceType],
+      "SupportedTransformInstanceTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<TransformInstanceType>(x)],
+      "SupportedRealtimeInferenceInstanceTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<ProductionVariantInstanceType>(x)],
       "SupportedContentTypes": ["s"],
       "SupportedResponseMIMETypes": ["s"],
     },
@@ -5807,13 +6177,18 @@ export interface ModelPackageContainerDefinition {
   ModelDataUrl?: string | null;
   ProductId?: string | null;
 }
-function fromModelPackageContainerDefinition(input?: ModelPackageContainerDefinition | null): JSONValue {
+function fromModelPackageContainerDefinition(input?: ModelPackageContainerDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ContainerHostname: input["ContainerHostname"],
+    Image: input["Image"],
+    ImageDigest: input["ImageDigest"],
+    ModelDataUrl: input["ModelDataUrl"],
+    ProductId: input["ProductId"],
   }
 }
-function toModelPackageContainerDefinition(root: JSONValue): ModelPackageContainerDefinition {
-  return prt.readObj({
+function toModelPackageContainerDefinition(root: jsonP.JSONValue): ModelPackageContainerDefinition {
+  return jsonP.readObj({
     required: {
       "Image": "s",
     },
@@ -5854,38 +6229,7 @@ export type TransformInstanceType =
 | "ml.m5.4xlarge"
 | "ml.m5.12xlarge"
 | "ml.m5.24xlarge"
-;
-
-function toTransformInstanceType(root: JSONValue): TransformInstanceType | null {
-  return ( false
-    || root == "ml.m4.xlarge"
-    || root == "ml.m4.2xlarge"
-    || root == "ml.m4.4xlarge"
-    || root == "ml.m4.10xlarge"
-    || root == "ml.m4.16xlarge"
-    || root == "ml.c4.xlarge"
-    || root == "ml.c4.2xlarge"
-    || root == "ml.c4.4xlarge"
-    || root == "ml.c4.8xlarge"
-    || root == "ml.p2.xlarge"
-    || root == "ml.p2.8xlarge"
-    || root == "ml.p2.16xlarge"
-    || root == "ml.p3.2xlarge"
-    || root == "ml.p3.8xlarge"
-    || root == "ml.p3.16xlarge"
-    || root == "ml.c5.xlarge"
-    || root == "ml.c5.2xlarge"
-    || root == "ml.c5.4xlarge"
-    || root == "ml.c5.9xlarge"
-    || root == "ml.c5.18xlarge"
-    || root == "ml.m5.large"
-    || root == "ml.m5.xlarge"
-    || root == "ml.m5.2xlarge"
-    || root == "ml.m5.4xlarge"
-    || root == "ml.m5.12xlarge"
-    || root == "ml.m5.24xlarge"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, enum, output
 export type ProductionVariantInstanceType =
@@ -5955,92 +6299,22 @@ export type ProductionVariantInstanceType =
 | "ml.inf1.2xlarge"
 | "ml.inf1.6xlarge"
 | "ml.inf1.24xlarge"
-;
-
-function toProductionVariantInstanceType(root: JSONValue): ProductionVariantInstanceType | null {
-  return ( false
-    || root == "ml.t2.medium"
-    || root == "ml.t2.large"
-    || root == "ml.t2.xlarge"
-    || root == "ml.t2.2xlarge"
-    || root == "ml.m4.xlarge"
-    || root == "ml.m4.2xlarge"
-    || root == "ml.m4.4xlarge"
-    || root == "ml.m4.10xlarge"
-    || root == "ml.m4.16xlarge"
-    || root == "ml.m5.large"
-    || root == "ml.m5.xlarge"
-    || root == "ml.m5.2xlarge"
-    || root == "ml.m5.4xlarge"
-    || root == "ml.m5.12xlarge"
-    || root == "ml.m5.24xlarge"
-    || root == "ml.m5d.large"
-    || root == "ml.m5d.xlarge"
-    || root == "ml.m5d.2xlarge"
-    || root == "ml.m5d.4xlarge"
-    || root == "ml.m5d.12xlarge"
-    || root == "ml.m5d.24xlarge"
-    || root == "ml.c4.large"
-    || root == "ml.c4.xlarge"
-    || root == "ml.c4.2xlarge"
-    || root == "ml.c4.4xlarge"
-    || root == "ml.c4.8xlarge"
-    || root == "ml.p2.xlarge"
-    || root == "ml.p2.8xlarge"
-    || root == "ml.p2.16xlarge"
-    || root == "ml.p3.2xlarge"
-    || root == "ml.p3.8xlarge"
-    || root == "ml.p3.16xlarge"
-    || root == "ml.c5.large"
-    || root == "ml.c5.xlarge"
-    || root == "ml.c5.2xlarge"
-    || root == "ml.c5.4xlarge"
-    || root == "ml.c5.9xlarge"
-    || root == "ml.c5.18xlarge"
-    || root == "ml.c5d.large"
-    || root == "ml.c5d.xlarge"
-    || root == "ml.c5d.2xlarge"
-    || root == "ml.c5d.4xlarge"
-    || root == "ml.c5d.9xlarge"
-    || root == "ml.c5d.18xlarge"
-    || root == "ml.g4dn.xlarge"
-    || root == "ml.g4dn.2xlarge"
-    || root == "ml.g4dn.4xlarge"
-    || root == "ml.g4dn.8xlarge"
-    || root == "ml.g4dn.12xlarge"
-    || root == "ml.g4dn.16xlarge"
-    || root == "ml.r5.large"
-    || root == "ml.r5.xlarge"
-    || root == "ml.r5.2xlarge"
-    || root == "ml.r5.4xlarge"
-    || root == "ml.r5.12xlarge"
-    || root == "ml.r5.24xlarge"
-    || root == "ml.r5d.large"
-    || root == "ml.r5d.xlarge"
-    || root == "ml.r5d.2xlarge"
-    || root == "ml.r5d.4xlarge"
-    || root == "ml.r5d.12xlarge"
-    || root == "ml.r5d.24xlarge"
-    || root == "ml.inf1.xlarge"
-    || root == "ml.inf1.2xlarge"
-    || root == "ml.inf1.6xlarge"
-    || root == "ml.inf1.24xlarge"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface AlgorithmValidationSpecification {
   ValidationRole: string;
   ValidationProfiles: AlgorithmValidationProfile[];
 }
-function fromAlgorithmValidationSpecification(input?: AlgorithmValidationSpecification | null): JSONValue {
+function fromAlgorithmValidationSpecification(input?: AlgorithmValidationSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ValidationRole: input["ValidationRole"],
     ValidationProfiles: input["ValidationProfiles"]?.map(x => fromAlgorithmValidationProfile(x)),
   }
 }
-function toAlgorithmValidationSpecification(root: JSONValue): AlgorithmValidationSpecification {
-  return prt.readObj({
+function toAlgorithmValidationSpecification(root: jsonP.JSONValue): AlgorithmValidationSpecification {
+  return jsonP.readObj({
     required: {
       "ValidationRole": "s",
       "ValidationProfiles": [toAlgorithmValidationProfile],
@@ -6055,15 +6329,16 @@ export interface AlgorithmValidationProfile {
   TrainingJobDefinition: TrainingJobDefinition;
   TransformJobDefinition?: TransformJobDefinition | null;
 }
-function fromAlgorithmValidationProfile(input?: AlgorithmValidationProfile | null): JSONValue {
+function fromAlgorithmValidationProfile(input?: AlgorithmValidationProfile | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ProfileName: input["ProfileName"],
     TrainingJobDefinition: fromTrainingJobDefinition(input["TrainingJobDefinition"]),
     TransformJobDefinition: fromTransformJobDefinition(input["TransformJobDefinition"]),
   }
 }
-function toAlgorithmValidationProfile(root: JSONValue): AlgorithmValidationProfile {
-  return prt.readObj({
+function toAlgorithmValidationProfile(root: jsonP.JSONValue): AlgorithmValidationProfile {
+  return jsonP.readObj({
     required: {
       "ProfileName": "s",
       "TrainingJobDefinition": toTrainingJobDefinition,
@@ -6077,32 +6352,34 @@ function toAlgorithmValidationProfile(root: JSONValue): AlgorithmValidationProfi
 // refs: 2 - tags: input, named, interface, output
 export interface TrainingJobDefinition {
   TrainingInputMode: TrainingInputMode;
-  HyperParameters?: { [key: string]: string } | null;
+  HyperParameters?: { [key: string]: string | null | undefined } | null;
   InputDataConfig: Channel[];
   OutputDataConfig: OutputDataConfig;
   ResourceConfig: ResourceConfig;
   StoppingCondition: StoppingCondition;
 }
-function fromTrainingJobDefinition(input?: TrainingJobDefinition | null): JSONValue {
+function fromTrainingJobDefinition(input?: TrainingJobDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    TrainingInputMode: input["TrainingInputMode"],
+    HyperParameters: input["HyperParameters"],
     InputDataConfig: input["InputDataConfig"]?.map(x => fromChannel(x)),
     OutputDataConfig: fromOutputDataConfig(input["OutputDataConfig"]),
     ResourceConfig: fromResourceConfig(input["ResourceConfig"]),
     StoppingCondition: fromStoppingCondition(input["StoppingCondition"]),
   }
 }
-function toTrainingJobDefinition(root: JSONValue): TrainingJobDefinition {
-  return prt.readObj({
+function toTrainingJobDefinition(root: jsonP.JSONValue): TrainingJobDefinition {
+  return jsonP.readObj({
     required: {
-      "TrainingInputMode": toTrainingInputMode,
+      "TrainingInputMode": (x: jsonP.JSONValue) => cmnP.readEnum<TrainingInputMode>(x),
       "InputDataConfig": [toChannel],
       "OutputDataConfig": toOutputDataConfig,
       "ResourceConfig": toResourceConfig,
       "StoppingCondition": toStoppingCondition,
     },
     optional: {
-      "HyperParameters": x => prt.readMap(String, String, x),
+      "HyperParameters": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -6117,24 +6394,29 @@ export interface Channel {
   InputMode?: TrainingInputMode | null;
   ShuffleConfig?: ShuffleConfig | null;
 }
-function fromChannel(input?: Channel | null): JSONValue {
+function fromChannel(input?: Channel | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ChannelName: input["ChannelName"],
     DataSource: fromDataSource(input["DataSource"]),
+    ContentType: input["ContentType"],
+    CompressionType: input["CompressionType"],
+    RecordWrapperType: input["RecordWrapperType"],
+    InputMode: input["InputMode"],
     ShuffleConfig: fromShuffleConfig(input["ShuffleConfig"]),
   }
 }
-function toChannel(root: JSONValue): Channel {
-  return prt.readObj({
+function toChannel(root: jsonP.JSONValue): Channel {
+  return jsonP.readObj({
     required: {
       "ChannelName": "s",
       "DataSource": toDataSource,
     },
     optional: {
       "ContentType": "s",
-      "CompressionType": toCompressionType,
-      "RecordWrapperType": toRecordWrapper,
-      "InputMode": toTrainingInputMode,
+      "CompressionType": (x: jsonP.JSONValue) => cmnP.readEnum<CompressionType>(x),
+      "RecordWrapperType": (x: jsonP.JSONValue) => cmnP.readEnum<RecordWrapper>(x),
+      "InputMode": (x: jsonP.JSONValue) => cmnP.readEnum<TrainingInputMode>(x),
       "ShuffleConfig": toShuffleConfig,
     },
   }, root);
@@ -6145,15 +6427,15 @@ export interface DataSource {
   S3DataSource?: S3DataSource | null;
   FileSystemDataSource?: FileSystemDataSource | null;
 }
-function fromDataSource(input?: DataSource | null): JSONValue {
+function fromDataSource(input?: DataSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     S3DataSource: fromS3DataSource(input["S3DataSource"]),
     FileSystemDataSource: fromFileSystemDataSource(input["FileSystemDataSource"]),
   }
 }
-function toDataSource(root: JSONValue): DataSource {
-  return prt.readObj({
+function toDataSource(root: jsonP.JSONValue): DataSource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "S3DataSource": toS3DataSource,
@@ -6169,19 +6451,23 @@ export interface S3DataSource {
   S3DataDistributionType?: S3DataDistribution | null;
   AttributeNames?: string[] | null;
 }
-function fromS3DataSource(input?: S3DataSource | null): JSONValue {
+function fromS3DataSource(input?: S3DataSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3DataType: input["S3DataType"],
+    S3Uri: input["S3Uri"],
+    S3DataDistributionType: input["S3DataDistributionType"],
+    AttributeNames: input["AttributeNames"],
   }
 }
-function toS3DataSource(root: JSONValue): S3DataSource {
-  return prt.readObj({
+function toS3DataSource(root: jsonP.JSONValue): S3DataSource {
+  return jsonP.readObj({
     required: {
-      "S3DataType": toS3DataType,
+      "S3DataType": (x: jsonP.JSONValue) => cmnP.readEnum<S3DataType>(x),
       "S3Uri": "s",
     },
     optional: {
-      "S3DataDistributionType": toS3DataDistribution,
+      "S3DataDistributionType": (x: jsonP.JSONValue) => cmnP.readEnum<S3DataDistribution>(x),
       "AttributeNames": ["s"],
     },
   }, root);
@@ -6192,28 +6478,13 @@ export type S3DataType =
 | "ManifestFile"
 | "S3Prefix"
 | "AugmentedManifestFile"
-;
-
-function toS3DataType(root: JSONValue): S3DataType | null {
-  return ( false
-    || root == "ManifestFile"
-    || root == "S3Prefix"
-    || root == "AugmentedManifestFile"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, enum, output
 export type S3DataDistribution =
 | "FullyReplicated"
 | "ShardedByS3Key"
-;
-
-function toS3DataDistribution(root: JSONValue): S3DataDistribution | null {
-  return ( false
-    || root == "FullyReplicated"
-    || root == "ShardedByS3Key"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, interface, output
 export interface FileSystemDataSource {
@@ -6222,17 +6493,21 @@ export interface FileSystemDataSource {
   FileSystemType: FileSystemType;
   DirectoryPath: string;
 }
-function fromFileSystemDataSource(input?: FileSystemDataSource | null): JSONValue {
+function fromFileSystemDataSource(input?: FileSystemDataSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    FileSystemId: input["FileSystemId"],
+    FileSystemAccessMode: input["FileSystemAccessMode"],
+    FileSystemType: input["FileSystemType"],
+    DirectoryPath: input["DirectoryPath"],
   }
 }
-function toFileSystemDataSource(root: JSONValue): FileSystemDataSource {
-  return prt.readObj({
+function toFileSystemDataSource(root: jsonP.JSONValue): FileSystemDataSource {
+  return jsonP.readObj({
     required: {
       "FileSystemId": "s",
-      "FileSystemAccessMode": toFileSystemAccessMode,
-      "FileSystemType": toFileSystemType,
+      "FileSystemAccessMode": (x: jsonP.JSONValue) => cmnP.readEnum<FileSystemAccessMode>(x),
+      "FileSystemType": (x: jsonP.JSONValue) => cmnP.readEnum<FileSystemType>(x),
       "DirectoryPath": "s",
     },
     optional: {},
@@ -6243,52 +6518,32 @@ function toFileSystemDataSource(root: JSONValue): FileSystemDataSource {
 export type FileSystemAccessMode =
 | "rw"
 | "ro"
-;
-
-function toFileSystemAccessMode(root: JSONValue): FileSystemAccessMode | null {
-  return ( false
-    || root == "rw"
-    || root == "ro"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, enum, output
 export type FileSystemType =
 | "EFS"
 | "FSxLustre"
-;
-
-function toFileSystemType(root: JSONValue): FileSystemType | null {
-  return ( false
-    || root == "EFS"
-    || root == "FSxLustre"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, enum, output
 export type RecordWrapper =
 | "None"
 | "RecordIO"
-;
-
-function toRecordWrapper(root: JSONValue): RecordWrapper | null {
-  return ( false
-    || root == "None"
-    || root == "RecordIO"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, interface, output
 export interface ShuffleConfig {
   Seed: number;
 }
-function fromShuffleConfig(input?: ShuffleConfig | null): JSONValue {
+function fromShuffleConfig(input?: ShuffleConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Seed: input["Seed"],
   }
 }
-function toShuffleConfig(root: JSONValue): ShuffleConfig {
-  return prt.readObj({
+function toShuffleConfig(root: jsonP.JSONValue): ShuffleConfig {
+  return jsonP.readObj({
     required: {
       "Seed": "n",
     },
@@ -6301,13 +6556,15 @@ export interface OutputDataConfig {
   KmsKeyId?: string | null;
   S3OutputPath: string;
 }
-function fromOutputDataConfig(input?: OutputDataConfig | null): JSONValue {
+function fromOutputDataConfig(input?: OutputDataConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    KmsKeyId: input["KmsKeyId"],
+    S3OutputPath: input["S3OutputPath"],
   }
 }
-function toOutputDataConfig(root: JSONValue): OutputDataConfig {
-  return prt.readObj({
+function toOutputDataConfig(root: jsonP.JSONValue): OutputDataConfig {
+  return jsonP.readObj({
     required: {
       "S3OutputPath": "s",
     },
@@ -6324,15 +6581,19 @@ export interface ResourceConfig {
   VolumeSizeInGB: number;
   VolumeKmsKeyId?: string | null;
 }
-function fromResourceConfig(input?: ResourceConfig | null): JSONValue {
+function fromResourceConfig(input?: ResourceConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    InstanceType: input["InstanceType"],
+    InstanceCount: input["InstanceCount"],
+    VolumeSizeInGB: input["VolumeSizeInGB"],
+    VolumeKmsKeyId: input["VolumeKmsKeyId"],
   }
 }
-function toResourceConfig(root: JSONValue): ResourceConfig {
-  return prt.readObj({
+function toResourceConfig(root: jsonP.JSONValue): ResourceConfig {
+  return jsonP.readObj({
     required: {
-      "InstanceType": toTrainingInstanceType,
+      "InstanceType": (x: jsonP.JSONValue) => cmnP.readEnum<TrainingInstanceType>(x),
       "InstanceCount": "n",
       "VolumeSizeInGB": "n",
     },
@@ -6347,13 +6608,15 @@ export interface StoppingCondition {
   MaxRuntimeInSeconds?: number | null;
   MaxWaitTimeInSeconds?: number | null;
 }
-function fromStoppingCondition(input?: StoppingCondition | null): JSONValue {
+function fromStoppingCondition(input?: StoppingCondition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MaxRuntimeInSeconds: input["MaxRuntimeInSeconds"],
+    MaxWaitTimeInSeconds: input["MaxWaitTimeInSeconds"],
   }
 }
-function toStoppingCondition(root: JSONValue): StoppingCondition {
-  return prt.readObj({
+function toStoppingCondition(root: jsonP.JSONValue): StoppingCondition {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MaxRuntimeInSeconds": "n",
@@ -6367,21 +6630,25 @@ export interface TransformJobDefinition {
   MaxConcurrentTransforms?: number | null;
   MaxPayloadInMB?: number | null;
   BatchStrategy?: BatchStrategy | null;
-  Environment?: { [key: string]: string } | null;
+  Environment?: { [key: string]: string | null | undefined } | null;
   TransformInput: TransformInput;
   TransformOutput: TransformOutput;
   TransformResources: TransformResources;
 }
-function fromTransformJobDefinition(input?: TransformJobDefinition | null): JSONValue {
+function fromTransformJobDefinition(input?: TransformJobDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MaxConcurrentTransforms: input["MaxConcurrentTransforms"],
+    MaxPayloadInMB: input["MaxPayloadInMB"],
+    BatchStrategy: input["BatchStrategy"],
+    Environment: input["Environment"],
     TransformInput: fromTransformInput(input["TransformInput"]),
     TransformOutput: fromTransformOutput(input["TransformOutput"]),
     TransformResources: fromTransformResources(input["TransformResources"]),
   }
 }
-function toTransformJobDefinition(root: JSONValue): TransformJobDefinition {
-  return prt.readObj({
+function toTransformJobDefinition(root: jsonP.JSONValue): TransformJobDefinition {
+  return jsonP.readObj({
     required: {
       "TransformInput": toTransformInput,
       "TransformOutput": toTransformOutput,
@@ -6390,8 +6657,8 @@ function toTransformJobDefinition(root: JSONValue): TransformJobDefinition {
     optional: {
       "MaxConcurrentTransforms": "n",
       "MaxPayloadInMB": "n",
-      "BatchStrategy": toBatchStrategy,
-      "Environment": x => prt.readMap(String, String, x),
+      "BatchStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<BatchStrategy>(x),
+      "Environment": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -6400,14 +6667,7 @@ function toTransformJobDefinition(root: JSONValue): TransformJobDefinition {
 export type BatchStrategy =
 | "MultiRecord"
 | "SingleRecord"
-;
-
-function toBatchStrategy(root: JSONValue): BatchStrategy | null {
-  return ( false
-    || root == "MultiRecord"
-    || root == "SingleRecord"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: input, named, interface, output
 export interface TransformInput {
@@ -6416,21 +6676,24 @@ export interface TransformInput {
   CompressionType?: CompressionType | null;
   SplitType?: SplitType | null;
 }
-function fromTransformInput(input?: TransformInput | null): JSONValue {
+function fromTransformInput(input?: TransformInput | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     DataSource: fromTransformDataSource(input["DataSource"]),
+    ContentType: input["ContentType"],
+    CompressionType: input["CompressionType"],
+    SplitType: input["SplitType"],
   }
 }
-function toTransformInput(root: JSONValue): TransformInput {
-  return prt.readObj({
+function toTransformInput(root: jsonP.JSONValue): TransformInput {
+  return jsonP.readObj({
     required: {
       "DataSource": toTransformDataSource,
     },
     optional: {
       "ContentType": "s",
-      "CompressionType": toCompressionType,
-      "SplitType": toSplitType,
+      "CompressionType": (x: jsonP.JSONValue) => cmnP.readEnum<CompressionType>(x),
+      "SplitType": (x: jsonP.JSONValue) => cmnP.readEnum<SplitType>(x),
     },
   }, root);
 }
@@ -6439,14 +6702,14 @@ function toTransformInput(root: JSONValue): TransformInput {
 export interface TransformDataSource {
   S3DataSource: TransformS3DataSource;
 }
-function fromTransformDataSource(input?: TransformDataSource | null): JSONValue {
+function fromTransformDataSource(input?: TransformDataSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     S3DataSource: fromTransformS3DataSource(input["S3DataSource"]),
   }
 }
-function toTransformDataSource(root: JSONValue): TransformDataSource {
-  return prt.readObj({
+function toTransformDataSource(root: jsonP.JSONValue): TransformDataSource {
+  return jsonP.readObj({
     required: {
       "S3DataSource": toTransformS3DataSource,
     },
@@ -6459,15 +6722,17 @@ export interface TransformS3DataSource {
   S3DataType: S3DataType;
   S3Uri: string;
 }
-function fromTransformS3DataSource(input?: TransformS3DataSource | null): JSONValue {
+function fromTransformS3DataSource(input?: TransformS3DataSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3DataType: input["S3DataType"],
+    S3Uri: input["S3Uri"],
   }
 }
-function toTransformS3DataSource(root: JSONValue): TransformS3DataSource {
-  return prt.readObj({
+function toTransformS3DataSource(root: jsonP.JSONValue): TransformS3DataSource {
+  return jsonP.readObj({
     required: {
-      "S3DataType": toS3DataType,
+      "S3DataType": (x: jsonP.JSONValue) => cmnP.readEnum<S3DataType>(x),
       "S3Uri": "s",
     },
     optional: {},
@@ -6480,16 +6745,7 @@ export type SplitType =
 | "Line"
 | "RecordIO"
 | "TFRecord"
-;
-
-function toSplitType(root: JSONValue): SplitType | null {
-  return ( false
-    || root == "None"
-    || root == "Line"
-    || root == "RecordIO"
-    || root == "TFRecord"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: input, named, interface, output
 export interface TransformOutput {
@@ -6498,19 +6754,23 @@ export interface TransformOutput {
   AssembleWith?: AssemblyType | null;
   KmsKeyId?: string | null;
 }
-function fromTransformOutput(input?: TransformOutput | null): JSONValue {
+function fromTransformOutput(input?: TransformOutput | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3OutputPath: input["S3OutputPath"],
+    Accept: input["Accept"],
+    AssembleWith: input["AssembleWith"],
+    KmsKeyId: input["KmsKeyId"],
   }
 }
-function toTransformOutput(root: JSONValue): TransformOutput {
-  return prt.readObj({
+function toTransformOutput(root: jsonP.JSONValue): TransformOutput {
+  return jsonP.readObj({
     required: {
       "S3OutputPath": "s",
     },
     optional: {
       "Accept": "s",
-      "AssembleWith": toAssemblyType,
+      "AssembleWith": (x: jsonP.JSONValue) => cmnP.readEnum<AssemblyType>(x),
       "KmsKeyId": "s",
     },
   }, root);
@@ -6520,14 +6780,7 @@ function toTransformOutput(root: JSONValue): TransformOutput {
 export type AssemblyType =
 | "None"
 | "Line"
-;
-
-function toAssemblyType(root: JSONValue): AssemblyType | null {
-  return ( false
-    || root == "None"
-    || root == "Line"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: input, named, interface, output
 export interface TransformResources {
@@ -6535,15 +6788,18 @@ export interface TransformResources {
   InstanceCount: number;
   VolumeKmsKeyId?: string | null;
 }
-function fromTransformResources(input?: TransformResources | null): JSONValue {
+function fromTransformResources(input?: TransformResources | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    InstanceType: input["InstanceType"],
+    InstanceCount: input["InstanceCount"],
+    VolumeKmsKeyId: input["VolumeKmsKeyId"],
   }
 }
-function toTransformResources(root: JSONValue): TransformResources {
-  return prt.readObj({
+function toTransformResources(root: jsonP.JSONValue): TransformResources {
+  return jsonP.readObj({
     required: {
-      "InstanceType": toTransformInstanceType,
+      "InstanceType": (x: jsonP.JSONValue) => cmnP.readEnum<TransformInstanceType>(x),
       "InstanceCount": "n",
     },
     optional: {
@@ -6557,15 +6813,7 @@ export type AppType =
 | "JupyterServer"
 | "KernelGateway"
 | "TensorBoard"
-;
-
-function toAppType(root: JSONValue): AppType | null {
-  return ( false
-    || root == "JupyterServer"
-    || root == "KernelGateway"
-    || root == "TensorBoard"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 20 - tags: input, named, interface, output
 export interface ResourceSpec {
@@ -6573,18 +6821,21 @@ export interface ResourceSpec {
   SageMakerImageVersionArn?: string | null;
   InstanceType?: AppInstanceType | null;
 }
-function fromResourceSpec(input?: ResourceSpec | null): JSONValue {
+function fromResourceSpec(input?: ResourceSpec | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SageMakerImageArn: input["SageMakerImageArn"],
+    SageMakerImageVersionArn: input["SageMakerImageVersionArn"],
+    InstanceType: input["InstanceType"],
   }
 }
-function toResourceSpec(root: JSONValue): ResourceSpec {
-  return prt.readObj({
+function toResourceSpec(root: jsonP.JSONValue): ResourceSpec {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SageMakerImageArn": "s",
       "SageMakerImageVersionArn": "s",
-      "InstanceType": toAppInstanceType,
+      "InstanceType": (x: jsonP.JSONValue) => cmnP.readEnum<AppInstanceType>(x),
     },
   }, root);
 }
@@ -6623,59 +6874,22 @@ export type AppInstanceType =
 | "ml.g4dn.8xlarge"
 | "ml.g4dn.12xlarge"
 | "ml.g4dn.16xlarge"
-;
-
-function toAppInstanceType(root: JSONValue): AppInstanceType | null {
-  return ( false
-    || root == "system"
-    || root == "ml.t3.micro"
-    || root == "ml.t3.small"
-    || root == "ml.t3.medium"
-    || root == "ml.t3.large"
-    || root == "ml.t3.xlarge"
-    || root == "ml.t3.2xlarge"
-    || root == "ml.m5.large"
-    || root == "ml.m5.xlarge"
-    || root == "ml.m5.2xlarge"
-    || root == "ml.m5.4xlarge"
-    || root == "ml.m5.8xlarge"
-    || root == "ml.m5.12xlarge"
-    || root == "ml.m5.16xlarge"
-    || root == "ml.m5.24xlarge"
-    || root == "ml.c5.large"
-    || root == "ml.c5.xlarge"
-    || root == "ml.c5.2xlarge"
-    || root == "ml.c5.4xlarge"
-    || root == "ml.c5.9xlarge"
-    || root == "ml.c5.12xlarge"
-    || root == "ml.c5.18xlarge"
-    || root == "ml.c5.24xlarge"
-    || root == "ml.p3.2xlarge"
-    || root == "ml.p3.8xlarge"
-    || root == "ml.p3.16xlarge"
-    || root == "ml.g4dn.xlarge"
-    || root == "ml.g4dn.2xlarge"
-    || root == "ml.g4dn.4xlarge"
-    || root == "ml.g4dn.8xlarge"
-    || root == "ml.g4dn.12xlarge"
-    || root == "ml.g4dn.16xlarge"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface KernelGatewayImageConfig {
   KernelSpecs: KernelSpec[];
   FileSystemConfig?: FileSystemConfig | null;
 }
-function fromKernelGatewayImageConfig(input?: KernelGatewayImageConfig | null): JSONValue {
+function fromKernelGatewayImageConfig(input?: KernelGatewayImageConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     KernelSpecs: input["KernelSpecs"]?.map(x => fromKernelSpec(x)),
     FileSystemConfig: fromFileSystemConfig(input["FileSystemConfig"]),
   }
 }
-function toKernelGatewayImageConfig(root: JSONValue): KernelGatewayImageConfig {
-  return prt.readObj({
+function toKernelGatewayImageConfig(root: jsonP.JSONValue): KernelGatewayImageConfig {
+  return jsonP.readObj({
     required: {
       "KernelSpecs": [toKernelSpec],
     },
@@ -6690,13 +6904,15 @@ export interface KernelSpec {
   Name: string;
   DisplayName?: string | null;
 }
-function fromKernelSpec(input?: KernelSpec | null): JSONValue {
+function fromKernelSpec(input?: KernelSpec | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    DisplayName: input["DisplayName"],
   }
 }
-function toKernelSpec(root: JSONValue): KernelSpec {
-  return prt.readObj({
+function toKernelSpec(root: jsonP.JSONValue): KernelSpec {
+  return jsonP.readObj({
     required: {
       "Name": "s",
     },
@@ -6712,13 +6928,16 @@ export interface FileSystemConfig {
   DefaultUid?: number | null;
   DefaultGid?: number | null;
 }
-function fromFileSystemConfig(input?: FileSystemConfig | null): JSONValue {
+function fromFileSystemConfig(input?: FileSystemConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MountPath: input["MountPath"],
+    DefaultUid: input["DefaultUid"],
+    DefaultGid: input["DefaultGid"],
   }
 }
-function toFileSystemConfig(root: JSONValue): FileSystemConfig {
-  return prt.readObj({
+function toFileSystemConfig(root: jsonP.JSONValue): FileSystemConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MountPath": "s",
@@ -6734,20 +6953,22 @@ export interface AutoMLChannel {
   CompressionType?: CompressionType | null;
   TargetAttributeName: string;
 }
-function fromAutoMLChannel(input?: AutoMLChannel | null): JSONValue {
+function fromAutoMLChannel(input?: AutoMLChannel | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     DataSource: fromAutoMLDataSource(input["DataSource"]),
+    CompressionType: input["CompressionType"],
+    TargetAttributeName: input["TargetAttributeName"],
   }
 }
-function toAutoMLChannel(root: JSONValue): AutoMLChannel {
-  return prt.readObj({
+function toAutoMLChannel(root: jsonP.JSONValue): AutoMLChannel {
+  return jsonP.readObj({
     required: {
       "DataSource": toAutoMLDataSource,
       "TargetAttributeName": "s",
     },
     optional: {
-      "CompressionType": toCompressionType,
+      "CompressionType": (x: jsonP.JSONValue) => cmnP.readEnum<CompressionType>(x),
     },
   }, root);
 }
@@ -6756,14 +6977,14 @@ function toAutoMLChannel(root: JSONValue): AutoMLChannel {
 export interface AutoMLDataSource {
   S3DataSource: AutoMLS3DataSource;
 }
-function fromAutoMLDataSource(input?: AutoMLDataSource | null): JSONValue {
+function fromAutoMLDataSource(input?: AutoMLDataSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     S3DataSource: fromAutoMLS3DataSource(input["S3DataSource"]),
   }
 }
-function toAutoMLDataSource(root: JSONValue): AutoMLDataSource {
-  return prt.readObj({
+function toAutoMLDataSource(root: jsonP.JSONValue): AutoMLDataSource {
+  return jsonP.readObj({
     required: {
       "S3DataSource": toAutoMLS3DataSource,
     },
@@ -6776,15 +6997,17 @@ export interface AutoMLS3DataSource {
   S3DataType: AutoMLS3DataType;
   S3Uri: string;
 }
-function fromAutoMLS3DataSource(input?: AutoMLS3DataSource | null): JSONValue {
+function fromAutoMLS3DataSource(input?: AutoMLS3DataSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3DataType: input["S3DataType"],
+    S3Uri: input["S3Uri"],
   }
 }
-function toAutoMLS3DataSource(root: JSONValue): AutoMLS3DataSource {
-  return prt.readObj({
+function toAutoMLS3DataSource(root: jsonP.JSONValue): AutoMLS3DataSource {
+  return jsonP.readObj({
     required: {
-      "S3DataType": toAutoMLS3DataType,
+      "S3DataType": (x: jsonP.JSONValue) => cmnP.readEnum<AutoMLS3DataType>(x),
       "S3Uri": "s",
     },
     optional: {},
@@ -6795,27 +7018,22 @@ function toAutoMLS3DataSource(root: JSONValue): AutoMLS3DataSource {
 export type AutoMLS3DataType =
 | "ManifestFile"
 | "S3Prefix"
-;
-
-function toAutoMLS3DataType(root: JSONValue): AutoMLS3DataType | null {
-  return ( false
-    || root == "ManifestFile"
-    || root == "S3Prefix"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface AutoMLOutputDataConfig {
   KmsKeyId?: string | null;
   S3OutputPath: string;
 }
-function fromAutoMLOutputDataConfig(input?: AutoMLOutputDataConfig | null): JSONValue {
+function fromAutoMLOutputDataConfig(input?: AutoMLOutputDataConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    KmsKeyId: input["KmsKeyId"],
+    S3OutputPath: input["S3OutputPath"],
   }
 }
-function toAutoMLOutputDataConfig(root: JSONValue): AutoMLOutputDataConfig {
-  return prt.readObj({
+function toAutoMLOutputDataConfig(root: jsonP.JSONValue): AutoMLOutputDataConfig {
+  return jsonP.readObj({
     required: {
       "S3OutputPath": "s",
     },
@@ -6830,29 +7048,22 @@ export type ProblemType =
 | "BinaryClassification"
 | "MulticlassClassification"
 | "Regression"
-;
-
-function toProblemType(root: JSONValue): ProblemType | null {
-  return ( false
-    || root == "BinaryClassification"
-    || root == "MulticlassClassification"
-    || root == "Regression"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface AutoMLJobObjective {
   MetricName: AutoMLMetricEnum;
 }
-function fromAutoMLJobObjective(input?: AutoMLJobObjective | null): JSONValue {
+function fromAutoMLJobObjective(input?: AutoMLJobObjective | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MetricName: input["MetricName"],
   }
 }
-function toAutoMLJobObjective(root: JSONValue): AutoMLJobObjective {
-  return prt.readObj({
+function toAutoMLJobObjective(root: jsonP.JSONValue): AutoMLJobObjective {
+  return jsonP.readObj({
     required: {
-      "MetricName": toAutoMLMetricEnum,
+      "MetricName": (x: jsonP.JSONValue) => cmnP.readEnum<AutoMLMetricEnum>(x),
     },
     optional: {},
   }, root);
@@ -6865,32 +7076,22 @@ export type AutoMLMetricEnum =
 | "F1"
 | "F1macro"
 | "AUC"
-;
-
-function toAutoMLMetricEnum(root: JSONValue): AutoMLMetricEnum | null {
-  return ( false
-    || root == "Accuracy"
-    || root == "MSE"
-    || root == "F1"
-    || root == "F1macro"
-    || root == "AUC"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface AutoMLJobConfig {
   CompletionCriteria?: AutoMLJobCompletionCriteria | null;
   SecurityConfig?: AutoMLSecurityConfig | null;
 }
-function fromAutoMLJobConfig(input?: AutoMLJobConfig | null): JSONValue {
+function fromAutoMLJobConfig(input?: AutoMLJobConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     CompletionCriteria: fromAutoMLJobCompletionCriteria(input["CompletionCriteria"]),
     SecurityConfig: fromAutoMLSecurityConfig(input["SecurityConfig"]),
   }
 }
-function toAutoMLJobConfig(root: JSONValue): AutoMLJobConfig {
-  return prt.readObj({
+function toAutoMLJobConfig(root: jsonP.JSONValue): AutoMLJobConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CompletionCriteria": toAutoMLJobCompletionCriteria,
@@ -6905,13 +7106,16 @@ export interface AutoMLJobCompletionCriteria {
   MaxRuntimePerTrainingJobInSeconds?: number | null;
   MaxAutoMLJobRuntimeInSeconds?: number | null;
 }
-function fromAutoMLJobCompletionCriteria(input?: AutoMLJobCompletionCriteria | null): JSONValue {
+function fromAutoMLJobCompletionCriteria(input?: AutoMLJobCompletionCriteria | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MaxCandidates: input["MaxCandidates"],
+    MaxRuntimePerTrainingJobInSeconds: input["MaxRuntimePerTrainingJobInSeconds"],
+    MaxAutoMLJobRuntimeInSeconds: input["MaxAutoMLJobRuntimeInSeconds"],
   }
 }
-function toAutoMLJobCompletionCriteria(root: JSONValue): AutoMLJobCompletionCriteria {
-  return prt.readObj({
+function toAutoMLJobCompletionCriteria(root: jsonP.JSONValue): AutoMLJobCompletionCriteria {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MaxCandidates": "n",
@@ -6927,14 +7131,16 @@ export interface AutoMLSecurityConfig {
   EnableInterContainerTrafficEncryption?: boolean | null;
   VpcConfig?: VpcConfig | null;
 }
-function fromAutoMLSecurityConfig(input?: AutoMLSecurityConfig | null): JSONValue {
+function fromAutoMLSecurityConfig(input?: AutoMLSecurityConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    VolumeKmsKeyId: input["VolumeKmsKeyId"],
+    EnableInterContainerTrafficEncryption: input["EnableInterContainerTrafficEncryption"],
     VpcConfig: fromVpcConfig(input["VpcConfig"]),
   }
 }
-function toAutoMLSecurityConfig(root: JSONValue): AutoMLSecurityConfig {
-  return prt.readObj({
+function toAutoMLSecurityConfig(root: jsonP.JSONValue): AutoMLSecurityConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "VolumeKmsKeyId": "s",
@@ -6949,13 +7155,15 @@ export interface VpcConfig {
   SecurityGroupIds: string[];
   Subnets: string[];
 }
-function fromVpcConfig(input?: VpcConfig | null): JSONValue {
+function fromVpcConfig(input?: VpcConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SecurityGroupIds: input["SecurityGroupIds"],
+    Subnets: input["Subnets"],
   }
 }
-function toVpcConfig(root: JSONValue): VpcConfig {
-  return prt.readObj({
+function toVpcConfig(root: jsonP.JSONValue): VpcConfig {
+  return jsonP.readObj({
     required: {
       "SecurityGroupIds": ["s"],
       "Subnets": ["s"],
@@ -6970,13 +7178,16 @@ export interface GitConfig {
   Branch?: string | null;
   SecretArn?: string | null;
 }
-function fromGitConfig(input?: GitConfig | null): JSONValue {
+function fromGitConfig(input?: GitConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RepositoryUrl: input["RepositoryUrl"],
+    Branch: input["Branch"],
+    SecretArn: input["SecretArn"],
   }
 }
-function toGitConfig(root: JSONValue): GitConfig {
-  return prt.readObj({
+function toGitConfig(root: jsonP.JSONValue): GitConfig {
+  return jsonP.readObj({
     required: {
       "RepositoryUrl": "s",
     },
@@ -6993,17 +7204,20 @@ export interface InputConfig {
   DataInputConfig: string;
   Framework: Framework;
 }
-function fromInputConfig(input?: InputConfig | null): JSONValue {
+function fromInputConfig(input?: InputConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Uri: input["S3Uri"],
+    DataInputConfig: input["DataInputConfig"],
+    Framework: input["Framework"],
   }
 }
-function toInputConfig(root: JSONValue): InputConfig {
-  return prt.readObj({
+function toInputConfig(root: jsonP.JSONValue): InputConfig {
+  return jsonP.readObj({
     required: {
       "S3Uri": "s",
       "DataInputConfig": "s",
-      "Framework": toFramework,
+      "Framework": (x: jsonP.JSONValue) => cmnP.readEnum<Framework>(x),
     },
     optional: {},
   }, root);
@@ -7019,20 +7233,7 @@ export type Framework =
 | "XGBOOST"
 | "TFLITE"
 | "DARKNET"
-;
-
-function toFramework(root: JSONValue): Framework | null {
-  return ( false
-    || root == "TENSORFLOW"
-    || root == "KERAS"
-    || root == "MXNET"
-    || root == "ONNX"
-    || root == "PYTORCH"
-    || root == "XGBOOST"
-    || root == "TFLITE"
-    || root == "DARKNET"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface OutputConfig {
@@ -7041,19 +7242,22 @@ export interface OutputConfig {
   TargetPlatform?: TargetPlatform | null;
   CompilerOptions?: string | null;
 }
-function fromOutputConfig(input?: OutputConfig | null): JSONValue {
+function fromOutputConfig(input?: OutputConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3OutputLocation: input["S3OutputLocation"],
+    TargetDevice: input["TargetDevice"],
     TargetPlatform: fromTargetPlatform(input["TargetPlatform"]),
+    CompilerOptions: input["CompilerOptions"],
   }
 }
-function toOutputConfig(root: JSONValue): OutputConfig {
-  return prt.readObj({
+function toOutputConfig(root: jsonP.JSONValue): OutputConfig {
+  return jsonP.readObj({
     required: {
       "S3OutputLocation": "s",
     },
     optional: {
-      "TargetDevice": toTargetDevice,
+      "TargetDevice": (x: jsonP.JSONValue) => cmnP.readEnum<TargetDevice>(x),
       "TargetPlatform": toTargetPlatform,
       "CompilerOptions": "s",
     },
@@ -7089,39 +7293,7 @@ export type TargetDevice =
 | "x86_win32"
 | "x86_win64"
 | "coreml"
-;
-
-function toTargetDevice(root: JSONValue): TargetDevice | null {
-  return ( false
-    || root == "lambda"
-    || root == "ml_m4"
-    || root == "ml_m5"
-    || root == "ml_c4"
-    || root == "ml_c5"
-    || root == "ml_p2"
-    || root == "ml_p3"
-    || root == "ml_g4dn"
-    || root == "ml_inf1"
-    || root == "jetson_tx1"
-    || root == "jetson_tx2"
-    || root == "jetson_nano"
-    || root == "jetson_xavier"
-    || root == "rasp3b"
-    || root == "imx8qm"
-    || root == "deeplens"
-    || root == "rk3399"
-    || root == "rk3288"
-    || root == "aisage"
-    || root == "sbe_c"
-    || root == "qcs605"
-    || root == "qcs603"
-    || root == "sitara_am57x"
-    || root == "amba_cv22"
-    || root == "x86_win32"
-    || root == "x86_win64"
-    || root == "coreml"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface TargetPlatform {
@@ -7129,19 +7301,22 @@ export interface TargetPlatform {
   Arch: TargetPlatformArch;
   Accelerator?: TargetPlatformAccelerator | null;
 }
-function fromTargetPlatform(input?: TargetPlatform | null): JSONValue {
+function fromTargetPlatform(input?: TargetPlatform | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Os: input["Os"],
+    Arch: input["Arch"],
+    Accelerator: input["Accelerator"],
   }
 }
-function toTargetPlatform(root: JSONValue): TargetPlatform {
-  return prt.readObj({
+function toTargetPlatform(root: jsonP.JSONValue): TargetPlatform {
+  return jsonP.readObj({
     required: {
-      "Os": toTargetPlatformOs,
-      "Arch": toTargetPlatformArch,
+      "Os": (x: jsonP.JSONValue) => cmnP.readEnum<TargetPlatformOs>(x),
+      "Arch": (x: jsonP.JSONValue) => cmnP.readEnum<TargetPlatformArch>(x),
     },
     optional: {
-      "Accelerator": toTargetPlatformAccelerator,
+      "Accelerator": (x: jsonP.JSONValue) => cmnP.readEnum<TargetPlatformAccelerator>(x),
     },
   }, root);
 }
@@ -7150,14 +7325,7 @@ function toTargetPlatform(root: JSONValue): TargetPlatform {
 export type TargetPlatformOs =
 | "ANDROID"
 | "LINUX"
-;
-
-function toTargetPlatformOs(root: JSONValue): TargetPlatformOs | null {
-  return ( false
-    || root == "ANDROID"
-    || root == "LINUX"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type TargetPlatformArch =
@@ -7166,45 +7334,20 @@ export type TargetPlatformArch =
 | "ARM64"
 | "ARM_EABI"
 | "ARM_EABIHF"
-;
-
-function toTargetPlatformArch(root: JSONValue): TargetPlatformArch | null {
-  return ( false
-    || root == "X86_64"
-    || root == "X86"
-    || root == "ARM64"
-    || root == "ARM_EABI"
-    || root == "ARM_EABIHF"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type TargetPlatformAccelerator =
 | "INTEL_GRAPHICS"
 | "MALI"
 | "NVIDIA"
-;
-
-function toTargetPlatformAccelerator(root: JSONValue): TargetPlatformAccelerator | null {
-  return ( false
-    || root == "INTEL_GRAPHICS"
-    || root == "MALI"
-    || root == "NVIDIA"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type AuthMode =
 | "SSO"
 | "IAM"
-;
-
-function toAuthMode(root: JSONValue): AuthMode | null {
-  return ( false
-    || root == "SSO"
-    || root == "IAM"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface UserSettings {
@@ -7215,17 +7358,19 @@ export interface UserSettings {
   KernelGatewayAppSettings?: KernelGatewayAppSettings | null;
   TensorBoardAppSettings?: TensorBoardAppSettings | null;
 }
-function fromUserSettings(input?: UserSettings | null): JSONValue {
+function fromUserSettings(input?: UserSettings | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ExecutionRole: input["ExecutionRole"],
+    SecurityGroups: input["SecurityGroups"],
     SharingSettings: fromSharingSettings(input["SharingSettings"]),
     JupyterServerAppSettings: fromJupyterServerAppSettings(input["JupyterServerAppSettings"]),
     KernelGatewayAppSettings: fromKernelGatewayAppSettings(input["KernelGatewayAppSettings"]),
     TensorBoardAppSettings: fromTensorBoardAppSettings(input["TensorBoardAppSettings"]),
   }
 }
-function toUserSettings(root: JSONValue): UserSettings {
-  return prt.readObj({
+function toUserSettings(root: jsonP.JSONValue): UserSettings {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ExecutionRole": "s",
@@ -7244,16 +7389,19 @@ export interface SharingSettings {
   S3OutputPath?: string | null;
   S3KmsKeyId?: string | null;
 }
-function fromSharingSettings(input?: SharingSettings | null): JSONValue {
+function fromSharingSettings(input?: SharingSettings | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    NotebookOutputOption: input["NotebookOutputOption"],
+    S3OutputPath: input["S3OutputPath"],
+    S3KmsKeyId: input["S3KmsKeyId"],
   }
 }
-function toSharingSettings(root: JSONValue): SharingSettings {
-  return prt.readObj({
+function toSharingSettings(root: jsonP.JSONValue): SharingSettings {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "NotebookOutputOption": toNotebookOutputOption,
+      "NotebookOutputOption": (x: jsonP.JSONValue) => cmnP.readEnum<NotebookOutputOption>(x),
       "S3OutputPath": "s",
       "S3KmsKeyId": "s",
     },
@@ -7264,27 +7412,20 @@ function toSharingSettings(root: JSONValue): SharingSettings {
 export type NotebookOutputOption =
 | "Allowed"
 | "Disabled"
-;
-
-function toNotebookOutputOption(root: JSONValue): NotebookOutputOption | null {
-  return ( false
-    || root == "Allowed"
-    || root == "Disabled"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface JupyterServerAppSettings {
   DefaultResourceSpec?: ResourceSpec | null;
 }
-function fromJupyterServerAppSettings(input?: JupyterServerAppSettings | null): JSONValue {
+function fromJupyterServerAppSettings(input?: JupyterServerAppSettings | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     DefaultResourceSpec: fromResourceSpec(input["DefaultResourceSpec"]),
   }
 }
-function toJupyterServerAppSettings(root: JSONValue): JupyterServerAppSettings {
-  return prt.readObj({
+function toJupyterServerAppSettings(root: jsonP.JSONValue): JupyterServerAppSettings {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DefaultResourceSpec": toResourceSpec,
@@ -7297,15 +7438,15 @@ export interface KernelGatewayAppSettings {
   DefaultResourceSpec?: ResourceSpec | null;
   CustomImages?: CustomImage[] | null;
 }
-function fromKernelGatewayAppSettings(input?: KernelGatewayAppSettings | null): JSONValue {
+function fromKernelGatewayAppSettings(input?: KernelGatewayAppSettings | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     DefaultResourceSpec: fromResourceSpec(input["DefaultResourceSpec"]),
     CustomImages: input["CustomImages"]?.map(x => fromCustomImage(x)),
   }
 }
-function toKernelGatewayAppSettings(root: JSONValue): KernelGatewayAppSettings {
-  return prt.readObj({
+function toKernelGatewayAppSettings(root: jsonP.JSONValue): KernelGatewayAppSettings {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DefaultResourceSpec": toResourceSpec,
@@ -7320,13 +7461,16 @@ export interface CustomImage {
   ImageVersionNumber?: number | null;
   AppImageConfigName: string;
 }
-function fromCustomImage(input?: CustomImage | null): JSONValue {
+function fromCustomImage(input?: CustomImage | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ImageName: input["ImageName"],
+    ImageVersionNumber: input["ImageVersionNumber"],
+    AppImageConfigName: input["AppImageConfigName"],
   }
 }
-function toCustomImage(root: JSONValue): CustomImage {
-  return prt.readObj({
+function toCustomImage(root: jsonP.JSONValue): CustomImage {
+  return jsonP.readObj({
     required: {
       "ImageName": "s",
       "AppImageConfigName": "s",
@@ -7341,14 +7485,14 @@ function toCustomImage(root: JSONValue): CustomImage {
 export interface TensorBoardAppSettings {
   DefaultResourceSpec?: ResourceSpec | null;
 }
-function fromTensorBoardAppSettings(input?: TensorBoardAppSettings | null): JSONValue {
+function fromTensorBoardAppSettings(input?: TensorBoardAppSettings | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     DefaultResourceSpec: fromResourceSpec(input["DefaultResourceSpec"]),
   }
 }
-function toTensorBoardAppSettings(root: JSONValue): TensorBoardAppSettings {
-  return prt.readObj({
+function toTensorBoardAppSettings(root: jsonP.JSONValue): TensorBoardAppSettings {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DefaultResourceSpec": toResourceSpec,
@@ -7360,14 +7504,7 @@ function toTensorBoardAppSettings(root: JSONValue): TensorBoardAppSettings {
 export type AppNetworkAccessType =
 | "PublicInternetOnly"
 | "VpcOnly"
-;
-
-function toAppNetworkAccessType(root: JSONValue): AppNetworkAccessType | null {
-  return ( false
-    || root == "PublicInternetOnly"
-    || root == "VpcOnly"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface ProductionVariant {
@@ -7378,22 +7515,28 @@ export interface ProductionVariant {
   InitialVariantWeight?: number | null;
   AcceleratorType?: ProductionVariantAcceleratorType | null;
 }
-function fromProductionVariant(input?: ProductionVariant | null): JSONValue {
+function fromProductionVariant(input?: ProductionVariant | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    VariantName: input["VariantName"],
+    ModelName: input["ModelName"],
+    InitialInstanceCount: input["InitialInstanceCount"],
+    InstanceType: input["InstanceType"],
+    InitialVariantWeight: input["InitialVariantWeight"],
+    AcceleratorType: input["AcceleratorType"],
   }
 }
-function toProductionVariant(root: JSONValue): ProductionVariant {
-  return prt.readObj({
+function toProductionVariant(root: jsonP.JSONValue): ProductionVariant {
+  return jsonP.readObj({
     required: {
       "VariantName": "s",
       "ModelName": "s",
       "InitialInstanceCount": "n",
-      "InstanceType": toProductionVariantInstanceType,
+      "InstanceType": (x: jsonP.JSONValue) => cmnP.readEnum<ProductionVariantInstanceType>(x),
     },
     optional: {
       "InitialVariantWeight": "n",
-      "AcceleratorType": toProductionVariantAcceleratorType,
+      "AcceleratorType": (x: jsonP.JSONValue) => cmnP.readEnum<ProductionVariantAcceleratorType>(x),
     },
   }, root);
 }
@@ -7406,18 +7549,7 @@ export type ProductionVariantAcceleratorType =
 | "ml.eia2.medium"
 | "ml.eia2.large"
 | "ml.eia2.xlarge"
-;
-
-function toProductionVariantAcceleratorType(root: JSONValue): ProductionVariantAcceleratorType | null {
-  return ( false
-    || root == "ml.eia1.medium"
-    || root == "ml.eia1.large"
-    || root == "ml.eia1.xlarge"
-    || root == "ml.eia2.medium"
-    || root == "ml.eia2.large"
-    || root == "ml.eia2.xlarge"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface DataCaptureConfig {
@@ -7428,15 +7560,19 @@ export interface DataCaptureConfig {
   CaptureOptions: CaptureOption[];
   CaptureContentTypeHeader?: CaptureContentTypeHeader | null;
 }
-function fromDataCaptureConfig(input?: DataCaptureConfig | null): JSONValue {
+function fromDataCaptureConfig(input?: DataCaptureConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    EnableCapture: input["EnableCapture"],
+    InitialSamplingPercentage: input["InitialSamplingPercentage"],
+    DestinationS3Uri: input["DestinationS3Uri"],
+    KmsKeyId: input["KmsKeyId"],
     CaptureOptions: input["CaptureOptions"]?.map(x => fromCaptureOption(x)),
     CaptureContentTypeHeader: fromCaptureContentTypeHeader(input["CaptureContentTypeHeader"]),
   }
 }
-function toDataCaptureConfig(root: JSONValue): DataCaptureConfig {
-  return prt.readObj({
+function toDataCaptureConfig(root: jsonP.JSONValue): DataCaptureConfig {
+  return jsonP.readObj({
     required: {
       "InitialSamplingPercentage": "n",
       "DestinationS3Uri": "s",
@@ -7454,15 +7590,16 @@ function toDataCaptureConfig(root: JSONValue): DataCaptureConfig {
 export interface CaptureOption {
   CaptureMode: CaptureMode;
 }
-function fromCaptureOption(input?: CaptureOption | null): JSONValue {
+function fromCaptureOption(input?: CaptureOption | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CaptureMode: input["CaptureMode"],
   }
 }
-function toCaptureOption(root: JSONValue): CaptureOption {
-  return prt.readObj({
+function toCaptureOption(root: jsonP.JSONValue): CaptureOption {
+  return jsonP.readObj({
     required: {
-      "CaptureMode": toCaptureMode,
+      "CaptureMode": (x: jsonP.JSONValue) => cmnP.readEnum<CaptureMode>(x),
     },
     optional: {},
   }, root);
@@ -7472,27 +7609,22 @@ function toCaptureOption(root: JSONValue): CaptureOption {
 export type CaptureMode =
 | "Input"
 | "Output"
-;
-
-function toCaptureMode(root: JSONValue): CaptureMode | null {
-  return ( false
-    || root == "Input"
-    || root == "Output"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface CaptureContentTypeHeader {
   CsvContentTypes?: string[] | null;
   JsonContentTypes?: string[] | null;
 }
-function fromCaptureContentTypeHeader(input?: CaptureContentTypeHeader | null): JSONValue {
+function fromCaptureContentTypeHeader(input?: CaptureContentTypeHeader | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CsvContentTypes: input["CsvContentTypes"],
+    JsonContentTypes: input["JsonContentTypes"],
   }
 }
-function toCaptureContentTypeHeader(root: JSONValue): CaptureContentTypeHeader {
-  return prt.readObj({
+function toCaptureContentTypeHeader(root: jsonP.JSONValue): CaptureContentTypeHeader {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CsvContentTypes": ["s"],
@@ -7505,15 +7637,16 @@ function toCaptureContentTypeHeader(root: JSONValue): CaptureContentTypeHeader {
 export interface HumanLoopRequestSource {
   AwsManagedHumanLoopRequestSource: AwsManagedHumanLoopRequestSource;
 }
-function fromHumanLoopRequestSource(input?: HumanLoopRequestSource | null): JSONValue {
+function fromHumanLoopRequestSource(input?: HumanLoopRequestSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AwsManagedHumanLoopRequestSource: input["AwsManagedHumanLoopRequestSource"],
   }
 }
-function toHumanLoopRequestSource(root: JSONValue): HumanLoopRequestSource {
-  return prt.readObj({
+function toHumanLoopRequestSource(root: jsonP.JSONValue): HumanLoopRequestSource {
+  return jsonP.readObj({
     required: {
-      "AwsManagedHumanLoopRequestSource": toAwsManagedHumanLoopRequestSource,
+      "AwsManagedHumanLoopRequestSource": (x: jsonP.JSONValue) => cmnP.readEnum<AwsManagedHumanLoopRequestSource>(x),
     },
     optional: {},
   }, root);
@@ -7523,27 +7656,20 @@ function toHumanLoopRequestSource(root: JSONValue): HumanLoopRequestSource {
 export type AwsManagedHumanLoopRequestSource =
 | "AWS/Rekognition/DetectModerationLabels/Image/V3"
 | "AWS/Textract/AnalyzeDocument/Forms/V1"
-;
-
-function toAwsManagedHumanLoopRequestSource(root: JSONValue): AwsManagedHumanLoopRequestSource | null {
-  return ( false
-    || root == "AWS/Rekognition/DetectModerationLabels/Image/V3"
-    || root == "AWS/Textract/AnalyzeDocument/Forms/V1"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface HumanLoopActivationConfig {
   HumanLoopActivationConditionsConfig: HumanLoopActivationConditionsConfig;
 }
-function fromHumanLoopActivationConfig(input?: HumanLoopActivationConfig | null): JSONValue {
+function fromHumanLoopActivationConfig(input?: HumanLoopActivationConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     HumanLoopActivationConditionsConfig: fromHumanLoopActivationConditionsConfig(input["HumanLoopActivationConditionsConfig"]),
   }
 }
-function toHumanLoopActivationConfig(root: JSONValue): HumanLoopActivationConfig {
-  return prt.readObj({
+function toHumanLoopActivationConfig(root: jsonP.JSONValue): HumanLoopActivationConfig {
+  return jsonP.readObj({
     required: {
       "HumanLoopActivationConditionsConfig": toHumanLoopActivationConditionsConfig,
     },
@@ -7553,17 +7679,18 @@ function toHumanLoopActivationConfig(root: JSONValue): HumanLoopActivationConfig
 
 // refs: 2 - tags: input, named, interface, output
 export interface HumanLoopActivationConditionsConfig {
-  HumanLoopActivationConditions: string;
+  HumanLoopActivationConditions: jsonP.JSONValue;
 }
-function fromHumanLoopActivationConditionsConfig(input?: HumanLoopActivationConditionsConfig | null): JSONValue {
+function fromHumanLoopActivationConditionsConfig(input?: HumanLoopActivationConditionsConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    HumanLoopActivationConditions: jsonP.serializeJsonValue(input["HumanLoopActivationConditions"]),
   }
 }
-function toHumanLoopActivationConditionsConfig(root: JSONValue): HumanLoopActivationConditionsConfig {
-  return prt.readObj({
+function toHumanLoopActivationConditionsConfig(root: jsonP.JSONValue): HumanLoopActivationConditionsConfig {
+  return jsonP.readObj({
     required: {
-      "HumanLoopActivationConditions": "s",
+      "HumanLoopActivationConditions": jsonP.readJsonValue,
     },
     optional: {},
   }, root);
@@ -7581,14 +7708,22 @@ export interface HumanLoopConfig {
   TaskKeywords?: string[] | null;
   PublicWorkforceTaskPrice?: PublicWorkforceTaskPrice | null;
 }
-function fromHumanLoopConfig(input?: HumanLoopConfig | null): JSONValue {
+function fromHumanLoopConfig(input?: HumanLoopConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    WorkteamArn: input["WorkteamArn"],
+    HumanTaskUiArn: input["HumanTaskUiArn"],
+    TaskTitle: input["TaskTitle"],
+    TaskDescription: input["TaskDescription"],
+    TaskCount: input["TaskCount"],
+    TaskAvailabilityLifetimeInSeconds: input["TaskAvailabilityLifetimeInSeconds"],
+    TaskTimeLimitInSeconds: input["TaskTimeLimitInSeconds"],
+    TaskKeywords: input["TaskKeywords"],
     PublicWorkforceTaskPrice: fromPublicWorkforceTaskPrice(input["PublicWorkforceTaskPrice"]),
   }
 }
-function toHumanLoopConfig(root: JSONValue): HumanLoopConfig {
-  return prt.readObj({
+function toHumanLoopConfig(root: jsonP.JSONValue): HumanLoopConfig {
+  return jsonP.readObj({
     required: {
       "WorkteamArn": "s",
       "HumanTaskUiArn": "s",
@@ -7609,14 +7744,14 @@ function toHumanLoopConfig(root: JSONValue): HumanLoopConfig {
 export interface PublicWorkforceTaskPrice {
   AmountInUsd?: USD | null;
 }
-function fromPublicWorkforceTaskPrice(input?: PublicWorkforceTaskPrice | null): JSONValue {
+function fromPublicWorkforceTaskPrice(input?: PublicWorkforceTaskPrice | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     AmountInUsd: fromUSD(input["AmountInUsd"]),
   }
 }
-function toPublicWorkforceTaskPrice(root: JSONValue): PublicWorkforceTaskPrice {
-  return prt.readObj({
+function toPublicWorkforceTaskPrice(root: jsonP.JSONValue): PublicWorkforceTaskPrice {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AmountInUsd": toUSD,
@@ -7630,13 +7765,16 @@ export interface USD {
   Cents?: number | null;
   TenthFractionsOfACent?: number | null;
 }
-function fromUSD(input?: USD | null): JSONValue {
+function fromUSD(input?: USD | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Dollars: input["Dollars"],
+    Cents: input["Cents"],
+    TenthFractionsOfACent: input["TenthFractionsOfACent"],
   }
 }
-function toUSD(root: JSONValue): USD {
-  return prt.readObj({
+function toUSD(root: jsonP.JSONValue): USD {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Dollars": "n",
@@ -7651,13 +7789,15 @@ export interface FlowDefinitionOutputConfig {
   S3OutputPath: string;
   KmsKeyId?: string | null;
 }
-function fromFlowDefinitionOutputConfig(input?: FlowDefinitionOutputConfig | null): JSONValue {
+function fromFlowDefinitionOutputConfig(input?: FlowDefinitionOutputConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3OutputPath: input["S3OutputPath"],
+    KmsKeyId: input["KmsKeyId"],
   }
 }
-function toFlowDefinitionOutputConfig(root: JSONValue): FlowDefinitionOutputConfig {
-  return prt.readObj({
+function toFlowDefinitionOutputConfig(root: jsonP.JSONValue): FlowDefinitionOutputConfig {
+  return jsonP.readObj({
     required: {
       "S3OutputPath": "s",
     },
@@ -7671,9 +7811,10 @@ function toFlowDefinitionOutputConfig(root: JSONValue): FlowDefinitionOutputConf
 export interface UiTemplate {
   Content: string;
 }
-function fromUiTemplate(input?: UiTemplate | null): JSONValue {
+function fromUiTemplate(input?: UiTemplate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Content: input["Content"],
   }
 }
 
@@ -7686,25 +7827,27 @@ export interface HyperParameterTuningJobConfig {
   TrainingJobEarlyStoppingType?: TrainingJobEarlyStoppingType | null;
   TuningJobCompletionCriteria?: TuningJobCompletionCriteria | null;
 }
-function fromHyperParameterTuningJobConfig(input?: HyperParameterTuningJobConfig | null): JSONValue {
+function fromHyperParameterTuningJobConfig(input?: HyperParameterTuningJobConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Strategy: input["Strategy"],
     HyperParameterTuningJobObjective: fromHyperParameterTuningJobObjective(input["HyperParameterTuningJobObjective"]),
     ResourceLimits: fromResourceLimits(input["ResourceLimits"]),
     ParameterRanges: fromParameterRanges(input["ParameterRanges"]),
+    TrainingJobEarlyStoppingType: input["TrainingJobEarlyStoppingType"],
     TuningJobCompletionCriteria: fromTuningJobCompletionCriteria(input["TuningJobCompletionCriteria"]),
   }
 }
-function toHyperParameterTuningJobConfig(root: JSONValue): HyperParameterTuningJobConfig {
-  return prt.readObj({
+function toHyperParameterTuningJobConfig(root: jsonP.JSONValue): HyperParameterTuningJobConfig {
+  return jsonP.readObj({
     required: {
-      "Strategy": toHyperParameterTuningJobStrategyType,
+      "Strategy": (x: jsonP.JSONValue) => cmnP.readEnum<HyperParameterTuningJobStrategyType>(x),
       "ResourceLimits": toResourceLimits,
     },
     optional: {
       "HyperParameterTuningJobObjective": toHyperParameterTuningJobObjective,
       "ParameterRanges": toParameterRanges,
-      "TrainingJobEarlyStoppingType": toTrainingJobEarlyStoppingType,
+      "TrainingJobEarlyStoppingType": (x: jsonP.JSONValue) => cmnP.readEnum<TrainingJobEarlyStoppingType>(x),
       "TuningJobCompletionCriteria": toTuningJobCompletionCriteria,
     },
   }, root);
@@ -7714,27 +7857,22 @@ function toHyperParameterTuningJobConfig(root: JSONValue): HyperParameterTuningJ
 export type HyperParameterTuningJobStrategyType =
 | "Bayesian"
 | "Random"
-;
-
-function toHyperParameterTuningJobStrategyType(root: JSONValue): HyperParameterTuningJobStrategyType | null {
-  return ( false
-    || root == "Bayesian"
-    || root == "Random"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface ResourceLimits {
   MaxNumberOfTrainingJobs: number;
   MaxParallelTrainingJobs: number;
 }
-function fromResourceLimits(input?: ResourceLimits | null): JSONValue {
+function fromResourceLimits(input?: ResourceLimits | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MaxNumberOfTrainingJobs: input["MaxNumberOfTrainingJobs"],
+    MaxParallelTrainingJobs: input["MaxParallelTrainingJobs"],
   }
 }
-function toResourceLimits(root: JSONValue): ResourceLimits {
-  return prt.readObj({
+function toResourceLimits(root: jsonP.JSONValue): ResourceLimits {
+  return jsonP.readObj({
     required: {
       "MaxNumberOfTrainingJobs": "n",
       "MaxParallelTrainingJobs": "n",
@@ -7749,16 +7887,16 @@ export interface ParameterRanges {
   ContinuousParameterRanges?: ContinuousParameterRange[] | null;
   CategoricalParameterRanges?: CategoricalParameterRange[] | null;
 }
-function fromParameterRanges(input?: ParameterRanges | null): JSONValue {
+function fromParameterRanges(input?: ParameterRanges | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     IntegerParameterRanges: input["IntegerParameterRanges"]?.map(x => fromIntegerParameterRange(x)),
     ContinuousParameterRanges: input["ContinuousParameterRanges"]?.map(x => fromContinuousParameterRange(x)),
     CategoricalParameterRanges: input["CategoricalParameterRanges"]?.map(x => fromCategoricalParameterRange(x)),
   }
 }
-function toParameterRanges(root: JSONValue): ParameterRanges {
-  return prt.readObj({
+function toParameterRanges(root: jsonP.JSONValue): ParameterRanges {
+  return jsonP.readObj({
     required: {},
     optional: {
       "IntegerParameterRanges": [toIntegerParameterRange],
@@ -7775,20 +7913,24 @@ export interface IntegerParameterRange {
   MaxValue: string;
   ScalingType?: HyperParameterScalingType | null;
 }
-function fromIntegerParameterRange(input?: IntegerParameterRange | null): JSONValue {
+function fromIntegerParameterRange(input?: IntegerParameterRange | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    MinValue: input["MinValue"],
+    MaxValue: input["MaxValue"],
+    ScalingType: input["ScalingType"],
   }
 }
-function toIntegerParameterRange(root: JSONValue): IntegerParameterRange {
-  return prt.readObj({
+function toIntegerParameterRange(root: jsonP.JSONValue): IntegerParameterRange {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "MinValue": "s",
       "MaxValue": "s",
     },
     optional: {
-      "ScalingType": toHyperParameterScalingType,
+      "ScalingType": (x: jsonP.JSONValue) => cmnP.readEnum<HyperParameterScalingType>(x),
     },
   }, root);
 }
@@ -7799,16 +7941,7 @@ export type HyperParameterScalingType =
 | "Linear"
 | "Logarithmic"
 | "ReverseLogarithmic"
-;
-
-function toHyperParameterScalingType(root: JSONValue): HyperParameterScalingType | null {
-  return ( false
-    || root == "Auto"
-    || root == "Linear"
-    || root == "Logarithmic"
-    || root == "ReverseLogarithmic"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface ContinuousParameterRange {
@@ -7817,20 +7950,24 @@ export interface ContinuousParameterRange {
   MaxValue: string;
   ScalingType?: HyperParameterScalingType | null;
 }
-function fromContinuousParameterRange(input?: ContinuousParameterRange | null): JSONValue {
+function fromContinuousParameterRange(input?: ContinuousParameterRange | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    MinValue: input["MinValue"],
+    MaxValue: input["MaxValue"],
+    ScalingType: input["ScalingType"],
   }
 }
-function toContinuousParameterRange(root: JSONValue): ContinuousParameterRange {
-  return prt.readObj({
+function toContinuousParameterRange(root: jsonP.JSONValue): ContinuousParameterRange {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "MinValue": "s",
       "MaxValue": "s",
     },
     optional: {
-      "ScalingType": toHyperParameterScalingType,
+      "ScalingType": (x: jsonP.JSONValue) => cmnP.readEnum<HyperParameterScalingType>(x),
     },
   }, root);
 }
@@ -7840,13 +7977,15 @@ export interface CategoricalParameterRange {
   Name: string;
   Values: string[];
 }
-function fromCategoricalParameterRange(input?: CategoricalParameterRange | null): JSONValue {
+function fromCategoricalParameterRange(input?: CategoricalParameterRange | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Values: input["Values"],
   }
 }
-function toCategoricalParameterRange(root: JSONValue): CategoricalParameterRange {
-  return prt.readObj({
+function toCategoricalParameterRange(root: jsonP.JSONValue): CategoricalParameterRange {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "Values": ["s"],
@@ -7859,26 +7998,20 @@ function toCategoricalParameterRange(root: JSONValue): CategoricalParameterRange
 export type TrainingJobEarlyStoppingType =
 | "Off"
 | "Auto"
-;
-
-function toTrainingJobEarlyStoppingType(root: JSONValue): TrainingJobEarlyStoppingType | null {
-  return ( false
-    || root == "Off"
-    || root == "Auto"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface TuningJobCompletionCriteria {
   TargetObjectiveMetricValue: number;
 }
-function fromTuningJobCompletionCriteria(input?: TuningJobCompletionCriteria | null): JSONValue {
+function fromTuningJobCompletionCriteria(input?: TuningJobCompletionCriteria | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    TargetObjectiveMetricValue: input["TargetObjectiveMetricValue"],
   }
 }
-function toTuningJobCompletionCriteria(root: JSONValue): TuningJobCompletionCriteria {
-  return prt.readObj({
+function toTuningJobCompletionCriteria(root: jsonP.JSONValue): TuningJobCompletionCriteria {
+  return jsonP.readObj({
     required: {
       "TargetObjectiveMetricValue": "n",
     },
@@ -7891,7 +8024,7 @@ export interface HyperParameterTrainingJobDefinition {
   DefinitionName?: string | null;
   TuningObjective?: HyperParameterTuningJobObjective | null;
   HyperParameterRanges?: ParameterRanges | null;
-  StaticHyperParameters?: { [key: string]: string } | null;
+  StaticHyperParameters?: { [key: string]: string | null | undefined } | null;
   AlgorithmSpecification: HyperParameterAlgorithmSpecification;
   RoleArn: string;
   InputDataConfig?: Channel[] | null;
@@ -7904,22 +8037,28 @@ export interface HyperParameterTrainingJobDefinition {
   EnableManagedSpotTraining?: boolean | null;
   CheckpointConfig?: CheckpointConfig | null;
 }
-function fromHyperParameterTrainingJobDefinition(input?: HyperParameterTrainingJobDefinition | null): JSONValue {
+function fromHyperParameterTrainingJobDefinition(input?: HyperParameterTrainingJobDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DefinitionName: input["DefinitionName"],
     TuningObjective: fromHyperParameterTuningJobObjective(input["TuningObjective"]),
     HyperParameterRanges: fromParameterRanges(input["HyperParameterRanges"]),
+    StaticHyperParameters: input["StaticHyperParameters"],
     AlgorithmSpecification: fromHyperParameterAlgorithmSpecification(input["AlgorithmSpecification"]),
+    RoleArn: input["RoleArn"],
     InputDataConfig: input["InputDataConfig"]?.map(x => fromChannel(x)),
     VpcConfig: fromVpcConfig(input["VpcConfig"]),
     OutputDataConfig: fromOutputDataConfig(input["OutputDataConfig"]),
     ResourceConfig: fromResourceConfig(input["ResourceConfig"]),
     StoppingCondition: fromStoppingCondition(input["StoppingCondition"]),
+    EnableNetworkIsolation: input["EnableNetworkIsolation"],
+    EnableInterContainerTrafficEncryption: input["EnableInterContainerTrafficEncryption"],
+    EnableManagedSpotTraining: input["EnableManagedSpotTraining"],
     CheckpointConfig: fromCheckpointConfig(input["CheckpointConfig"]),
   }
 }
-function toHyperParameterTrainingJobDefinition(root: JSONValue): HyperParameterTrainingJobDefinition {
-  return prt.readObj({
+function toHyperParameterTrainingJobDefinition(root: jsonP.JSONValue): HyperParameterTrainingJobDefinition {
+  return jsonP.readObj({
     required: {
       "AlgorithmSpecification": toHyperParameterAlgorithmSpecification,
       "RoleArn": "s",
@@ -7931,7 +8070,7 @@ function toHyperParameterTrainingJobDefinition(root: JSONValue): HyperParameterT
       "DefinitionName": "s",
       "TuningObjective": toHyperParameterTuningJobObjective,
       "HyperParameterRanges": toParameterRanges,
-      "StaticHyperParameters": x => prt.readMap(String, String, x),
+      "StaticHyperParameters": x => jsonP.readMap(String, String, x),
       "InputDataConfig": [toChannel],
       "VpcConfig": toVpcConfig,
       "EnableNetworkIsolation": "b",
@@ -7949,16 +8088,19 @@ export interface HyperParameterAlgorithmSpecification {
   AlgorithmName?: string | null;
   MetricDefinitions?: MetricDefinition[] | null;
 }
-function fromHyperParameterAlgorithmSpecification(input?: HyperParameterAlgorithmSpecification | null): JSONValue {
+function fromHyperParameterAlgorithmSpecification(input?: HyperParameterAlgorithmSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    TrainingImage: input["TrainingImage"],
+    TrainingInputMode: input["TrainingInputMode"],
+    AlgorithmName: input["AlgorithmName"],
     MetricDefinitions: input["MetricDefinitions"]?.map(x => fromMetricDefinition(x)),
   }
 }
-function toHyperParameterAlgorithmSpecification(root: JSONValue): HyperParameterAlgorithmSpecification {
-  return prt.readObj({
+function toHyperParameterAlgorithmSpecification(root: jsonP.JSONValue): HyperParameterAlgorithmSpecification {
+  return jsonP.readObj({
     required: {
-      "TrainingInputMode": toTrainingInputMode,
+      "TrainingInputMode": (x: jsonP.JSONValue) => cmnP.readEnum<TrainingInputMode>(x),
     },
     optional: {
       "TrainingImage": "s",
@@ -7973,13 +8115,15 @@ export interface CheckpointConfig {
   S3Uri: string;
   LocalPath?: string | null;
 }
-function fromCheckpointConfig(input?: CheckpointConfig | null): JSONValue {
+function fromCheckpointConfig(input?: CheckpointConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Uri: input["S3Uri"],
+    LocalPath: input["LocalPath"],
   }
 }
-function toCheckpointConfig(root: JSONValue): CheckpointConfig {
-  return prt.readObj({
+function toCheckpointConfig(root: jsonP.JSONValue): CheckpointConfig {
+  return jsonP.readObj({
     required: {
       "S3Uri": "s",
     },
@@ -7994,17 +8138,18 @@ export interface HyperParameterTuningJobWarmStartConfig {
   ParentHyperParameterTuningJobs: ParentHyperParameterTuningJob[];
   WarmStartType: HyperParameterTuningJobWarmStartType;
 }
-function fromHyperParameterTuningJobWarmStartConfig(input?: HyperParameterTuningJobWarmStartConfig | null): JSONValue {
+function fromHyperParameterTuningJobWarmStartConfig(input?: HyperParameterTuningJobWarmStartConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     ParentHyperParameterTuningJobs: input["ParentHyperParameterTuningJobs"]?.map(x => fromParentHyperParameterTuningJob(x)),
+    WarmStartType: input["WarmStartType"],
   }
 }
-function toHyperParameterTuningJobWarmStartConfig(root: JSONValue): HyperParameterTuningJobWarmStartConfig {
-  return prt.readObj({
+function toHyperParameterTuningJobWarmStartConfig(root: jsonP.JSONValue): HyperParameterTuningJobWarmStartConfig {
+  return jsonP.readObj({
     required: {
       "ParentHyperParameterTuningJobs": [toParentHyperParameterTuningJob],
-      "WarmStartType": toHyperParameterTuningJobWarmStartType,
+      "WarmStartType": (x: jsonP.JSONValue) => cmnP.readEnum<HyperParameterTuningJobWarmStartType>(x),
     },
     optional: {},
   }, root);
@@ -8014,13 +8159,14 @@ function toHyperParameterTuningJobWarmStartConfig(root: JSONValue): HyperParamet
 export interface ParentHyperParameterTuningJob {
   HyperParameterTuningJobName?: string | null;
 }
-function fromParentHyperParameterTuningJob(input?: ParentHyperParameterTuningJob | null): JSONValue {
+function fromParentHyperParameterTuningJob(input?: ParentHyperParameterTuningJob | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    HyperParameterTuningJobName: input["HyperParameterTuningJobName"],
   }
 }
-function toParentHyperParameterTuningJob(root: JSONValue): ParentHyperParameterTuningJob {
-  return prt.readObj({
+function toParentHyperParameterTuningJob(root: jsonP.JSONValue): ParentHyperParameterTuningJob {
+  return jsonP.readObj({
     required: {},
     optional: {
       "HyperParameterTuningJobName": "s",
@@ -8032,29 +8178,22 @@ function toParentHyperParameterTuningJob(root: JSONValue): ParentHyperParameterT
 export type HyperParameterTuningJobWarmStartType =
 | "IdenticalDataAndAlgorithm"
 | "TransferLearning"
-;
-
-function toHyperParameterTuningJobWarmStartType(root: JSONValue): HyperParameterTuningJobWarmStartType | null {
-  return ( false
-    || root == "IdenticalDataAndAlgorithm"
-    || root == "TransferLearning"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface LabelingJobInputConfig {
   DataSource: LabelingJobDataSource;
   DataAttributes?: LabelingJobDataAttributes | null;
 }
-function fromLabelingJobInputConfig(input?: LabelingJobInputConfig | null): JSONValue {
+function fromLabelingJobInputConfig(input?: LabelingJobInputConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     DataSource: fromLabelingJobDataSource(input["DataSource"]),
     DataAttributes: fromLabelingJobDataAttributes(input["DataAttributes"]),
   }
 }
-function toLabelingJobInputConfig(root: JSONValue): LabelingJobInputConfig {
-  return prt.readObj({
+function toLabelingJobInputConfig(root: jsonP.JSONValue): LabelingJobInputConfig {
+  return jsonP.readObj({
     required: {
       "DataSource": toLabelingJobDataSource,
     },
@@ -8069,15 +8208,15 @@ export interface LabelingJobDataSource {
   S3DataSource?: LabelingJobS3DataSource | null;
   SnsDataSource?: LabelingJobSnsDataSource | null;
 }
-function fromLabelingJobDataSource(input?: LabelingJobDataSource | null): JSONValue {
+function fromLabelingJobDataSource(input?: LabelingJobDataSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     S3DataSource: fromLabelingJobS3DataSource(input["S3DataSource"]),
     SnsDataSource: fromLabelingJobSnsDataSource(input["SnsDataSource"]),
   }
 }
-function toLabelingJobDataSource(root: JSONValue): LabelingJobDataSource {
-  return prt.readObj({
+function toLabelingJobDataSource(root: jsonP.JSONValue): LabelingJobDataSource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "S3DataSource": toLabelingJobS3DataSource,
@@ -8090,13 +8229,14 @@ function toLabelingJobDataSource(root: JSONValue): LabelingJobDataSource {
 export interface LabelingJobS3DataSource {
   ManifestS3Uri: string;
 }
-function fromLabelingJobS3DataSource(input?: LabelingJobS3DataSource | null): JSONValue {
+function fromLabelingJobS3DataSource(input?: LabelingJobS3DataSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ManifestS3Uri: input["ManifestS3Uri"],
   }
 }
-function toLabelingJobS3DataSource(root: JSONValue): LabelingJobS3DataSource {
-  return prt.readObj({
+function toLabelingJobS3DataSource(root: jsonP.JSONValue): LabelingJobS3DataSource {
+  return jsonP.readObj({
     required: {
       "ManifestS3Uri": "s",
     },
@@ -8108,13 +8248,14 @@ function toLabelingJobS3DataSource(root: JSONValue): LabelingJobS3DataSource {
 export interface LabelingJobSnsDataSource {
   SnsTopicArn: string;
 }
-function fromLabelingJobSnsDataSource(input?: LabelingJobSnsDataSource | null): JSONValue {
+function fromLabelingJobSnsDataSource(input?: LabelingJobSnsDataSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SnsTopicArn: input["SnsTopicArn"],
   }
 }
-function toLabelingJobSnsDataSource(root: JSONValue): LabelingJobSnsDataSource {
-  return prt.readObj({
+function toLabelingJobSnsDataSource(root: jsonP.JSONValue): LabelingJobSnsDataSource {
+  return jsonP.readObj({
     required: {
       "SnsTopicArn": "s",
     },
@@ -8126,16 +8267,17 @@ function toLabelingJobSnsDataSource(root: JSONValue): LabelingJobSnsDataSource {
 export interface LabelingJobDataAttributes {
   ContentClassifiers?: ContentClassifier[] | null;
 }
-function fromLabelingJobDataAttributes(input?: LabelingJobDataAttributes | null): JSONValue {
+function fromLabelingJobDataAttributes(input?: LabelingJobDataAttributes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ContentClassifiers: input["ContentClassifiers"],
   }
 }
-function toLabelingJobDataAttributes(root: JSONValue): LabelingJobDataAttributes {
-  return prt.readObj({
+function toLabelingJobDataAttributes(root: jsonP.JSONValue): LabelingJobDataAttributes {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "ContentClassifiers": [toContentClassifier],
+      "ContentClassifiers": [(x: jsonP.JSONValue) => cmnP.readEnum<ContentClassifier>(x)],
     },
   }, root);
 }
@@ -8144,14 +8286,7 @@ function toLabelingJobDataAttributes(root: JSONValue): LabelingJobDataAttributes
 export type ContentClassifier =
 | "FreeOfPersonallyIdentifiableInformation"
 | "FreeOfAdultContent"
-;
-
-function toContentClassifier(root: JSONValue): ContentClassifier | null {
-  return ( false
-    || root == "FreeOfPersonallyIdentifiableInformation"
-    || root == "FreeOfAdultContent"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface LabelingJobOutputConfig {
@@ -8159,13 +8294,16 @@ export interface LabelingJobOutputConfig {
   KmsKeyId?: string | null;
   SnsTopicArn?: string | null;
 }
-function fromLabelingJobOutputConfig(input?: LabelingJobOutputConfig | null): JSONValue {
+function fromLabelingJobOutputConfig(input?: LabelingJobOutputConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3OutputPath: input["S3OutputPath"],
+    KmsKeyId: input["KmsKeyId"],
+    SnsTopicArn: input["SnsTopicArn"],
   }
 }
-function toLabelingJobOutputConfig(root: JSONValue): LabelingJobOutputConfig {
-  return prt.readObj({
+function toLabelingJobOutputConfig(root: jsonP.JSONValue): LabelingJobOutputConfig {
+  return jsonP.readObj({
     required: {
       "S3OutputPath": "s",
     },
@@ -8181,13 +8319,15 @@ export interface LabelingJobStoppingConditions {
   MaxHumanLabeledObjectCount?: number | null;
   MaxPercentageOfInputDatasetLabeled?: number | null;
 }
-function fromLabelingJobStoppingConditions(input?: LabelingJobStoppingConditions | null): JSONValue {
+function fromLabelingJobStoppingConditions(input?: LabelingJobStoppingConditions | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MaxHumanLabeledObjectCount: input["MaxHumanLabeledObjectCount"],
+    MaxPercentageOfInputDatasetLabeled: input["MaxPercentageOfInputDatasetLabeled"],
   }
 }
-function toLabelingJobStoppingConditions(root: JSONValue): LabelingJobStoppingConditions {
-  return prt.readObj({
+function toLabelingJobStoppingConditions(root: jsonP.JSONValue): LabelingJobStoppingConditions {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MaxHumanLabeledObjectCount": "n",
@@ -8202,14 +8342,16 @@ export interface LabelingJobAlgorithmsConfig {
   InitialActiveLearningModelArn?: string | null;
   LabelingJobResourceConfig?: LabelingJobResourceConfig | null;
 }
-function fromLabelingJobAlgorithmsConfig(input?: LabelingJobAlgorithmsConfig | null): JSONValue {
+function fromLabelingJobAlgorithmsConfig(input?: LabelingJobAlgorithmsConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    LabelingJobAlgorithmSpecificationArn: input["LabelingJobAlgorithmSpecificationArn"],
+    InitialActiveLearningModelArn: input["InitialActiveLearningModelArn"],
     LabelingJobResourceConfig: fromLabelingJobResourceConfig(input["LabelingJobResourceConfig"]),
   }
 }
-function toLabelingJobAlgorithmsConfig(root: JSONValue): LabelingJobAlgorithmsConfig {
-  return prt.readObj({
+function toLabelingJobAlgorithmsConfig(root: jsonP.JSONValue): LabelingJobAlgorithmsConfig {
+  return jsonP.readObj({
     required: {
       "LabelingJobAlgorithmSpecificationArn": "s",
     },
@@ -8224,13 +8366,14 @@ function toLabelingJobAlgorithmsConfig(root: JSONValue): LabelingJobAlgorithmsCo
 export interface LabelingJobResourceConfig {
   VolumeKmsKeyId?: string | null;
 }
-function fromLabelingJobResourceConfig(input?: LabelingJobResourceConfig | null): JSONValue {
+function fromLabelingJobResourceConfig(input?: LabelingJobResourceConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    VolumeKmsKeyId: input["VolumeKmsKeyId"],
   }
 }
-function toLabelingJobResourceConfig(root: JSONValue): LabelingJobResourceConfig {
-  return prt.readObj({
+function toLabelingJobResourceConfig(root: jsonP.JSONValue): LabelingJobResourceConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "VolumeKmsKeyId": "s",
@@ -8253,16 +8396,25 @@ export interface HumanTaskConfig {
   AnnotationConsolidationConfig: AnnotationConsolidationConfig;
   PublicWorkforceTaskPrice?: PublicWorkforceTaskPrice | null;
 }
-function fromHumanTaskConfig(input?: HumanTaskConfig | null): JSONValue {
+function fromHumanTaskConfig(input?: HumanTaskConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    WorkteamArn: input["WorkteamArn"],
     UiConfig: fromUiConfig(input["UiConfig"]),
+    PreHumanTaskLambdaArn: input["PreHumanTaskLambdaArn"],
+    TaskKeywords: input["TaskKeywords"],
+    TaskTitle: input["TaskTitle"],
+    TaskDescription: input["TaskDescription"],
+    NumberOfHumanWorkersPerDataObject: input["NumberOfHumanWorkersPerDataObject"],
+    TaskTimeLimitInSeconds: input["TaskTimeLimitInSeconds"],
+    TaskAvailabilityLifetimeInSeconds: input["TaskAvailabilityLifetimeInSeconds"],
+    MaxConcurrentTaskCount: input["MaxConcurrentTaskCount"],
     AnnotationConsolidationConfig: fromAnnotationConsolidationConfig(input["AnnotationConsolidationConfig"]),
     PublicWorkforceTaskPrice: fromPublicWorkforceTaskPrice(input["PublicWorkforceTaskPrice"]),
   }
 }
-function toHumanTaskConfig(root: JSONValue): HumanTaskConfig {
-  return prt.readObj({
+function toHumanTaskConfig(root: jsonP.JSONValue): HumanTaskConfig {
+  return jsonP.readObj({
     required: {
       "WorkteamArn": "s",
       "UiConfig": toUiConfig,
@@ -8287,13 +8439,15 @@ export interface UiConfig {
   UiTemplateS3Uri?: string | null;
   HumanTaskUiArn?: string | null;
 }
-function fromUiConfig(input?: UiConfig | null): JSONValue {
+function fromUiConfig(input?: UiConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    UiTemplateS3Uri: input["UiTemplateS3Uri"],
+    HumanTaskUiArn: input["HumanTaskUiArn"],
   }
 }
-function toUiConfig(root: JSONValue): UiConfig {
-  return prt.readObj({
+function toUiConfig(root: jsonP.JSONValue): UiConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "UiTemplateS3Uri": "s",
@@ -8306,13 +8460,14 @@ function toUiConfig(root: JSONValue): UiConfig {
 export interface AnnotationConsolidationConfig {
   AnnotationConsolidationLambdaArn: string;
 }
-function fromAnnotationConsolidationConfig(input?: AnnotationConsolidationConfig | null): JSONValue {
+function fromAnnotationConsolidationConfig(input?: AnnotationConsolidationConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AnnotationConsolidationLambdaArn: input["AnnotationConsolidationLambdaArn"],
   }
 }
-function toAnnotationConsolidationConfig(root: JSONValue): AnnotationConsolidationConfig {
-  return prt.readObj({
+function toAnnotationConsolidationConfig(root: jsonP.JSONValue): AnnotationConsolidationConfig {
+  return jsonP.readObj({
     required: {
       "AnnotationConsolidationLambdaArn": "s",
     },
@@ -8327,25 +8482,31 @@ export interface ContainerDefinition {
   ImageConfig?: ImageConfig | null;
   Mode?: ContainerMode | null;
   ModelDataUrl?: string | null;
-  Environment?: { [key: string]: string } | null;
+  Environment?: { [key: string]: string | null | undefined } | null;
   ModelPackageName?: string | null;
 }
-function fromContainerDefinition(input?: ContainerDefinition | null): JSONValue {
+function fromContainerDefinition(input?: ContainerDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ContainerHostname: input["ContainerHostname"],
+    Image: input["Image"],
     ImageConfig: fromImageConfig(input["ImageConfig"]),
+    Mode: input["Mode"],
+    ModelDataUrl: input["ModelDataUrl"],
+    Environment: input["Environment"],
+    ModelPackageName: input["ModelPackageName"],
   }
 }
-function toContainerDefinition(root: JSONValue): ContainerDefinition {
-  return prt.readObj({
+function toContainerDefinition(root: jsonP.JSONValue): ContainerDefinition {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ContainerHostname": "s",
       "Image": "s",
       "ImageConfig": toImageConfig,
-      "Mode": toContainerMode,
+      "Mode": (x: jsonP.JSONValue) => cmnP.readEnum<ContainerMode>(x),
       "ModelDataUrl": "s",
-      "Environment": x => prt.readMap(String, String, x),
+      "Environment": x => jsonP.readMap(String, String, x),
       "ModelPackageName": "s",
     },
   }, root);
@@ -8355,15 +8516,16 @@ function toContainerDefinition(root: JSONValue): ContainerDefinition {
 export interface ImageConfig {
   RepositoryAccessMode: RepositoryAccessMode;
 }
-function fromImageConfig(input?: ImageConfig | null): JSONValue {
+function fromImageConfig(input?: ImageConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RepositoryAccessMode: input["RepositoryAccessMode"],
   }
 }
-function toImageConfig(root: JSONValue): ImageConfig {
-  return prt.readObj({
+function toImageConfig(root: jsonP.JSONValue): ImageConfig {
+  return jsonP.readObj({
     required: {
-      "RepositoryAccessMode": toRepositoryAccessMode,
+      "RepositoryAccessMode": (x: jsonP.JSONValue) => cmnP.readEnum<RepositoryAccessMode>(x),
     },
     optional: {},
   }, root);
@@ -8373,41 +8535,28 @@ function toImageConfig(root: JSONValue): ImageConfig {
 export type RepositoryAccessMode =
 | "Platform"
 | "Vpc"
-;
-
-function toRepositoryAccessMode(root: JSONValue): RepositoryAccessMode | null {
-  return ( false
-    || root == "Platform"
-    || root == "Vpc"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type ContainerMode =
 | "SingleModel"
 | "MultiModel"
-;
-
-function toContainerMode(root: JSONValue): ContainerMode | null {
-  return ( false
-    || root == "SingleModel"
-    || root == "MultiModel"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface ModelPackageValidationSpecification {
   ValidationRole: string;
   ValidationProfiles: ModelPackageValidationProfile[];
 }
-function fromModelPackageValidationSpecification(input?: ModelPackageValidationSpecification | null): JSONValue {
+function fromModelPackageValidationSpecification(input?: ModelPackageValidationSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ValidationRole: input["ValidationRole"],
     ValidationProfiles: input["ValidationProfiles"]?.map(x => fromModelPackageValidationProfile(x)),
   }
 }
-function toModelPackageValidationSpecification(root: JSONValue): ModelPackageValidationSpecification {
-  return prt.readObj({
+function toModelPackageValidationSpecification(root: jsonP.JSONValue): ModelPackageValidationSpecification {
+  return jsonP.readObj({
     required: {
       "ValidationRole": "s",
       "ValidationProfiles": [toModelPackageValidationProfile],
@@ -8421,14 +8570,15 @@ export interface ModelPackageValidationProfile {
   ProfileName: string;
   TransformJobDefinition: TransformJobDefinition;
 }
-function fromModelPackageValidationProfile(input?: ModelPackageValidationProfile | null): JSONValue {
+function fromModelPackageValidationProfile(input?: ModelPackageValidationProfile | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ProfileName: input["ProfileName"],
     TransformJobDefinition: fromTransformJobDefinition(input["TransformJobDefinition"]),
   }
 }
-function toModelPackageValidationProfile(root: JSONValue): ModelPackageValidationProfile {
-  return prt.readObj({
+function toModelPackageValidationProfile(root: jsonP.JSONValue): ModelPackageValidationProfile {
+  return jsonP.readObj({
     required: {
       "ProfileName": "s",
       "TransformJobDefinition": toTransformJobDefinition,
@@ -8441,14 +8591,14 @@ function toModelPackageValidationProfile(root: JSONValue): ModelPackageValidatio
 export interface SourceAlgorithmSpecification {
   SourceAlgorithms: SourceAlgorithm[];
 }
-function fromSourceAlgorithmSpecification(input?: SourceAlgorithmSpecification | null): JSONValue {
+function fromSourceAlgorithmSpecification(input?: SourceAlgorithmSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     SourceAlgorithms: input["SourceAlgorithms"]?.map(x => fromSourceAlgorithm(x)),
   }
 }
-function toSourceAlgorithmSpecification(root: JSONValue): SourceAlgorithmSpecification {
-  return prt.readObj({
+function toSourceAlgorithmSpecification(root: jsonP.JSONValue): SourceAlgorithmSpecification {
+  return jsonP.readObj({
     required: {
       "SourceAlgorithms": [toSourceAlgorithm],
     },
@@ -8461,13 +8611,15 @@ export interface SourceAlgorithm {
   ModelDataUrl?: string | null;
   AlgorithmName: string;
 }
-function fromSourceAlgorithm(input?: SourceAlgorithm | null): JSONValue {
+function fromSourceAlgorithm(input?: SourceAlgorithm | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ModelDataUrl: input["ModelDataUrl"],
+    AlgorithmName: input["AlgorithmName"],
   }
 }
-function toSourceAlgorithm(root: JSONValue): SourceAlgorithm {
-  return prt.readObj({
+function toSourceAlgorithm(root: jsonP.JSONValue): SourceAlgorithm {
+  return jsonP.readObj({
     required: {
       "AlgorithmName": "s",
     },
@@ -8482,15 +8634,15 @@ export interface MonitoringScheduleConfig {
   ScheduleConfig?: ScheduleConfig | null;
   MonitoringJobDefinition: MonitoringJobDefinition;
 }
-function fromMonitoringScheduleConfig(input?: MonitoringScheduleConfig | null): JSONValue {
+function fromMonitoringScheduleConfig(input?: MonitoringScheduleConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     ScheduleConfig: fromScheduleConfig(input["ScheduleConfig"]),
     MonitoringJobDefinition: fromMonitoringJobDefinition(input["MonitoringJobDefinition"]),
   }
 }
-function toMonitoringScheduleConfig(root: JSONValue): MonitoringScheduleConfig {
-  return prt.readObj({
+function toMonitoringScheduleConfig(root: jsonP.JSONValue): MonitoringScheduleConfig {
+  return jsonP.readObj({
     required: {
       "MonitoringJobDefinition": toMonitoringJobDefinition,
     },
@@ -8504,13 +8656,14 @@ function toMonitoringScheduleConfig(root: JSONValue): MonitoringScheduleConfig {
 export interface ScheduleConfig {
   ScheduleExpression: string;
 }
-function fromScheduleConfig(input?: ScheduleConfig | null): JSONValue {
+function fromScheduleConfig(input?: ScheduleConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ScheduleExpression: input["ScheduleExpression"],
   }
 }
-function toScheduleConfig(root: JSONValue): ScheduleConfig {
-  return prt.readObj({
+function toScheduleConfig(root: jsonP.JSONValue): ScheduleConfig {
+  return jsonP.readObj({
     required: {
       "ScheduleExpression": "s",
     },
@@ -8526,24 +8679,26 @@ export interface MonitoringJobDefinition {
   MonitoringResources: MonitoringResources;
   MonitoringAppSpecification: MonitoringAppSpecification;
   StoppingCondition?: MonitoringStoppingCondition | null;
-  Environment?: { [key: string]: string } | null;
+  Environment?: { [key: string]: string | null | undefined } | null;
   NetworkConfig?: NetworkConfig | null;
   RoleArn: string;
 }
-function fromMonitoringJobDefinition(input?: MonitoringJobDefinition | null): JSONValue {
+function fromMonitoringJobDefinition(input?: MonitoringJobDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     BaselineConfig: fromMonitoringBaselineConfig(input["BaselineConfig"]),
     MonitoringInputs: input["MonitoringInputs"]?.map(x => fromMonitoringInput(x)),
     MonitoringOutputConfig: fromMonitoringOutputConfig(input["MonitoringOutputConfig"]),
     MonitoringResources: fromMonitoringResources(input["MonitoringResources"]),
     MonitoringAppSpecification: fromMonitoringAppSpecification(input["MonitoringAppSpecification"]),
     StoppingCondition: fromMonitoringStoppingCondition(input["StoppingCondition"]),
+    Environment: input["Environment"],
     NetworkConfig: fromNetworkConfig(input["NetworkConfig"]),
+    RoleArn: input["RoleArn"],
   }
 }
-function toMonitoringJobDefinition(root: JSONValue): MonitoringJobDefinition {
-  return prt.readObj({
+function toMonitoringJobDefinition(root: jsonP.JSONValue): MonitoringJobDefinition {
+  return jsonP.readObj({
     required: {
       "MonitoringInputs": [toMonitoringInput],
       "MonitoringOutputConfig": toMonitoringOutputConfig,
@@ -8554,7 +8709,7 @@ function toMonitoringJobDefinition(root: JSONValue): MonitoringJobDefinition {
     optional: {
       "BaselineConfig": toMonitoringBaselineConfig,
       "StoppingCondition": toMonitoringStoppingCondition,
-      "Environment": x => prt.readMap(String, String, x),
+      "Environment": x => jsonP.readMap(String, String, x),
       "NetworkConfig": toNetworkConfig,
     },
   }, root);
@@ -8565,15 +8720,15 @@ export interface MonitoringBaselineConfig {
   ConstraintsResource?: MonitoringConstraintsResource | null;
   StatisticsResource?: MonitoringStatisticsResource | null;
 }
-function fromMonitoringBaselineConfig(input?: MonitoringBaselineConfig | null): JSONValue {
+function fromMonitoringBaselineConfig(input?: MonitoringBaselineConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     ConstraintsResource: fromMonitoringConstraintsResource(input["ConstraintsResource"]),
     StatisticsResource: fromMonitoringStatisticsResource(input["StatisticsResource"]),
   }
 }
-function toMonitoringBaselineConfig(root: JSONValue): MonitoringBaselineConfig {
-  return prt.readObj({
+function toMonitoringBaselineConfig(root: jsonP.JSONValue): MonitoringBaselineConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ConstraintsResource": toMonitoringConstraintsResource,
@@ -8586,13 +8741,14 @@ function toMonitoringBaselineConfig(root: JSONValue): MonitoringBaselineConfig {
 export interface MonitoringConstraintsResource {
   S3Uri?: string | null;
 }
-function fromMonitoringConstraintsResource(input?: MonitoringConstraintsResource | null): JSONValue {
+function fromMonitoringConstraintsResource(input?: MonitoringConstraintsResource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Uri: input["S3Uri"],
   }
 }
-function toMonitoringConstraintsResource(root: JSONValue): MonitoringConstraintsResource {
-  return prt.readObj({
+function toMonitoringConstraintsResource(root: jsonP.JSONValue): MonitoringConstraintsResource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "S3Uri": "s",
@@ -8604,13 +8760,14 @@ function toMonitoringConstraintsResource(root: JSONValue): MonitoringConstraints
 export interface MonitoringStatisticsResource {
   S3Uri?: string | null;
 }
-function fromMonitoringStatisticsResource(input?: MonitoringStatisticsResource | null): JSONValue {
+function fromMonitoringStatisticsResource(input?: MonitoringStatisticsResource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Uri: input["S3Uri"],
   }
 }
-function toMonitoringStatisticsResource(root: JSONValue): MonitoringStatisticsResource {
-  return prt.readObj({
+function toMonitoringStatisticsResource(root: jsonP.JSONValue): MonitoringStatisticsResource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "S3Uri": "s",
@@ -8622,14 +8779,14 @@ function toMonitoringStatisticsResource(root: JSONValue): MonitoringStatisticsRe
 export interface MonitoringInput {
   EndpointInput: EndpointInput;
 }
-function fromMonitoringInput(input?: MonitoringInput | null): JSONValue {
+function fromMonitoringInput(input?: MonitoringInput | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     EndpointInput: fromEndpointInput(input["EndpointInput"]),
   }
 }
-function toMonitoringInput(root: JSONValue): MonitoringInput {
-  return prt.readObj({
+function toMonitoringInput(root: jsonP.JSONValue): MonitoringInput {
+  return jsonP.readObj({
     required: {
       "EndpointInput": toEndpointInput,
     },
@@ -8644,20 +8801,24 @@ export interface EndpointInput {
   S3InputMode?: ProcessingS3InputMode | null;
   S3DataDistributionType?: ProcessingS3DataDistributionType | null;
 }
-function fromEndpointInput(input?: EndpointInput | null): JSONValue {
+function fromEndpointInput(input?: EndpointInput | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    EndpointName: input["EndpointName"],
+    LocalPath: input["LocalPath"],
+    S3InputMode: input["S3InputMode"],
+    S3DataDistributionType: input["S3DataDistributionType"],
   }
 }
-function toEndpointInput(root: JSONValue): EndpointInput {
-  return prt.readObj({
+function toEndpointInput(root: jsonP.JSONValue): EndpointInput {
+  return jsonP.readObj({
     required: {
       "EndpointName": "s",
       "LocalPath": "s",
     },
     optional: {
-      "S3InputMode": toProcessingS3InputMode,
-      "S3DataDistributionType": toProcessingS3DataDistributionType,
+      "S3InputMode": (x: jsonP.JSONValue) => cmnP.readEnum<ProcessingS3InputMode>(x),
+      "S3DataDistributionType": (x: jsonP.JSONValue) => cmnP.readEnum<ProcessingS3DataDistributionType>(x),
     },
   }, root);
 }
@@ -8666,41 +8827,28 @@ function toEndpointInput(root: JSONValue): EndpointInput {
 export type ProcessingS3InputMode =
 | "Pipe"
 | "File"
-;
-
-function toProcessingS3InputMode(root: JSONValue): ProcessingS3InputMode | null {
-  return ( false
-    || root == "Pipe"
-    || root == "File"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, enum, output
 export type ProcessingS3DataDistributionType =
 | "FullyReplicated"
 | "ShardedByS3Key"
-;
-
-function toProcessingS3DataDistributionType(root: JSONValue): ProcessingS3DataDistributionType | null {
-  return ( false
-    || root == "FullyReplicated"
-    || root == "ShardedByS3Key"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface MonitoringOutputConfig {
   MonitoringOutputs: MonitoringOutput[];
   KmsKeyId?: string | null;
 }
-function fromMonitoringOutputConfig(input?: MonitoringOutputConfig | null): JSONValue {
+function fromMonitoringOutputConfig(input?: MonitoringOutputConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     MonitoringOutputs: input["MonitoringOutputs"]?.map(x => fromMonitoringOutput(x)),
+    KmsKeyId: input["KmsKeyId"],
   }
 }
-function toMonitoringOutputConfig(root: JSONValue): MonitoringOutputConfig {
-  return prt.readObj({
+function toMonitoringOutputConfig(root: jsonP.JSONValue): MonitoringOutputConfig {
+  return jsonP.readObj({
     required: {
       "MonitoringOutputs": [toMonitoringOutput],
     },
@@ -8714,14 +8862,14 @@ function toMonitoringOutputConfig(root: JSONValue): MonitoringOutputConfig {
 export interface MonitoringOutput {
   S3Output: MonitoringS3Output;
 }
-function fromMonitoringOutput(input?: MonitoringOutput | null): JSONValue {
+function fromMonitoringOutput(input?: MonitoringOutput | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     S3Output: fromMonitoringS3Output(input["S3Output"]),
   }
 }
-function toMonitoringOutput(root: JSONValue): MonitoringOutput {
-  return prt.readObj({
+function toMonitoringOutput(root: jsonP.JSONValue): MonitoringOutput {
+  return jsonP.readObj({
     required: {
       "S3Output": toMonitoringS3Output,
     },
@@ -8735,19 +8883,22 @@ export interface MonitoringS3Output {
   LocalPath: string;
   S3UploadMode?: ProcessingS3UploadMode | null;
 }
-function fromMonitoringS3Output(input?: MonitoringS3Output | null): JSONValue {
+function fromMonitoringS3Output(input?: MonitoringS3Output | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Uri: input["S3Uri"],
+    LocalPath: input["LocalPath"],
+    S3UploadMode: input["S3UploadMode"],
   }
 }
-function toMonitoringS3Output(root: JSONValue): MonitoringS3Output {
-  return prt.readObj({
+function toMonitoringS3Output(root: jsonP.JSONValue): MonitoringS3Output {
+  return jsonP.readObj({
     required: {
       "S3Uri": "s",
       "LocalPath": "s",
     },
     optional: {
-      "S3UploadMode": toProcessingS3UploadMode,
+      "S3UploadMode": (x: jsonP.JSONValue) => cmnP.readEnum<ProcessingS3UploadMode>(x),
     },
   }, root);
 }
@@ -8756,27 +8907,20 @@ function toMonitoringS3Output(root: JSONValue): MonitoringS3Output {
 export type ProcessingS3UploadMode =
 | "Continuous"
 | "EndOfJob"
-;
-
-function toProcessingS3UploadMode(root: JSONValue): ProcessingS3UploadMode | null {
-  return ( false
-    || root == "Continuous"
-    || root == "EndOfJob"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface MonitoringResources {
   ClusterConfig: MonitoringClusterConfig;
 }
-function fromMonitoringResources(input?: MonitoringResources | null): JSONValue {
+function fromMonitoringResources(input?: MonitoringResources | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     ClusterConfig: fromMonitoringClusterConfig(input["ClusterConfig"]),
   }
 }
-function toMonitoringResources(root: JSONValue): MonitoringResources {
-  return prt.readObj({
+function toMonitoringResources(root: jsonP.JSONValue): MonitoringResources {
+  return jsonP.readObj({
     required: {
       "ClusterConfig": toMonitoringClusterConfig,
     },
@@ -8791,16 +8935,20 @@ export interface MonitoringClusterConfig {
   VolumeSizeInGB: number;
   VolumeKmsKeyId?: string | null;
 }
-function fromMonitoringClusterConfig(input?: MonitoringClusterConfig | null): JSONValue {
+function fromMonitoringClusterConfig(input?: MonitoringClusterConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    InstanceCount: input["InstanceCount"],
+    InstanceType: input["InstanceType"],
+    VolumeSizeInGB: input["VolumeSizeInGB"],
+    VolumeKmsKeyId: input["VolumeKmsKeyId"],
   }
 }
-function toMonitoringClusterConfig(root: JSONValue): MonitoringClusterConfig {
-  return prt.readObj({
+function toMonitoringClusterConfig(root: jsonP.JSONValue): MonitoringClusterConfig {
+  return jsonP.readObj({
     required: {
       "InstanceCount": "n",
-      "InstanceType": toProcessingInstanceType,
+      "InstanceType": (x: jsonP.JSONValue) => cmnP.readEnum<ProcessingInstanceType>(x),
       "VolumeSizeInGB": "n",
     },
     optional: {
@@ -8849,50 +8997,7 @@ export type ProcessingInstanceType =
 | "ml.r5.12xlarge"
 | "ml.r5.16xlarge"
 | "ml.r5.24xlarge"
-;
-
-function toProcessingInstanceType(root: JSONValue): ProcessingInstanceType | null {
-  return ( false
-    || root == "ml.t3.medium"
-    || root == "ml.t3.large"
-    || root == "ml.t3.xlarge"
-    || root == "ml.t3.2xlarge"
-    || root == "ml.m4.xlarge"
-    || root == "ml.m4.2xlarge"
-    || root == "ml.m4.4xlarge"
-    || root == "ml.m4.10xlarge"
-    || root == "ml.m4.16xlarge"
-    || root == "ml.c4.xlarge"
-    || root == "ml.c4.2xlarge"
-    || root == "ml.c4.4xlarge"
-    || root == "ml.c4.8xlarge"
-    || root == "ml.p2.xlarge"
-    || root == "ml.p2.8xlarge"
-    || root == "ml.p2.16xlarge"
-    || root == "ml.p3.2xlarge"
-    || root == "ml.p3.8xlarge"
-    || root == "ml.p3.16xlarge"
-    || root == "ml.c5.xlarge"
-    || root == "ml.c5.2xlarge"
-    || root == "ml.c5.4xlarge"
-    || root == "ml.c5.9xlarge"
-    || root == "ml.c5.18xlarge"
-    || root == "ml.m5.large"
-    || root == "ml.m5.xlarge"
-    || root == "ml.m5.2xlarge"
-    || root == "ml.m5.4xlarge"
-    || root == "ml.m5.12xlarge"
-    || root == "ml.m5.24xlarge"
-    || root == "ml.r5.large"
-    || root == "ml.r5.xlarge"
-    || root == "ml.r5.2xlarge"
-    || root == "ml.r5.4xlarge"
-    || root == "ml.r5.8xlarge"
-    || root == "ml.r5.12xlarge"
-    || root == "ml.r5.16xlarge"
-    || root == "ml.r5.24xlarge"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface MonitoringAppSpecification {
@@ -8902,13 +9007,18 @@ export interface MonitoringAppSpecification {
   RecordPreprocessorSourceUri?: string | null;
   PostAnalyticsProcessorSourceUri?: string | null;
 }
-function fromMonitoringAppSpecification(input?: MonitoringAppSpecification | null): JSONValue {
+function fromMonitoringAppSpecification(input?: MonitoringAppSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ImageUri: input["ImageUri"],
+    ContainerEntrypoint: input["ContainerEntrypoint"],
+    ContainerArguments: input["ContainerArguments"],
+    RecordPreprocessorSourceUri: input["RecordPreprocessorSourceUri"],
+    PostAnalyticsProcessorSourceUri: input["PostAnalyticsProcessorSourceUri"],
   }
 }
-function toMonitoringAppSpecification(root: JSONValue): MonitoringAppSpecification {
-  return prt.readObj({
+function toMonitoringAppSpecification(root: jsonP.JSONValue): MonitoringAppSpecification {
+  return jsonP.readObj({
     required: {
       "ImageUri": "s",
     },
@@ -8925,13 +9035,14 @@ function toMonitoringAppSpecification(root: JSONValue): MonitoringAppSpecificati
 export interface MonitoringStoppingCondition {
   MaxRuntimeInSeconds: number;
 }
-function fromMonitoringStoppingCondition(input?: MonitoringStoppingCondition | null): JSONValue {
+function fromMonitoringStoppingCondition(input?: MonitoringStoppingCondition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MaxRuntimeInSeconds: input["MaxRuntimeInSeconds"],
   }
 }
-function toMonitoringStoppingCondition(root: JSONValue): MonitoringStoppingCondition {
-  return prt.readObj({
+function toMonitoringStoppingCondition(root: jsonP.JSONValue): MonitoringStoppingCondition {
+  return jsonP.readObj({
     required: {
       "MaxRuntimeInSeconds": "n",
     },
@@ -8945,14 +9056,16 @@ export interface NetworkConfig {
   EnableNetworkIsolation?: boolean | null;
   VpcConfig?: VpcConfig | null;
 }
-function fromNetworkConfig(input?: NetworkConfig | null): JSONValue {
+function fromNetworkConfig(input?: NetworkConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    EnableInterContainerTrafficEncryption: input["EnableInterContainerTrafficEncryption"],
+    EnableNetworkIsolation: input["EnableNetworkIsolation"],
     VpcConfig: fromVpcConfig(input["VpcConfig"]),
   }
 }
-function toNetworkConfig(root: JSONValue): NetworkConfig {
-  return prt.readObj({
+function toNetworkConfig(root: jsonP.JSONValue): NetworkConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EnableInterContainerTrafficEncryption": "b",
@@ -9002,63 +9115,13 @@ export type InstanceType =
 | "ml.p3.2xlarge"
 | "ml.p3.8xlarge"
 | "ml.p3.16xlarge"
-;
-
-function toInstanceType(root: JSONValue): InstanceType | null {
-  return ( false
-    || root == "ml.t2.medium"
-    || root == "ml.t2.large"
-    || root == "ml.t2.xlarge"
-    || root == "ml.t2.2xlarge"
-    || root == "ml.t3.medium"
-    || root == "ml.t3.large"
-    || root == "ml.t3.xlarge"
-    || root == "ml.t3.2xlarge"
-    || root == "ml.m4.xlarge"
-    || root == "ml.m4.2xlarge"
-    || root == "ml.m4.4xlarge"
-    || root == "ml.m4.10xlarge"
-    || root == "ml.m4.16xlarge"
-    || root == "ml.m5.xlarge"
-    || root == "ml.m5.2xlarge"
-    || root == "ml.m5.4xlarge"
-    || root == "ml.m5.12xlarge"
-    || root == "ml.m5.24xlarge"
-    || root == "ml.c4.xlarge"
-    || root == "ml.c4.2xlarge"
-    || root == "ml.c4.4xlarge"
-    || root == "ml.c4.8xlarge"
-    || root == "ml.c5.xlarge"
-    || root == "ml.c5.2xlarge"
-    || root == "ml.c5.4xlarge"
-    || root == "ml.c5.9xlarge"
-    || root == "ml.c5.18xlarge"
-    || root == "ml.c5d.xlarge"
-    || root == "ml.c5d.2xlarge"
-    || root == "ml.c5d.4xlarge"
-    || root == "ml.c5d.9xlarge"
-    || root == "ml.c5d.18xlarge"
-    || root == "ml.p2.xlarge"
-    || root == "ml.p2.8xlarge"
-    || root == "ml.p2.16xlarge"
-    || root == "ml.p3.2xlarge"
-    || root == "ml.p3.8xlarge"
-    || root == "ml.p3.16xlarge"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type DirectInternetAccess =
 | "Enabled"
 | "Disabled"
-;
-
-function toDirectInternetAccess(root: JSONValue): DirectInternetAccess | null {
-  return ( false
-    || root == "Enabled"
-    || root == "Disabled"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type NotebookInstanceAcceleratorType =
@@ -9068,43 +9131,26 @@ export type NotebookInstanceAcceleratorType =
 | "ml.eia2.medium"
 | "ml.eia2.large"
 | "ml.eia2.xlarge"
-;
-
-function toNotebookInstanceAcceleratorType(root: JSONValue): NotebookInstanceAcceleratorType | null {
-  return ( false
-    || root == "ml.eia1.medium"
-    || root == "ml.eia1.large"
-    || root == "ml.eia1.xlarge"
-    || root == "ml.eia2.medium"
-    || root == "ml.eia2.large"
-    || root == "ml.eia2.xlarge"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type RootAccess =
 | "Enabled"
 | "Disabled"
-;
-
-function toRootAccess(root: JSONValue): RootAccess | null {
-  return ( false
-    || root == "Enabled"
-    || root == "Disabled"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface NotebookInstanceLifecycleHook {
   Content?: string | null;
 }
-function fromNotebookInstanceLifecycleHook(input?: NotebookInstanceLifecycleHook | null): JSONValue {
+function fromNotebookInstanceLifecycleHook(input?: NotebookInstanceLifecycleHook | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Content: input["Content"],
   }
 }
-function toNotebookInstanceLifecycleHook(root: JSONValue): NotebookInstanceLifecycleHook {
-  return prt.readObj({
+function toNotebookInstanceLifecycleHook(root: jsonP.JSONValue): NotebookInstanceLifecycleHook {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Content": "s",
@@ -9117,14 +9163,15 @@ export interface ProcessingInput {
   InputName: string;
   S3Input: ProcessingS3Input;
 }
-function fromProcessingInput(input?: ProcessingInput | null): JSONValue {
+function fromProcessingInput(input?: ProcessingInput | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    InputName: input["InputName"],
     S3Input: fromProcessingS3Input(input["S3Input"]),
   }
 }
-function toProcessingInput(root: JSONValue): ProcessingInput {
-  return prt.readObj({
+function toProcessingInput(root: jsonP.JSONValue): ProcessingInput {
+  return jsonP.readObj({
     required: {
       "InputName": "s",
       "S3Input": toProcessingS3Input,
@@ -9142,22 +9189,28 @@ export interface ProcessingS3Input {
   S3DataDistributionType?: ProcessingS3DataDistributionType | null;
   S3CompressionType?: ProcessingS3CompressionType | null;
 }
-function fromProcessingS3Input(input?: ProcessingS3Input | null): JSONValue {
+function fromProcessingS3Input(input?: ProcessingS3Input | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Uri: input["S3Uri"],
+    LocalPath: input["LocalPath"],
+    S3DataType: input["S3DataType"],
+    S3InputMode: input["S3InputMode"],
+    S3DataDistributionType: input["S3DataDistributionType"],
+    S3CompressionType: input["S3CompressionType"],
   }
 }
-function toProcessingS3Input(root: JSONValue): ProcessingS3Input {
-  return prt.readObj({
+function toProcessingS3Input(root: jsonP.JSONValue): ProcessingS3Input {
+  return jsonP.readObj({
     required: {
       "S3Uri": "s",
       "LocalPath": "s",
-      "S3DataType": toProcessingS3DataType,
-      "S3InputMode": toProcessingS3InputMode,
+      "S3DataType": (x: jsonP.JSONValue) => cmnP.readEnum<ProcessingS3DataType>(x),
+      "S3InputMode": (x: jsonP.JSONValue) => cmnP.readEnum<ProcessingS3InputMode>(x),
     },
     optional: {
-      "S3DataDistributionType": toProcessingS3DataDistributionType,
-      "S3CompressionType": toProcessingS3CompressionType,
+      "S3DataDistributionType": (x: jsonP.JSONValue) => cmnP.readEnum<ProcessingS3DataDistributionType>(x),
+      "S3CompressionType": (x: jsonP.JSONValue) => cmnP.readEnum<ProcessingS3CompressionType>(x),
     },
   }, root);
 }
@@ -9166,41 +9219,28 @@ function toProcessingS3Input(root: JSONValue): ProcessingS3Input {
 export type ProcessingS3DataType =
 | "ManifestFile"
 | "S3Prefix"
-;
-
-function toProcessingS3DataType(root: JSONValue): ProcessingS3DataType | null {
-  return ( false
-    || root == "ManifestFile"
-    || root == "S3Prefix"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type ProcessingS3CompressionType =
 | "None"
 | "Gzip"
-;
-
-function toProcessingS3CompressionType(root: JSONValue): ProcessingS3CompressionType | null {
-  return ( false
-    || root == "None"
-    || root == "Gzip"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface ProcessingOutputConfig {
   Outputs: ProcessingOutput[];
   KmsKeyId?: string | null;
 }
-function fromProcessingOutputConfig(input?: ProcessingOutputConfig | null): JSONValue {
+function fromProcessingOutputConfig(input?: ProcessingOutputConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Outputs: input["Outputs"]?.map(x => fromProcessingOutput(x)),
+    KmsKeyId: input["KmsKeyId"],
   }
 }
-function toProcessingOutputConfig(root: JSONValue): ProcessingOutputConfig {
-  return prt.readObj({
+function toProcessingOutputConfig(root: jsonP.JSONValue): ProcessingOutputConfig {
+  return jsonP.readObj({
     required: {
       "Outputs": [toProcessingOutput],
     },
@@ -9215,14 +9255,15 @@ export interface ProcessingOutput {
   OutputName: string;
   S3Output: ProcessingS3Output;
 }
-function fromProcessingOutput(input?: ProcessingOutput | null): JSONValue {
+function fromProcessingOutput(input?: ProcessingOutput | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    OutputName: input["OutputName"],
     S3Output: fromProcessingS3Output(input["S3Output"]),
   }
 }
-function toProcessingOutput(root: JSONValue): ProcessingOutput {
-  return prt.readObj({
+function toProcessingOutput(root: jsonP.JSONValue): ProcessingOutput {
+  return jsonP.readObj({
     required: {
       "OutputName": "s",
       "S3Output": toProcessingS3Output,
@@ -9237,17 +9278,20 @@ export interface ProcessingS3Output {
   LocalPath: string;
   S3UploadMode: ProcessingS3UploadMode;
 }
-function fromProcessingS3Output(input?: ProcessingS3Output | null): JSONValue {
+function fromProcessingS3Output(input?: ProcessingS3Output | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Uri: input["S3Uri"],
+    LocalPath: input["LocalPath"],
+    S3UploadMode: input["S3UploadMode"],
   }
 }
-function toProcessingS3Output(root: JSONValue): ProcessingS3Output {
-  return prt.readObj({
+function toProcessingS3Output(root: jsonP.JSONValue): ProcessingS3Output {
+  return jsonP.readObj({
     required: {
       "S3Uri": "s",
       "LocalPath": "s",
-      "S3UploadMode": toProcessingS3UploadMode,
+      "S3UploadMode": (x: jsonP.JSONValue) => cmnP.readEnum<ProcessingS3UploadMode>(x),
     },
     optional: {},
   }, root);
@@ -9257,14 +9301,14 @@ function toProcessingS3Output(root: JSONValue): ProcessingS3Output {
 export interface ProcessingResources {
   ClusterConfig: ProcessingClusterConfig;
 }
-function fromProcessingResources(input?: ProcessingResources | null): JSONValue {
+function fromProcessingResources(input?: ProcessingResources | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     ClusterConfig: fromProcessingClusterConfig(input["ClusterConfig"]),
   }
 }
-function toProcessingResources(root: JSONValue): ProcessingResources {
-  return prt.readObj({
+function toProcessingResources(root: jsonP.JSONValue): ProcessingResources {
+  return jsonP.readObj({
     required: {
       "ClusterConfig": toProcessingClusterConfig,
     },
@@ -9279,16 +9323,20 @@ export interface ProcessingClusterConfig {
   VolumeSizeInGB: number;
   VolumeKmsKeyId?: string | null;
 }
-function fromProcessingClusterConfig(input?: ProcessingClusterConfig | null): JSONValue {
+function fromProcessingClusterConfig(input?: ProcessingClusterConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    InstanceCount: input["InstanceCount"],
+    InstanceType: input["InstanceType"],
+    VolumeSizeInGB: input["VolumeSizeInGB"],
+    VolumeKmsKeyId: input["VolumeKmsKeyId"],
   }
 }
-function toProcessingClusterConfig(root: JSONValue): ProcessingClusterConfig {
-  return prt.readObj({
+function toProcessingClusterConfig(root: jsonP.JSONValue): ProcessingClusterConfig {
+  return jsonP.readObj({
     required: {
       "InstanceCount": "n",
-      "InstanceType": toProcessingInstanceType,
+      "InstanceType": (x: jsonP.JSONValue) => cmnP.readEnum<ProcessingInstanceType>(x),
       "VolumeSizeInGB": "n",
     },
     optional: {
@@ -9301,13 +9349,14 @@ function toProcessingClusterConfig(root: JSONValue): ProcessingClusterConfig {
 export interface ProcessingStoppingCondition {
   MaxRuntimeInSeconds: number;
 }
-function fromProcessingStoppingCondition(input?: ProcessingStoppingCondition | null): JSONValue {
+function fromProcessingStoppingCondition(input?: ProcessingStoppingCondition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MaxRuntimeInSeconds: input["MaxRuntimeInSeconds"],
   }
 }
-function toProcessingStoppingCondition(root: JSONValue): ProcessingStoppingCondition {
-  return prt.readObj({
+function toProcessingStoppingCondition(root: jsonP.JSONValue): ProcessingStoppingCondition {
+  return jsonP.readObj({
     required: {
       "MaxRuntimeInSeconds": "n",
     },
@@ -9321,13 +9370,16 @@ export interface AppSpecification {
   ContainerEntrypoint?: string[] | null;
   ContainerArguments?: string[] | null;
 }
-function fromAppSpecification(input?: AppSpecification | null): JSONValue {
+function fromAppSpecification(input?: AppSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ImageUri: input["ImageUri"],
+    ContainerEntrypoint: input["ContainerEntrypoint"],
+    ContainerArguments: input["ContainerArguments"],
   }
 }
-function toAppSpecification(root: JSONValue): AppSpecification {
-  return prt.readObj({
+function toAppSpecification(root: jsonP.JSONValue): AppSpecification {
+  return jsonP.readObj({
     required: {
       "ImageUri": "s",
     },
@@ -9344,13 +9396,16 @@ export interface ExperimentConfig {
   TrialName?: string | null;
   TrialComponentDisplayName?: string | null;
 }
-function fromExperimentConfig(input?: ExperimentConfig | null): JSONValue {
+function fromExperimentConfig(input?: ExperimentConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ExperimentName: input["ExperimentName"],
+    TrialName: input["TrialName"],
+    TrialComponentDisplayName: input["TrialComponentDisplayName"],
   }
 }
-function toExperimentConfig(root: JSONValue): ExperimentConfig {
-  return prt.readObj({
+function toExperimentConfig(root: jsonP.JSONValue): ExperimentConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ExperimentName": "s",
@@ -9368,16 +9423,20 @@ export interface AlgorithmSpecification {
   MetricDefinitions?: MetricDefinition[] | null;
   EnableSageMakerMetricsTimeSeries?: boolean | null;
 }
-function fromAlgorithmSpecification(input?: AlgorithmSpecification | null): JSONValue {
+function fromAlgorithmSpecification(input?: AlgorithmSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    TrainingImage: input["TrainingImage"],
+    AlgorithmName: input["AlgorithmName"],
+    TrainingInputMode: input["TrainingInputMode"],
     MetricDefinitions: input["MetricDefinitions"]?.map(x => fromMetricDefinition(x)),
+    EnableSageMakerMetricsTimeSeries: input["EnableSageMakerMetricsTimeSeries"],
   }
 }
-function toAlgorithmSpecification(root: JSONValue): AlgorithmSpecification {
-  return prt.readObj({
+function toAlgorithmSpecification(root: jsonP.JSONValue): AlgorithmSpecification {
+  return jsonP.readObj({
     required: {
-      "TrainingInputMode": toTrainingInputMode,
+      "TrainingInputMode": (x: jsonP.JSONValue) => cmnP.readEnum<TrainingInputMode>(x),
     },
     optional: {
       "TrainingImage": "s",
@@ -9392,23 +9451,26 @@ function toAlgorithmSpecification(root: JSONValue): AlgorithmSpecification {
 export interface DebugHookConfig {
   LocalPath?: string | null;
   S3OutputPath: string;
-  HookParameters?: { [key: string]: string } | null;
+  HookParameters?: { [key: string]: string | null | undefined } | null;
   CollectionConfigurations?: CollectionConfiguration[] | null;
 }
-function fromDebugHookConfig(input?: DebugHookConfig | null): JSONValue {
+function fromDebugHookConfig(input?: DebugHookConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    LocalPath: input["LocalPath"],
+    S3OutputPath: input["S3OutputPath"],
+    HookParameters: input["HookParameters"],
     CollectionConfigurations: input["CollectionConfigurations"]?.map(x => fromCollectionConfiguration(x)),
   }
 }
-function toDebugHookConfig(root: JSONValue): DebugHookConfig {
-  return prt.readObj({
+function toDebugHookConfig(root: jsonP.JSONValue): DebugHookConfig {
+  return jsonP.readObj({
     required: {
       "S3OutputPath": "s",
     },
     optional: {
       "LocalPath": "s",
-      "HookParameters": x => prt.readMap(String, String, x),
+      "HookParameters": x => jsonP.readMap(String, String, x),
       "CollectionConfigurations": [toCollectionConfiguration],
     },
   }, root);
@@ -9417,19 +9479,21 @@ function toDebugHookConfig(root: JSONValue): DebugHookConfig {
 // refs: 4 - tags: input, named, interface, output
 export interface CollectionConfiguration {
   CollectionName?: string | null;
-  CollectionParameters?: { [key: string]: string } | null;
+  CollectionParameters?: { [key: string]: string | null | undefined } | null;
 }
-function fromCollectionConfiguration(input?: CollectionConfiguration | null): JSONValue {
+function fromCollectionConfiguration(input?: CollectionConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CollectionName: input["CollectionName"],
+    CollectionParameters: input["CollectionParameters"],
   }
 }
-function toCollectionConfiguration(root: JSONValue): CollectionConfiguration {
-  return prt.readObj({
+function toCollectionConfiguration(root: jsonP.JSONValue): CollectionConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CollectionName": "s",
-      "CollectionParameters": x => prt.readMap(String, String, x),
+      "CollectionParameters": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -9442,15 +9506,22 @@ export interface DebugRuleConfiguration {
   RuleEvaluatorImage: string;
   InstanceType?: ProcessingInstanceType | null;
   VolumeSizeInGB?: number | null;
-  RuleParameters?: { [key: string]: string } | null;
+  RuleParameters?: { [key: string]: string | null | undefined } | null;
 }
-function fromDebugRuleConfiguration(input?: DebugRuleConfiguration | null): JSONValue {
+function fromDebugRuleConfiguration(input?: DebugRuleConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RuleConfigurationName: input["RuleConfigurationName"],
+    LocalPath: input["LocalPath"],
+    S3OutputPath: input["S3OutputPath"],
+    RuleEvaluatorImage: input["RuleEvaluatorImage"],
+    InstanceType: input["InstanceType"],
+    VolumeSizeInGB: input["VolumeSizeInGB"],
+    RuleParameters: input["RuleParameters"],
   }
 }
-function toDebugRuleConfiguration(root: JSONValue): DebugRuleConfiguration {
-  return prt.readObj({
+function toDebugRuleConfiguration(root: jsonP.JSONValue): DebugRuleConfiguration {
+  return jsonP.readObj({
     required: {
       "RuleConfigurationName": "s",
       "RuleEvaluatorImage": "s",
@@ -9458,9 +9529,9 @@ function toDebugRuleConfiguration(root: JSONValue): DebugRuleConfiguration {
     optional: {
       "LocalPath": "s",
       "S3OutputPath": "s",
-      "InstanceType": toProcessingInstanceType,
+      "InstanceType": (x: jsonP.JSONValue) => cmnP.readEnum<ProcessingInstanceType>(x),
       "VolumeSizeInGB": "n",
-      "RuleParameters": x => prt.readMap(String, String, x),
+      "RuleParameters": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -9470,13 +9541,15 @@ export interface TensorBoardOutputConfig {
   LocalPath?: string | null;
   S3OutputPath: string;
 }
-function fromTensorBoardOutputConfig(input?: TensorBoardOutputConfig | null): JSONValue {
+function fromTensorBoardOutputConfig(input?: TensorBoardOutputConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    LocalPath: input["LocalPath"],
+    S3OutputPath: input["S3OutputPath"],
   }
 }
-function toTensorBoardOutputConfig(root: JSONValue): TensorBoardOutputConfig {
-  return prt.readObj({
+function toTensorBoardOutputConfig(root: jsonP.JSONValue): TensorBoardOutputConfig {
+  return jsonP.readObj({
     required: {
       "S3OutputPath": "s",
     },
@@ -9491,13 +9564,15 @@ export interface ModelClientConfig {
   InvocationsTimeoutInSeconds?: number | null;
   InvocationsMaxRetries?: number | null;
 }
-function fromModelClientConfig(input?: ModelClientConfig | null): JSONValue {
+function fromModelClientConfig(input?: ModelClientConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    InvocationsTimeoutInSeconds: input["InvocationsTimeoutInSeconds"],
+    InvocationsMaxRetries: input["InvocationsMaxRetries"],
   }
 }
-function toModelClientConfig(root: JSONValue): ModelClientConfig {
-  return prt.readObj({
+function toModelClientConfig(root: jsonP.JSONValue): ModelClientConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "InvocationsTimeoutInSeconds": "n",
@@ -9512,18 +9587,21 @@ export interface DataProcessing {
   OutputFilter?: string | null;
   JoinSource?: JoinSource | null;
 }
-function fromDataProcessing(input?: DataProcessing | null): JSONValue {
+function fromDataProcessing(input?: DataProcessing | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    InputFilter: input["InputFilter"],
+    OutputFilter: input["OutputFilter"],
+    JoinSource: input["JoinSource"],
   }
 }
-function toDataProcessing(root: JSONValue): DataProcessing {
-  return prt.readObj({
+function toDataProcessing(root: jsonP.JSONValue): DataProcessing {
+  return jsonP.readObj({
     required: {},
     optional: {
       "InputFilter": "s",
       "OutputFilter": "s",
-      "JoinSource": toJoinSource,
+      "JoinSource": (x: jsonP.JSONValue) => cmnP.readEnum<JoinSource>(x),
     },
   }, root);
 }
@@ -9532,30 +9610,25 @@ function toDataProcessing(root: JSONValue): DataProcessing {
 export type JoinSource =
 | "Input"
 | "None"
-;
-
-function toJoinSource(root: JSONValue): JoinSource | null {
-  return ( false
-    || root == "Input"
-    || root == "None"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface TrialComponentStatus {
   PrimaryStatus?: TrialComponentPrimaryStatus | null;
   Message?: string | null;
 }
-function fromTrialComponentStatus(input?: TrialComponentStatus | null): JSONValue {
+function fromTrialComponentStatus(input?: TrialComponentStatus | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    PrimaryStatus: input["PrimaryStatus"],
+    Message: input["Message"],
   }
 }
-function toTrialComponentStatus(root: JSONValue): TrialComponentStatus {
-  return prt.readObj({
+function toTrialComponentStatus(root: jsonP.JSONValue): TrialComponentStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "PrimaryStatus": toTrialComponentPrimaryStatus,
+      "PrimaryStatus": (x: jsonP.JSONValue) => cmnP.readEnum<TrialComponentPrimaryStatus>(x),
       "Message": "s",
     },
   }, root);
@@ -9568,30 +9641,22 @@ export type TrialComponentPrimaryStatus =
 | "Failed"
 | "Stopping"
 | "Stopped"
-;
-
-function toTrialComponentPrimaryStatus(root: JSONValue): TrialComponentPrimaryStatus | null {
-  return ( false
-    || root == "InProgress"
-    || root == "Completed"
-    || root == "Failed"
-    || root == "Stopping"
-    || root == "Stopped"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface TrialComponentParameterValue {
   StringValue?: string | null;
   NumberValue?: number | null;
 }
-function fromTrialComponentParameterValue(input?: TrialComponentParameterValue | null): JSONValue {
+function fromTrialComponentParameterValue(input?: TrialComponentParameterValue | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    StringValue: input["StringValue"],
+    NumberValue: input["NumberValue"],
   }
 }
-function toTrialComponentParameterValue(root: JSONValue): TrialComponentParameterValue {
-  return prt.readObj({
+function toTrialComponentParameterValue(root: jsonP.JSONValue): TrialComponentParameterValue {
+  return jsonP.readObj({
     required: {},
     optional: {
       "StringValue": "s",
@@ -9605,13 +9670,15 @@ export interface TrialComponentArtifact {
   MediaType?: string | null;
   Value: string;
 }
-function fromTrialComponentArtifact(input?: TrialComponentArtifact | null): JSONValue {
+function fromTrialComponentArtifact(input?: TrialComponentArtifact | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MediaType: input["MediaType"],
+    Value: input["Value"],
   }
 }
-function toTrialComponentArtifact(root: JSONValue): TrialComponentArtifact {
-  return prt.readObj({
+function toTrialComponentArtifact(root: jsonP.JSONValue): TrialComponentArtifact {
+  return jsonP.readObj({
     required: {
       "Value": "s",
     },
@@ -9626,13 +9693,15 @@ export interface CognitoConfig {
   UserPool: string;
   ClientId: string;
 }
-function fromCognitoConfig(input?: CognitoConfig | null): JSONValue {
+function fromCognitoConfig(input?: CognitoConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    UserPool: input["UserPool"],
+    ClientId: input["ClientId"],
   }
 }
-function toCognitoConfig(root: JSONValue): CognitoConfig {
-  return prt.readObj({
+function toCognitoConfig(root: jsonP.JSONValue): CognitoConfig {
+  return jsonP.readObj({
     required: {
       "UserPool": "s",
       "ClientId": "s",
@@ -9652,9 +9721,17 @@ export interface OidcConfig {
   LogoutEndpoint: string;
   JwksUri: string;
 }
-function fromOidcConfig(input?: OidcConfig | null): JSONValue {
+function fromOidcConfig(input?: OidcConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ClientId: input["ClientId"],
+    ClientSecret: input["ClientSecret"],
+    Issuer: input["Issuer"],
+    AuthorizationEndpoint: input["AuthorizationEndpoint"],
+    TokenEndpoint: input["TokenEndpoint"],
+    UserInfoEndpoint: input["UserInfoEndpoint"],
+    LogoutEndpoint: input["LogoutEndpoint"],
+    JwksUri: input["JwksUri"],
   }
 }
 
@@ -9662,13 +9739,14 @@ function fromOidcConfig(input?: OidcConfig | null): JSONValue {
 export interface SourceIpConfig {
   Cidrs: string[];
 }
-function fromSourceIpConfig(input?: SourceIpConfig | null): JSONValue {
+function fromSourceIpConfig(input?: SourceIpConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Cidrs: input["Cidrs"],
   }
 }
-function toSourceIpConfig(root: JSONValue): SourceIpConfig {
-  return prt.readObj({
+function toSourceIpConfig(root: jsonP.JSONValue): SourceIpConfig {
+  return jsonP.readObj({
     required: {
       "Cidrs": ["s"],
     },
@@ -9681,15 +9759,15 @@ export interface MemberDefinition {
   CognitoMemberDefinition?: CognitoMemberDefinition | null;
   OidcMemberDefinition?: OidcMemberDefinition | null;
 }
-function fromMemberDefinition(input?: MemberDefinition | null): JSONValue {
+function fromMemberDefinition(input?: MemberDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     CognitoMemberDefinition: fromCognitoMemberDefinition(input["CognitoMemberDefinition"]),
     OidcMemberDefinition: fromOidcMemberDefinition(input["OidcMemberDefinition"]),
   }
 }
-function toMemberDefinition(root: JSONValue): MemberDefinition {
-  return prt.readObj({
+function toMemberDefinition(root: jsonP.JSONValue): MemberDefinition {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CognitoMemberDefinition": toCognitoMemberDefinition,
@@ -9704,13 +9782,16 @@ export interface CognitoMemberDefinition {
   UserGroup: string;
   ClientId: string;
 }
-function fromCognitoMemberDefinition(input?: CognitoMemberDefinition | null): JSONValue {
+function fromCognitoMemberDefinition(input?: CognitoMemberDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    UserPool: input["UserPool"],
+    UserGroup: input["UserGroup"],
+    ClientId: input["ClientId"],
   }
 }
-function toCognitoMemberDefinition(root: JSONValue): CognitoMemberDefinition {
-  return prt.readObj({
+function toCognitoMemberDefinition(root: jsonP.JSONValue): CognitoMemberDefinition {
+  return jsonP.readObj({
     required: {
       "UserPool": "s",
       "UserGroup": "s",
@@ -9724,13 +9805,14 @@ function toCognitoMemberDefinition(root: JSONValue): CognitoMemberDefinition {
 export interface OidcMemberDefinition {
   Groups: string[];
 }
-function fromOidcMemberDefinition(input?: OidcMemberDefinition | null): JSONValue {
+function fromOidcMemberDefinition(input?: OidcMemberDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Groups: input["Groups"],
   }
 }
-function toOidcMemberDefinition(root: JSONValue): OidcMemberDefinition {
-  return prt.readObj({
+function toOidcMemberDefinition(root: jsonP.JSONValue): OidcMemberDefinition {
+  return jsonP.readObj({
     required: {
       "Groups": ["s"],
     },
@@ -9742,13 +9824,14 @@ function toOidcMemberDefinition(root: JSONValue): OidcMemberDefinition {
 export interface NotificationConfiguration {
   NotificationTopicArn?: string | null;
 }
-function fromNotificationConfiguration(input?: NotificationConfiguration | null): JSONValue {
+function fromNotificationConfiguration(input?: NotificationConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    NotificationTopicArn: input["NotificationTopicArn"],
   }
 }
-function toNotificationConfiguration(root: JSONValue): NotificationConfiguration {
-  return prt.readObj({
+function toNotificationConfiguration(root: jsonP.JSONValue): NotificationConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "NotificationTopicArn": "s",
@@ -9760,9 +9843,10 @@ function toNotificationConfiguration(root: JSONValue): NotificationConfiguration
 export interface RetentionPolicy {
   HomeEfsFileSystem?: RetentionType | null;
 }
-function fromRetentionPolicy(input?: RetentionPolicy | null): JSONValue {
+function fromRetentionPolicy(input?: RetentionPolicy | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    HomeEfsFileSystem: input["HomeEfsFileSystem"],
   }
 }
 
@@ -9770,8 +9854,7 @@ function fromRetentionPolicy(input?: RetentionPolicy | null): JSONValue {
 export type RetentionType =
 | "Retain"
 | "Delete"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
 export type ResourceType =
@@ -9779,16 +9862,15 @@ export type ResourceType =
 | "Experiment"
 | "ExperimentTrial"
 | "ExperimentTrialComponent"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface SuggestionQuery {
   PropertyNameQuery?: PropertyNameQuery | null;
 }
-function fromSuggestionQuery(input?: SuggestionQuery | null): JSONValue {
+function fromSuggestionQuery(input?: SuggestionQuery | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     PropertyNameQuery: fromPropertyNameQuery(input["PropertyNameQuery"]),
   }
 }
@@ -9797,9 +9879,10 @@ function fromSuggestionQuery(input?: SuggestionQuery | null): JSONValue {
 export interface PropertyNameQuery {
   PropertyNameHint: string;
 }
-function fromPropertyNameQuery(input?: PropertyNameQuery | null): JSONValue {
+function fromPropertyNameQuery(input?: PropertyNameQuery | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    PropertyNameHint: input["PropertyNameHint"],
   }
 }
 
@@ -9807,29 +9890,25 @@ function fromPropertyNameQuery(input?: PropertyNameQuery | null): JSONValue {
 export type AlgorithmSortBy =
 | "Name"
 | "CreationTime"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 22 - tags: input, named, enum
 export type SortOrder =
 | "Ascending"
 | "Descending"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type AppImageConfigSortKey =
 | "CreationTime"
 | "LastModifiedTime"
 | "Name"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type AppSortKey =
 | "CreationTime"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type AutoMLJobStatus =
@@ -9838,32 +9917,20 @@ export type AutoMLJobStatus =
 | "Failed"
 | "Stopped"
 | "Stopping"
-;
-
-function toAutoMLJobStatus(root: JSONValue): AutoMLJobStatus | null {
-  return ( false
-    || root == "Completed"
-    || root == "InProgress"
-    || root == "Failed"
-    || root == "Stopped"
-    || root == "Stopping"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
 export type AutoMLSortOrder =
 | "Ascending"
 | "Descending"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type AutoMLSortBy =
 | "Name"
 | "CreationTime"
 | "Status"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type CandidateStatus =
@@ -9872,40 +9939,27 @@ export type CandidateStatus =
 | "Failed"
 | "Stopped"
 | "Stopping"
-;
-
-function toCandidateStatus(root: JSONValue): CandidateStatus | null {
-  return ( false
-    || root == "Completed"
-    || root == "InProgress"
-    || root == "Failed"
-    || root == "Stopped"
-    || root == "Stopping"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type CandidateSortBy =
 | "CreationTime"
 | "Status"
 | "FinalObjectiveMetricValue"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type CodeRepositorySortBy =
 | "Name"
 | "CreationTime"
 | "LastModifiedTime"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type CodeRepositorySortOrder =
 | "Ascending"
 | "Descending"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type CompilationJobStatus =
@@ -9915,48 +9969,33 @@ export type CompilationJobStatus =
 | "STARTING"
 | "STOPPING"
 | "STOPPED"
-;
-
-function toCompilationJobStatus(root: JSONValue): CompilationJobStatus | null {
-  return ( false
-    || root == "INPROGRESS"
-    || root == "COMPLETED"
-    || root == "FAILED"
-    || root == "STARTING"
-    || root == "STOPPING"
-    || root == "STOPPED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ListCompilationJobsSortBy =
 | "Name"
 | "CreationTime"
 | "Status"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type EndpointConfigSortKey =
 | "Name"
 | "CreationTime"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum
 export type OrderKey =
 | "Ascending"
 | "Descending"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type EndpointSortKey =
 | "Name"
 | "CreationTime"
 | "Status"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type EndpointStatus =
@@ -9968,35 +10007,20 @@ export type EndpointStatus =
 | "InService"
 | "Deleting"
 | "Failed"
-;
-
-function toEndpointStatus(root: JSONValue): EndpointStatus | null {
-  return ( false
-    || root == "OutOfService"
-    || root == "Creating"
-    || root == "Updating"
-    || root == "SystemUpdating"
-    || root == "RollingBack"
-    || root == "InService"
-    || root == "Deleting"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type SortExperimentsBy =
 | "Name"
 | "CreationTime"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type HyperParameterTuningJobSortByOptions =
 | "Name"
 | "Status"
 | "CreationTime"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type HyperParameterTuningJobStatus =
@@ -10005,55 +10029,40 @@ export type HyperParameterTuningJobStatus =
 | "Failed"
 | "Stopped"
 | "Stopping"
-;
-
-function toHyperParameterTuningJobStatus(root: JSONValue): HyperParameterTuningJobStatus | null {
-  return ( false
-    || root == "Completed"
-    || root == "InProgress"
-    || root == "Failed"
-    || root == "Stopped"
-    || root == "Stopping"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ImageVersionSortBy =
 | "CREATION_TIME"
 | "LAST_MODIFIED_TIME"
 | "VERSION"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ImageVersionSortOrder =
 | "ASCENDING"
 | "DESCENDING"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ImageSortBy =
 | "CREATION_TIME"
 | "LAST_MODIFIED_TIME"
 | "IMAGE_NAME"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ImageSortOrder =
 | "ASCENDING"
 | "DESCENDING"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum
 export type SortBy =
 | "Name"
 | "CreationTime"
 | "Status"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type LabelingJobStatus =
@@ -10063,46 +10072,31 @@ export type LabelingJobStatus =
 | "Failed"
 | "Stopping"
 | "Stopped"
-;
-
-function toLabelingJobStatus(root: JSONValue): LabelingJobStatus | null {
-  return ( false
-    || root == "Initializing"
-    || root == "InProgress"
-    || root == "Completed"
-    || root == "Failed"
-    || root == "Stopping"
-    || root == "Stopped"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ListLabelingJobsForWorkteamSortByOptions =
 | "CreationTime"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ModelPackageSortBy =
 | "Name"
 | "CreationTime"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ModelSortKey =
 | "Name"
 | "CreationTime"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type MonitoringExecutionSortKey =
 | "CreationTime"
 | "ScheduledTime"
 | "Status"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type ExecutionStatus =
@@ -10113,27 +10107,14 @@ export type ExecutionStatus =
 | "Failed"
 | "Stopping"
 | "Stopped"
-;
-
-function toExecutionStatus(root: JSONValue): ExecutionStatus | null {
-  return ( false
-    || root == "Pending"
-    || root == "Completed"
-    || root == "CompletedWithViolations"
-    || root == "InProgress"
-    || root == "Failed"
-    || root == "Stopping"
-    || root == "Stopped"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type MonitoringScheduleSortKey =
 | "Name"
 | "CreationTime"
 | "Status"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type ScheduleStatus =
@@ -10141,46 +10122,33 @@ export type ScheduleStatus =
 | "Failed"
 | "Scheduled"
 | "Stopped"
-;
-
-function toScheduleStatus(root: JSONValue): ScheduleStatus | null {
-  return ( false
-    || root == "Pending"
-    || root == "Failed"
-    || root == "Scheduled"
-    || root == "Stopped"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type NotebookInstanceLifecycleConfigSortKey =
 | "Name"
 | "CreationTime"
 | "LastModifiedTime"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type NotebookInstanceLifecycleConfigSortOrder =
 | "Ascending"
 | "Descending"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type NotebookInstanceSortKey =
 | "Name"
 | "CreationTime"
 | "Status"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type NotebookInstanceSortOrder =
 | "Ascending"
 | "Descending"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type NotebookInstanceStatus =
@@ -10191,19 +10159,7 @@ export type NotebookInstanceStatus =
 | "Failed"
 | "Deleting"
 | "Updating"
-;
-
-function toNotebookInstanceStatus(root: JSONValue): NotebookInstanceStatus | null {
-  return ( false
-    || root == "Pending"
-    || root == "InService"
-    || root == "Stopping"
-    || root == "Stopped"
-    || root == "Failed"
-    || root == "Deleting"
-    || root == "Updating"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type ProcessingJobStatus =
@@ -10212,17 +10168,7 @@ export type ProcessingJobStatus =
 | "Failed"
 | "Stopping"
 | "Stopped"
-;
-
-function toProcessingJobStatus(root: JSONValue): ProcessingJobStatus | null {
-  return ( false
-    || root == "InProgress"
-    || root == "Completed"
-    || root == "Failed"
-    || root == "Stopping"
-    || root == "Stopped"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 9 - tags: input, named, enum, output
 export type TrainingJobStatus =
@@ -10231,17 +10177,7 @@ export type TrainingJobStatus =
 | "Failed"
 | "Stopping"
 | "Stopped"
-;
-
-function toTrainingJobStatus(root: JSONValue): TrainingJobStatus | null {
-  return ( false
-    || root == "InProgress"
-    || root == "Completed"
-    || root == "Failed"
-    || root == "Stopping"
-    || root == "Stopped"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type TrainingJobSortByOptions =
@@ -10249,8 +10185,7 @@ export type TrainingJobSortByOptions =
 | "CreationTime"
 | "Status"
 | "FinalObjectiveMetricValue"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type TransformJobStatus =
@@ -10259,60 +10194,46 @@ export type TransformJobStatus =
 | "Failed"
 | "Stopping"
 | "Stopped"
-;
-
-function toTransformJobStatus(root: JSONValue): TransformJobStatus | null {
-  return ( false
-    || root == "InProgress"
-    || root == "Completed"
-    || root == "Failed"
-    || root == "Stopping"
-    || root == "Stopped"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type SortTrialComponentsBy =
 | "Name"
 | "CreationTime"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type SortTrialsBy =
 | "Name"
 | "CreationTime"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type UserProfileSortKey =
 | "CreationTime"
 | "LastModifiedTime"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ListWorkforcesSortByOptions =
 | "Name"
 | "CreateDate"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ListWorkteamsSortByOptions =
 | "Name"
 | "CreateDate"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface RenderableTask {
   Input: string;
 }
-function fromRenderableTask(input?: RenderableTask | null): JSONValue {
+function fromRenderableTask(input?: RenderableTask | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Input: input["Input"],
   }
 }
 
@@ -10323,12 +10244,13 @@ export interface SearchExpression {
   SubExpressions?: SearchExpression[] | null;
   Operator?: BooleanOperator | null;
 }
-function fromSearchExpression(input?: SearchExpression | null): JSONValue {
+function fromSearchExpression(input?: SearchExpression | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Filters: input["Filters"]?.map(x => fromFilter(x)),
     NestedFilters: input["NestedFilters"]?.map(x => fromNestedFilters(x)),
     SubExpressions: input["SubExpressions"]?.map(x => fromSearchExpression(x)),
+    Operator: input["Operator"],
   }
 }
 
@@ -10338,9 +10260,12 @@ export interface Filter {
   Operator?: Operator | null;
   Value?: string | null;
 }
-function fromFilter(input?: Filter | null): JSONValue {
+function fromFilter(input?: Filter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Operator: input["Operator"],
+    Value: input["Value"],
   }
 }
 
@@ -10356,17 +10281,17 @@ export type Operator =
 | "Exists"
 | "NotExists"
 | "In"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface NestedFilters {
   NestedPropertyName: string;
   Filters: Filter[];
 }
-function fromNestedFilters(input?: NestedFilters | null): JSONValue {
+function fromNestedFilters(input?: NestedFilters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    NestedPropertyName: input["NestedPropertyName"],
     Filters: input["Filters"]?.map(x => fromFilter(x)),
   }
 }
@@ -10375,23 +10300,22 @@ function fromNestedFilters(input?: NestedFilters | null): JSONValue {
 export type BooleanOperator =
 | "And"
 | "Or"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type SearchSortOrder =
 | "Ascending"
 | "Descending"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface GitConfigForUpdate {
   SecretArn?: string | null;
 }
-function fromGitConfigForUpdate(input?: GitConfigForUpdate | null): JSONValue {
+function fromGitConfigForUpdate(input?: GitConfigForUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SecretArn: input["SecretArn"],
   }
 }
 
@@ -10399,9 +10323,10 @@ function fromGitConfigForUpdate(input?: GitConfigForUpdate | null): JSONValue {
 export interface VariantProperty {
   VariantPropertyType: VariantPropertyType;
 }
-function fromVariantProperty(input?: VariantProperty | null): JSONValue {
+function fromVariantProperty(input?: VariantProperty | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    VariantPropertyType: input["VariantPropertyType"],
   }
 }
 
@@ -10410,8 +10335,7 @@ export type VariantPropertyType =
 | "DesiredInstanceCount"
 | "DesiredWeight"
 | "DataCaptureConfig"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface DesiredWeightAndCapacity {
@@ -10419,9 +10343,12 @@ export interface DesiredWeightAndCapacity {
   DesiredWeight?: number | null;
   DesiredInstanceCount?: number | null;
 }
-function fromDesiredWeightAndCapacity(input?: DesiredWeightAndCapacity | null): JSONValue {
+function fromDesiredWeightAndCapacity(input?: DesiredWeightAndCapacity | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    VariantName: input["VariantName"],
+    DesiredWeight: input["DesiredWeight"],
+    DesiredInstanceCount: input["DesiredInstanceCount"],
   }
 }
 
@@ -10432,24 +10359,15 @@ export type AlgorithmStatus =
 | "Completed"
 | "Failed"
 | "Deleting"
-;
-function toAlgorithmStatus(root: JSONValue): AlgorithmStatus | null {
-  return ( false
-    || root == "Pending"
-    || root == "InProgress"
-    || root == "Completed"
-    || root == "Failed"
-    || root == "Deleting"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AlgorithmStatusDetails {
   ValidationStatuses?: AlgorithmStatusItem[] | null;
   ImageScanStatuses?: AlgorithmStatusItem[] | null;
 }
-function toAlgorithmStatusDetails(root: JSONValue): AlgorithmStatusDetails {
-  return prt.readObj({
+function toAlgorithmStatusDetails(root: jsonP.JSONValue): AlgorithmStatusDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ValidationStatuses": [toAlgorithmStatusItem],
@@ -10464,11 +10382,11 @@ export interface AlgorithmStatusItem {
   Status: DetailedAlgorithmStatus;
   FailureReason?: string | null;
 }
-function toAlgorithmStatusItem(root: JSONValue): AlgorithmStatusItem {
-  return prt.readObj({
+function toAlgorithmStatusItem(root: jsonP.JSONValue): AlgorithmStatusItem {
+  return jsonP.readObj({
     required: {
       "Name": "s",
-      "Status": toDetailedAlgorithmStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<DetailedAlgorithmStatus>(x),
     },
     optional: {
       "FailureReason": "s",
@@ -10482,15 +10400,7 @@ export type DetailedAlgorithmStatus =
 | "InProgress"
 | "Completed"
 | "Failed"
-;
-function toDetailedAlgorithmStatus(root: JSONValue): DetailedAlgorithmStatus | null {
-  return ( false
-    || root == "NotStarted"
-    || root == "InProgress"
-    || root == "Completed"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type AppStatus =
@@ -10499,16 +10409,7 @@ export type AppStatus =
 | "Failed"
 | "InService"
 | "Pending"
-;
-function toAppStatus(root: JSONValue): AppStatus | null {
-  return ( false
-    || root == "Deleted"
-    || root == "Deleting"
-    || root == "Failed"
-    || root == "InService"
-    || root == "Pending"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface AutoMLCandidate {
@@ -10523,13 +10424,13 @@ export interface AutoMLCandidate {
   LastModifiedTime: Date | number;
   FailureReason?: string | null;
 }
-function toAutoMLCandidate(root: JSONValue): AutoMLCandidate {
-  return prt.readObj({
+function toAutoMLCandidate(root: jsonP.JSONValue): AutoMLCandidate {
+  return jsonP.readObj({
     required: {
       "CandidateName": "s",
-      "ObjectiveStatus": toObjectiveStatus,
+      "ObjectiveStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ObjectiveStatus>(x),
       "CandidateSteps": [toAutoMLCandidateStep],
-      "CandidateStatus": toCandidateStatus,
+      "CandidateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<CandidateStatus>(x),
       "CreationTime": "d",
       "LastModifiedTime": "d",
     },
@@ -10548,14 +10449,14 @@ export interface FinalAutoMLJobObjectiveMetric {
   MetricName: AutoMLMetricEnum;
   Value: number;
 }
-function toFinalAutoMLJobObjectiveMetric(root: JSONValue): FinalAutoMLJobObjectiveMetric {
-  return prt.readObj({
+function toFinalAutoMLJobObjectiveMetric(root: jsonP.JSONValue): FinalAutoMLJobObjectiveMetric {
+  return jsonP.readObj({
     required: {
-      "MetricName": toAutoMLMetricEnum,
+      "MetricName": (x: jsonP.JSONValue) => cmnP.readEnum<AutoMLMetricEnum>(x),
       "Value": "n",
     },
     optional: {
-      "Type": toAutoMLJobObjectiveType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<AutoMLJobObjectiveType>(x),
     },
   }, root);
 }
@@ -10564,27 +10465,14 @@ function toFinalAutoMLJobObjectiveMetric(root: JSONValue): FinalAutoMLJobObjecti
 export type AutoMLJobObjectiveType =
 | "Maximize"
 | "Minimize"
-;
-function toAutoMLJobObjectiveType(root: JSONValue): AutoMLJobObjectiveType | null {
-  return ( false
-    || root == "Maximize"
-    || root == "Minimize"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, enum
 export type ObjectiveStatus =
 | "Succeeded"
 | "Pending"
 | "Failed"
-;
-function toObjectiveStatus(root: JSONValue): ObjectiveStatus | null {
-  return ( false
-    || root == "Succeeded"
-    || root == "Pending"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface AutoMLCandidateStep {
@@ -10592,10 +10480,10 @@ export interface AutoMLCandidateStep {
   CandidateStepArn: string;
   CandidateStepName: string;
 }
-function toAutoMLCandidateStep(root: JSONValue): AutoMLCandidateStep {
-  return prt.readObj({
+function toAutoMLCandidateStep(root: jsonP.JSONValue): AutoMLCandidateStep {
+  return jsonP.readObj({
     required: {
-      "CandidateStepType": toCandidateStepType,
+      "CandidateStepType": (x: jsonP.JSONValue) => cmnP.readEnum<CandidateStepType>(x),
       "CandidateStepArn": "s",
       "CandidateStepName": "s",
     },
@@ -10608,29 +10496,22 @@ export type CandidateStepType =
 | "AWS::SageMaker::TrainingJob"
 | "AWS::SageMaker::TransformJob"
 | "AWS::SageMaker::ProcessingJob"
-;
-function toCandidateStepType(root: JSONValue): CandidateStepType | null {
-  return ( false
-    || root == "AWS::SageMaker::TrainingJob"
-    || root == "AWS::SageMaker::TransformJob"
-    || root == "AWS::SageMaker::ProcessingJob"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface AutoMLContainerDefinition {
   Image: string;
   ModelDataUrl: string;
-  Environment?: { [key: string]: string } | null;
+  Environment?: { [key: string]: string | null | undefined } | null;
 }
-function toAutoMLContainerDefinition(root: JSONValue): AutoMLContainerDefinition {
-  return prt.readObj({
+function toAutoMLContainerDefinition(root: jsonP.JSONValue): AutoMLContainerDefinition {
+  return jsonP.readObj({
     required: {
       "Image": "s",
       "ModelDataUrl": "s",
     },
     optional: {
-      "Environment": x => prt.readMap(String, String, x),
+      "Environment": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -10647,29 +10528,15 @@ export type AutoMLJobSecondaryStatus =
 | "MaxAutoMLJobRuntimeReached"
 | "Stopping"
 | "CandidateDefinitionsGenerated"
-;
-function toAutoMLJobSecondaryStatus(root: JSONValue): AutoMLJobSecondaryStatus | null {
-  return ( false
-    || root == "Starting"
-    || root == "AnalyzingData"
-    || root == "FeatureEngineering"
-    || root == "ModelTuning"
-    || root == "MaxCandidatesReached"
-    || root == "Failed"
-    || root == "Stopped"
-    || root == "MaxAutoMLJobRuntimeReached"
-    || root == "Stopping"
-    || root == "CandidateDefinitionsGenerated"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AutoMLJobArtifacts {
   CandidateDefinitionNotebookLocation?: string | null;
   DataExplorationNotebookLocation?: string | null;
 }
-function toAutoMLJobArtifacts(root: JSONValue): AutoMLJobArtifacts {
-  return prt.readObj({
+function toAutoMLJobArtifacts(root: jsonP.JSONValue): AutoMLJobArtifacts {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CandidateDefinitionNotebookLocation": "s",
@@ -10684,12 +10551,12 @@ export interface ResolvedAttributes {
   ProblemType?: ProblemType | null;
   CompletionCriteria?: AutoMLJobCompletionCriteria | null;
 }
-function toResolvedAttributes(root: JSONValue): ResolvedAttributes {
-  return prt.readObj({
+function toResolvedAttributes(root: jsonP.JSONValue): ResolvedAttributes {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AutoMLJobObjective": toAutoMLJobObjective,
-      "ProblemType": toProblemType,
+      "ProblemType": (x: jsonP.JSONValue) => cmnP.readEnum<ProblemType>(x),
       "CompletionCriteria": toAutoMLJobCompletionCriteria,
     },
   }, root);
@@ -10699,8 +10566,8 @@ function toResolvedAttributes(root: JSONValue): ResolvedAttributes {
 export interface ModelArtifacts {
   S3ModelArtifacts: string;
 }
-function toModelArtifacts(root: JSONValue): ModelArtifacts {
-  return prt.readObj({
+function toModelArtifacts(root: jsonP.JSONValue): ModelArtifacts {
+  return jsonP.readObj({
     required: {
       "S3ModelArtifacts": "s",
     },
@@ -10717,18 +10584,7 @@ export type DomainStatus =
 | "Updating"
 | "Update_Failed"
 | "Delete_Failed"
-;
-function toDomainStatus(root: JSONValue): DomainStatus | null {
-  return ( false
-    || root == "Deleting"
-    || root == "Failed"
-    || root == "InService"
-    || root == "Pending"
-    || root == "Updating"
-    || root == "Update_Failed"
-    || root == "Delete_Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ProductionVariantSummary {
@@ -10739,8 +10595,8 @@ export interface ProductionVariantSummary {
   CurrentInstanceCount?: number | null;
   DesiredInstanceCount?: number | null;
 }
-function toProductionVariantSummary(root: JSONValue): ProductionVariantSummary {
-  return prt.readObj({
+function toProductionVariantSummary(root: jsonP.JSONValue): ProductionVariantSummary {
+  return jsonP.readObj({
     required: {
       "VariantName": "s",
     },
@@ -10760,8 +10616,8 @@ export interface DeployedImage {
   ResolvedImage?: string | null;
   ResolutionTime?: Date | number | null;
 }
-function toDeployedImage(root: JSONValue): DeployedImage {
-  return prt.readObj({
+function toDeployedImage(root: jsonP.JSONValue): DeployedImage {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SpecifiedImage": "s",
@@ -10779,11 +10635,11 @@ export interface DataCaptureConfigSummary {
   DestinationS3Uri: string;
   KmsKeyId: string;
 }
-function toDataCaptureConfigSummary(root: JSONValue): DataCaptureConfigSummary {
-  return prt.readObj({
+function toDataCaptureConfigSummary(root: jsonP.JSONValue): DataCaptureConfigSummary {
+  return jsonP.readObj({
     required: {
       "EnableCapture": "b",
-      "CaptureStatus": toCaptureStatus,
+      "CaptureStatus": (x: jsonP.JSONValue) => cmnP.readEnum<CaptureStatus>(x),
       "CurrentSamplingPercentage": "n",
       "DestinationS3Uri": "s",
       "KmsKeyId": "s",
@@ -10796,21 +10652,15 @@ function toDataCaptureConfigSummary(root: JSONValue): DataCaptureConfigSummary {
 export type CaptureStatus =
 | "Started"
 | "Stopped"
-;
-function toCaptureStatus(root: JSONValue): CaptureStatus | null {
-  return ( false
-    || root == "Started"
-    || root == "Stopped"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface ExperimentSource {
   SourceArn: string;
   SourceType?: string | null;
 }
-function toExperimentSource(root: JSONValue): ExperimentSource {
-  return prt.readObj({
+function toExperimentSource(root: jsonP.JSONValue): ExperimentSource {
+  return jsonP.readObj({
     required: {
       "SourceArn": "s",
     },
@@ -10826,8 +10676,8 @@ export interface UserContext {
   UserProfileName?: string | null;
   DomainId?: string | null;
 }
-function toUserContext(root: JSONValue): UserContext {
-  return prt.readObj({
+function toUserContext(root: jsonP.JSONValue): UserContext {
+  return jsonP.readObj({
     required: {},
     optional: {
       "UserProfileArn": "s",
@@ -10843,35 +10693,21 @@ export type FlowDefinitionStatus =
 | "Active"
 | "Failed"
 | "Deleting"
-;
-function toFlowDefinitionStatus(root: JSONValue): FlowDefinitionStatus | null {
-  return ( false
-    || root == "Initializing"
-    || root == "Active"
-    || root == "Failed"
-    || root == "Deleting"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type HumanTaskUiStatus =
 | "Active"
 | "Deleting"
-;
-function toHumanTaskUiStatus(root: JSONValue): HumanTaskUiStatus | null {
-  return ( false
-    || root == "Active"
-    || root == "Deleting"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface UiTemplateInfo {
   Url?: string | null;
   ContentSha256?: string | null;
 }
-function toUiTemplateInfo(root: JSONValue): UiTemplateInfo {
-  return prt.readObj({
+function toUiTemplateInfo(root: jsonP.JSONValue): UiTemplateInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Url": "s",
@@ -10888,8 +10724,8 @@ export interface TrainingJobStatusCounters {
   NonRetryableError?: number | null;
   Stopped?: number | null;
 }
-function toTrainingJobStatusCounters(root: JSONValue): TrainingJobStatusCounters {
-  return prt.readObj({
+function toTrainingJobStatusCounters(root: jsonP.JSONValue): TrainingJobStatusCounters {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Completed": "n",
@@ -10907,8 +10743,8 @@ export interface ObjectiveStatusCounters {
   Pending?: number | null;
   Failed?: number | null;
 }
-function toObjectiveStatusCounters(root: JSONValue): ObjectiveStatusCounters {
-  return prt.readObj({
+function toObjectiveStatusCounters(root: jsonP.JSONValue): ObjectiveStatusCounters {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Succeeded": "n",
@@ -10928,19 +10764,19 @@ export interface HyperParameterTrainingJobSummary {
   TrainingStartTime?: Date | number | null;
   TrainingEndTime?: Date | number | null;
   TrainingJobStatus: TrainingJobStatus;
-  TunedHyperParameters: { [key: string]: string };
+  TunedHyperParameters: { [key: string]: string | null | undefined };
   FailureReason?: string | null;
   FinalHyperParameterTuningJobObjectiveMetric?: FinalHyperParameterTuningJobObjectiveMetric | null;
   ObjectiveStatus?: ObjectiveStatus | null;
 }
-function toHyperParameterTrainingJobSummary(root: JSONValue): HyperParameterTrainingJobSummary {
-  return prt.readObj({
+function toHyperParameterTrainingJobSummary(root: jsonP.JSONValue): HyperParameterTrainingJobSummary {
+  return jsonP.readObj({
     required: {
       "TrainingJobName": "s",
       "TrainingJobArn": "s",
       "CreationTime": "d",
-      "TrainingJobStatus": toTrainingJobStatus,
-      "TunedHyperParameters": x => prt.readMap(String, String, x),
+      "TrainingJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<TrainingJobStatus>(x),
+      "TunedHyperParameters": x => jsonP.readMap(String, String, x),
     },
     optional: {
       "TrainingJobDefinitionName": "s",
@@ -10949,7 +10785,7 @@ function toHyperParameterTrainingJobSummary(root: JSONValue): HyperParameterTrai
       "TrainingEndTime": "d",
       "FailureReason": "s",
       "FinalHyperParameterTuningJobObjectiveMetric": toFinalHyperParameterTuningJobObjectiveMetric,
-      "ObjectiveStatus": toObjectiveStatus,
+      "ObjectiveStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ObjectiveStatus>(x),
     },
   }, root);
 }
@@ -10960,14 +10796,14 @@ export interface FinalHyperParameterTuningJobObjectiveMetric {
   MetricName: string;
   Value: number;
 }
-function toFinalHyperParameterTuningJobObjectiveMetric(root: JSONValue): FinalHyperParameterTuningJobObjectiveMetric {
-  return prt.readObj({
+function toFinalHyperParameterTuningJobObjectiveMetric(root: jsonP.JSONValue): FinalHyperParameterTuningJobObjectiveMetric {
+  return jsonP.readObj({
     required: {
       "MetricName": "s",
       "Value": "n",
     },
     optional: {
-      "Type": toHyperParameterTuningJobObjectiveType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<HyperParameterTuningJobObjectiveType>(x),
     },
   }, root);
 }
@@ -10981,18 +10817,7 @@ export type ImageStatus =
 | "UPDATE_FAILED"
 | "DELETING"
 | "DELETE_FAILED"
-;
-function toImageStatus(root: JSONValue): ImageStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "CREATED"
-    || root == "CREATE_FAILED"
-    || root == "UPDATING"
-    || root == "UPDATE_FAILED"
-    || root == "DELETING"
-    || root == "DELETE_FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type ImageVersionStatus =
@@ -11001,16 +10826,7 @@ export type ImageVersionStatus =
 | "CREATE_FAILED"
 | "DELETING"
 | "DELETE_FAILED"
-;
-function toImageVersionStatus(root: JSONValue): ImageVersionStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "CREATED"
-    || root == "CREATE_FAILED"
-    || root == "DELETING"
-    || root == "DELETE_FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface LabelCounters {
@@ -11020,8 +10836,8 @@ export interface LabelCounters {
   FailedNonRetryableError?: number | null;
   Unlabeled?: number | null;
 }
-function toLabelCounters(root: JSONValue): LabelCounters {
-  return prt.readObj({
+function toLabelCounters(root: jsonP.JSONValue): LabelCounters {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TotalLabeled": "n",
@@ -11038,8 +10854,8 @@ export interface LabelingJobOutput {
   OutputDatasetS3Uri: string;
   FinalActiveLearningModelArn?: string | null;
 }
-function toLabelingJobOutput(root: JSONValue): LabelingJobOutput {
-  return prt.readObj({
+function toLabelingJobOutput(root: jsonP.JSONValue): LabelingJobOutput {
+  return jsonP.readObj({
     required: {
       "OutputDatasetS3Uri": "s",
     },
@@ -11056,24 +10872,15 @@ export type ModelPackageStatus =
 | "Completed"
 | "Failed"
 | "Deleting"
-;
-function toModelPackageStatus(root: JSONValue): ModelPackageStatus | null {
-  return ( false
-    || root == "Pending"
-    || root == "InProgress"
-    || root == "Completed"
-    || root == "Failed"
-    || root == "Deleting"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ModelPackageStatusDetails {
   ValidationStatuses: ModelPackageStatusItem[];
   ImageScanStatuses?: ModelPackageStatusItem[] | null;
 }
-function toModelPackageStatusDetails(root: JSONValue): ModelPackageStatusDetails {
-  return prt.readObj({
+function toModelPackageStatusDetails(root: jsonP.JSONValue): ModelPackageStatusDetails {
+  return jsonP.readObj({
     required: {
       "ValidationStatuses": [toModelPackageStatusItem],
     },
@@ -11089,11 +10896,11 @@ export interface ModelPackageStatusItem {
   Status: DetailedModelPackageStatus;
   FailureReason?: string | null;
 }
-function toModelPackageStatusItem(root: JSONValue): ModelPackageStatusItem {
-  return prt.readObj({
+function toModelPackageStatusItem(root: jsonP.JSONValue): ModelPackageStatusItem {
+  return jsonP.readObj({
     required: {
       "Name": "s",
-      "Status": toDetailedModelPackageStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<DetailedModelPackageStatus>(x),
     },
     optional: {
       "FailureReason": "s",
@@ -11107,15 +10914,7 @@ export type DetailedModelPackageStatus =
 | "InProgress"
 | "Completed"
 | "Failed"
-;
-function toDetailedModelPackageStatus(root: JSONValue): DetailedModelPackageStatus | null {
-  return ( false
-    || root == "NotStarted"
-    || root == "InProgress"
-    || root == "Completed"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface MonitoringExecutionSummary {
@@ -11128,14 +10927,14 @@ export interface MonitoringExecutionSummary {
   EndpointName?: string | null;
   FailureReason?: string | null;
 }
-function toMonitoringExecutionSummary(root: JSONValue): MonitoringExecutionSummary {
-  return prt.readObj({
+function toMonitoringExecutionSummary(root: jsonP.JSONValue): MonitoringExecutionSummary {
+  return jsonP.readObj({
     required: {
       "MonitoringScheduleName": "s",
       "ScheduledTime": "d",
       "CreationTime": "d",
       "LastModifiedTime": "d",
-      "MonitoringExecutionStatus": toExecutionStatus,
+      "MonitoringExecutionStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ExecutionStatus>(x),
     },
     optional: {
       "ProcessingJobArn": "s",
@@ -11153,8 +10952,8 @@ export interface SubscribedWorkteam {
   MarketplaceDescription?: string | null;
   ListingId?: string | null;
 }
-function toSubscribedWorkteam(root: JSONValue): SubscribedWorkteam {
-  return prt.readObj({
+function toSubscribedWorkteam(root: jsonP.JSONValue): SubscribedWorkteam {
+  return jsonP.readObj({
     required: {
       "WorkteamArn": "s",
     },
@@ -11183,25 +10982,7 @@ export type SecondaryStatus =
 | "Failed"
 | "Interrupted"
 | "MaxWaitTimeExceeded"
-;
-function toSecondaryStatus(root: JSONValue): SecondaryStatus | null {
-  return ( false
-    || root == "Starting"
-    || root == "LaunchingMLInstances"
-    || root == "PreparingTrainingStack"
-    || root == "Downloading"
-    || root == "DownloadingTrainingImage"
-    || root == "Training"
-    || root == "Uploading"
-    || root == "Stopping"
-    || root == "Stopped"
-    || root == "MaxRuntimeExceeded"
-    || root == "Completed"
-    || root == "Failed"
-    || root == "Interrupted"
-    || root == "MaxWaitTimeExceeded"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface SecondaryStatusTransition {
@@ -11210,10 +10991,10 @@ export interface SecondaryStatusTransition {
   EndTime?: Date | number | null;
   StatusMessage?: string | null;
 }
-function toSecondaryStatusTransition(root: JSONValue): SecondaryStatusTransition {
-  return prt.readObj({
+function toSecondaryStatusTransition(root: jsonP.JSONValue): SecondaryStatusTransition {
+  return jsonP.readObj({
     required: {
-      "Status": toSecondaryStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<SecondaryStatus>(x),
       "StartTime": "d",
     },
     optional: {
@@ -11229,8 +11010,8 @@ export interface MetricData {
   Value?: number | null;
   Timestamp?: Date | number | null;
 }
-function toMetricData(root: JSONValue): MetricData {
-  return prt.readObj({
+function toMetricData(root: jsonP.JSONValue): MetricData {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MetricName": "s",
@@ -11248,13 +11029,13 @@ export interface DebugRuleEvaluationStatus {
   StatusDetails?: string | null;
   LastModifiedTime?: Date | number | null;
 }
-function toDebugRuleEvaluationStatus(root: JSONValue): DebugRuleEvaluationStatus {
-  return prt.readObj({
+function toDebugRuleEvaluationStatus(root: jsonP.JSONValue): DebugRuleEvaluationStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RuleConfigurationName": "s",
       "RuleEvaluationJobArn": "s",
-      "RuleEvaluationStatus": toRuleEvaluationStatus,
+      "RuleEvaluationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<RuleEvaluationStatus>(x),
       "StatusDetails": "s",
       "LastModifiedTime": "d",
     },
@@ -11269,25 +11050,15 @@ export type RuleEvaluationStatus =
 | "Error"
 | "Stopping"
 | "Stopped"
-;
-function toRuleEvaluationStatus(root: JSONValue): RuleEvaluationStatus | null {
-  return ( false
-    || root == "InProgress"
-    || root == "NoIssuesFound"
-    || root == "IssuesFound"
-    || root == "Error"
-    || root == "Stopping"
-    || root == "Stopped"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface TrialSource {
   SourceArn: string;
   SourceType?: string | null;
 }
-function toTrialSource(root: JSONValue): TrialSource {
-  return prt.readObj({
+function toTrialSource(root: jsonP.JSONValue): TrialSource {
+  return jsonP.readObj({
     required: {
       "SourceArn": "s",
     },
@@ -11302,8 +11073,8 @@ export interface TrialComponentSource {
   SourceArn: string;
   SourceType?: string | null;
 }
-function toTrialComponentSource(root: JSONValue): TrialComponentSource {
-  return prt.readObj({
+function toTrialComponentSource(root: jsonP.JSONValue): TrialComponentSource {
+  return jsonP.readObj({
     required: {
       "SourceArn": "s",
     },
@@ -11325,8 +11096,8 @@ export interface TrialComponentMetricSummary {
   Avg?: number | null;
   StdDev?: number | null;
 }
-function toTrialComponentMetricSummary(root: JSONValue): TrialComponentMetricSummary {
-  return prt.readObj({
+function toTrialComponentMetricSummary(root: jsonP.JSONValue): TrialComponentMetricSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MetricName": "s",
@@ -11351,18 +11122,7 @@ export type UserProfileStatus =
 | "Updating"
 | "Update_Failed"
 | "Delete_Failed"
-;
-function toUserProfileStatus(root: JSONValue): UserProfileStatus | null {
-  return ( false
-    || root == "Deleting"
-    || root == "Failed"
-    || root == "InService"
-    || root == "Pending"
-    || root == "Updating"
-    || root == "Update_Failed"
-    || root == "Delete_Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface Workforce {
@@ -11375,8 +11135,8 @@ export interface Workforce {
   OidcConfig?: OidcConfigForResponse | null;
   CreateDate?: Date | number | null;
 }
-function toWorkforce(root: JSONValue): Workforce {
-  return prt.readObj({
+function toWorkforce(root: jsonP.JSONValue): Workforce {
+  return jsonP.readObj({
     required: {
       "WorkforceName": "s",
       "WorkforceArn": "s",
@@ -11402,8 +11162,8 @@ export interface OidcConfigForResponse {
   LogoutEndpoint?: string | null;
   JwksUri?: string | null;
 }
-function toOidcConfigForResponse(root: JSONValue): OidcConfigForResponse {
-  return prt.readObj({
+function toOidcConfigForResponse(root: jsonP.JSONValue): OidcConfigForResponse {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ClientId": "s",
@@ -11430,8 +11190,8 @@ export interface Workteam {
   LastUpdatedDate?: Date | number | null;
   NotificationConfiguration?: NotificationConfiguration | null;
 }
-function toWorkteam(root: JSONValue): Workteam {
-  return prt.readObj({
+function toWorkteam(root: jsonP.JSONValue): Workteam {
+  return jsonP.readObj({
     required: {
       "WorkteamName": "s",
       "MemberDefinitions": [toMemberDefinition],
@@ -11453,8 +11213,8 @@ function toWorkteam(root: JSONValue): Workteam {
 export interface PropertyNameSuggestion {
   PropertyName?: string | null;
 }
-function toPropertyNameSuggestion(root: JSONValue): PropertyNameSuggestion {
-  return prt.readObj({
+function toPropertyNameSuggestion(root: jsonP.JSONValue): PropertyNameSuggestion {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PropertyName": "s",
@@ -11470,13 +11230,13 @@ export interface AlgorithmSummary {
   CreationTime: Date | number;
   AlgorithmStatus: AlgorithmStatus;
 }
-function toAlgorithmSummary(root: JSONValue): AlgorithmSummary {
-  return prt.readObj({
+function toAlgorithmSummary(root: jsonP.JSONValue): AlgorithmSummary {
+  return jsonP.readObj({
     required: {
       "AlgorithmName": "s",
       "AlgorithmArn": "s",
       "CreationTime": "d",
-      "AlgorithmStatus": toAlgorithmStatus,
+      "AlgorithmStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AlgorithmStatus>(x),
     },
     optional: {
       "AlgorithmDescription": "s",
@@ -11492,8 +11252,8 @@ export interface AppImageConfigDetails {
   LastModifiedTime?: Date | number | null;
   KernelGatewayImageConfig?: KernelGatewayImageConfig | null;
 }
-function toAppImageConfigDetails(root: JSONValue): AppImageConfigDetails {
-  return prt.readObj({
+function toAppImageConfigDetails(root: jsonP.JSONValue): AppImageConfigDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AppImageConfigArn": "s",
@@ -11514,15 +11274,15 @@ export interface AppDetails {
   Status?: AppStatus | null;
   CreationTime?: Date | number | null;
 }
-function toAppDetails(root: JSONValue): AppDetails {
-  return prt.readObj({
+function toAppDetails(root: jsonP.JSONValue): AppDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DomainId": "s",
       "UserProfileName": "s",
-      "AppType": toAppType,
+      "AppType": (x: jsonP.JSONValue) => cmnP.readEnum<AppType>(x),
       "AppName": "s",
-      "Status": toAppStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<AppStatus>(x),
       "CreationTime": "d",
     },
   }, root);
@@ -11539,13 +11299,13 @@ export interface AutoMLJobSummary {
   LastModifiedTime: Date | number;
   FailureReason?: string | null;
 }
-function toAutoMLJobSummary(root: JSONValue): AutoMLJobSummary {
-  return prt.readObj({
+function toAutoMLJobSummary(root: jsonP.JSONValue): AutoMLJobSummary {
+  return jsonP.readObj({
     required: {
       "AutoMLJobName": "s",
       "AutoMLJobArn": "s",
-      "AutoMLJobStatus": toAutoMLJobStatus,
-      "AutoMLJobSecondaryStatus": toAutoMLJobSecondaryStatus,
+      "AutoMLJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AutoMLJobStatus>(x),
+      "AutoMLJobSecondaryStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AutoMLJobSecondaryStatus>(x),
       "CreationTime": "d",
       "LastModifiedTime": "d",
     },
@@ -11564,8 +11324,8 @@ export interface CodeRepositorySummary {
   LastModifiedTime: Date | number;
   GitConfig?: GitConfig | null;
 }
-function toCodeRepositorySummary(root: JSONValue): CodeRepositorySummary {
-  return prt.readObj({
+function toCodeRepositorySummary(root: jsonP.JSONValue): CodeRepositorySummary {
+  return jsonP.readObj({
     required: {
       "CodeRepositoryName": "s",
       "CodeRepositoryArn": "s",
@@ -11592,21 +11352,21 @@ export interface CompilationJobSummary {
   LastModifiedTime?: Date | number | null;
   CompilationJobStatus: CompilationJobStatus;
 }
-function toCompilationJobSummary(root: JSONValue): CompilationJobSummary {
-  return prt.readObj({
+function toCompilationJobSummary(root: jsonP.JSONValue): CompilationJobSummary {
+  return jsonP.readObj({
     required: {
       "CompilationJobName": "s",
       "CompilationJobArn": "s",
       "CreationTime": "d",
-      "CompilationJobStatus": toCompilationJobStatus,
+      "CompilationJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<CompilationJobStatus>(x),
     },
     optional: {
       "CompilationStartTime": "d",
       "CompilationEndTime": "d",
-      "CompilationTargetDevice": toTargetDevice,
-      "CompilationTargetPlatformOs": toTargetPlatformOs,
-      "CompilationTargetPlatformArch": toTargetPlatformArch,
-      "CompilationTargetPlatformAccelerator": toTargetPlatformAccelerator,
+      "CompilationTargetDevice": (x: jsonP.JSONValue) => cmnP.readEnum<TargetDevice>(x),
+      "CompilationTargetPlatformOs": (x: jsonP.JSONValue) => cmnP.readEnum<TargetPlatformOs>(x),
+      "CompilationTargetPlatformArch": (x: jsonP.JSONValue) => cmnP.readEnum<TargetPlatformArch>(x),
+      "CompilationTargetPlatformAccelerator": (x: jsonP.JSONValue) => cmnP.readEnum<TargetPlatformAccelerator>(x),
       "LastModifiedTime": "d",
     },
   }, root);
@@ -11622,14 +11382,14 @@ export interface DomainDetails {
   LastModifiedTime?: Date | number | null;
   Url?: string | null;
 }
-function toDomainDetails(root: JSONValue): DomainDetails {
-  return prt.readObj({
+function toDomainDetails(root: jsonP.JSONValue): DomainDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DomainArn": "s",
       "DomainId": "s",
       "DomainName": "s",
-      "Status": toDomainStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<DomainStatus>(x),
       "CreationTime": "d",
       "LastModifiedTime": "d",
       "Url": "s",
@@ -11643,8 +11403,8 @@ export interface EndpointConfigSummary {
   EndpointConfigArn: string;
   CreationTime: Date | number;
 }
-function toEndpointConfigSummary(root: JSONValue): EndpointConfigSummary {
-  return prt.readObj({
+function toEndpointConfigSummary(root: jsonP.JSONValue): EndpointConfigSummary {
+  return jsonP.readObj({
     required: {
       "EndpointConfigName": "s",
       "EndpointConfigArn": "s",
@@ -11662,14 +11422,14 @@ export interface EndpointSummary {
   LastModifiedTime: Date | number;
   EndpointStatus: EndpointStatus;
 }
-function toEndpointSummary(root: JSONValue): EndpointSummary {
-  return prt.readObj({
+function toEndpointSummary(root: jsonP.JSONValue): EndpointSummary {
+  return jsonP.readObj({
     required: {
       "EndpointName": "s",
       "EndpointArn": "s",
       "CreationTime": "d",
       "LastModifiedTime": "d",
-      "EndpointStatus": toEndpointStatus,
+      "EndpointStatus": (x: jsonP.JSONValue) => cmnP.readEnum<EndpointStatus>(x),
     },
     optional: {},
   }, root);
@@ -11684,8 +11444,8 @@ export interface ExperimentSummary {
   CreationTime?: Date | number | null;
   LastModifiedTime?: Date | number | null;
 }
-function toExperimentSummary(root: JSONValue): ExperimentSummary {
-  return prt.readObj({
+function toExperimentSummary(root: jsonP.JSONValue): ExperimentSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ExperimentArn": "s",
@@ -11706,12 +11466,12 @@ export interface FlowDefinitionSummary {
   CreationTime: Date | number;
   FailureReason?: string | null;
 }
-function toFlowDefinitionSummary(root: JSONValue): FlowDefinitionSummary {
-  return prt.readObj({
+function toFlowDefinitionSummary(root: jsonP.JSONValue): FlowDefinitionSummary {
+  return jsonP.readObj({
     required: {
       "FlowDefinitionName": "s",
       "FlowDefinitionArn": "s",
-      "FlowDefinitionStatus": toFlowDefinitionStatus,
+      "FlowDefinitionStatus": (x: jsonP.JSONValue) => cmnP.readEnum<FlowDefinitionStatus>(x),
       "CreationTime": "d",
     },
     optional: {
@@ -11726,8 +11486,8 @@ export interface HumanTaskUiSummary {
   HumanTaskUiArn: string;
   CreationTime: Date | number;
 }
-function toHumanTaskUiSummary(root: JSONValue): HumanTaskUiSummary {
-  return prt.readObj({
+function toHumanTaskUiSummary(root: jsonP.JSONValue): HumanTaskUiSummary {
+  return jsonP.readObj({
     required: {
       "HumanTaskUiName": "s",
       "HumanTaskUiArn": "s",
@@ -11750,13 +11510,13 @@ export interface HyperParameterTuningJobSummary {
   ObjectiveStatusCounters: ObjectiveStatusCounters;
   ResourceLimits?: ResourceLimits | null;
 }
-function toHyperParameterTuningJobSummary(root: JSONValue): HyperParameterTuningJobSummary {
-  return prt.readObj({
+function toHyperParameterTuningJobSummary(root: jsonP.JSONValue): HyperParameterTuningJobSummary {
+  return jsonP.readObj({
     required: {
       "HyperParameterTuningJobName": "s",
       "HyperParameterTuningJobArn": "s",
-      "HyperParameterTuningJobStatus": toHyperParameterTuningJobStatus,
-      "Strategy": toHyperParameterTuningJobStrategyType,
+      "HyperParameterTuningJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<HyperParameterTuningJobStatus>(x),
+      "Strategy": (x: jsonP.JSONValue) => cmnP.readEnum<HyperParameterTuningJobStrategyType>(x),
       "CreationTime": "d",
       "TrainingJobStatusCounters": toTrainingJobStatusCounters,
       "ObjectiveStatusCounters": toObjectiveStatusCounters,
@@ -11779,13 +11539,13 @@ export interface ImageVersion {
   LastModifiedTime: Date | number;
   Version: number;
 }
-function toImageVersion(root: JSONValue): ImageVersion {
-  return prt.readObj({
+function toImageVersion(root: jsonP.JSONValue): ImageVersion {
+  return jsonP.readObj({
     required: {
       "CreationTime": "d",
       "ImageArn": "s",
       "ImageVersionArn": "s",
-      "ImageVersionStatus": toImageVersionStatus,
+      "ImageVersionStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ImageVersionStatus>(x),
       "LastModifiedTime": "d",
       "Version": "n",
     },
@@ -11806,13 +11566,13 @@ export interface Image {
   ImageStatus: ImageStatus;
   LastModifiedTime: Date | number;
 }
-function toImage(root: JSONValue): Image {
-  return prt.readObj({
+function toImage(root: jsonP.JSONValue): Image {
+  return jsonP.readObj({
     required: {
       "CreationTime": "d",
       "ImageArn": "s",
       "ImageName": "s",
-      "ImageStatus": toImageStatus,
+      "ImageStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ImageStatus>(x),
       "LastModifiedTime": "d",
     },
     optional: {
@@ -11838,14 +11598,14 @@ export interface LabelingJobSummary {
   LabelingJobOutput?: LabelingJobOutput | null;
   InputConfig?: LabelingJobInputConfig | null;
 }
-function toLabelingJobSummary(root: JSONValue): LabelingJobSummary {
-  return prt.readObj({
+function toLabelingJobSummary(root: jsonP.JSONValue): LabelingJobSummary {
+  return jsonP.readObj({
     required: {
       "LabelingJobName": "s",
       "LabelingJobArn": "s",
       "CreationTime": "d",
       "LastModifiedTime": "d",
-      "LabelingJobStatus": toLabelingJobStatus,
+      "LabelingJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<LabelingJobStatus>(x),
       "LabelCounters": toLabelCounters,
       "WorkteamArn": "s",
       "PreHumanTaskLambdaArn": "s",
@@ -11868,8 +11628,8 @@ export interface LabelingJobForWorkteamSummary {
   LabelCounters?: LabelCountersForWorkteam | null;
   NumberOfHumanWorkersPerDataObject?: number | null;
 }
-function toLabelingJobForWorkteamSummary(root: JSONValue): LabelingJobForWorkteamSummary {
-  return prt.readObj({
+function toLabelingJobForWorkteamSummary(root: jsonP.JSONValue): LabelingJobForWorkteamSummary {
+  return jsonP.readObj({
     required: {
       "JobReferenceCode": "s",
       "WorkRequesterAccountId": "s",
@@ -11889,8 +11649,8 @@ export interface LabelCountersForWorkteam {
   PendingHuman?: number | null;
   Total?: number | null;
 }
-function toLabelCountersForWorkteam(root: JSONValue): LabelCountersForWorkteam {
-  return prt.readObj({
+function toLabelCountersForWorkteam(root: jsonP.JSONValue): LabelCountersForWorkteam {
+  return jsonP.readObj({
     required: {},
     optional: {
       "HumanLabeled": "n",
@@ -11908,13 +11668,13 @@ export interface ModelPackageSummary {
   CreationTime: Date | number;
   ModelPackageStatus: ModelPackageStatus;
 }
-function toModelPackageSummary(root: JSONValue): ModelPackageSummary {
-  return prt.readObj({
+function toModelPackageSummary(root: jsonP.JSONValue): ModelPackageSummary {
+  return jsonP.readObj({
     required: {
       "ModelPackageName": "s",
       "ModelPackageArn": "s",
       "CreationTime": "d",
-      "ModelPackageStatus": toModelPackageStatus,
+      "ModelPackageStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ModelPackageStatus>(x),
     },
     optional: {
       "ModelPackageDescription": "s",
@@ -11928,8 +11688,8 @@ export interface ModelSummary {
   ModelArn: string;
   CreationTime: Date | number;
 }
-function toModelSummary(root: JSONValue): ModelSummary {
-  return prt.readObj({
+function toModelSummary(root: jsonP.JSONValue): ModelSummary {
+  return jsonP.readObj({
     required: {
       "ModelName": "s",
       "ModelArn": "s",
@@ -11948,14 +11708,14 @@ export interface MonitoringScheduleSummary {
   MonitoringScheduleStatus: ScheduleStatus;
   EndpointName?: string | null;
 }
-function toMonitoringScheduleSummary(root: JSONValue): MonitoringScheduleSummary {
-  return prt.readObj({
+function toMonitoringScheduleSummary(root: jsonP.JSONValue): MonitoringScheduleSummary {
+  return jsonP.readObj({
     required: {
       "MonitoringScheduleName": "s",
       "MonitoringScheduleArn": "s",
       "CreationTime": "d",
       "LastModifiedTime": "d",
-      "MonitoringScheduleStatus": toScheduleStatus,
+      "MonitoringScheduleStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ScheduleStatus>(x),
     },
     optional: {
       "EndpointName": "s",
@@ -11970,8 +11730,8 @@ export interface NotebookInstanceLifecycleConfigSummary {
   CreationTime?: Date | number | null;
   LastModifiedTime?: Date | number | null;
 }
-function toNotebookInstanceLifecycleConfigSummary(root: JSONValue): NotebookInstanceLifecycleConfigSummary {
-  return prt.readObj({
+function toNotebookInstanceLifecycleConfigSummary(root: jsonP.JSONValue): NotebookInstanceLifecycleConfigSummary {
+  return jsonP.readObj({
     required: {
       "NotebookInstanceLifecycleConfigName": "s",
       "NotebookInstanceLifecycleConfigArn": "s",
@@ -11996,16 +11756,16 @@ export interface NotebookInstanceSummary {
   DefaultCodeRepository?: string | null;
   AdditionalCodeRepositories?: string[] | null;
 }
-function toNotebookInstanceSummary(root: JSONValue): NotebookInstanceSummary {
-  return prt.readObj({
+function toNotebookInstanceSummary(root: jsonP.JSONValue): NotebookInstanceSummary {
+  return jsonP.readObj({
     required: {
       "NotebookInstanceName": "s",
       "NotebookInstanceArn": "s",
     },
     optional: {
-      "NotebookInstanceStatus": toNotebookInstanceStatus,
+      "NotebookInstanceStatus": (x: jsonP.JSONValue) => cmnP.readEnum<NotebookInstanceStatus>(x),
       "Url": "s",
-      "InstanceType": toInstanceType,
+      "InstanceType": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceType>(x),
       "CreationTime": "d",
       "LastModifiedTime": "d",
       "NotebookInstanceLifecycleConfigName": "s",
@@ -12026,13 +11786,13 @@ export interface ProcessingJobSummary {
   FailureReason?: string | null;
   ExitMessage?: string | null;
 }
-function toProcessingJobSummary(root: JSONValue): ProcessingJobSummary {
-  return prt.readObj({
+function toProcessingJobSummary(root: jsonP.JSONValue): ProcessingJobSummary {
+  return jsonP.readObj({
     required: {
       "ProcessingJobName": "s",
       "ProcessingJobArn": "s",
       "CreationTime": "d",
-      "ProcessingJobStatus": toProcessingJobStatus,
+      "ProcessingJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ProcessingJobStatus>(x),
     },
     optional: {
       "ProcessingEndTime": "d",
@@ -12052,13 +11812,13 @@ export interface TrainingJobSummary {
   LastModifiedTime?: Date | number | null;
   TrainingJobStatus: TrainingJobStatus;
 }
-function toTrainingJobSummary(root: JSONValue): TrainingJobSummary {
-  return prt.readObj({
+function toTrainingJobSummary(root: jsonP.JSONValue): TrainingJobSummary {
+  return jsonP.readObj({
     required: {
       "TrainingJobName": "s",
       "TrainingJobArn": "s",
       "CreationTime": "d",
-      "TrainingJobStatus": toTrainingJobStatus,
+      "TrainingJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<TrainingJobStatus>(x),
     },
     optional: {
       "TrainingEndTime": "d",
@@ -12077,13 +11837,13 @@ export interface TransformJobSummary {
   TransformJobStatus: TransformJobStatus;
   FailureReason?: string | null;
 }
-function toTransformJobSummary(root: JSONValue): TransformJobSummary {
-  return prt.readObj({
+function toTransformJobSummary(root: jsonP.JSONValue): TransformJobSummary {
+  return jsonP.readObj({
     required: {
       "TransformJobName": "s",
       "TransformJobArn": "s",
       "CreationTime": "d",
-      "TransformJobStatus": toTransformJobStatus,
+      "TransformJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<TransformJobStatus>(x),
     },
     optional: {
       "TransformEndTime": "d",
@@ -12107,8 +11867,8 @@ export interface TrialComponentSummary {
   LastModifiedTime?: Date | number | null;
   LastModifiedBy?: UserContext | null;
 }
-function toTrialComponentSummary(root: JSONValue): TrialComponentSummary {
-  return prt.readObj({
+function toTrialComponentSummary(root: jsonP.JSONValue): TrialComponentSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TrialComponentName": "s",
@@ -12135,8 +11895,8 @@ export interface TrialSummary {
   CreationTime?: Date | number | null;
   LastModifiedTime?: Date | number | null;
 }
-function toTrialSummary(root: JSONValue): TrialSummary {
-  return prt.readObj({
+function toTrialSummary(root: jsonP.JSONValue): TrialSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TrialArn": "s",
@@ -12157,13 +11917,13 @@ export interface UserProfileDetails {
   CreationTime?: Date | number | null;
   LastModifiedTime?: Date | number | null;
 }
-function toUserProfileDetails(root: JSONValue): UserProfileDetails {
-  return prt.readObj({
+function toUserProfileDetails(root: jsonP.JSONValue): UserProfileDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DomainId": "s",
       "UserProfileName": "s",
-      "Status": toUserProfileStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<UserProfileStatus>(x),
       "CreationTime": "d",
       "LastModifiedTime": "d",
     },
@@ -12175,8 +11935,8 @@ export interface RenderingError {
   Code: string;
   Message: string;
 }
-function toRenderingError(root: JSONValue): RenderingError {
-  return prt.readObj({
+function toRenderingError(root: jsonP.JSONValue): RenderingError {
+  return jsonP.readObj({
     required: {
       "Code": "s",
       "Message": "s",
@@ -12192,8 +11952,8 @@ export interface SearchRecord {
   Trial?: Trial | null;
   TrialComponent?: TrialComponent | null;
 }
-function toSearchRecord(root: JSONValue): SearchRecord {
-  return prt.readObj({
+function toSearchRecord(root: jsonP.JSONValue): SearchRecord {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TrainingJob": toTrainingJob,
@@ -12215,7 +11975,7 @@ export interface TrainingJob {
   TrainingJobStatus?: TrainingJobStatus | null;
   SecondaryStatus?: SecondaryStatus | null;
   FailureReason?: string | null;
-  HyperParameters?: { [key: string]: string } | null;
+  HyperParameters?: { [key: string]: string | null | undefined } | null;
   AlgorithmSpecification?: AlgorithmSpecification | null;
   RoleArn?: string | null;
   InputDataConfig?: Channel[] | null;
@@ -12242,8 +12002,8 @@ export interface TrainingJob {
   DebugRuleEvaluationStatuses?: DebugRuleEvaluationStatus[] | null;
   Tags?: Tag[] | null;
 }
-function toTrainingJob(root: JSONValue): TrainingJob {
-  return prt.readObj({
+function toTrainingJob(root: jsonP.JSONValue): TrainingJob {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TrainingJobName": "s",
@@ -12252,10 +12012,10 @@ function toTrainingJob(root: JSONValue): TrainingJob {
       "LabelingJobArn": "s",
       "AutoMLJobArn": "s",
       "ModelArtifacts": toModelArtifacts,
-      "TrainingJobStatus": toTrainingJobStatus,
-      "SecondaryStatus": toSecondaryStatus,
+      "TrainingJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<TrainingJobStatus>(x),
+      "SecondaryStatus": (x: jsonP.JSONValue) => cmnP.readEnum<SecondaryStatus>(x),
       "FailureReason": "s",
-      "HyperParameters": x => prt.readMap(String, String, x),
+      "HyperParameters": x => jsonP.readMap(String, String, x),
       "AlgorithmSpecification": toAlgorithmSpecification,
       "RoleArn": "s",
       "InputDataConfig": [toChannel],
@@ -12298,8 +12058,8 @@ export interface Experiment {
   LastModifiedBy?: UserContext | null;
   Tags?: Tag[] | null;
 }
-function toExperiment(root: JSONValue): Experiment {
-  return prt.readObj({
+function toExperiment(root: jsonP.JSONValue): Experiment {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ExperimentName": "s",
@@ -12330,8 +12090,8 @@ export interface Trial {
   Tags?: Tag[] | null;
   TrialComponentSummaries?: TrialComponentSimpleSummary[] | null;
 }
-function toTrial(root: JSONValue): Trial {
-  return prt.readObj({
+function toTrial(root: jsonP.JSONValue): Trial {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TrialName": "s",
@@ -12357,8 +12117,8 @@ export interface TrialComponentSimpleSummary {
   CreationTime?: Date | number | null;
   CreatedBy?: UserContext | null;
 }
-function toTrialComponentSimpleSummary(root: JSONValue): TrialComponentSimpleSummary {
-  return prt.readObj({
+function toTrialComponentSimpleSummary(root: jsonP.JSONValue): TrialComponentSimpleSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TrialComponentName": "s",
@@ -12383,16 +12143,16 @@ export interface TrialComponent {
   CreatedBy?: UserContext | null;
   LastModifiedTime?: Date | number | null;
   LastModifiedBy?: UserContext | null;
-  Parameters?: { [key: string]: TrialComponentParameterValue } | null;
-  InputArtifacts?: { [key: string]: TrialComponentArtifact } | null;
-  OutputArtifacts?: { [key: string]: TrialComponentArtifact } | null;
+  Parameters?: { [key: string]: TrialComponentParameterValue | null | undefined } | null;
+  InputArtifacts?: { [key: string]: TrialComponentArtifact | null | undefined } | null;
+  OutputArtifacts?: { [key: string]: TrialComponentArtifact | null | undefined } | null;
   Metrics?: TrialComponentMetricSummary[] | null;
   SourceDetail?: TrialComponentSourceDetail | null;
   Tags?: Tag[] | null;
   Parents?: Parent[] | null;
 }
-function toTrialComponent(root: JSONValue): TrialComponent {
-  return prt.readObj({
+function toTrialComponent(root: jsonP.JSONValue): TrialComponent {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TrialComponentName": "s",
@@ -12406,9 +12166,9 @@ function toTrialComponent(root: JSONValue): TrialComponent {
       "CreatedBy": toUserContext,
       "LastModifiedTime": "d",
       "LastModifiedBy": toUserContext,
-      "Parameters": x => prt.readMap(String, toTrialComponentParameterValue, x),
-      "InputArtifacts": x => prt.readMap(String, toTrialComponentArtifact, x),
-      "OutputArtifacts": x => prt.readMap(String, toTrialComponentArtifact, x),
+      "Parameters": x => jsonP.readMap(String, toTrialComponentParameterValue, x),
+      "InputArtifacts": x => jsonP.readMap(String, toTrialComponentArtifact, x),
+      "OutputArtifacts": x => jsonP.readMap(String, toTrialComponentArtifact, x),
       "Metrics": [toTrialComponentMetricSummary],
       "SourceDetail": toTrialComponentSourceDetail,
       "Tags": [toTag],
@@ -12424,8 +12184,8 @@ export interface TrialComponentSourceDetail {
   ProcessingJob?: ProcessingJob | null;
   TransformJob?: TransformJob | null;
 }
-function toTrialComponentSourceDetail(root: JSONValue): TrialComponentSourceDetail {
-  return prt.readObj({
+function toTrialComponentSourceDetail(root: jsonP.JSONValue): TrialComponentSourceDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SourceArn": "s",
@@ -12444,7 +12204,7 @@ export interface ProcessingJob {
   ProcessingResources?: ProcessingResources | null;
   StoppingCondition?: ProcessingStoppingCondition | null;
   AppSpecification?: AppSpecification | null;
-  Environment?: { [key: string]: string } | null;
+  Environment?: { [key: string]: string | null | undefined } | null;
   NetworkConfig?: NetworkConfig | null;
   RoleArn?: string | null;
   ExperimentConfig?: ExperimentConfig | null;
@@ -12461,8 +12221,8 @@ export interface ProcessingJob {
   TrainingJobArn?: string | null;
   Tags?: Tag[] | null;
 }
-function toProcessingJob(root: JSONValue): ProcessingJob {
-  return prt.readObj({
+function toProcessingJob(root: jsonP.JSONValue): ProcessingJob {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ProcessingInputs": [toProcessingInput],
@@ -12471,12 +12231,12 @@ function toProcessingJob(root: JSONValue): ProcessingJob {
       "ProcessingResources": toProcessingResources,
       "StoppingCondition": toProcessingStoppingCondition,
       "AppSpecification": toAppSpecification,
-      "Environment": x => prt.readMap(String, String, x),
+      "Environment": x => jsonP.readMap(String, String, x),
       "NetworkConfig": toNetworkConfig,
       "RoleArn": "s",
       "ExperimentConfig": toExperimentConfig,
       "ProcessingJobArn": "s",
-      "ProcessingJobStatus": toProcessingJobStatus,
+      "ProcessingJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ProcessingJobStatus>(x),
       "ExitMessage": "s",
       "FailureReason": "s",
       "ProcessingEndTime": "d",
@@ -12502,7 +12262,7 @@ export interface TransformJob {
   ModelClientConfig?: ModelClientConfig | null;
   MaxPayloadInMB?: number | null;
   BatchStrategy?: BatchStrategy | null;
-  Environment?: { [key: string]: string } | null;
+  Environment?: { [key: string]: string | null | undefined } | null;
   TransformInput?: TransformInput | null;
   TransformOutput?: TransformOutput | null;
   TransformResources?: TransformResources | null;
@@ -12515,20 +12275,20 @@ export interface TransformJob {
   ExperimentConfig?: ExperimentConfig | null;
   Tags?: Tag[] | null;
 }
-function toTransformJob(root: JSONValue): TransformJob {
-  return prt.readObj({
+function toTransformJob(root: jsonP.JSONValue): TransformJob {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TransformJobName": "s",
       "TransformJobArn": "s",
-      "TransformJobStatus": toTransformJobStatus,
+      "TransformJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<TransformJobStatus>(x),
       "FailureReason": "s",
       "ModelName": "s",
       "MaxConcurrentTransforms": "n",
       "ModelClientConfig": toModelClientConfig,
       "MaxPayloadInMB": "n",
-      "BatchStrategy": toBatchStrategy,
-      "Environment": x => prt.readMap(String, String, x),
+      "BatchStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<BatchStrategy>(x),
+      "Environment": x => jsonP.readMap(String, String, x),
       "TransformInput": toTransformInput,
       "TransformOutput": toTransformOutput,
       "TransformResources": toTransformResources,
@@ -12549,8 +12309,8 @@ export interface Parent {
   TrialName?: string | null;
   ExperimentName?: string | null;
 }
-function toParent(root: JSONValue): Parent {
-  return prt.readObj({
+function toParent(root: jsonP.JSONValue): Parent {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TrialName": "s",

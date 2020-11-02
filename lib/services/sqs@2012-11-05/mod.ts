@@ -5,9 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
-
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 import * as Base64 from "https://deno.land/x/base64@v0.2.1/mod.ts";
 
 export default class SQS {
@@ -35,8 +35,8 @@ export default class SQS {
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
     body.append(prefix+"Label", (params["Label"] ?? '').toString());
-    if (params["AWSAccountIds"]) prt.appendList(body, prefix+"AWSAccountId", params["AWSAccountIds"], {"entryPrefix":"."})
-    if (params["Actions"]) prt.appendList(body, prefix+"ActionName", params["Actions"], {"entryPrefix":"."})
+    if (params["AWSAccountIds"]) qsP.appendList(body, prefix+"AWSAccountId", params["AWSAccountIds"], {"entryPrefix":"."})
+    if (params["Actions"]) qsP.appendList(body, prefix+"ActionName", params["Actions"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddPermission",
@@ -63,12 +63,12 @@ export default class SQS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    if (params["Entries"]) prt.appendList(body, prefix+"ChangeMessageVisibilityBatchRequestEntry", params["Entries"], {"appender":ChangeMessageVisibilityBatchRequestEntry_Serialize,"entryPrefix":"."})
+    if (params["Entries"]) qsP.appendList(body, prefix+"ChangeMessageVisibilityBatchRequestEntry", params["Entries"], {"appender":ChangeMessageVisibilityBatchRequestEntry_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ChangeMessageVisibilityBatch",
     });
-    const xml = readXmlResult(await resp.text(), "ChangeMessageVisibilityBatchResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ChangeMessageVisibilityBatchResult");
     return {
       Successful: xml.getList("ChangeMessageVisibilityBatchResultEntry").map(ChangeMessageVisibilityBatchResultEntry_Parse),
       Failed: xml.getList("BatchResultErrorEntry").map(BatchResultErrorEntry_Parse),
@@ -81,13 +81,13 @@ export default class SQS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueName", (params["QueueName"] ?? '').toString());
-    if (params["Attributes"]) prt.appendMap(body, prefix+"Attribute", params["Attributes"], {"keyName":".Name","valName":".Value","entryPrefix":"."})
-    if (params["tags"]) prt.appendMap(body, prefix+"Tag", params["tags"], {"keyName":".Key","valName":".Value","entryPrefix":"."})
+    if (params["Attributes"]) qsP.appendMap(body, prefix+"Attribute", params["Attributes"], {"keyName":".Name","valName":".Value","entryPrefix":"."})
+    if (params["tags"]) qsP.appendMap(body, prefix+"Tag", params["tags"], {"keyName":".Key","valName":".Value","entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateQueue",
     });
-    const xml = readXmlResult(await resp.text(), "CreateQueueResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateQueueResult");
     return xml.strings({
       optional: {"QueueUrl":true},
     });
@@ -112,12 +112,12 @@ export default class SQS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    if (params["Entries"]) prt.appendList(body, prefix+"DeleteMessageBatchRequestEntry", params["Entries"], {"appender":DeleteMessageBatchRequestEntry_Serialize,"entryPrefix":"."})
+    if (params["Entries"]) qsP.appendList(body, prefix+"DeleteMessageBatchRequestEntry", params["Entries"], {"appender":DeleteMessageBatchRequestEntry_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMessageBatch",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteMessageBatchResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteMessageBatchResult");
     return {
       Successful: xml.getList("DeleteMessageBatchResultEntry").map(DeleteMessageBatchResultEntry_Parse),
       Failed: xml.getList("BatchResultErrorEntry").map(BatchResultErrorEntry_Parse),
@@ -142,14 +142,14 @@ export default class SQS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    if (params["AttributeNames"]) prt.appendList(body, prefix+"AttributeName", params["AttributeNames"], {"entryPrefix":"."})
+    if (params["AttributeNames"]) qsP.appendList(body, prefix+"AttributeName", params["AttributeNames"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetQueueAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "GetQueueAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetQueueAttributesResult");
     return {
-      Attributes: readXmlMap(xml.getList("Attribute"), x => x.content ?? '', {"keyName":"Name","valName":"Value"}),
+      Attributes: xmlP.readXmlMap(xml.getList("Attribute"), x => x.content ?? '', {"keyName":"Name","valName":"Value"}),
     };
   }
 
@@ -164,7 +164,7 @@ export default class SQS {
       abortSignal, body,
       action: "GetQueueUrl",
     });
-    const xml = readXmlResult(await resp.text(), "GetQueueUrlResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetQueueUrlResult");
     return xml.strings({
       optional: {"QueueUrl":true},
     });
@@ -182,7 +182,7 @@ export default class SQS {
       abortSignal, body,
       action: "ListDeadLetterSourceQueues",
     });
-    const xml = readXmlResult(await resp.text(), "ListDeadLetterSourceQueuesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListDeadLetterSourceQueuesResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -201,9 +201,9 @@ export default class SQS {
       abortSignal, body,
       action: "ListQueueTags",
     });
-    const xml = readXmlResult(await resp.text(), "ListQueueTagsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListQueueTagsResult");
     return {
-      Tags: readXmlMap(xml.getList("Tag"), x => x.content ?? '', {"keyName":"Key","valName":"Value"}),
+      Tags: xmlP.readXmlMap(xml.getList("Tag"), x => x.content ?? '', {"keyName":"Key","valName":"Value"}),
     };
   }
 
@@ -219,7 +219,7 @@ export default class SQS {
       abortSignal, body,
       action: "ListQueues",
     });
-    const xml = readXmlResult(await resp.text(), "ListQueuesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListQueuesResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -246,8 +246,8 @@ export default class SQS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    if (params["AttributeNames"]) prt.appendList(body, prefix+"AttributeName", params["AttributeNames"], {"entryPrefix":"."})
-    if (params["MessageAttributeNames"]) prt.appendList(body, prefix+"MessageAttributeName", params["MessageAttributeNames"], {"entryPrefix":"."})
+    if (params["AttributeNames"]) qsP.appendList(body, prefix+"AttributeName", params["AttributeNames"], {"entryPrefix":"."})
+    if (params["MessageAttributeNames"]) qsP.appendList(body, prefix+"MessageAttributeName", params["MessageAttributeNames"], {"entryPrefix":"."})
     if ("MaxNumberOfMessages" in params) body.append(prefix+"MaxNumberOfMessages", (params["MaxNumberOfMessages"] ?? '').toString());
     if ("VisibilityTimeout" in params) body.append(prefix+"VisibilityTimeout", (params["VisibilityTimeout"] ?? '').toString());
     if ("WaitTimeSeconds" in params) body.append(prefix+"WaitTimeSeconds", (params["WaitTimeSeconds"] ?? '').toString());
@@ -256,7 +256,7 @@ export default class SQS {
       abortSignal, body,
       action: "ReceiveMessage",
     });
-    const xml = readXmlResult(await resp.text(), "ReceiveMessageResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ReceiveMessageResult");
     return {
       Messages: xml.getList("Message").map(Message_Parse),
     };
@@ -283,15 +283,15 @@ export default class SQS {
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
     body.append(prefix+"MessageBody", (params["MessageBody"] ?? '').toString());
     if ("DelaySeconds" in params) body.append(prefix+"DelaySeconds", (params["DelaySeconds"] ?? '').toString());
-    if (params["MessageAttributes"]) prt.appendMap(body, prefix+"MessageAttribute", params["MessageAttributes"], {"appender":MessageAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":"."})
-    if (params["MessageSystemAttributes"]) prt.appendMap(body, prefix+"MessageSystemAttribute", params["MessageSystemAttributes"], {"appender":MessageSystemAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":"."})
+    if (params["MessageAttributes"]) qsP.appendMap(body, prefix+"MessageAttribute", params["MessageAttributes"], {"appender":MessageAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":"."})
+    if (params["MessageSystemAttributes"]) qsP.appendMap(body, prefix+"MessageSystemAttribute", params["MessageSystemAttributes"], {"appender":MessageSystemAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":"."})
     if ("MessageDeduplicationId" in params) body.append(prefix+"MessageDeduplicationId", (params["MessageDeduplicationId"] ?? '').toString());
     if ("MessageGroupId" in params) body.append(prefix+"MessageGroupId", (params["MessageGroupId"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendMessage",
     });
-    const xml = readXmlResult(await resp.text(), "SendMessageResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SendMessageResult");
     return xml.strings({
       optional: {"MD5OfMessageBody":true,"MD5OfMessageAttributes":true,"MD5OfMessageSystemAttributes":true,"MessageId":true,"SequenceNumber":true},
     });
@@ -303,12 +303,12 @@ export default class SQS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    if (params["Entries"]) prt.appendList(body, prefix+"SendMessageBatchRequestEntry", params["Entries"], {"appender":SendMessageBatchRequestEntry_Serialize,"entryPrefix":"."})
+    if (params["Entries"]) qsP.appendList(body, prefix+"SendMessageBatchRequestEntry", params["Entries"], {"appender":SendMessageBatchRequestEntry_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendMessageBatch",
     });
-    const xml = readXmlResult(await resp.text(), "SendMessageBatchResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SendMessageBatchResult");
     return {
       Successful: xml.getList("SendMessageBatchResultEntry").map(SendMessageBatchResultEntry_Parse),
       Failed: xml.getList("BatchResultErrorEntry").map(BatchResultErrorEntry_Parse),
@@ -321,7 +321,7 @@ export default class SQS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    if (params["Attributes"]) prt.appendMap(body, prefix+"Attribute", params["Attributes"], {"keyName":".Name","valName":".Value","entryPrefix":"."})
+    if (params["Attributes"]) qsP.appendMap(body, prefix+"Attribute", params["Attributes"], {"keyName":".Name","valName":".Value","entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetQueueAttributes",
@@ -334,7 +334,7 @@ export default class SQS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    if (params["Tags"]) prt.appendMap(body, prefix+"Tag", params["Tags"], {"keyName":".Key","valName":".Value","entryPrefix":"."})
+    if (params["Tags"]) qsP.appendMap(body, prefix+"Tag", params["Tags"], {"keyName":".Key","valName":".Value","entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagQueue",
@@ -347,7 +347,7 @@ export default class SQS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKey", params["TagKeys"], {"entryPrefix":"."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKey", params["TagKeys"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagQueue",
@@ -380,8 +380,8 @@ export interface ChangeMessageVisibilityBatchRequest {
 // refs: 1 - tags: named, input
 export interface CreateQueueRequest {
   QueueName: string;
-  Attributes?: { [key in QueueAttributeName]: string } | null;
-  tags?: { [key: string]: string } | null;
+  Attributes?: { [key in QueueAttributeName]: string | null | undefined } | null;
+  tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -459,8 +459,8 @@ export interface SendMessageRequest {
   QueueUrl: string;
   MessageBody: string;
   DelaySeconds?: number | null;
-  MessageAttributes?: { [key: string]: MessageAttributeValue } | null;
-  MessageSystemAttributes?: { [key in MessageSystemAttributeNameForSends]: MessageSystemAttributeValue } | null;
+  MessageAttributes?: { [key: string]: MessageAttributeValue | null | undefined } | null;
+  MessageSystemAttributes?: { [key in MessageSystemAttributeNameForSends]: MessageSystemAttributeValue | null | undefined } | null;
   MessageDeduplicationId?: string | null;
   MessageGroupId?: string | null;
 }
@@ -474,13 +474,13 @@ export interface SendMessageBatchRequest {
 // refs: 1 - tags: named, input
 export interface SetQueueAttributesRequest {
   QueueUrl: string;
-  Attributes: { [key in QueueAttributeName]: string };
+  Attributes: { [key in QueueAttributeName]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, input
 export interface TagQueueRequest {
   QueueUrl: string;
-  Tags: { [key: string]: string };
+  Tags: { [key: string]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, input
@@ -508,7 +508,7 @@ export interface DeleteMessageBatchResult {
 
 // refs: 1 - tags: named, output
 export interface GetQueueAttributesResult {
-  Attributes: { [key in QueueAttributeName]: string };
+  Attributes: { [key in QueueAttributeName]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, output
@@ -524,7 +524,7 @@ export interface ListDeadLetterSourceQueuesResult {
 
 // refs: 1 - tags: named, output
 export interface ListQueueTagsResult {
-  Tags: { [key: string]: string };
+  Tags: { [key: string]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, output
@@ -585,9 +585,7 @@ export type QueueAttributeName =
 | "ContentBasedDeduplication"
 | "KmsMasterKeyId"
 | "KmsDataKeyReusePeriodSeconds"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface DeleteMessageBatchRequestEntry {
@@ -610,9 +608,7 @@ export type MessageSystemAttributeName =
 | "MessageDeduplicationId"
 | "MessageGroupId"
 | "AWSTraceHeader"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface MessageAttributeValue {
@@ -624,12 +620,12 @@ export interface MessageAttributeValue {
 }
 function MessageAttributeValue_Serialize(body: URLSearchParams, prefix: string, params: MessageAttributeValue) {
     if ("StringValue" in params) body.append(prefix+".StringValue", (params["StringValue"] ?? '').toString());
-    if ("BinaryValue" in params) body.append(prefix+".BinaryValue", prt.encodeBlob(params["BinaryValue"]));
-    if (params["StringListValues"]) prt.appendList(body, prefix+".StringListValue", params["StringListValues"], {"entryPrefix":"."})
-    if (params["BinaryListValues"]) prt.appendList(body, prefix+".BinaryListValue", params["BinaryListValues"], {"encoder":prt.encodeBlob,"entryPrefix":"."})
+    if ("BinaryValue" in params) body.append(prefix+".BinaryValue", qsP.encodeBlob(params["BinaryValue"]));
+    if (params["StringListValues"]) qsP.appendList(body, prefix+".StringListValue", params["StringListValues"], {"entryPrefix":"."})
+    if (params["BinaryListValues"]) qsP.appendList(body, prefix+".BinaryListValue", params["BinaryListValues"], {"encoder":qsP.encodeBlob,"entryPrefix":"."})
     body.append(prefix+".DataType", (params["DataType"] ?? '').toString());
 }
-function MessageAttributeValue_Parse(node: XmlNode): MessageAttributeValue {
+function MessageAttributeValue_Parse(node: xmlP.XmlNode): MessageAttributeValue {
   return {
     ...node.strings({
       required: {"DataType":true},
@@ -644,8 +640,7 @@ function MessageAttributeValue_Parse(node: XmlNode): MessageAttributeValue {
 // refs: 2 - tags: input, named, enum
 export type MessageSystemAttributeNameForSends =
 | "AWSTraceHeader"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface MessageSystemAttributeValue {
@@ -657,9 +652,9 @@ export interface MessageSystemAttributeValue {
 }
 function MessageSystemAttributeValue_Serialize(body: URLSearchParams, prefix: string, params: MessageSystemAttributeValue) {
     if ("StringValue" in params) body.append(prefix+".StringValue", (params["StringValue"] ?? '').toString());
-    if ("BinaryValue" in params) body.append(prefix+".BinaryValue", prt.encodeBlob(params["BinaryValue"]));
-    if (params["StringListValues"]) prt.appendList(body, prefix+".StringListValue", params["StringListValues"], {"entryPrefix":"."})
-    if (params["BinaryListValues"]) prt.appendList(body, prefix+".BinaryListValue", params["BinaryListValues"], {"encoder":prt.encodeBlob,"entryPrefix":"."})
+    if ("BinaryValue" in params) body.append(prefix+".BinaryValue", qsP.encodeBlob(params["BinaryValue"]));
+    if (params["StringListValues"]) qsP.appendList(body, prefix+".StringListValue", params["StringListValues"], {"entryPrefix":"."})
+    if (params["BinaryListValues"]) qsP.appendList(body, prefix+".BinaryListValue", params["BinaryListValues"], {"encoder":qsP.encodeBlob,"entryPrefix":"."})
     body.append(prefix+".DataType", (params["DataType"] ?? '').toString());
 }
 
@@ -668,8 +663,8 @@ export interface SendMessageBatchRequestEntry {
   Id: string;
   MessageBody: string;
   DelaySeconds?: number | null;
-  MessageAttributes?: { [key: string]: MessageAttributeValue } | null;
-  MessageSystemAttributes?: { [key in MessageSystemAttributeNameForSends]: MessageSystemAttributeValue } | null;
+  MessageAttributes?: { [key: string]: MessageAttributeValue | null | undefined } | null;
+  MessageSystemAttributes?: { [key in MessageSystemAttributeNameForSends]: MessageSystemAttributeValue | null | undefined } | null;
   MessageDeduplicationId?: string | null;
   MessageGroupId?: string | null;
 }
@@ -677,8 +672,8 @@ function SendMessageBatchRequestEntry_Serialize(body: URLSearchParams, prefix: s
     body.append(prefix+".Id", (params["Id"] ?? '').toString());
     body.append(prefix+".MessageBody", (params["MessageBody"] ?? '').toString());
     if ("DelaySeconds" in params) body.append(prefix+".DelaySeconds", (params["DelaySeconds"] ?? '').toString());
-    if (params["MessageAttributes"]) prt.appendMap(body, prefix+".MessageAttribute", params["MessageAttributes"], {"appender":MessageAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":"."})
-    if (params["MessageSystemAttributes"]) prt.appendMap(body, prefix+".MessageSystemAttribute", params["MessageSystemAttributes"], {"appender":MessageSystemAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":"."})
+    if (params["MessageAttributes"]) qsP.appendMap(body, prefix+".MessageAttribute", params["MessageAttributes"], {"appender":MessageAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":"."})
+    if (params["MessageSystemAttributes"]) qsP.appendMap(body, prefix+".MessageSystemAttribute", params["MessageSystemAttributes"], {"appender":MessageSystemAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":"."})
     if ("MessageDeduplicationId" in params) body.append(prefix+".MessageDeduplicationId", (params["MessageDeduplicationId"] ?? '').toString());
     if ("MessageGroupId" in params) body.append(prefix+".MessageGroupId", (params["MessageGroupId"] ?? '').toString());
 }
@@ -687,7 +682,7 @@ function SendMessageBatchRequestEntry_Serialize(body: URLSearchParams, prefix: s
 export interface ChangeMessageVisibilityBatchResultEntry {
   Id: string;
 }
-function ChangeMessageVisibilityBatchResultEntry_Parse(node: XmlNode): ChangeMessageVisibilityBatchResultEntry {
+function ChangeMessageVisibilityBatchResultEntry_Parse(node: xmlP.XmlNode): ChangeMessageVisibilityBatchResultEntry {
   return node.strings({
     required: {"Id":true},
   });
@@ -700,7 +695,7 @@ export interface BatchResultErrorEntry {
   Code: string;
   Message?: string | null;
 }
-function BatchResultErrorEntry_Parse(node: XmlNode): BatchResultErrorEntry {
+function BatchResultErrorEntry_Parse(node: xmlP.XmlNode): BatchResultErrorEntry {
   return {
     ...node.strings({
       required: {"Id":true,"Code":true},
@@ -714,7 +709,7 @@ function BatchResultErrorEntry_Parse(node: XmlNode): BatchResultErrorEntry {
 export interface DeleteMessageBatchResultEntry {
   Id: string;
 }
-function DeleteMessageBatchResultEntry_Parse(node: XmlNode): DeleteMessageBatchResultEntry {
+function DeleteMessageBatchResultEntry_Parse(node: xmlP.XmlNode): DeleteMessageBatchResultEntry {
   return node.strings({
     required: {"Id":true},
   });
@@ -726,17 +721,17 @@ export interface Message {
   ReceiptHandle?: string | null;
   MD5OfBody?: string | null;
   Body?: string | null;
-  Attributes: { [key in MessageSystemAttributeName]: string };
+  Attributes: { [key in MessageSystemAttributeName]: string | null | undefined };
   MD5OfMessageAttributes?: string | null;
-  MessageAttributes: { [key: string]: MessageAttributeValue };
+  MessageAttributes: { [key: string]: MessageAttributeValue | null | undefined };
 }
-function Message_Parse(node: XmlNode): Message {
+function Message_Parse(node: xmlP.XmlNode): Message {
   return {
     ...node.strings({
       optional: {"MessageId":true,"ReceiptHandle":true,"MD5OfBody":true,"Body":true,"MD5OfMessageAttributes":true},
     }),
-    Attributes: readXmlMap(node.getList("Attribute"), x => x.content ?? '', {"keyName":"Name","valName":"Value"}),
-    MessageAttributes: readXmlMap(node.getList("MessageAttribute"), MessageAttributeValue_Parse, {"keyName":"Name","valName":"Value"}),
+    Attributes: xmlP.readXmlMap(node.getList("Attribute"), x => x.content ?? '', {"keyName":"Name","valName":"Value"}),
+    MessageAttributes: xmlP.readXmlMap(node.getList("MessageAttribute"), MessageAttributeValue_Parse, {"keyName":"Name","valName":"Value"}),
   };
 }
 
@@ -749,7 +744,7 @@ export interface SendMessageBatchResultEntry {
   MD5OfMessageSystemAttributes?: string | null;
   SequenceNumber?: string | null;
 }
-function SendMessageBatchResultEntry_Parse(node: XmlNode): SendMessageBatchResultEntry {
+function SendMessageBatchResultEntry_Parse(node: xmlP.XmlNode): SendMessageBatchResultEntry {
   return node.strings({
     required: {"Id":true,"MessageId":true,"MD5OfMessageBody":true},
     optional: {"MD5OfMessageAttributes":true,"MD5OfMessageSystemAttributes":true,"SequenceNumber":true},

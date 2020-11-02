@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class Snowball {
   #client: ServiceClient;
@@ -30,13 +30,14 @@ export default class Snowball {
   async cancelCluster(
     {abortSignal, ...params}: RequestConfig & CancelClusterRequest,
   ): Promise<CancelClusterResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelCluster",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -45,13 +46,14 @@ export default class Snowball {
   async cancelJob(
     {abortSignal, ...params}: RequestConfig & CancelJobRequest,
   ): Promise<CancelJobResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -60,14 +62,14 @@ export default class Snowball {
   async createAddress(
     {abortSignal, ...params}: RequestConfig & CreateAddressRequest,
   ): Promise<CreateAddressResult> {
-    const body: JSONObject = {...params,
-    Address: fromAddress(params["Address"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Address: fromAddress(params["Address"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAddress",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AddressId": "s",
@@ -78,16 +80,24 @@ export default class Snowball {
   async createCluster(
     {abortSignal, ...params}: RequestConfig & CreateClusterRequest,
   ): Promise<CreateClusterResult> {
-    const body: JSONObject = {...params,
-    Resources: fromJobResource(params["Resources"]),
-    Notification: fromNotification(params["Notification"]),
-    TaxDocuments: fromTaxDocuments(params["TaxDocuments"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobType: params["JobType"],
+      Resources: fromJobResource(params["Resources"]),
+      Description: params["Description"],
+      AddressId: params["AddressId"],
+      KmsKeyARN: params["KmsKeyARN"],
+      RoleARN: params["RoleARN"],
+      SnowballType: params["SnowballType"],
+      ShippingOption: params["ShippingOption"],
+      Notification: fromNotification(params["Notification"]),
+      ForwardingAddressId: params["ForwardingAddressId"],
+      TaxDocuments: fromTaxDocuments(params["TaxDocuments"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCluster",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ClusterId": "s",
@@ -98,17 +108,27 @@ export default class Snowball {
   async createJob(
     {abortSignal, ...params}: RequestConfig & CreateJobRequest = {},
   ): Promise<CreateJobResult> {
-    const body: JSONObject = {...params,
-    Resources: fromJobResource(params["Resources"]),
-    Notification: fromNotification(params["Notification"]),
-    TaxDocuments: fromTaxDocuments(params["TaxDocuments"]),
-    DeviceConfiguration: fromDeviceConfiguration(params["DeviceConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobType: params["JobType"],
+      Resources: fromJobResource(params["Resources"]),
+      Description: params["Description"],
+      AddressId: params["AddressId"],
+      KmsKeyARN: params["KmsKeyARN"],
+      RoleARN: params["RoleARN"],
+      SnowballCapacityPreference: params["SnowballCapacityPreference"],
+      ShippingOption: params["ShippingOption"],
+      Notification: fromNotification(params["Notification"]),
+      ClusterId: params["ClusterId"],
+      SnowballType: params["SnowballType"],
+      ForwardingAddressId: params["ForwardingAddressId"],
+      TaxDocuments: fromTaxDocuments(params["TaxDocuments"]),
+      DeviceConfiguration: fromDeviceConfiguration(params["DeviceConfiguration"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
@@ -119,16 +139,18 @@ export default class Snowball {
   async createReturnShippingLabel(
     {abortSignal, ...params}: RequestConfig & CreateReturnShippingLabelRequest,
   ): Promise<CreateReturnShippingLabelResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+      ShippingOption: params["ShippingOption"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateReturnShippingLabel",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Status": toShippingLabelStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ShippingLabelStatus>(x),
       },
     }, await resp.json());
   }
@@ -136,13 +158,14 @@ export default class Snowball {
   async describeAddress(
     {abortSignal, ...params}: RequestConfig & DescribeAddressRequest,
   ): Promise<DescribeAddressResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AddressId: params["AddressId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAddress",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Address": toAddress,
@@ -153,13 +176,15 @@ export default class Snowball {
   async describeAddresses(
     {abortSignal, ...params}: RequestConfig & DescribeAddressesRequest = {},
   ): Promise<DescribeAddressesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAddresses",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Addresses": [toAddress],
@@ -171,13 +196,14 @@ export default class Snowball {
   async describeCluster(
     {abortSignal, ...params}: RequestConfig & DescribeClusterRequest,
   ): Promise<DescribeClusterResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCluster",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ClusterMetadata": toClusterMetadata,
@@ -188,13 +214,14 @@ export default class Snowball {
   async describeJob(
     {abortSignal, ...params}: RequestConfig & DescribeJobRequest,
   ): Promise<DescribeJobResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobMetadata": toJobMetadata,
@@ -206,16 +233,17 @@ export default class Snowball {
   async describeReturnShippingLabel(
     {abortSignal, ...params}: RequestConfig & DescribeReturnShippingLabelRequest = {},
   ): Promise<DescribeReturnShippingLabelResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeReturnShippingLabel",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Status": toShippingLabelStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ShippingLabelStatus>(x),
         "ExpirationDate": "d",
       },
     }, await resp.json());
@@ -224,13 +252,14 @@ export default class Snowball {
   async getJobManifest(
     {abortSignal, ...params}: RequestConfig & GetJobManifestRequest,
   ): Promise<GetJobManifestResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetJobManifest",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ManifestURI": "s",
@@ -241,13 +270,14 @@ export default class Snowball {
   async getJobUnlockCode(
     {abortSignal, ...params}: RequestConfig & GetJobUnlockCodeRequest,
   ): Promise<GetJobUnlockCodeResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetJobUnlockCode",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UnlockCode": "s",
@@ -258,13 +288,13 @@ export default class Snowball {
   async getSnowballUsage(
     {abortSignal, ...params}: RequestConfig & GetSnowballUsageRequest = {},
   ): Promise<GetSnowballUsageResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSnowballUsage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SnowballLimit": "n",
@@ -276,13 +306,14 @@ export default class Snowball {
   async getSoftwareUpdates(
     {abortSignal, ...params}: RequestConfig & GetSoftwareUpdatesRequest,
   ): Promise<GetSoftwareUpdatesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSoftwareUpdates",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UpdatesURI": "s",
@@ -293,13 +324,16 @@ export default class Snowball {
   async listClusterJobs(
     {abortSignal, ...params}: RequestConfig & ListClusterJobsRequest,
   ): Promise<ListClusterJobsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListClusterJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobListEntries": [toJobListEntry],
@@ -311,13 +345,15 @@ export default class Snowball {
   async listClusters(
     {abortSignal, ...params}: RequestConfig & ListClustersRequest = {},
   ): Promise<ListClustersResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListClusters",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ClusterListEntries": [toClusterListEntry],
@@ -329,13 +365,15 @@ export default class Snowball {
   async listCompatibleImages(
     {abortSignal, ...params}: RequestConfig & ListCompatibleImagesRequest = {},
   ): Promise<ListCompatibleImagesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCompatibleImages",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CompatibleImages": [toCompatibleImage],
@@ -347,13 +385,15 @@ export default class Snowball {
   async listJobs(
     {abortSignal, ...params}: RequestConfig & ListJobsRequest = {},
   ): Promise<ListJobsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobListEntries": [toJobListEntry],
@@ -365,15 +405,21 @@ export default class Snowball {
   async updateCluster(
     {abortSignal, ...params}: RequestConfig & UpdateClusterRequest,
   ): Promise<UpdateClusterResult> {
-    const body: JSONObject = {...params,
-    Resources: fromJobResource(params["Resources"]),
-    Notification: fromNotification(params["Notification"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+      RoleARN: params["RoleARN"],
+      Description: params["Description"],
+      Resources: fromJobResource(params["Resources"]),
+      AddressId: params["AddressId"],
+      ShippingOption: params["ShippingOption"],
+      Notification: fromNotification(params["Notification"]),
+      ForwardingAddressId: params["ForwardingAddressId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateCluster",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -382,15 +428,22 @@ export default class Snowball {
   async updateJob(
     {abortSignal, ...params}: RequestConfig & UpdateJobRequest,
   ): Promise<UpdateJobResult> {
-    const body: JSONObject = {...params,
-    Notification: fromNotification(params["Notification"]),
-    Resources: fromJobResource(params["Resources"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+      RoleARN: params["RoleARN"],
+      Notification: fromNotification(params["Notification"]),
+      Resources: fromJobResource(params["Resources"]),
+      AddressId: params["AddressId"],
+      ShippingOption: params["ShippingOption"],
+      Description: params["Description"],
+      SnowballCapacityPreference: params["SnowballCapacityPreference"],
+      ForwardingAddressId: params["ForwardingAddressId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -399,13 +452,15 @@ export default class Snowball {
   async updateJobShipmentState(
     {abortSignal, ...params}: RequestConfig & UpdateJobShipmentStateRequest,
   ): Promise<UpdateJobShipmentStateResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+      ShipmentState: params["ShipmentState"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateJobShipmentState",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -698,13 +753,27 @@ export interface Address {
   PhoneNumber?: string | null;
   IsRestricted?: boolean | null;
 }
-function fromAddress(input?: Address | null): JSONValue {
+function fromAddress(input?: Address | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AddressId: input["AddressId"],
+    Name: input["Name"],
+    Company: input["Company"],
+    Street1: input["Street1"],
+    Street2: input["Street2"],
+    Street3: input["Street3"],
+    City: input["City"],
+    StateOrProvince: input["StateOrProvince"],
+    PrefectureOrDistrict: input["PrefectureOrDistrict"],
+    Landmark: input["Landmark"],
+    Country: input["Country"],
+    PostalCode: input["PostalCode"],
+    PhoneNumber: input["PhoneNumber"],
+    IsRestricted: input["IsRestricted"],
   }
 }
-function toAddress(root: JSONValue): Address {
-  return prt.readObj({
+function toAddress(root: jsonP.JSONValue): Address {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AddressId": "s",
@@ -730,15 +799,7 @@ export type JobType =
 | "IMPORT"
 | "EXPORT"
 | "LOCAL_USE"
-;
-
-function toJobType(root: JSONValue): JobType | null {
-  return ( false
-    || root == "IMPORT"
-    || root == "EXPORT"
-    || root == "LOCAL_USE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: input, named, interface, output
 export interface JobResource {
@@ -746,16 +807,16 @@ export interface JobResource {
   LambdaResources?: LambdaResource[] | null;
   Ec2AmiResources?: Ec2AmiResource[] | null;
 }
-function fromJobResource(input?: JobResource | null): JSONValue {
+function fromJobResource(input?: JobResource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     S3Resources: input["S3Resources"]?.map(x => fromS3Resource(x)),
     LambdaResources: input["LambdaResources"]?.map(x => fromLambdaResource(x)),
     Ec2AmiResources: input["Ec2AmiResources"]?.map(x => fromEc2AmiResource(x)),
   }
 }
-function toJobResource(root: JSONValue): JobResource {
-  return prt.readObj({
+function toJobResource(root: jsonP.JSONValue): JobResource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "S3Resources": [toS3Resource],
@@ -770,14 +831,15 @@ export interface S3Resource {
   BucketArn?: string | null;
   KeyRange?: KeyRange | null;
 }
-function fromS3Resource(input?: S3Resource | null): JSONValue {
+function fromS3Resource(input?: S3Resource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    BucketArn: input["BucketArn"],
     KeyRange: fromKeyRange(input["KeyRange"]),
   }
 }
-function toS3Resource(root: JSONValue): S3Resource {
-  return prt.readObj({
+function toS3Resource(root: jsonP.JSONValue): S3Resource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "BucketArn": "s",
@@ -791,13 +853,15 @@ export interface KeyRange {
   BeginMarker?: string | null;
   EndMarker?: string | null;
 }
-function fromKeyRange(input?: KeyRange | null): JSONValue {
+function fromKeyRange(input?: KeyRange | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    BeginMarker: input["BeginMarker"],
+    EndMarker: input["EndMarker"],
   }
 }
-function toKeyRange(root: JSONValue): KeyRange {
-  return prt.readObj({
+function toKeyRange(root: jsonP.JSONValue): KeyRange {
+  return jsonP.readObj({
     required: {},
     optional: {
       "BeginMarker": "s",
@@ -811,14 +875,15 @@ export interface LambdaResource {
   LambdaArn?: string | null;
   EventTriggers?: EventTriggerDefinition[] | null;
 }
-function fromLambdaResource(input?: LambdaResource | null): JSONValue {
+function fromLambdaResource(input?: LambdaResource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    LambdaArn: input["LambdaArn"],
     EventTriggers: input["EventTriggers"]?.map(x => fromEventTriggerDefinition(x)),
   }
 }
-function toLambdaResource(root: JSONValue): LambdaResource {
-  return prt.readObj({
+function toLambdaResource(root: jsonP.JSONValue): LambdaResource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "LambdaArn": "s",
@@ -831,13 +896,14 @@ function toLambdaResource(root: JSONValue): LambdaResource {
 export interface EventTriggerDefinition {
   EventResourceARN?: string | null;
 }
-function fromEventTriggerDefinition(input?: EventTriggerDefinition | null): JSONValue {
+function fromEventTriggerDefinition(input?: EventTriggerDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    EventResourceARN: input["EventResourceARN"],
   }
 }
-function toEventTriggerDefinition(root: JSONValue): EventTriggerDefinition {
-  return prt.readObj({
+function toEventTriggerDefinition(root: jsonP.JSONValue): EventTriggerDefinition {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EventResourceARN": "s",
@@ -850,13 +916,15 @@ export interface Ec2AmiResource {
   AmiId: string;
   SnowballAmiId?: string | null;
 }
-function fromEc2AmiResource(input?: Ec2AmiResource | null): JSONValue {
+function fromEc2AmiResource(input?: Ec2AmiResource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AmiId: input["AmiId"],
+    SnowballAmiId: input["SnowballAmiId"],
   }
 }
-function toEc2AmiResource(root: JSONValue): Ec2AmiResource {
-  return prt.readObj({
+function toEc2AmiResource(root: jsonP.JSONValue): Ec2AmiResource {
+  return jsonP.readObj({
     required: {
       "AmiId": "s",
     },
@@ -874,18 +942,7 @@ export type SnowballType =
 | "EDGE_CG"
 | "EDGE_S"
 | "SNC1_HDD"
-;
-
-function toSnowballType(root: JSONValue): SnowballType | null {
-  return ( false
-    || root == "STANDARD"
-    || root == "EDGE"
-    || root == "EDGE_C"
-    || root == "EDGE_CG"
-    || root == "EDGE_S"
-    || root == "SNC1_HDD"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: input, named, enum, output
 export type ShippingOption =
@@ -893,16 +950,7 @@ export type ShippingOption =
 | "NEXT_DAY"
 | "EXPRESS"
 | "STANDARD"
-;
-
-function toShippingOption(root: JSONValue): ShippingOption | null {
-  return ( false
-    || root == "SECOND_DAY"
-    || root == "NEXT_DAY"
-    || root == "EXPRESS"
-    || root == "STANDARD"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: input, named, interface, output
 export interface Notification {
@@ -910,17 +958,20 @@ export interface Notification {
   JobStatesToNotify?: JobState[] | null;
   NotifyAll?: boolean | null;
 }
-function fromNotification(input?: Notification | null): JSONValue {
+function fromNotification(input?: Notification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SnsTopicARN: input["SnsTopicARN"],
+    JobStatesToNotify: input["JobStatesToNotify"],
+    NotifyAll: input["NotifyAll"],
   }
 }
-function toNotification(root: JSONValue): Notification {
-  return prt.readObj({
+function toNotification(root: jsonP.JSONValue): Notification {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SnsTopicARN": "s",
-      "JobStatesToNotify": [toJobState],
+      "JobStatesToNotify": [(x: jsonP.JSONValue) => cmnP.readEnum<JobState>(x)],
       "NotifyAll": "b",
     },
   }, root);
@@ -941,38 +992,20 @@ export type JobState =
 | "Cancelled"
 | "Listing"
 | "Pending"
-;
-
-function toJobState(root: JSONValue): JobState | null {
-  return ( false
-    || root == "New"
-    || root == "PreparingAppliance"
-    || root == "PreparingShipment"
-    || root == "InTransitToCustomer"
-    || root == "WithCustomer"
-    || root == "InTransitToAWS"
-    || root == "WithAWSSortingFacility"
-    || root == "WithAWS"
-    || root == "InProgress"
-    || root == "Complete"
-    || root == "Cancelled"
-    || root == "Listing"
-    || root == "Pending"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface TaxDocuments {
   IND?: INDTaxDocuments | null;
 }
-function fromTaxDocuments(input?: TaxDocuments | null): JSONValue {
+function fromTaxDocuments(input?: TaxDocuments | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     IND: fromINDTaxDocuments(input["IND"]),
   }
 }
-function toTaxDocuments(root: JSONValue): TaxDocuments {
-  return prt.readObj({
+function toTaxDocuments(root: jsonP.JSONValue): TaxDocuments {
+  return jsonP.readObj({
     required: {},
     optional: {
       "IND": toINDTaxDocuments,
@@ -984,13 +1017,14 @@ function toTaxDocuments(root: JSONValue): TaxDocuments {
 export interface INDTaxDocuments {
   GSTIN?: string | null;
 }
-function fromINDTaxDocuments(input?: INDTaxDocuments | null): JSONValue {
+function fromINDTaxDocuments(input?: INDTaxDocuments | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    GSTIN: input["GSTIN"],
   }
 }
-function toINDTaxDocuments(root: JSONValue): INDTaxDocuments {
-  return prt.readObj({
+function toINDTaxDocuments(root: jsonP.JSONValue): INDTaxDocuments {
+  return jsonP.readObj({
     required: {},
     optional: {
       "GSTIN": "s",
@@ -1007,32 +1041,20 @@ export type SnowballCapacity =
 | "T98"
 | "T8"
 | "NoPreference"
-;
-
-function toSnowballCapacity(root: JSONValue): SnowballCapacity | null {
-  return ( false
-    || root == "T50"
-    || root == "T80"
-    || root == "T100"
-    || root == "T42"
-    || root == "T98"
-    || root == "T8"
-    || root == "NoPreference"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface DeviceConfiguration {
   SnowconeDeviceConfiguration?: SnowconeDeviceConfiguration | null;
 }
-function fromDeviceConfiguration(input?: DeviceConfiguration | null): JSONValue {
+function fromDeviceConfiguration(input?: DeviceConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     SnowconeDeviceConfiguration: fromSnowconeDeviceConfiguration(input["SnowconeDeviceConfiguration"]),
   }
 }
-function toDeviceConfiguration(root: JSONValue): DeviceConfiguration {
-  return prt.readObj({
+function toDeviceConfiguration(root: jsonP.JSONValue): DeviceConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SnowconeDeviceConfiguration": toSnowconeDeviceConfiguration,
@@ -1044,14 +1066,14 @@ function toDeviceConfiguration(root: JSONValue): DeviceConfiguration {
 export interface SnowconeDeviceConfiguration {
   WirelessConnection?: WirelessConnection | null;
 }
-function fromSnowconeDeviceConfiguration(input?: SnowconeDeviceConfiguration | null): JSONValue {
+function fromSnowconeDeviceConfiguration(input?: SnowconeDeviceConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     WirelessConnection: fromWirelessConnection(input["WirelessConnection"]),
   }
 }
-function toSnowconeDeviceConfiguration(root: JSONValue): SnowconeDeviceConfiguration {
-  return prt.readObj({
+function toSnowconeDeviceConfiguration(root: jsonP.JSONValue): SnowconeDeviceConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "WirelessConnection": toWirelessConnection,
@@ -1063,13 +1085,14 @@ function toSnowconeDeviceConfiguration(root: JSONValue): SnowconeDeviceConfigura
 export interface WirelessConnection {
   IsWifiEnabled?: boolean | null;
 }
-function fromWirelessConnection(input?: WirelessConnection | null): JSONValue {
+function fromWirelessConnection(input?: WirelessConnection | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    IsWifiEnabled: input["IsWifiEnabled"],
   }
 }
-function toWirelessConnection(root: JSONValue): WirelessConnection {
-  return prt.readObj({
+function toWirelessConnection(root: jsonP.JSONValue): WirelessConnection {
+  return jsonP.readObj({
     required: {},
     optional: {
       "IsWifiEnabled": "b",
@@ -1081,8 +1104,7 @@ function toWirelessConnection(root: JSONValue): WirelessConnection {
 export type ShipmentState =
 | "RECEIVED"
 | "RETURNED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type ShippingLabelStatus =
@@ -1090,15 +1112,7 @@ export type ShippingLabelStatus =
 | "TimedOut"
 | "Succeeded"
 | "Failed"
-;
-function toShippingLabelStatus(root: JSONValue): ShippingLabelStatus | null {
-  return ( false
-    || root == "InProgress"
-    || root == "TimedOut"
-    || root == "Succeeded"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ClusterMetadata {
@@ -1117,21 +1131,21 @@ export interface ClusterMetadata {
   ForwardingAddressId?: string | null;
   TaxDocuments?: TaxDocuments | null;
 }
-function toClusterMetadata(root: JSONValue): ClusterMetadata {
-  return prt.readObj({
+function toClusterMetadata(root: jsonP.JSONValue): ClusterMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ClusterId": "s",
       "Description": "s",
       "KmsKeyARN": "s",
       "RoleARN": "s",
-      "ClusterState": toClusterState,
-      "JobType": toJobType,
-      "SnowballType": toSnowballType,
+      "ClusterState": (x: jsonP.JSONValue) => cmnP.readEnum<ClusterState>(x),
+      "JobType": (x: jsonP.JSONValue) => cmnP.readEnum<JobType>(x),
+      "SnowballType": (x: jsonP.JSONValue) => cmnP.readEnum<SnowballType>(x),
       "CreationDate": "d",
       "Resources": toJobResource,
       "AddressId": "s",
-      "ShippingOption": toShippingOption,
+      "ShippingOption": (x: jsonP.JSONValue) => cmnP.readEnum<ShippingOption>(x),
       "Notification": toNotification,
       "ForwardingAddressId": "s",
       "TaxDocuments": toTaxDocuments,
@@ -1146,16 +1160,7 @@ export type ClusterState =
 | "InUse"
 | "Complete"
 | "Cancelled"
-;
-function toClusterState(root: JSONValue): ClusterState | null {
-  return ( false
-    || root == "AwaitingQuorum"
-    || root == "Pending"
-    || root == "InUse"
-    || root == "Complete"
-    || root == "Cancelled"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface JobMetadata {
@@ -1179,14 +1184,14 @@ export interface JobMetadata {
   TaxDocuments?: TaxDocuments | null;
   DeviceConfiguration?: DeviceConfiguration | null;
 }
-function toJobMetadata(root: JSONValue): JobMetadata {
-  return prt.readObj({
+function toJobMetadata(root: jsonP.JSONValue): JobMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "JobId": "s",
-      "JobState": toJobState,
-      "JobType": toJobType,
-      "SnowballType": toSnowballType,
+      "JobState": (x: jsonP.JSONValue) => cmnP.readEnum<JobState>(x),
+      "JobType": (x: jsonP.JSONValue) => cmnP.readEnum<JobType>(x),
+      "SnowballType": (x: jsonP.JSONValue) => cmnP.readEnum<SnowballType>(x),
       "CreationDate": "d",
       "Resources": toJobResource,
       "Description": "s",
@@ -1194,7 +1199,7 @@ function toJobMetadata(root: JSONValue): JobMetadata {
       "RoleARN": "s",
       "AddressId": "s",
       "ShippingDetails": toShippingDetails,
-      "SnowballCapacityPreference": toSnowballCapacity,
+      "SnowballCapacityPreference": (x: jsonP.JSONValue) => cmnP.readEnum<SnowballCapacity>(x),
       "Notification": toNotification,
       "DataTransferProgress": toDataTransfer,
       "JobLogInfo": toJobLogs,
@@ -1212,11 +1217,11 @@ export interface ShippingDetails {
   InboundShipment?: Shipment | null;
   OutboundShipment?: Shipment | null;
 }
-function toShippingDetails(root: JSONValue): ShippingDetails {
-  return prt.readObj({
+function toShippingDetails(root: jsonP.JSONValue): ShippingDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "ShippingOption": toShippingOption,
+      "ShippingOption": (x: jsonP.JSONValue) => cmnP.readEnum<ShippingOption>(x),
       "InboundShipment": toShipment,
       "OutboundShipment": toShipment,
     },
@@ -1228,8 +1233,8 @@ export interface Shipment {
   Status?: string | null;
   TrackingNumber?: string | null;
 }
-function toShipment(root: JSONValue): Shipment {
-  return prt.readObj({
+function toShipment(root: jsonP.JSONValue): Shipment {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Status": "s",
@@ -1245,8 +1250,8 @@ export interface DataTransfer {
   TotalBytes?: number | null;
   TotalObjects?: number | null;
 }
-function toDataTransfer(root: JSONValue): DataTransfer {
-  return prt.readObj({
+function toDataTransfer(root: jsonP.JSONValue): DataTransfer {
+  return jsonP.readObj({
     required: {},
     optional: {
       "BytesTransferred": "n",
@@ -1263,8 +1268,8 @@ export interface JobLogs {
   JobSuccessLogURI?: string | null;
   JobFailureLogURI?: string | null;
 }
-function toJobLogs(root: JSONValue): JobLogs {
-  return prt.readObj({
+function toJobLogs(root: jsonP.JSONValue): JobLogs {
+  return jsonP.readObj({
     required: {},
     optional: {
       "JobCompletionReportURI": "s",
@@ -1284,15 +1289,15 @@ export interface JobListEntry {
   CreationDate?: Date | number | null;
   Description?: string | null;
 }
-function toJobListEntry(root: JSONValue): JobListEntry {
-  return prt.readObj({
+function toJobListEntry(root: jsonP.JSONValue): JobListEntry {
+  return jsonP.readObj({
     required: {},
     optional: {
       "JobId": "s",
-      "JobState": toJobState,
+      "JobState": (x: jsonP.JSONValue) => cmnP.readEnum<JobState>(x),
       "IsMaster": "b",
-      "JobType": toJobType,
-      "SnowballType": toSnowballType,
+      "JobType": (x: jsonP.JSONValue) => cmnP.readEnum<JobType>(x),
+      "SnowballType": (x: jsonP.JSONValue) => cmnP.readEnum<SnowballType>(x),
       "CreationDate": "d",
       "Description": "s",
     },
@@ -1306,12 +1311,12 @@ export interface ClusterListEntry {
   CreationDate?: Date | number | null;
   Description?: string | null;
 }
-function toClusterListEntry(root: JSONValue): ClusterListEntry {
-  return prt.readObj({
+function toClusterListEntry(root: jsonP.JSONValue): ClusterListEntry {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ClusterId": "s",
-      "ClusterState": toClusterState,
+      "ClusterState": (x: jsonP.JSONValue) => cmnP.readEnum<ClusterState>(x),
       "CreationDate": "d",
       "Description": "s",
     },
@@ -1323,8 +1328,8 @@ export interface CompatibleImage {
   AmiId?: string | null;
   Name?: string | null;
 }
-function toCompatibleImage(root: JSONValue): CompatibleImage {
-  return prt.readObj({
+function toCompatibleImage(root: jsonP.JSONValue): CompatibleImage {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AmiId": "s",

@@ -5,10 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }
@@ -35,8 +34,9 @@ export default class Translate {
   async deleteTerminology(
     {abortSignal, ...params}: RequestConfig & DeleteTerminologyRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTerminology",
@@ -46,13 +46,14 @@ export default class Translate {
   async describeTextTranslationJob(
     {abortSignal, ...params}: RequestConfig & DescribeTextTranslationJobRequest,
   ): Promise<DescribeTextTranslationJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTextTranslationJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TextTranslationJobProperties": toTextTranslationJobProperties,
@@ -63,13 +64,15 @@ export default class Translate {
   async getTerminology(
     {abortSignal, ...params}: RequestConfig & GetTerminologyRequest,
   ): Promise<GetTerminologyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      TerminologyDataFormat: params["TerminologyDataFormat"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTerminology",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TerminologyProperties": toTerminologyProperties,
@@ -81,15 +84,18 @@ export default class Translate {
   async importTerminology(
     {abortSignal, ...params}: RequestConfig & ImportTerminologyRequest,
   ): Promise<ImportTerminologyResponse> {
-    const body: JSONObject = {...params,
-    TerminologyData: fromTerminologyData(params["TerminologyData"]),
-    EncryptionKey: fromEncryptionKey(params["EncryptionKey"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      MergeStrategy: params["MergeStrategy"],
+      Description: params["Description"],
+      TerminologyData: fromTerminologyData(params["TerminologyData"]),
+      EncryptionKey: fromEncryptionKey(params["EncryptionKey"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportTerminology",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TerminologyProperties": toTerminologyProperties,
@@ -100,13 +106,15 @@ export default class Translate {
   async listTerminologies(
     {abortSignal, ...params}: RequestConfig & ListTerminologiesRequest = {},
   ): Promise<ListTerminologiesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTerminologies",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TerminologyPropertiesList": [toTerminologyProperties],
@@ -118,14 +126,16 @@ export default class Translate {
   async listTextTranslationJobs(
     {abortSignal, ...params}: RequestConfig & ListTextTranslationJobsRequest = {},
   ): Promise<ListTextTranslationJobsResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromTextTranslationJobFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filter: fromTextTranslationJobFilter(params["Filter"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTextTranslationJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TextTranslationJobPropertiesList": [toTextTranslationJobProperties],
@@ -137,20 +147,25 @@ export default class Translate {
   async startTextTranslationJob(
     {abortSignal, ...params}: RequestConfig & StartTextTranslationJobRequest,
   ): Promise<StartTextTranslationJobResponse> {
-    const body: JSONObject = {...params,
-    InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
-    OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
-    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobName: params["JobName"],
+      InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
+      OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
+      DataAccessRoleArn: params["DataAccessRoleArn"],
+      SourceLanguageCode: params["SourceLanguageCode"],
+      TargetLanguageCodes: params["TargetLanguageCodes"],
+      TerminologyNames: params["TerminologyNames"],
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartTextTranslationJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
-        "JobStatus": toJobStatus,
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       },
     }, await resp.json());
   }
@@ -158,17 +173,18 @@ export default class Translate {
   async stopTextTranslationJob(
     {abortSignal, ...params}: RequestConfig & StopTextTranslationJobRequest,
   ): Promise<StopTextTranslationJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopTextTranslationJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
-        "JobStatus": toJobStatus,
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       },
     }, await resp.json());
   }
@@ -176,13 +192,17 @@ export default class Translate {
   async translateText(
     {abortSignal, ...params}: RequestConfig & TranslateTextRequest,
   ): Promise<TranslateTextResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Text: params["Text"],
+      TerminologyNames: params["TerminologyNames"],
+      SourceLanguageCode: params["SourceLanguageCode"],
+      TargetLanguageCode: params["TargetLanguageCode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TranslateText",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "TranslatedText": "s",
         "SourceLanguageCode": "s",
@@ -311,24 +331,23 @@ export interface TranslateTextResponse {
 export type TerminologyDataFormat =
 | "CSV"
 | "TMX"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type MergeStrategy =
 | "OVERWRITE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface TerminologyData {
   File: Uint8Array | string;
   Format: TerminologyDataFormat;
 }
-function fromTerminologyData(input?: TerminologyData | null): JSONValue {
+function fromTerminologyData(input?: TerminologyData | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    File: prt.serializeBlob(input["File"]),
+  return {
+    File: jsonP.serializeBlob(input["File"]),
+    Format: input["Format"],
   }
 }
 
@@ -337,15 +356,17 @@ export interface EncryptionKey {
   Type: EncryptionKeyType;
   Id: string;
 }
-function fromEncryptionKey(input?: EncryptionKey | null): JSONValue {
+function fromEncryptionKey(input?: EncryptionKey | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Type: input["Type"],
+    Id: input["Id"],
   }
 }
-function toEncryptionKey(root: JSONValue): EncryptionKey {
-  return prt.readObj({
+function toEncryptionKey(root: jsonP.JSONValue): EncryptionKey {
+  return jsonP.readObj({
     required: {
-      "Type": toEncryptionKeyType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<EncryptionKeyType>(x),
       "Id": "s",
     },
     optional: {},
@@ -355,13 +376,7 @@ function toEncryptionKey(root: JSONValue): EncryptionKey {
 // refs: 4 - tags: input, named, enum, output
 export type EncryptionKeyType =
 | "KMS"
-;
-
-function toEncryptionKeyType(root: JSONValue): EncryptionKeyType | null {
-  return ( false
-    || root == "KMS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface TextTranslationJobFilter {
@@ -370,11 +385,13 @@ export interface TextTranslationJobFilter {
   SubmittedBeforeTime?: Date | number | null;
   SubmittedAfterTime?: Date | number | null;
 }
-function fromTextTranslationJobFilter(input?: TextTranslationJobFilter | null): JSONValue {
+function fromTextTranslationJobFilter(input?: TextTranslationJobFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    SubmittedBeforeTime: prt.serializeDate_unixTimestamp(input["SubmittedBeforeTime"]),
-    SubmittedAfterTime: prt.serializeDate_unixTimestamp(input["SubmittedAfterTime"]),
+  return {
+    JobName: input["JobName"],
+    JobStatus: input["JobStatus"],
+    SubmittedBeforeTime: jsonP.serializeDate_unixTimestamp(input["SubmittedBeforeTime"]),
+    SubmittedAfterTime: jsonP.serializeDate_unixTimestamp(input["SubmittedAfterTime"]),
   }
 }
 
@@ -387,32 +404,22 @@ export type JobStatus =
 | "FAILED"
 | "STOP_REQUESTED"
 | "STOPPED"
-;
-
-function toJobStatus(root: JSONValue): JobStatus | null {
-  return ( false
-    || root == "SUBMITTED"
-    || root == "IN_PROGRESS"
-    || root == "COMPLETED"
-    || root == "COMPLETED_WITH_ERROR"
-    || root == "FAILED"
-    || root == "STOP_REQUESTED"
-    || root == "STOPPED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface InputDataConfig {
   S3Uri: string;
   ContentType: string;
 }
-function fromInputDataConfig(input?: InputDataConfig | null): JSONValue {
+function fromInputDataConfig(input?: InputDataConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Uri: input["S3Uri"],
+    ContentType: input["ContentType"],
   }
 }
-function toInputDataConfig(root: JSONValue): InputDataConfig {
-  return prt.readObj({
+function toInputDataConfig(root: jsonP.JSONValue): InputDataConfig {
+  return jsonP.readObj({
     required: {
       "S3Uri": "s",
       "ContentType": "s",
@@ -425,13 +432,14 @@ function toInputDataConfig(root: JSONValue): InputDataConfig {
 export interface OutputDataConfig {
   S3Uri: string;
 }
-function fromOutputDataConfig(input?: OutputDataConfig | null): JSONValue {
+function fromOutputDataConfig(input?: OutputDataConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Uri: input["S3Uri"],
   }
 }
-function toOutputDataConfig(root: JSONValue): OutputDataConfig {
-  return prt.readObj({
+function toOutputDataConfig(root: jsonP.JSONValue): OutputDataConfig {
+  return jsonP.readObj({
     required: {
       "S3Uri": "s",
     },
@@ -455,13 +463,13 @@ export interface TextTranslationJobProperties {
   OutputDataConfig?: OutputDataConfig | null;
   DataAccessRoleArn?: string | null;
 }
-function toTextTranslationJobProperties(root: JSONValue): TextTranslationJobProperties {
-  return prt.readObj({
+function toTextTranslationJobProperties(root: jsonP.JSONValue): TextTranslationJobProperties {
+  return jsonP.readObj({
     required: {},
     optional: {
       "JobId": "s",
       "JobName": "s",
-      "JobStatus": toJobStatus,
+      "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       "JobDetails": toJobDetails,
       "SourceLanguageCode": "s",
       "TargetLanguageCodes": ["s"],
@@ -482,8 +490,8 @@ export interface JobDetails {
   DocumentsWithErrorsCount?: number | null;
   InputDocumentsCount?: number | null;
 }
-function toJobDetails(root: JSONValue): JobDetails {
-  return prt.readObj({
+function toJobDetails(root: jsonP.JSONValue): JobDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TranslatedDocumentsCount": "n",
@@ -506,8 +514,8 @@ export interface TerminologyProperties {
   CreatedAt?: Date | number | null;
   LastUpdatedAt?: Date | number | null;
 }
-function toTerminologyProperties(root: JSONValue): TerminologyProperties {
-  return prt.readObj({
+function toTerminologyProperties(root: jsonP.JSONValue): TerminologyProperties {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -529,8 +537,8 @@ export interface TerminologyDataLocation {
   RepositoryType: string;
   Location: string;
 }
-function toTerminologyDataLocation(root: JSONValue): TerminologyDataLocation {
-  return prt.readObj({
+function toTerminologyDataLocation(root: jsonP.JSONValue): TerminologyDataLocation {
+  return jsonP.readObj({
     required: {
       "RepositoryType": "s",
       "Location": "s",
@@ -544,8 +552,8 @@ export interface AppliedTerminology {
   Name?: string | null;
   Terms?: Term[] | null;
 }
-function toAppliedTerminology(root: JSONValue): AppliedTerminology {
-  return prt.readObj({
+function toAppliedTerminology(root: jsonP.JSONValue): AppliedTerminology {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -559,8 +567,8 @@ export interface Term {
   SourceText?: string | null;
   TargetText?: string | null;
 }
-function toTerm(root: JSONValue): Term {
-  return prt.readObj({
+function toTerm(root: jsonP.JSONValue): Term {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SourceText": "s",

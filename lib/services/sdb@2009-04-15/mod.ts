@@ -5,8 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 
 export default class SimpleDB {
   #client: ServiceClient;
@@ -31,7 +32,7 @@ export default class SimpleDB {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DomainName", (params["DomainName"] ?? '').toString());
-    if (params["Items"]) prt.appendList(body, prefix+"Item", params["Items"], {"appender":DeletableItem_Serialize,"entryPrefix":"."})
+    if (params["Items"]) qsP.appendList(body, prefix+"Item", params["Items"], {"appender":DeletableItem_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDeleteAttributes",
@@ -44,7 +45,7 @@ export default class SimpleDB {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DomainName", (params["DomainName"] ?? '').toString());
-    if (params["Items"]) prt.appendList(body, prefix+"Item", params["Items"], {"appender":ReplaceableItem_Serialize,"entryPrefix":"."})
+    if (params["Items"]) qsP.appendList(body, prefix+"Item", params["Items"], {"appender":ReplaceableItem_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchPutAttributes",
@@ -70,7 +71,7 @@ export default class SimpleDB {
     const prefix = '';
     body.append(prefix+"DomainName", (params["DomainName"] ?? '').toString());
     body.append(prefix+"ItemName", (params["ItemName"] ?? '').toString());
-    if (params["Attributes"]) prt.appendList(body, prefix+"Attribute", params["Attributes"], {"appender":DeletableAttribute_Serialize,"entryPrefix":"."})
+    if (params["Attributes"]) qsP.appendList(body, prefix+"Attribute", params["Attributes"], {"appender":DeletableAttribute_Serialize,"entryPrefix":"."})
     if (params["Expected"] != null) UpdateCondition_Serialize(body, prefix+"Expected", params["Expected"]);
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -100,7 +101,7 @@ export default class SimpleDB {
       abortSignal, body,
       action: "DomainMetadata",
     });
-    const xml = readXmlResult(await resp.text(), "DomainMetadataResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DomainMetadataResult");
     return {
       ItemCount: xml.first("ItemCount", false, x => parseInt(x.content ?? '0')),
       ItemNamesSizeBytes: xml.first("ItemNamesSizeBytes", false, x => parseInt(x.content ?? '0')),
@@ -119,13 +120,13 @@ export default class SimpleDB {
     const prefix = '';
     body.append(prefix+"DomainName", (params["DomainName"] ?? '').toString());
     body.append(prefix+"ItemName", (params["ItemName"] ?? '').toString());
-    if (params["AttributeNames"]) prt.appendList(body, prefix+"AttributeName", params["AttributeNames"], {"entryPrefix":"."})
+    if (params["AttributeNames"]) qsP.appendList(body, prefix+"AttributeName", params["AttributeNames"], {"entryPrefix":"."})
     if ("ConsistentRead" in params) body.append(prefix+"ConsistentRead", (params["ConsistentRead"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "GetAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetAttributesResult");
     return {
       Attributes: xml.getList("Attribute").map(Attribute_Parse),
     };
@@ -142,7 +143,7 @@ export default class SimpleDB {
       abortSignal, body,
       action: "ListDomains",
     });
-    const xml = readXmlResult(await resp.text(), "ListDomainsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListDomainsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -158,7 +159,7 @@ export default class SimpleDB {
     const prefix = '';
     body.append(prefix+"DomainName", (params["DomainName"] ?? '').toString());
     body.append(prefix+"ItemName", (params["ItemName"] ?? '').toString());
-    if (params["Attributes"]) prt.appendList(body, prefix+"Attribute", params["Attributes"], {"appender":ReplaceableAttribute_Serialize,"entryPrefix":"."})
+    if (params["Attributes"]) qsP.appendList(body, prefix+"Attribute", params["Attributes"], {"appender":ReplaceableAttribute_Serialize,"entryPrefix":"."})
     if (params["Expected"] != null) UpdateCondition_Serialize(body, prefix+"Expected", params["Expected"]);
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -178,7 +179,7 @@ export default class SimpleDB {
       abortSignal, body,
       action: "Select",
     });
-    const xml = readXmlResult(await resp.text(), "SelectResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SelectResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -288,7 +289,7 @@ export interface DeletableItem {
 }
 function DeletableItem_Serialize(body: URLSearchParams, prefix: string, params: DeletableItem) {
     body.append(prefix+".ItemName", (params["Name"] ?? '').toString());
-    if (params["Attributes"]) prt.appendList(body, prefix+".Attribute", params["Attributes"], {"appender":DeletableAttribute_Serialize,"entryPrefix":"."})
+    if (params["Attributes"]) qsP.appendList(body, prefix+".Attribute", params["Attributes"], {"appender":DeletableAttribute_Serialize,"entryPrefix":"."})
 }
 
 // refs: 2 - tags: input, named, interface
@@ -308,7 +309,7 @@ export interface ReplaceableItem {
 }
 function ReplaceableItem_Serialize(body: URLSearchParams, prefix: string, params: ReplaceableItem) {
     body.append(prefix+".ItemName", (params["Name"] ?? '').toString());
-    if (params["Attributes"]) prt.appendList(body, prefix+".Attribute", params["Attributes"], {"appender":ReplaceableAttribute_Serialize,"entryPrefix":"."})
+    if (params["Attributes"]) qsP.appendList(body, prefix+".Attribute", params["Attributes"], {"appender":ReplaceableAttribute_Serialize,"entryPrefix":"."})
 }
 
 // refs: 2 - tags: input, named, interface
@@ -342,7 +343,7 @@ export interface Attribute {
   Value: string;
   AlternateValueEncoding?: string | null;
 }
-function Attribute_Parse(node: XmlNode): Attribute {
+function Attribute_Parse(node: xmlP.XmlNode): Attribute {
   return node.strings({
     required: {"Name":true,"Value":true},
     optional: {"AlternateNameEncoding":true,"AlternateValueEncoding":true},
@@ -355,7 +356,7 @@ export interface Item {
   AlternateNameEncoding?: string | null;
   Attributes: Attribute[];
 }
-function Item_Parse(node: XmlNode): Item {
+function Item_Parse(node: xmlP.XmlNode): Item {
   return {
     ...node.strings({
       required: {"Name":true},

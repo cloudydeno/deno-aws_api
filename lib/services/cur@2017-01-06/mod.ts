@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class CUR {
   #client: ServiceClient;
@@ -30,13 +30,14 @@ export default class CUR {
   async deleteReportDefinition(
     {abortSignal, ...params}: RequestConfig & DeleteReportDefinitionRequest = {},
   ): Promise<DeleteReportDefinitionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ReportName: params["ReportName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteReportDefinition",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResponseMessage": "s",
@@ -47,13 +48,15 @@ export default class CUR {
   async describeReportDefinitions(
     {abortSignal, ...params}: RequestConfig & DescribeReportDefinitionsRequest = {},
   ): Promise<DescribeReportDefinitionsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeReportDefinitions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ReportDefinitions": [toReportDefinition],
@@ -65,14 +68,15 @@ export default class CUR {
   async modifyReportDefinition(
     {abortSignal, ...params}: RequestConfig & ModifyReportDefinitionRequest,
   ): Promise<ModifyReportDefinitionResponse> {
-    const body: JSONObject = {...params,
-    ReportDefinition: fromReportDefinition(params["ReportDefinition"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ReportName: params["ReportName"],
+      ReportDefinition: fromReportDefinition(params["ReportDefinition"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyReportDefinition",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -81,14 +85,14 @@ export default class CUR {
   async putReportDefinition(
     {abortSignal, ...params}: RequestConfig & PutReportDefinitionRequest,
   ): Promise<PutReportDefinitionResponse> {
-    const body: JSONObject = {...params,
-    ReportDefinition: fromReportDefinition(params["ReportDefinition"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ReportDefinition: fromReportDefinition(params["ReportDefinition"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutReportDefinition",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -151,27 +155,38 @@ export interface ReportDefinition {
   RefreshClosedReports?: boolean | null;
   ReportVersioning?: ReportVersioning | null;
 }
-function fromReportDefinition(input?: ReportDefinition | null): JSONValue {
+function fromReportDefinition(input?: ReportDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ReportName: input["ReportName"],
+    TimeUnit: input["TimeUnit"],
+    Format: input["Format"],
+    Compression: input["Compression"],
+    AdditionalSchemaElements: input["AdditionalSchemaElements"],
+    S3Bucket: input["S3Bucket"],
+    S3Prefix: input["S3Prefix"],
+    S3Region: input["S3Region"],
+    AdditionalArtifacts: input["AdditionalArtifacts"],
+    RefreshClosedReports: input["RefreshClosedReports"],
+    ReportVersioning: input["ReportVersioning"],
   }
 }
-function toReportDefinition(root: JSONValue): ReportDefinition {
-  return prt.readObj({
+function toReportDefinition(root: jsonP.JSONValue): ReportDefinition {
+  return jsonP.readObj({
     required: {
       "ReportName": "s",
-      "TimeUnit": toTimeUnit,
-      "Format": toReportFormat,
-      "Compression": toCompressionFormat,
-      "AdditionalSchemaElements": [toSchemaElement],
+      "TimeUnit": (x: jsonP.JSONValue) => cmnP.readEnum<TimeUnit>(x),
+      "Format": (x: jsonP.JSONValue) => cmnP.readEnum<ReportFormat>(x),
+      "Compression": (x: jsonP.JSONValue) => cmnP.readEnum<CompressionFormat>(x),
+      "AdditionalSchemaElements": [(x: jsonP.JSONValue) => cmnP.readEnum<SchemaElement>(x)],
       "S3Bucket": "s",
       "S3Prefix": "s",
-      "S3Region": toAWSRegion,
+      "S3Region": (x: jsonP.JSONValue) => cmnP.readEnum<AWSRegion>(x),
     },
     optional: {
-      "AdditionalArtifacts": [toAdditionalArtifact],
+      "AdditionalArtifacts": [(x: jsonP.JSONValue) => cmnP.readEnum<AdditionalArtifact>(x)],
       "RefreshClosedReports": "b",
-      "ReportVersioning": toReportVersioning,
+      "ReportVersioning": (x: jsonP.JSONValue) => cmnP.readEnum<ReportVersioning>(x),
     },
   }, root);
 }
@@ -181,54 +196,25 @@ export type TimeUnit =
 | "HOURLY"
 | "DAILY"
 | "MONTHLY"
-;
-
-function toTimeUnit(root: JSONValue): TimeUnit | null {
-  return ( false
-    || root == "HOURLY"
-    || root == "DAILY"
-    || root == "MONTHLY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type ReportFormat =
 | "textORcsv"
 | "Parquet"
-;
-
-function toReportFormat(root: JSONValue): ReportFormat | null {
-  return ( false
-    || root == "textORcsv"
-    || root == "Parquet"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type CompressionFormat =
 | "ZIP"
 | "GZIP"
 | "Parquet"
-;
-
-function toCompressionFormat(root: JSONValue): CompressionFormat | null {
-  return ( false
-    || root == "ZIP"
-    || root == "GZIP"
-    || root == "Parquet"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type SchemaElement =
 | "RESOURCES"
-;
-
-function toSchemaElement(root: JSONValue): SchemaElement | null {
-  return ( false
-    || root == "RESOURCES"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type AWSRegion =
@@ -255,60 +241,17 @@ export type AWSRegion =
 | "us-west-2"
 | "cn-north-1"
 | "cn-northwest-1"
-;
-
-function toAWSRegion(root: JSONValue): AWSRegion | null {
-  return ( false
-    || root == "af-south-1"
-    || root == "ap-east-1"
-    || root == "ap-south-1"
-    || root == "ap-southeast-1"
-    || root == "ap-southeast-2"
-    || root == "ap-northeast-1"
-    || root == "ap-northeast-2"
-    || root == "ap-northeast-3"
-    || root == "ca-central-1"
-    || root == "eu-central-1"
-    || root == "eu-west-1"
-    || root == "eu-west-2"
-    || root == "eu-west-3"
-    || root == "eu-north-1"
-    || root == "eu-south-1"
-    || root == "me-south-1"
-    || root == "sa-east-1"
-    || root == "us-east-1"
-    || root == "us-east-2"
-    || root == "us-west-1"
-    || root == "us-west-2"
-    || root == "cn-north-1"
-    || root == "cn-northwest-1"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type AdditionalArtifact =
 | "REDSHIFT"
 | "QUICKSIGHT"
 | "ATHENA"
-;
-
-function toAdditionalArtifact(root: JSONValue): AdditionalArtifact | null {
-  return ( false
-    || root == "REDSHIFT"
-    || root == "QUICKSIGHT"
-    || root == "ATHENA"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type ReportVersioning =
 | "CREATE_NEW_REPORT"
 | "OVERWRITE_REPORT"
-;
-
-function toReportVersioning(root: JSONValue): ReportVersioning | null {
-  return ( false
-    || root == "CREATE_NEW_REPORT"
-    || root == "OVERWRITE_REPORT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;

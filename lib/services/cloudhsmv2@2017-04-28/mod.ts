@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class CloudHSMV2 {
   #client: ServiceClient;
@@ -31,14 +31,16 @@ export default class CloudHSMV2 {
   async copyBackupToRegion(
     {abortSignal, ...params}: RequestConfig & CopyBackupToRegionRequest,
   ): Promise<CopyBackupToRegionResponse> {
-    const body: JSONObject = {...params,
-    TagList: params["TagList"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DestinationRegion: params["DestinationRegion"],
+      BackupId: params["BackupId"],
+      TagList: params["TagList"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CopyBackupToRegion",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DestinationBackup": toDestinationBackup,
@@ -49,14 +51,17 @@ export default class CloudHSMV2 {
   async createCluster(
     {abortSignal, ...params}: RequestConfig & CreateClusterRequest,
   ): Promise<CreateClusterResponse> {
-    const body: JSONObject = {...params,
-    TagList: params["TagList"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SubnetIds: params["SubnetIds"],
+      HsmType: params["HsmType"],
+      SourceBackupId: params["SourceBackupId"],
+      TagList: params["TagList"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCluster",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Cluster": toCluster,
@@ -67,13 +72,16 @@ export default class CloudHSMV2 {
   async createHsm(
     {abortSignal, ...params}: RequestConfig & CreateHsmRequest,
   ): Promise<CreateHsmResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+      AvailabilityZone: params["AvailabilityZone"],
+      IpAddress: params["IpAddress"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHsm",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Hsm": toHsm,
@@ -84,13 +92,14 @@ export default class CloudHSMV2 {
   async deleteBackup(
     {abortSignal, ...params}: RequestConfig & DeleteBackupRequest,
   ): Promise<DeleteBackupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      BackupId: params["BackupId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBackup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Backup": toBackup,
@@ -101,13 +110,14 @@ export default class CloudHSMV2 {
   async deleteCluster(
     {abortSignal, ...params}: RequestConfig & DeleteClusterRequest,
   ): Promise<DeleteClusterResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCluster",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Cluster": toCluster,
@@ -118,13 +128,17 @@ export default class CloudHSMV2 {
   async deleteHsm(
     {abortSignal, ...params}: RequestConfig & DeleteHsmRequest,
   ): Promise<DeleteHsmResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+      HsmId: params["HsmId"],
+      EniId: params["EniId"],
+      EniIp: params["EniIp"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteHsm",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "HsmId": "s",
@@ -135,13 +149,17 @@ export default class CloudHSMV2 {
   async describeBackups(
     {abortSignal, ...params}: RequestConfig & DescribeBackupsRequest = {},
   ): Promise<DescribeBackupsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      Filters: params["Filters"],
+      SortAscending: params["SortAscending"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBackups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Backups": [toBackup],
@@ -153,13 +171,16 @@ export default class CloudHSMV2 {
   async describeClusters(
     {abortSignal, ...params}: RequestConfig & DescribeClustersRequest = {},
   ): Promise<DescribeClustersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filters: params["Filters"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeClusters",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Clusters": [toCluster],
@@ -171,16 +192,19 @@ export default class CloudHSMV2 {
   async initializeCluster(
     {abortSignal, ...params}: RequestConfig & InitializeClusterRequest,
   ): Promise<InitializeClusterResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+      SignedCert: params["SignedCert"],
+      TrustAnchor: params["TrustAnchor"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "InitializeCluster",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "State": toClusterState,
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<ClusterState>(x),
         "StateMessage": "s",
       },
     }, await resp.json());
@@ -189,13 +213,16 @@ export default class CloudHSMV2 {
   async listTags(
     {abortSignal, ...params}: RequestConfig & ListTagsRequest,
   ): Promise<ListTagsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "TagList": [toTag],
       },
@@ -208,13 +235,14 @@ export default class CloudHSMV2 {
   async restoreBackup(
     {abortSignal, ...params}: RequestConfig & RestoreBackupRequest,
   ): Promise<RestoreBackupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      BackupId: params["BackupId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreBackup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Backup": toBackup,
@@ -225,14 +253,15 @@ export default class CloudHSMV2 {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    TagList: params["TagList"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      TagList: params["TagList"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -241,13 +270,15 @@ export default class CloudHSMV2 {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      TagKeyList: params["TagKeyList"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -299,13 +330,13 @@ export interface DeleteHsmRequest {
 export interface DescribeBackupsRequest {
   NextToken?: string | null;
   MaxResults?: number | null;
-  Filters?: { [key: string]: string[] } | null;
+  Filters?: { [key: string]: string[] | null | undefined } | null;
   SortAscending?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
 export interface DescribeClustersRequest {
-  Filters?: { [key: string]: string[] } | null;
+  Filters?: { [key: string]: string[] | null | undefined } | null;
   NextToken?: string | null;
   MaxResults?: number | null;
 }
@@ -413,13 +444,15 @@ export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -435,8 +468,8 @@ export interface DestinationBackup {
   SourceBackup?: string | null;
   SourceCluster?: string | null;
 }
-function toDestinationBackup(root: JSONValue): DestinationBackup {
-  return prt.readObj({
+function toDestinationBackup(root: jsonP.JSONValue): DestinationBackup {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CreateTimestamp": "d",
@@ -459,16 +492,16 @@ export interface Cluster {
   SourceBackupId?: string | null;
   State?: ClusterState | null;
   StateMessage?: string | null;
-  SubnetMapping?: { [key: string]: string } | null;
+  SubnetMapping?: { [key: string]: string | null | undefined } | null;
   VpcId?: string | null;
   Certificates?: Certificates | null;
   TagList?: Tag[] | null;
 }
-function toCluster(root: JSONValue): Cluster {
-  return prt.readObj({
+function toCluster(root: jsonP.JSONValue): Cluster {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "BackupPolicy": toBackupPolicy,
+      "BackupPolicy": (x: jsonP.JSONValue) => cmnP.readEnum<BackupPolicy>(x),
       "ClusterId": "s",
       "CreateTimestamp": "d",
       "Hsms": [toHsm],
@@ -476,9 +509,9 @@ function toCluster(root: JSONValue): Cluster {
       "PreCoPassword": "s",
       "SecurityGroup": "s",
       "SourceBackupId": "s",
-      "State": toClusterState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<ClusterState>(x),
       "StateMessage": "s",
-      "SubnetMapping": x => prt.readMap(String, String, x),
+      "SubnetMapping": x => jsonP.readMap(String, String, x),
       "VpcId": "s",
       "Certificates": toCertificates,
       "TagList": [toTag],
@@ -489,12 +522,7 @@ function toCluster(root: JSONValue): Cluster {
 // refs: 3 - tags: output, named, enum
 export type BackupPolicy =
 | "DEFAULT"
-;
-function toBackupPolicy(root: JSONValue): BackupPolicy | null {
-  return ( false
-    || root == "DEFAULT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface Hsm {
@@ -507,8 +535,8 @@ export interface Hsm {
   State?: HsmState | null;
   StateMessage?: string | null;
 }
-function toHsm(root: JSONValue): Hsm {
-  return prt.readObj({
+function toHsm(root: jsonP.JSONValue): Hsm {
+  return jsonP.readObj({
     required: {
       "HsmId": "s",
     },
@@ -518,7 +546,7 @@ function toHsm(root: JSONValue): Hsm {
       "SubnetId": "s",
       "EniId": "s",
       "EniIp": "s",
-      "State": toHsmState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<HsmState>(x),
       "StateMessage": "s",
     },
   }, root);
@@ -531,16 +559,7 @@ export type HsmState =
 | "DEGRADED"
 | "DELETE_IN_PROGRESS"
 | "DELETED"
-;
-function toHsmState(root: JSONValue): HsmState | null {
-  return ( false
-    || root == "CREATE_IN_PROGRESS"
-    || root == "ACTIVE"
-    || root == "DEGRADED"
-    || root == "DELETE_IN_PROGRESS"
-    || root == "DELETED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, enum
 export type ClusterState =
@@ -553,20 +572,7 @@ export type ClusterState =
 | "DELETE_IN_PROGRESS"
 | "DELETED"
 | "DEGRADED"
-;
-function toClusterState(root: JSONValue): ClusterState | null {
-  return ( false
-    || root == "CREATE_IN_PROGRESS"
-    || root == "UNINITIALIZED"
-    || root == "INITIALIZE_IN_PROGRESS"
-    || root == "INITIALIZED"
-    || root == "ACTIVE"
-    || root == "UPDATE_IN_PROGRESS"
-    || root == "DELETE_IN_PROGRESS"
-    || root == "DELETED"
-    || root == "DEGRADED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface Certificates {
@@ -576,8 +582,8 @@ export interface Certificates {
   ManufacturerHardwareCertificate?: string | null;
   ClusterCertificate?: string | null;
 }
-function toCertificates(root: JSONValue): Certificates {
-  return prt.readObj({
+function toCertificates(root: jsonP.JSONValue): Certificates {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ClusterCsr": "s",
@@ -602,13 +608,13 @@ export interface Backup {
   DeleteTimestamp?: Date | number | null;
   TagList?: Tag[] | null;
 }
-function toBackup(root: JSONValue): Backup {
-  return prt.readObj({
+function toBackup(root: jsonP.JSONValue): Backup {
+  return jsonP.readObj({
     required: {
       "BackupId": "s",
     },
     optional: {
-      "BackupState": toBackupState,
+      "BackupState": (x: jsonP.JSONValue) => cmnP.readEnum<BackupState>(x),
       "ClusterId": "s",
       "CreateTimestamp": "d",
       "CopyTimestamp": "d",
@@ -627,12 +633,4 @@ export type BackupState =
 | "READY"
 | "DELETED"
 | "PENDING_DELETION"
-;
-function toBackupState(root: JSONValue): BackupState | null {
-  return ( false
-    || root == "CREATE_IN_PROGRESS"
-    || root == "READY"
-    || root == "DELETED"
-    || root == "PENDING_DELETION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;

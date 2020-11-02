@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class LicenseManager {
   #client: ServiceClient;
@@ -29,15 +29,21 @@ export default class LicenseManager {
   async createLicenseConfiguration(
     {abortSignal, ...params}: RequestConfig & CreateLicenseConfigurationRequest,
   ): Promise<CreateLicenseConfigurationResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-    ProductInformationList: params["ProductInformationList"]?.map(x => fromProductInformation(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Description: params["Description"],
+      LicenseCountingType: params["LicenseCountingType"],
+      LicenseCount: params["LicenseCount"],
+      LicenseCountHardLimit: params["LicenseCountHardLimit"],
+      LicenseRules: params["LicenseRules"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      ProductInformationList: params["ProductInformationList"]?.map(x => fromProductInformation(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLicenseConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LicenseConfigurationArn": "s",
@@ -48,13 +54,14 @@ export default class LicenseManager {
   async deleteLicenseConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteLicenseConfigurationRequest,
   ): Promise<DeleteLicenseConfigurationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      LicenseConfigurationArn: params["LicenseConfigurationArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLicenseConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -63,20 +70,21 @@ export default class LicenseManager {
   async getLicenseConfiguration(
     {abortSignal, ...params}: RequestConfig & GetLicenseConfigurationRequest,
   ): Promise<GetLicenseConfigurationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      LicenseConfigurationArn: params["LicenseConfigurationArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetLicenseConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LicenseConfigurationId": "s",
         "LicenseConfigurationArn": "s",
         "Name": "s",
         "Description": "s",
-        "LicenseCountingType": toLicenseCountingType,
+        "LicenseCountingType": (x: jsonP.JSONValue) => cmnP.readEnum<LicenseCountingType>(x),
         "LicenseRules": ["s"],
         "LicenseCount": "n",
         "LicenseCountHardLimit": "b",
@@ -95,13 +103,13 @@ export default class LicenseManager {
   async getServiceSettings(
     {abortSignal, ...params}: RequestConfig & GetServiceSettingsRequest = {},
   ): Promise<GetServiceSettingsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetServiceSettings",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "S3BucketArn": "s",
@@ -116,13 +124,16 @@ export default class LicenseManager {
   async listAssociationsForLicenseConfiguration(
     {abortSignal, ...params}: RequestConfig & ListAssociationsForLicenseConfigurationRequest,
   ): Promise<ListAssociationsForLicenseConfigurationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      LicenseConfigurationArn: params["LicenseConfigurationArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAssociationsForLicenseConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LicenseConfigurationAssociations": [toLicenseConfigurationAssociation],
@@ -134,13 +145,16 @@ export default class LicenseManager {
   async listFailuresForLicenseConfigurationOperations(
     {abortSignal, ...params}: RequestConfig & ListFailuresForLicenseConfigurationOperationsRequest,
   ): Promise<ListFailuresForLicenseConfigurationOperationsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      LicenseConfigurationArn: params["LicenseConfigurationArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFailuresForLicenseConfigurationOperations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LicenseOperationFailureList": [toLicenseOperationFailure],
@@ -152,14 +166,17 @@ export default class LicenseManager {
   async listLicenseConfigurations(
     {abortSignal, ...params}: RequestConfig & ListLicenseConfigurationsRequest = {},
   ): Promise<ListLicenseConfigurationsResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      LicenseConfigurationArns: params["LicenseConfigurationArns"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLicenseConfigurations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LicenseConfigurations": [toLicenseConfiguration],
@@ -171,13 +188,16 @@ export default class LicenseManager {
   async listLicenseSpecificationsForResource(
     {abortSignal, ...params}: RequestConfig & ListLicenseSpecificationsForResourceRequest,
   ): Promise<ListLicenseSpecificationsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLicenseSpecificationsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LicenseSpecifications": [toLicenseSpecification],
@@ -189,14 +209,16 @@ export default class LicenseManager {
   async listResourceInventory(
     {abortSignal, ...params}: RequestConfig & ListResourceInventoryRequest = {},
   ): Promise<ListResourceInventoryResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromInventoryFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filters: params["Filters"]?.map(x => fromInventoryFilter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResourceInventory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResourceInventoryList": [toResourceInventory],
@@ -208,13 +230,14 @@ export default class LicenseManager {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -225,14 +248,17 @@ export default class LicenseManager {
   async listUsageForLicenseConfiguration(
     {abortSignal, ...params}: RequestConfig & ListUsageForLicenseConfigurationRequest,
   ): Promise<ListUsageForLicenseConfigurationResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      LicenseConfigurationArn: params["LicenseConfigurationArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUsageForLicenseConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LicenseConfigurationUsageList": [toLicenseConfigurationUsage],
@@ -244,14 +270,15 @@ export default class LicenseManager {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -260,13 +287,15 @@ export default class LicenseManager {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -275,14 +304,21 @@ export default class LicenseManager {
   async updateLicenseConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateLicenseConfigurationRequest,
   ): Promise<UpdateLicenseConfigurationResponse> {
-    const body: JSONObject = {...params,
-    ProductInformationList: params["ProductInformationList"]?.map(x => fromProductInformation(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      LicenseConfigurationArn: params["LicenseConfigurationArn"],
+      LicenseConfigurationStatus: params["LicenseConfigurationStatus"],
+      LicenseRules: params["LicenseRules"],
+      LicenseCount: params["LicenseCount"],
+      LicenseCountHardLimit: params["LicenseCountHardLimit"],
+      Name: params["Name"],
+      Description: params["Description"],
+      ProductInformationList: params["ProductInformationList"]?.map(x => fromProductInformation(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateLicenseConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -291,15 +327,16 @@ export default class LicenseManager {
   async updateLicenseSpecificationsForResource(
     {abortSignal, ...params}: RequestConfig & UpdateLicenseSpecificationsForResourceRequest,
   ): Promise<UpdateLicenseSpecificationsForResourceResponse> {
-    const body: JSONObject = {...params,
-    AddLicenseSpecifications: params["AddLicenseSpecifications"]?.map(x => fromLicenseSpecification(x)),
-    RemoveLicenseSpecifications: params["RemoveLicenseSpecifications"]?.map(x => fromLicenseSpecification(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      AddLicenseSpecifications: params["AddLicenseSpecifications"]?.map(x => fromLicenseSpecification(x)),
+      RemoveLicenseSpecifications: params["RemoveLicenseSpecifications"]?.map(x => fromLicenseSpecification(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateLicenseSpecificationsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -308,14 +345,17 @@ export default class LicenseManager {
   async updateServiceSettings(
     {abortSignal, ...params}: RequestConfig & UpdateServiceSettingsRequest = {},
   ): Promise<UpdateServiceSettingsResponse> {
-    const body: JSONObject = {...params,
-    OrganizationConfiguration: fromOrganizationConfiguration(params["OrganizationConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      S3BucketArn: params["S3BucketArn"],
+      SnsTopicArn: params["SnsTopicArn"],
+      OrganizationConfiguration: fromOrganizationConfiguration(params["OrganizationConfiguration"]),
+      EnableCrossAccountsDiscovery: params["EnableCrossAccountsDiscovery"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateServiceSettings",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -542,29 +582,22 @@ export type LicenseCountingType =
 | "Instance"
 | "Core"
 | "Socket"
-;
-
-function toLicenseCountingType(root: JSONValue): LicenseCountingType | null {
-  return ( false
-    || root == "vCPU"
-    || root == "Instance"
-    || root == "Core"
-    || root == "Socket"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface Tag {
   Key?: string | null;
   Value?: string | null;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Key": "s",
@@ -578,14 +611,15 @@ export interface ProductInformation {
   ResourceType: string;
   ProductInformationFilterList: ProductInformationFilter[];
 }
-function fromProductInformation(input?: ProductInformation | null): JSONValue {
+function fromProductInformation(input?: ProductInformation | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ResourceType: input["ResourceType"],
     ProductInformationFilterList: input["ProductInformationFilterList"]?.map(x => fromProductInformationFilter(x)),
   }
 }
-function toProductInformation(root: JSONValue): ProductInformation {
-  return prt.readObj({
+function toProductInformation(root: jsonP.JSONValue): ProductInformation {
+  return jsonP.readObj({
     required: {
       "ResourceType": "s",
       "ProductInformationFilterList": [toProductInformationFilter],
@@ -600,13 +634,16 @@ export interface ProductInformationFilter {
   ProductInformationFilterValue: string[];
   ProductInformationFilterComparator: string;
 }
-function fromProductInformationFilter(input?: ProductInformationFilter | null): JSONValue {
+function fromProductInformationFilter(input?: ProductInformationFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ProductInformationFilterName: input["ProductInformationFilterName"],
+    ProductInformationFilterValue: input["ProductInformationFilterValue"],
+    ProductInformationFilterComparator: input["ProductInformationFilterComparator"],
   }
 }
-function toProductInformationFilter(root: JSONValue): ProductInformationFilter {
-  return prt.readObj({
+function toProductInformationFilter(root: jsonP.JSONValue): ProductInformationFilter {
+  return jsonP.readObj({
     required: {
       "ProductInformationFilterName": "s",
       "ProductInformationFilterValue": ["s"],
@@ -621,9 +658,11 @@ export interface Filter {
   Name?: string | null;
   Values?: string[] | null;
 }
-function fromFilter(input?: Filter | null): JSONValue {
+function fromFilter(input?: Filter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Values: input["Values"],
   }
 }
 
@@ -633,9 +672,12 @@ export interface InventoryFilter {
   Condition: InventoryFilterCondition;
   Value?: string | null;
 }
-function fromInventoryFilter(input?: InventoryFilter | null): JSONValue {
+function fromInventoryFilter(input?: InventoryFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Condition: input["Condition"],
+    Value: input["Value"],
   }
 }
 
@@ -645,27 +687,26 @@ export type InventoryFilterCondition =
 | "NOT_EQUALS"
 | "BEGINS_WITH"
 | "CONTAINS"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type LicenseConfigurationStatus =
 | "AVAILABLE"
 | "DISABLED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface LicenseSpecification {
   LicenseConfigurationArn: string;
 }
-function fromLicenseSpecification(input?: LicenseSpecification | null): JSONValue {
+function fromLicenseSpecification(input?: LicenseSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    LicenseConfigurationArn: input["LicenseConfigurationArn"],
   }
 }
-function toLicenseSpecification(root: JSONValue): LicenseSpecification {
-  return prt.readObj({
+function toLicenseSpecification(root: jsonP.JSONValue): LicenseSpecification {
+  return jsonP.readObj({
     required: {
       "LicenseConfigurationArn": "s",
     },
@@ -677,13 +718,14 @@ function toLicenseSpecification(root: JSONValue): LicenseSpecification {
 export interface OrganizationConfiguration {
   EnableIntegration: boolean;
 }
-function fromOrganizationConfiguration(input?: OrganizationConfiguration | null): JSONValue {
+function fromOrganizationConfiguration(input?: OrganizationConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    EnableIntegration: input["EnableIntegration"],
   }
 }
-function toOrganizationConfiguration(root: JSONValue): OrganizationConfiguration {
-  return prt.readObj({
+function toOrganizationConfiguration(root: jsonP.JSONValue): OrganizationConfiguration {
+  return jsonP.readObj({
     required: {
       "EnableIntegration": "b",
     },
@@ -696,11 +738,11 @@ export interface ConsumedLicenseSummary {
   ResourceType?: ResourceType | null;
   ConsumedLicenses?: number | null;
 }
-function toConsumedLicenseSummary(root: JSONValue): ConsumedLicenseSummary {
-  return prt.readObj({
+function toConsumedLicenseSummary(root: jsonP.JSONValue): ConsumedLicenseSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "ResourceType": toResourceType,
+      "ResourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
       "ConsumedLicenses": "n",
     },
   }, root);
@@ -713,27 +755,18 @@ export type ResourceType =
 | "EC2_AMI"
 | "RDS"
 | "SYSTEMS_MANAGER_MANAGED_INSTANCE"
-;
-function toResourceType(root: JSONValue): ResourceType | null {
-  return ( false
-    || root == "EC2_INSTANCE"
-    || root == "EC2_HOST"
-    || root == "EC2_AMI"
-    || root == "RDS"
-    || root == "SYSTEMS_MANAGER_MANAGED_INSTANCE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ManagedResourceSummary {
   ResourceType?: ResourceType | null;
   AssociationCount?: number | null;
 }
-function toManagedResourceSummary(root: JSONValue): ManagedResourceSummary {
-  return prt.readObj({
+function toManagedResourceSummary(root: jsonP.JSONValue): ManagedResourceSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "ResourceType": toResourceType,
+      "ResourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
       "AssociationCount": "n",
     },
   }, root);
@@ -743,8 +776,8 @@ function toManagedResourceSummary(root: JSONValue): ManagedResourceSummary {
 export interface AutomatedDiscoveryInformation {
   LastRunTime?: Date | number | null;
 }
-function toAutomatedDiscoveryInformation(root: JSONValue): AutomatedDiscoveryInformation {
-  return prt.readObj({
+function toAutomatedDiscoveryInformation(root: jsonP.JSONValue): AutomatedDiscoveryInformation {
+  return jsonP.readObj({
     required: {},
     optional: {
       "LastRunTime": "d",
@@ -759,12 +792,12 @@ export interface LicenseConfigurationAssociation {
   ResourceOwnerId?: string | null;
   AssociationTime?: Date | number | null;
 }
-function toLicenseConfigurationAssociation(root: JSONValue): LicenseConfigurationAssociation {
-  return prt.readObj({
+function toLicenseConfigurationAssociation(root: jsonP.JSONValue): LicenseConfigurationAssociation {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ResourceArn": "s",
-      "ResourceType": toResourceType,
+      "ResourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
       "ResourceOwnerId": "s",
       "AssociationTime": "d",
     },
@@ -782,12 +815,12 @@ export interface LicenseOperationFailure {
   OperationRequestedBy?: string | null;
   MetadataList?: Metadata[] | null;
 }
-function toLicenseOperationFailure(root: JSONValue): LicenseOperationFailure {
-  return prt.readObj({
+function toLicenseOperationFailure(root: jsonP.JSONValue): LicenseOperationFailure {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ResourceArn": "s",
-      "ResourceType": toResourceType,
+      "ResourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
       "ErrorMessage": "s",
       "FailureTime": "d",
       "OperationName": "s",
@@ -803,8 +836,8 @@ export interface Metadata {
   Name?: string | null;
   Value?: string | null;
 }
-function toMetadata(root: JSONValue): Metadata {
-  return prt.readObj({
+function toMetadata(root: jsonP.JSONValue): Metadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -831,15 +864,15 @@ export interface LicenseConfiguration {
   ProductInformationList?: ProductInformation[] | null;
   AutomatedDiscoveryInformation?: AutomatedDiscoveryInformation | null;
 }
-function toLicenseConfiguration(root: JSONValue): LicenseConfiguration {
-  return prt.readObj({
+function toLicenseConfiguration(root: jsonP.JSONValue): LicenseConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "LicenseConfigurationId": "s",
       "LicenseConfigurationArn": "s",
       "Name": "s",
       "Description": "s",
-      "LicenseCountingType": toLicenseCountingType,
+      "LicenseCountingType": (x: jsonP.JSONValue) => cmnP.readEnum<LicenseCountingType>(x),
       "LicenseRules": ["s"],
       "LicenseCount": "n",
       "LicenseCountHardLimit": "b",
@@ -863,12 +896,12 @@ export interface ResourceInventory {
   PlatformVersion?: string | null;
   ResourceOwningAccountId?: string | null;
 }
-function toResourceInventory(root: JSONValue): ResourceInventory {
-  return prt.readObj({
+function toResourceInventory(root: jsonP.JSONValue): ResourceInventory {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ResourceId": "s",
-      "ResourceType": toResourceType,
+      "ResourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
       "ResourceArn": "s",
       "Platform": "s",
       "PlatformVersion": "s",
@@ -886,12 +919,12 @@ export interface LicenseConfigurationUsage {
   AssociationTime?: Date | number | null;
   ConsumedLicenses?: number | null;
 }
-function toLicenseConfigurationUsage(root: JSONValue): LicenseConfigurationUsage {
-  return prt.readObj({
+function toLicenseConfigurationUsage(root: jsonP.JSONValue): LicenseConfigurationUsage {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ResourceArn": "s",
-      "ResourceType": toResourceType,
+      "ResourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
       "ResourceStatus": "s",
       "ResourceOwnerId": "s",
       "AssociationTime": "d",

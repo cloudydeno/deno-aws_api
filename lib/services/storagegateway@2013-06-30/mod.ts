@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class StorageGateway {
   #client: ServiceClient;
@@ -29,14 +29,21 @@ export default class StorageGateway {
   async activateGateway(
     {abortSignal, ...params}: RequestConfig & ActivateGatewayInput,
   ): Promise<ActivateGatewayOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ActivationKey: params["ActivationKey"],
+      GatewayName: params["GatewayName"],
+      GatewayTimezone: params["GatewayTimezone"],
+      GatewayRegion: params["GatewayRegion"],
+      GatewayType: params["GatewayType"],
+      TapeDriveType: params["TapeDriveType"],
+      MediumChangerType: params["MediumChangerType"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ActivateGateway",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -47,13 +54,15 @@ export default class StorageGateway {
   async addCache(
     {abortSignal, ...params}: RequestConfig & AddCacheInput,
   ): Promise<AddCacheOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      DiskIds: params["DiskIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddCache",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -64,14 +73,15 @@ export default class StorageGateway {
   async addTagsToResource(
     {abortSignal, ...params}: RequestConfig & AddTagsToResourceInput,
   ): Promise<AddTagsToResourceOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTagsToResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResourceARN": "s",
@@ -82,13 +92,15 @@ export default class StorageGateway {
   async addUploadBuffer(
     {abortSignal, ...params}: RequestConfig & AddUploadBufferInput,
   ): Promise<AddUploadBufferOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      DiskIds: params["DiskIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddUploadBuffer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -99,13 +111,15 @@ export default class StorageGateway {
   async addWorkingStorage(
     {abortSignal, ...params}: RequestConfig & AddWorkingStorageInput,
   ): Promise<AddWorkingStorageOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      DiskIds: params["DiskIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddWorkingStorage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -116,13 +130,16 @@ export default class StorageGateway {
   async assignTapePool(
     {abortSignal, ...params}: RequestConfig & AssignTapePoolInput,
   ): Promise<AssignTapePoolOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TapeARN: params["TapeARN"],
+      PoolId: params["PoolId"],
+      BypassGovernanceRetention: params["BypassGovernanceRetention"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssignTapePool",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TapeARN": "s",
@@ -133,13 +150,18 @@ export default class StorageGateway {
   async attachVolume(
     {abortSignal, ...params}: RequestConfig & AttachVolumeInput,
   ): Promise<AttachVolumeOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      TargetName: params["TargetName"],
+      VolumeARN: params["VolumeARN"],
+      NetworkInterfaceId: params["NetworkInterfaceId"],
+      DiskId: params["DiskId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AttachVolume",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VolumeARN": "s",
@@ -151,13 +173,15 @@ export default class StorageGateway {
   async cancelArchival(
     {abortSignal, ...params}: RequestConfig & CancelArchivalInput,
   ): Promise<CancelArchivalOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      TapeARN: params["TapeARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelArchival",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TapeARN": "s",
@@ -168,13 +192,15 @@ export default class StorageGateway {
   async cancelRetrieval(
     {abortSignal, ...params}: RequestConfig & CancelRetrievalInput,
   ): Promise<CancelRetrievalOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      TapeARN: params["TapeARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelRetrieval",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TapeARN": "s",
@@ -185,14 +211,23 @@ export default class StorageGateway {
   async createCachediSCSIVolume(
     {abortSignal, ...params}: RequestConfig & CreateCachediSCSIVolumeInput,
   ): Promise<CreateCachediSCSIVolumeOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      VolumeSizeInBytes: params["VolumeSizeInBytes"],
+      SnapshotId: params["SnapshotId"],
+      TargetName: params["TargetName"],
+      SourceVolumeARN: params["SourceVolumeARN"],
+      NetworkInterfaceId: params["NetworkInterfaceId"],
+      ClientToken: params["ClientToken"],
+      KMSEncrypted: params["KMSEncrypted"],
+      KMSKey: params["KMSKey"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCachediSCSIVolume",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VolumeARN": "s",
@@ -204,16 +239,30 @@ export default class StorageGateway {
   async createNFSFileShare(
     {abortSignal, ...params}: RequestConfig & CreateNFSFileShareInput,
   ): Promise<CreateNFSFileShareOutput> {
-    const body: JSONObject = {...params,
-    NFSFileShareDefaults: fromNFSFileShareDefaults(params["NFSFileShareDefaults"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-    CacheAttributes: fromCacheAttributes(params["CacheAttributes"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClientToken: params["ClientToken"],
+      NFSFileShareDefaults: fromNFSFileShareDefaults(params["NFSFileShareDefaults"]),
+      GatewayARN: params["GatewayARN"],
+      KMSEncrypted: params["KMSEncrypted"],
+      KMSKey: params["KMSKey"],
+      Role: params["Role"],
+      LocationARN: params["LocationARN"],
+      DefaultStorageClass: params["DefaultStorageClass"],
+      ObjectACL: params["ObjectACL"],
+      ClientList: params["ClientList"],
+      Squash: params["Squash"],
+      ReadOnly: params["ReadOnly"],
+      GuessMIMETypeEnabled: params["GuessMIMETypeEnabled"],
+      RequesterPays: params["RequesterPays"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      FileShareName: params["FileShareName"],
+      CacheAttributes: fromCacheAttributes(params["CacheAttributes"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNFSFileShare",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FileShareARN": "s",
@@ -224,15 +273,34 @@ export default class StorageGateway {
   async createSMBFileShare(
     {abortSignal, ...params}: RequestConfig & CreateSMBFileShareInput,
   ): Promise<CreateSMBFileShareOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-    CacheAttributes: fromCacheAttributes(params["CacheAttributes"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClientToken: params["ClientToken"],
+      GatewayARN: params["GatewayARN"],
+      KMSEncrypted: params["KMSEncrypted"],
+      KMSKey: params["KMSKey"],
+      Role: params["Role"],
+      LocationARN: params["LocationARN"],
+      DefaultStorageClass: params["DefaultStorageClass"],
+      ObjectACL: params["ObjectACL"],
+      ReadOnly: params["ReadOnly"],
+      GuessMIMETypeEnabled: params["GuessMIMETypeEnabled"],
+      RequesterPays: params["RequesterPays"],
+      SMBACLEnabled: params["SMBACLEnabled"],
+      AdminUserList: params["AdminUserList"],
+      ValidUserList: params["ValidUserList"],
+      InvalidUserList: params["InvalidUserList"],
+      AuditDestinationARN: params["AuditDestinationARN"],
+      Authentication: params["Authentication"],
+      CaseSensitivity: params["CaseSensitivity"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      FileShareName: params["FileShareName"],
+      CacheAttributes: fromCacheAttributes(params["CacheAttributes"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSMBFileShare",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FileShareARN": "s",
@@ -243,14 +311,16 @@ export default class StorageGateway {
   async createSnapshot(
     {abortSignal, ...params}: RequestConfig & CreateSnapshotInput,
   ): Promise<CreateSnapshotOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      VolumeARN: params["VolumeARN"],
+      SnapshotDescription: params["SnapshotDescription"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSnapshot",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VolumeARN": "s",
@@ -262,14 +332,16 @@ export default class StorageGateway {
   async createSnapshotFromVolumeRecoveryPoint(
     {abortSignal, ...params}: RequestConfig & CreateSnapshotFromVolumeRecoveryPointInput,
   ): Promise<CreateSnapshotFromVolumeRecoveryPointOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      VolumeARN: params["VolumeARN"],
+      SnapshotDescription: params["SnapshotDescription"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSnapshotFromVolumeRecoveryPoint",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SnapshotId": "s",
@@ -282,14 +354,22 @@ export default class StorageGateway {
   async createStorediSCSIVolume(
     {abortSignal, ...params}: RequestConfig & CreateStorediSCSIVolumeInput,
   ): Promise<CreateStorediSCSIVolumeOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      DiskId: params["DiskId"],
+      SnapshotId: params["SnapshotId"],
+      PreserveExistingData: params["PreserveExistingData"],
+      TargetName: params["TargetName"],
+      NetworkInterfaceId: params["NetworkInterfaceId"],
+      KMSEncrypted: params["KMSEncrypted"],
+      KMSKey: params["KMSKey"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateStorediSCSIVolume",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VolumeARN": "s",
@@ -302,14 +382,18 @@ export default class StorageGateway {
   async createTapePool(
     {abortSignal, ...params}: RequestConfig & CreateTapePoolInput,
   ): Promise<CreateTapePoolOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      PoolName: params["PoolName"],
+      StorageClass: params["StorageClass"],
+      RetentionLockType: params["RetentionLockType"],
+      RetentionLockTimeInDays: params["RetentionLockTimeInDays"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTapePool",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PoolARN": "s",
@@ -320,14 +404,21 @@ export default class StorageGateway {
   async createTapeWithBarcode(
     {abortSignal, ...params}: RequestConfig & CreateTapeWithBarcodeInput,
   ): Promise<CreateTapeWithBarcodeOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      TapeSizeInBytes: params["TapeSizeInBytes"],
+      TapeBarcode: params["TapeBarcode"],
+      KMSEncrypted: params["KMSEncrypted"],
+      KMSKey: params["KMSKey"],
+      PoolId: params["PoolId"],
+      Worm: params["Worm"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTapeWithBarcode",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TapeARN": "s",
@@ -338,14 +429,23 @@ export default class StorageGateway {
   async createTapes(
     {abortSignal, ...params}: RequestConfig & CreateTapesInput,
   ): Promise<CreateTapesOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      TapeSizeInBytes: params["TapeSizeInBytes"],
+      ClientToken: params["ClientToken"],
+      NumTapesToCreate: params["NumTapesToCreate"],
+      TapeBarcodePrefix: params["TapeBarcodePrefix"],
+      KMSEncrypted: params["KMSEncrypted"],
+      KMSKey: params["KMSKey"],
+      PoolId: params["PoolId"],
+      Worm: params["Worm"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTapes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TapeARNs": ["s"],
@@ -356,13 +456,14 @@ export default class StorageGateway {
   async deleteAutomaticTapeCreationPolicy(
     {abortSignal, ...params}: RequestConfig & DeleteAutomaticTapeCreationPolicyInput,
   ): Promise<DeleteAutomaticTapeCreationPolicyOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAutomaticTapeCreationPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -373,13 +474,15 @@ export default class StorageGateway {
   async deleteBandwidthRateLimit(
     {abortSignal, ...params}: RequestConfig & DeleteBandwidthRateLimitInput,
   ): Promise<DeleteBandwidthRateLimitOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      BandwidthType: params["BandwidthType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBandwidthRateLimit",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -390,13 +493,15 @@ export default class StorageGateway {
   async deleteChapCredentials(
     {abortSignal, ...params}: RequestConfig & DeleteChapCredentialsInput,
   ): Promise<DeleteChapCredentialsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TargetARN: params["TargetARN"],
+      InitiatorName: params["InitiatorName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteChapCredentials",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TargetARN": "s",
@@ -408,13 +513,15 @@ export default class StorageGateway {
   async deleteFileShare(
     {abortSignal, ...params}: RequestConfig & DeleteFileShareInput,
   ): Promise<DeleteFileShareOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FileShareARN: params["FileShareARN"],
+      ForceDelete: params["ForceDelete"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFileShare",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FileShareARN": "s",
@@ -425,13 +532,14 @@ export default class StorageGateway {
   async deleteGateway(
     {abortSignal, ...params}: RequestConfig & DeleteGatewayInput,
   ): Promise<DeleteGatewayOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteGateway",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -442,13 +550,14 @@ export default class StorageGateway {
   async deleteSnapshotSchedule(
     {abortSignal, ...params}: RequestConfig & DeleteSnapshotScheduleInput,
   ): Promise<DeleteSnapshotScheduleOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VolumeARN: params["VolumeARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSnapshotSchedule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VolumeARN": "s",
@@ -459,13 +568,16 @@ export default class StorageGateway {
   async deleteTape(
     {abortSignal, ...params}: RequestConfig & DeleteTapeInput,
   ): Promise<DeleteTapeOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      TapeARN: params["TapeARN"],
+      BypassGovernanceRetention: params["BypassGovernanceRetention"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTape",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TapeARN": "s",
@@ -476,13 +588,15 @@ export default class StorageGateway {
   async deleteTapeArchive(
     {abortSignal, ...params}: RequestConfig & DeleteTapeArchiveInput,
   ): Promise<DeleteTapeArchiveOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TapeARN: params["TapeARN"],
+      BypassGovernanceRetention: params["BypassGovernanceRetention"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTapeArchive",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TapeARN": "s",
@@ -493,13 +607,14 @@ export default class StorageGateway {
   async deleteTapePool(
     {abortSignal, ...params}: RequestConfig & DeleteTapePoolInput,
   ): Promise<DeleteTapePoolOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PoolARN: params["PoolARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTapePool",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PoolARN": "s",
@@ -510,13 +625,14 @@ export default class StorageGateway {
   async deleteVolume(
     {abortSignal, ...params}: RequestConfig & DeleteVolumeInput,
   ): Promise<DeleteVolumeOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VolumeARN: params["VolumeARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteVolume",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VolumeARN": "s",
@@ -527,17 +643,18 @@ export default class StorageGateway {
   async describeAvailabilityMonitorTest(
     {abortSignal, ...params}: RequestConfig & DescribeAvailabilityMonitorTestInput,
   ): Promise<DescribeAvailabilityMonitorTestOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAvailabilityMonitorTest",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
-        "Status": toAvailabilityMonitorTestStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<AvailabilityMonitorTestStatus>(x),
         "StartTime": "d",
       },
     }, await resp.json());
@@ -546,13 +663,14 @@ export default class StorageGateway {
   async describeBandwidthRateLimit(
     {abortSignal, ...params}: RequestConfig & DescribeBandwidthRateLimitInput,
   ): Promise<DescribeBandwidthRateLimitOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBandwidthRateLimit",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -565,13 +683,14 @@ export default class StorageGateway {
   async describeCache(
     {abortSignal, ...params}: RequestConfig & DescribeCacheInput,
   ): Promise<DescribeCacheOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCache",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -588,13 +707,14 @@ export default class StorageGateway {
   async describeCachediSCSIVolumes(
     {abortSignal, ...params}: RequestConfig & DescribeCachediSCSIVolumesInput,
   ): Promise<DescribeCachediSCSIVolumesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VolumeARNs: params["VolumeARNs"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCachediSCSIVolumes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CachediSCSIVolumes": [toCachediSCSIVolume],
@@ -605,13 +725,14 @@ export default class StorageGateway {
   async describeChapCredentials(
     {abortSignal, ...params}: RequestConfig & DescribeChapCredentialsInput,
   ): Promise<DescribeChapCredentialsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TargetARN: params["TargetARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeChapCredentials",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChapCredentials": [toChapInfo],
@@ -622,13 +743,14 @@ export default class StorageGateway {
   async describeGatewayInformation(
     {abortSignal, ...params}: RequestConfig & DescribeGatewayInformationInput,
   ): Promise<DescribeGatewayInformationOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGatewayInformation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -645,7 +767,7 @@ export default class StorageGateway {
         "Tags": [toTag],
         "VPCEndpoint": "s",
         "CloudWatchLogGroupARN": "s",
-        "HostEnvironment": toHostEnvironment,
+        "HostEnvironment": (x: jsonP.JSONValue) => cmnP.readEnum<HostEnvironment>(x),
         "EndpointType": "s",
         "SoftwareUpdatesEndDate": "s",
         "DeprecationDate": "s",
@@ -656,13 +778,14 @@ export default class StorageGateway {
   async describeMaintenanceStartTime(
     {abortSignal, ...params}: RequestConfig & DescribeMaintenanceStartTimeInput,
   ): Promise<DescribeMaintenanceStartTimeOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMaintenanceStartTime",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -678,13 +801,14 @@ export default class StorageGateway {
   async describeNFSFileShares(
     {abortSignal, ...params}: RequestConfig & DescribeNFSFileSharesInput,
   ): Promise<DescribeNFSFileSharesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FileShareARNList: params["FileShareARNList"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNFSFileShares",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NFSFileShareInfoList": [toNFSFileShareInfo],
@@ -695,13 +819,14 @@ export default class StorageGateway {
   async describeSMBFileShares(
     {abortSignal, ...params}: RequestConfig & DescribeSMBFileSharesInput,
   ): Promise<DescribeSMBFileSharesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FileShareARNList: params["FileShareARNList"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSMBFileShares",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SMBFileShareInfoList": [toSMBFileShareInfo],
@@ -712,20 +837,21 @@ export default class StorageGateway {
   async describeSMBSettings(
     {abortSignal, ...params}: RequestConfig & DescribeSMBSettingsInput,
   ): Promise<DescribeSMBSettingsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSMBSettings",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
         "DomainName": "s",
-        "ActiveDirectoryStatus": toActiveDirectoryStatus,
+        "ActiveDirectoryStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ActiveDirectoryStatus>(x),
         "SMBGuestPasswordSet": "b",
-        "SMBSecurityStrategy": toSMBSecurityStrategy,
+        "SMBSecurityStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<SMBSecurityStrategy>(x),
       },
     }, await resp.json());
   }
@@ -733,13 +859,14 @@ export default class StorageGateway {
   async describeSnapshotSchedule(
     {abortSignal, ...params}: RequestConfig & DescribeSnapshotScheduleInput,
   ): Promise<DescribeSnapshotScheduleOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VolumeARN: params["VolumeARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSnapshotSchedule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VolumeARN": "s",
@@ -755,13 +882,14 @@ export default class StorageGateway {
   async describeStorediSCSIVolumes(
     {abortSignal, ...params}: RequestConfig & DescribeStorediSCSIVolumesInput,
   ): Promise<DescribeStorediSCSIVolumesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VolumeARNs: params["VolumeARNs"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStorediSCSIVolumes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "StorediSCSIVolumes": [toStorediSCSIVolume],
@@ -772,13 +900,16 @@ export default class StorageGateway {
   async describeTapeArchives(
     {abortSignal, ...params}: RequestConfig & DescribeTapeArchivesInput = {},
   ): Promise<DescribeTapeArchivesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TapeARNs: params["TapeARNs"],
+      Marker: params["Marker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTapeArchives",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TapeArchives": [toTapeArchive],
@@ -790,13 +921,16 @@ export default class StorageGateway {
   async describeTapeRecoveryPoints(
     {abortSignal, ...params}: RequestConfig & DescribeTapeRecoveryPointsInput,
   ): Promise<DescribeTapeRecoveryPointsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      Marker: params["Marker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTapeRecoveryPoints",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -809,13 +943,17 @@ export default class StorageGateway {
   async describeTapes(
     {abortSignal, ...params}: RequestConfig & DescribeTapesInput,
   ): Promise<DescribeTapesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      TapeARNs: params["TapeARNs"],
+      Marker: params["Marker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTapes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tapes": [toTape],
@@ -827,13 +965,14 @@ export default class StorageGateway {
   async describeUploadBuffer(
     {abortSignal, ...params}: RequestConfig & DescribeUploadBufferInput,
   ): Promise<DescribeUploadBufferOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUploadBuffer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -847,13 +986,17 @@ export default class StorageGateway {
   async describeVTLDevices(
     {abortSignal, ...params}: RequestConfig & DescribeVTLDevicesInput,
   ): Promise<DescribeVTLDevicesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      VTLDeviceARNs: params["VTLDeviceARNs"],
+      Marker: params["Marker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVTLDevices",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -866,13 +1009,14 @@ export default class StorageGateway {
   async describeWorkingStorage(
     {abortSignal, ...params}: RequestConfig & DescribeWorkingStorageInput,
   ): Promise<DescribeWorkingStorageOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorkingStorage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -886,13 +1030,15 @@ export default class StorageGateway {
   async detachVolume(
     {abortSignal, ...params}: RequestConfig & DetachVolumeInput,
   ): Promise<DetachVolumeOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VolumeARN: params["VolumeARN"],
+      ForceDetach: params["ForceDetach"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetachVolume",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VolumeARN": "s",
@@ -903,13 +1049,14 @@ export default class StorageGateway {
   async disableGateway(
     {abortSignal, ...params}: RequestConfig & DisableGatewayInput,
   ): Promise<DisableGatewayOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableGateway",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -920,17 +1067,24 @@ export default class StorageGateway {
   async joinDomain(
     {abortSignal, ...params}: RequestConfig & JoinDomainInput,
   ): Promise<JoinDomainOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      DomainName: params["DomainName"],
+      OrganizationalUnit: params["OrganizationalUnit"],
+      DomainControllers: params["DomainControllers"],
+      TimeoutInSeconds: params["TimeoutInSeconds"],
+      UserName: params["UserName"],
+      Password: params["Password"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "JoinDomain",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
-        "ActiveDirectoryStatus": toActiveDirectoryStatus,
+        "ActiveDirectoryStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ActiveDirectoryStatus>(x),
       },
     }, await resp.json());
   }
@@ -938,13 +1092,14 @@ export default class StorageGateway {
   async listAutomaticTapeCreationPolicies(
     {abortSignal, ...params}: RequestConfig & ListAutomaticTapeCreationPoliciesInput = {},
   ): Promise<ListAutomaticTapeCreationPoliciesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAutomaticTapeCreationPolicies",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AutomaticTapeCreationPolicyInfos": [toAutomaticTapeCreationPolicyInfo],
@@ -955,13 +1110,16 @@ export default class StorageGateway {
   async listFileShares(
     {abortSignal, ...params}: RequestConfig & ListFileSharesInput = {},
   ): Promise<ListFileSharesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      Limit: params["Limit"],
+      Marker: params["Marker"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFileShares",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Marker": "s",
@@ -974,13 +1132,15 @@ export default class StorageGateway {
   async listGateways(
     {abortSignal, ...params}: RequestConfig & ListGatewaysInput = {},
   ): Promise<ListGatewaysOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Marker: params["Marker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGateways",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Gateways": [toGatewayInfo],
@@ -992,13 +1152,14 @@ export default class StorageGateway {
   async listLocalDisks(
     {abortSignal, ...params}: RequestConfig & ListLocalDisksInput,
   ): Promise<ListLocalDisksOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLocalDisks",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -1010,13 +1171,16 @@ export default class StorageGateway {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceInput,
   ): Promise<ListTagsForResourceOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      Marker: params["Marker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResourceARN": "s",
@@ -1029,13 +1193,16 @@ export default class StorageGateway {
   async listTapePools(
     {abortSignal, ...params}: RequestConfig & ListTapePoolsInput = {},
   ): Promise<ListTapePoolsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PoolARNs: params["PoolARNs"],
+      Marker: params["Marker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTapePools",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PoolInfos": [toPoolInfo],
@@ -1047,13 +1214,16 @@ export default class StorageGateway {
   async listTapes(
     {abortSignal, ...params}: RequestConfig & ListTapesInput = {},
   ): Promise<ListTapesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TapeARNs: params["TapeARNs"],
+      Marker: params["Marker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTapes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TapeInfos": [toTapeInfo],
@@ -1065,13 +1235,14 @@ export default class StorageGateway {
   async listVolumeInitiators(
     {abortSignal, ...params}: RequestConfig & ListVolumeInitiatorsInput,
   ): Promise<ListVolumeInitiatorsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VolumeARN: params["VolumeARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListVolumeInitiators",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Initiators": ["s"],
@@ -1082,13 +1253,14 @@ export default class StorageGateway {
   async listVolumeRecoveryPoints(
     {abortSignal, ...params}: RequestConfig & ListVolumeRecoveryPointsInput,
   ): Promise<ListVolumeRecoveryPointsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListVolumeRecoveryPoints",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -1100,13 +1272,16 @@ export default class StorageGateway {
   async listVolumes(
     {abortSignal, ...params}: RequestConfig & ListVolumesInput = {},
   ): Promise<ListVolumesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      Marker: params["Marker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListVolumes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -1119,13 +1294,14 @@ export default class StorageGateway {
   async notifyWhenUploaded(
     {abortSignal, ...params}: RequestConfig & NotifyWhenUploadedInput,
   ): Promise<NotifyWhenUploadedOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FileShareARN: params["FileShareARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "NotifyWhenUploaded",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FileShareARN": "s",
@@ -1137,13 +1313,16 @@ export default class StorageGateway {
   async refreshCache(
     {abortSignal, ...params}: RequestConfig & RefreshCacheInput,
   ): Promise<RefreshCacheOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FileShareARN: params["FileShareARN"],
+      FolderList: params["FolderList"],
+      Recursive: params["Recursive"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RefreshCache",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FileShareARN": "s",
@@ -1155,13 +1334,15 @@ export default class StorageGateway {
   async removeTagsFromResource(
     {abortSignal, ...params}: RequestConfig & RemoveTagsFromResourceInput,
   ): Promise<RemoveTagsFromResourceOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTagsFromResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResourceARN": "s",
@@ -1172,13 +1353,14 @@ export default class StorageGateway {
   async resetCache(
     {abortSignal, ...params}: RequestConfig & ResetCacheInput,
   ): Promise<ResetCacheOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResetCache",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -1189,13 +1371,15 @@ export default class StorageGateway {
   async retrieveTapeArchive(
     {abortSignal, ...params}: RequestConfig & RetrieveTapeArchiveInput,
   ): Promise<RetrieveTapeArchiveOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TapeARN: params["TapeARN"],
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RetrieveTapeArchive",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TapeARN": "s",
@@ -1206,13 +1390,15 @@ export default class StorageGateway {
   async retrieveTapeRecoveryPoint(
     {abortSignal, ...params}: RequestConfig & RetrieveTapeRecoveryPointInput,
   ): Promise<RetrieveTapeRecoveryPointOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TapeARN: params["TapeARN"],
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RetrieveTapeRecoveryPoint",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TapeARN": "s",
@@ -1223,13 +1409,15 @@ export default class StorageGateway {
   async setLocalConsolePassword(
     {abortSignal, ...params}: RequestConfig & SetLocalConsolePasswordInput,
   ): Promise<SetLocalConsolePasswordOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      LocalConsolePassword: params["LocalConsolePassword"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetLocalConsolePassword",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -1240,13 +1428,15 @@ export default class StorageGateway {
   async setSMBGuestPassword(
     {abortSignal, ...params}: RequestConfig & SetSMBGuestPasswordInput,
   ): Promise<SetSMBGuestPasswordOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      Password: params["Password"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetSMBGuestPassword",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -1257,13 +1447,14 @@ export default class StorageGateway {
   async shutdownGateway(
     {abortSignal, ...params}: RequestConfig & ShutdownGatewayInput,
   ): Promise<ShutdownGatewayOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ShutdownGateway",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -1274,13 +1465,14 @@ export default class StorageGateway {
   async startAvailabilityMonitorTest(
     {abortSignal, ...params}: RequestConfig & StartAvailabilityMonitorTestInput,
   ): Promise<StartAvailabilityMonitorTestOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartAvailabilityMonitorTest",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -1291,13 +1483,14 @@ export default class StorageGateway {
   async startGateway(
     {abortSignal, ...params}: RequestConfig & StartGatewayInput,
   ): Promise<StartGatewayOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartGateway",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -1308,14 +1501,15 @@ export default class StorageGateway {
   async updateAutomaticTapeCreationPolicy(
     {abortSignal, ...params}: RequestConfig & UpdateAutomaticTapeCreationPolicyInput,
   ): Promise<UpdateAutomaticTapeCreationPolicyOutput> {
-    const body: JSONObject = {...params,
-    AutomaticTapeCreationRules: params["AutomaticTapeCreationRules"]?.map(x => fromAutomaticTapeCreationRule(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AutomaticTapeCreationRules: params["AutomaticTapeCreationRules"]?.map(x => fromAutomaticTapeCreationRule(x)),
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAutomaticTapeCreationPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -1326,13 +1520,16 @@ export default class StorageGateway {
   async updateBandwidthRateLimit(
     {abortSignal, ...params}: RequestConfig & UpdateBandwidthRateLimitInput,
   ): Promise<UpdateBandwidthRateLimitOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      AverageUploadRateLimitInBitsPerSec: params["AverageUploadRateLimitInBitsPerSec"],
+      AverageDownloadRateLimitInBitsPerSec: params["AverageDownloadRateLimitInBitsPerSec"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateBandwidthRateLimit",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -1343,13 +1540,17 @@ export default class StorageGateway {
   async updateChapCredentials(
     {abortSignal, ...params}: RequestConfig & UpdateChapCredentialsInput,
   ): Promise<UpdateChapCredentialsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TargetARN: params["TargetARN"],
+      SecretToAuthenticateInitiator: params["SecretToAuthenticateInitiator"],
+      InitiatorName: params["InitiatorName"],
+      SecretToAuthenticateTarget: params["SecretToAuthenticateTarget"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateChapCredentials",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TargetARN": "s",
@@ -1361,13 +1562,17 @@ export default class StorageGateway {
   async updateGatewayInformation(
     {abortSignal, ...params}: RequestConfig & UpdateGatewayInformationInput,
   ): Promise<UpdateGatewayInformationOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      GatewayName: params["GatewayName"],
+      GatewayTimezone: params["GatewayTimezone"],
+      CloudWatchLogGroupARN: params["CloudWatchLogGroupARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGatewayInformation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -1379,13 +1584,14 @@ export default class StorageGateway {
   async updateGatewaySoftwareNow(
     {abortSignal, ...params}: RequestConfig & UpdateGatewaySoftwareNowInput,
   ): Promise<UpdateGatewaySoftwareNowOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGatewaySoftwareNow",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -1396,13 +1602,18 @@ export default class StorageGateway {
   async updateMaintenanceStartTime(
     {abortSignal, ...params}: RequestConfig & UpdateMaintenanceStartTimeInput,
   ): Promise<UpdateMaintenanceStartTimeOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      HourOfDay: params["HourOfDay"],
+      MinuteOfHour: params["MinuteOfHour"],
+      DayOfWeek: params["DayOfWeek"],
+      DayOfMonth: params["DayOfMonth"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMaintenanceStartTime",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -1413,15 +1624,26 @@ export default class StorageGateway {
   async updateNFSFileShare(
     {abortSignal, ...params}: RequestConfig & UpdateNFSFileShareInput,
   ): Promise<UpdateNFSFileShareOutput> {
-    const body: JSONObject = {...params,
-    NFSFileShareDefaults: fromNFSFileShareDefaults(params["NFSFileShareDefaults"]),
-    CacheAttributes: fromCacheAttributes(params["CacheAttributes"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      FileShareARN: params["FileShareARN"],
+      KMSEncrypted: params["KMSEncrypted"],
+      KMSKey: params["KMSKey"],
+      NFSFileShareDefaults: fromNFSFileShareDefaults(params["NFSFileShareDefaults"]),
+      DefaultStorageClass: params["DefaultStorageClass"],
+      ObjectACL: params["ObjectACL"],
+      ClientList: params["ClientList"],
+      Squash: params["Squash"],
+      ReadOnly: params["ReadOnly"],
+      GuessMIMETypeEnabled: params["GuessMIMETypeEnabled"],
+      RequesterPays: params["RequesterPays"],
+      FileShareName: params["FileShareName"],
+      CacheAttributes: fromCacheAttributes(params["CacheAttributes"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateNFSFileShare",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FileShareARN": "s",
@@ -1432,14 +1654,29 @@ export default class StorageGateway {
   async updateSMBFileShare(
     {abortSignal, ...params}: RequestConfig & UpdateSMBFileShareInput,
   ): Promise<UpdateSMBFileShareOutput> {
-    const body: JSONObject = {...params,
-    CacheAttributes: fromCacheAttributes(params["CacheAttributes"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      FileShareARN: params["FileShareARN"],
+      KMSEncrypted: params["KMSEncrypted"],
+      KMSKey: params["KMSKey"],
+      DefaultStorageClass: params["DefaultStorageClass"],
+      ObjectACL: params["ObjectACL"],
+      ReadOnly: params["ReadOnly"],
+      GuessMIMETypeEnabled: params["GuessMIMETypeEnabled"],
+      RequesterPays: params["RequesterPays"],
+      SMBACLEnabled: params["SMBACLEnabled"],
+      AdminUserList: params["AdminUserList"],
+      ValidUserList: params["ValidUserList"],
+      InvalidUserList: params["InvalidUserList"],
+      AuditDestinationARN: params["AuditDestinationARN"],
+      CaseSensitivity: params["CaseSensitivity"],
+      FileShareName: params["FileShareName"],
+      CacheAttributes: fromCacheAttributes(params["CacheAttributes"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSMBFileShare",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FileShareARN": "s",
@@ -1450,13 +1687,15 @@ export default class StorageGateway {
   async updateSMBSecurityStrategy(
     {abortSignal, ...params}: RequestConfig & UpdateSMBSecurityStrategyInput,
   ): Promise<UpdateSMBSecurityStrategyOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      SMBSecurityStrategy: params["SMBSecurityStrategy"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSMBSecurityStrategy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GatewayARN": "s",
@@ -1467,14 +1706,18 @@ export default class StorageGateway {
   async updateSnapshotSchedule(
     {abortSignal, ...params}: RequestConfig & UpdateSnapshotScheduleInput,
   ): Promise<UpdateSnapshotScheduleOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      VolumeARN: params["VolumeARN"],
+      StartAt: params["StartAt"],
+      RecurrenceInHours: params["RecurrenceInHours"],
+      Description: params["Description"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSnapshotSchedule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VolumeARN": "s",
@@ -1485,13 +1728,15 @@ export default class StorageGateway {
   async updateVTLDeviceType(
     {abortSignal, ...params}: RequestConfig & UpdateVTLDeviceTypeInput,
   ): Promise<UpdateVTLDeviceTypeOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VTLDeviceARN: params["VTLDeviceARN"],
+      DeviceType: params["DeviceType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateVTLDeviceType",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VTLDeviceARN": "s",
@@ -2576,13 +2821,15 @@ export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -2598,13 +2845,17 @@ export interface NFSFileShareDefaults {
   GroupId?: number | null;
   OwnerId?: number | null;
 }
-function fromNFSFileShareDefaults(input?: NFSFileShareDefaults | null): JSONValue {
+function fromNFSFileShareDefaults(input?: NFSFileShareDefaults | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    FileMode: input["FileMode"],
+    DirectoryMode: input["DirectoryMode"],
+    GroupId: input["GroupId"],
+    OwnerId: input["OwnerId"],
   }
 }
-function toNFSFileShareDefaults(root: JSONValue): NFSFileShareDefaults {
-  return prt.readObj({
+function toNFSFileShareDefaults(root: jsonP.JSONValue): NFSFileShareDefaults {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FileMode": "s",
@@ -2624,31 +2875,20 @@ export type ObjectACL =
 | "bucket-owner-read"
 | "bucket-owner-full-control"
 | "aws-exec-read"
-;
-
-function toObjectACL(root: JSONValue): ObjectACL | null {
-  return ( false
-    || root == "private"
-    || root == "public-read"
-    || root == "public-read-write"
-    || root == "authenticated-read"
-    || root == "bucket-owner-read"
-    || root == "bucket-owner-full-control"
-    || root == "aws-exec-read"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface CacheAttributes {
   CacheStaleTimeoutInSeconds?: number | null;
 }
-function fromCacheAttributes(input?: CacheAttributes | null): JSONValue {
+function fromCacheAttributes(input?: CacheAttributes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CacheStaleTimeoutInSeconds: input["CacheStaleTimeoutInSeconds"],
   }
 }
-function toCacheAttributes(root: JSONValue): CacheAttributes {
-  return prt.readObj({
+function toCacheAttributes(root: jsonP.JSONValue): CacheAttributes {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CacheStaleTimeoutInSeconds": "n",
@@ -2660,42 +2900,20 @@ function toCacheAttributes(root: JSONValue): CacheAttributes {
 export type CaseSensitivity =
 | "ClientSpecified"
 | "CaseSensitive"
-;
-
-function toCaseSensitivity(root: JSONValue): CaseSensitivity | null {
-  return ( false
-    || root == "ClientSpecified"
-    || root == "CaseSensitive"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type TapeStorageClass =
 | "DEEP_ARCHIVE"
 | "GLACIER"
-;
-
-function toTapeStorageClass(root: JSONValue): TapeStorageClass | null {
-  return ( false
-    || root == "DEEP_ARCHIVE"
-    || root == "GLACIER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type RetentionLockType =
 | "COMPLIANCE"
 | "GOVERNANCE"
 | "NONE"
-;
-
-function toRetentionLockType(root: JSONValue): RetentionLockType | null {
-  return ( false
-    || root == "COMPLIANCE"
-    || root == "GOVERNANCE"
-    || root == "NONE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface AutomaticTapeCreationRule {
@@ -2705,13 +2923,18 @@ export interface AutomaticTapeCreationRule {
   MinimumNumTapes: number;
   Worm?: boolean | null;
 }
-function fromAutomaticTapeCreationRule(input?: AutomaticTapeCreationRule | null): JSONValue {
+function fromAutomaticTapeCreationRule(input?: AutomaticTapeCreationRule | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    TapeBarcodePrefix: input["TapeBarcodePrefix"],
+    PoolId: input["PoolId"],
+    TapeSizeInBytes: input["TapeSizeInBytes"],
+    MinimumNumTapes: input["MinimumNumTapes"],
+    Worm: input["Worm"],
   }
 }
-function toAutomaticTapeCreationRule(root: JSONValue): AutomaticTapeCreationRule {
-  return prt.readObj({
+function toAutomaticTapeCreationRule(root: jsonP.JSONValue): AutomaticTapeCreationRule {
+  return jsonP.readObj({
     required: {
       "TapeBarcodePrefix": "s",
       "PoolId": "s",
@@ -2729,29 +2952,14 @@ export type SMBSecurityStrategy =
 | "ClientSpecified"
 | "MandatorySigning"
 | "MandatoryEncryption"
-;
-
-function toSMBSecurityStrategy(root: JSONValue): SMBSecurityStrategy | null {
-  return ( false
-    || root == "ClientSpecified"
-    || root == "MandatorySigning"
-    || root == "MandatoryEncryption"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type AvailabilityMonitorTestStatus =
 | "COMPLETE"
 | "FAILED"
 | "PENDING"
-;
-function toAvailabilityMonitorTestStatus(root: JSONValue): AvailabilityMonitorTestStatus | null {
-  return ( false
-    || root == "COMPLETE"
-    || root == "FAILED"
-    || root == "PENDING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface CachediSCSIVolume {
@@ -2769,8 +2977,8 @@ export interface CachediSCSIVolume {
   KMSKey?: string | null;
   TargetName?: string | null;
 }
-function toCachediSCSIVolume(root: JSONValue): CachediSCSIVolume {
-  return prt.readObj({
+function toCachediSCSIVolume(root: jsonP.JSONValue): CachediSCSIVolume {
+  return jsonP.readObj({
     required: {},
     optional: {
       "VolumeARN": "s",
@@ -2798,8 +3006,8 @@ export interface VolumeiSCSIAttributes {
   LunNumber?: number | null;
   ChapEnabled?: boolean | null;
 }
-function toVolumeiSCSIAttributes(root: JSONValue): VolumeiSCSIAttributes {
-  return prt.readObj({
+function toVolumeiSCSIAttributes(root: jsonP.JSONValue): VolumeiSCSIAttributes {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TargetARN": "s",
@@ -2818,8 +3026,8 @@ export interface ChapInfo {
   InitiatorName?: string | null;
   SecretToAuthenticateTarget?: string | null;
 }
-function toChapInfo(root: JSONValue): ChapInfo {
-  return prt.readObj({
+function toChapInfo(root: jsonP.JSONValue): ChapInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TargetARN": "s",
@@ -2836,8 +3044,8 @@ export interface NetworkInterface {
   MacAddress?: string | null;
   Ipv6Address?: string | null;
 }
-function toNetworkInterface(root: JSONValue): NetworkInterface {
-  return prt.readObj({
+function toNetworkInterface(root: jsonP.JSONValue): NetworkInterface {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Ipv4Address": "s",
@@ -2854,16 +3062,7 @@ export type HostEnvironment =
 | "EC2"
 | "KVM"
 | "OTHER"
-;
-function toHostEnvironment(root: JSONValue): HostEnvironment | null {
-  return ( false
-    || root == "VMWARE"
-    || root == "HYPER-V"
-    || root == "EC2"
-    || root == "KVM"
-    || root == "OTHER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface NFSFileShareInfo {
@@ -2888,8 +3087,8 @@ export interface NFSFileShareInfo {
   FileShareName?: string | null;
   CacheAttributes?: CacheAttributes | null;
 }
-function toNFSFileShareInfo(root: JSONValue): NFSFileShareInfo {
-  return prt.readObj({
+function toNFSFileShareInfo(root: jsonP.JSONValue): NFSFileShareInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "NFSFileShareDefaults": toNFSFileShareDefaults,
@@ -2903,7 +3102,7 @@ function toNFSFileShareInfo(root: JSONValue): NFSFileShareInfo {
       "Role": "s",
       "LocationARN": "s",
       "DefaultStorageClass": "s",
-      "ObjectACL": toObjectACL,
+      "ObjectACL": (x: jsonP.JSONValue) => cmnP.readEnum<ObjectACL>(x),
       "ClientList": ["s"],
       "Squash": "s",
       "ReadOnly": "b",
@@ -2943,8 +3142,8 @@ export interface SMBFileShareInfo {
   FileShareName?: string | null;
   CacheAttributes?: CacheAttributes | null;
 }
-function toSMBFileShareInfo(root: JSONValue): SMBFileShareInfo {
-  return prt.readObj({
+function toSMBFileShareInfo(root: jsonP.JSONValue): SMBFileShareInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FileShareARN": "s",
@@ -2957,7 +3156,7 @@ function toSMBFileShareInfo(root: JSONValue): SMBFileShareInfo {
       "Role": "s",
       "LocationARN": "s",
       "DefaultStorageClass": "s",
-      "ObjectACL": toObjectACL,
+      "ObjectACL": (x: jsonP.JSONValue) => cmnP.readEnum<ObjectACL>(x),
       "ReadOnly": "b",
       "GuessMIMETypeEnabled": "b",
       "RequesterPays": "b",
@@ -2967,7 +3166,7 @@ function toSMBFileShareInfo(root: JSONValue): SMBFileShareInfo {
       "InvalidUserList": ["s"],
       "AuditDestinationARN": "s",
       "Authentication": "s",
-      "CaseSensitivity": toCaseSensitivity,
+      "CaseSensitivity": (x: jsonP.JSONValue) => cmnP.readEnum<CaseSensitivity>(x),
       "Tags": [toTag],
       "FileShareName": "s",
       "CacheAttributes": toCacheAttributes,
@@ -2984,18 +3183,7 @@ export type ActiveDirectoryStatus =
 | "NETWORK_ERROR"
 | "TIMEOUT"
 | "UNKNOWN_ERROR"
-;
-function toActiveDirectoryStatus(root: JSONValue): ActiveDirectoryStatus | null {
-  return ( false
-    || root == "ACCESS_DENIED"
-    || root == "DETACHED"
-    || root == "JOINED"
-    || root == "JOINING"
-    || root == "NETWORK_ERROR"
-    || root == "TIMEOUT"
-    || root == "UNKNOWN_ERROR"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface StorediSCSIVolume {
@@ -3015,8 +3203,8 @@ export interface StorediSCSIVolume {
   KMSKey?: string | null;
   TargetName?: string | null;
 }
-function toStorediSCSIVolume(root: JSONValue): StorediSCSIVolume {
-  return prt.readObj({
+function toStorediSCSIVolume(root: jsonP.JSONValue): StorediSCSIVolume {
+  return jsonP.readObj({
     required: {},
     optional: {
       "VolumeARN": "s",
@@ -3054,8 +3242,8 @@ export interface TapeArchive {
   RetentionStartDate?: Date | number | null;
   PoolEntryDate?: Date | number | null;
 }
-function toTapeArchive(root: JSONValue): TapeArchive {
-  return prt.readObj({
+function toTapeArchive(root: jsonP.JSONValue): TapeArchive {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TapeARN": "s",
@@ -3082,8 +3270,8 @@ export interface TapeRecoveryPointInfo {
   TapeSizeInBytes?: number | null;
   TapeStatus?: string | null;
 }
-function toTapeRecoveryPointInfo(root: JSONValue): TapeRecoveryPointInfo {
-  return prt.readObj({
+function toTapeRecoveryPointInfo(root: jsonP.JSONValue): TapeRecoveryPointInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TapeARN": "s",
@@ -3110,8 +3298,8 @@ export interface Tape {
   RetentionStartDate?: Date | number | null;
   PoolEntryDate?: Date | number | null;
 }
-function toTape(root: JSONValue): Tape {
-  return prt.readObj({
+function toTape(root: jsonP.JSONValue): Tape {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TapeARN": "s",
@@ -3139,8 +3327,8 @@ export interface VTLDevice {
   VTLDeviceProductIdentifier?: string | null;
   DeviceiSCSIAttributes?: DeviceiSCSIAttributes | null;
 }
-function toVTLDevice(root: JSONValue): VTLDevice {
-  return prt.readObj({
+function toVTLDevice(root: jsonP.JSONValue): VTLDevice {
+  return jsonP.readObj({
     required: {},
     optional: {
       "VTLDeviceARN": "s",
@@ -3159,8 +3347,8 @@ export interface DeviceiSCSIAttributes {
   NetworkInterfacePort?: number | null;
   ChapEnabled?: boolean | null;
 }
-function toDeviceiSCSIAttributes(root: JSONValue): DeviceiSCSIAttributes {
-  return prt.readObj({
+function toDeviceiSCSIAttributes(root: jsonP.JSONValue): DeviceiSCSIAttributes {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TargetARN": "s",
@@ -3176,8 +3364,8 @@ export interface AutomaticTapeCreationPolicyInfo {
   AutomaticTapeCreationRules?: AutomaticTapeCreationRule[] | null;
   GatewayARN?: string | null;
 }
-function toAutomaticTapeCreationPolicyInfo(root: JSONValue): AutomaticTapeCreationPolicyInfo {
-  return prt.readObj({
+function toAutomaticTapeCreationPolicyInfo(root: jsonP.JSONValue): AutomaticTapeCreationPolicyInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AutomaticTapeCreationRules": [toAutomaticTapeCreationRule],
@@ -3194,11 +3382,11 @@ export interface FileShareInfo {
   FileShareStatus?: string | null;
   GatewayARN?: string | null;
 }
-function toFileShareInfo(root: JSONValue): FileShareInfo {
-  return prt.readObj({
+function toFileShareInfo(root: jsonP.JSONValue): FileShareInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "FileShareType": toFileShareType,
+      "FileShareType": (x: jsonP.JSONValue) => cmnP.readEnum<FileShareType>(x),
       "FileShareARN": "s",
       "FileShareId": "s",
       "FileShareStatus": "s",
@@ -3211,13 +3399,7 @@ function toFileShareInfo(root: JSONValue): FileShareInfo {
 export type FileShareType =
 | "NFS"
 | "SMB"
-;
-function toFileShareType(root: JSONValue): FileShareType | null {
-  return ( false
-    || root == "NFS"
-    || root == "SMB"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface GatewayInfo {
@@ -3229,8 +3411,8 @@ export interface GatewayInfo {
   Ec2InstanceId?: string | null;
   Ec2InstanceRegion?: string | null;
 }
-function toGatewayInfo(root: JSONValue): GatewayInfo {
-  return prt.readObj({
+function toGatewayInfo(root: jsonP.JSONValue): GatewayInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "GatewayId": "s",
@@ -3255,8 +3437,8 @@ export interface Disk {
   DiskAllocationResource?: string | null;
   DiskAttributeList?: string[] | null;
 }
-function toDisk(root: JSONValue): Disk {
-  return prt.readObj({
+function toDisk(root: jsonP.JSONValue): Disk {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DiskId": "s",
@@ -3280,16 +3462,16 @@ export interface PoolInfo {
   RetentionLockTimeInDays?: number | null;
   PoolStatus?: PoolStatus | null;
 }
-function toPoolInfo(root: JSONValue): PoolInfo {
-  return prt.readObj({
+function toPoolInfo(root: jsonP.JSONValue): PoolInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PoolARN": "s",
       "PoolName": "s",
-      "StorageClass": toTapeStorageClass,
-      "RetentionLockType": toRetentionLockType,
+      "StorageClass": (x: jsonP.JSONValue) => cmnP.readEnum<TapeStorageClass>(x),
+      "RetentionLockType": (x: jsonP.JSONValue) => cmnP.readEnum<RetentionLockType>(x),
       "RetentionLockTimeInDays": "n",
-      "PoolStatus": toPoolStatus,
+      "PoolStatus": (x: jsonP.JSONValue) => cmnP.readEnum<PoolStatus>(x),
     },
   }, root);
 }
@@ -3298,13 +3480,7 @@ function toPoolInfo(root: JSONValue): PoolInfo {
 export type PoolStatus =
 | "ACTIVE"
 | "DELETED"
-;
-function toPoolStatus(root: JSONValue): PoolStatus | null {
-  return ( false
-    || root == "ACTIVE"
-    || root == "DELETED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface TapeInfo {
@@ -3317,8 +3493,8 @@ export interface TapeInfo {
   RetentionStartDate?: Date | number | null;
   PoolEntryDate?: Date | number | null;
 }
-function toTapeInfo(root: JSONValue): TapeInfo {
-  return prt.readObj({
+function toTapeInfo(root: jsonP.JSONValue): TapeInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TapeARN": "s",
@@ -3340,8 +3516,8 @@ export interface VolumeRecoveryPointInfo {
   VolumeUsageInBytes?: number | null;
   VolumeRecoveryPointTime?: string | null;
 }
-function toVolumeRecoveryPointInfo(root: JSONValue): VolumeRecoveryPointInfo {
-  return prt.readObj({
+function toVolumeRecoveryPointInfo(root: jsonP.JSONValue): VolumeRecoveryPointInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "VolumeARN": "s",
@@ -3362,8 +3538,8 @@ export interface VolumeInfo {
   VolumeSizeInBytes?: number | null;
   VolumeAttachmentStatus?: string | null;
 }
-function toVolumeInfo(root: JSONValue): VolumeInfo {
-  return prt.readObj({
+function toVolumeInfo(root: jsonP.JSONValue): VolumeInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "VolumeARN": "s",

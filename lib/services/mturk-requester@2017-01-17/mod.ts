@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class MTurk {
   #client: ServiceClient;
@@ -30,13 +30,15 @@ export default class MTurk {
   async acceptQualificationRequest(
     {abortSignal, ...params}: RequestConfig & AcceptQualificationRequestRequest,
   ): Promise<AcceptQualificationRequestResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      QualificationRequestId: params["QualificationRequestId"],
+      IntegerValue: params["IntegerValue"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcceptQualificationRequest",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -45,13 +47,16 @@ export default class MTurk {
   async approveAssignment(
     {abortSignal, ...params}: RequestConfig & ApproveAssignmentRequest,
   ): Promise<ApproveAssignmentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AssignmentId: params["AssignmentId"],
+      RequesterFeedback: params["RequesterFeedback"],
+      OverrideRejection: params["OverrideRejection"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ApproveAssignment",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -60,13 +65,17 @@ export default class MTurk {
   async associateQualificationWithWorker(
     {abortSignal, ...params}: RequestConfig & AssociateQualificationWithWorkerRequest,
   ): Promise<AssociateQualificationWithWorkerResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      QualificationTypeId: params["QualificationTypeId"],
+      WorkerId: params["WorkerId"],
+      IntegerValue: params["IntegerValue"],
+      SendNotification: params["SendNotification"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateQualificationWithWorker",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -75,13 +84,16 @@ export default class MTurk {
   async createAdditionalAssignmentsForHIT(
     {abortSignal, ...params}: RequestConfig & CreateAdditionalAssignmentsForHITRequest,
   ): Promise<CreateAdditionalAssignmentsForHITResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HITId: params["HITId"],
+      NumberOfAdditionalAssignments: params["NumberOfAdditionalAssignments"],
+      UniqueRequestToken: params["UniqueRequestToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAdditionalAssignmentsForHIT",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -90,17 +102,29 @@ export default class MTurk {
   async createHIT(
     {abortSignal, ...params}: RequestConfig & CreateHITRequest,
   ): Promise<CreateHITResponse> {
-    const body: JSONObject = {...params,
-    QualificationRequirements: params["QualificationRequirements"]?.map(x => fromQualificationRequirement(x)),
-    AssignmentReviewPolicy: fromReviewPolicy(params["AssignmentReviewPolicy"]),
-    HITReviewPolicy: fromReviewPolicy(params["HITReviewPolicy"]),
-    HITLayoutParameters: params["HITLayoutParameters"]?.map(x => fromHITLayoutParameter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxAssignments: params["MaxAssignments"],
+      AutoApprovalDelayInSeconds: params["AutoApprovalDelayInSeconds"],
+      LifetimeInSeconds: params["LifetimeInSeconds"],
+      AssignmentDurationInSeconds: params["AssignmentDurationInSeconds"],
+      Reward: params["Reward"],
+      Title: params["Title"],
+      Keywords: params["Keywords"],
+      Description: params["Description"],
+      Question: params["Question"],
+      RequesterAnnotation: params["RequesterAnnotation"],
+      QualificationRequirements: params["QualificationRequirements"]?.map(x => fromQualificationRequirement(x)),
+      UniqueRequestToken: params["UniqueRequestToken"],
+      AssignmentReviewPolicy: fromReviewPolicy(params["AssignmentReviewPolicy"]),
+      HITReviewPolicy: fromReviewPolicy(params["HITReviewPolicy"]),
+      HITLayoutId: params["HITLayoutId"],
+      HITLayoutParameters: params["HITLayoutParameters"]?.map(x => fromHITLayoutParameter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHIT",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "HIT": toHIT,
@@ -111,14 +135,20 @@ export default class MTurk {
   async createHITType(
     {abortSignal, ...params}: RequestConfig & CreateHITTypeRequest,
   ): Promise<CreateHITTypeResponse> {
-    const body: JSONObject = {...params,
-    QualificationRequirements: params["QualificationRequirements"]?.map(x => fromQualificationRequirement(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AutoApprovalDelayInSeconds: params["AutoApprovalDelayInSeconds"],
+      AssignmentDurationInSeconds: params["AssignmentDurationInSeconds"],
+      Reward: params["Reward"],
+      Title: params["Title"],
+      Keywords: params["Keywords"],
+      Description: params["Description"],
+      QualificationRequirements: params["QualificationRequirements"]?.map(x => fromQualificationRequirement(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHITType",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "HITTypeId": "s",
@@ -129,16 +159,23 @@ export default class MTurk {
   async createHITWithHITType(
     {abortSignal, ...params}: RequestConfig & CreateHITWithHITTypeRequest,
   ): Promise<CreateHITWithHITTypeResponse> {
-    const body: JSONObject = {...params,
-    AssignmentReviewPolicy: fromReviewPolicy(params["AssignmentReviewPolicy"]),
-    HITReviewPolicy: fromReviewPolicy(params["HITReviewPolicy"]),
-    HITLayoutParameters: params["HITLayoutParameters"]?.map(x => fromHITLayoutParameter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      HITTypeId: params["HITTypeId"],
+      MaxAssignments: params["MaxAssignments"],
+      LifetimeInSeconds: params["LifetimeInSeconds"],
+      Question: params["Question"],
+      RequesterAnnotation: params["RequesterAnnotation"],
+      UniqueRequestToken: params["UniqueRequestToken"],
+      AssignmentReviewPolicy: fromReviewPolicy(params["AssignmentReviewPolicy"]),
+      HITReviewPolicy: fromReviewPolicy(params["HITReviewPolicy"]),
+      HITLayoutId: params["HITLayoutId"],
+      HITLayoutParameters: params["HITLayoutParameters"]?.map(x => fromHITLayoutParameter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHITWithHITType",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "HIT": toHIT,
@@ -149,13 +186,23 @@ export default class MTurk {
   async createQualificationType(
     {abortSignal, ...params}: RequestConfig & CreateQualificationTypeRequest,
   ): Promise<CreateQualificationTypeResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Keywords: params["Keywords"],
+      Description: params["Description"],
+      QualificationTypeStatus: params["QualificationTypeStatus"],
+      RetryDelayInSeconds: params["RetryDelayInSeconds"],
+      Test: params["Test"],
+      AnswerKey: params["AnswerKey"],
+      TestDurationInSeconds: params["TestDurationInSeconds"],
+      AutoGranted: params["AutoGranted"],
+      AutoGrantedValue: params["AutoGrantedValue"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateQualificationType",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "QualificationType": toQualificationType,
@@ -166,13 +213,15 @@ export default class MTurk {
   async createWorkerBlock(
     {abortSignal, ...params}: RequestConfig & CreateWorkerBlockRequest,
   ): Promise<CreateWorkerBlockResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkerId: params["WorkerId"],
+      Reason: params["Reason"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWorkerBlock",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -181,13 +230,14 @@ export default class MTurk {
   async deleteHIT(
     {abortSignal, ...params}: RequestConfig & DeleteHITRequest,
   ): Promise<DeleteHITResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HITId: params["HITId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteHIT",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -196,13 +246,14 @@ export default class MTurk {
   async deleteQualificationType(
     {abortSignal, ...params}: RequestConfig & DeleteQualificationTypeRequest,
   ): Promise<DeleteQualificationTypeResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      QualificationTypeId: params["QualificationTypeId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteQualificationType",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -211,13 +262,15 @@ export default class MTurk {
   async deleteWorkerBlock(
     {abortSignal, ...params}: RequestConfig & DeleteWorkerBlockRequest,
   ): Promise<DeleteWorkerBlockResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkerId: params["WorkerId"],
+      Reason: params["Reason"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteWorkerBlock",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -226,13 +279,16 @@ export default class MTurk {
   async disassociateQualificationFromWorker(
     {abortSignal, ...params}: RequestConfig & DisassociateQualificationFromWorkerRequest,
   ): Promise<DisassociateQualificationFromWorkerResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkerId: params["WorkerId"],
+      QualificationTypeId: params["QualificationTypeId"],
+      Reason: params["Reason"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateQualificationFromWorker",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -241,13 +297,13 @@ export default class MTurk {
   async getAccountBalance(
     {abortSignal, ...params}: RequestConfig & GetAccountBalanceRequest = {},
   ): Promise<GetAccountBalanceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAccountBalance",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AvailableBalance": "s",
@@ -259,13 +315,14 @@ export default class MTurk {
   async getAssignment(
     {abortSignal, ...params}: RequestConfig & GetAssignmentRequest,
   ): Promise<GetAssignmentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AssignmentId: params["AssignmentId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAssignment",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Assignment": toAssignment,
@@ -277,13 +334,15 @@ export default class MTurk {
   async getFileUploadURL(
     {abortSignal, ...params}: RequestConfig & GetFileUploadURLRequest,
   ): Promise<GetFileUploadURLResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AssignmentId: params["AssignmentId"],
+      QuestionIdentifier: params["QuestionIdentifier"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetFileUploadURL",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FileUploadURL": "s",
@@ -294,13 +353,14 @@ export default class MTurk {
   async getHIT(
     {abortSignal, ...params}: RequestConfig & GetHITRequest,
   ): Promise<GetHITResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HITId: params["HITId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetHIT",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "HIT": toHIT,
@@ -311,13 +371,15 @@ export default class MTurk {
   async getQualificationScore(
     {abortSignal, ...params}: RequestConfig & GetQualificationScoreRequest,
   ): Promise<GetQualificationScoreResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      QualificationTypeId: params["QualificationTypeId"],
+      WorkerId: params["WorkerId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetQualificationScore",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Qualification": toQualification,
@@ -328,13 +390,14 @@ export default class MTurk {
   async getQualificationType(
     {abortSignal, ...params}: RequestConfig & GetQualificationTypeRequest,
   ): Promise<GetQualificationTypeResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      QualificationTypeId: params["QualificationTypeId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetQualificationType",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "QualificationType": toQualificationType,
@@ -345,13 +408,17 @@ export default class MTurk {
   async listAssignmentsForHIT(
     {abortSignal, ...params}: RequestConfig & ListAssignmentsForHITRequest,
   ): Promise<ListAssignmentsForHITResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HITId: params["HITId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      AssignmentStatuses: params["AssignmentStatuses"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAssignmentsForHIT",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -364,13 +431,17 @@ export default class MTurk {
   async listBonusPayments(
     {abortSignal, ...params}: RequestConfig & ListBonusPaymentsRequest = {},
   ): Promise<ListBonusPaymentsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HITId: params["HITId"],
+      AssignmentId: params["AssignmentId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListBonusPayments",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NumResults": "n",
@@ -383,13 +454,15 @@ export default class MTurk {
   async listHITs(
     {abortSignal, ...params}: RequestConfig & ListHITsRequest = {},
   ): Promise<ListHITsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListHITs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -402,13 +475,16 @@ export default class MTurk {
   async listHITsForQualificationType(
     {abortSignal, ...params}: RequestConfig & ListHITsForQualificationTypeRequest,
   ): Promise<ListHITsForQualificationTypeResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      QualificationTypeId: params["QualificationTypeId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListHITsForQualificationType",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -421,13 +497,16 @@ export default class MTurk {
   async listQualificationRequests(
     {abortSignal, ...params}: RequestConfig & ListQualificationRequestsRequest = {},
   ): Promise<ListQualificationRequestsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      QualificationTypeId: params["QualificationTypeId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListQualificationRequests",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NumResults": "n",
@@ -440,13 +519,18 @@ export default class MTurk {
   async listQualificationTypes(
     {abortSignal, ...params}: RequestConfig & ListQualificationTypesRequest,
   ): Promise<ListQualificationTypesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Query: params["Query"],
+      MustBeRequestable: params["MustBeRequestable"],
+      MustBeOwnedByCaller: params["MustBeOwnedByCaller"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListQualificationTypes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NumResults": "n",
@@ -459,13 +543,19 @@ export default class MTurk {
   async listReviewPolicyResultsForHIT(
     {abortSignal, ...params}: RequestConfig & ListReviewPolicyResultsForHITRequest,
   ): Promise<ListReviewPolicyResultsForHITResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HITId: params["HITId"],
+      PolicyLevels: params["PolicyLevels"],
+      RetrieveActions: params["RetrieveActions"],
+      RetrieveResults: params["RetrieveResults"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListReviewPolicyResultsForHIT",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "HITId": "s",
@@ -481,13 +571,17 @@ export default class MTurk {
   async listReviewableHITs(
     {abortSignal, ...params}: RequestConfig & ListReviewableHITsRequest = {},
   ): Promise<ListReviewableHITsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HITTypeId: params["HITTypeId"],
+      Status: params["Status"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListReviewableHITs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -500,13 +594,15 @@ export default class MTurk {
   async listWorkerBlocks(
     {abortSignal, ...params}: RequestConfig & ListWorkerBlocksRequest = {},
   ): Promise<ListWorkerBlocksResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWorkerBlocks",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -519,13 +615,17 @@ export default class MTurk {
   async listWorkersWithQualificationType(
     {abortSignal, ...params}: RequestConfig & ListWorkersWithQualificationTypeRequest,
   ): Promise<ListWorkersWithQualificationTypeResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      QualificationTypeId: params["QualificationTypeId"],
+      Status: params["Status"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWorkersWithQualificationType",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -538,13 +638,16 @@ export default class MTurk {
   async notifyWorkers(
     {abortSignal, ...params}: RequestConfig & NotifyWorkersRequest,
   ): Promise<NotifyWorkersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Subject: params["Subject"],
+      MessageText: params["MessageText"],
+      WorkerIds: params["WorkerIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "NotifyWorkers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NotifyWorkersFailureStatuses": [toNotifyWorkersFailureStatus],
@@ -555,13 +658,15 @@ export default class MTurk {
   async rejectAssignment(
     {abortSignal, ...params}: RequestConfig & RejectAssignmentRequest,
   ): Promise<RejectAssignmentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AssignmentId: params["AssignmentId"],
+      RequesterFeedback: params["RequesterFeedback"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RejectAssignment",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -570,13 +675,15 @@ export default class MTurk {
   async rejectQualificationRequest(
     {abortSignal, ...params}: RequestConfig & RejectQualificationRequestRequest,
   ): Promise<RejectQualificationRequestResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      QualificationRequestId: params["QualificationRequestId"],
+      Reason: params["Reason"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RejectQualificationRequest",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -585,13 +692,18 @@ export default class MTurk {
   async sendBonus(
     {abortSignal, ...params}: RequestConfig & SendBonusRequest,
   ): Promise<SendBonusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WorkerId: params["WorkerId"],
+      BonusAmount: params["BonusAmount"],
+      AssignmentId: params["AssignmentId"],
+      Reason: params["Reason"],
+      UniqueRequestToken: params["UniqueRequestToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendBonus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -600,14 +712,15 @@ export default class MTurk {
   async sendTestEventNotification(
     {abortSignal, ...params}: RequestConfig & SendTestEventNotificationRequest,
   ): Promise<SendTestEventNotificationResponse> {
-    const body: JSONObject = {...params,
-    Notification: fromNotificationSpecification(params["Notification"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Notification: fromNotificationSpecification(params["Notification"]),
+      TestEventType: params["TestEventType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendTestEventNotification",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -616,14 +729,15 @@ export default class MTurk {
   async updateExpirationForHIT(
     {abortSignal, ...params}: RequestConfig & UpdateExpirationForHITRequest,
   ): Promise<UpdateExpirationForHITResponse> {
-    const body: JSONObject = {...params,
-    ExpireAt: prt.serializeDate_unixTimestamp(params["ExpireAt"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      HITId: params["HITId"],
+      ExpireAt: jsonP.serializeDate_unixTimestamp(params["ExpireAt"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateExpirationForHIT",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -632,13 +746,15 @@ export default class MTurk {
   async updateHITReviewStatus(
     {abortSignal, ...params}: RequestConfig & UpdateHITReviewStatusRequest,
   ): Promise<UpdateHITReviewStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HITId: params["HITId"],
+      Revert: params["Revert"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateHITReviewStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -647,13 +763,15 @@ export default class MTurk {
   async updateHITTypeOfHIT(
     {abortSignal, ...params}: RequestConfig & UpdateHITTypeOfHITRequest,
   ): Promise<UpdateHITTypeOfHITResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      HITId: params["HITId"],
+      HITTypeId: params["HITTypeId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateHITTypeOfHIT",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -662,14 +780,16 @@ export default class MTurk {
   async updateNotificationSettings(
     {abortSignal, ...params}: RequestConfig & UpdateNotificationSettingsRequest,
   ): Promise<UpdateNotificationSettingsResponse> {
-    const body: JSONObject = {...params,
-    Notification: fromNotificationSpecification(params["Notification"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      HITTypeId: params["HITTypeId"],
+      Notification: fromNotificationSpecification(params["Notification"]),
+      Active: params["Active"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateNotificationSettings",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -678,13 +798,22 @@ export default class MTurk {
   async updateQualificationType(
     {abortSignal, ...params}: RequestConfig & UpdateQualificationTypeRequest,
   ): Promise<UpdateQualificationTypeResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      QualificationTypeId: params["QualificationTypeId"],
+      Description: params["Description"],
+      QualificationTypeStatus: params["QualificationTypeStatus"],
+      Test: params["Test"],
+      AnswerKey: params["AnswerKey"],
+      TestDurationInSeconds: params["TestDurationInSeconds"],
+      RetryDelayInSeconds: params["RetryDelayInSeconds"],
+      AutoGranted: params["AutoGranted"],
+      AutoGrantedValue: params["AutoGrantedValue"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateQualificationType",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "QualificationType": toQualificationType,
@@ -1202,23 +1331,28 @@ export interface QualificationRequirement {
   RequiredToPreview?: boolean | null;
   ActionsGuarded?: HITAccessActions | null;
 }
-function fromQualificationRequirement(input?: QualificationRequirement | null): JSONValue {
+function fromQualificationRequirement(input?: QualificationRequirement | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    QualificationTypeId: input["QualificationTypeId"],
+    Comparator: input["Comparator"],
+    IntegerValues: input["IntegerValues"],
     LocaleValues: input["LocaleValues"]?.map(x => fromLocale(x)),
+    RequiredToPreview: input["RequiredToPreview"],
+    ActionsGuarded: input["ActionsGuarded"],
   }
 }
-function toQualificationRequirement(root: JSONValue): QualificationRequirement {
-  return prt.readObj({
+function toQualificationRequirement(root: jsonP.JSONValue): QualificationRequirement {
+  return jsonP.readObj({
     required: {
       "QualificationTypeId": "s",
-      "Comparator": toComparator,
+      "Comparator": (x: jsonP.JSONValue) => cmnP.readEnum<Comparator>(x),
     },
     optional: {
       "IntegerValues": ["n"],
       "LocaleValues": [toLocale],
       "RequiredToPreview": "b",
-      "ActionsGuarded": toHITAccessActions,
+      "ActionsGuarded": (x: jsonP.JSONValue) => cmnP.readEnum<HITAccessActions>(x),
     },
   }, root);
 }
@@ -1235,35 +1369,22 @@ export type Comparator =
 | "DoesNotExist"
 | "In"
 | "NotIn"
-;
-
-function toComparator(root: JSONValue): Comparator | null {
-  return ( false
-    || root == "LessThan"
-    || root == "LessThanOrEqualTo"
-    || root == "GreaterThan"
-    || root == "GreaterThanOrEqualTo"
-    || root == "EqualTo"
-    || root == "NotEqualTo"
-    || root == "Exists"
-    || root == "DoesNotExist"
-    || root == "In"
-    || root == "NotIn"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 11 - tags: input, named, interface, output
 export interface Locale {
   Country: string;
   Subdivision?: string | null;
 }
-function fromLocale(input?: Locale | null): JSONValue {
+function fromLocale(input?: Locale | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Country: input["Country"],
+    Subdivision: input["Subdivision"],
   }
 }
-function toLocale(root: JSONValue): Locale {
-  return prt.readObj({
+function toLocale(root: jsonP.JSONValue): Locale {
+  return jsonP.readObj({
     required: {
       "Country": "s",
     },
@@ -1278,29 +1399,22 @@ export type HITAccessActions =
 | "Accept"
 | "PreviewAndAccept"
 | "DiscoverPreviewAndAccept"
-;
-
-function toHITAccessActions(root: JSONValue): HITAccessActions | null {
-  return ( false
-    || root == "Accept"
-    || root == "PreviewAndAccept"
-    || root == "DiscoverPreviewAndAccept"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface ReviewPolicy {
   PolicyName: string;
   Parameters?: PolicyParameter[] | null;
 }
-function fromReviewPolicy(input?: ReviewPolicy | null): JSONValue {
+function fromReviewPolicy(input?: ReviewPolicy | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    PolicyName: input["PolicyName"],
     Parameters: input["Parameters"]?.map(x => fromPolicyParameter(x)),
   }
 }
-function toReviewPolicy(root: JSONValue): ReviewPolicy {
-  return prt.readObj({
+function toReviewPolicy(root: jsonP.JSONValue): ReviewPolicy {
+  return jsonP.readObj({
     required: {
       "PolicyName": "s",
     },
@@ -1316,14 +1430,16 @@ export interface PolicyParameter {
   Values?: string[] | null;
   MapEntries?: ParameterMapEntry[] | null;
 }
-function fromPolicyParameter(input?: PolicyParameter | null): JSONValue {
+function fromPolicyParameter(input?: PolicyParameter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
     MapEntries: input["MapEntries"]?.map(x => fromParameterMapEntry(x)),
   }
 }
-function toPolicyParameter(root: JSONValue): PolicyParameter {
-  return prt.readObj({
+function toPolicyParameter(root: jsonP.JSONValue): PolicyParameter {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Key": "s",
@@ -1338,13 +1454,15 @@ export interface ParameterMapEntry {
   Key?: string | null;
   Values?: string[] | null;
 }
-function fromParameterMapEntry(input?: ParameterMapEntry | null): JSONValue {
+function fromParameterMapEntry(input?: ParameterMapEntry | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
   }
 }
-function toParameterMapEntry(root: JSONValue): ParameterMapEntry {
-  return prt.readObj({
+function toParameterMapEntry(root: jsonP.JSONValue): ParameterMapEntry {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Key": "s",
@@ -1358,9 +1476,11 @@ export interface HITLayoutParameter {
   Name: string;
   Value: string;
 }
-function fromHITLayoutParameter(input?: HITLayoutParameter | null): JSONValue {
+function fromHITLayoutParameter(input?: HITLayoutParameter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Value: input["Value"],
   }
 }
 
@@ -1368,56 +1488,32 @@ function fromHITLayoutParameter(input?: HITLayoutParameter | null): JSONValue {
 export type QualificationTypeStatus =
 | "Active"
 | "Inactive"
-;
-
-function toQualificationTypeStatus(root: JSONValue): QualificationTypeStatus | null {
-  return ( false
-    || root == "Active"
-    || root == "Inactive"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type AssignmentStatus =
 | "Submitted"
 | "Approved"
 | "Rejected"
-;
-
-function toAssignmentStatus(root: JSONValue): AssignmentStatus | null {
-  return ( false
-    || root == "Submitted"
-    || root == "Approved"
-    || root == "Rejected"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ReviewPolicyLevel =
 | "Assignment"
 | "HIT"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ReviewableHITStatus =
 | "Reviewable"
 | "Reviewing"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type QualificationStatus =
 | "Granted"
 | "Revoked"
-;
-
-function toQualificationStatus(root: JSONValue): QualificationStatus | null {
-  return ( false
-    || root == "Granted"
-    || root == "Revoked"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface NotificationSpecification {
@@ -1426,9 +1522,13 @@ export interface NotificationSpecification {
   Version: string;
   EventTypes: EventType[];
 }
-function fromNotificationSpecification(input?: NotificationSpecification | null): JSONValue {
+function fromNotificationSpecification(input?: NotificationSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Destination: input["Destination"],
+    Transport: input["Transport"],
+    Version: input["Version"],
+    EventTypes: input["EventTypes"],
   }
 }
 
@@ -1437,8 +1537,7 @@ export type NotificationTransport =
 | "Email"
 | "SQS"
 | "SNS"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum
 export type EventType =
@@ -1454,8 +1553,7 @@ export type EventType =
 | "HITExtended"
 | "HITDisposed"
 | "Ping"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: output, named, interface
 export interface HIT {
@@ -1481,8 +1579,8 @@ export interface HIT {
   NumberOfAssignmentsAvailable?: number | null;
   NumberOfAssignmentsCompleted?: number | null;
 }
-function toHIT(root: JSONValue): HIT {
-  return prt.readObj({
+function toHIT(root: jsonP.JSONValue): HIT {
+  return jsonP.readObj({
     required: {},
     optional: {
       "HITId": "s",
@@ -1494,7 +1592,7 @@ function toHIT(root: JSONValue): HIT {
       "Description": "s",
       "Question": "s",
       "Keywords": "s",
-      "HITStatus": toHITStatus,
+      "HITStatus": (x: jsonP.JSONValue) => cmnP.readEnum<HITStatus>(x),
       "MaxAssignments": "n",
       "Reward": "s",
       "AutoApprovalDelayInSeconds": "n",
@@ -1502,7 +1600,7 @@ function toHIT(root: JSONValue): HIT {
       "AssignmentDurationInSeconds": "n",
       "RequesterAnnotation": "s",
       "QualificationRequirements": [toQualificationRequirement],
-      "HITReviewStatus": toHITReviewStatus,
+      "HITReviewStatus": (x: jsonP.JSONValue) => cmnP.readEnum<HITReviewStatus>(x),
       "NumberOfAssignmentsPending": "n",
       "NumberOfAssignmentsAvailable": "n",
       "NumberOfAssignmentsCompleted": "n",
@@ -1517,16 +1615,7 @@ export type HITStatus =
 | "Reviewable"
 | "Reviewing"
 | "Disposed"
-;
-function toHITStatus(root: JSONValue): HITStatus | null {
-  return ( false
-    || root == "Assignable"
-    || root == "Unassignable"
-    || root == "Reviewable"
-    || root == "Reviewing"
-    || root == "Disposed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: output, named, enum
 export type HITReviewStatus =
@@ -1534,15 +1623,7 @@ export type HITReviewStatus =
 | "MarkedForReview"
 | "ReviewedAppropriate"
 | "ReviewedInappropriate"
-;
-function toHITReviewStatus(root: JSONValue): HITReviewStatus | null {
-  return ( false
-    || root == "NotReviewed"
-    || root == "MarkedForReview"
-    || root == "ReviewedAppropriate"
-    || root == "ReviewedInappropriate"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface QualificationType {
@@ -1560,8 +1641,8 @@ export interface QualificationType {
   AutoGranted?: boolean | null;
   AutoGrantedValue?: number | null;
 }
-function toQualificationType(root: JSONValue): QualificationType {
-  return prt.readObj({
+function toQualificationType(root: jsonP.JSONValue): QualificationType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "QualificationTypeId": "s",
@@ -1569,7 +1650,7 @@ function toQualificationType(root: JSONValue): QualificationType {
       "Name": "s",
       "Description": "s",
       "Keywords": "s",
-      "QualificationTypeStatus": toQualificationTypeStatus,
+      "QualificationTypeStatus": (x: jsonP.JSONValue) => cmnP.readEnum<QualificationTypeStatus>(x),
       "Test": "s",
       "TestDurationInSeconds": "n",
       "AnswerKey": "s",
@@ -1596,14 +1677,14 @@ export interface Assignment {
   Answer?: string | null;
   RequesterFeedback?: string | null;
 }
-function toAssignment(root: JSONValue): Assignment {
-  return prt.readObj({
+function toAssignment(root: jsonP.JSONValue): Assignment {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AssignmentId": "s",
       "WorkerId": "s",
       "HITId": "s",
-      "AssignmentStatus": toAssignmentStatus,
+      "AssignmentStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AssignmentStatus>(x),
       "AutoApprovalTime": "d",
       "AcceptTime": "d",
       "SubmitTime": "d",
@@ -1625,8 +1706,8 @@ export interface Qualification {
   LocaleValue?: Locale | null;
   Status?: QualificationStatus | null;
 }
-function toQualification(root: JSONValue): Qualification {
-  return prt.readObj({
+function toQualification(root: jsonP.JSONValue): Qualification {
+  return jsonP.readObj({
     required: {},
     optional: {
       "QualificationTypeId": "s",
@@ -1634,7 +1715,7 @@ function toQualification(root: JSONValue): Qualification {
       "GrantTime": "d",
       "IntegerValue": "n",
       "LocaleValue": toLocale,
-      "Status": toQualificationStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<QualificationStatus>(x),
     },
   }, root);
 }
@@ -1647,8 +1728,8 @@ export interface BonusPayment {
   Reason?: string | null;
   GrantTime?: Date | number | null;
 }
-function toBonusPayment(root: JSONValue): BonusPayment {
-  return prt.readObj({
+function toBonusPayment(root: jsonP.JSONValue): BonusPayment {
+  return jsonP.readObj({
     required: {},
     optional: {
       "WorkerId": "s",
@@ -1669,8 +1750,8 @@ export interface QualificationRequest {
   Answer?: string | null;
   SubmitTime?: Date | number | null;
 }
-function toQualificationRequest(root: JSONValue): QualificationRequest {
-  return prt.readObj({
+function toQualificationRequest(root: jsonP.JSONValue): QualificationRequest {
+  return jsonP.readObj({
     required: {},
     optional: {
       "QualificationRequestId": "s",
@@ -1688,8 +1769,8 @@ export interface ReviewReport {
   ReviewResults?: ReviewResultDetail[] | null;
   ReviewActions?: ReviewActionDetail[] | null;
 }
-function toReviewReport(root: JSONValue): ReviewReport {
-  return prt.readObj({
+function toReviewReport(root: jsonP.JSONValue): ReviewReport {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ReviewResults": [toReviewResultDetail],
@@ -1707,8 +1788,8 @@ export interface ReviewResultDetail {
   Key?: string | null;
   Value?: string | null;
 }
-function toReviewResultDetail(root: JSONValue): ReviewResultDetail {
-  return prt.readObj({
+function toReviewResultDetail(root: jsonP.JSONValue): ReviewResultDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ActionId": "s",
@@ -1732,15 +1813,15 @@ export interface ReviewActionDetail {
   Result?: string | null;
   ErrorCode?: string | null;
 }
-function toReviewActionDetail(root: JSONValue): ReviewActionDetail {
-  return prt.readObj({
+function toReviewActionDetail(root: jsonP.JSONValue): ReviewActionDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ActionId": "s",
       "ActionName": "s",
       "TargetId": "s",
       "TargetType": "s",
-      "Status": toReviewActionStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ReviewActionStatus>(x),
       "CompleteTime": "d",
       "Result": "s",
       "ErrorCode": "s",
@@ -1754,23 +1835,15 @@ export type ReviewActionStatus =
 | "Succeeded"
 | "Failed"
 | "Cancelled"
-;
-function toReviewActionStatus(root: JSONValue): ReviewActionStatus | null {
-  return ( false
-    || root == "Intended"
-    || root == "Succeeded"
-    || root == "Failed"
-    || root == "Cancelled"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface WorkerBlock {
   WorkerId?: string | null;
   Reason?: string | null;
 }
-function toWorkerBlock(root: JSONValue): WorkerBlock {
-  return prt.readObj({
+function toWorkerBlock(root: jsonP.JSONValue): WorkerBlock {
+  return jsonP.readObj({
     required: {},
     optional: {
       "WorkerId": "s",
@@ -1785,11 +1858,11 @@ export interface NotifyWorkersFailureStatus {
   NotifyWorkersFailureMessage?: string | null;
   WorkerId?: string | null;
 }
-function toNotifyWorkersFailureStatus(root: JSONValue): NotifyWorkersFailureStatus {
-  return prt.readObj({
+function toNotifyWorkersFailureStatus(root: jsonP.JSONValue): NotifyWorkersFailureStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "NotifyWorkersFailureCode": toNotifyWorkersFailureCode,
+      "NotifyWorkersFailureCode": (x: jsonP.JSONValue) => cmnP.readEnum<NotifyWorkersFailureCode>(x),
       "NotifyWorkersFailureMessage": "s",
       "WorkerId": "s",
     },
@@ -1800,10 +1873,4 @@ function toNotifyWorkersFailureStatus(root: JSONValue): NotifyWorkersFailureStat
 export type NotifyWorkersFailureCode =
 | "SoftFailure"
 | "HardFailure"
-;
-function toNotifyWorkersFailureCode(root: JSONValue): NotifyWorkersFailureCode | null {
-  return ( false
-    || root == "SoftFailure"
-    || root == "HardFailure"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;

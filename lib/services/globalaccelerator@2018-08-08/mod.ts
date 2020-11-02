@@ -5,10 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }
@@ -35,13 +34,14 @@ export default class GlobalAccelerator {
   async advertiseByoipCidr(
     {abortSignal, ...params}: RequestConfig & AdvertiseByoipCidrRequest,
   ): Promise<AdvertiseByoipCidrResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Cidr: params["Cidr"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdvertiseByoipCidr",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ByoipCidr": toByoipCidr,
@@ -52,15 +52,19 @@ export default class GlobalAccelerator {
   async createAccelerator(
     {abortSignal, ...params}: RequestConfig & CreateAcceleratorRequest,
   ): Promise<CreateAcceleratorResponse> {
-    const body: JSONObject = {...params,
-    IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      IpAddressType: params["IpAddressType"],
+      IpAddresses: params["IpAddresses"],
+      Enabled: params["Enabled"],
+      IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAccelerator",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Accelerator": toAccelerator,
@@ -71,16 +75,24 @@ export default class GlobalAccelerator {
   async createEndpointGroup(
     {abortSignal, ...params}: RequestConfig & CreateEndpointGroupRequest,
   ): Promise<CreateEndpointGroupResponse> {
-    const body: JSONObject = {...params,
-    EndpointConfigurations: params["EndpointConfigurations"]?.map(x => fromEndpointConfiguration(x)),
-    IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
-    PortOverrides: params["PortOverrides"]?.map(x => fromPortOverride(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ListenerArn: params["ListenerArn"],
+      EndpointGroupRegion: params["EndpointGroupRegion"],
+      EndpointConfigurations: params["EndpointConfigurations"]?.map(x => fromEndpointConfiguration(x)),
+      TrafficDialPercentage: params["TrafficDialPercentage"],
+      HealthCheckPort: params["HealthCheckPort"],
+      HealthCheckProtocol: params["HealthCheckProtocol"],
+      HealthCheckPath: params["HealthCheckPath"],
+      HealthCheckIntervalSeconds: params["HealthCheckIntervalSeconds"],
+      ThresholdCount: params["ThresholdCount"],
+      IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
+      PortOverrides: params["PortOverrides"]?.map(x => fromPortOverride(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEndpointGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EndpointGroup": toEndpointGroup,
@@ -91,15 +103,18 @@ export default class GlobalAccelerator {
   async createListener(
     {abortSignal, ...params}: RequestConfig & CreateListenerRequest,
   ): Promise<CreateListenerResponse> {
-    const body: JSONObject = {...params,
-    PortRanges: params["PortRanges"]?.map(x => fromPortRange(x)),
-    IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AcceleratorArn: params["AcceleratorArn"],
+      PortRanges: params["PortRanges"]?.map(x => fromPortRange(x)),
+      Protocol: params["Protocol"],
+      ClientAffinity: params["ClientAffinity"],
+      IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateListener",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Listener": toListener,
@@ -110,8 +125,9 @@ export default class GlobalAccelerator {
   async deleteAccelerator(
     {abortSignal, ...params}: RequestConfig & DeleteAcceleratorRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AcceleratorArn: params["AcceleratorArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAccelerator",
@@ -121,8 +137,9 @@ export default class GlobalAccelerator {
   async deleteEndpointGroup(
     {abortSignal, ...params}: RequestConfig & DeleteEndpointGroupRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      EndpointGroupArn: params["EndpointGroupArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEndpointGroup",
@@ -132,8 +149,9 @@ export default class GlobalAccelerator {
   async deleteListener(
     {abortSignal, ...params}: RequestConfig & DeleteListenerRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ListenerArn: params["ListenerArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteListener",
@@ -143,13 +161,14 @@ export default class GlobalAccelerator {
   async deprovisionByoipCidr(
     {abortSignal, ...params}: RequestConfig & DeprovisionByoipCidrRequest,
   ): Promise<DeprovisionByoipCidrResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Cidr: params["Cidr"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeprovisionByoipCidr",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ByoipCidr": toByoipCidr,
@@ -160,13 +179,14 @@ export default class GlobalAccelerator {
   async describeAccelerator(
     {abortSignal, ...params}: RequestConfig & DescribeAcceleratorRequest,
   ): Promise<DescribeAcceleratorResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AcceleratorArn: params["AcceleratorArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccelerator",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Accelerator": toAccelerator,
@@ -177,13 +197,14 @@ export default class GlobalAccelerator {
   async describeAcceleratorAttributes(
     {abortSignal, ...params}: RequestConfig & DescribeAcceleratorAttributesRequest,
   ): Promise<DescribeAcceleratorAttributesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AcceleratorArn: params["AcceleratorArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAcceleratorAttributes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AcceleratorAttributes": toAcceleratorAttributes,
@@ -194,13 +215,14 @@ export default class GlobalAccelerator {
   async describeEndpointGroup(
     {abortSignal, ...params}: RequestConfig & DescribeEndpointGroupRequest,
   ): Promise<DescribeEndpointGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      EndpointGroupArn: params["EndpointGroupArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEndpointGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EndpointGroup": toEndpointGroup,
@@ -211,13 +233,14 @@ export default class GlobalAccelerator {
   async describeListener(
     {abortSignal, ...params}: RequestConfig & DescribeListenerRequest,
   ): Promise<DescribeListenerResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ListenerArn: params["ListenerArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeListener",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Listener": toListener,
@@ -228,13 +251,15 @@ export default class GlobalAccelerator {
   async listAccelerators(
     {abortSignal, ...params}: RequestConfig & ListAcceleratorsRequest = {},
   ): Promise<ListAcceleratorsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAccelerators",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Accelerators": [toAccelerator],
@@ -246,13 +271,15 @@ export default class GlobalAccelerator {
   async listByoipCidrs(
     {abortSignal, ...params}: RequestConfig & ListByoipCidrsRequest = {},
   ): Promise<ListByoipCidrsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListByoipCidrs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ByoipCidrs": [toByoipCidr],
@@ -264,13 +291,16 @@ export default class GlobalAccelerator {
   async listEndpointGroups(
     {abortSignal, ...params}: RequestConfig & ListEndpointGroupsRequest,
   ): Promise<ListEndpointGroupsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ListenerArn: params["ListenerArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEndpointGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EndpointGroups": [toEndpointGroup],
@@ -282,13 +312,16 @@ export default class GlobalAccelerator {
   async listListeners(
     {abortSignal, ...params}: RequestConfig & ListListenersRequest,
   ): Promise<ListListenersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AcceleratorArn: params["AcceleratorArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListListeners",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Listeners": [toListener],
@@ -300,13 +333,14 @@ export default class GlobalAccelerator {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -317,14 +351,15 @@ export default class GlobalAccelerator {
   async provisionByoipCidr(
     {abortSignal, ...params}: RequestConfig & ProvisionByoipCidrRequest,
   ): Promise<ProvisionByoipCidrResponse> {
-    const body: JSONObject = {...params,
-    CidrAuthorizationContext: fromCidrAuthorizationContext(params["CidrAuthorizationContext"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Cidr: params["Cidr"],
+      CidrAuthorizationContext: fromCidrAuthorizationContext(params["CidrAuthorizationContext"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ProvisionByoipCidr",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ByoipCidr": toByoipCidr,
@@ -335,14 +370,15 @@ export default class GlobalAccelerator {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -351,13 +387,15 @@ export default class GlobalAccelerator {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -366,13 +404,17 @@ export default class GlobalAccelerator {
   async updateAccelerator(
     {abortSignal, ...params}: RequestConfig & UpdateAcceleratorRequest,
   ): Promise<UpdateAcceleratorResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AcceleratorArn: params["AcceleratorArn"],
+      Name: params["Name"],
+      IpAddressType: params["IpAddressType"],
+      Enabled: params["Enabled"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAccelerator",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Accelerator": toAccelerator,
@@ -383,13 +425,17 @@ export default class GlobalAccelerator {
   async updateAcceleratorAttributes(
     {abortSignal, ...params}: RequestConfig & UpdateAcceleratorAttributesRequest,
   ): Promise<UpdateAcceleratorAttributesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AcceleratorArn: params["AcceleratorArn"],
+      FlowLogsEnabled: params["FlowLogsEnabled"],
+      FlowLogsS3Bucket: params["FlowLogsS3Bucket"],
+      FlowLogsS3Prefix: params["FlowLogsS3Prefix"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAcceleratorAttributes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AcceleratorAttributes": toAcceleratorAttributes,
@@ -400,15 +446,22 @@ export default class GlobalAccelerator {
   async updateEndpointGroup(
     {abortSignal, ...params}: RequestConfig & UpdateEndpointGroupRequest,
   ): Promise<UpdateEndpointGroupResponse> {
-    const body: JSONObject = {...params,
-    EndpointConfigurations: params["EndpointConfigurations"]?.map(x => fromEndpointConfiguration(x)),
-    PortOverrides: params["PortOverrides"]?.map(x => fromPortOverride(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      EndpointGroupArn: params["EndpointGroupArn"],
+      EndpointConfigurations: params["EndpointConfigurations"]?.map(x => fromEndpointConfiguration(x)),
+      TrafficDialPercentage: params["TrafficDialPercentage"],
+      HealthCheckPort: params["HealthCheckPort"],
+      HealthCheckProtocol: params["HealthCheckProtocol"],
+      HealthCheckPath: params["HealthCheckPath"],
+      HealthCheckIntervalSeconds: params["HealthCheckIntervalSeconds"],
+      ThresholdCount: params["ThresholdCount"],
+      PortOverrides: params["PortOverrides"]?.map(x => fromPortOverride(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEndpointGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EndpointGroup": toEndpointGroup,
@@ -419,14 +472,17 @@ export default class GlobalAccelerator {
   async updateListener(
     {abortSignal, ...params}: RequestConfig & UpdateListenerRequest,
   ): Promise<UpdateListenerResponse> {
-    const body: JSONObject = {...params,
-    PortRanges: params["PortRanges"]?.map(x => fromPortRange(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ListenerArn: params["ListenerArn"],
+      PortRanges: params["PortRanges"]?.map(x => fromPortRange(x)),
+      Protocol: params["Protocol"],
+      ClientAffinity: params["ClientAffinity"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateListener",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Listener": toListener,
@@ -437,13 +493,14 @@ export default class GlobalAccelerator {
   async withdrawByoipCidr(
     {abortSignal, ...params}: RequestConfig & WithdrawByoipCidrRequest,
   ): Promise<WithdrawByoipCidrResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Cidr: params["Cidr"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "WithdrawByoipCidr",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ByoipCidr": toByoipCidr,
@@ -738,26 +795,22 @@ export interface WithdrawByoipCidrResponse {
 // refs: 6 - tags: input, named, enum, output
 export type IpAddressType =
 | "IPV4"
-;
-
-function toIpAddressType(root: JSONValue): IpAddressType | null {
-  return ( false
-    || root == "IPV4"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -772,9 +825,12 @@ export interface EndpointConfiguration {
   Weight?: number | null;
   ClientIPPreservationEnabled?: boolean | null;
 }
-function fromEndpointConfiguration(input?: EndpointConfiguration | null): JSONValue {
+function fromEndpointConfiguration(input?: EndpointConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    EndpointId: input["EndpointId"],
+    Weight: input["Weight"],
+    ClientIPPreservationEnabled: input["ClientIPPreservationEnabled"],
   }
 }
 
@@ -783,28 +839,22 @@ export type HealthCheckProtocol =
 | "TCP"
 | "HTTP"
 | "HTTPS"
-;
-
-function toHealthCheckProtocol(root: JSONValue): HealthCheckProtocol | null {
-  return ( false
-    || root == "TCP"
-    || root == "HTTP"
-    || root == "HTTPS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface PortOverride {
   ListenerPort?: number | null;
   EndpointPort?: number | null;
 }
-function fromPortOverride(input?: PortOverride | null): JSONValue {
+function fromPortOverride(input?: PortOverride | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ListenerPort: input["ListenerPort"],
+    EndpointPort: input["EndpointPort"],
   }
 }
-function toPortOverride(root: JSONValue): PortOverride {
-  return prt.readObj({
+function toPortOverride(root: jsonP.JSONValue): PortOverride {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ListenerPort": "n",
@@ -818,13 +868,15 @@ export interface PortRange {
   FromPort?: number | null;
   ToPort?: number | null;
 }
-function fromPortRange(input?: PortRange | null): JSONValue {
+function fromPortRange(input?: PortRange | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    FromPort: input["FromPort"],
+    ToPort: input["ToPort"],
   }
 }
-function toPortRange(root: JSONValue): PortRange {
-  return prt.readObj({
+function toPortRange(root: jsonP.JSONValue): PortRange {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FromPort": "n",
@@ -837,36 +889,24 @@ function toPortRange(root: JSONValue): PortRange {
 export type Protocol =
 | "TCP"
 | "UDP"
-;
-
-function toProtocol(root: JSONValue): Protocol | null {
-  return ( false
-    || root == "TCP"
-    || root == "UDP"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, enum, output
 export type ClientAffinity =
 | "NONE"
 | "SOURCE_IP"
-;
-
-function toClientAffinity(root: JSONValue): ClientAffinity | null {
-  return ( false
-    || root == "NONE"
-    || root == "SOURCE_IP"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface CidrAuthorizationContext {
   Message: string;
   Signature: string;
 }
-function fromCidrAuthorizationContext(input?: CidrAuthorizationContext | null): JSONValue {
+function fromCidrAuthorizationContext(input?: CidrAuthorizationContext | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Message: input["Message"],
+    Signature: input["Signature"],
   }
 }
 
@@ -876,12 +916,12 @@ export interface ByoipCidr {
   State?: ByoipCidrState | null;
   Events?: ByoipCidrEvent[] | null;
 }
-function toByoipCidr(root: JSONValue): ByoipCidr {
-  return prt.readObj({
+function toByoipCidr(root: jsonP.JSONValue): ByoipCidr {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Cidr": "s",
-      "State": toByoipCidrState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<ByoipCidrState>(x),
       "Events": [toByoipCidrEvent],
     },
   }, root);
@@ -900,30 +940,15 @@ export type ByoipCidrState =
 | "FAILED_ADVERTISING"
 | "FAILED_WITHDRAW"
 | "FAILED_DEPROVISION"
-;
-function toByoipCidrState(root: JSONValue): ByoipCidrState | null {
-  return ( false
-    || root == "PENDING_PROVISIONING"
-    || root == "READY"
-    || root == "PENDING_ADVERTISING"
-    || root == "ADVERTISING"
-    || root == "PENDING_WITHDRAWING"
-    || root == "PENDING_DEPROVISIONING"
-    || root == "DEPROVISIONED"
-    || root == "FAILED_PROVISION"
-    || root == "FAILED_ADVERTISING"
-    || root == "FAILED_WITHDRAW"
-    || root == "FAILED_DEPROVISION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, interface
 export interface ByoipCidrEvent {
   Message?: string | null;
   Timestamp?: Date | number | null;
 }
-function toByoipCidrEvent(root: JSONValue): ByoipCidrEvent {
-  return prt.readObj({
+function toByoipCidrEvent(root: jsonP.JSONValue): ByoipCidrEvent {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Message": "s",
@@ -944,17 +969,17 @@ export interface Accelerator {
   CreatedTime?: Date | number | null;
   LastModifiedTime?: Date | number | null;
 }
-function toAccelerator(root: JSONValue): Accelerator {
-  return prt.readObj({
+function toAccelerator(root: jsonP.JSONValue): Accelerator {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AcceleratorArn": "s",
       "Name": "s",
-      "IpAddressType": toIpAddressType,
+      "IpAddressType": (x: jsonP.JSONValue) => cmnP.readEnum<IpAddressType>(x),
       "Enabled": "b",
       "IpSets": [toIpSet],
       "DnsName": "s",
-      "Status": toAcceleratorStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<AcceleratorStatus>(x),
       "CreatedTime": "d",
       "LastModifiedTime": "d",
     },
@@ -966,8 +991,8 @@ export interface IpSet {
   IpFamily?: string | null;
   IpAddresses?: string[] | null;
 }
-function toIpSet(root: JSONValue): IpSet {
-  return prt.readObj({
+function toIpSet(root: jsonP.JSONValue): IpSet {
+  return jsonP.readObj({
     required: {},
     optional: {
       "IpFamily": "s",
@@ -980,13 +1005,7 @@ function toIpSet(root: JSONValue): IpSet {
 export type AcceleratorStatus =
 | "DEPLOYED"
 | "IN_PROGRESS"
-;
-function toAcceleratorStatus(root: JSONValue): AcceleratorStatus | null {
-  return ( false
-    || root == "DEPLOYED"
-    || root == "IN_PROGRESS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface EndpointGroup {
@@ -1001,8 +1020,8 @@ export interface EndpointGroup {
   ThresholdCount?: number | null;
   PortOverrides?: PortOverride[] | null;
 }
-function toEndpointGroup(root: JSONValue): EndpointGroup {
-  return prt.readObj({
+function toEndpointGroup(root: jsonP.JSONValue): EndpointGroup {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EndpointGroupArn": "s",
@@ -1010,7 +1029,7 @@ function toEndpointGroup(root: JSONValue): EndpointGroup {
       "EndpointDescriptions": [toEndpointDescription],
       "TrafficDialPercentage": "n",
       "HealthCheckPort": "n",
-      "HealthCheckProtocol": toHealthCheckProtocol,
+      "HealthCheckProtocol": (x: jsonP.JSONValue) => cmnP.readEnum<HealthCheckProtocol>(x),
       "HealthCheckPath": "s",
       "HealthCheckIntervalSeconds": "n",
       "ThresholdCount": "n",
@@ -1027,13 +1046,13 @@ export interface EndpointDescription {
   HealthReason?: string | null;
   ClientIPPreservationEnabled?: boolean | null;
 }
-function toEndpointDescription(root: JSONValue): EndpointDescription {
-  return prt.readObj({
+function toEndpointDescription(root: jsonP.JSONValue): EndpointDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EndpointId": "s",
       "Weight": "n",
-      "HealthState": toHealthState,
+      "HealthState": (x: jsonP.JSONValue) => cmnP.readEnum<HealthState>(x),
       "HealthReason": "s",
       "ClientIPPreservationEnabled": "b",
     },
@@ -1045,14 +1064,7 @@ export type HealthState =
 | "INITIAL"
 | "HEALTHY"
 | "UNHEALTHY"
-;
-function toHealthState(root: JSONValue): HealthState | null {
-  return ( false
-    || root == "INITIAL"
-    || root == "HEALTHY"
-    || root == "UNHEALTHY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface Listener {
@@ -1061,14 +1073,14 @@ export interface Listener {
   Protocol?: Protocol | null;
   ClientAffinity?: ClientAffinity | null;
 }
-function toListener(root: JSONValue): Listener {
-  return prt.readObj({
+function toListener(root: jsonP.JSONValue): Listener {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ListenerArn": "s",
       "PortRanges": [toPortRange],
-      "Protocol": toProtocol,
-      "ClientAffinity": toClientAffinity,
+      "Protocol": (x: jsonP.JSONValue) => cmnP.readEnum<Protocol>(x),
+      "ClientAffinity": (x: jsonP.JSONValue) => cmnP.readEnum<ClientAffinity>(x),
     },
   }, root);
 }
@@ -1079,8 +1091,8 @@ export interface AcceleratorAttributes {
   FlowLogsS3Bucket?: string | null;
   FlowLogsS3Prefix?: string | null;
 }
-function toAcceleratorAttributes(root: JSONValue): AcceleratorAttributes {
-  return prt.readObj({
+function toAcceleratorAttributes(root: jsonP.JSONValue): AcceleratorAttributes {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FlowLogsEnabled": "b",

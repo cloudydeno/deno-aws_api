@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class MigrationHubConfig {
   #client: ServiceClient;
@@ -30,14 +30,16 @@ export default class MigrationHubConfig {
   async createHomeRegionControl(
     {abortSignal, ...params}: RequestConfig & CreateHomeRegionControlRequest,
   ): Promise<CreateHomeRegionControlResult> {
-    const body: JSONObject = {...params,
-    Target: fromTarget(params["Target"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      HomeRegion: params["HomeRegion"],
+      Target: fromTarget(params["Target"]),
+      DryRun: params["DryRun"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHomeRegionControl",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "HomeRegionControl": toHomeRegionControl,
@@ -48,14 +50,18 @@ export default class MigrationHubConfig {
   async describeHomeRegionControls(
     {abortSignal, ...params}: RequestConfig & DescribeHomeRegionControlsRequest = {},
   ): Promise<DescribeHomeRegionControlsResult> {
-    const body: JSONObject = {...params,
-    Target: fromTarget(params["Target"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ControlId: params["ControlId"],
+      HomeRegion: params["HomeRegion"],
+      Target: fromTarget(params["Target"]),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeHomeRegionControls",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "HomeRegionControls": [toHomeRegionControl],
@@ -67,13 +73,13 @@ export default class MigrationHubConfig {
   async getHomeRegion(
     {abortSignal, ...params}: RequestConfig & GetHomeRegionRequest = {},
   ): Promise<GetHomeRegionResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetHomeRegion",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "HomeRegion": "s",
@@ -124,15 +130,17 @@ export interface Target {
   Type: TargetType;
   Id?: string | null;
 }
-function fromTarget(input?: Target | null): JSONValue {
+function fromTarget(input?: Target | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Type: input["Type"],
+    Id: input["Id"],
   }
 }
-function toTarget(root: JSONValue): Target {
-  return prt.readObj({
+function toTarget(root: jsonP.JSONValue): Target {
+  return jsonP.readObj({
     required: {
-      "Type": toTargetType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<TargetType>(x),
     },
     optional: {
       "Id": "s",
@@ -143,13 +151,7 @@ function toTarget(root: JSONValue): Target {
 // refs: 4 - tags: input, named, enum, output
 export type TargetType =
 | "ACCOUNT"
-;
-
-function toTargetType(root: JSONValue): TargetType | null {
-  return ( false
-    || root == "ACCOUNT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface HomeRegionControl {
@@ -158,8 +160,8 @@ export interface HomeRegionControl {
   Target?: Target | null;
   RequestedTime?: Date | number | null;
 }
-function toHomeRegionControl(root: JSONValue): HomeRegionControl {
-  return prt.readObj({
+function toHomeRegionControl(root: jsonP.JSONValue): HomeRegionControl {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ControlId": "s",

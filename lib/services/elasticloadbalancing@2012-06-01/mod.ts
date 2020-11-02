@@ -5,8 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 
 export default class ELB {
   #client: ServiceClient;
@@ -30,13 +31,13 @@ export default class ELB {
   ): Promise<AddTagsOutput> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["LoadBalancerNames"]) prt.appendList(body, prefix+"LoadBalancerNames", params["LoadBalancerNames"], {"entryPrefix":".member."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["LoadBalancerNames"]) qsP.appendList(body, prefix+"LoadBalancerNames", params["LoadBalancerNames"], {"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTags",
     });
-    const xml = readXmlResult(await resp.text(), "AddTagsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "AddTagsResult");
     return {};
   }
 
@@ -46,12 +47,12 @@ export default class ELB {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
-    if (params["SecurityGroups"]) prt.appendList(body, prefix+"SecurityGroups", params["SecurityGroups"], {"entryPrefix":".member."})
+    if (params["SecurityGroups"]) qsP.appendList(body, prefix+"SecurityGroups", params["SecurityGroups"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ApplySecurityGroupsToLoadBalancer",
     });
-    const xml = readXmlResult(await resp.text(), "ApplySecurityGroupsToLoadBalancerResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ApplySecurityGroupsToLoadBalancerResult");
     return {
       SecurityGroups: xml.getList("SecurityGroups", "member").map(x => x.content ?? ''),
     };
@@ -63,12 +64,12 @@ export default class ELB {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
-    if (params["Subnets"]) prt.appendList(body, prefix+"Subnets", params["Subnets"], {"entryPrefix":".member."})
+    if (params["Subnets"]) qsP.appendList(body, prefix+"Subnets", params["Subnets"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AttachLoadBalancerToSubnets",
     });
-    const xml = readXmlResult(await resp.text(), "AttachLoadBalancerToSubnetsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "AttachLoadBalancerToSubnetsResult");
     return {
       Subnets: xml.getList("Subnets", "member").map(x => x.content ?? ''),
     };
@@ -85,7 +86,7 @@ export default class ELB {
       abortSignal, body,
       action: "ConfigureHealthCheck",
     });
-    const xml = readXmlResult(await resp.text(), "ConfigureHealthCheckResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ConfigureHealthCheckResult");
     return {
       HealthCheck: xml.first("HealthCheck", false, HealthCheck_Parse),
     };
@@ -103,7 +104,7 @@ export default class ELB {
       abortSignal, body,
       action: "CreateAppCookieStickinessPolicy",
     });
-    const xml = readXmlResult(await resp.text(), "CreateAppCookieStickinessPolicyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateAppCookieStickinessPolicyResult");
     return {};
   }
 
@@ -119,7 +120,7 @@ export default class ELB {
       abortSignal, body,
       action: "CreateLBCookieStickinessPolicy",
     });
-    const xml = readXmlResult(await resp.text(), "CreateLBCookieStickinessPolicyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateLBCookieStickinessPolicyResult");
     return {};
   }
 
@@ -129,17 +130,17 @@ export default class ELB {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
-    if (params["Listeners"]) prt.appendList(body, prefix+"Listeners", params["Listeners"], {"appender":Listener_Serialize,"entryPrefix":".member."})
-    if (params["AvailabilityZones"]) prt.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".member."})
-    if (params["Subnets"]) prt.appendList(body, prefix+"Subnets", params["Subnets"], {"entryPrefix":".member."})
-    if (params["SecurityGroups"]) prt.appendList(body, prefix+"SecurityGroups", params["SecurityGroups"], {"entryPrefix":".member."})
+    if (params["Listeners"]) qsP.appendList(body, prefix+"Listeners", params["Listeners"], {"appender":Listener_Serialize,"entryPrefix":".member."})
+    if (params["AvailabilityZones"]) qsP.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".member."})
+    if (params["Subnets"]) qsP.appendList(body, prefix+"Subnets", params["Subnets"], {"entryPrefix":".member."})
+    if (params["SecurityGroups"]) qsP.appendList(body, prefix+"SecurityGroups", params["SecurityGroups"], {"entryPrefix":".member."})
     if ("Scheme" in params) body.append(prefix+"Scheme", (params["Scheme"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLoadBalancer",
     });
-    const xml = readXmlResult(await resp.text(), "CreateLoadBalancerResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateLoadBalancerResult");
     return xml.strings({
       optional: {"DNSName":true},
     });
@@ -151,12 +152,12 @@ export default class ELB {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
-    if (params["Listeners"]) prt.appendList(body, prefix+"Listeners", params["Listeners"], {"appender":Listener_Serialize,"entryPrefix":".member."})
+    if (params["Listeners"]) qsP.appendList(body, prefix+"Listeners", params["Listeners"], {"appender":Listener_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLoadBalancerListeners",
     });
-    const xml = readXmlResult(await resp.text(), "CreateLoadBalancerListenersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateLoadBalancerListenersResult");
     return {};
   }
 
@@ -168,12 +169,12 @@ export default class ELB {
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
     body.append(prefix+"PolicyName", (params["PolicyName"] ?? '').toString());
     body.append(prefix+"PolicyTypeName", (params["PolicyTypeName"] ?? '').toString());
-    if (params["PolicyAttributes"]) prt.appendList(body, prefix+"PolicyAttributes", params["PolicyAttributes"], {"appender":PolicyAttribute_Serialize,"entryPrefix":".member."})
+    if (params["PolicyAttributes"]) qsP.appendList(body, prefix+"PolicyAttributes", params["PolicyAttributes"], {"appender":PolicyAttribute_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLoadBalancerPolicy",
     });
-    const xml = readXmlResult(await resp.text(), "CreateLoadBalancerPolicyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateLoadBalancerPolicyResult");
     return {};
   }
 
@@ -187,7 +188,7 @@ export default class ELB {
       abortSignal, body,
       action: "DeleteLoadBalancer",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteLoadBalancerResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteLoadBalancerResult");
     return {};
   }
 
@@ -197,12 +198,12 @@ export default class ELB {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
-    if (params["LoadBalancerPorts"]) prt.appendList(body, prefix+"LoadBalancerPorts", params["LoadBalancerPorts"], {"entryPrefix":".member."})
+    if (params["LoadBalancerPorts"]) qsP.appendList(body, prefix+"LoadBalancerPorts", params["LoadBalancerPorts"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLoadBalancerListeners",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteLoadBalancerListenersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteLoadBalancerListenersResult");
     return {};
   }
 
@@ -217,7 +218,7 @@ export default class ELB {
       abortSignal, body,
       action: "DeleteLoadBalancerPolicy",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteLoadBalancerPolicyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteLoadBalancerPolicyResult");
     return {};
   }
 
@@ -227,12 +228,12 @@ export default class ELB {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
-    if (params["Instances"]) prt.appendList(body, prefix+"Instances", params["Instances"], {"appender":Instance_Serialize,"entryPrefix":".member."})
+    if (params["Instances"]) qsP.appendList(body, prefix+"Instances", params["Instances"], {"appender":Instance_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterInstancesFromLoadBalancer",
     });
-    const xml = readXmlResult(await resp.text(), "DeregisterInstancesFromLoadBalancerResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeregisterInstancesFromLoadBalancerResult");
     return {
       Instances: xml.getList("Instances", "member").map(Instance_Parse),
     };
@@ -249,7 +250,7 @@ export default class ELB {
       abortSignal, body,
       action: "DescribeAccountLimits",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeAccountLimitsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeAccountLimitsResult");
     return {
       ...xml.strings({
         optional: {"NextMarker":true},
@@ -264,12 +265,12 @@ export default class ELB {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
-    if (params["Instances"]) prt.appendList(body, prefix+"Instances", params["Instances"], {"appender":Instance_Serialize,"entryPrefix":".member."})
+    if (params["Instances"]) qsP.appendList(body, prefix+"Instances", params["Instances"], {"appender":Instance_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstanceHealth",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeInstanceHealthResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeInstanceHealthResult");
     return {
       InstanceStates: xml.getList("InstanceStates", "member").map(InstanceState_Parse),
     };
@@ -285,7 +286,7 @@ export default class ELB {
       abortSignal, body,
       action: "DescribeLoadBalancerAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeLoadBalancerAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeLoadBalancerAttributesResult");
     return {
       LoadBalancerAttributes: xml.first("LoadBalancerAttributes", false, LoadBalancerAttributes_Parse),
     };
@@ -297,12 +298,12 @@ export default class ELB {
     const body = new URLSearchParams;
     const prefix = '';
     if ("LoadBalancerName" in params) body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
-    if (params["PolicyNames"]) prt.appendList(body, prefix+"PolicyNames", params["PolicyNames"], {"entryPrefix":".member."})
+    if (params["PolicyNames"]) qsP.appendList(body, prefix+"PolicyNames", params["PolicyNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLoadBalancerPolicies",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeLoadBalancerPoliciesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeLoadBalancerPoliciesResult");
     return {
       PolicyDescriptions: xml.getList("PolicyDescriptions", "member").map(PolicyDescription_Parse),
     };
@@ -313,12 +314,12 @@ export default class ELB {
   ): Promise<DescribeLoadBalancerPolicyTypesOutput> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["PolicyTypeNames"]) prt.appendList(body, prefix+"PolicyTypeNames", params["PolicyTypeNames"], {"entryPrefix":".member."})
+    if (params["PolicyTypeNames"]) qsP.appendList(body, prefix+"PolicyTypeNames", params["PolicyTypeNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLoadBalancerPolicyTypes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeLoadBalancerPolicyTypesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeLoadBalancerPolicyTypesResult");
     return {
       PolicyTypeDescriptions: xml.getList("PolicyTypeDescriptions", "member").map(PolicyTypeDescription_Parse),
     };
@@ -329,14 +330,14 @@ export default class ELB {
   ): Promise<DescribeAccessPointsOutput> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["LoadBalancerNames"]) prt.appendList(body, prefix+"LoadBalancerNames", params["LoadBalancerNames"], {"entryPrefix":".member."})
+    if (params["LoadBalancerNames"]) qsP.appendList(body, prefix+"LoadBalancerNames", params["LoadBalancerNames"], {"entryPrefix":".member."})
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("PageSize" in params) body.append(prefix+"PageSize", (params["PageSize"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLoadBalancers",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeLoadBalancersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeLoadBalancersResult");
     return {
       ...xml.strings({
         optional: {"NextMarker":true},
@@ -350,12 +351,12 @@ export default class ELB {
   ): Promise<DescribeTagsOutput> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["LoadBalancerNames"]) prt.appendList(body, prefix+"LoadBalancerNames", params["LoadBalancerNames"], {"entryPrefix":".member."})
+    if (params["LoadBalancerNames"]) qsP.appendList(body, prefix+"LoadBalancerNames", params["LoadBalancerNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTags",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeTagsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeTagsResult");
     return {
       TagDescriptions: xml.getList("TagDescriptions", "member").map(TagDescription_Parse),
     };
@@ -367,12 +368,12 @@ export default class ELB {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
-    if (params["Subnets"]) prt.appendList(body, prefix+"Subnets", params["Subnets"], {"entryPrefix":".member."})
+    if (params["Subnets"]) qsP.appendList(body, prefix+"Subnets", params["Subnets"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetachLoadBalancerFromSubnets",
     });
-    const xml = readXmlResult(await resp.text(), "DetachLoadBalancerFromSubnetsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DetachLoadBalancerFromSubnetsResult");
     return {
       Subnets: xml.getList("Subnets", "member").map(x => x.content ?? ''),
     };
@@ -384,12 +385,12 @@ export default class ELB {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
-    if (params["AvailabilityZones"]) prt.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".member."})
+    if (params["AvailabilityZones"]) qsP.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableAvailabilityZonesForLoadBalancer",
     });
-    const xml = readXmlResult(await resp.text(), "DisableAvailabilityZonesForLoadBalancerResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DisableAvailabilityZonesForLoadBalancerResult");
     return {
       AvailabilityZones: xml.getList("AvailabilityZones", "member").map(x => x.content ?? ''),
     };
@@ -401,12 +402,12 @@ export default class ELB {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
-    if (params["AvailabilityZones"]) prt.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".member."})
+    if (params["AvailabilityZones"]) qsP.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableAvailabilityZonesForLoadBalancer",
     });
-    const xml = readXmlResult(await resp.text(), "EnableAvailabilityZonesForLoadBalancerResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "EnableAvailabilityZonesForLoadBalancerResult");
     return {
       AvailabilityZones: xml.getList("AvailabilityZones", "member").map(x => x.content ?? ''),
     };
@@ -423,7 +424,7 @@ export default class ELB {
       abortSignal, body,
       action: "ModifyLoadBalancerAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyLoadBalancerAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyLoadBalancerAttributesResult");
     return {
       ...xml.strings({
         optional: {"LoadBalancerName":true},
@@ -438,12 +439,12 @@ export default class ELB {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
-    if (params["Instances"]) prt.appendList(body, prefix+"Instances", params["Instances"], {"appender":Instance_Serialize,"entryPrefix":".member."})
+    if (params["Instances"]) qsP.appendList(body, prefix+"Instances", params["Instances"], {"appender":Instance_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterInstancesWithLoadBalancer",
     });
-    const xml = readXmlResult(await resp.text(), "RegisterInstancesWithLoadBalancerResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RegisterInstancesWithLoadBalancerResult");
     return {
       Instances: xml.getList("Instances", "member").map(Instance_Parse),
     };
@@ -454,13 +455,13 @@ export default class ELB {
   ): Promise<RemoveTagsOutput> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["LoadBalancerNames"]) prt.appendList(body, prefix+"LoadBalancerNames", params["LoadBalancerNames"], {"entryPrefix":".member."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":TagKeyOnly_Serialize,"entryPrefix":".member."})
+    if (params["LoadBalancerNames"]) qsP.appendList(body, prefix+"LoadBalancerNames", params["LoadBalancerNames"], {"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":TagKeyOnly_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTags",
     });
-    const xml = readXmlResult(await resp.text(), "RemoveTagsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RemoveTagsResult");
     return {};
   }
 
@@ -476,7 +477,7 @@ export default class ELB {
       abortSignal, body,
       action: "SetLoadBalancerListenerSSLCertificate",
     });
-    const xml = readXmlResult(await resp.text(), "SetLoadBalancerListenerSSLCertificateResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SetLoadBalancerListenerSSLCertificateResult");
     return {};
   }
 
@@ -487,12 +488,12 @@ export default class ELB {
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
     body.append(prefix+"InstancePort", (params["InstancePort"] ?? '').toString());
-    if (params["PolicyNames"]) prt.appendList(body, prefix+"PolicyNames", params["PolicyNames"], {"entryPrefix":".member."})
+    if (params["PolicyNames"]) qsP.appendList(body, prefix+"PolicyNames", params["PolicyNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetLoadBalancerPoliciesForBackendServer",
     });
-    const xml = readXmlResult(await resp.text(), "SetLoadBalancerPoliciesForBackendServerResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SetLoadBalancerPoliciesForBackendServerResult");
     return {};
   }
 
@@ -503,12 +504,12 @@ export default class ELB {
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
     body.append(prefix+"LoadBalancerPort", (params["LoadBalancerPort"] ?? '').toString());
-    if (params["PolicyNames"]) prt.appendList(body, prefix+"PolicyNames", params["PolicyNames"], {"entryPrefix":".member."})
+    if (params["PolicyNames"]) qsP.appendList(body, prefix+"PolicyNames", params["PolicyNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetLoadBalancerPoliciesOfListener",
     });
-    const xml = readXmlResult(await resp.text(), "SetLoadBalancerPoliciesOfListenerResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SetLoadBalancerPoliciesOfListenerResult");
     return {};
   }
 
@@ -522,7 +523,7 @@ export default class ELB {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeInstanceHealth(params);
-        if (resp["InstanceStates"].flatMap(x => x["State"]).every(x => x === "OutOfService")) return resp;
+        if (resp?.InstanceStates?.flatMap(x => x?.State).every(x => x === "OutOfService")) return resp;
       } catch (err) {
         if (["InvalidInstance"].includes(err.code)) return err;
         throw err;
@@ -539,7 +540,7 @@ export default class ELB {
     const errMessage = 'ResourceNotReady: Resource is not in the state AnyInstanceInService';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeInstanceHealth(params);
-      if (resp["InstanceStates"].flatMap(x => x["State"]).some(x => x === "InService")) return resp;
+      if (resp?.InstanceStates?.flatMap(x => x?.State).some(x => x === "InService")) return resp;
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -553,7 +554,7 @@ export default class ELB {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeInstanceHealth(params);
-        if (resp["InstanceStates"].flatMap(x => x["State"]).every(x => x === "InService")) return resp;
+        if (resp?.InstanceStates?.flatMap(x => x?.State).every(x => x === "InService")) return resp;
       } catch (err) {
         if (!["InvalidInstance"].includes(err.code)) throw err;
       }
@@ -892,7 +893,7 @@ function Tag_Serialize(body: URLSearchParams, prefix: string, params: Tag) {
     body.append(prefix+".Key", (params["Key"] ?? '').toString());
     if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function Tag_Parse(node: XmlNode): Tag {
+function Tag_Parse(node: xmlP.XmlNode): Tag {
   return node.strings({
     required: {"Key":true},
     optional: {"Value":true},
@@ -914,7 +915,7 @@ function HealthCheck_Serialize(body: URLSearchParams, prefix: string, params: He
     body.append(prefix+".UnhealthyThreshold", (params["UnhealthyThreshold"] ?? '').toString());
     body.append(prefix+".HealthyThreshold", (params["HealthyThreshold"] ?? '').toString());
 }
-function HealthCheck_Parse(node: XmlNode): HealthCheck {
+function HealthCheck_Parse(node: xmlP.XmlNode): HealthCheck {
   return {
     ...node.strings({
       required: {"Target":true},
@@ -941,7 +942,7 @@ function Listener_Serialize(body: URLSearchParams, prefix: string, params: Liste
     body.append(prefix+".InstancePort", (params["InstancePort"] ?? '').toString());
     if ("SSLCertificateId" in params) body.append(prefix+".SSLCertificateId", (params["SSLCertificateId"] ?? '').toString());
 }
-function Listener_Parse(node: XmlNode): Listener {
+function Listener_Parse(node: xmlP.XmlNode): Listener {
   return {
     ...node.strings({
       required: {"Protocol":true},
@@ -969,7 +970,7 @@ export interface Instance {
 function Instance_Serialize(body: URLSearchParams, prefix: string, params: Instance) {
     if ("InstanceId" in params) body.append(prefix+".InstanceId", (params["InstanceId"] ?? '').toString());
 }
-function Instance_Parse(node: XmlNode): Instance {
+function Instance_Parse(node: xmlP.XmlNode): Instance {
   return node.strings({
     optional: {"InstanceId":true},
   });
@@ -988,9 +989,9 @@ function LoadBalancerAttributes_Serialize(body: URLSearchParams, prefix: string,
     if (params["AccessLog"] != null) AccessLog_Serialize(body, prefix+".AccessLog", params["AccessLog"]);
     if (params["ConnectionDraining"] != null) ConnectionDraining_Serialize(body, prefix+".ConnectionDraining", params["ConnectionDraining"]);
     if (params["ConnectionSettings"] != null) ConnectionSettings_Serialize(body, prefix+".ConnectionSettings", params["ConnectionSettings"]);
-    if (params["AdditionalAttributes"]) prt.appendList(body, prefix+".AdditionalAttributes", params["AdditionalAttributes"], {"appender":AdditionalAttribute_Serialize,"entryPrefix":".member."})
+    if (params["AdditionalAttributes"]) qsP.appendList(body, prefix+".AdditionalAttributes", params["AdditionalAttributes"], {"appender":AdditionalAttribute_Serialize,"entryPrefix":".member."})
 }
-function LoadBalancerAttributes_Parse(node: XmlNode): LoadBalancerAttributes {
+function LoadBalancerAttributes_Parse(node: xmlP.XmlNode): LoadBalancerAttributes {
   return {
     CrossZoneLoadBalancing: node.first("CrossZoneLoadBalancing", false, CrossZoneLoadBalancing_Parse),
     AccessLog: node.first("AccessLog", false, AccessLog_Parse),
@@ -1007,7 +1008,7 @@ export interface CrossZoneLoadBalancing {
 function CrossZoneLoadBalancing_Serialize(body: URLSearchParams, prefix: string, params: CrossZoneLoadBalancing) {
     body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
 }
-function CrossZoneLoadBalancing_Parse(node: XmlNode): CrossZoneLoadBalancing {
+function CrossZoneLoadBalancing_Parse(node: xmlP.XmlNode): CrossZoneLoadBalancing {
   return {
     Enabled: node.first("Enabled", true, x => x.content === 'true'),
   };
@@ -1026,7 +1027,7 @@ function AccessLog_Serialize(body: URLSearchParams, prefix: string, params: Acce
     if ("EmitInterval" in params) body.append(prefix+".EmitInterval", (params["EmitInterval"] ?? '').toString());
     if ("S3BucketPrefix" in params) body.append(prefix+".S3BucketPrefix", (params["S3BucketPrefix"] ?? '').toString());
 }
-function AccessLog_Parse(node: XmlNode): AccessLog {
+function AccessLog_Parse(node: xmlP.XmlNode): AccessLog {
   return {
     ...node.strings({
       optional: {"S3BucketName":true,"S3BucketPrefix":true},
@@ -1045,7 +1046,7 @@ function ConnectionDraining_Serialize(body: URLSearchParams, prefix: string, par
     body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
     if ("Timeout" in params) body.append(prefix+".Timeout", (params["Timeout"] ?? '').toString());
 }
-function ConnectionDraining_Parse(node: XmlNode): ConnectionDraining {
+function ConnectionDraining_Parse(node: xmlP.XmlNode): ConnectionDraining {
   return {
     Enabled: node.first("Enabled", true, x => x.content === 'true'),
     Timeout: node.first("Timeout", false, x => parseInt(x.content ?? '0')),
@@ -1059,7 +1060,7 @@ export interface ConnectionSettings {
 function ConnectionSettings_Serialize(body: URLSearchParams, prefix: string, params: ConnectionSettings) {
     body.append(prefix+".IdleTimeout", (params["IdleTimeout"] ?? '').toString());
 }
-function ConnectionSettings_Parse(node: XmlNode): ConnectionSettings {
+function ConnectionSettings_Parse(node: xmlP.XmlNode): ConnectionSettings {
   return {
     IdleTimeout: node.first("IdleTimeout", true, x => parseInt(x.content ?? '0')),
   };
@@ -1074,7 +1075,7 @@ function AdditionalAttribute_Serialize(body: URLSearchParams, prefix: string, pa
     if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
     if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function AdditionalAttribute_Parse(node: XmlNode): AdditionalAttribute {
+function AdditionalAttribute_Parse(node: xmlP.XmlNode): AdditionalAttribute {
   return node.strings({
     optional: {"Key":true,"Value":true},
   });
@@ -1093,7 +1094,7 @@ export interface Limit {
   Name?: string | null;
   Max?: string | null;
 }
-function Limit_Parse(node: XmlNode): Limit {
+function Limit_Parse(node: xmlP.XmlNode): Limit {
   return node.strings({
     optional: {"Name":true,"Max":true},
   });
@@ -1106,7 +1107,7 @@ export interface InstanceState {
   ReasonCode?: string | null;
   Description?: string | null;
 }
-function InstanceState_Parse(node: XmlNode): InstanceState {
+function InstanceState_Parse(node: xmlP.XmlNode): InstanceState {
   return node.strings({
     optional: {"InstanceId":true,"State":true,"ReasonCode":true,"Description":true},
   });
@@ -1118,7 +1119,7 @@ export interface PolicyDescription {
   PolicyTypeName?: string | null;
   PolicyAttributeDescriptions: PolicyAttributeDescription[];
 }
-function PolicyDescription_Parse(node: XmlNode): PolicyDescription {
+function PolicyDescription_Parse(node: xmlP.XmlNode): PolicyDescription {
   return {
     ...node.strings({
       optional: {"PolicyName":true,"PolicyTypeName":true},
@@ -1132,7 +1133,7 @@ export interface PolicyAttributeDescription {
   AttributeName?: string | null;
   AttributeValue?: string | null;
 }
-function PolicyAttributeDescription_Parse(node: XmlNode): PolicyAttributeDescription {
+function PolicyAttributeDescription_Parse(node: xmlP.XmlNode): PolicyAttributeDescription {
   return node.strings({
     optional: {"AttributeName":true,"AttributeValue":true},
   });
@@ -1144,7 +1145,7 @@ export interface PolicyTypeDescription {
   Description?: string | null;
   PolicyAttributeTypeDescriptions: PolicyAttributeTypeDescription[];
 }
-function PolicyTypeDescription_Parse(node: XmlNode): PolicyTypeDescription {
+function PolicyTypeDescription_Parse(node: xmlP.XmlNode): PolicyTypeDescription {
   return {
     ...node.strings({
       optional: {"PolicyTypeName":true,"Description":true},
@@ -1161,7 +1162,7 @@ export interface PolicyAttributeTypeDescription {
   DefaultValue?: string | null;
   Cardinality?: string | null;
 }
-function PolicyAttributeTypeDescription_Parse(node: XmlNode): PolicyAttributeTypeDescription {
+function PolicyAttributeTypeDescription_Parse(node: xmlP.XmlNode): PolicyAttributeTypeDescription {
   return node.strings({
     optional: {"AttributeName":true,"AttributeType":true,"Description":true,"DefaultValue":true,"Cardinality":true},
   });
@@ -1186,7 +1187,7 @@ export interface LoadBalancerDescription {
   CreatedTime?: Date | number | null;
   Scheme?: string | null;
 }
-function LoadBalancerDescription_Parse(node: XmlNode): LoadBalancerDescription {
+function LoadBalancerDescription_Parse(node: xmlP.XmlNode): LoadBalancerDescription {
   return {
     ...node.strings({
       optional: {"LoadBalancerName":true,"DNSName":true,"CanonicalHostedZoneName":true,"CanonicalHostedZoneNameID":true,"VPCId":true,"Scheme":true},
@@ -1200,7 +1201,7 @@ function LoadBalancerDescription_Parse(node: XmlNode): LoadBalancerDescription {
     HealthCheck: node.first("HealthCheck", false, HealthCheck_Parse),
     SourceSecurityGroup: node.first("SourceSecurityGroup", false, SourceSecurityGroup_Parse),
     SecurityGroups: node.getList("SecurityGroups", "member").map(x => x.content ?? ''),
-    CreatedTime: node.first("CreatedTime", false, x => parseTimestamp(x.content)),
+    CreatedTime: node.first("CreatedTime", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -1209,7 +1210,7 @@ export interface ListenerDescription {
   Listener?: Listener | null;
   PolicyNames: string[];
 }
-function ListenerDescription_Parse(node: XmlNode): ListenerDescription {
+function ListenerDescription_Parse(node: xmlP.XmlNode): ListenerDescription {
   return {
     Listener: node.first("Listener", false, Listener_Parse),
     PolicyNames: node.getList("PolicyNames", "member").map(x => x.content ?? ''),
@@ -1222,7 +1223,7 @@ export interface Policies {
   LBCookieStickinessPolicies: LBCookieStickinessPolicy[];
   OtherPolicies: string[];
 }
-function Policies_Parse(node: XmlNode): Policies {
+function Policies_Parse(node: xmlP.XmlNode): Policies {
   return {
     AppCookieStickinessPolicies: node.getList("AppCookieStickinessPolicies", "member").map(AppCookieStickinessPolicy_Parse),
     LBCookieStickinessPolicies: node.getList("LBCookieStickinessPolicies", "member").map(LBCookieStickinessPolicy_Parse),
@@ -1235,7 +1236,7 @@ export interface AppCookieStickinessPolicy {
   PolicyName?: string | null;
   CookieName?: string | null;
 }
-function AppCookieStickinessPolicy_Parse(node: XmlNode): AppCookieStickinessPolicy {
+function AppCookieStickinessPolicy_Parse(node: xmlP.XmlNode): AppCookieStickinessPolicy {
   return node.strings({
     optional: {"PolicyName":true,"CookieName":true},
   });
@@ -1246,7 +1247,7 @@ export interface LBCookieStickinessPolicy {
   PolicyName?: string | null;
   CookieExpirationPeriod?: number | null;
 }
-function LBCookieStickinessPolicy_Parse(node: XmlNode): LBCookieStickinessPolicy {
+function LBCookieStickinessPolicy_Parse(node: xmlP.XmlNode): LBCookieStickinessPolicy {
   return {
     ...node.strings({
       optional: {"PolicyName":true},
@@ -1260,7 +1261,7 @@ export interface BackendServerDescription {
   InstancePort?: number | null;
   PolicyNames: string[];
 }
-function BackendServerDescription_Parse(node: XmlNode): BackendServerDescription {
+function BackendServerDescription_Parse(node: xmlP.XmlNode): BackendServerDescription {
   return {
     InstancePort: node.first("InstancePort", false, x => parseInt(x.content ?? '0')),
     PolicyNames: node.getList("PolicyNames", "member").map(x => x.content ?? ''),
@@ -1272,7 +1273,7 @@ export interface SourceSecurityGroup {
   OwnerAlias?: string | null;
   GroupName?: string | null;
 }
-function SourceSecurityGroup_Parse(node: XmlNode): SourceSecurityGroup {
+function SourceSecurityGroup_Parse(node: xmlP.XmlNode): SourceSecurityGroup {
   return node.strings({
     optional: {"OwnerAlias":true,"GroupName":true},
   });
@@ -1283,7 +1284,7 @@ export interface TagDescription {
   LoadBalancerName?: string | null;
   Tags: Tag[];
 }
-function TagDescription_Parse(node: XmlNode): TagDescription {
+function TagDescription_Parse(node: xmlP.XmlNode): TagDescription {
   return {
     ...node.strings({
       optional: {"LoadBalancerName":true},

@@ -5,10 +5,10 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }
@@ -50,13 +50,13 @@ export default class CloudFormation {
     const prefix = '';
     body.append(prefix+"StackName", (params["StackName"] ?? '').toString());
     if ("RoleARN" in params) body.append(prefix+"RoleARN", (params["RoleARN"] ?? '').toString());
-    if (params["ResourcesToSkip"]) prt.appendList(body, prefix+"ResourcesToSkip", params["ResourcesToSkip"], {"entryPrefix":".member."})
+    if (params["ResourcesToSkip"]) qsP.appendList(body, prefix+"ResourcesToSkip", params["ResourcesToSkip"], {"entryPrefix":".member."})
     if ("ClientRequestToken" in params) body.append(prefix+"ClientRequestToken", (params["ClientRequestToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ContinueUpdateRollback",
     });
-    const xml = readXmlResult(await resp.text(), "ContinueUpdateRollbackResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ContinueUpdateRollbackResult");
     return {};
   }
 
@@ -69,23 +69,23 @@ export default class CloudFormation {
     if ("TemplateBody" in params) body.append(prefix+"TemplateBody", (params["TemplateBody"] ?? '').toString());
     if ("TemplateURL" in params) body.append(prefix+"TemplateURL", (params["TemplateURL"] ?? '').toString());
     if ("UsePreviousTemplate" in params) body.append(prefix+"UsePreviousTemplate", (params["UsePreviousTemplate"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".member."})
-    if (params["Capabilities"]) prt.appendList(body, prefix+"Capabilities", params["Capabilities"], {"entryPrefix":".member."})
-    if (params["ResourceTypes"]) prt.appendList(body, prefix+"ResourceTypes", params["ResourceTypes"], {"entryPrefix":".member."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".member."})
+    if (params["Capabilities"]) qsP.appendList(body, prefix+"Capabilities", params["Capabilities"], {"entryPrefix":".member."})
+    if (params["ResourceTypes"]) qsP.appendList(body, prefix+"ResourceTypes", params["ResourceTypes"], {"entryPrefix":".member."})
     if ("RoleARN" in params) body.append(prefix+"RoleARN", (params["RoleARN"] ?? '').toString());
     if (params["RollbackConfiguration"] != null) RollbackConfiguration_Serialize(body, prefix+"RollbackConfiguration", params["RollbackConfiguration"]);
-    if (params["NotificationARNs"]) prt.appendList(body, prefix+"NotificationARNs", params["NotificationARNs"], {"entryPrefix":".member."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["NotificationARNs"]) qsP.appendList(body, prefix+"NotificationARNs", params["NotificationARNs"], {"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     body.append(prefix+"ChangeSetName", (params["ChangeSetName"] ?? '').toString());
     if ("ClientToken" in params) body.append(prefix+"ClientToken", (params["ClientToken"] ?? '').toString());
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     if ("ChangeSetType" in params) body.append(prefix+"ChangeSetType", (params["ChangeSetType"] ?? '').toString());
-    if (params["ResourcesToImport"]) prt.appendList(body, prefix+"ResourcesToImport", params["ResourcesToImport"], {"appender":ResourceToImport_Serialize,"entryPrefix":".member."})
+    if (params["ResourcesToImport"]) qsP.appendList(body, prefix+"ResourcesToImport", params["ResourcesToImport"], {"appender":ResourceToImport_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateChangeSet",
     });
-    const xml = readXmlResult(await resp.text(), "CreateChangeSetResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateChangeSetResult");
     return xml.strings({
       optional: {"Id":true,"StackId":true},
     });
@@ -99,25 +99,25 @@ export default class CloudFormation {
     body.append(prefix+"StackName", (params["StackName"] ?? '').toString());
     if ("TemplateBody" in params) body.append(prefix+"TemplateBody", (params["TemplateBody"] ?? '').toString());
     if ("TemplateURL" in params) body.append(prefix+"TemplateURL", (params["TemplateURL"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".member."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".member."})
     if ("DisableRollback" in params) body.append(prefix+"DisableRollback", (params["DisableRollback"] ?? '').toString());
     if (params["RollbackConfiguration"] != null) RollbackConfiguration_Serialize(body, prefix+"RollbackConfiguration", params["RollbackConfiguration"]);
     if ("TimeoutInMinutes" in params) body.append(prefix+"TimeoutInMinutes", (params["TimeoutInMinutes"] ?? '').toString());
-    if (params["NotificationARNs"]) prt.appendList(body, prefix+"NotificationARNs", params["NotificationARNs"], {"entryPrefix":".member."})
-    if (params["Capabilities"]) prt.appendList(body, prefix+"Capabilities", params["Capabilities"], {"entryPrefix":".member."})
-    if (params["ResourceTypes"]) prt.appendList(body, prefix+"ResourceTypes", params["ResourceTypes"], {"entryPrefix":".member."})
+    if (params["NotificationARNs"]) qsP.appendList(body, prefix+"NotificationARNs", params["NotificationARNs"], {"entryPrefix":".member."})
+    if (params["Capabilities"]) qsP.appendList(body, prefix+"Capabilities", params["Capabilities"], {"entryPrefix":".member."})
+    if (params["ResourceTypes"]) qsP.appendList(body, prefix+"ResourceTypes", params["ResourceTypes"], {"entryPrefix":".member."})
     if ("RoleARN" in params) body.append(prefix+"RoleARN", (params["RoleARN"] ?? '').toString());
     if ("OnFailure" in params) body.append(prefix+"OnFailure", (params["OnFailure"] ?? '').toString());
     if ("StackPolicyBody" in params) body.append(prefix+"StackPolicyBody", (params["StackPolicyBody"] ?? '').toString());
     if ("StackPolicyURL" in params) body.append(prefix+"StackPolicyURL", (params["StackPolicyURL"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     if ("ClientRequestToken" in params) body.append(prefix+"ClientRequestToken", (params["ClientRequestToken"] ?? '').toString());
     if ("EnableTerminationProtection" in params) body.append(prefix+"EnableTerminationProtection", (params["EnableTerminationProtection"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateStack",
     });
-    const xml = readXmlResult(await resp.text(), "CreateStackResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateStackResult");
     return xml.strings({
       optional: {"StackId":true},
     });
@@ -129,17 +129,17 @@ export default class CloudFormation {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"StackSetName", (params["StackSetName"] ?? '').toString());
-    if (params["Accounts"]) prt.appendList(body, prefix+"Accounts", params["Accounts"], {"entryPrefix":".member."})
+    if (params["Accounts"]) qsP.appendList(body, prefix+"Accounts", params["Accounts"], {"entryPrefix":".member."})
     if (params["DeploymentTargets"] != null) DeploymentTargets_Serialize(body, prefix+"DeploymentTargets", params["DeploymentTargets"]);
-    if (params["Regions"]) prt.appendList(body, prefix+"Regions", params["Regions"], {"entryPrefix":".member."})
-    if (params["ParameterOverrides"]) prt.appendList(body, prefix+"ParameterOverrides", params["ParameterOverrides"], {"appender":Parameter_Serialize,"entryPrefix":".member."})
+    if (params["Regions"]) qsP.appendList(body, prefix+"Regions", params["Regions"], {"entryPrefix":".member."})
+    if (params["ParameterOverrides"]) qsP.appendList(body, prefix+"ParameterOverrides", params["ParameterOverrides"], {"appender":Parameter_Serialize,"entryPrefix":".member."})
     if (params["OperationPreferences"] != null) StackSetOperationPreferences_Serialize(body, prefix+"OperationPreferences", params["OperationPreferences"]);
     body.append(prefix+"OperationId", (params["OperationId"] ?? generateIdemptToken()).toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateStackInstances",
     });
-    const xml = readXmlResult(await resp.text(), "CreateStackInstancesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateStackInstancesResult");
     return xml.strings({
       optional: {"OperationId":true},
     });
@@ -154,9 +154,9 @@ export default class CloudFormation {
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     if ("TemplateBody" in params) body.append(prefix+"TemplateBody", (params["TemplateBody"] ?? '').toString());
     if ("TemplateURL" in params) body.append(prefix+"TemplateURL", (params["TemplateURL"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".member."})
-    if (params["Capabilities"]) prt.appendList(body, prefix+"Capabilities", params["Capabilities"], {"entryPrefix":".member."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".member."})
+    if (params["Capabilities"]) qsP.appendList(body, prefix+"Capabilities", params["Capabilities"], {"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     if ("AdministrationRoleARN" in params) body.append(prefix+"AdministrationRoleARN", (params["AdministrationRoleARN"] ?? '').toString());
     if ("ExecutionRoleName" in params) body.append(prefix+"ExecutionRoleName", (params["ExecutionRoleName"] ?? '').toString());
     if ("PermissionModel" in params) body.append(prefix+"PermissionModel", (params["PermissionModel"] ?? '').toString());
@@ -166,7 +166,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "CreateStackSet",
     });
-    const xml = readXmlResult(await resp.text(), "CreateStackSetResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateStackSetResult");
     return xml.strings({
       optional: {"StackSetId":true},
     });
@@ -183,7 +183,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DeleteChangeSet",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteChangeSetResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteChangeSetResult");
     return {};
   }
 
@@ -193,7 +193,7 @@ export default class CloudFormation {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"StackName", (params["StackName"] ?? '').toString());
-    if (params["RetainResources"]) prt.appendList(body, prefix+"RetainResources", params["RetainResources"], {"entryPrefix":".member."})
+    if (params["RetainResources"]) qsP.appendList(body, prefix+"RetainResources", params["RetainResources"], {"entryPrefix":".member."})
     if ("RoleARN" in params) body.append(prefix+"RoleARN", (params["RoleARN"] ?? '').toString());
     if ("ClientRequestToken" in params) body.append(prefix+"ClientRequestToken", (params["ClientRequestToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
@@ -208,9 +208,9 @@ export default class CloudFormation {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"StackSetName", (params["StackSetName"] ?? '').toString());
-    if (params["Accounts"]) prt.appendList(body, prefix+"Accounts", params["Accounts"], {"entryPrefix":".member."})
+    if (params["Accounts"]) qsP.appendList(body, prefix+"Accounts", params["Accounts"], {"entryPrefix":".member."})
     if (params["DeploymentTargets"] != null) DeploymentTargets_Serialize(body, prefix+"DeploymentTargets", params["DeploymentTargets"]);
-    if (params["Regions"]) prt.appendList(body, prefix+"Regions", params["Regions"], {"entryPrefix":".member."})
+    if (params["Regions"]) qsP.appendList(body, prefix+"Regions", params["Regions"], {"entryPrefix":".member."})
     if (params["OperationPreferences"] != null) StackSetOperationPreferences_Serialize(body, prefix+"OperationPreferences", params["OperationPreferences"]);
     body.append(prefix+"RetainStacks", (params["RetainStacks"] ?? '').toString());
     body.append(prefix+"OperationId", (params["OperationId"] ?? generateIdemptToken()).toString());
@@ -218,7 +218,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DeleteStackInstances",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteStackInstancesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteStackInstancesResult");
     return xml.strings({
       optional: {"OperationId":true},
     });
@@ -234,7 +234,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DeleteStackSet",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteStackSetResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteStackSetResult");
     return {};
   }
 
@@ -251,7 +251,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DeregisterType",
     });
-    const xml = readXmlResult(await resp.text(), "DeregisterTypeResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeregisterTypeResult");
     return {};
   }
 
@@ -265,7 +265,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DescribeAccountLimits",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeAccountLimitsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeAccountLimitsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -286,13 +286,13 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DescribeChangeSet",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeChangeSetResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeChangeSetResult");
     return {
       ...xml.strings({
         optional: {"ChangeSetName":true,"ChangeSetId":true,"StackId":true,"StackName":true,"Description":true,"StatusReason":true,"NextToken":true},
       }),
       Parameters: xml.getList("Parameters", "member").map(Parameter_Parse),
-      CreationTime: xml.first("CreationTime", false, x => parseTimestamp(x.content)),
+      CreationTime: xml.first("CreationTime", false, x => xmlP.parseTimestamp(x.content)),
       ExecutionStatus: xml.first("ExecutionStatus", false, x => (x.content ?? '') as ExecutionStatus),
       Status: xml.first("Status", false, x => (x.content ?? '') as ChangeSetStatus),
       NotificationARNs: xml.getList("NotificationARNs", "member").map(x => x.content ?? ''),
@@ -313,7 +313,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DescribeStackDriftDetectionStatus",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeStackDriftDetectionStatusResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeStackDriftDetectionStatusResult");
     return {
       ...xml.strings({
         required: {"StackId":true,"StackDriftDetectionId":true},
@@ -322,7 +322,7 @@ export default class CloudFormation {
       StackDriftStatus: xml.first("StackDriftStatus", false, x => (x.content ?? '') as StackDriftStatus),
       DetectionStatus: xml.first("DetectionStatus", true, x => (x.content ?? '') as StackDriftDetectionStatus),
       DriftedStackResourceCount: xml.first("DriftedStackResourceCount", false, x => parseInt(x.content ?? '0')),
-      Timestamp: xml.first("Timestamp", true, x => parseTimestamp(x.content)),
+      Timestamp: xml.first("Timestamp", true, x => xmlP.parseTimestamp(x.content)),
     };
   }
 
@@ -337,7 +337,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DescribeStackEvents",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeStackEventsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeStackEventsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -358,7 +358,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DescribeStackInstance",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeStackInstanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeStackInstanceResult");
     return {
       StackInstance: xml.first("StackInstance", false, StackInstance_Parse),
     };
@@ -375,7 +375,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DescribeStackResource",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeStackResourceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeStackResourceResult");
     return {
       StackResourceDetail: xml.first("StackResourceDetail", false, StackResourceDetail_Parse),
     };
@@ -387,14 +387,14 @@ export default class CloudFormation {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"StackName", (params["StackName"] ?? '').toString());
-    if (params["StackResourceDriftStatusFilters"]) prt.appendList(body, prefix+"StackResourceDriftStatusFilters", params["StackResourceDriftStatusFilters"], {"entryPrefix":".member."})
+    if (params["StackResourceDriftStatusFilters"]) qsP.appendList(body, prefix+"StackResourceDriftStatusFilters", params["StackResourceDriftStatusFilters"], {"entryPrefix":".member."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStackResourceDrifts",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeStackResourceDriftsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeStackResourceDriftsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -415,7 +415,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DescribeStackResources",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeStackResourcesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeStackResourcesResult");
     return {
       StackResources: xml.getList("StackResources", "member").map(StackResource_Parse),
     };
@@ -431,7 +431,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DescribeStackSet",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeStackSetResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeStackSetResult");
     return {
       StackSet: xml.first("StackSet", false, StackSet_Parse),
     };
@@ -448,7 +448,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DescribeStackSetOperation",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeStackSetOperationResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeStackSetOperationResult");
     return {
       StackSetOperation: xml.first("StackSetOperation", false, StackSetOperation_Parse),
     };
@@ -465,7 +465,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DescribeStacks",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeStacksResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeStacksResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -487,7 +487,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DescribeType",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeTypeResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeTypeResult");
     return {
       ...xml.strings({
         optional: {"Arn":true,"TypeName":true,"DefaultVersionId":true,"Description":true,"Schema":true,"ExecutionRoleArn":true,"SourceUrl":true,"DocumentationUrl":true},
@@ -498,8 +498,8 @@ export default class CloudFormation {
       DeprecatedStatus: xml.first("DeprecatedStatus", false, x => (x.content ?? '') as DeprecatedStatus),
       LoggingConfig: xml.first("LoggingConfig", false, LoggingConfig_Parse),
       Visibility: xml.first("Visibility", false, x => (x.content ?? '') as Visibility),
-      LastUpdated: xml.first("LastUpdated", false, x => parseTimestamp(x.content)),
-      TimeCreated: xml.first("TimeCreated", false, x => parseTimestamp(x.content)),
+      LastUpdated: xml.first("LastUpdated", false, x => xmlP.parseTimestamp(x.content)),
+      TimeCreated: xml.first("TimeCreated", false, x => xmlP.parseTimestamp(x.content)),
     };
   }
 
@@ -513,7 +513,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DescribeTypeRegistration",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeTypeRegistrationResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeTypeRegistrationResult");
     return {
       ...xml.strings({
         optional: {"Description":true,"TypeArn":true,"TypeVersionArn":true},
@@ -528,12 +528,12 @@ export default class CloudFormation {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"StackName", (params["StackName"] ?? '').toString());
-    if (params["LogicalResourceIds"]) prt.appendList(body, prefix+"LogicalResourceIds", params["LogicalResourceIds"], {"entryPrefix":".member."})
+    if (params["LogicalResourceIds"]) qsP.appendList(body, prefix+"LogicalResourceIds", params["LogicalResourceIds"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectStackDrift",
     });
-    const xml = readXmlResult(await resp.text(), "DetectStackDriftResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DetectStackDriftResult");
     return xml.strings({
       required: {"StackDriftDetectionId":true},
     });
@@ -550,7 +550,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DetectStackResourceDrift",
     });
-    const xml = readXmlResult(await resp.text(), "DetectStackResourceDriftResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DetectStackResourceDriftResult");
     return {
       StackResourceDrift: xml.first("StackResourceDrift", true, StackResourceDrift_Parse),
     };
@@ -568,7 +568,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DetectStackSetDrift",
     });
-    const xml = readXmlResult(await resp.text(), "DetectStackSetDriftResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DetectStackSetDriftResult");
     return xml.strings({
       optional: {"OperationId":true},
     });
@@ -581,12 +581,12 @@ export default class CloudFormation {
     const prefix = '';
     if ("TemplateBody" in params) body.append(prefix+"TemplateBody", (params["TemplateBody"] ?? '').toString());
     if ("TemplateURL" in params) body.append(prefix+"TemplateURL", (params["TemplateURL"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".member."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EstimateTemplateCost",
     });
-    const xml = readXmlResult(await resp.text(), "EstimateTemplateCostResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "EstimateTemplateCostResult");
     return xml.strings({
       optional: {"Url":true},
     });
@@ -604,7 +604,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "ExecuteChangeSet",
     });
-    const xml = readXmlResult(await resp.text(), "ExecuteChangeSetResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ExecuteChangeSetResult");
     return {};
   }
 
@@ -618,7 +618,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "GetStackPolicy",
     });
-    const xml = readXmlResult(await resp.text(), "GetStackPolicyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetStackPolicyResult");
     return xml.strings({
       optional: {"StackPolicyBody":true},
     });
@@ -636,7 +636,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "GetTemplate",
     });
-    const xml = readXmlResult(await resp.text(), "GetTemplateResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetTemplateResult");
     return {
       ...xml.strings({
         optional: {"TemplateBody":true},
@@ -658,7 +658,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "GetTemplateSummary",
     });
-    const xml = readXmlResult(await resp.text(), "GetTemplateSummaryResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetTemplateSummaryResult");
     return {
       ...xml.strings({
         optional: {"Description":true,"CapabilitiesReason":true,"Version":true,"Metadata":true},
@@ -682,7 +682,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "ListChangeSets",
     });
-    const xml = readXmlResult(await resp.text(), "ListChangeSetsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListChangeSetsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -701,7 +701,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "ListExports",
     });
-    const xml = readXmlResult(await resp.text(), "ListExportsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListExportsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -721,7 +721,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "ListImports",
     });
-    const xml = readXmlResult(await resp.text(), "ListImportsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListImportsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -738,14 +738,14 @@ export default class CloudFormation {
     body.append(prefix+"StackSetName", (params["StackSetName"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":StackInstanceFilter_Serialize,"entryPrefix":".member."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":StackInstanceFilter_Serialize,"entryPrefix":".member."})
     if ("StackInstanceAccount" in params) body.append(prefix+"StackInstanceAccount", (params["StackInstanceAccount"] ?? '').toString());
     if ("StackInstanceRegion" in params) body.append(prefix+"StackInstanceRegion", (params["StackInstanceRegion"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListStackInstances",
     });
-    const xml = readXmlResult(await resp.text(), "ListStackInstancesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListStackInstancesResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -765,7 +765,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "ListStackResources",
     });
-    const xml = readXmlResult(await resp.text(), "ListStackResourcesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListStackResourcesResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -787,7 +787,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "ListStackSetOperationResults",
     });
-    const xml = readXmlResult(await resp.text(), "ListStackSetOperationResultsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListStackSetOperationResultsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -808,7 +808,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "ListStackSetOperations",
     });
-    const xml = readXmlResult(await resp.text(), "ListStackSetOperationsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListStackSetOperationsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -829,7 +829,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "ListStackSets",
     });
-    const xml = readXmlResult(await resp.text(), "ListStackSetsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListStackSetsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -844,12 +844,12 @@ export default class CloudFormation {
     const body = new URLSearchParams;
     const prefix = '';
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
-    if (params["StackStatusFilter"]) prt.appendList(body, prefix+"StackStatusFilter", params["StackStatusFilter"], {"entryPrefix":".member."})
+    if (params["StackStatusFilter"]) qsP.appendList(body, prefix+"StackStatusFilter", params["StackStatusFilter"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListStacks",
     });
-    const xml = readXmlResult(await resp.text(), "ListStacksResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListStacksResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -873,7 +873,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "ListTypeRegistrations",
     });
-    const xml = readXmlResult(await resp.text(), "ListTypeRegistrationsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListTypeRegistrationsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -897,7 +897,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "ListTypeVersions",
     });
-    const xml = readXmlResult(await resp.text(), "ListTypeVersionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListTypeVersionsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -920,7 +920,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "ListTypes",
     });
-    const xml = readXmlResult(await resp.text(), "ListTypesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListTypesResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -945,7 +945,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "RecordHandlerProgress",
     });
-    const xml = readXmlResult(await resp.text(), "RecordHandlerProgressResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RecordHandlerProgressResult");
     return {};
   }
 
@@ -964,7 +964,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "RegisterType",
     });
-    const xml = readXmlResult(await resp.text(), "RegisterTypeResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RegisterTypeResult");
     return xml.strings({
       optional: {"RegistrationToken":true},
     });
@@ -997,7 +997,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "SetTypeDefaultVersion",
     });
-    const xml = readXmlResult(await resp.text(), "SetTypeDefaultVersionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SetTypeDefaultVersionResult");
     return {};
   }
 
@@ -1027,7 +1027,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "StopStackSetOperation",
     });
-    const xml = readXmlResult(await resp.text(), "StopStackSetOperationResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "StopStackSetOperationResult");
     return {};
   }
 
@@ -1042,21 +1042,21 @@ export default class CloudFormation {
     if ("UsePreviousTemplate" in params) body.append(prefix+"UsePreviousTemplate", (params["UsePreviousTemplate"] ?? '').toString());
     if ("StackPolicyDuringUpdateBody" in params) body.append(prefix+"StackPolicyDuringUpdateBody", (params["StackPolicyDuringUpdateBody"] ?? '').toString());
     if ("StackPolicyDuringUpdateURL" in params) body.append(prefix+"StackPolicyDuringUpdateURL", (params["StackPolicyDuringUpdateURL"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".member."})
-    if (params["Capabilities"]) prt.appendList(body, prefix+"Capabilities", params["Capabilities"], {"entryPrefix":".member."})
-    if (params["ResourceTypes"]) prt.appendList(body, prefix+"ResourceTypes", params["ResourceTypes"], {"entryPrefix":".member."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".member."})
+    if (params["Capabilities"]) qsP.appendList(body, prefix+"Capabilities", params["Capabilities"], {"entryPrefix":".member."})
+    if (params["ResourceTypes"]) qsP.appendList(body, prefix+"ResourceTypes", params["ResourceTypes"], {"entryPrefix":".member."})
     if ("RoleARN" in params) body.append(prefix+"RoleARN", (params["RoleARN"] ?? '').toString());
     if (params["RollbackConfiguration"] != null) RollbackConfiguration_Serialize(body, prefix+"RollbackConfiguration", params["RollbackConfiguration"]);
     if ("StackPolicyBody" in params) body.append(prefix+"StackPolicyBody", (params["StackPolicyBody"] ?? '').toString());
     if ("StackPolicyURL" in params) body.append(prefix+"StackPolicyURL", (params["StackPolicyURL"] ?? '').toString());
-    if (params["NotificationARNs"]) prt.appendList(body, prefix+"NotificationARNs", params["NotificationARNs"], {"entryPrefix":".member."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["NotificationARNs"]) qsP.appendList(body, prefix+"NotificationARNs", params["NotificationARNs"], {"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     if ("ClientRequestToken" in params) body.append(prefix+"ClientRequestToken", (params["ClientRequestToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateStack",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateStackResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateStackResult");
     return xml.strings({
       optional: {"StackId":true},
     });
@@ -1068,17 +1068,17 @@ export default class CloudFormation {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"StackSetName", (params["StackSetName"] ?? '').toString());
-    if (params["Accounts"]) prt.appendList(body, prefix+"Accounts", params["Accounts"], {"entryPrefix":".member."})
+    if (params["Accounts"]) qsP.appendList(body, prefix+"Accounts", params["Accounts"], {"entryPrefix":".member."})
     if (params["DeploymentTargets"] != null) DeploymentTargets_Serialize(body, prefix+"DeploymentTargets", params["DeploymentTargets"]);
-    if (params["Regions"]) prt.appendList(body, prefix+"Regions", params["Regions"], {"entryPrefix":".member."})
-    if (params["ParameterOverrides"]) prt.appendList(body, prefix+"ParameterOverrides", params["ParameterOverrides"], {"appender":Parameter_Serialize,"entryPrefix":".member."})
+    if (params["Regions"]) qsP.appendList(body, prefix+"Regions", params["Regions"], {"entryPrefix":".member."})
+    if (params["ParameterOverrides"]) qsP.appendList(body, prefix+"ParameterOverrides", params["ParameterOverrides"], {"appender":Parameter_Serialize,"entryPrefix":".member."})
     if (params["OperationPreferences"] != null) StackSetOperationPreferences_Serialize(body, prefix+"OperationPreferences", params["OperationPreferences"]);
     body.append(prefix+"OperationId", (params["OperationId"] ?? generateIdemptToken()).toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateStackInstances",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateStackInstancesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateStackInstancesResult");
     return xml.strings({
       optional: {"OperationId":true},
     });
@@ -1094,9 +1094,9 @@ export default class CloudFormation {
     if ("TemplateBody" in params) body.append(prefix+"TemplateBody", (params["TemplateBody"] ?? '').toString());
     if ("TemplateURL" in params) body.append(prefix+"TemplateURL", (params["TemplateURL"] ?? '').toString());
     if ("UsePreviousTemplate" in params) body.append(prefix+"UsePreviousTemplate", (params["UsePreviousTemplate"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".member."})
-    if (params["Capabilities"]) prt.appendList(body, prefix+"Capabilities", params["Capabilities"], {"entryPrefix":".member."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".member."})
+    if (params["Capabilities"]) qsP.appendList(body, prefix+"Capabilities", params["Capabilities"], {"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     if (params["OperationPreferences"] != null) StackSetOperationPreferences_Serialize(body, prefix+"OperationPreferences", params["OperationPreferences"]);
     if ("AdministrationRoleARN" in params) body.append(prefix+"AdministrationRoleARN", (params["AdministrationRoleARN"] ?? '').toString());
     if ("ExecutionRoleName" in params) body.append(prefix+"ExecutionRoleName", (params["ExecutionRoleName"] ?? '').toString());
@@ -1104,13 +1104,13 @@ export default class CloudFormation {
     if ("PermissionModel" in params) body.append(prefix+"PermissionModel", (params["PermissionModel"] ?? '').toString());
     if (params["AutoDeployment"] != null) AutoDeployment_Serialize(body, prefix+"AutoDeployment", params["AutoDeployment"]);
     body.append(prefix+"OperationId", (params["OperationId"] ?? generateIdemptToken()).toString());
-    if (params["Accounts"]) prt.appendList(body, prefix+"Accounts", params["Accounts"], {"entryPrefix":".member."})
-    if (params["Regions"]) prt.appendList(body, prefix+"Regions", params["Regions"], {"entryPrefix":".member."})
+    if (params["Accounts"]) qsP.appendList(body, prefix+"Accounts", params["Accounts"], {"entryPrefix":".member."})
+    if (params["Regions"]) qsP.appendList(body, prefix+"Regions", params["Regions"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateStackSet",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateStackSetResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateStackSetResult");
     return xml.strings({
       optional: {"OperationId":true},
     });
@@ -1127,7 +1127,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "UpdateTerminationProtection",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateTerminationProtectionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateTerminationProtectionResult");
     return xml.strings({
       optional: {"StackId":true},
     });
@@ -1144,7 +1144,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "ValidateTemplate",
     });
-    const xml = readXmlResult(await resp.text(), "ValidateTemplateResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ValidateTemplateResult");
     return {
       ...xml.strings({
         optional: {"Description":true,"CapabilitiesReason":true},
@@ -1185,7 +1185,7 @@ export default class CloudFormation {
     for (let i = 0; i < 120; i++) {
       try {
         const resp = await this.describeStacks(params);
-        const field = resp["Stacks"].flatMap(x => x["StackStatus"]);
+        const field = resp?.Stacks?.flatMap(x => x?.StackStatus);
         if (field.every(x => x === "CREATE_COMPLETE")) return resp;
         if (field.some(x => x === "CREATE_FAILED")) throw new Error(errMessage);
         if (field.some(x => x === "DELETE_COMPLETE")) throw new Error(errMessage);
@@ -1212,7 +1212,7 @@ export default class CloudFormation {
     for (let i = 0; i < 120; i++) {
       try {
         const resp = await this.describeStacks(params);
-        const field = resp["Stacks"].flatMap(x => x["StackStatus"]);
+        const field = resp?.Stacks?.flatMap(x => x?.StackStatus);
         if (field.every(x => x === "DELETE_COMPLETE")) return resp;
         if (field.some(x => x === "DELETE_FAILED")) throw new Error(errMessage);
         if (field.some(x => x === "CREATE_FAILED")) throw new Error(errMessage);
@@ -1240,7 +1240,7 @@ export default class CloudFormation {
     for (let i = 0; i < 120; i++) {
       try {
         const resp = await this.describeStacks(params);
-        const field = resp["Stacks"].flatMap(x => x["StackStatus"]);
+        const field = resp?.Stacks?.flatMap(x => x?.StackStatus);
         if (field.every(x => x === "UPDATE_COMPLETE")) return resp;
         // BROKEN: if (field.some(x => x === "UPDATE_FAILED")) throw new Error(errMessage);
         if (field.some(x => x === "UPDATE_ROLLBACK_FAILED")) throw new Error(errMessage);
@@ -1265,7 +1265,7 @@ export default class CloudFormation {
     for (let i = 0; i < 120; i++) {
       try {
         const resp = await this.describeStacks(params);
-        const field = resp["Stacks"].flatMap(x => x["StackStatus"]);
+        const field = resp?.Stacks?.flatMap(x => x?.StackStatus);
         if (field.every(x => x === "IMPORT_COMPLETE")) return resp;
         if (field.some(x => x === "ROLLBACK_COMPLETE")) throw new Error(errMessage);
         if (field.some(x => x === "ROLLBACK_FAILED")) throw new Error(errMessage);
@@ -1292,7 +1292,7 @@ export default class CloudFormation {
     for (let i = 0; i < 120; i++) {
       try {
         const resp = await this.describeStacks(params);
-        const field = resp["Stacks"].flatMap(x => x["StackStatus"]);
+        const field = resp?.Stacks?.flatMap(x => x?.StackStatus);
         if (field.every(x => x === "UPDATE_ROLLBACK_COMPLETE")) return resp;
         // BROKEN: if (field.some(x => x === "UPDATE_FAILED")) throw new Error(errMessage);
         if (field.some(x => x === "UPDATE_ROLLBACK_FAILED")) throw new Error(errMessage);
@@ -1317,7 +1317,7 @@ export default class CloudFormation {
     for (let i = 0; i < 120; i++) {
       try {
         const resp = await this.describeChangeSet(params);
-        const field = resp["Status"];
+        const field = resp?.Status;
         if (field === "CREATE_COMPLETE") return resp;
         if (field === "FAILED") throw new Error(errMessage);
       } catch (err) {
@@ -1339,7 +1339,7 @@ export default class CloudFormation {
     const errMessage = 'ResourceNotReady: Resource is not in the state TypeRegistrationComplete';
     for (let i = 0; i < 120; i++) {
       const resp = await this.describeTypeRegistration(params);
-      const field = resp["ProgressStatus"];
+      const field = resp?.ProgressStatus;
       if (field === "COMPLETE") return resp;
       if (field === "FAILED") throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 30000));
@@ -2136,7 +2136,7 @@ function Parameter_Serialize(body: URLSearchParams, prefix: string, params: Para
     if ("UsePreviousValue" in params) body.append(prefix+".UsePreviousValue", (params["UsePreviousValue"] ?? '').toString());
     if ("ResolvedValue" in params) body.append(prefix+".ResolvedValue", (params["ResolvedValue"] ?? '').toString());
 }
-function Parameter_Parse(node: XmlNode): Parameter {
+function Parameter_Parse(node: xmlP.XmlNode): Parameter {
   return {
     ...node.strings({
       optional: {"ParameterKey":true,"ParameterValue":true,"ResolvedValue":true},
@@ -2150,9 +2150,7 @@ export type Capability =
 | "CAPABILITY_IAM"
 | "CAPABILITY_NAMED_IAM"
 | "CAPABILITY_AUTO_EXPAND"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface RollbackConfiguration {
@@ -2160,10 +2158,10 @@ export interface RollbackConfiguration {
   MonitoringTimeInMinutes?: number | null;
 }
 function RollbackConfiguration_Serialize(body: URLSearchParams, prefix: string, params: RollbackConfiguration) {
-    if (params["RollbackTriggers"]) prt.appendList(body, prefix+".RollbackTriggers", params["RollbackTriggers"], {"appender":RollbackTrigger_Serialize,"entryPrefix":".member."})
+    if (params["RollbackTriggers"]) qsP.appendList(body, prefix+".RollbackTriggers", params["RollbackTriggers"], {"appender":RollbackTrigger_Serialize,"entryPrefix":".member."})
     if ("MonitoringTimeInMinutes" in params) body.append(prefix+".MonitoringTimeInMinutes", (params["MonitoringTimeInMinutes"] ?? '').toString());
 }
-function RollbackConfiguration_Parse(node: XmlNode): RollbackConfiguration {
+function RollbackConfiguration_Parse(node: xmlP.XmlNode): RollbackConfiguration {
   return {
     RollbackTriggers: node.getList("RollbackTriggers", "member").map(RollbackTrigger_Parse),
     MonitoringTimeInMinutes: node.first("MonitoringTimeInMinutes", false, x => parseInt(x.content ?? '0')),
@@ -2179,7 +2177,7 @@ function RollbackTrigger_Serialize(body: URLSearchParams, prefix: string, params
     body.append(prefix+".Arn", (params["Arn"] ?? '').toString());
     body.append(prefix+".Type", (params["Type"] ?? '').toString());
 }
-function RollbackTrigger_Parse(node: XmlNode): RollbackTrigger {
+function RollbackTrigger_Parse(node: xmlP.XmlNode): RollbackTrigger {
   return node.strings({
     required: {"Arn":true,"Type":true},
   });
@@ -2194,7 +2192,7 @@ function Tag_Serialize(body: URLSearchParams, prefix: string, params: Tag) {
     body.append(prefix+".Key", (params["Key"] ?? '').toString());
     body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function Tag_Parse(node: XmlNode): Tag {
+function Tag_Parse(node: xmlP.XmlNode): Tag {
   return node.strings({
     required: {"Key":true,"Value":true},
   });
@@ -2205,19 +2203,18 @@ export type ChangeSetType =
 | "CREATE"
 | "UPDATE"
 | "IMPORT"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ResourceToImport {
   ResourceType: string;
   LogicalResourceId: string;
-  ResourceIdentifier: { [key: string]: string };
+  ResourceIdentifier: { [key: string]: string | null | undefined };
 }
 function ResourceToImport_Serialize(body: URLSearchParams, prefix: string, params: ResourceToImport) {
     body.append(prefix+".ResourceType", (params["ResourceType"] ?? '').toString());
     body.append(prefix+".LogicalResourceId", (params["LogicalResourceId"] ?? '').toString());
-    if (params["ResourceIdentifier"]) prt.appendMap(body, prefix+".ResourceIdentifier", params["ResourceIdentifier"], {"entryPrefix":".entry."})
+    if (params["ResourceIdentifier"]) qsP.appendMap(body, prefix+".ResourceIdentifier", params["ResourceIdentifier"], {"entryPrefix":".entry."})
 }
 
 // refs: 1 - tags: input, named, enum
@@ -2225,8 +2222,7 @@ export type OnFailure =
 | "DO_NOTHING"
 | "ROLLBACK"
 | "DELETE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface DeploymentTargets {
@@ -2234,10 +2230,10 @@ export interface DeploymentTargets {
   OrganizationalUnitIds: string[];
 }
 function DeploymentTargets_Serialize(body: URLSearchParams, prefix: string, params: DeploymentTargets) {
-    if (params["Accounts"]) prt.appendList(body, prefix+".Accounts", params["Accounts"], {"entryPrefix":".member."})
-    if (params["OrganizationalUnitIds"]) prt.appendList(body, prefix+".OrganizationalUnitIds", params["OrganizationalUnitIds"], {"entryPrefix":".member."})
+    if (params["Accounts"]) qsP.appendList(body, prefix+".Accounts", params["Accounts"], {"entryPrefix":".member."})
+    if (params["OrganizationalUnitIds"]) qsP.appendList(body, prefix+".OrganizationalUnitIds", params["OrganizationalUnitIds"], {"entryPrefix":".member."})
 }
-function DeploymentTargets_Parse(node: XmlNode): DeploymentTargets {
+function DeploymentTargets_Parse(node: xmlP.XmlNode): DeploymentTargets {
   return {
     Accounts: node.getList("Accounts", "member").map(x => x.content ?? ''),
     OrganizationalUnitIds: node.getList("OrganizationalUnitIds", "member").map(x => x.content ?? ''),
@@ -2253,13 +2249,13 @@ export interface StackSetOperationPreferences {
   MaxConcurrentPercentage?: number | null;
 }
 function StackSetOperationPreferences_Serialize(body: URLSearchParams, prefix: string, params: StackSetOperationPreferences) {
-    if (params["RegionOrder"]) prt.appendList(body, prefix+".RegionOrder", params["RegionOrder"], {"entryPrefix":".member."})
+    if (params["RegionOrder"]) qsP.appendList(body, prefix+".RegionOrder", params["RegionOrder"], {"entryPrefix":".member."})
     if ("FailureToleranceCount" in params) body.append(prefix+".FailureToleranceCount", (params["FailureToleranceCount"] ?? '').toString());
     if ("FailureTolerancePercentage" in params) body.append(prefix+".FailureTolerancePercentage", (params["FailureTolerancePercentage"] ?? '').toString());
     if ("MaxConcurrentCount" in params) body.append(prefix+".MaxConcurrentCount", (params["MaxConcurrentCount"] ?? '').toString());
     if ("MaxConcurrentPercentage" in params) body.append(prefix+".MaxConcurrentPercentage", (params["MaxConcurrentPercentage"] ?? '').toString());
 }
-function StackSetOperationPreferences_Parse(node: XmlNode): StackSetOperationPreferences {
+function StackSetOperationPreferences_Parse(node: xmlP.XmlNode): StackSetOperationPreferences {
   return {
     RegionOrder: node.getList("RegionOrder", "member").map(x => x.content ?? ''),
     FailureToleranceCount: node.first("FailureToleranceCount", false, x => parseInt(x.content ?? '0')),
@@ -2273,9 +2269,7 @@ function StackSetOperationPreferences_Parse(node: XmlNode): StackSetOperationPre
 export type PermissionModels =
 | "SERVICE_MANAGED"
 | "SELF_MANAGED"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface AutoDeployment {
@@ -2286,7 +2280,7 @@ function AutoDeployment_Serialize(body: URLSearchParams, prefix: string, params:
     if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
     if ("RetainStacksOnAccountRemoval" in params) body.append(prefix+".RetainStacksOnAccountRemoval", (params["RetainStacksOnAccountRemoval"] ?? '').toString());
 }
-function AutoDeployment_Parse(node: XmlNode): AutoDeployment {
+function AutoDeployment_Parse(node: xmlP.XmlNode): AutoDeployment {
   return {
     Enabled: node.first("Enabled", false, x => x.content === 'true'),
     RetainStacksOnAccountRemoval: node.first("RetainStacksOnAccountRemoval", false, x => x.content === 'true'),
@@ -2296,9 +2290,7 @@ function AutoDeployment_Parse(node: XmlNode): AutoDeployment {
 // refs: 9 - tags: input, named, enum, output
 export type RegistryType =
 | "RESOURCE"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, enum, output
 export type StackResourceDriftStatus =
@@ -2306,17 +2298,13 @@ export type StackResourceDriftStatus =
 | "MODIFIED"
 | "DELETED"
 | "NOT_CHECKED"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type TemplateStage =
 | "Original"
 | "Processed"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface StackInstanceFilter {
@@ -2331,16 +2319,13 @@ function StackInstanceFilter_Serialize(body: URLSearchParams, prefix: string, pa
 // refs: 1 - tags: input, named, enum
 export type StackInstanceFilterName =
 | "DETAILED_STATUS"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type StackSetStatus =
 | "ACTIVE"
 | "DELETED"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type StackStatus =
@@ -2366,43 +2351,33 @@ export type StackStatus =
 | "IMPORT_ROLLBACK_IN_PROGRESS"
 | "IMPORT_ROLLBACK_FAILED"
 | "IMPORT_ROLLBACK_COMPLETE"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type RegistrationStatus =
 | "COMPLETE"
 | "IN_PROGRESS"
 | "FAILED"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type DeprecatedStatus =
 | "LIVE"
 | "DEPRECATED"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type Visibility =
 | "PUBLIC"
 | "PRIVATE"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type ProvisioningType =
 | "NON_PROVISIONABLE"
 | "IMMUTABLE"
 | "FULLY_MUTABLE"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
 export type OperationStatus =
@@ -2410,8 +2385,7 @@ export type OperationStatus =
 | "IN_PROGRESS"
 | "SUCCESS"
 | "FAILED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type HandlerErrorCode =
@@ -2429,8 +2403,7 @@ export type HandlerErrorCode =
 | "ServiceInternalError"
 | "NetworkFailure"
 | "InternalFailure"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface LoggingConfig {
@@ -2441,7 +2414,7 @@ function LoggingConfig_Serialize(body: URLSearchParams, prefix: string, params: 
     body.append(prefix+".LogRoleArn", (params["LogRoleArn"] ?? '').toString());
     body.append(prefix+".LogGroupName", (params["LogGroupName"] ?? '').toString());
 }
-function LoggingConfig_Parse(node: XmlNode): LoggingConfig {
+function LoggingConfig_Parse(node: xmlP.XmlNode): LoggingConfig {
   return node.strings({
     required: {"LogRoleArn":true,"LogGroupName":true},
   });
@@ -2451,15 +2424,14 @@ function LoggingConfig_Parse(node: XmlNode): LoggingConfig {
 export type ResourceSignalStatus =
 | "SUCCESS"
 | "FAILURE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AccountLimit {
   Name?: string | null;
   Value?: number | null;
 }
-function AccountLimit_Parse(node: XmlNode): AccountLimit {
+function AccountLimit_Parse(node: xmlP.XmlNode): AccountLimit {
   return {
     ...node.strings({
       optional: {"Name":true},
@@ -2476,8 +2448,7 @@ export type ExecutionStatus =
 | "EXECUTE_COMPLETE"
 | "EXECUTE_FAILED"
 | "OBSOLETE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type ChangeSetStatus =
@@ -2486,15 +2457,14 @@ export type ChangeSetStatus =
 | "CREATE_COMPLETE"
 | "DELETE_COMPLETE"
 | "FAILED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Change {
   Type?: ChangeType | null;
   ResourceChange?: ResourceChange | null;
 }
-function Change_Parse(node: XmlNode): Change {
+function Change_Parse(node: xmlP.XmlNode): Change {
   return {
     Type: node.first("Type", false, x => (x.content ?? '') as ChangeType),
     ResourceChange: node.first("ResourceChange", false, ResourceChange_Parse),
@@ -2504,8 +2474,7 @@ function Change_Parse(node: XmlNode): Change {
 // refs: 1 - tags: output, named, enum
 export type ChangeType =
 | "Resource"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ResourceChange {
@@ -2517,7 +2486,7 @@ export interface ResourceChange {
   Scope: ResourceAttribute[];
   Details: ResourceChangeDetail[];
 }
-function ResourceChange_Parse(node: XmlNode): ResourceChange {
+function ResourceChange_Parse(node: xmlP.XmlNode): ResourceChange {
   return {
     ...node.strings({
       optional: {"LogicalResourceId":true,"PhysicalResourceId":true,"ResourceType":true},
@@ -2535,16 +2504,14 @@ export type ChangeAction =
 | "Modify"
 | "Remove"
 | "Import"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type Replacement =
 | "True"
 | "False"
 | "Conditional"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type ResourceAttribute =
@@ -2554,8 +2521,7 @@ export type ResourceAttribute =
 | "UpdatePolicy"
 | "DeletionPolicy"
 | "Tags"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ResourceChangeDetail {
@@ -2564,7 +2530,7 @@ export interface ResourceChangeDetail {
   ChangeSource?: ChangeSource | null;
   CausingEntity?: string | null;
 }
-function ResourceChangeDetail_Parse(node: XmlNode): ResourceChangeDetail {
+function ResourceChangeDetail_Parse(node: xmlP.XmlNode): ResourceChangeDetail {
   return {
     ...node.strings({
       optional: {"CausingEntity":true},
@@ -2581,7 +2547,7 @@ export interface ResourceTargetDefinition {
   Name?: string | null;
   RequiresRecreation?: RequiresRecreation | null;
 }
-function ResourceTargetDefinition_Parse(node: XmlNode): ResourceTargetDefinition {
+function ResourceTargetDefinition_Parse(node: xmlP.XmlNode): ResourceTargetDefinition {
   return {
     ...node.strings({
       optional: {"Name":true},
@@ -2596,15 +2562,13 @@ export type RequiresRecreation =
 | "Never"
 | "Conditionally"
 | "Always"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type EvaluationType =
 | "Static"
 | "Dynamic"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type ChangeSource =
@@ -2613,8 +2577,7 @@ export type ChangeSource =
 | "ResourceAttribute"
 | "DirectModification"
 | "Automatic"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: output, named, enum
 export type StackDriftStatus =
@@ -2622,16 +2585,14 @@ export type StackDriftStatus =
 | "IN_SYNC"
 | "UNKNOWN"
 | "NOT_CHECKED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type StackDriftDetectionStatus =
 | "DETECTION_IN_PROGRESS"
 | "DETECTION_FAILED"
 | "DETECTION_COMPLETE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface StackEvent {
@@ -2647,13 +2608,13 @@ export interface StackEvent {
   ResourceProperties?: string | null;
   ClientRequestToken?: string | null;
 }
-function StackEvent_Parse(node: XmlNode): StackEvent {
+function StackEvent_Parse(node: xmlP.XmlNode): StackEvent {
   return {
     ...node.strings({
       required: {"StackId":true,"EventId":true,"StackName":true},
       optional: {"LogicalResourceId":true,"PhysicalResourceId":true,"ResourceType":true,"ResourceStatusReason":true,"ResourceProperties":true,"ClientRequestToken":true},
     }),
-    Timestamp: node.first("Timestamp", true, x => parseTimestamp(x.content)),
+    Timestamp: node.first("Timestamp", true, x => xmlP.parseTimestamp(x.content)),
     ResourceStatus: node.first("ResourceStatus", false, x => (x.content ?? '') as ResourceStatus),
   };
 }
@@ -2676,8 +2637,7 @@ export type ResourceStatus =
 | "IMPORT_ROLLBACK_IN_PROGRESS"
 | "IMPORT_ROLLBACK_FAILED"
 | "IMPORT_ROLLBACK_COMPLETE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface StackInstance {
@@ -2693,7 +2653,7 @@ export interface StackInstance {
   DriftStatus?: StackDriftStatus | null;
   LastDriftCheckTimestamp?: Date | number | null;
 }
-function StackInstance_Parse(node: XmlNode): StackInstance {
+function StackInstance_Parse(node: xmlP.XmlNode): StackInstance {
   return {
     ...node.strings({
       optional: {"StackSetId":true,"Region":true,"Account":true,"StackId":true,"StatusReason":true,"OrganizationalUnitId":true},
@@ -2702,7 +2662,7 @@ function StackInstance_Parse(node: XmlNode): StackInstance {
     Status: node.first("Status", false, x => (x.content ?? '') as StackInstanceStatus),
     StackInstanceStatus: node.first("StackInstanceStatus", false, StackInstanceComprehensiveStatus_Parse),
     DriftStatus: node.first("DriftStatus", false, x => (x.content ?? '') as StackDriftStatus),
-    LastDriftCheckTimestamp: node.first("LastDriftCheckTimestamp", false, x => parseTimestamp(x.content)),
+    LastDriftCheckTimestamp: node.first("LastDriftCheckTimestamp", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -2711,14 +2671,13 @@ export type StackInstanceStatus =
 | "CURRENT"
 | "OUTDATED"
 | "INOPERABLE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface StackInstanceComprehensiveStatus {
   DetailedStatus?: StackInstanceDetailedStatus | null;
 }
-function StackInstanceComprehensiveStatus_Parse(node: XmlNode): StackInstanceComprehensiveStatus {
+function StackInstanceComprehensiveStatus_Parse(node: xmlP.XmlNode): StackInstanceComprehensiveStatus {
   return {
     DetailedStatus: node.first("DetailedStatus", false, x => (x.content ?? '') as StackInstanceDetailedStatus),
   };
@@ -2732,8 +2691,7 @@ export type StackInstanceDetailedStatus =
 | "FAILED"
 | "CANCELLED"
 | "INOPERABLE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface StackResourceDetail {
@@ -2749,13 +2707,13 @@ export interface StackResourceDetail {
   Metadata?: string | null;
   DriftInformation?: StackResourceDriftInformation | null;
 }
-function StackResourceDetail_Parse(node: XmlNode): StackResourceDetail {
+function StackResourceDetail_Parse(node: xmlP.XmlNode): StackResourceDetail {
   return {
     ...node.strings({
       required: {"LogicalResourceId":true,"ResourceType":true},
       optional: {"StackName":true,"StackId":true,"PhysicalResourceId":true,"ResourceStatusReason":true,"Description":true,"Metadata":true},
     }),
-    LastUpdatedTimestamp: node.first("LastUpdatedTimestamp", true, x => parseTimestamp(x.content)),
+    LastUpdatedTimestamp: node.first("LastUpdatedTimestamp", true, x => xmlP.parseTimestamp(x.content)),
     ResourceStatus: node.first("ResourceStatus", true, x => (x.content ?? '') as ResourceStatus),
     DriftInformation: node.first("DriftInformation", false, StackResourceDriftInformation_Parse),
   };
@@ -2766,10 +2724,10 @@ export interface StackResourceDriftInformation {
   StackResourceDriftStatus: StackResourceDriftStatus;
   LastCheckTimestamp?: Date | number | null;
 }
-function StackResourceDriftInformation_Parse(node: XmlNode): StackResourceDriftInformation {
+function StackResourceDriftInformation_Parse(node: xmlP.XmlNode): StackResourceDriftInformation {
   return {
     StackResourceDriftStatus: node.first("StackResourceDriftStatus", true, x => (x.content ?? '') as StackResourceDriftStatus),
-    LastCheckTimestamp: node.first("LastCheckTimestamp", false, x => parseTimestamp(x.content)),
+    LastCheckTimestamp: node.first("LastCheckTimestamp", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -2786,7 +2744,7 @@ export interface StackResourceDrift {
   StackResourceDriftStatus: StackResourceDriftStatus;
   Timestamp: Date | number;
 }
-function StackResourceDrift_Parse(node: XmlNode): StackResourceDrift {
+function StackResourceDrift_Parse(node: xmlP.XmlNode): StackResourceDrift {
   return {
     ...node.strings({
       required: {"StackId":true,"LogicalResourceId":true,"ResourceType":true},
@@ -2795,7 +2753,7 @@ function StackResourceDrift_Parse(node: XmlNode): StackResourceDrift {
     PhysicalResourceIdContext: node.getList("PhysicalResourceIdContext", "member").map(PhysicalResourceIdContextKeyValuePair_Parse),
     PropertyDifferences: node.getList("PropertyDifferences", "member").map(PropertyDifference_Parse),
     StackResourceDriftStatus: node.first("StackResourceDriftStatus", true, x => (x.content ?? '') as StackResourceDriftStatus),
-    Timestamp: node.first("Timestamp", true, x => parseTimestamp(x.content)),
+    Timestamp: node.first("Timestamp", true, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -2804,7 +2762,7 @@ export interface PhysicalResourceIdContextKeyValuePair {
   Key: string;
   Value: string;
 }
-function PhysicalResourceIdContextKeyValuePair_Parse(node: XmlNode): PhysicalResourceIdContextKeyValuePair {
+function PhysicalResourceIdContextKeyValuePair_Parse(node: xmlP.XmlNode): PhysicalResourceIdContextKeyValuePair {
   return node.strings({
     required: {"Key":true,"Value":true},
   });
@@ -2817,7 +2775,7 @@ export interface PropertyDifference {
   ActualValue: string;
   DifferenceType: DifferenceType;
 }
-function PropertyDifference_Parse(node: XmlNode): PropertyDifference {
+function PropertyDifference_Parse(node: xmlP.XmlNode): PropertyDifference {
   return {
     ...node.strings({
       required: {"PropertyPath":true,"ExpectedValue":true,"ActualValue":true},
@@ -2831,8 +2789,7 @@ export type DifferenceType =
 | "ADD"
 | "REMOVE"
 | "NOT_EQUAL"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface StackResource {
@@ -2847,13 +2804,13 @@ export interface StackResource {
   Description?: string | null;
   DriftInformation?: StackResourceDriftInformation | null;
 }
-function StackResource_Parse(node: XmlNode): StackResource {
+function StackResource_Parse(node: xmlP.XmlNode): StackResource {
   return {
     ...node.strings({
       required: {"LogicalResourceId":true,"ResourceType":true},
       optional: {"StackName":true,"StackId":true,"PhysicalResourceId":true,"ResourceStatusReason":true,"Description":true},
     }),
-    Timestamp: node.first("Timestamp", true, x => parseTimestamp(x.content)),
+    Timestamp: node.first("Timestamp", true, x => xmlP.parseTimestamp(x.content)),
     ResourceStatus: node.first("ResourceStatus", true, x => (x.content ?? '') as ResourceStatus),
     DriftInformation: node.first("DriftInformation", false, StackResourceDriftInformation_Parse),
   };
@@ -2877,7 +2834,7 @@ export interface StackSet {
   PermissionModel?: PermissionModels | null;
   OrganizationalUnitIds: string[];
 }
-function StackSet_Parse(node: XmlNode): StackSet {
+function StackSet_Parse(node: xmlP.XmlNode): StackSet {
   return {
     ...node.strings({
       optional: {"StackSetName":true,"StackSetId":true,"Description":true,"TemplateBody":true,"StackSetARN":true,"AdministrationRoleARN":true,"ExecutionRoleName":true},
@@ -2904,11 +2861,11 @@ export interface StackSetDriftDetectionDetails {
   InProgressStackInstancesCount?: number | null;
   FailedStackInstancesCount?: number | null;
 }
-function StackSetDriftDetectionDetails_Parse(node: XmlNode): StackSetDriftDetectionDetails {
+function StackSetDriftDetectionDetails_Parse(node: xmlP.XmlNode): StackSetDriftDetectionDetails {
   return {
     DriftStatus: node.first("DriftStatus", false, x => (x.content ?? '') as StackSetDriftStatus),
     DriftDetectionStatus: node.first("DriftDetectionStatus", false, x => (x.content ?? '') as StackSetDriftDetectionStatus),
-    LastDriftCheckTimestamp: node.first("LastDriftCheckTimestamp", false, x => parseTimestamp(x.content)),
+    LastDriftCheckTimestamp: node.first("LastDriftCheckTimestamp", false, x => xmlP.parseTimestamp(x.content)),
     TotalStackInstancesCount: node.first("TotalStackInstancesCount", false, x => parseInt(x.content ?? '0')),
     DriftedStackInstancesCount: node.first("DriftedStackInstancesCount", false, x => parseInt(x.content ?? '0')),
     InSyncStackInstancesCount: node.first("InSyncStackInstancesCount", false, x => parseInt(x.content ?? '0')),
@@ -2922,8 +2879,7 @@ export type StackSetDriftStatus =
 | "DRIFTED"
 | "IN_SYNC"
 | "NOT_CHECKED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type StackSetDriftDetectionStatus =
@@ -2932,8 +2888,7 @@ export type StackSetDriftDetectionStatus =
 | "PARTIAL_SUCCESS"
 | "IN_PROGRESS"
 | "STOPPED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface StackSetOperation {
@@ -2950,7 +2905,7 @@ export interface StackSetOperation {
   DeploymentTargets?: DeploymentTargets | null;
   StackSetDriftDetectionDetails?: StackSetDriftDetectionDetails | null;
 }
-function StackSetOperation_Parse(node: XmlNode): StackSetOperation {
+function StackSetOperation_Parse(node: xmlP.XmlNode): StackSetOperation {
   return {
     ...node.strings({
       optional: {"OperationId":true,"StackSetId":true,"AdministrationRoleARN":true,"ExecutionRoleName":true},
@@ -2959,8 +2914,8 @@ function StackSetOperation_Parse(node: XmlNode): StackSetOperation {
     Status: node.first("Status", false, x => (x.content ?? '') as StackSetOperationStatus),
     OperationPreferences: node.first("OperationPreferences", false, StackSetOperationPreferences_Parse),
     RetainStacks: node.first("RetainStacks", false, x => x.content === 'true'),
-    CreationTimestamp: node.first("CreationTimestamp", false, x => parseTimestamp(x.content)),
-    EndTimestamp: node.first("EndTimestamp", false, x => parseTimestamp(x.content)),
+    CreationTimestamp: node.first("CreationTimestamp", false, x => xmlP.parseTimestamp(x.content)),
+    EndTimestamp: node.first("EndTimestamp", false, x => xmlP.parseTimestamp(x.content)),
     DeploymentTargets: node.first("DeploymentTargets", false, DeploymentTargets_Parse),
     StackSetDriftDetectionDetails: node.first("StackSetDriftDetectionDetails", false, StackSetDriftDetectionDetails_Parse),
   };
@@ -2972,8 +2927,7 @@ export type StackSetOperationAction =
 | "UPDATE"
 | "DELETE"
 | "DETECT_DRIFT"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type StackSetOperationStatus =
@@ -2983,8 +2937,7 @@ export type StackSetOperationStatus =
 | "STOPPING"
 | "STOPPED"
 | "QUEUED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Stack {
@@ -3011,16 +2964,16 @@ export interface Stack {
   RootId?: string | null;
   DriftInformation?: StackDriftInformation | null;
 }
-function Stack_Parse(node: XmlNode): Stack {
+function Stack_Parse(node: xmlP.XmlNode): Stack {
   return {
     ...node.strings({
       required: {"StackName":true},
       optional: {"StackId":true,"ChangeSetId":true,"Description":true,"StackStatusReason":true,"RoleARN":true,"ParentId":true,"RootId":true},
     }),
     Parameters: node.getList("Parameters", "member").map(Parameter_Parse),
-    CreationTime: node.first("CreationTime", true, x => parseTimestamp(x.content)),
-    DeletionTime: node.first("DeletionTime", false, x => parseTimestamp(x.content)),
-    LastUpdatedTime: node.first("LastUpdatedTime", false, x => parseTimestamp(x.content)),
+    CreationTime: node.first("CreationTime", true, x => xmlP.parseTimestamp(x.content)),
+    DeletionTime: node.first("DeletionTime", false, x => xmlP.parseTimestamp(x.content)),
+    LastUpdatedTime: node.first("LastUpdatedTime", false, x => xmlP.parseTimestamp(x.content)),
     RollbackConfiguration: node.first("RollbackConfiguration", false, RollbackConfiguration_Parse),
     StackStatus: node.first("StackStatus", true, x => (x.content ?? '') as StackStatus),
     DisableRollback: node.first("DisableRollback", false, x => x.content === 'true'),
@@ -3041,7 +2994,7 @@ export interface Output {
   Description?: string | null;
   ExportName?: string | null;
 }
-function Output_Parse(node: XmlNode): Output {
+function Output_Parse(node: xmlP.XmlNode): Output {
   return node.strings({
     optional: {"OutputKey":true,"OutputValue":true,"Description":true,"ExportName":true},
   });
@@ -3052,10 +3005,10 @@ export interface StackDriftInformation {
   StackDriftStatus: StackDriftStatus;
   LastCheckTimestamp?: Date | number | null;
 }
-function StackDriftInformation_Parse(node: XmlNode): StackDriftInformation {
+function StackDriftInformation_Parse(node: xmlP.XmlNode): StackDriftInformation {
   return {
     StackDriftStatus: node.first("StackDriftStatus", true, x => (x.content ?? '') as StackDriftStatus),
-    LastCheckTimestamp: node.first("LastCheckTimestamp", false, x => parseTimestamp(x.content)),
+    LastCheckTimestamp: node.first("LastCheckTimestamp", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -3068,7 +3021,7 @@ export interface ParameterDeclaration {
   Description?: string | null;
   ParameterConstraints?: ParameterConstraints | null;
 }
-function ParameterDeclaration_Parse(node: XmlNode): ParameterDeclaration {
+function ParameterDeclaration_Parse(node: xmlP.XmlNode): ParameterDeclaration {
   return {
     ...node.strings({
       optional: {"ParameterKey":true,"DefaultValue":true,"ParameterType":true,"Description":true},
@@ -3082,7 +3035,7 @@ function ParameterDeclaration_Parse(node: XmlNode): ParameterDeclaration {
 export interface ParameterConstraints {
   AllowedValues: string[];
 }
-function ParameterConstraints_Parse(node: XmlNode): ParameterConstraints {
+function ParameterConstraints_Parse(node: xmlP.XmlNode): ParameterConstraints {
   return {
     AllowedValues: node.getList("AllowedValues", "member").map(x => x.content ?? ''),
   };
@@ -3094,7 +3047,7 @@ export interface ResourceIdentifierSummary {
   LogicalResourceIds: string[];
   ResourceIdentifiers: string[];
 }
-function ResourceIdentifierSummary_Parse(node: XmlNode): ResourceIdentifierSummary {
+function ResourceIdentifierSummary_Parse(node: xmlP.XmlNode): ResourceIdentifierSummary {
   return {
     ...node.strings({
       optional: {"ResourceType":true},
@@ -3116,14 +3069,14 @@ export interface ChangeSetSummary {
   CreationTime?: Date | number | null;
   Description?: string | null;
 }
-function ChangeSetSummary_Parse(node: XmlNode): ChangeSetSummary {
+function ChangeSetSummary_Parse(node: xmlP.XmlNode): ChangeSetSummary {
   return {
     ...node.strings({
       optional: {"StackId":true,"StackName":true,"ChangeSetId":true,"ChangeSetName":true,"StatusReason":true,"Description":true},
     }),
     ExecutionStatus: node.first("ExecutionStatus", false, x => (x.content ?? '') as ExecutionStatus),
     Status: node.first("Status", false, x => (x.content ?? '') as ChangeSetStatus),
-    CreationTime: node.first("CreationTime", false, x => parseTimestamp(x.content)),
+    CreationTime: node.first("CreationTime", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -3133,7 +3086,7 @@ export interface Export {
   Name?: string | null;
   Value?: string | null;
 }
-function Export_Parse(node: XmlNode): Export {
+function Export_Parse(node: xmlP.XmlNode): Export {
   return node.strings({
     optional: {"ExportingStackId":true,"Name":true,"Value":true},
   });
@@ -3152,7 +3105,7 @@ export interface StackInstanceSummary {
   DriftStatus?: StackDriftStatus | null;
   LastDriftCheckTimestamp?: Date | number | null;
 }
-function StackInstanceSummary_Parse(node: XmlNode): StackInstanceSummary {
+function StackInstanceSummary_Parse(node: xmlP.XmlNode): StackInstanceSummary {
   return {
     ...node.strings({
       optional: {"StackSetId":true,"Region":true,"Account":true,"StackId":true,"StatusReason":true,"OrganizationalUnitId":true},
@@ -3160,7 +3113,7 @@ function StackInstanceSummary_Parse(node: XmlNode): StackInstanceSummary {
     Status: node.first("Status", false, x => (x.content ?? '') as StackInstanceStatus),
     StackInstanceStatus: node.first("StackInstanceStatus", false, StackInstanceComprehensiveStatus_Parse),
     DriftStatus: node.first("DriftStatus", false, x => (x.content ?? '') as StackDriftStatus),
-    LastDriftCheckTimestamp: node.first("LastDriftCheckTimestamp", false, x => parseTimestamp(x.content)),
+    LastDriftCheckTimestamp: node.first("LastDriftCheckTimestamp", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -3174,13 +3127,13 @@ export interface StackResourceSummary {
   ResourceStatusReason?: string | null;
   DriftInformation?: StackResourceDriftInformationSummary | null;
 }
-function StackResourceSummary_Parse(node: XmlNode): StackResourceSummary {
+function StackResourceSummary_Parse(node: xmlP.XmlNode): StackResourceSummary {
   return {
     ...node.strings({
       required: {"LogicalResourceId":true,"ResourceType":true},
       optional: {"PhysicalResourceId":true,"ResourceStatusReason":true},
     }),
-    LastUpdatedTimestamp: node.first("LastUpdatedTimestamp", true, x => parseTimestamp(x.content)),
+    LastUpdatedTimestamp: node.first("LastUpdatedTimestamp", true, x => xmlP.parseTimestamp(x.content)),
     ResourceStatus: node.first("ResourceStatus", true, x => (x.content ?? '') as ResourceStatus),
     DriftInformation: node.first("DriftInformation", false, StackResourceDriftInformationSummary_Parse),
   };
@@ -3191,10 +3144,10 @@ export interface StackResourceDriftInformationSummary {
   StackResourceDriftStatus: StackResourceDriftStatus;
   LastCheckTimestamp?: Date | number | null;
 }
-function StackResourceDriftInformationSummary_Parse(node: XmlNode): StackResourceDriftInformationSummary {
+function StackResourceDriftInformationSummary_Parse(node: xmlP.XmlNode): StackResourceDriftInformationSummary {
   return {
     StackResourceDriftStatus: node.first("StackResourceDriftStatus", true, x => (x.content ?? '') as StackResourceDriftStatus),
-    LastCheckTimestamp: node.first("LastCheckTimestamp", false, x => parseTimestamp(x.content)),
+    LastCheckTimestamp: node.first("LastCheckTimestamp", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -3207,7 +3160,7 @@ export interface StackSetOperationResultSummary {
   AccountGateResult?: AccountGateResult | null;
   OrganizationalUnitId?: string | null;
 }
-function StackSetOperationResultSummary_Parse(node: XmlNode): StackSetOperationResultSummary {
+function StackSetOperationResultSummary_Parse(node: xmlP.XmlNode): StackSetOperationResultSummary {
   return {
     ...node.strings({
       optional: {"Account":true,"Region":true,"StatusReason":true,"OrganizationalUnitId":true},
@@ -3224,15 +3177,14 @@ export type StackSetOperationResultStatus =
 | "SUCCEEDED"
 | "FAILED"
 | "CANCELLED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AccountGateResult {
   Status?: AccountGateStatus | null;
   StatusReason?: string | null;
 }
-function AccountGateResult_Parse(node: XmlNode): AccountGateResult {
+function AccountGateResult_Parse(node: xmlP.XmlNode): AccountGateResult {
   return {
     ...node.strings({
       optional: {"StatusReason":true},
@@ -3246,8 +3198,7 @@ export type AccountGateStatus =
 | "SUCCEEDED"
 | "FAILED"
 | "SKIPPED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface StackSetOperationSummary {
@@ -3257,15 +3208,15 @@ export interface StackSetOperationSummary {
   CreationTimestamp?: Date | number | null;
   EndTimestamp?: Date | number | null;
 }
-function StackSetOperationSummary_Parse(node: XmlNode): StackSetOperationSummary {
+function StackSetOperationSummary_Parse(node: xmlP.XmlNode): StackSetOperationSummary {
   return {
     ...node.strings({
       optional: {"OperationId":true},
     }),
     Action: node.first("Action", false, x => (x.content ?? '') as StackSetOperationAction),
     Status: node.first("Status", false, x => (x.content ?? '') as StackSetOperationStatus),
-    CreationTimestamp: node.first("CreationTimestamp", false, x => parseTimestamp(x.content)),
-    EndTimestamp: node.first("EndTimestamp", false, x => parseTimestamp(x.content)),
+    CreationTimestamp: node.first("CreationTimestamp", false, x => xmlP.parseTimestamp(x.content)),
+    EndTimestamp: node.first("EndTimestamp", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -3280,7 +3231,7 @@ export interface StackSetSummary {
   DriftStatus?: StackDriftStatus | null;
   LastDriftCheckTimestamp?: Date | number | null;
 }
-function StackSetSummary_Parse(node: XmlNode): StackSetSummary {
+function StackSetSummary_Parse(node: xmlP.XmlNode): StackSetSummary {
   return {
     ...node.strings({
       optional: {"StackSetName":true,"StackSetId":true,"Description":true},
@@ -3289,7 +3240,7 @@ function StackSetSummary_Parse(node: XmlNode): StackSetSummary {
     AutoDeployment: node.first("AutoDeployment", false, AutoDeployment_Parse),
     PermissionModel: node.first("PermissionModel", false, x => (x.content ?? '') as PermissionModels),
     DriftStatus: node.first("DriftStatus", false, x => (x.content ?? '') as StackDriftStatus),
-    LastDriftCheckTimestamp: node.first("LastDriftCheckTimestamp", false, x => parseTimestamp(x.content)),
+    LastDriftCheckTimestamp: node.first("LastDriftCheckTimestamp", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -3307,15 +3258,15 @@ export interface StackSummary {
   RootId?: string | null;
   DriftInformation?: StackDriftInformationSummary | null;
 }
-function StackSummary_Parse(node: XmlNode): StackSummary {
+function StackSummary_Parse(node: xmlP.XmlNode): StackSummary {
   return {
     ...node.strings({
       required: {"StackName":true},
       optional: {"StackId":true,"TemplateDescription":true,"StackStatusReason":true,"ParentId":true,"RootId":true},
     }),
-    CreationTime: node.first("CreationTime", true, x => parseTimestamp(x.content)),
-    LastUpdatedTime: node.first("LastUpdatedTime", false, x => parseTimestamp(x.content)),
-    DeletionTime: node.first("DeletionTime", false, x => parseTimestamp(x.content)),
+    CreationTime: node.first("CreationTime", true, x => xmlP.parseTimestamp(x.content)),
+    LastUpdatedTime: node.first("LastUpdatedTime", false, x => xmlP.parseTimestamp(x.content)),
+    DeletionTime: node.first("DeletionTime", false, x => xmlP.parseTimestamp(x.content)),
     StackStatus: node.first("StackStatus", true, x => (x.content ?? '') as StackStatus),
     DriftInformation: node.first("DriftInformation", false, StackDriftInformationSummary_Parse),
   };
@@ -3326,10 +3277,10 @@ export interface StackDriftInformationSummary {
   StackDriftStatus: StackDriftStatus;
   LastCheckTimestamp?: Date | number | null;
 }
-function StackDriftInformationSummary_Parse(node: XmlNode): StackDriftInformationSummary {
+function StackDriftInformationSummary_Parse(node: xmlP.XmlNode): StackDriftInformationSummary {
   return {
     StackDriftStatus: node.first("StackDriftStatus", true, x => (x.content ?? '') as StackDriftStatus),
-    LastCheckTimestamp: node.first("LastCheckTimestamp", false, x => parseTimestamp(x.content)),
+    LastCheckTimestamp: node.first("LastCheckTimestamp", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -3343,14 +3294,14 @@ export interface TypeVersionSummary {
   TimeCreated?: Date | number | null;
   Description?: string | null;
 }
-function TypeVersionSummary_Parse(node: XmlNode): TypeVersionSummary {
+function TypeVersionSummary_Parse(node: xmlP.XmlNode): TypeVersionSummary {
   return {
     ...node.strings({
       optional: {"TypeName":true,"VersionId":true,"Arn":true,"Description":true},
     }),
     Type: node.first("Type", false, x => (x.content ?? '') as RegistryType),
     IsDefaultVersion: node.first("IsDefaultVersion", false, x => x.content === 'true'),
-    TimeCreated: node.first("TimeCreated", false, x => parseTimestamp(x.content)),
+    TimeCreated: node.first("TimeCreated", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -3363,13 +3314,13 @@ export interface TypeSummary {
   LastUpdated?: Date | number | null;
   Description?: string | null;
 }
-function TypeSummary_Parse(node: XmlNode): TypeSummary {
+function TypeSummary_Parse(node: xmlP.XmlNode): TypeSummary {
   return {
     ...node.strings({
       optional: {"TypeName":true,"DefaultVersionId":true,"TypeArn":true,"Description":true},
     }),
     Type: node.first("Type", false, x => (x.content ?? '') as RegistryType),
-    LastUpdated: node.first("LastUpdated", false, x => parseTimestamp(x.content)),
+    LastUpdated: node.first("LastUpdated", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -3380,7 +3331,7 @@ export interface TemplateParameter {
   NoEcho?: boolean | null;
   Description?: string | null;
 }
-function TemplateParameter_Parse(node: XmlNode): TemplateParameter {
+function TemplateParameter_Parse(node: xmlP.XmlNode): TemplateParameter {
   return {
     ...node.strings({
       optional: {"ParameterKey":true,"DefaultValue":true,"Description":true},

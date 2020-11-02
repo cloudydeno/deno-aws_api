@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class CognitoIdentityServiceProvider {
   #client: ServiceClient;
@@ -29,14 +29,15 @@ export default class CognitoIdentityServiceProvider {
   async addCustomAttributes(
     {abortSignal, ...params}: RequestConfig & AddCustomAttributesRequest,
   ): Promise<AddCustomAttributesResponse> {
-    const body: JSONObject = {...params,
-    CustomAttributes: params["CustomAttributes"]?.map(x => fromSchemaAttributeType(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      CustomAttributes: params["CustomAttributes"]?.map(x => fromSchemaAttributeType(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddCustomAttributes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -45,8 +46,11 @@ export default class CognitoIdentityServiceProvider {
   async adminAddUserToGroup(
     {abortSignal, ...params}: RequestConfig & AdminAddUserToGroupRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+      GroupName: params["GroupName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminAddUserToGroup",
@@ -56,13 +60,16 @@ export default class CognitoIdentityServiceProvider {
   async adminConfirmSignUp(
     {abortSignal, ...params}: RequestConfig & AdminConfirmSignUpRequest,
   ): Promise<AdminConfirmSignUpResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+      ClientMetadata: params["ClientMetadata"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminConfirmSignUp",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -71,15 +78,22 @@ export default class CognitoIdentityServiceProvider {
   async adminCreateUser(
     {abortSignal, ...params}: RequestConfig & AdminCreateUserRequest,
   ): Promise<AdminCreateUserResponse> {
-    const body: JSONObject = {...params,
-    UserAttributes: params["UserAttributes"]?.map(x => fromAttributeType(x)),
-    ValidationData: params["ValidationData"]?.map(x => fromAttributeType(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+      UserAttributes: params["UserAttributes"]?.map(x => fromAttributeType(x)),
+      ValidationData: params["ValidationData"]?.map(x => fromAttributeType(x)),
+      TemporaryPassword: params["TemporaryPassword"],
+      ForceAliasCreation: params["ForceAliasCreation"],
+      MessageAction: params["MessageAction"],
+      DesiredDeliveryMediums: params["DesiredDeliveryMediums"],
+      ClientMetadata: params["ClientMetadata"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminCreateUser",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "User": toUserType,
@@ -90,8 +104,10 @@ export default class CognitoIdentityServiceProvider {
   async adminDeleteUser(
     {abortSignal, ...params}: RequestConfig & AdminDeleteUserRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminDeleteUser",
@@ -101,13 +117,16 @@ export default class CognitoIdentityServiceProvider {
   async adminDeleteUserAttributes(
     {abortSignal, ...params}: RequestConfig & AdminDeleteUserAttributesRequest,
   ): Promise<AdminDeleteUserAttributesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+      UserAttributeNames: params["UserAttributeNames"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminDeleteUserAttributes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -116,14 +135,15 @@ export default class CognitoIdentityServiceProvider {
   async adminDisableProviderForUser(
     {abortSignal, ...params}: RequestConfig & AdminDisableProviderForUserRequest,
   ): Promise<AdminDisableProviderForUserResponse> {
-    const body: JSONObject = {...params,
-    User: fromProviderUserIdentifierType(params["User"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      User: fromProviderUserIdentifierType(params["User"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminDisableProviderForUser",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -132,13 +152,15 @@ export default class CognitoIdentityServiceProvider {
   async adminDisableUser(
     {abortSignal, ...params}: RequestConfig & AdminDisableUserRequest,
   ): Promise<AdminDisableUserResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminDisableUser",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -147,13 +169,15 @@ export default class CognitoIdentityServiceProvider {
   async adminEnableUser(
     {abortSignal, ...params}: RequestConfig & AdminEnableUserRequest,
   ): Promise<AdminEnableUserResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminEnableUser",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -162,8 +186,11 @@ export default class CognitoIdentityServiceProvider {
   async adminForgetDevice(
     {abortSignal, ...params}: RequestConfig & AdminForgetDeviceRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+      DeviceKey: params["DeviceKey"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminForgetDevice",
@@ -173,13 +200,16 @@ export default class CognitoIdentityServiceProvider {
   async adminGetDevice(
     {abortSignal, ...params}: RequestConfig & AdminGetDeviceRequest,
   ): Promise<AdminGetDeviceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeviceKey: params["DeviceKey"],
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminGetDevice",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Device": toDeviceType,
       },
@@ -190,13 +220,15 @@ export default class CognitoIdentityServiceProvider {
   async adminGetUser(
     {abortSignal, ...params}: RequestConfig & AdminGetUserRequest,
   ): Promise<AdminGetUserResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminGetUser",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Username": "s",
       },
@@ -205,7 +237,7 @@ export default class CognitoIdentityServiceProvider {
         "UserCreateDate": "d",
         "UserLastModifiedDate": "d",
         "Enabled": "b",
-        "UserStatus": toUserStatusType,
+        "UserStatus": (x: jsonP.JSONValue) => cmnP.readEnum<UserStatusType>(x),
         "MFAOptions": [toMFAOptionType],
         "PreferredMfaSetting": "s",
         "UserMFASettingList": ["s"],
@@ -216,20 +248,25 @@ export default class CognitoIdentityServiceProvider {
   async adminInitiateAuth(
     {abortSignal, ...params}: RequestConfig & AdminInitiateAuthRequest,
   ): Promise<AdminInitiateAuthResponse> {
-    const body: JSONObject = {...params,
-    AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
-    ContextData: fromContextDataType(params["ContextData"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      ClientId: params["ClientId"],
+      AuthFlow: params["AuthFlow"],
+      AuthParameters: params["AuthParameters"],
+      ClientMetadata: params["ClientMetadata"],
+      AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
+      ContextData: fromContextDataType(params["ContextData"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminInitiateAuth",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "ChallengeName": toChallengeNameType,
+        "ChallengeName": (x: jsonP.JSONValue) => cmnP.readEnum<ChallengeNameType>(x),
         "Session": "s",
-        "ChallengeParameters": x => prt.readMap(String, String, x),
+        "ChallengeParameters": x => jsonP.readMap(String, String, x),
         "AuthenticationResult": toAuthenticationResultType,
       },
     }, await resp.json());
@@ -238,15 +275,16 @@ export default class CognitoIdentityServiceProvider {
   async adminLinkProviderForUser(
     {abortSignal, ...params}: RequestConfig & AdminLinkProviderForUserRequest,
   ): Promise<AdminLinkProviderForUserResponse> {
-    const body: JSONObject = {...params,
-    DestinationUser: fromProviderUserIdentifierType(params["DestinationUser"]),
-    SourceUser: fromProviderUserIdentifierType(params["SourceUser"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      DestinationUser: fromProviderUserIdentifierType(params["DestinationUser"]),
+      SourceUser: fromProviderUserIdentifierType(params["SourceUser"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminLinkProviderForUser",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -255,13 +293,17 @@ export default class CognitoIdentityServiceProvider {
   async adminListDevices(
     {abortSignal, ...params}: RequestConfig & AdminListDevicesRequest,
   ): Promise<AdminListDevicesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+      Limit: params["Limit"],
+      PaginationToken: params["PaginationToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminListDevices",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Devices": [toDeviceType],
@@ -273,13 +315,17 @@ export default class CognitoIdentityServiceProvider {
   async adminListGroupsForUser(
     {abortSignal, ...params}: RequestConfig & AdminListGroupsForUserRequest,
   ): Promise<AdminListGroupsForUserResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Username: params["Username"],
+      UserPoolId: params["UserPoolId"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminListGroupsForUser",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Groups": [toGroupType],
@@ -291,13 +337,17 @@ export default class CognitoIdentityServiceProvider {
   async adminListUserAuthEvents(
     {abortSignal, ...params}: RequestConfig & AdminListUserAuthEventsRequest,
   ): Promise<AdminListUserAuthEventsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminListUserAuthEvents",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AuthEvents": [toAuthEventType],
@@ -309,8 +359,11 @@ export default class CognitoIdentityServiceProvider {
   async adminRemoveUserFromGroup(
     {abortSignal, ...params}: RequestConfig & AdminRemoveUserFromGroupRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+      GroupName: params["GroupName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminRemoveUserFromGroup",
@@ -320,13 +373,16 @@ export default class CognitoIdentityServiceProvider {
   async adminResetUserPassword(
     {abortSignal, ...params}: RequestConfig & AdminResetUserPasswordRequest,
   ): Promise<AdminResetUserPasswordResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+      ClientMetadata: params["ClientMetadata"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminResetUserPassword",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -335,20 +391,26 @@ export default class CognitoIdentityServiceProvider {
   async adminRespondToAuthChallenge(
     {abortSignal, ...params}: RequestConfig & AdminRespondToAuthChallengeRequest,
   ): Promise<AdminRespondToAuthChallengeResponse> {
-    const body: JSONObject = {...params,
-    AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
-    ContextData: fromContextDataType(params["ContextData"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      ClientId: params["ClientId"],
+      ChallengeName: params["ChallengeName"],
+      ChallengeResponses: params["ChallengeResponses"],
+      Session: params["Session"],
+      AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
+      ContextData: fromContextDataType(params["ContextData"]),
+      ClientMetadata: params["ClientMetadata"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminRespondToAuthChallenge",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "ChallengeName": toChallengeNameType,
+        "ChallengeName": (x: jsonP.JSONValue) => cmnP.readEnum<ChallengeNameType>(x),
         "Session": "s",
-        "ChallengeParameters": x => prt.readMap(String, String, x),
+        "ChallengeParameters": x => jsonP.readMap(String, String, x),
         "AuthenticationResult": toAuthenticationResultType,
       },
     }, await resp.json());
@@ -357,15 +419,17 @@ export default class CognitoIdentityServiceProvider {
   async adminSetUserMFAPreference(
     {abortSignal, ...params}: RequestConfig & AdminSetUserMFAPreferenceRequest,
   ): Promise<AdminSetUserMFAPreferenceResponse> {
-    const body: JSONObject = {...params,
-    SMSMfaSettings: fromSMSMfaSettingsType(params["SMSMfaSettings"]),
-    SoftwareTokenMfaSettings: fromSoftwareTokenMfaSettingsType(params["SoftwareTokenMfaSettings"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SMSMfaSettings: fromSMSMfaSettingsType(params["SMSMfaSettings"]),
+      SoftwareTokenMfaSettings: fromSoftwareTokenMfaSettingsType(params["SoftwareTokenMfaSettings"]),
+      Username: params["Username"],
+      UserPoolId: params["UserPoolId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminSetUserMFAPreference",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -374,13 +438,17 @@ export default class CognitoIdentityServiceProvider {
   async adminSetUserPassword(
     {abortSignal, ...params}: RequestConfig & AdminSetUserPasswordRequest,
   ): Promise<AdminSetUserPasswordResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+      Password: params["Password"],
+      Permanent: params["Permanent"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminSetUserPassword",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -389,14 +457,16 @@ export default class CognitoIdentityServiceProvider {
   async adminSetUserSettings(
     {abortSignal, ...params}: RequestConfig & AdminSetUserSettingsRequest,
   ): Promise<AdminSetUserSettingsResponse> {
-    const body: JSONObject = {...params,
-    MFAOptions: params["MFAOptions"]?.map(x => fromMFAOptionType(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+      MFAOptions: params["MFAOptions"]?.map(x => fromMFAOptionType(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminSetUserSettings",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -405,13 +475,17 @@ export default class CognitoIdentityServiceProvider {
   async adminUpdateAuthEventFeedback(
     {abortSignal, ...params}: RequestConfig & AdminUpdateAuthEventFeedbackRequest,
   ): Promise<AdminUpdateAuthEventFeedbackResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+      EventId: params["EventId"],
+      FeedbackValue: params["FeedbackValue"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminUpdateAuthEventFeedback",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -420,13 +494,17 @@ export default class CognitoIdentityServiceProvider {
   async adminUpdateDeviceStatus(
     {abortSignal, ...params}: RequestConfig & AdminUpdateDeviceStatusRequest,
   ): Promise<AdminUpdateDeviceStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+      DeviceKey: params["DeviceKey"],
+      DeviceRememberedStatus: params["DeviceRememberedStatus"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminUpdateDeviceStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -435,14 +513,17 @@ export default class CognitoIdentityServiceProvider {
   async adminUpdateUserAttributes(
     {abortSignal, ...params}: RequestConfig & AdminUpdateUserAttributesRequest,
   ): Promise<AdminUpdateUserAttributesResponse> {
-    const body: JSONObject = {...params,
-    UserAttributes: params["UserAttributes"]?.map(x => fromAttributeType(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+      UserAttributes: params["UserAttributes"]?.map(x => fromAttributeType(x)),
+      ClientMetadata: params["ClientMetadata"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminUpdateUserAttributes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -451,13 +532,15 @@ export default class CognitoIdentityServiceProvider {
   async adminUserGlobalSignOut(
     {abortSignal, ...params}: RequestConfig & AdminUserGlobalSignOutRequest,
   ): Promise<AdminUserGlobalSignOutResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminUserGlobalSignOut",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -466,13 +549,15 @@ export default class CognitoIdentityServiceProvider {
   async associateSoftwareToken(
     {abortSignal, ...params}: RequestConfig & AssociateSoftwareTokenRequest = {},
   ): Promise<AssociateSoftwareTokenResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccessToken: params["AccessToken"],
+      Session: params["Session"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateSoftwareToken",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SecretCode": "s",
@@ -484,13 +569,16 @@ export default class CognitoIdentityServiceProvider {
   async changePassword(
     {abortSignal, ...params}: RequestConfig & ChangePasswordRequest,
   ): Promise<ChangePasswordResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PreviousPassword: params["PreviousPassword"],
+      ProposedPassword: params["ProposedPassword"],
+      AccessToken: params["AccessToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ChangePassword",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -499,14 +587,17 @@ export default class CognitoIdentityServiceProvider {
   async confirmDevice(
     {abortSignal, ...params}: RequestConfig & ConfirmDeviceRequest,
   ): Promise<ConfirmDeviceResponse> {
-    const body: JSONObject = {...params,
-    DeviceSecretVerifierConfig: fromDeviceSecretVerifierConfigType(params["DeviceSecretVerifierConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccessToken: params["AccessToken"],
+      DeviceKey: params["DeviceKey"],
+      DeviceSecretVerifierConfig: fromDeviceSecretVerifierConfigType(params["DeviceSecretVerifierConfig"]),
+      DeviceName: params["DeviceName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ConfirmDevice",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserConfirmationNecessary": "b",
@@ -517,15 +608,21 @@ export default class CognitoIdentityServiceProvider {
   async confirmForgotPassword(
     {abortSignal, ...params}: RequestConfig & ConfirmForgotPasswordRequest,
   ): Promise<ConfirmForgotPasswordResponse> {
-    const body: JSONObject = {...params,
-    AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
-    UserContextData: fromUserContextDataType(params["UserContextData"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClientId: params["ClientId"],
+      SecretHash: params["SecretHash"],
+      Username: params["Username"],
+      ConfirmationCode: params["ConfirmationCode"],
+      Password: params["Password"],
+      AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
+      UserContextData: fromUserContextDataType(params["UserContextData"]),
+      ClientMetadata: params["ClientMetadata"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ConfirmForgotPassword",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -534,15 +631,21 @@ export default class CognitoIdentityServiceProvider {
   async confirmSignUp(
     {abortSignal, ...params}: RequestConfig & ConfirmSignUpRequest,
   ): Promise<ConfirmSignUpResponse> {
-    const body: JSONObject = {...params,
-    AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
-    UserContextData: fromUserContextDataType(params["UserContextData"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClientId: params["ClientId"],
+      SecretHash: params["SecretHash"],
+      Username: params["Username"],
+      ConfirmationCode: params["ConfirmationCode"],
+      ForceAliasCreation: params["ForceAliasCreation"],
+      AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
+      UserContextData: fromUserContextDataType(params["UserContextData"]),
+      ClientMetadata: params["ClientMetadata"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ConfirmSignUp",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -551,13 +654,18 @@ export default class CognitoIdentityServiceProvider {
   async createGroup(
     {abortSignal, ...params}: RequestConfig & CreateGroupRequest,
   ): Promise<CreateGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GroupName: params["GroupName"],
+      UserPoolId: params["UserPoolId"],
+      Description: params["Description"],
+      RoleArn: params["RoleArn"],
+      Precedence: params["Precedence"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Group": toGroupType,
@@ -568,13 +676,19 @@ export default class CognitoIdentityServiceProvider {
   async createIdentityProvider(
     {abortSignal, ...params}: RequestConfig & CreateIdentityProviderRequest,
   ): Promise<CreateIdentityProviderResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      ProviderName: params["ProviderName"],
+      ProviderType: params["ProviderType"],
+      ProviderDetails: params["ProviderDetails"],
+      AttributeMapping: params["AttributeMapping"],
+      IdpIdentifiers: params["IdpIdentifiers"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateIdentityProvider",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "IdentityProvider": toIdentityProviderType,
       },
@@ -585,14 +699,17 @@ export default class CognitoIdentityServiceProvider {
   async createResourceServer(
     {abortSignal, ...params}: RequestConfig & CreateResourceServerRequest,
   ): Promise<CreateResourceServerResponse> {
-    const body: JSONObject = {...params,
-    Scopes: params["Scopes"]?.map(x => fromResourceServerScopeType(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Identifier: params["Identifier"],
+      Name: params["Name"],
+      Scopes: params["Scopes"]?.map(x => fromResourceServerScopeType(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateResourceServer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ResourceServer": toResourceServerType,
       },
@@ -603,13 +720,16 @@ export default class CognitoIdentityServiceProvider {
   async createUserImportJob(
     {abortSignal, ...params}: RequestConfig & CreateUserImportJobRequest,
   ): Promise<CreateUserImportJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobName: params["JobName"],
+      UserPoolId: params["UserPoolId"],
+      CloudWatchLogsRoleArn: params["CloudWatchLogsRoleArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUserImportJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserImportJob": toUserImportJobType,
@@ -620,24 +740,34 @@ export default class CognitoIdentityServiceProvider {
   async createUserPool(
     {abortSignal, ...params}: RequestConfig & CreateUserPoolRequest,
   ): Promise<CreateUserPoolResponse> {
-    const body: JSONObject = {...params,
-    Policies: fromUserPoolPolicyType(params["Policies"]),
-    LambdaConfig: fromLambdaConfigType(params["LambdaConfig"]),
-    VerificationMessageTemplate: fromVerificationMessageTemplateType(params["VerificationMessageTemplate"]),
-    DeviceConfiguration: fromDeviceConfigurationType(params["DeviceConfiguration"]),
-    EmailConfiguration: fromEmailConfigurationType(params["EmailConfiguration"]),
-    SmsConfiguration: fromSmsConfigurationType(params["SmsConfiguration"]),
-    AdminCreateUserConfig: fromAdminCreateUserConfigType(params["AdminCreateUserConfig"]),
-    Schema: params["Schema"]?.map(x => fromSchemaAttributeType(x)),
-    UserPoolAddOns: fromUserPoolAddOnsType(params["UserPoolAddOns"]),
-    UsernameConfiguration: fromUsernameConfigurationType(params["UsernameConfiguration"]),
-    AccountRecoverySetting: fromAccountRecoverySettingType(params["AccountRecoverySetting"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      PoolName: params["PoolName"],
+      Policies: fromUserPoolPolicyType(params["Policies"]),
+      LambdaConfig: fromLambdaConfigType(params["LambdaConfig"]),
+      AutoVerifiedAttributes: params["AutoVerifiedAttributes"],
+      AliasAttributes: params["AliasAttributes"],
+      UsernameAttributes: params["UsernameAttributes"],
+      SmsVerificationMessage: params["SmsVerificationMessage"],
+      EmailVerificationMessage: params["EmailVerificationMessage"],
+      EmailVerificationSubject: params["EmailVerificationSubject"],
+      VerificationMessageTemplate: fromVerificationMessageTemplateType(params["VerificationMessageTemplate"]),
+      SmsAuthenticationMessage: params["SmsAuthenticationMessage"],
+      MfaConfiguration: params["MfaConfiguration"],
+      DeviceConfiguration: fromDeviceConfigurationType(params["DeviceConfiguration"]),
+      EmailConfiguration: fromEmailConfigurationType(params["EmailConfiguration"]),
+      SmsConfiguration: fromSmsConfigurationType(params["SmsConfiguration"]),
+      UserPoolTags: params["UserPoolTags"],
+      AdminCreateUserConfig: fromAdminCreateUserConfigType(params["AdminCreateUserConfig"]),
+      Schema: params["Schema"]?.map(x => fromSchemaAttributeType(x)),
+      UserPoolAddOns: fromUserPoolAddOnsType(params["UserPoolAddOns"]),
+      UsernameConfiguration: fromUsernameConfigurationType(params["UsernameConfiguration"]),
+      AccountRecoverySetting: fromAccountRecoverySettingType(params["AccountRecoverySetting"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUserPool",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserPool": toUserPoolType,
@@ -648,15 +778,32 @@ export default class CognitoIdentityServiceProvider {
   async createUserPoolClient(
     {abortSignal, ...params}: RequestConfig & CreateUserPoolClientRequest,
   ): Promise<CreateUserPoolClientResponse> {
-    const body: JSONObject = {...params,
-    TokenValidityUnits: fromTokenValidityUnitsType(params["TokenValidityUnits"]),
-    AnalyticsConfiguration: fromAnalyticsConfigurationType(params["AnalyticsConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      ClientName: params["ClientName"],
+      GenerateSecret: params["GenerateSecret"],
+      RefreshTokenValidity: params["RefreshTokenValidity"],
+      AccessTokenValidity: params["AccessTokenValidity"],
+      IdTokenValidity: params["IdTokenValidity"],
+      TokenValidityUnits: fromTokenValidityUnitsType(params["TokenValidityUnits"]),
+      ReadAttributes: params["ReadAttributes"],
+      WriteAttributes: params["WriteAttributes"],
+      ExplicitAuthFlows: params["ExplicitAuthFlows"],
+      SupportedIdentityProviders: params["SupportedIdentityProviders"],
+      CallbackURLs: params["CallbackURLs"],
+      LogoutURLs: params["LogoutURLs"],
+      DefaultRedirectURI: params["DefaultRedirectURI"],
+      AllowedOAuthFlows: params["AllowedOAuthFlows"],
+      AllowedOAuthScopes: params["AllowedOAuthScopes"],
+      AllowedOAuthFlowsUserPoolClient: params["AllowedOAuthFlowsUserPoolClient"],
+      AnalyticsConfiguration: fromAnalyticsConfigurationType(params["AnalyticsConfiguration"]),
+      PreventUserExistenceErrors: params["PreventUserExistenceErrors"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUserPoolClient",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserPoolClient": toUserPoolClientType,
@@ -667,14 +814,16 @@ export default class CognitoIdentityServiceProvider {
   async createUserPoolDomain(
     {abortSignal, ...params}: RequestConfig & CreateUserPoolDomainRequest,
   ): Promise<CreateUserPoolDomainResponse> {
-    const body: JSONObject = {...params,
-    CustomDomainConfig: fromCustomDomainConfigType(params["CustomDomainConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Domain: params["Domain"],
+      UserPoolId: params["UserPoolId"],
+      CustomDomainConfig: fromCustomDomainConfigType(params["CustomDomainConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUserPoolDomain",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CloudFrontDomain": "s",
@@ -685,8 +834,10 @@ export default class CognitoIdentityServiceProvider {
   async deleteGroup(
     {abortSignal, ...params}: RequestConfig & DeleteGroupRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GroupName: params["GroupName"],
+      UserPoolId: params["UserPoolId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteGroup",
@@ -696,8 +847,10 @@ export default class CognitoIdentityServiceProvider {
   async deleteIdentityProvider(
     {abortSignal, ...params}: RequestConfig & DeleteIdentityProviderRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      ProviderName: params["ProviderName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteIdentityProvider",
@@ -707,8 +860,10 @@ export default class CognitoIdentityServiceProvider {
   async deleteResourceServer(
     {abortSignal, ...params}: RequestConfig & DeleteResourceServerRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Identifier: params["Identifier"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteResourceServer",
@@ -718,8 +873,9 @@ export default class CognitoIdentityServiceProvider {
   async deleteUser(
     {abortSignal, ...params}: RequestConfig & DeleteUserRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccessToken: params["AccessToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUser",
@@ -729,13 +885,15 @@ export default class CognitoIdentityServiceProvider {
   async deleteUserAttributes(
     {abortSignal, ...params}: RequestConfig & DeleteUserAttributesRequest,
   ): Promise<DeleteUserAttributesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserAttributeNames: params["UserAttributeNames"],
+      AccessToken: params["AccessToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUserAttributes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -744,8 +902,9 @@ export default class CognitoIdentityServiceProvider {
   async deleteUserPool(
     {abortSignal, ...params}: RequestConfig & DeleteUserPoolRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUserPool",
@@ -755,8 +914,10 @@ export default class CognitoIdentityServiceProvider {
   async deleteUserPoolClient(
     {abortSignal, ...params}: RequestConfig & DeleteUserPoolClientRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      ClientId: params["ClientId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUserPoolClient",
@@ -766,13 +927,15 @@ export default class CognitoIdentityServiceProvider {
   async deleteUserPoolDomain(
     {abortSignal, ...params}: RequestConfig & DeleteUserPoolDomainRequest,
   ): Promise<DeleteUserPoolDomainResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Domain: params["Domain"],
+      UserPoolId: params["UserPoolId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUserPoolDomain",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -781,13 +944,15 @@ export default class CognitoIdentityServiceProvider {
   async describeIdentityProvider(
     {abortSignal, ...params}: RequestConfig & DescribeIdentityProviderRequest,
   ): Promise<DescribeIdentityProviderResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      ProviderName: params["ProviderName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeIdentityProvider",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "IdentityProvider": toIdentityProviderType,
       },
@@ -798,13 +963,15 @@ export default class CognitoIdentityServiceProvider {
   async describeResourceServer(
     {abortSignal, ...params}: RequestConfig & DescribeResourceServerRequest,
   ): Promise<DescribeResourceServerResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Identifier: params["Identifier"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeResourceServer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ResourceServer": toResourceServerType,
       },
@@ -815,13 +982,15 @@ export default class CognitoIdentityServiceProvider {
   async describeRiskConfiguration(
     {abortSignal, ...params}: RequestConfig & DescribeRiskConfigurationRequest,
   ): Promise<DescribeRiskConfigurationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      ClientId: params["ClientId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRiskConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "RiskConfiguration": toRiskConfigurationType,
       },
@@ -832,13 +1001,15 @@ export default class CognitoIdentityServiceProvider {
   async describeUserImportJob(
     {abortSignal, ...params}: RequestConfig & DescribeUserImportJobRequest,
   ): Promise<DescribeUserImportJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUserImportJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserImportJob": toUserImportJobType,
@@ -849,13 +1020,14 @@ export default class CognitoIdentityServiceProvider {
   async describeUserPool(
     {abortSignal, ...params}: RequestConfig & DescribeUserPoolRequest,
   ): Promise<DescribeUserPoolResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUserPool",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserPool": toUserPoolType,
@@ -866,13 +1038,15 @@ export default class CognitoIdentityServiceProvider {
   async describeUserPoolClient(
     {abortSignal, ...params}: RequestConfig & DescribeUserPoolClientRequest,
   ): Promise<DescribeUserPoolClientResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      ClientId: params["ClientId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUserPoolClient",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserPoolClient": toUserPoolClientType,
@@ -883,13 +1057,14 @@ export default class CognitoIdentityServiceProvider {
   async describeUserPoolDomain(
     {abortSignal, ...params}: RequestConfig & DescribeUserPoolDomainRequest,
   ): Promise<DescribeUserPoolDomainResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Domain: params["Domain"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUserPoolDomain",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DomainDescription": toDomainDescriptionType,
@@ -900,8 +1075,10 @@ export default class CognitoIdentityServiceProvider {
   async forgetDevice(
     {abortSignal, ...params}: RequestConfig & ForgetDeviceRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccessToken: params["AccessToken"],
+      DeviceKey: params["DeviceKey"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ForgetDevice",
@@ -911,15 +1088,19 @@ export default class CognitoIdentityServiceProvider {
   async forgotPassword(
     {abortSignal, ...params}: RequestConfig & ForgotPasswordRequest,
   ): Promise<ForgotPasswordResponse> {
-    const body: JSONObject = {...params,
-    UserContextData: fromUserContextDataType(params["UserContextData"]),
-    AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClientId: params["ClientId"],
+      SecretHash: params["SecretHash"],
+      UserContextData: fromUserContextDataType(params["UserContextData"]),
+      Username: params["Username"],
+      AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
+      ClientMetadata: params["ClientMetadata"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ForgotPassword",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CodeDeliveryDetails": toCodeDeliveryDetailsType,
@@ -930,13 +1111,14 @@ export default class CognitoIdentityServiceProvider {
   async getCSVHeader(
     {abortSignal, ...params}: RequestConfig & GetCSVHeaderRequest,
   ): Promise<GetCSVHeaderResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCSVHeader",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserPoolId": "s",
@@ -948,13 +1130,15 @@ export default class CognitoIdentityServiceProvider {
   async getDevice(
     {abortSignal, ...params}: RequestConfig & GetDeviceRequest,
   ): Promise<GetDeviceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeviceKey: params["DeviceKey"],
+      AccessToken: params["AccessToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDevice",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Device": toDeviceType,
       },
@@ -965,13 +1149,15 @@ export default class CognitoIdentityServiceProvider {
   async getGroup(
     {abortSignal, ...params}: RequestConfig & GetGroupRequest,
   ): Promise<GetGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GroupName: params["GroupName"],
+      UserPoolId: params["UserPoolId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Group": toGroupType,
@@ -982,13 +1168,15 @@ export default class CognitoIdentityServiceProvider {
   async getIdentityProviderByIdentifier(
     {abortSignal, ...params}: RequestConfig & GetIdentityProviderByIdentifierRequest,
   ): Promise<GetIdentityProviderByIdentifierResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      IdpIdentifier: params["IdpIdentifier"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetIdentityProviderByIdentifier",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "IdentityProvider": toIdentityProviderType,
       },
@@ -999,13 +1187,14 @@ export default class CognitoIdentityServiceProvider {
   async getSigningCertificate(
     {abortSignal, ...params}: RequestConfig & GetSigningCertificateRequest,
   ): Promise<GetSigningCertificateResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSigningCertificate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Certificate": "s",
@@ -1016,13 +1205,15 @@ export default class CognitoIdentityServiceProvider {
   async getUICustomization(
     {abortSignal, ...params}: RequestConfig & GetUICustomizationRequest,
   ): Promise<GetUICustomizationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      ClientId: params["ClientId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetUICustomization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "UICustomization": toUICustomizationType,
       },
@@ -1033,13 +1224,14 @@ export default class CognitoIdentityServiceProvider {
   async getUser(
     {abortSignal, ...params}: RequestConfig & GetUserRequest,
   ): Promise<GetUserResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccessToken: params["AccessToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetUser",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Username": "s",
         "UserAttributes": [toAttributeType],
@@ -1055,13 +1247,16 @@ export default class CognitoIdentityServiceProvider {
   async getUserAttributeVerificationCode(
     {abortSignal, ...params}: RequestConfig & GetUserAttributeVerificationCodeRequest,
   ): Promise<GetUserAttributeVerificationCodeResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccessToken: params["AccessToken"],
+      AttributeName: params["AttributeName"],
+      ClientMetadata: params["ClientMetadata"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetUserAttributeVerificationCode",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CodeDeliveryDetails": toCodeDeliveryDetailsType,
@@ -1072,18 +1267,19 @@ export default class CognitoIdentityServiceProvider {
   async getUserPoolMfaConfig(
     {abortSignal, ...params}: RequestConfig & GetUserPoolMfaConfigRequest,
   ): Promise<GetUserPoolMfaConfigResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetUserPoolMfaConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SmsMfaConfiguration": toSmsMfaConfigType,
         "SoftwareTokenMfaConfiguration": toSoftwareTokenMfaConfigType,
-        "MfaConfiguration": toUserPoolMfaType,
+        "MfaConfiguration": (x: jsonP.JSONValue) => cmnP.readEnum<UserPoolMfaType>(x),
       },
     }, await resp.json());
   }
@@ -1091,13 +1287,14 @@ export default class CognitoIdentityServiceProvider {
   async globalSignOut(
     {abortSignal, ...params}: RequestConfig & GlobalSignOutRequest,
   ): Promise<GlobalSignOutResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccessToken: params["AccessToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GlobalSignOut",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1106,20 +1303,24 @@ export default class CognitoIdentityServiceProvider {
   async initiateAuth(
     {abortSignal, ...params}: RequestConfig & InitiateAuthRequest,
   ): Promise<InitiateAuthResponse> {
-    const body: JSONObject = {...params,
-    AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
-    UserContextData: fromUserContextDataType(params["UserContextData"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AuthFlow: params["AuthFlow"],
+      AuthParameters: params["AuthParameters"],
+      ClientMetadata: params["ClientMetadata"],
+      ClientId: params["ClientId"],
+      AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
+      UserContextData: fromUserContextDataType(params["UserContextData"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "InitiateAuth",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "ChallengeName": toChallengeNameType,
+        "ChallengeName": (x: jsonP.JSONValue) => cmnP.readEnum<ChallengeNameType>(x),
         "Session": "s",
-        "ChallengeParameters": x => prt.readMap(String, String, x),
+        "ChallengeParameters": x => jsonP.readMap(String, String, x),
         "AuthenticationResult": toAuthenticationResultType,
       },
     }, await resp.json());
@@ -1128,13 +1329,16 @@ export default class CognitoIdentityServiceProvider {
   async listDevices(
     {abortSignal, ...params}: RequestConfig & ListDevicesRequest,
   ): Promise<ListDevicesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccessToken: params["AccessToken"],
+      Limit: params["Limit"],
+      PaginationToken: params["PaginationToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDevices",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Devices": [toDeviceType],
@@ -1146,13 +1350,16 @@ export default class CognitoIdentityServiceProvider {
   async listGroups(
     {abortSignal, ...params}: RequestConfig & ListGroupsRequest,
   ): Promise<ListGroupsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Groups": [toGroupType],
@@ -1164,13 +1371,16 @@ export default class CognitoIdentityServiceProvider {
   async listIdentityProviders(
     {abortSignal, ...params}: RequestConfig & ListIdentityProvidersRequest,
   ): Promise<ListIdentityProvidersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListIdentityProviders",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Providers": [toProviderDescription],
       },
@@ -1183,13 +1393,16 @@ export default class CognitoIdentityServiceProvider {
   async listResourceServers(
     {abortSignal, ...params}: RequestConfig & ListResourceServersRequest,
   ): Promise<ListResourceServersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResourceServers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ResourceServers": [toResourceServerType],
       },
@@ -1202,16 +1415,17 @@ export default class CognitoIdentityServiceProvider {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Tags": x => prt.readMap(String, String, x),
+        "Tags": x => jsonP.readMap(String, String, x),
       },
     }, await resp.json());
   }
@@ -1219,13 +1433,16 @@ export default class CognitoIdentityServiceProvider {
   async listUserImportJobs(
     {abortSignal, ...params}: RequestConfig & ListUserImportJobsRequest,
   ): Promise<ListUserImportJobsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      MaxResults: params["MaxResults"],
+      PaginationToken: params["PaginationToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUserImportJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserImportJobs": [toUserImportJobType],
@@ -1237,13 +1454,16 @@ export default class CognitoIdentityServiceProvider {
   async listUserPoolClients(
     {abortSignal, ...params}: RequestConfig & ListUserPoolClientsRequest,
   ): Promise<ListUserPoolClientsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUserPoolClients",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserPoolClients": [toUserPoolClientDescription],
@@ -1255,13 +1475,15 @@ export default class CognitoIdentityServiceProvider {
   async listUserPools(
     {abortSignal, ...params}: RequestConfig & ListUserPoolsRequest,
   ): Promise<ListUserPoolsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUserPools",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserPools": [toUserPoolDescriptionType],
@@ -1273,13 +1495,18 @@ export default class CognitoIdentityServiceProvider {
   async listUsers(
     {abortSignal, ...params}: RequestConfig & ListUsersRequest,
   ): Promise<ListUsersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      AttributesToGet: params["AttributesToGet"],
+      Limit: params["Limit"],
+      PaginationToken: params["PaginationToken"],
+      Filter: params["Filter"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUsers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Users": [toUserType],
@@ -1291,13 +1518,17 @@ export default class CognitoIdentityServiceProvider {
   async listUsersInGroup(
     {abortSignal, ...params}: RequestConfig & ListUsersInGroupRequest,
   ): Promise<ListUsersInGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      GroupName: params["GroupName"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUsersInGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Users": [toUserType],
@@ -1309,15 +1540,19 @@ export default class CognitoIdentityServiceProvider {
   async resendConfirmationCode(
     {abortSignal, ...params}: RequestConfig & ResendConfirmationCodeRequest,
   ): Promise<ResendConfirmationCodeResponse> {
-    const body: JSONObject = {...params,
-    UserContextData: fromUserContextDataType(params["UserContextData"]),
-    AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClientId: params["ClientId"],
+      SecretHash: params["SecretHash"],
+      UserContextData: fromUserContextDataType(params["UserContextData"]),
+      Username: params["Username"],
+      AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
+      ClientMetadata: params["ClientMetadata"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResendConfirmationCode",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CodeDeliveryDetails": toCodeDeliveryDetailsType,
@@ -1328,20 +1563,25 @@ export default class CognitoIdentityServiceProvider {
   async respondToAuthChallenge(
     {abortSignal, ...params}: RequestConfig & RespondToAuthChallengeRequest,
   ): Promise<RespondToAuthChallengeResponse> {
-    const body: JSONObject = {...params,
-    AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
-    UserContextData: fromUserContextDataType(params["UserContextData"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClientId: params["ClientId"],
+      ChallengeName: params["ChallengeName"],
+      Session: params["Session"],
+      ChallengeResponses: params["ChallengeResponses"],
+      AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
+      UserContextData: fromUserContextDataType(params["UserContextData"]),
+      ClientMetadata: params["ClientMetadata"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RespondToAuthChallenge",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "ChallengeName": toChallengeNameType,
+        "ChallengeName": (x: jsonP.JSONValue) => cmnP.readEnum<ChallengeNameType>(x),
         "Session": "s",
-        "ChallengeParameters": x => prt.readMap(String, String, x),
+        "ChallengeParameters": x => jsonP.readMap(String, String, x),
         "AuthenticationResult": toAuthenticationResultType,
       },
     }, await resp.json());
@@ -1350,16 +1590,18 @@ export default class CognitoIdentityServiceProvider {
   async setRiskConfiguration(
     {abortSignal, ...params}: RequestConfig & SetRiskConfigurationRequest,
   ): Promise<SetRiskConfigurationResponse> {
-    const body: JSONObject = {...params,
-    CompromisedCredentialsRiskConfiguration: fromCompromisedCredentialsRiskConfigurationType(params["CompromisedCredentialsRiskConfiguration"]),
-    AccountTakeoverRiskConfiguration: fromAccountTakeoverRiskConfigurationType(params["AccountTakeoverRiskConfiguration"]),
-    RiskExceptionConfiguration: fromRiskExceptionConfigurationType(params["RiskExceptionConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      ClientId: params["ClientId"],
+      CompromisedCredentialsRiskConfiguration: fromCompromisedCredentialsRiskConfigurationType(params["CompromisedCredentialsRiskConfiguration"]),
+      AccountTakeoverRiskConfiguration: fromAccountTakeoverRiskConfigurationType(params["AccountTakeoverRiskConfiguration"]),
+      RiskExceptionConfiguration: fromRiskExceptionConfigurationType(params["RiskExceptionConfiguration"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetRiskConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "RiskConfiguration": toRiskConfigurationType,
       },
@@ -1370,14 +1612,17 @@ export default class CognitoIdentityServiceProvider {
   async setUICustomization(
     {abortSignal, ...params}: RequestConfig & SetUICustomizationRequest,
   ): Promise<SetUICustomizationResponse> {
-    const body: JSONObject = {...params,
-    ImageFile: prt.serializeBlob(params["ImageFile"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      ClientId: params["ClientId"],
+      CSS: params["CSS"],
+      ImageFile: jsonP.serializeBlob(params["ImageFile"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetUICustomization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "UICustomization": toUICustomizationType,
       },
@@ -1388,15 +1633,16 @@ export default class CognitoIdentityServiceProvider {
   async setUserMFAPreference(
     {abortSignal, ...params}: RequestConfig & SetUserMFAPreferenceRequest,
   ): Promise<SetUserMFAPreferenceResponse> {
-    const body: JSONObject = {...params,
-    SMSMfaSettings: fromSMSMfaSettingsType(params["SMSMfaSettings"]),
-    SoftwareTokenMfaSettings: fromSoftwareTokenMfaSettingsType(params["SoftwareTokenMfaSettings"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SMSMfaSettings: fromSMSMfaSettingsType(params["SMSMfaSettings"]),
+      SoftwareTokenMfaSettings: fromSoftwareTokenMfaSettingsType(params["SoftwareTokenMfaSettings"]),
+      AccessToken: params["AccessToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetUserMFAPreference",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1405,20 +1651,22 @@ export default class CognitoIdentityServiceProvider {
   async setUserPoolMfaConfig(
     {abortSignal, ...params}: RequestConfig & SetUserPoolMfaConfigRequest,
   ): Promise<SetUserPoolMfaConfigResponse> {
-    const body: JSONObject = {...params,
-    SmsMfaConfiguration: fromSmsMfaConfigType(params["SmsMfaConfiguration"]),
-    SoftwareTokenMfaConfiguration: fromSoftwareTokenMfaConfigType(params["SoftwareTokenMfaConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      SmsMfaConfiguration: fromSmsMfaConfigType(params["SmsMfaConfiguration"]),
+      SoftwareTokenMfaConfiguration: fromSoftwareTokenMfaConfigType(params["SoftwareTokenMfaConfiguration"]),
+      MfaConfiguration: params["MfaConfiguration"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetUserPoolMfaConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SmsMfaConfiguration": toSmsMfaConfigType,
         "SoftwareTokenMfaConfiguration": toSoftwareTokenMfaConfigType,
-        "MfaConfiguration": toUserPoolMfaType,
+        "MfaConfiguration": (x: jsonP.JSONValue) => cmnP.readEnum<UserPoolMfaType>(x),
       },
     }, await resp.json());
   }
@@ -1426,14 +1674,15 @@ export default class CognitoIdentityServiceProvider {
   async setUserSettings(
     {abortSignal, ...params}: RequestConfig & SetUserSettingsRequest,
   ): Promise<SetUserSettingsResponse> {
-    const body: JSONObject = {...params,
-    MFAOptions: params["MFAOptions"]?.map(x => fromMFAOptionType(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccessToken: params["AccessToken"],
+      MFAOptions: params["MFAOptions"]?.map(x => fromMFAOptionType(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetUserSettings",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1442,17 +1691,22 @@ export default class CognitoIdentityServiceProvider {
   async signUp(
     {abortSignal, ...params}: RequestConfig & SignUpRequest,
   ): Promise<SignUpResponse> {
-    const body: JSONObject = {...params,
-    UserAttributes: params["UserAttributes"]?.map(x => fromAttributeType(x)),
-    ValidationData: params["ValidationData"]?.map(x => fromAttributeType(x)),
-    AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
-    UserContextData: fromUserContextDataType(params["UserContextData"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClientId: params["ClientId"],
+      SecretHash: params["SecretHash"],
+      Username: params["Username"],
+      Password: params["Password"],
+      UserAttributes: params["UserAttributes"]?.map(x => fromAttributeType(x)),
+      ValidationData: params["ValidationData"]?.map(x => fromAttributeType(x)),
+      AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
+      UserContextData: fromUserContextDataType(params["UserContextData"]),
+      ClientMetadata: params["ClientMetadata"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SignUp",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "UserConfirmed": "b",
         "UserSub": "s",
@@ -1466,13 +1720,15 @@ export default class CognitoIdentityServiceProvider {
   async startUserImportJob(
     {abortSignal, ...params}: RequestConfig & StartUserImportJobRequest,
   ): Promise<StartUserImportJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartUserImportJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserImportJob": toUserImportJobType,
@@ -1483,13 +1739,15 @@ export default class CognitoIdentityServiceProvider {
   async stopUserImportJob(
     {abortSignal, ...params}: RequestConfig & StopUserImportJobRequest,
   ): Promise<StopUserImportJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopUserImportJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserImportJob": toUserImportJobType,
@@ -1500,13 +1758,15 @@ export default class CognitoIdentityServiceProvider {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      Tags: params["Tags"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1515,13 +1775,15 @@ export default class CognitoIdentityServiceProvider {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1530,13 +1792,18 @@ export default class CognitoIdentityServiceProvider {
   async updateAuthEventFeedback(
     {abortSignal, ...params}: RequestConfig & UpdateAuthEventFeedbackRequest,
   ): Promise<UpdateAuthEventFeedbackResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Username: params["Username"],
+      EventId: params["EventId"],
+      FeedbackToken: params["FeedbackToken"],
+      FeedbackValue: params["FeedbackValue"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAuthEventFeedback",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1545,13 +1812,16 @@ export default class CognitoIdentityServiceProvider {
   async updateDeviceStatus(
     {abortSignal, ...params}: RequestConfig & UpdateDeviceStatusRequest,
   ): Promise<UpdateDeviceStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccessToken: params["AccessToken"],
+      DeviceKey: params["DeviceKey"],
+      DeviceRememberedStatus: params["DeviceRememberedStatus"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDeviceStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1560,13 +1830,18 @@ export default class CognitoIdentityServiceProvider {
   async updateGroup(
     {abortSignal, ...params}: RequestConfig & UpdateGroupRequest,
   ): Promise<UpdateGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GroupName: params["GroupName"],
+      UserPoolId: params["UserPoolId"],
+      Description: params["Description"],
+      RoleArn: params["RoleArn"],
+      Precedence: params["Precedence"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Group": toGroupType,
@@ -1577,13 +1852,18 @@ export default class CognitoIdentityServiceProvider {
   async updateIdentityProvider(
     {abortSignal, ...params}: RequestConfig & UpdateIdentityProviderRequest,
   ): Promise<UpdateIdentityProviderResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      ProviderName: params["ProviderName"],
+      ProviderDetails: params["ProviderDetails"],
+      AttributeMapping: params["AttributeMapping"],
+      IdpIdentifiers: params["IdpIdentifiers"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateIdentityProvider",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "IdentityProvider": toIdentityProviderType,
       },
@@ -1594,14 +1874,17 @@ export default class CognitoIdentityServiceProvider {
   async updateResourceServer(
     {abortSignal, ...params}: RequestConfig & UpdateResourceServerRequest,
   ): Promise<UpdateResourceServerResponse> {
-    const body: JSONObject = {...params,
-    Scopes: params["Scopes"]?.map(x => fromResourceServerScopeType(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Identifier: params["Identifier"],
+      Name: params["Name"],
+      Scopes: params["Scopes"]?.map(x => fromResourceServerScopeType(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateResourceServer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ResourceServer": toResourceServerType,
       },
@@ -1612,14 +1895,16 @@ export default class CognitoIdentityServiceProvider {
   async updateUserAttributes(
     {abortSignal, ...params}: RequestConfig & UpdateUserAttributesRequest,
   ): Promise<UpdateUserAttributesResponse> {
-    const body: JSONObject = {...params,
-    UserAttributes: params["UserAttributes"]?.map(x => fromAttributeType(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserAttributes: params["UserAttributes"]?.map(x => fromAttributeType(x)),
+      AccessToken: params["AccessToken"],
+      ClientMetadata: params["ClientMetadata"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUserAttributes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CodeDeliveryDetailsList": [toCodeDeliveryDetailsType],
@@ -1630,22 +1915,30 @@ export default class CognitoIdentityServiceProvider {
   async updateUserPool(
     {abortSignal, ...params}: RequestConfig & UpdateUserPoolRequest,
   ): Promise<UpdateUserPoolResponse> {
-    const body: JSONObject = {...params,
-    Policies: fromUserPoolPolicyType(params["Policies"]),
-    LambdaConfig: fromLambdaConfigType(params["LambdaConfig"]),
-    VerificationMessageTemplate: fromVerificationMessageTemplateType(params["VerificationMessageTemplate"]),
-    DeviceConfiguration: fromDeviceConfigurationType(params["DeviceConfiguration"]),
-    EmailConfiguration: fromEmailConfigurationType(params["EmailConfiguration"]),
-    SmsConfiguration: fromSmsConfigurationType(params["SmsConfiguration"]),
-    AdminCreateUserConfig: fromAdminCreateUserConfigType(params["AdminCreateUserConfig"]),
-    UserPoolAddOns: fromUserPoolAddOnsType(params["UserPoolAddOns"]),
-    AccountRecoverySetting: fromAccountRecoverySettingType(params["AccountRecoverySetting"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      Policies: fromUserPoolPolicyType(params["Policies"]),
+      LambdaConfig: fromLambdaConfigType(params["LambdaConfig"]),
+      AutoVerifiedAttributes: params["AutoVerifiedAttributes"],
+      SmsVerificationMessage: params["SmsVerificationMessage"],
+      EmailVerificationMessage: params["EmailVerificationMessage"],
+      EmailVerificationSubject: params["EmailVerificationSubject"],
+      VerificationMessageTemplate: fromVerificationMessageTemplateType(params["VerificationMessageTemplate"]),
+      SmsAuthenticationMessage: params["SmsAuthenticationMessage"],
+      MfaConfiguration: params["MfaConfiguration"],
+      DeviceConfiguration: fromDeviceConfigurationType(params["DeviceConfiguration"]),
+      EmailConfiguration: fromEmailConfigurationType(params["EmailConfiguration"]),
+      SmsConfiguration: fromSmsConfigurationType(params["SmsConfiguration"]),
+      UserPoolTags: params["UserPoolTags"],
+      AdminCreateUserConfig: fromAdminCreateUserConfigType(params["AdminCreateUserConfig"]),
+      UserPoolAddOns: fromUserPoolAddOnsType(params["UserPoolAddOns"]),
+      AccountRecoverySetting: fromAccountRecoverySettingType(params["AccountRecoverySetting"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUserPool",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1654,15 +1947,32 @@ export default class CognitoIdentityServiceProvider {
   async updateUserPoolClient(
     {abortSignal, ...params}: RequestConfig & UpdateUserPoolClientRequest,
   ): Promise<UpdateUserPoolClientResponse> {
-    const body: JSONObject = {...params,
-    TokenValidityUnits: fromTokenValidityUnitsType(params["TokenValidityUnits"]),
-    AnalyticsConfiguration: fromAnalyticsConfigurationType(params["AnalyticsConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UserPoolId: params["UserPoolId"],
+      ClientId: params["ClientId"],
+      ClientName: params["ClientName"],
+      RefreshTokenValidity: params["RefreshTokenValidity"],
+      AccessTokenValidity: params["AccessTokenValidity"],
+      IdTokenValidity: params["IdTokenValidity"],
+      TokenValidityUnits: fromTokenValidityUnitsType(params["TokenValidityUnits"]),
+      ReadAttributes: params["ReadAttributes"],
+      WriteAttributes: params["WriteAttributes"],
+      ExplicitAuthFlows: params["ExplicitAuthFlows"],
+      SupportedIdentityProviders: params["SupportedIdentityProviders"],
+      CallbackURLs: params["CallbackURLs"],
+      LogoutURLs: params["LogoutURLs"],
+      DefaultRedirectURI: params["DefaultRedirectURI"],
+      AllowedOAuthFlows: params["AllowedOAuthFlows"],
+      AllowedOAuthScopes: params["AllowedOAuthScopes"],
+      AllowedOAuthFlowsUserPoolClient: params["AllowedOAuthFlowsUserPoolClient"],
+      AnalyticsConfiguration: fromAnalyticsConfigurationType(params["AnalyticsConfiguration"]),
+      PreventUserExistenceErrors: params["PreventUserExistenceErrors"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUserPoolClient",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UserPoolClient": toUserPoolClientType,
@@ -1673,14 +1983,16 @@ export default class CognitoIdentityServiceProvider {
   async updateUserPoolDomain(
     {abortSignal, ...params}: RequestConfig & UpdateUserPoolDomainRequest,
   ): Promise<UpdateUserPoolDomainResponse> {
-    const body: JSONObject = {...params,
-    CustomDomainConfig: fromCustomDomainConfigType(params["CustomDomainConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Domain: params["Domain"],
+      UserPoolId: params["UserPoolId"],
+      CustomDomainConfig: fromCustomDomainConfigType(params["CustomDomainConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUserPoolDomain",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CloudFrontDomain": "s",
@@ -1691,16 +2003,20 @@ export default class CognitoIdentityServiceProvider {
   async verifySoftwareToken(
     {abortSignal, ...params}: RequestConfig & VerifySoftwareTokenRequest,
   ): Promise<VerifySoftwareTokenResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccessToken: params["AccessToken"],
+      Session: params["Session"],
+      UserCode: params["UserCode"],
+      FriendlyDeviceName: params["FriendlyDeviceName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "VerifySoftwareToken",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Status": toVerifySoftwareTokenResponseType,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<VerifySoftwareTokenResponseType>(x),
         "Session": "s",
       },
     }, await resp.json());
@@ -1709,13 +2025,16 @@ export default class CognitoIdentityServiceProvider {
   async verifyUserAttribute(
     {abortSignal, ...params}: RequestConfig & VerifyUserAttributeRequest,
   ): Promise<VerifyUserAttributeResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccessToken: params["AccessToken"],
+      AttributeName: params["AttributeName"],
+      Code: params["Code"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "VerifyUserAttribute",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1740,7 +2059,7 @@ export interface AdminAddUserToGroupRequest {
 export interface AdminConfirmSignUpRequest {
   UserPoolId: string;
   Username: string;
-  ClientMetadata?: { [key: string]: string } | null;
+  ClientMetadata?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1753,7 +2072,7 @@ export interface AdminCreateUserRequest {
   ForceAliasCreation?: boolean | null;
   MessageAction?: MessageActionType | null;
   DesiredDeliveryMediums?: DeliveryMediumType[] | null;
-  ClientMetadata?: { [key: string]: string } | null;
+  ClientMetadata?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1812,8 +2131,8 @@ export interface AdminInitiateAuthRequest {
   UserPoolId: string;
   ClientId: string;
   AuthFlow: AuthFlowType;
-  AuthParameters?: { [key: string]: string } | null;
-  ClientMetadata?: { [key: string]: string } | null;
+  AuthParameters?: { [key: string]: string | null | undefined } | null;
+  ClientMetadata?: { [key: string]: string | null | undefined } | null;
   AnalyticsMetadata?: AnalyticsMetadataType | null;
   ContextData?: ContextDataType | null;
 }
@@ -1860,7 +2179,7 @@ export interface AdminRemoveUserFromGroupRequest {
 export interface AdminResetUserPasswordRequest {
   UserPoolId: string;
   Username: string;
-  ClientMetadata?: { [key: string]: string } | null;
+  ClientMetadata?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1868,11 +2187,11 @@ export interface AdminRespondToAuthChallengeRequest {
   UserPoolId: string;
   ClientId: string;
   ChallengeName: ChallengeNameType;
-  ChallengeResponses?: { [key: string]: string } | null;
+  ChallengeResponses?: { [key: string]: string | null | undefined } | null;
   Session?: string | null;
   AnalyticsMetadata?: AnalyticsMetadataType | null;
   ContextData?: ContextDataType | null;
-  ClientMetadata?: { [key: string]: string } | null;
+  ClientMetadata?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1919,7 +2238,7 @@ export interface AdminUpdateUserAttributesRequest {
   UserPoolId: string;
   Username: string;
   UserAttributes: AttributeType[];
-  ClientMetadata?: { [key: string]: string } | null;
+  ClientMetadata?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1958,7 +2277,7 @@ export interface ConfirmForgotPasswordRequest {
   Password: string;
   AnalyticsMetadata?: AnalyticsMetadataType | null;
   UserContextData?: UserContextDataType | null;
-  ClientMetadata?: { [key: string]: string } | null;
+  ClientMetadata?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1970,7 +2289,7 @@ export interface ConfirmSignUpRequest {
   ForceAliasCreation?: boolean | null;
   AnalyticsMetadata?: AnalyticsMetadataType | null;
   UserContextData?: UserContextDataType | null;
-  ClientMetadata?: { [key: string]: string } | null;
+  ClientMetadata?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1987,8 +2306,8 @@ export interface CreateIdentityProviderRequest {
   UserPoolId: string;
   ProviderName: string;
   ProviderType: IdentityProviderTypeType;
-  ProviderDetails: { [key: string]: string };
-  AttributeMapping?: { [key: string]: string } | null;
+  ProviderDetails: { [key: string]: string | null | undefined };
+  AttributeMapping?: { [key: string]: string | null | undefined } | null;
   IdpIdentifiers?: string[] | null;
 }
 
@@ -2024,7 +2343,7 @@ export interface CreateUserPoolRequest {
   DeviceConfiguration?: DeviceConfigurationType | null;
   EmailConfiguration?: EmailConfigurationType | null;
   SmsConfiguration?: SmsConfigurationType | null;
-  UserPoolTags?: { [key: string]: string } | null;
+  UserPoolTags?: { [key: string]: string | null | undefined } | null;
   AdminCreateUserConfig?: AdminCreateUserConfigType | null;
   Schema?: SchemaAttributeType[] | null;
   UserPoolAddOns?: UserPoolAddOnsType | null;
@@ -2161,7 +2480,7 @@ export interface ForgotPasswordRequest {
   UserContextData?: UserContextDataType | null;
   Username: string;
   AnalyticsMetadata?: AnalyticsMetadataType | null;
-  ClientMetadata?: { [key: string]: string } | null;
+  ClientMetadata?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2207,7 +2526,7 @@ export interface GetUserRequest {
 export interface GetUserAttributeVerificationCodeRequest {
   AccessToken: string;
   AttributeName: string;
-  ClientMetadata?: { [key: string]: string } | null;
+  ClientMetadata?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2223,8 +2542,8 @@ export interface GlobalSignOutRequest {
 // refs: 1 - tags: named, input
 export interface InitiateAuthRequest {
   AuthFlow: AuthFlowType;
-  AuthParameters?: { [key: string]: string } | null;
-  ClientMetadata?: { [key: string]: string } | null;
+  AuthParameters?: { [key: string]: string | null | undefined } | null;
+  ClientMetadata?: { [key: string]: string | null | undefined } | null;
   ClientId: string;
   AnalyticsMetadata?: AnalyticsMetadataType | null;
   UserContextData?: UserContextDataType | null;
@@ -2307,7 +2626,7 @@ export interface ResendConfirmationCodeRequest {
   UserContextData?: UserContextDataType | null;
   Username: string;
   AnalyticsMetadata?: AnalyticsMetadataType | null;
-  ClientMetadata?: { [key: string]: string } | null;
+  ClientMetadata?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2315,10 +2634,10 @@ export interface RespondToAuthChallengeRequest {
   ClientId: string;
   ChallengeName: ChallengeNameType;
   Session?: string | null;
-  ChallengeResponses?: { [key: string]: string } | null;
+  ChallengeResponses?: { [key: string]: string | null | undefined } | null;
   AnalyticsMetadata?: AnalyticsMetadataType | null;
   UserContextData?: UserContextDataType | null;
-  ClientMetadata?: { [key: string]: string } | null;
+  ClientMetadata?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2369,7 +2688,7 @@ export interface SignUpRequest {
   ValidationData?: AttributeType[] | null;
   AnalyticsMetadata?: AnalyticsMetadataType | null;
   UserContextData?: UserContextDataType | null;
-  ClientMetadata?: { [key: string]: string } | null;
+  ClientMetadata?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2387,7 +2706,7 @@ export interface StopUserImportJobRequest {
 // refs: 1 - tags: named, input
 export interface TagResourceRequest {
   ResourceArn: string;
-  Tags: { [key: string]: string };
+  Tags: { [key: string]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, input
@@ -2425,8 +2744,8 @@ export interface UpdateGroupRequest {
 export interface UpdateIdentityProviderRequest {
   UserPoolId: string;
   ProviderName: string;
-  ProviderDetails?: { [key: string]: string } | null;
-  AttributeMapping?: { [key: string]: string } | null;
+  ProviderDetails?: { [key: string]: string | null | undefined } | null;
+  AttributeMapping?: { [key: string]: string | null | undefined } | null;
   IdpIdentifiers?: string[] | null;
 }
 
@@ -2442,7 +2761,7 @@ export interface UpdateResourceServerRequest {
 export interface UpdateUserAttributesRequest {
   UserAttributes: AttributeType[];
   AccessToken: string;
-  ClientMetadata?: { [key: string]: string } | null;
+  ClientMetadata?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2460,7 +2779,7 @@ export interface UpdateUserPoolRequest {
   DeviceConfiguration?: DeviceConfigurationType | null;
   EmailConfiguration?: EmailConfigurationType | null;
   SmsConfiguration?: SmsConfigurationType | null;
-  UserPoolTags?: { [key: string]: string } | null;
+  UserPoolTags?: { [key: string]: string | null | undefined } | null;
   AdminCreateUserConfig?: AdminCreateUserConfigType | null;
   UserPoolAddOns?: UserPoolAddOnsType | null;
   AccountRecoverySetting?: AccountRecoverySettingType | null;
@@ -2562,7 +2881,7 @@ export interface AdminGetUserResponse {
 export interface AdminInitiateAuthResponse {
   ChallengeName?: ChallengeNameType | null;
   Session?: string | null;
-  ChallengeParameters?: { [key: string]: string } | null;
+  ChallengeParameters?: { [key: string]: string | null | undefined } | null;
   AuthenticationResult?: AuthenticationResultType | null;
 }
 
@@ -2596,7 +2915,7 @@ export interface AdminResetUserPasswordResponse {
 export interface AdminRespondToAuthChallengeResponse {
   ChallengeName?: ChallengeNameType | null;
   Session?: string | null;
-  ChallengeParameters?: { [key: string]: string } | null;
+  ChallengeParameters?: { [key: string]: string | null | undefined } | null;
   AuthenticationResult?: AuthenticationResultType | null;
 }
 
@@ -2794,7 +3113,7 @@ export interface GlobalSignOutResponse {
 export interface InitiateAuthResponse {
   ChallengeName?: ChallengeNameType | null;
   Session?: string | null;
-  ChallengeParameters?: { [key: string]: string } | null;
+  ChallengeParameters?: { [key: string]: string | null | undefined } | null;
   AuthenticationResult?: AuthenticationResultType | null;
 }
 
@@ -2824,7 +3143,7 @@ export interface ListResourceServersResponse {
 
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
-  Tags?: { [key: string]: string } | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output
@@ -2866,7 +3185,7 @@ export interface ResendConfirmationCodeResponse {
 export interface RespondToAuthChallengeResponse {
   ChallengeName?: ChallengeNameType | null;
   Session?: string | null;
-  ChallengeParameters?: { [key: string]: string } | null;
+  ChallengeParameters?: { [key: string]: string | null | undefined } | null;
   AuthenticationResult?: AuthenticationResultType | null;
 }
 
@@ -2982,19 +3301,24 @@ export interface SchemaAttributeType {
   NumberAttributeConstraints?: NumberAttributeConstraintsType | null;
   StringAttributeConstraints?: StringAttributeConstraintsType | null;
 }
-function fromSchemaAttributeType(input?: SchemaAttributeType | null): JSONValue {
+function fromSchemaAttributeType(input?: SchemaAttributeType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    AttributeDataType: input["AttributeDataType"],
+    DeveloperOnlyAttribute: input["DeveloperOnlyAttribute"],
+    Mutable: input["Mutable"],
+    Required: input["Required"],
     NumberAttributeConstraints: fromNumberAttributeConstraintsType(input["NumberAttributeConstraints"]),
     StringAttributeConstraints: fromStringAttributeConstraintsType(input["StringAttributeConstraints"]),
   }
 }
-function toSchemaAttributeType(root: JSONValue): SchemaAttributeType {
-  return prt.readObj({
+function toSchemaAttributeType(root: jsonP.JSONValue): SchemaAttributeType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
-      "AttributeDataType": toAttributeDataType,
+      "AttributeDataType": (x: jsonP.JSONValue) => cmnP.readEnum<AttributeDataType>(x),
       "DeveloperOnlyAttribute": "b",
       "Mutable": "b",
       "Required": "b",
@@ -3010,29 +3334,22 @@ export type AttributeDataType =
 | "Number"
 | "DateTime"
 | "Boolean"
-;
-
-function toAttributeDataType(root: JSONValue): AttributeDataType | null {
-  return ( false
-    || root == "String"
-    || root == "Number"
-    || root == "DateTime"
-    || root == "Boolean"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface NumberAttributeConstraintsType {
   MinValue?: string | null;
   MaxValue?: string | null;
 }
-function fromNumberAttributeConstraintsType(input?: NumberAttributeConstraintsType | null): JSONValue {
+function fromNumberAttributeConstraintsType(input?: NumberAttributeConstraintsType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MinValue: input["MinValue"],
+    MaxValue: input["MaxValue"],
   }
 }
-function toNumberAttributeConstraintsType(root: JSONValue): NumberAttributeConstraintsType {
-  return prt.readObj({
+function toNumberAttributeConstraintsType(root: jsonP.JSONValue): NumberAttributeConstraintsType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MinValue": "s",
@@ -3046,13 +3363,15 @@ export interface StringAttributeConstraintsType {
   MinLength?: string | null;
   MaxLength?: string | null;
 }
-function fromStringAttributeConstraintsType(input?: StringAttributeConstraintsType | null): JSONValue {
+function fromStringAttributeConstraintsType(input?: StringAttributeConstraintsType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MinLength: input["MinLength"],
+    MaxLength: input["MaxLength"],
   }
 }
-function toStringAttributeConstraintsType(root: JSONValue): StringAttributeConstraintsType {
-  return prt.readObj({
+function toStringAttributeConstraintsType(root: jsonP.JSONValue): StringAttributeConstraintsType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MinLength": "s",
@@ -3066,13 +3385,15 @@ export interface AttributeType {
   Name: string;
   Value?: string | null;
 }
-function fromAttributeType(input?: AttributeType | null): JSONValue {
+function fromAttributeType(input?: AttributeType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Value: input["Value"],
   }
 }
-function toAttributeType(root: JSONValue): AttributeType {
-  return prt.readObj({
+function toAttributeType(root: jsonP.JSONValue): AttributeType {
+  return jsonP.readObj({
     required: {
       "Name": "s",
     },
@@ -3086,21 +3407,13 @@ function toAttributeType(root: JSONValue): AttributeType {
 export type MessageActionType =
 | "RESEND"
 | "SUPPRESS"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 13 - tags: input, named, enum, output
 export type DeliveryMediumType =
 | "SMS"
 | "EMAIL"
-;
-
-function toDeliveryMediumType(root: JSONValue): DeliveryMediumType | null {
-  return ( false
-    || root == "SMS"
-    || root == "EMAIL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface
 export interface ProviderUserIdentifierType {
@@ -3108,9 +3421,12 @@ export interface ProviderUserIdentifierType {
   ProviderAttributeName?: string | null;
   ProviderAttributeValue?: string | null;
 }
-function fromProviderUserIdentifierType(input?: ProviderUserIdentifierType | null): JSONValue {
+function fromProviderUserIdentifierType(input?: ProviderUserIdentifierType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ProviderName: input["ProviderName"],
+    ProviderAttributeName: input["ProviderAttributeName"],
+    ProviderAttributeValue: input["ProviderAttributeValue"],
   }
 }
 
@@ -3123,16 +3439,16 @@ export type AuthFlowType =
 | "ADMIN_NO_SRP_AUTH"
 | "USER_PASSWORD_AUTH"
 | "ADMIN_USER_PASSWORD_AUTH"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 9 - tags: input, named, interface
 export interface AnalyticsMetadataType {
   AnalyticsEndpointId?: string | null;
 }
-function fromAnalyticsMetadataType(input?: AnalyticsMetadataType | null): JSONValue {
+function fromAnalyticsMetadataType(input?: AnalyticsMetadataType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AnalyticsEndpointId: input["AnalyticsEndpointId"],
   }
 }
 
@@ -3144,10 +3460,14 @@ export interface ContextDataType {
   HttpHeaders: HttpHeader[];
   EncodedData?: string | null;
 }
-function fromContextDataType(input?: ContextDataType | null): JSONValue {
+function fromContextDataType(input?: ContextDataType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    IpAddress: input["IpAddress"],
+    ServerName: input["ServerName"],
+    ServerPath: input["ServerPath"],
     HttpHeaders: input["HttpHeaders"]?.map(x => fromHttpHeader(x)),
+    EncodedData: input["EncodedData"],
   }
 }
 
@@ -3156,9 +3476,11 @@ export interface HttpHeader {
   headerName?: string | null;
   headerValue?: string | null;
 }
-function fromHttpHeader(input?: HttpHeader | null): JSONValue {
+function fromHttpHeader(input?: HttpHeader | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    headerName: input["headerName"],
+    headerValue: input["headerValue"],
   }
 }
 
@@ -3174,31 +3496,18 @@ export type ChallengeNameType =
 | "DEVICE_PASSWORD_VERIFIER"
 | "ADMIN_NO_SRP_AUTH"
 | "NEW_PASSWORD_REQUIRED"
-;
-
-function toChallengeNameType(root: JSONValue): ChallengeNameType | null {
-  return ( false
-    || root == "SMS_MFA"
-    || root == "SOFTWARE_TOKEN_MFA"
-    || root == "SELECT_MFA_TYPE"
-    || root == "MFA_SETUP"
-    || root == "PASSWORD_VERIFIER"
-    || root == "CUSTOM_CHALLENGE"
-    || root == "DEVICE_SRP_AUTH"
-    || root == "DEVICE_PASSWORD_VERIFIER"
-    || root == "ADMIN_NO_SRP_AUTH"
-    || root == "NEW_PASSWORD_REQUIRED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface SMSMfaSettingsType {
   Enabled?: boolean | null;
   PreferredMfa?: boolean | null;
 }
-function fromSMSMfaSettingsType(input?: SMSMfaSettingsType | null): JSONValue {
+function fromSMSMfaSettingsType(input?: SMSMfaSettingsType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Enabled: input["Enabled"],
+    PreferredMfa: input["PreferredMfa"],
   }
 }
 
@@ -3207,9 +3516,11 @@ export interface SoftwareTokenMfaSettingsType {
   Enabled?: boolean | null;
   PreferredMfa?: boolean | null;
 }
-function fromSoftwareTokenMfaSettingsType(input?: SoftwareTokenMfaSettingsType | null): JSONValue {
+function fromSoftwareTokenMfaSettingsType(input?: SoftwareTokenMfaSettingsType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Enabled: input["Enabled"],
+    PreferredMfa: input["PreferredMfa"],
   }
 }
 
@@ -3218,16 +3529,18 @@ export interface MFAOptionType {
   DeliveryMedium?: DeliveryMediumType | null;
   AttributeName?: string | null;
 }
-function fromMFAOptionType(input?: MFAOptionType | null): JSONValue {
+function fromMFAOptionType(input?: MFAOptionType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DeliveryMedium: input["DeliveryMedium"],
+    AttributeName: input["AttributeName"],
   }
 }
-function toMFAOptionType(root: JSONValue): MFAOptionType {
-  return prt.readObj({
+function toMFAOptionType(root: jsonP.JSONValue): MFAOptionType {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "DeliveryMedium": toDeliveryMediumType,
+      "DeliveryMedium": (x: jsonP.JSONValue) => cmnP.readEnum<DeliveryMediumType>(x),
       "AttributeName": "s",
     },
   }, root);
@@ -3237,30 +3550,24 @@ function toMFAOptionType(root: JSONValue): MFAOptionType {
 export type FeedbackValueType =
 | "Valid"
 | "Invalid"
-;
-
-function toFeedbackValueType(root: JSONValue): FeedbackValueType | null {
-  return ( false
-    || root == "Valid"
-    || root == "Invalid"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
 export type DeviceRememberedStatusType =
 | "remembered"
 | "not_remembered"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface DeviceSecretVerifierConfigType {
   PasswordVerifier?: string | null;
   Salt?: string | null;
 }
-function fromDeviceSecretVerifierConfigType(input?: DeviceSecretVerifierConfigType | null): JSONValue {
+function fromDeviceSecretVerifierConfigType(input?: DeviceSecretVerifierConfigType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    PasswordVerifier: input["PasswordVerifier"],
+    Salt: input["Salt"],
   }
 }
 
@@ -3268,9 +3575,10 @@ function fromDeviceSecretVerifierConfigType(input?: DeviceSecretVerifierConfigTy
 export interface UserContextDataType {
   EncodedData?: string | null;
 }
-function fromUserContextDataType(input?: UserContextDataType | null): JSONValue {
+function fromUserContextDataType(input?: UserContextDataType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    EncodedData: input["EncodedData"],
   }
 }
 
@@ -3282,31 +3590,22 @@ export type IdentityProviderTypeType =
 | "LoginWithAmazon"
 | "SignInWithApple"
 | "OIDC"
-;
-
-function toIdentityProviderTypeType(root: JSONValue): IdentityProviderTypeType | null {
-  return ( false
-    || root == "SAML"
-    || root == "Facebook"
-    || root == "Google"
-    || root == "LoginWithAmazon"
-    || root == "SignInWithApple"
-    || root == "OIDC"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface ResourceServerScopeType {
   ScopeName: string;
   ScopeDescription: string;
 }
-function fromResourceServerScopeType(input?: ResourceServerScopeType | null): JSONValue {
+function fromResourceServerScopeType(input?: ResourceServerScopeType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ScopeName: input["ScopeName"],
+    ScopeDescription: input["ScopeDescription"],
   }
 }
-function toResourceServerScopeType(root: JSONValue): ResourceServerScopeType {
-  return prt.readObj({
+function toResourceServerScopeType(root: jsonP.JSONValue): ResourceServerScopeType {
+  return jsonP.readObj({
     required: {
       "ScopeName": "s",
       "ScopeDescription": "s",
@@ -3319,14 +3618,14 @@ function toResourceServerScopeType(root: JSONValue): ResourceServerScopeType {
 export interface UserPoolPolicyType {
   PasswordPolicy?: PasswordPolicyType | null;
 }
-function fromUserPoolPolicyType(input?: UserPoolPolicyType | null): JSONValue {
+function fromUserPoolPolicyType(input?: UserPoolPolicyType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     PasswordPolicy: fromPasswordPolicyType(input["PasswordPolicy"]),
   }
 }
-function toUserPoolPolicyType(root: JSONValue): UserPoolPolicyType {
-  return prt.readObj({
+function toUserPoolPolicyType(root: jsonP.JSONValue): UserPoolPolicyType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PasswordPolicy": toPasswordPolicyType,
@@ -3343,13 +3642,19 @@ export interface PasswordPolicyType {
   RequireSymbols?: boolean | null;
   TemporaryPasswordValidityDays?: number | null;
 }
-function fromPasswordPolicyType(input?: PasswordPolicyType | null): JSONValue {
+function fromPasswordPolicyType(input?: PasswordPolicyType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MinimumLength: input["MinimumLength"],
+    RequireUppercase: input["RequireUppercase"],
+    RequireLowercase: input["RequireLowercase"],
+    RequireNumbers: input["RequireNumbers"],
+    RequireSymbols: input["RequireSymbols"],
+    TemporaryPasswordValidityDays: input["TemporaryPasswordValidityDays"],
   }
 }
-function toPasswordPolicyType(root: JSONValue): PasswordPolicyType {
-  return prt.readObj({
+function toPasswordPolicyType(root: jsonP.JSONValue): PasswordPolicyType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MinimumLength": "n",
@@ -3375,13 +3680,23 @@ export interface LambdaConfigType {
   PreTokenGeneration?: string | null;
   UserMigration?: string | null;
 }
-function fromLambdaConfigType(input?: LambdaConfigType | null): JSONValue {
+function fromLambdaConfigType(input?: LambdaConfigType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    PreSignUp: input["PreSignUp"],
+    CustomMessage: input["CustomMessage"],
+    PostConfirmation: input["PostConfirmation"],
+    PreAuthentication: input["PreAuthentication"],
+    PostAuthentication: input["PostAuthentication"],
+    DefineAuthChallenge: input["DefineAuthChallenge"],
+    CreateAuthChallenge: input["CreateAuthChallenge"],
+    VerifyAuthChallengeResponse: input["VerifyAuthChallengeResponse"],
+    PreTokenGeneration: input["PreTokenGeneration"],
+    UserMigration: input["UserMigration"],
   }
 }
-function toLambdaConfigType(root: JSONValue): LambdaConfigType {
-  return prt.readObj({
+function toLambdaConfigType(root: jsonP.JSONValue): LambdaConfigType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PreSignUp": "s",
@@ -3402,42 +3717,20 @@ function toLambdaConfigType(root: JSONValue): LambdaConfigType {
 export type VerifiedAttributeType =
 | "phone_number"
 | "email"
-;
-
-function toVerifiedAttributeType(root: JSONValue): VerifiedAttributeType | null {
-  return ( false
-    || root == "phone_number"
-    || root == "email"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type AliasAttributeType =
 | "phone_number"
 | "email"
 | "preferred_username"
-;
-
-function toAliasAttributeType(root: JSONValue): AliasAttributeType | null {
-  return ( false
-    || root == "phone_number"
-    || root == "email"
-    || root == "preferred_username"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type UsernameAttributeType =
 | "phone_number"
 | "email"
-;
-
-function toUsernameAttributeType(root: JSONValue): UsernameAttributeType | null {
-  return ( false
-    || root == "phone_number"
-    || root == "email"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface VerificationMessageTemplateType {
@@ -3448,13 +3741,19 @@ export interface VerificationMessageTemplateType {
   EmailSubjectByLink?: string | null;
   DefaultEmailOption?: DefaultEmailOptionType | null;
 }
-function fromVerificationMessageTemplateType(input?: VerificationMessageTemplateType | null): JSONValue {
+function fromVerificationMessageTemplateType(input?: VerificationMessageTemplateType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SmsMessage: input["SmsMessage"],
+    EmailMessage: input["EmailMessage"],
+    EmailSubject: input["EmailSubject"],
+    EmailMessageByLink: input["EmailMessageByLink"],
+    EmailSubjectByLink: input["EmailSubjectByLink"],
+    DefaultEmailOption: input["DefaultEmailOption"],
   }
 }
-function toVerificationMessageTemplateType(root: JSONValue): VerificationMessageTemplateType {
-  return prt.readObj({
+function toVerificationMessageTemplateType(root: jsonP.JSONValue): VerificationMessageTemplateType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SmsMessage": "s",
@@ -3462,7 +3761,7 @@ function toVerificationMessageTemplateType(root: JSONValue): VerificationMessage
       "EmailSubject": "s",
       "EmailMessageByLink": "s",
       "EmailSubjectByLink": "s",
-      "DefaultEmailOption": toDefaultEmailOptionType,
+      "DefaultEmailOption": (x: jsonP.JSONValue) => cmnP.readEnum<DefaultEmailOptionType>(x),
     },
   }, root);
 }
@@ -3471,42 +3770,29 @@ function toVerificationMessageTemplateType(root: JSONValue): VerificationMessage
 export type DefaultEmailOptionType =
 | "CONFIRM_WITH_LINK"
 | "CONFIRM_WITH_CODE"
-;
-
-function toDefaultEmailOptionType(root: JSONValue): DefaultEmailOptionType | null {
-  return ( false
-    || root == "CONFIRM_WITH_LINK"
-    || root == "CONFIRM_WITH_CODE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: input, named, enum, output
 export type UserPoolMfaType =
 | "OFF"
 | "ON"
 | "OPTIONAL"
-;
-
-function toUserPoolMfaType(root: JSONValue): UserPoolMfaType | null {
-  return ( false
-    || root == "OFF"
-    || root == "ON"
-    || root == "OPTIONAL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface DeviceConfigurationType {
   ChallengeRequiredOnNewDevice?: boolean | null;
   DeviceOnlyRememberedOnUserPrompt?: boolean | null;
 }
-function fromDeviceConfigurationType(input?: DeviceConfigurationType | null): JSONValue {
+function fromDeviceConfigurationType(input?: DeviceConfigurationType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ChallengeRequiredOnNewDevice: input["ChallengeRequiredOnNewDevice"],
+    DeviceOnlyRememberedOnUserPrompt: input["DeviceOnlyRememberedOnUserPrompt"],
   }
 }
-function toDeviceConfigurationType(root: JSONValue): DeviceConfigurationType {
-  return prt.readObj({
+function toDeviceConfigurationType(root: jsonP.JSONValue): DeviceConfigurationType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ChallengeRequiredOnNewDevice": "b",
@@ -3523,18 +3809,23 @@ export interface EmailConfigurationType {
   From?: string | null;
   ConfigurationSet?: string | null;
 }
-function fromEmailConfigurationType(input?: EmailConfigurationType | null): JSONValue {
+function fromEmailConfigurationType(input?: EmailConfigurationType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SourceArn: input["SourceArn"],
+    ReplyToEmailAddress: input["ReplyToEmailAddress"],
+    EmailSendingAccount: input["EmailSendingAccount"],
+    From: input["From"],
+    ConfigurationSet: input["ConfigurationSet"],
   }
 }
-function toEmailConfigurationType(root: JSONValue): EmailConfigurationType {
-  return prt.readObj({
+function toEmailConfigurationType(root: jsonP.JSONValue): EmailConfigurationType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SourceArn": "s",
       "ReplyToEmailAddress": "s",
-      "EmailSendingAccount": toEmailSendingAccountType,
+      "EmailSendingAccount": (x: jsonP.JSONValue) => cmnP.readEnum<EmailSendingAccountType>(x),
       "From": "s",
       "ConfigurationSet": "s",
     },
@@ -3545,27 +3836,22 @@ function toEmailConfigurationType(root: JSONValue): EmailConfigurationType {
 export type EmailSendingAccountType =
 | "COGNITO_DEFAULT"
 | "DEVELOPER"
-;
-
-function toEmailSendingAccountType(root: JSONValue): EmailSendingAccountType | null {
-  return ( false
-    || root == "COGNITO_DEFAULT"
-    || root == "DEVELOPER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: input, named, interface, output
 export interface SmsConfigurationType {
   SnsCallerArn: string;
   ExternalId?: string | null;
 }
-function fromSmsConfigurationType(input?: SmsConfigurationType | null): JSONValue {
+function fromSmsConfigurationType(input?: SmsConfigurationType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SnsCallerArn: input["SnsCallerArn"],
+    ExternalId: input["ExternalId"],
   }
 }
-function toSmsConfigurationType(root: JSONValue): SmsConfigurationType {
-  return prt.readObj({
+function toSmsConfigurationType(root: jsonP.JSONValue): SmsConfigurationType {
+  return jsonP.readObj({
     required: {
       "SnsCallerArn": "s",
     },
@@ -3581,14 +3867,16 @@ export interface AdminCreateUserConfigType {
   UnusedAccountValidityDays?: number | null;
   InviteMessageTemplate?: MessageTemplateType | null;
 }
-function fromAdminCreateUserConfigType(input?: AdminCreateUserConfigType | null): JSONValue {
+function fromAdminCreateUserConfigType(input?: AdminCreateUserConfigType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AllowAdminCreateUserOnly: input["AllowAdminCreateUserOnly"],
+    UnusedAccountValidityDays: input["UnusedAccountValidityDays"],
     InviteMessageTemplate: fromMessageTemplateType(input["InviteMessageTemplate"]),
   }
 }
-function toAdminCreateUserConfigType(root: JSONValue): AdminCreateUserConfigType {
-  return prt.readObj({
+function toAdminCreateUserConfigType(root: jsonP.JSONValue): AdminCreateUserConfigType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AllowAdminCreateUserOnly": "b",
@@ -3604,13 +3892,16 @@ export interface MessageTemplateType {
   EmailMessage?: string | null;
   EmailSubject?: string | null;
 }
-function fromMessageTemplateType(input?: MessageTemplateType | null): JSONValue {
+function fromMessageTemplateType(input?: MessageTemplateType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SMSMessage: input["SMSMessage"],
+    EmailMessage: input["EmailMessage"],
+    EmailSubject: input["EmailSubject"],
   }
 }
-function toMessageTemplateType(root: JSONValue): MessageTemplateType {
-  return prt.readObj({
+function toMessageTemplateType(root: jsonP.JSONValue): MessageTemplateType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SMSMessage": "s",
@@ -3624,15 +3915,16 @@ function toMessageTemplateType(root: JSONValue): MessageTemplateType {
 export interface UserPoolAddOnsType {
   AdvancedSecurityMode: AdvancedSecurityModeType;
 }
-function fromUserPoolAddOnsType(input?: UserPoolAddOnsType | null): JSONValue {
+function fromUserPoolAddOnsType(input?: UserPoolAddOnsType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AdvancedSecurityMode: input["AdvancedSecurityMode"],
   }
 }
-function toUserPoolAddOnsType(root: JSONValue): UserPoolAddOnsType {
-  return prt.readObj({
+function toUserPoolAddOnsType(root: jsonP.JSONValue): UserPoolAddOnsType {
+  return jsonP.readObj({
     required: {
-      "AdvancedSecurityMode": toAdvancedSecurityModeType,
+      "AdvancedSecurityMode": (x: jsonP.JSONValue) => cmnP.readEnum<AdvancedSecurityModeType>(x),
     },
     optional: {},
   }, root);
@@ -3643,27 +3935,20 @@ export type AdvancedSecurityModeType =
 | "OFF"
 | "AUDIT"
 | "ENFORCED"
-;
-
-function toAdvancedSecurityModeType(root: JSONValue): AdvancedSecurityModeType | null {
-  return ( false
-    || root == "OFF"
-    || root == "AUDIT"
-    || root == "ENFORCED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface UsernameConfigurationType {
   CaseSensitive: boolean;
 }
-function fromUsernameConfigurationType(input?: UsernameConfigurationType | null): JSONValue {
+function fromUsernameConfigurationType(input?: UsernameConfigurationType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CaseSensitive: input["CaseSensitive"],
   }
 }
-function toUsernameConfigurationType(root: JSONValue): UsernameConfigurationType {
-  return prt.readObj({
+function toUsernameConfigurationType(root: jsonP.JSONValue): UsernameConfigurationType {
+  return jsonP.readObj({
     required: {
       "CaseSensitive": "b",
     },
@@ -3675,14 +3960,14 @@ function toUsernameConfigurationType(root: JSONValue): UsernameConfigurationType
 export interface AccountRecoverySettingType {
   RecoveryMechanisms?: RecoveryOptionType[] | null;
 }
-function fromAccountRecoverySettingType(input?: AccountRecoverySettingType | null): JSONValue {
+function fromAccountRecoverySettingType(input?: AccountRecoverySettingType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     RecoveryMechanisms: input["RecoveryMechanisms"]?.map(x => fromRecoveryOptionType(x)),
   }
 }
-function toAccountRecoverySettingType(root: JSONValue): AccountRecoverySettingType {
-  return prt.readObj({
+function toAccountRecoverySettingType(root: jsonP.JSONValue): AccountRecoverySettingType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RecoveryMechanisms": [toRecoveryOptionType],
@@ -3695,16 +3980,18 @@ export interface RecoveryOptionType {
   Priority: number;
   Name: RecoveryOptionNameType;
 }
-function fromRecoveryOptionType(input?: RecoveryOptionType | null): JSONValue {
+function fromRecoveryOptionType(input?: RecoveryOptionType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Priority: input["Priority"],
+    Name: input["Name"],
   }
 }
-function toRecoveryOptionType(root: JSONValue): RecoveryOptionType {
-  return prt.readObj({
+function toRecoveryOptionType(root: jsonP.JSONValue): RecoveryOptionType {
+  return jsonP.readObj({
     required: {
       "Priority": "n",
-      "Name": toRecoveryOptionNameType,
+      "Name": (x: jsonP.JSONValue) => cmnP.readEnum<RecoveryOptionNameType>(x),
     },
     optional: {},
   }, root);
@@ -3715,15 +4002,7 @@ export type RecoveryOptionNameType =
 | "verified_email"
 | "verified_phone_number"
 | "admin_only"
-;
-
-function toRecoveryOptionNameType(root: JSONValue): RecoveryOptionNameType | null {
-  return ( false
-    || root == "verified_email"
-    || root == "verified_phone_number"
-    || root == "admin_only"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface TokenValidityUnitsType {
@@ -3731,18 +4010,21 @@ export interface TokenValidityUnitsType {
   IdToken?: TimeUnitsType | null;
   RefreshToken?: TimeUnitsType | null;
 }
-function fromTokenValidityUnitsType(input?: TokenValidityUnitsType | null): JSONValue {
+function fromTokenValidityUnitsType(input?: TokenValidityUnitsType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AccessToken: input["AccessToken"],
+    IdToken: input["IdToken"],
+    RefreshToken: input["RefreshToken"],
   }
 }
-function toTokenValidityUnitsType(root: JSONValue): TokenValidityUnitsType {
-  return prt.readObj({
+function toTokenValidityUnitsType(root: jsonP.JSONValue): TokenValidityUnitsType {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "AccessToken": toTimeUnitsType,
-      "IdToken": toTimeUnitsType,
-      "RefreshToken": toTimeUnitsType,
+      "AccessToken": (x: jsonP.JSONValue) => cmnP.readEnum<TimeUnitsType>(x),
+      "IdToken": (x: jsonP.JSONValue) => cmnP.readEnum<TimeUnitsType>(x),
+      "RefreshToken": (x: jsonP.JSONValue) => cmnP.readEnum<TimeUnitsType>(x),
     },
   }, root);
 }
@@ -3753,16 +4035,7 @@ export type TimeUnitsType =
 | "minutes"
 | "hours"
 | "days"
-;
-
-function toTimeUnitsType(root: JSONValue): TimeUnitsType | null {
-  return ( false
-    || root == "seconds"
-    || root == "minutes"
-    || root == "hours"
-    || root == "days"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type ExplicitAuthFlowsType =
@@ -3774,35 +4047,14 @@ export type ExplicitAuthFlowsType =
 | "ALLOW_USER_PASSWORD_AUTH"
 | "ALLOW_USER_SRP_AUTH"
 | "ALLOW_REFRESH_TOKEN_AUTH"
-;
-
-function toExplicitAuthFlowsType(root: JSONValue): ExplicitAuthFlowsType | null {
-  return ( false
-    || root == "ADMIN_NO_SRP_AUTH"
-    || root == "CUSTOM_AUTH_FLOW_ONLY"
-    || root == "USER_PASSWORD_AUTH"
-    || root == "ALLOW_ADMIN_USER_PASSWORD_AUTH"
-    || root == "ALLOW_CUSTOM_AUTH"
-    || root == "ALLOW_USER_PASSWORD_AUTH"
-    || root == "ALLOW_USER_SRP_AUTH"
-    || root == "ALLOW_REFRESH_TOKEN_AUTH"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type OAuthFlowType =
 | "code"
 | "implicit"
 | "client_credentials"
-;
-
-function toOAuthFlowType(root: JSONValue): OAuthFlowType | null {
-  return ( false
-    || root == "code"
-    || root == "implicit"
-    || root == "client_credentials"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface AnalyticsConfigurationType {
@@ -3812,13 +4064,18 @@ export interface AnalyticsConfigurationType {
   ExternalId?: string | null;
   UserDataShared?: boolean | null;
 }
-function fromAnalyticsConfigurationType(input?: AnalyticsConfigurationType | null): JSONValue {
+function fromAnalyticsConfigurationType(input?: AnalyticsConfigurationType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ApplicationId: input["ApplicationId"],
+    ApplicationArn: input["ApplicationArn"],
+    RoleArn: input["RoleArn"],
+    ExternalId: input["ExternalId"],
+    UserDataShared: input["UserDataShared"],
   }
 }
-function toAnalyticsConfigurationType(root: JSONValue): AnalyticsConfigurationType {
-  return prt.readObj({
+function toAnalyticsConfigurationType(root: jsonP.JSONValue): AnalyticsConfigurationType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ApplicationId": "s",
@@ -3834,26 +4091,20 @@ function toAnalyticsConfigurationType(root: JSONValue): AnalyticsConfigurationTy
 export type PreventUserExistenceErrorTypes =
 | "LEGACY"
 | "ENABLED"
-;
-
-function toPreventUserExistenceErrorTypes(root: JSONValue): PreventUserExistenceErrorTypes | null {
-  return ( false
-    || root == "LEGACY"
-    || root == "ENABLED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface CustomDomainConfigType {
   CertificateArn: string;
 }
-function fromCustomDomainConfigType(input?: CustomDomainConfigType | null): JSONValue {
+function fromCustomDomainConfigType(input?: CustomDomainConfigType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CertificateArn: input["CertificateArn"],
   }
 }
-function toCustomDomainConfigType(root: JSONValue): CustomDomainConfigType {
-  return prt.readObj({
+function toCustomDomainConfigType(root: jsonP.JSONValue): CustomDomainConfigType {
+  return jsonP.readObj({
     required: {
       "CertificateArn": "s",
     },
@@ -3866,19 +4117,20 @@ export interface CompromisedCredentialsRiskConfigurationType {
   EventFilter?: EventFilterType[] | null;
   Actions: CompromisedCredentialsActionsType;
 }
-function fromCompromisedCredentialsRiskConfigurationType(input?: CompromisedCredentialsRiskConfigurationType | null): JSONValue {
+function fromCompromisedCredentialsRiskConfigurationType(input?: CompromisedCredentialsRiskConfigurationType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    EventFilter: input["EventFilter"],
     Actions: fromCompromisedCredentialsActionsType(input["Actions"]),
   }
 }
-function toCompromisedCredentialsRiskConfigurationType(root: JSONValue): CompromisedCredentialsRiskConfigurationType {
-  return prt.readObj({
+function toCompromisedCredentialsRiskConfigurationType(root: jsonP.JSONValue): CompromisedCredentialsRiskConfigurationType {
+  return jsonP.readObj({
     required: {
       "Actions": toCompromisedCredentialsActionsType,
     },
     optional: {
-      "EventFilter": [toEventFilterType],
+      "EventFilter": [(x: jsonP.JSONValue) => cmnP.readEnum<EventFilterType>(x)],
     },
   }, root);
 }
@@ -3888,29 +4140,22 @@ export type EventFilterType =
 | "SIGN_IN"
 | "PASSWORD_CHANGE"
 | "SIGN_UP"
-;
-
-function toEventFilterType(root: JSONValue): EventFilterType | null {
-  return ( false
-    || root == "SIGN_IN"
-    || root == "PASSWORD_CHANGE"
-    || root == "SIGN_UP"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface CompromisedCredentialsActionsType {
   EventAction: CompromisedCredentialsEventActionType;
 }
-function fromCompromisedCredentialsActionsType(input?: CompromisedCredentialsActionsType | null): JSONValue {
+function fromCompromisedCredentialsActionsType(input?: CompromisedCredentialsActionsType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    EventAction: input["EventAction"],
   }
 }
-function toCompromisedCredentialsActionsType(root: JSONValue): CompromisedCredentialsActionsType {
-  return prt.readObj({
+function toCompromisedCredentialsActionsType(root: jsonP.JSONValue): CompromisedCredentialsActionsType {
+  return jsonP.readObj({
     required: {
-      "EventAction": toCompromisedCredentialsEventActionType,
+      "EventAction": (x: jsonP.JSONValue) => cmnP.readEnum<CompromisedCredentialsEventActionType>(x),
     },
     optional: {},
   }, root);
@@ -3920,29 +4165,22 @@ function toCompromisedCredentialsActionsType(root: JSONValue): CompromisedCreden
 export type CompromisedCredentialsEventActionType =
 | "BLOCK"
 | "NO_ACTION"
-;
-
-function toCompromisedCredentialsEventActionType(root: JSONValue): CompromisedCredentialsEventActionType | null {
-  return ( false
-    || root == "BLOCK"
-    || root == "NO_ACTION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface AccountTakeoverRiskConfigurationType {
   NotifyConfiguration?: NotifyConfigurationType | null;
   Actions: AccountTakeoverActionsType;
 }
-function fromAccountTakeoverRiskConfigurationType(input?: AccountTakeoverRiskConfigurationType | null): JSONValue {
+function fromAccountTakeoverRiskConfigurationType(input?: AccountTakeoverRiskConfigurationType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     NotifyConfiguration: fromNotifyConfigurationType(input["NotifyConfiguration"]),
     Actions: fromAccountTakeoverActionsType(input["Actions"]),
   }
 }
-function toAccountTakeoverRiskConfigurationType(root: JSONValue): AccountTakeoverRiskConfigurationType {
-  return prt.readObj({
+function toAccountTakeoverRiskConfigurationType(root: jsonP.JSONValue): AccountTakeoverRiskConfigurationType {
+  return jsonP.readObj({
     required: {
       "Actions": toAccountTakeoverActionsType,
     },
@@ -3961,16 +4199,19 @@ export interface NotifyConfigurationType {
   NoActionEmail?: NotifyEmailType | null;
   MfaEmail?: NotifyEmailType | null;
 }
-function fromNotifyConfigurationType(input?: NotifyConfigurationType | null): JSONValue {
+function fromNotifyConfigurationType(input?: NotifyConfigurationType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    From: input["From"],
+    ReplyTo: input["ReplyTo"],
+    SourceArn: input["SourceArn"],
     BlockEmail: fromNotifyEmailType(input["BlockEmail"]),
     NoActionEmail: fromNotifyEmailType(input["NoActionEmail"]),
     MfaEmail: fromNotifyEmailType(input["MfaEmail"]),
   }
 }
-function toNotifyConfigurationType(root: JSONValue): NotifyConfigurationType {
-  return prt.readObj({
+function toNotifyConfigurationType(root: jsonP.JSONValue): NotifyConfigurationType {
+  return jsonP.readObj({
     required: {
       "SourceArn": "s",
     },
@@ -3990,13 +4231,16 @@ export interface NotifyEmailType {
   HtmlBody?: string | null;
   TextBody?: string | null;
 }
-function fromNotifyEmailType(input?: NotifyEmailType | null): JSONValue {
+function fromNotifyEmailType(input?: NotifyEmailType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Subject: input["Subject"],
+    HtmlBody: input["HtmlBody"],
+    TextBody: input["TextBody"],
   }
 }
-function toNotifyEmailType(root: JSONValue): NotifyEmailType {
-  return prt.readObj({
+function toNotifyEmailType(root: jsonP.JSONValue): NotifyEmailType {
+  return jsonP.readObj({
     required: {
       "Subject": "s",
     },
@@ -4013,16 +4257,16 @@ export interface AccountTakeoverActionsType {
   MediumAction?: AccountTakeoverActionType | null;
   HighAction?: AccountTakeoverActionType | null;
 }
-function fromAccountTakeoverActionsType(input?: AccountTakeoverActionsType | null): JSONValue {
+function fromAccountTakeoverActionsType(input?: AccountTakeoverActionsType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     LowAction: fromAccountTakeoverActionType(input["LowAction"]),
     MediumAction: fromAccountTakeoverActionType(input["MediumAction"]),
     HighAction: fromAccountTakeoverActionType(input["HighAction"]),
   }
 }
-function toAccountTakeoverActionsType(root: JSONValue): AccountTakeoverActionsType {
-  return prt.readObj({
+function toAccountTakeoverActionsType(root: jsonP.JSONValue): AccountTakeoverActionsType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "LowAction": toAccountTakeoverActionType,
@@ -4037,16 +4281,18 @@ export interface AccountTakeoverActionType {
   Notify: boolean;
   EventAction: AccountTakeoverEventActionType;
 }
-function fromAccountTakeoverActionType(input?: AccountTakeoverActionType | null): JSONValue {
+function fromAccountTakeoverActionType(input?: AccountTakeoverActionType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Notify: input["Notify"],
+    EventAction: input["EventAction"],
   }
 }
-function toAccountTakeoverActionType(root: JSONValue): AccountTakeoverActionType {
-  return prt.readObj({
+function toAccountTakeoverActionType(root: jsonP.JSONValue): AccountTakeoverActionType {
+  return jsonP.readObj({
     required: {
       "Notify": "b",
-      "EventAction": toAccountTakeoverEventActionType,
+      "EventAction": (x: jsonP.JSONValue) => cmnP.readEnum<AccountTakeoverEventActionType>(x),
     },
     optional: {},
   }, root);
@@ -4058,29 +4304,22 @@ export type AccountTakeoverEventActionType =
 | "MFA_IF_CONFIGURED"
 | "MFA_REQUIRED"
 | "NO_ACTION"
-;
-
-function toAccountTakeoverEventActionType(root: JSONValue): AccountTakeoverEventActionType | null {
-  return ( false
-    || root == "BLOCK"
-    || root == "MFA_IF_CONFIGURED"
-    || root == "MFA_REQUIRED"
-    || root == "NO_ACTION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface RiskExceptionConfigurationType {
   BlockedIPRangeList?: string[] | null;
   SkippedIPRangeList?: string[] | null;
 }
-function fromRiskExceptionConfigurationType(input?: RiskExceptionConfigurationType | null): JSONValue {
+function fromRiskExceptionConfigurationType(input?: RiskExceptionConfigurationType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    BlockedIPRangeList: input["BlockedIPRangeList"],
+    SkippedIPRangeList: input["SkippedIPRangeList"],
   }
 }
-function toRiskExceptionConfigurationType(root: JSONValue): RiskExceptionConfigurationType {
-  return prt.readObj({
+function toRiskExceptionConfigurationType(root: jsonP.JSONValue): RiskExceptionConfigurationType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "BlockedIPRangeList": ["s"],
@@ -4094,14 +4333,15 @@ export interface SmsMfaConfigType {
   SmsAuthenticationMessage?: string | null;
   SmsConfiguration?: SmsConfigurationType | null;
 }
-function fromSmsMfaConfigType(input?: SmsMfaConfigType | null): JSONValue {
+function fromSmsMfaConfigType(input?: SmsMfaConfigType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SmsAuthenticationMessage: input["SmsAuthenticationMessage"],
     SmsConfiguration: fromSmsConfigurationType(input["SmsConfiguration"]),
   }
 }
-function toSmsMfaConfigType(root: JSONValue): SmsMfaConfigType {
-  return prt.readObj({
+function toSmsMfaConfigType(root: jsonP.JSONValue): SmsMfaConfigType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SmsAuthenticationMessage": "s",
@@ -4114,13 +4354,14 @@ function toSmsMfaConfigType(root: JSONValue): SmsMfaConfigType {
 export interface SoftwareTokenMfaConfigType {
   Enabled?: boolean | null;
 }
-function fromSoftwareTokenMfaConfigType(input?: SoftwareTokenMfaConfigType | null): JSONValue {
+function fromSoftwareTokenMfaConfigType(input?: SoftwareTokenMfaConfigType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Enabled: input["Enabled"],
   }
 }
-function toSoftwareTokenMfaConfigType(root: JSONValue): SoftwareTokenMfaConfigType {
-  return prt.readObj({
+function toSoftwareTokenMfaConfigType(root: jsonP.JSONValue): SoftwareTokenMfaConfigType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Enabled": "b",
@@ -4138,8 +4379,8 @@ export interface UserType {
   UserStatus?: UserStatusType | null;
   MFAOptions?: MFAOptionType[] | null;
 }
-function toUserType(root: JSONValue): UserType {
-  return prt.readObj({
+function toUserType(root: jsonP.JSONValue): UserType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Username": "s",
@@ -4147,7 +4388,7 @@ function toUserType(root: JSONValue): UserType {
       "UserCreateDate": "d",
       "UserLastModifiedDate": "d",
       "Enabled": "b",
-      "UserStatus": toUserStatusType,
+      "UserStatus": (x: jsonP.JSONValue) => cmnP.readEnum<UserStatusType>(x),
       "MFAOptions": [toMFAOptionType],
     },
   }, root);
@@ -4162,18 +4403,7 @@ export type UserStatusType =
 | "UNKNOWN"
 | "RESET_REQUIRED"
 | "FORCE_CHANGE_PASSWORD"
-;
-function toUserStatusType(root: JSONValue): UserStatusType | null {
-  return ( false
-    || root == "UNCONFIRMED"
-    || root == "CONFIRMED"
-    || root == "ARCHIVED"
-    || root == "COMPROMISED"
-    || root == "UNKNOWN"
-    || root == "RESET_REQUIRED"
-    || root == "FORCE_CHANGE_PASSWORD"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface DeviceType {
@@ -4183,8 +4413,8 @@ export interface DeviceType {
   DeviceLastModifiedDate?: Date | number | null;
   DeviceLastAuthenticatedDate?: Date | number | null;
 }
-function toDeviceType(root: JSONValue): DeviceType {
-  return prt.readObj({
+function toDeviceType(root: jsonP.JSONValue): DeviceType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DeviceKey": "s",
@@ -4205,8 +4435,8 @@ export interface AuthenticationResultType {
   IdToken?: string | null;
   NewDeviceMetadata?: NewDeviceMetadataType | null;
 }
-function toAuthenticationResultType(root: JSONValue): AuthenticationResultType {
-  return prt.readObj({
+function toAuthenticationResultType(root: jsonP.JSONValue): AuthenticationResultType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AccessToken": "s",
@@ -4224,8 +4454,8 @@ export interface NewDeviceMetadataType {
   DeviceKey?: string | null;
   DeviceGroupKey?: string | null;
 }
-function toNewDeviceMetadataType(root: JSONValue): NewDeviceMetadataType {
-  return prt.readObj({
+function toNewDeviceMetadataType(root: jsonP.JSONValue): NewDeviceMetadataType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DeviceKey": "s",
@@ -4244,8 +4474,8 @@ export interface GroupType {
   LastModifiedDate?: Date | number | null;
   CreationDate?: Date | number | null;
 }
-function toGroupType(root: JSONValue): GroupType {
-  return prt.readObj({
+function toGroupType(root: jsonP.JSONValue): GroupType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "GroupName": "s",
@@ -4270,14 +4500,14 @@ export interface AuthEventType {
   EventContextData?: EventContextDataType | null;
   EventFeedback?: EventFeedbackType | null;
 }
-function toAuthEventType(root: JSONValue): AuthEventType {
-  return prt.readObj({
+function toAuthEventType(root: jsonP.JSONValue): AuthEventType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EventId": "s",
-      "EventType": toEventType,
+      "EventType": (x: jsonP.JSONValue) => cmnP.readEnum<EventType>(x),
       "CreationDate": "d",
-      "EventResponse": toEventResponseType,
+      "EventResponse": (x: jsonP.JSONValue) => cmnP.readEnum<EventResponseType>(x),
       "EventRisk": toEventRiskType,
       "ChallengeResponses": [toChallengeResponseType],
       "EventContextData": toEventContextDataType,
@@ -4291,26 +4521,13 @@ export type EventType =
 | "SignIn"
 | "SignUp"
 | "ForgotPassword"
-;
-function toEventType(root: JSONValue): EventType | null {
-  return ( false
-    || root == "SignIn"
-    || root == "SignUp"
-    || root == "ForgotPassword"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type EventResponseType =
 | "Success"
 | "Failure"
-;
-function toEventResponseType(root: JSONValue): EventResponseType | null {
-  return ( false
-    || root == "Success"
-    || root == "Failure"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface EventRiskType {
@@ -4318,12 +4535,12 @@ export interface EventRiskType {
   RiskLevel?: RiskLevelType | null;
   CompromisedCredentialsDetected?: boolean | null;
 }
-function toEventRiskType(root: JSONValue): EventRiskType {
-  return prt.readObj({
+function toEventRiskType(root: jsonP.JSONValue): EventRiskType {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "RiskDecision": toRiskDecisionType,
-      "RiskLevel": toRiskLevelType,
+      "RiskDecision": (x: jsonP.JSONValue) => cmnP.readEnum<RiskDecisionType>(x),
+      "RiskLevel": (x: jsonP.JSONValue) => cmnP.readEnum<RiskLevelType>(x),
       "CompromisedCredentialsDetected": "b",
     },
   }, root);
@@ -4334,40 +4551,26 @@ export type RiskDecisionType =
 | "NoRisk"
 | "AccountTakeover"
 | "Block"
-;
-function toRiskDecisionType(root: JSONValue): RiskDecisionType | null {
-  return ( false
-    || root == "NoRisk"
-    || root == "AccountTakeover"
-    || root == "Block"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type RiskLevelType =
 | "Low"
 | "Medium"
 | "High"
-;
-function toRiskLevelType(root: JSONValue): RiskLevelType | null {
-  return ( false
-    || root == "Low"
-    || root == "Medium"
-    || root == "High"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ChallengeResponseType {
   ChallengeName?: ChallengeName | null;
   ChallengeResponse?: ChallengeResponse | null;
 }
-function toChallengeResponseType(root: JSONValue): ChallengeResponseType {
-  return prt.readObj({
+function toChallengeResponseType(root: jsonP.JSONValue): ChallengeResponseType {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "ChallengeName": toChallengeName,
-      "ChallengeResponse": toChallengeResponse,
+      "ChallengeName": (x: jsonP.JSONValue) => cmnP.readEnum<ChallengeName>(x),
+      "ChallengeResponse": (x: jsonP.JSONValue) => cmnP.readEnum<ChallengeResponse>(x),
     },
   }, root);
 }
@@ -4376,25 +4579,13 @@ function toChallengeResponseType(root: JSONValue): ChallengeResponseType {
 export type ChallengeName =
 | "Password"
 | "Mfa"
-;
-function toChallengeName(root: JSONValue): ChallengeName | null {
-  return ( false
-    || root == "Password"
-    || root == "Mfa"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type ChallengeResponse =
 | "Success"
 | "Failure"
-;
-function toChallengeResponse(root: JSONValue): ChallengeResponse | null {
-  return ( false
-    || root == "Success"
-    || root == "Failure"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface EventContextDataType {
@@ -4404,8 +4595,8 @@ export interface EventContextDataType {
   City?: string | null;
   Country?: string | null;
 }
-function toEventContextDataType(root: JSONValue): EventContextDataType {
-  return prt.readObj({
+function toEventContextDataType(root: jsonP.JSONValue): EventContextDataType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "IpAddress": "s",
@@ -4423,10 +4614,10 @@ export interface EventFeedbackType {
   Provider: string;
   FeedbackDate?: Date | number | null;
 }
-function toEventFeedbackType(root: JSONValue): EventFeedbackType {
-  return prt.readObj({
+function toEventFeedbackType(root: jsonP.JSONValue): EventFeedbackType {
+  return jsonP.readObj({
     required: {
-      "FeedbackValue": toFeedbackValueType,
+      "FeedbackValue": (x: jsonP.JSONValue) => cmnP.readEnum<FeedbackValueType>(x),
       "Provider": "s",
     },
     optional: {
@@ -4440,21 +4631,21 @@ export interface IdentityProviderType {
   UserPoolId?: string | null;
   ProviderName?: string | null;
   ProviderType?: IdentityProviderTypeType | null;
-  ProviderDetails?: { [key: string]: string } | null;
-  AttributeMapping?: { [key: string]: string } | null;
+  ProviderDetails?: { [key: string]: string | null | undefined } | null;
+  AttributeMapping?: { [key: string]: string | null | undefined } | null;
   IdpIdentifiers?: string[] | null;
   LastModifiedDate?: Date | number | null;
   CreationDate?: Date | number | null;
 }
-function toIdentityProviderType(root: JSONValue): IdentityProviderType {
-  return prt.readObj({
+function toIdentityProviderType(root: jsonP.JSONValue): IdentityProviderType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "UserPoolId": "s",
       "ProviderName": "s",
-      "ProviderType": toIdentityProviderTypeType,
-      "ProviderDetails": x => prt.readMap(String, String, x),
-      "AttributeMapping": x => prt.readMap(String, String, x),
+      "ProviderType": (x: jsonP.JSONValue) => cmnP.readEnum<IdentityProviderTypeType>(x),
+      "ProviderDetails": x => jsonP.readMap(String, String, x),
+      "AttributeMapping": x => jsonP.readMap(String, String, x),
       "IdpIdentifiers": ["s"],
       "LastModifiedDate": "d",
       "CreationDate": "d",
@@ -4469,8 +4660,8 @@ export interface ResourceServerType {
   Name?: string | null;
   Scopes?: ResourceServerScopeType[] | null;
 }
-function toResourceServerType(root: JSONValue): ResourceServerType {
-  return prt.readObj({
+function toResourceServerType(root: jsonP.JSONValue): ResourceServerType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "UserPoolId": "s",
@@ -4497,8 +4688,8 @@ export interface UserImportJobType {
   FailedUsers?: number | null;
   CompletionMessage?: string | null;
 }
-function toUserImportJobType(root: JSONValue): UserImportJobType {
-  return prt.readObj({
+function toUserImportJobType(root: jsonP.JSONValue): UserImportJobType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "JobName": "s",
@@ -4508,7 +4699,7 @@ function toUserImportJobType(root: JSONValue): UserImportJobType {
       "CreationDate": "d",
       "StartDate": "d",
       "CompletionDate": "d",
-      "Status": toUserImportJobStatusType,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<UserImportJobStatusType>(x),
       "CloudWatchLogsRoleArn": "s",
       "ImportedUsers": "n",
       "SkippedUsers": "n",
@@ -4528,19 +4719,7 @@ export type UserImportJobStatusType =
 | "Stopped"
 | "Failed"
 | "Succeeded"
-;
-function toUserImportJobStatusType(root: JSONValue): UserImportJobStatusType | null {
-  return ( false
-    || root == "Created"
-    || root == "Pending"
-    || root == "InProgress"
-    || root == "Stopping"
-    || root == "Expired"
-    || root == "Stopped"
-    || root == "Failed"
-    || root == "Succeeded"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface UserPoolType {
@@ -4565,7 +4744,7 @@ export interface UserPoolType {
   EstimatedNumberOfUsers?: number | null;
   EmailConfiguration?: EmailConfigurationType | null;
   SmsConfiguration?: SmsConfigurationType | null;
-  UserPoolTags?: { [key: string]: string } | null;
+  UserPoolTags?: { [key: string]: string | null | undefined } | null;
   SmsConfigurationFailure?: string | null;
   EmailConfigurationFailure?: string | null;
   Domain?: string | null;
@@ -4576,32 +4755,32 @@ export interface UserPoolType {
   Arn?: string | null;
   AccountRecoverySetting?: AccountRecoverySettingType | null;
 }
-function toUserPoolType(root: JSONValue): UserPoolType {
-  return prt.readObj({
+function toUserPoolType(root: jsonP.JSONValue): UserPoolType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "Name": "s",
       "Policies": toUserPoolPolicyType,
       "LambdaConfig": toLambdaConfigType,
-      "Status": toStatusType,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<StatusType>(x),
       "LastModifiedDate": "d",
       "CreationDate": "d",
       "SchemaAttributes": [toSchemaAttributeType],
-      "AutoVerifiedAttributes": [toVerifiedAttributeType],
-      "AliasAttributes": [toAliasAttributeType],
-      "UsernameAttributes": [toUsernameAttributeType],
+      "AutoVerifiedAttributes": [(x: jsonP.JSONValue) => cmnP.readEnum<VerifiedAttributeType>(x)],
+      "AliasAttributes": [(x: jsonP.JSONValue) => cmnP.readEnum<AliasAttributeType>(x)],
+      "UsernameAttributes": [(x: jsonP.JSONValue) => cmnP.readEnum<UsernameAttributeType>(x)],
       "SmsVerificationMessage": "s",
       "EmailVerificationMessage": "s",
       "EmailVerificationSubject": "s",
       "VerificationMessageTemplate": toVerificationMessageTemplateType,
       "SmsAuthenticationMessage": "s",
-      "MfaConfiguration": toUserPoolMfaType,
+      "MfaConfiguration": (x: jsonP.JSONValue) => cmnP.readEnum<UserPoolMfaType>(x),
       "DeviceConfiguration": toDeviceConfigurationType,
       "EstimatedNumberOfUsers": "n",
       "EmailConfiguration": toEmailConfigurationType,
       "SmsConfiguration": toSmsConfigurationType,
-      "UserPoolTags": x => prt.readMap(String, String, x),
+      "UserPoolTags": x => jsonP.readMap(String, String, x),
       "SmsConfigurationFailure": "s",
       "EmailConfigurationFailure": "s",
       "Domain": "s",
@@ -4619,13 +4798,7 @@ function toUserPoolType(root: JSONValue): UserPoolType {
 export type StatusType =
 | "Enabled"
 | "Disabled"
-;
-function toStatusType(root: JSONValue): StatusType | null {
-  return ( false
-    || root == "Enabled"
-    || root == "Disabled"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface UserPoolClientType {
@@ -4652,8 +4825,8 @@ export interface UserPoolClientType {
   AnalyticsConfiguration?: AnalyticsConfigurationType | null;
   PreventUserExistenceErrors?: PreventUserExistenceErrorTypes | null;
 }
-function toUserPoolClientType(root: JSONValue): UserPoolClientType {
-  return prt.readObj({
+function toUserPoolClientType(root: jsonP.JSONValue): UserPoolClientType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "UserPoolId": "s",
@@ -4668,16 +4841,16 @@ function toUserPoolClientType(root: JSONValue): UserPoolClientType {
       "TokenValidityUnits": toTokenValidityUnitsType,
       "ReadAttributes": ["s"],
       "WriteAttributes": ["s"],
-      "ExplicitAuthFlows": [toExplicitAuthFlowsType],
+      "ExplicitAuthFlows": [(x: jsonP.JSONValue) => cmnP.readEnum<ExplicitAuthFlowsType>(x)],
       "SupportedIdentityProviders": ["s"],
       "CallbackURLs": ["s"],
       "LogoutURLs": ["s"],
       "DefaultRedirectURI": "s",
-      "AllowedOAuthFlows": [toOAuthFlowType],
+      "AllowedOAuthFlows": [(x: jsonP.JSONValue) => cmnP.readEnum<OAuthFlowType>(x)],
       "AllowedOAuthScopes": ["s"],
       "AllowedOAuthFlowsUserPoolClient": "b",
       "AnalyticsConfiguration": toAnalyticsConfigurationType,
-      "PreventUserExistenceErrors": toPreventUserExistenceErrorTypes,
+      "PreventUserExistenceErrors": (x: jsonP.JSONValue) => cmnP.readEnum<PreventUserExistenceErrorTypes>(x),
     },
   }, root);
 }
@@ -4691,8 +4864,8 @@ export interface RiskConfigurationType {
   RiskExceptionConfiguration?: RiskExceptionConfigurationType | null;
   LastModifiedDate?: Date | number | null;
 }
-function toRiskConfigurationType(root: JSONValue): RiskConfigurationType {
-  return prt.readObj({
+function toRiskConfigurationType(root: jsonP.JSONValue): RiskConfigurationType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "UserPoolId": "s",
@@ -4716,8 +4889,8 @@ export interface DomainDescriptionType {
   Status?: DomainStatusType | null;
   CustomDomainConfig?: CustomDomainConfigType | null;
 }
-function toDomainDescriptionType(root: JSONValue): DomainDescriptionType {
-  return prt.readObj({
+function toDomainDescriptionType(root: jsonP.JSONValue): DomainDescriptionType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "UserPoolId": "s",
@@ -4726,7 +4899,7 @@ function toDomainDescriptionType(root: JSONValue): DomainDescriptionType {
       "S3Bucket": "s",
       "CloudFrontDistribution": "s",
       "Version": "s",
-      "Status": toDomainStatusType,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<DomainStatusType>(x),
       "CustomDomainConfig": toCustomDomainConfigType,
     },
   }, root);
@@ -4739,16 +4912,7 @@ export type DomainStatusType =
 | "UPDATING"
 | "ACTIVE"
 | "FAILED"
-;
-function toDomainStatusType(root: JSONValue): DomainStatusType | null {
-  return ( false
-    || root == "CREATING"
-    || root == "DELETING"
-    || root == "UPDATING"
-    || root == "ACTIVE"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, interface
 export interface CodeDeliveryDetailsType {
@@ -4756,12 +4920,12 @@ export interface CodeDeliveryDetailsType {
   DeliveryMedium?: DeliveryMediumType | null;
   AttributeName?: string | null;
 }
-function toCodeDeliveryDetailsType(root: JSONValue): CodeDeliveryDetailsType {
-  return prt.readObj({
+function toCodeDeliveryDetailsType(root: jsonP.JSONValue): CodeDeliveryDetailsType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Destination": "s",
-      "DeliveryMedium": toDeliveryMediumType,
+      "DeliveryMedium": (x: jsonP.JSONValue) => cmnP.readEnum<DeliveryMediumType>(x),
       "AttributeName": "s",
     },
   }, root);
@@ -4777,8 +4941,8 @@ export interface UICustomizationType {
   LastModifiedDate?: Date | number | null;
   CreationDate?: Date | number | null;
 }
-function toUICustomizationType(root: JSONValue): UICustomizationType {
-  return prt.readObj({
+function toUICustomizationType(root: jsonP.JSONValue): UICustomizationType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "UserPoolId": "s",
@@ -4799,12 +4963,12 @@ export interface ProviderDescription {
   LastModifiedDate?: Date | number | null;
   CreationDate?: Date | number | null;
 }
-function toProviderDescription(root: JSONValue): ProviderDescription {
-  return prt.readObj({
+function toProviderDescription(root: jsonP.JSONValue): ProviderDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ProviderName": "s",
-      "ProviderType": toIdentityProviderTypeType,
+      "ProviderType": (x: jsonP.JSONValue) => cmnP.readEnum<IdentityProviderTypeType>(x),
       "LastModifiedDate": "d",
       "CreationDate": "d",
     },
@@ -4817,8 +4981,8 @@ export interface UserPoolClientDescription {
   UserPoolId?: string | null;
   ClientName?: string | null;
 }
-function toUserPoolClientDescription(root: JSONValue): UserPoolClientDescription {
-  return prt.readObj({
+function toUserPoolClientDescription(root: jsonP.JSONValue): UserPoolClientDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ClientId": "s",
@@ -4837,14 +5001,14 @@ export interface UserPoolDescriptionType {
   LastModifiedDate?: Date | number | null;
   CreationDate?: Date | number | null;
 }
-function toUserPoolDescriptionType(root: JSONValue): UserPoolDescriptionType {
-  return prt.readObj({
+function toUserPoolDescriptionType(root: jsonP.JSONValue): UserPoolDescriptionType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "Name": "s",
       "LambdaConfig": toLambdaConfigType,
-      "Status": toStatusType,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<StatusType>(x),
       "LastModifiedDate": "d",
       "CreationDate": "d",
     },
@@ -4855,10 +5019,4 @@ function toUserPoolDescriptionType(root: JSONValue): UserPoolDescriptionType {
 export type VerifySoftwareTokenResponseType =
 | "SUCCESS"
 | "ERROR"
-;
-function toVerifySoftwareTokenResponseType(root: JSONValue): VerifySoftwareTokenResponseType | null {
-  return ( false
-    || root == "SUCCESS"
-    || root == "ERROR"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;

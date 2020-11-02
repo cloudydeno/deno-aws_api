@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class Budgets {
   #client: ServiceClient;
@@ -30,15 +30,16 @@ export default class Budgets {
   async createBudget(
     {abortSignal, ...params}: RequestConfig & CreateBudgetRequest,
   ): Promise<CreateBudgetResponse> {
-    const body: JSONObject = {...params,
-    Budget: fromBudget(params["Budget"]),
-    NotificationsWithSubscribers: params["NotificationsWithSubscribers"]?.map(x => fromNotificationWithSubscribers(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      Budget: fromBudget(params["Budget"]),
+      NotificationsWithSubscribers: params["NotificationsWithSubscribers"]?.map(x => fromNotificationWithSubscribers(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBudget",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -47,16 +48,22 @@ export default class Budgets {
   async createBudgetAction(
     {abortSignal, ...params}: RequestConfig & CreateBudgetActionRequest,
   ): Promise<CreateBudgetActionResponse> {
-    const body: JSONObject = {...params,
-    ActionThreshold: fromActionThreshold(params["ActionThreshold"]),
-    Definition: fromDefinition(params["Definition"]),
-    Subscribers: params["Subscribers"]?.map(x => fromSubscriber(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      BudgetName: params["BudgetName"],
+      NotificationType: params["NotificationType"],
+      ActionType: params["ActionType"],
+      ActionThreshold: fromActionThreshold(params["ActionThreshold"]),
+      Definition: fromDefinition(params["Definition"]),
+      ExecutionRoleArn: params["ExecutionRoleArn"],
+      ApprovalModel: params["ApprovalModel"],
+      Subscribers: params["Subscribers"]?.map(x => fromSubscriber(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBudgetAction",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "AccountId": "s",
         "BudgetName": "s",
@@ -69,15 +76,17 @@ export default class Budgets {
   async createNotification(
     {abortSignal, ...params}: RequestConfig & CreateNotificationRequest,
   ): Promise<CreateNotificationResponse> {
-    const body: JSONObject = {...params,
-    Notification: fromNotification(params["Notification"]),
-    Subscribers: params["Subscribers"]?.map(x => fromSubscriber(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      BudgetName: params["BudgetName"],
+      Notification: fromNotification(params["Notification"]),
+      Subscribers: params["Subscribers"]?.map(x => fromSubscriber(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNotification",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -86,15 +95,17 @@ export default class Budgets {
   async createSubscriber(
     {abortSignal, ...params}: RequestConfig & CreateSubscriberRequest,
   ): Promise<CreateSubscriberResponse> {
-    const body: JSONObject = {...params,
-    Notification: fromNotification(params["Notification"]),
-    Subscriber: fromSubscriber(params["Subscriber"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      BudgetName: params["BudgetName"],
+      Notification: fromNotification(params["Notification"]),
+      Subscriber: fromSubscriber(params["Subscriber"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSubscriber",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -103,13 +114,15 @@ export default class Budgets {
   async deleteBudget(
     {abortSignal, ...params}: RequestConfig & DeleteBudgetRequest,
   ): Promise<DeleteBudgetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      BudgetName: params["BudgetName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBudget",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -118,13 +131,16 @@ export default class Budgets {
   async deleteBudgetAction(
     {abortSignal, ...params}: RequestConfig & DeleteBudgetActionRequest,
   ): Promise<DeleteBudgetActionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      BudgetName: params["BudgetName"],
+      ActionId: params["ActionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBudgetAction",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "AccountId": "s",
         "BudgetName": "s",
@@ -137,14 +153,16 @@ export default class Budgets {
   async deleteNotification(
     {abortSignal, ...params}: RequestConfig & DeleteNotificationRequest,
   ): Promise<DeleteNotificationResponse> {
-    const body: JSONObject = {...params,
-    Notification: fromNotification(params["Notification"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      BudgetName: params["BudgetName"],
+      Notification: fromNotification(params["Notification"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteNotification",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -153,15 +171,17 @@ export default class Budgets {
   async deleteSubscriber(
     {abortSignal, ...params}: RequestConfig & DeleteSubscriberRequest,
   ): Promise<DeleteSubscriberResponse> {
-    const body: JSONObject = {...params,
-    Notification: fromNotification(params["Notification"]),
-    Subscriber: fromSubscriber(params["Subscriber"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      BudgetName: params["BudgetName"],
+      Notification: fromNotification(params["Notification"]),
+      Subscriber: fromSubscriber(params["Subscriber"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSubscriber",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -170,13 +190,15 @@ export default class Budgets {
   async describeBudget(
     {abortSignal, ...params}: RequestConfig & DescribeBudgetRequest,
   ): Promise<DescribeBudgetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      BudgetName: params["BudgetName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBudget",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Budget": toBudget,
@@ -187,13 +209,16 @@ export default class Budgets {
   async describeBudgetAction(
     {abortSignal, ...params}: RequestConfig & DescribeBudgetActionRequest,
   ): Promise<DescribeBudgetActionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      BudgetName: params["BudgetName"],
+      ActionId: params["ActionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBudgetAction",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "AccountId": "s",
         "BudgetName": "s",
@@ -206,14 +231,19 @@ export default class Budgets {
   async describeBudgetActionHistories(
     {abortSignal, ...params}: RequestConfig & DescribeBudgetActionHistoriesRequest,
   ): Promise<DescribeBudgetActionHistoriesResponse> {
-    const body: JSONObject = {...params,
-    TimePeriod: fromTimePeriod(params["TimePeriod"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      BudgetName: params["BudgetName"],
+      ActionId: params["ActionId"],
+      TimePeriod: fromTimePeriod(params["TimePeriod"]),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBudgetActionHistories",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ActionHistories": [toActionHistory],
       },
@@ -226,13 +256,16 @@ export default class Budgets {
   async describeBudgetActionsForAccount(
     {abortSignal, ...params}: RequestConfig & DescribeBudgetActionsForAccountRequest,
   ): Promise<DescribeBudgetActionsForAccountResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBudgetActionsForAccount",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Actions": [toAction],
       },
@@ -245,13 +278,17 @@ export default class Budgets {
   async describeBudgetActionsForBudget(
     {abortSignal, ...params}: RequestConfig & DescribeBudgetActionsForBudgetRequest,
   ): Promise<DescribeBudgetActionsForBudgetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      BudgetName: params["BudgetName"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBudgetActionsForBudget",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Actions": [toAction],
       },
@@ -264,14 +301,18 @@ export default class Budgets {
   async describeBudgetPerformanceHistory(
     {abortSignal, ...params}: RequestConfig & DescribeBudgetPerformanceHistoryRequest,
   ): Promise<DescribeBudgetPerformanceHistoryResponse> {
-    const body: JSONObject = {...params,
-    TimePeriod: fromTimePeriod(params["TimePeriod"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      BudgetName: params["BudgetName"],
+      TimePeriod: fromTimePeriod(params["TimePeriod"]),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBudgetPerformanceHistory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BudgetPerformanceHistory": toBudgetPerformanceHistory,
@@ -283,13 +324,16 @@ export default class Budgets {
   async describeBudgets(
     {abortSignal, ...params}: RequestConfig & DescribeBudgetsRequest,
   ): Promise<DescribeBudgetsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBudgets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Budgets": [toBudget],
@@ -301,13 +345,17 @@ export default class Budgets {
   async describeNotificationsForBudget(
     {abortSignal, ...params}: RequestConfig & DescribeNotificationsForBudgetRequest,
   ): Promise<DescribeNotificationsForBudgetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      BudgetName: params["BudgetName"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNotificationsForBudget",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Notifications": [toNotification],
@@ -319,14 +367,18 @@ export default class Budgets {
   async describeSubscribersForNotification(
     {abortSignal, ...params}: RequestConfig & DescribeSubscribersForNotificationRequest,
   ): Promise<DescribeSubscribersForNotificationResponse> {
-    const body: JSONObject = {...params,
-    Notification: fromNotification(params["Notification"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      BudgetName: params["BudgetName"],
+      Notification: fromNotification(params["Notification"]),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSubscribersForNotification",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Subscribers": [toSubscriber],
@@ -338,18 +390,22 @@ export default class Budgets {
   async executeBudgetAction(
     {abortSignal, ...params}: RequestConfig & ExecuteBudgetActionRequest,
   ): Promise<ExecuteBudgetActionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      BudgetName: params["BudgetName"],
+      ActionId: params["ActionId"],
+      ExecutionType: params["ExecutionType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExecuteBudgetAction",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "AccountId": "s",
         "BudgetName": "s",
         "ActionId": "s",
-        "ExecutionType": toExecutionType,
+        "ExecutionType": (x: jsonP.JSONValue) => cmnP.readEnum<ExecutionType>(x),
       },
       optional: {},
     }, await resp.json());
@@ -358,14 +414,15 @@ export default class Budgets {
   async updateBudget(
     {abortSignal, ...params}: RequestConfig & UpdateBudgetRequest,
   ): Promise<UpdateBudgetResponse> {
-    const body: JSONObject = {...params,
-    NewBudget: fromBudget(params["NewBudget"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      NewBudget: fromBudget(params["NewBudget"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateBudget",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -374,16 +431,22 @@ export default class Budgets {
   async updateBudgetAction(
     {abortSignal, ...params}: RequestConfig & UpdateBudgetActionRequest,
   ): Promise<UpdateBudgetActionResponse> {
-    const body: JSONObject = {...params,
-    ActionThreshold: fromActionThreshold(params["ActionThreshold"]),
-    Definition: fromDefinition(params["Definition"]),
-    Subscribers: params["Subscribers"]?.map(x => fromSubscriber(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      BudgetName: params["BudgetName"],
+      ActionId: params["ActionId"],
+      NotificationType: params["NotificationType"],
+      ActionThreshold: fromActionThreshold(params["ActionThreshold"]),
+      Definition: fromDefinition(params["Definition"]),
+      ExecutionRoleArn: params["ExecutionRoleArn"],
+      ApprovalModel: params["ApprovalModel"],
+      Subscribers: params["Subscribers"]?.map(x => fromSubscriber(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateBudgetAction",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "AccountId": "s",
         "BudgetName": "s",
@@ -397,15 +460,17 @@ export default class Budgets {
   async updateNotification(
     {abortSignal, ...params}: RequestConfig & UpdateNotificationRequest,
   ): Promise<UpdateNotificationResponse> {
-    const body: JSONObject = {...params,
-    OldNotification: fromNotification(params["OldNotification"]),
-    NewNotification: fromNotification(params["NewNotification"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      BudgetName: params["BudgetName"],
+      OldNotification: fromNotification(params["OldNotification"]),
+      NewNotification: fromNotification(params["NewNotification"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateNotification",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -414,16 +479,18 @@ export default class Budgets {
   async updateSubscriber(
     {abortSignal, ...params}: RequestConfig & UpdateSubscriberRequest,
   ): Promise<UpdateSubscriberResponse> {
-    const body: JSONObject = {...params,
-    Notification: fromNotification(params["Notification"]),
-    OldSubscriber: fromSubscriber(params["OldSubscriber"]),
-    NewSubscriber: fromSubscriber(params["NewSubscriber"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      BudgetName: params["BudgetName"],
+      Notification: fromNotification(params["Notification"]),
+      OldSubscriber: fromSubscriber(params["OldSubscriber"]),
+      NewSubscriber: fromSubscriber(params["NewSubscriber"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSubscriber",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -734,8 +801,8 @@ export interface UpdateSubscriberResponse {
 export interface Budget {
   BudgetName: string;
   BudgetLimit?: Spend | null;
-  PlannedBudgetLimits?: { [key: string]: Spend } | null;
-  CostFilters?: { [key: string]: string[] } | null;
+  PlannedBudgetLimits?: { [key: string]: Spend | null | undefined } | null;
+  CostFilters?: { [key: string]: string[] | null | undefined } | null;
   CostTypes?: CostTypes | null;
   TimeUnit: TimeUnit;
   TimePeriod?: TimePeriod | null;
@@ -743,28 +810,32 @@ export interface Budget {
   BudgetType: BudgetType;
   LastUpdatedTime?: Date | number | null;
 }
-function fromBudget(input?: Budget | null): JSONValue {
+function fromBudget(input?: Budget | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    BudgetName: input["BudgetName"],
     BudgetLimit: fromSpend(input["BudgetLimit"]),
-    PlannedBudgetLimits: prt.serializeMap(input["PlannedBudgetLimits"], x => fromSpend(x)),
+    PlannedBudgetLimits: jsonP.serializeMap(input["PlannedBudgetLimits"], x => fromSpend(x)),
+    CostFilters: input["CostFilters"],
     CostTypes: fromCostTypes(input["CostTypes"]),
+    TimeUnit: input["TimeUnit"],
     TimePeriod: fromTimePeriod(input["TimePeriod"]),
     CalculatedSpend: fromCalculatedSpend(input["CalculatedSpend"]),
-    LastUpdatedTime: prt.serializeDate_unixTimestamp(input["LastUpdatedTime"]),
+    BudgetType: input["BudgetType"],
+    LastUpdatedTime: jsonP.serializeDate_unixTimestamp(input["LastUpdatedTime"]),
   }
 }
-function toBudget(root: JSONValue): Budget {
-  return prt.readObj({
+function toBudget(root: jsonP.JSONValue): Budget {
+  return jsonP.readObj({
     required: {
       "BudgetName": "s",
-      "TimeUnit": toTimeUnit,
-      "BudgetType": toBudgetType,
+      "TimeUnit": (x: jsonP.JSONValue) => cmnP.readEnum<TimeUnit>(x),
+      "BudgetType": (x: jsonP.JSONValue) => cmnP.readEnum<BudgetType>(x),
     },
     optional: {
       "BudgetLimit": toSpend,
-      "PlannedBudgetLimits": x => prt.readMap(String, toSpend, x),
-      "CostFilters": x => prt.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+      "PlannedBudgetLimits": x => jsonP.readMap(String, toSpend, x),
+      "CostFilters": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
       "CostTypes": toCostTypes,
       "TimePeriod": toTimePeriod,
       "CalculatedSpend": toCalculatedSpend,
@@ -778,13 +849,15 @@ export interface Spend {
   Amount: string;
   Unit: string;
 }
-function fromSpend(input?: Spend | null): JSONValue {
+function fromSpend(input?: Spend | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Amount: input["Amount"],
+    Unit: input["Unit"],
   }
 }
-function toSpend(root: JSONValue): Spend {
-  return prt.readObj({
+function toSpend(root: jsonP.JSONValue): Spend {
+  return jsonP.readObj({
     required: {
       "Amount": "s",
       "Unit": "s",
@@ -807,13 +880,24 @@ export interface CostTypes {
   IncludeDiscount?: boolean | null;
   UseAmortized?: boolean | null;
 }
-function fromCostTypes(input?: CostTypes | null): JSONValue {
+function fromCostTypes(input?: CostTypes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    IncludeTax: input["IncludeTax"],
+    IncludeSubscription: input["IncludeSubscription"],
+    UseBlended: input["UseBlended"],
+    IncludeRefund: input["IncludeRefund"],
+    IncludeCredit: input["IncludeCredit"],
+    IncludeUpfront: input["IncludeUpfront"],
+    IncludeRecurring: input["IncludeRecurring"],
+    IncludeOtherSubscription: input["IncludeOtherSubscription"],
+    IncludeSupport: input["IncludeSupport"],
+    IncludeDiscount: input["IncludeDiscount"],
+    UseAmortized: input["UseAmortized"],
   }
 }
-function toCostTypes(root: JSONValue): CostTypes {
-  return prt.readObj({
+function toCostTypes(root: jsonP.JSONValue): CostTypes {
+  return jsonP.readObj({
     required: {},
     optional: {
       "IncludeTax": "b",
@@ -837,31 +921,22 @@ export type TimeUnit =
 | "MONTHLY"
 | "QUARTERLY"
 | "ANNUALLY"
-;
-
-function toTimeUnit(root: JSONValue): TimeUnit | null {
-  return ( false
-    || root == "DAILY"
-    || root == "MONTHLY"
-    || root == "QUARTERLY"
-    || root == "ANNUALLY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: input, named, interface, output
 export interface TimePeriod {
   Start?: Date | number | null;
   End?: Date | number | null;
 }
-function fromTimePeriod(input?: TimePeriod | null): JSONValue {
+function fromTimePeriod(input?: TimePeriod | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Start: prt.serializeDate_unixTimestamp(input["Start"]),
-    End: prt.serializeDate_unixTimestamp(input["End"]),
+  return {
+    Start: jsonP.serializeDate_unixTimestamp(input["Start"]),
+    End: jsonP.serializeDate_unixTimestamp(input["End"]),
   }
 }
-function toTimePeriod(root: JSONValue): TimePeriod {
-  return prt.readObj({
+function toTimePeriod(root: jsonP.JSONValue): TimePeriod {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Start": "d",
@@ -875,15 +950,15 @@ export interface CalculatedSpend {
   ActualSpend: Spend;
   ForecastedSpend?: Spend | null;
 }
-function fromCalculatedSpend(input?: CalculatedSpend | null): JSONValue {
+function fromCalculatedSpend(input?: CalculatedSpend | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     ActualSpend: fromSpend(input["ActualSpend"]),
     ForecastedSpend: fromSpend(input["ForecastedSpend"]),
   }
 }
-function toCalculatedSpend(root: JSONValue): CalculatedSpend {
-  return prt.readObj({
+function toCalculatedSpend(root: jsonP.JSONValue): CalculatedSpend {
+  return jsonP.readObj({
     required: {
       "ActualSpend": toSpend,
     },
@@ -901,27 +976,16 @@ export type BudgetType =
 | "RI_COVERAGE"
 | "SAVINGS_PLANS_UTILIZATION"
 | "SAVINGS_PLANS_COVERAGE"
-;
-
-function toBudgetType(root: JSONValue): BudgetType | null {
-  return ( false
-    || root == "USAGE"
-    || root == "COST"
-    || root == "RI_UTILIZATION"
-    || root == "RI_COVERAGE"
-    || root == "SAVINGS_PLANS_UTILIZATION"
-    || root == "SAVINGS_PLANS_COVERAGE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface NotificationWithSubscribers {
   Notification: Notification;
   Subscribers: Subscriber[];
 }
-function fromNotificationWithSubscribers(input?: NotificationWithSubscribers | null): JSONValue {
+function fromNotificationWithSubscribers(input?: NotificationWithSubscribers | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Notification: fromNotification(input["Notification"]),
     Subscribers: input["Subscribers"]?.map(x => fromSubscriber(x)),
   }
@@ -935,21 +999,26 @@ export interface Notification {
   ThresholdType?: ThresholdType | null;
   NotificationState?: NotificationState | null;
 }
-function fromNotification(input?: Notification | null): JSONValue {
+function fromNotification(input?: Notification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    NotificationType: input["NotificationType"],
+    ComparisonOperator: input["ComparisonOperator"],
+    Threshold: input["Threshold"],
+    ThresholdType: input["ThresholdType"],
+    NotificationState: input["NotificationState"],
   }
 }
-function toNotification(root: JSONValue): Notification {
-  return prt.readObj({
+function toNotification(root: jsonP.JSONValue): Notification {
+  return jsonP.readObj({
     required: {
-      "NotificationType": toNotificationType,
-      "ComparisonOperator": toComparisonOperator,
+      "NotificationType": (x: jsonP.JSONValue) => cmnP.readEnum<NotificationType>(x),
+      "ComparisonOperator": (x: jsonP.JSONValue) => cmnP.readEnum<ComparisonOperator>(x),
       "Threshold": "n",
     },
     optional: {
-      "ThresholdType": toThresholdType,
-      "NotificationState": toNotificationState,
+      "ThresholdType": (x: jsonP.JSONValue) => cmnP.readEnum<ThresholdType>(x),
+      "NotificationState": (x: jsonP.JSONValue) => cmnP.readEnum<NotificationState>(x),
     },
   }, root);
 }
@@ -958,70 +1027,43 @@ function toNotification(root: JSONValue): Notification {
 export type NotificationType =
 | "ACTUAL"
 | "FORECASTED"
-;
-
-function toNotificationType(root: JSONValue): NotificationType | null {
-  return ( false
-    || root == "ACTUAL"
-    || root == "FORECASTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, enum, output
 export type ComparisonOperator =
 | "GREATER_THAN"
 | "LESS_THAN"
 | "EQUAL_TO"
-;
-
-function toComparisonOperator(root: JSONValue): ComparisonOperator | null {
-  return ( false
-    || root == "GREATER_THAN"
-    || root == "LESS_THAN"
-    || root == "EQUAL_TO"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 19 - tags: input, named, enum, output
 export type ThresholdType =
 | "PERCENTAGE"
 | "ABSOLUTE_VALUE"
-;
-
-function toThresholdType(root: JSONValue): ThresholdType | null {
-  return ( false
-    || root == "PERCENTAGE"
-    || root == "ABSOLUTE_VALUE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, enum, output
 export type NotificationState =
 | "OK"
 | "ALARM"
-;
-
-function toNotificationState(root: JSONValue): NotificationState | null {
-  return ( false
-    || root == "OK"
-    || root == "ALARM"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 16 - tags: input, named, interface, output
 export interface Subscriber {
   SubscriptionType: SubscriptionType;
   Address: string;
 }
-function fromSubscriber(input?: Subscriber | null): JSONValue {
+function fromSubscriber(input?: Subscriber | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SubscriptionType: input["SubscriptionType"],
+    Address: input["Address"],
   }
 }
-function toSubscriber(root: JSONValue): Subscriber {
-  return prt.readObj({
+function toSubscriber(root: jsonP.JSONValue): Subscriber {
+  return jsonP.readObj({
     required: {
-      "SubscriptionType": toSubscriptionType,
+      "SubscriptionType": (x: jsonP.JSONValue) => cmnP.readEnum<SubscriptionType>(x),
       "Address": "s",
     },
     optional: {},
@@ -1032,45 +1074,32 @@ function toSubscriber(root: JSONValue): Subscriber {
 export type SubscriptionType =
 | "SNS"
 | "EMAIL"
-;
-
-function toSubscriptionType(root: JSONValue): SubscriptionType | null {
-  return ( false
-    || root == "SNS"
-    || root == "EMAIL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: input, named, enum, output
 export type ActionType =
 | "APPLY_IAM_POLICY"
 | "APPLY_SCP_POLICY"
 | "RUN_SSM_DOCUMENTS"
-;
-
-function toActionType(root: JSONValue): ActionType | null {
-  return ( false
-    || root == "APPLY_IAM_POLICY"
-    || root == "APPLY_SCP_POLICY"
-    || root == "RUN_SSM_DOCUMENTS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 9 - tags: input, named, interface, output
 export interface ActionThreshold {
   ActionThresholdValue: number;
   ActionThresholdType: ThresholdType;
 }
-function fromActionThreshold(input?: ActionThreshold | null): JSONValue {
+function fromActionThreshold(input?: ActionThreshold | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ActionThresholdValue: input["ActionThresholdValue"],
+    ActionThresholdType: input["ActionThresholdType"],
   }
 }
-function toActionThreshold(root: JSONValue): ActionThreshold {
-  return prt.readObj({
+function toActionThreshold(root: jsonP.JSONValue): ActionThreshold {
+  return jsonP.readObj({
     required: {
       "ActionThresholdValue": "n",
-      "ActionThresholdType": toThresholdType,
+      "ActionThresholdType": (x: jsonP.JSONValue) => cmnP.readEnum<ThresholdType>(x),
     },
     optional: {},
   }, root);
@@ -1082,16 +1111,16 @@ export interface Definition {
   ScpActionDefinition?: ScpActionDefinition | null;
   SsmActionDefinition?: SsmActionDefinition | null;
 }
-function fromDefinition(input?: Definition | null): JSONValue {
+function fromDefinition(input?: Definition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     IamActionDefinition: fromIamActionDefinition(input["IamActionDefinition"]),
     ScpActionDefinition: fromScpActionDefinition(input["ScpActionDefinition"]),
     SsmActionDefinition: fromSsmActionDefinition(input["SsmActionDefinition"]),
   }
 }
-function toDefinition(root: JSONValue): Definition {
-  return prt.readObj({
+function toDefinition(root: jsonP.JSONValue): Definition {
+  return jsonP.readObj({
     required: {},
     optional: {
       "IamActionDefinition": toIamActionDefinition,
@@ -1108,13 +1137,17 @@ export interface IamActionDefinition {
   Groups?: string[] | null;
   Users?: string[] | null;
 }
-function fromIamActionDefinition(input?: IamActionDefinition | null): JSONValue {
+function fromIamActionDefinition(input?: IamActionDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    PolicyArn: input["PolicyArn"],
+    Roles: input["Roles"],
+    Groups: input["Groups"],
+    Users: input["Users"],
   }
 }
-function toIamActionDefinition(root: JSONValue): IamActionDefinition {
-  return prt.readObj({
+function toIamActionDefinition(root: jsonP.JSONValue): IamActionDefinition {
+  return jsonP.readObj({
     required: {
       "PolicyArn": "s",
     },
@@ -1131,13 +1164,15 @@ export interface ScpActionDefinition {
   PolicyId: string;
   TargetIds: string[];
 }
-function fromScpActionDefinition(input?: ScpActionDefinition | null): JSONValue {
+function fromScpActionDefinition(input?: ScpActionDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    PolicyId: input["PolicyId"],
+    TargetIds: input["TargetIds"],
   }
 }
-function toScpActionDefinition(root: JSONValue): ScpActionDefinition {
-  return prt.readObj({
+function toScpActionDefinition(root: jsonP.JSONValue): ScpActionDefinition {
+  return jsonP.readObj({
     required: {
       "PolicyId": "s",
       "TargetIds": ["s"],
@@ -1152,15 +1187,18 @@ export interface SsmActionDefinition {
   Region: string;
   InstanceIds: string[];
 }
-function fromSsmActionDefinition(input?: SsmActionDefinition | null): JSONValue {
+function fromSsmActionDefinition(input?: SsmActionDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ActionSubType: input["ActionSubType"],
+    Region: input["Region"],
+    InstanceIds: input["InstanceIds"],
   }
 }
-function toSsmActionDefinition(root: JSONValue): SsmActionDefinition {
-  return prt.readObj({
+function toSsmActionDefinition(root: jsonP.JSONValue): SsmActionDefinition {
+  return jsonP.readObj({
     required: {
-      "ActionSubType": toActionSubType,
+      "ActionSubType": (x: jsonP.JSONValue) => cmnP.readEnum<ActionSubType>(x),
       "Region": "s",
       "InstanceIds": ["s"],
     },
@@ -1172,27 +1210,13 @@ function toSsmActionDefinition(root: JSONValue): SsmActionDefinition {
 export type ActionSubType =
 | "STOP_EC2_INSTANCES"
 | "STOP_RDS_INSTANCES"
-;
-
-function toActionSubType(root: JSONValue): ActionSubType | null {
-  return ( false
-    || root == "STOP_EC2_INSTANCES"
-    || root == "STOP_RDS_INSTANCES"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 9 - tags: input, named, enum, output
 export type ApprovalModel =
 | "AUTOMATIC"
 | "MANUAL"
-;
-
-function toApprovalModel(root: JSONValue): ApprovalModel | null {
-  return ( false
-    || root == "AUTOMATIC"
-    || root == "MANUAL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type ExecutionType =
@@ -1200,16 +1224,7 @@ export type ExecutionType =
 | "RETRY_BUDGET_ACTION"
 | "REVERSE_BUDGET_ACTION"
 | "RESET_BUDGET_ACTION"
-;
-
-function toExecutionType(root: JSONValue): ExecutionType | null {
-  return ( false
-    || root == "APPROVE_BUDGET_ACTION"
-    || root == "RETRY_BUDGET_ACTION"
-    || root == "REVERSE_BUDGET_ACTION"
-    || root == "RESET_BUDGET_ACTION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: output, named, interface
 export interface Action {
@@ -1224,18 +1239,18 @@ export interface Action {
   Status: ActionStatus;
   Subscribers: Subscriber[];
 }
-function toAction(root: JSONValue): Action {
-  return prt.readObj({
+function toAction(root: jsonP.JSONValue): Action {
+  return jsonP.readObj({
     required: {
       "ActionId": "s",
       "BudgetName": "s",
-      "NotificationType": toNotificationType,
-      "ActionType": toActionType,
+      "NotificationType": (x: jsonP.JSONValue) => cmnP.readEnum<NotificationType>(x),
+      "ActionType": (x: jsonP.JSONValue) => cmnP.readEnum<ActionType>(x),
       "ActionThreshold": toActionThreshold,
       "Definition": toDefinition,
       "ExecutionRoleArn": "s",
-      "ApprovalModel": toApprovalModel,
-      "Status": toActionStatus,
+      "ApprovalModel": (x: jsonP.JSONValue) => cmnP.readEnum<ApprovalModel>(x),
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ActionStatus>(x),
       "Subscribers": [toSubscriber],
     },
     optional: {},
@@ -1254,21 +1269,7 @@ export type ActionStatus =
 | "REVERSE_FAILURE"
 | "RESET_IN_PROGRESS"
 | "RESET_FAILURE"
-;
-function toActionStatus(root: JSONValue): ActionStatus | null {
-  return ( false
-    || root == "STANDBY"
-    || root == "PENDING"
-    || root == "EXECUTION_IN_PROGRESS"
-    || root == "EXECUTION_SUCCESS"
-    || root == "EXECUTION_FAILURE"
-    || root == "REVERSE_IN_PROGRESS"
-    || root == "REVERSE_SUCCESS"
-    || root == "REVERSE_FAILURE"
-    || root == "RESET_IN_PROGRESS"
-    || root == "RESET_FAILURE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ActionHistory {
@@ -1277,12 +1278,12 @@ export interface ActionHistory {
   EventType: EventType;
   ActionHistoryDetails: ActionHistoryDetails;
 }
-function toActionHistory(root: JSONValue): ActionHistory {
-  return prt.readObj({
+function toActionHistory(root: jsonP.JSONValue): ActionHistory {
+  return jsonP.readObj({
     required: {
       "Timestamp": "d",
-      "Status": toActionStatus,
-      "EventType": toEventType,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ActionStatus>(x),
+      "EventType": (x: jsonP.JSONValue) => cmnP.readEnum<EventType>(x),
       "ActionHistoryDetails": toActionHistoryDetails,
     },
     optional: {},
@@ -1296,24 +1297,15 @@ export type EventType =
 | "DELETE_ACTION"
 | "UPDATE_ACTION"
 | "EXECUTE_ACTION"
-;
-function toEventType(root: JSONValue): EventType | null {
-  return ( false
-    || root == "SYSTEM"
-    || root == "CREATE_ACTION"
-    || root == "DELETE_ACTION"
-    || root == "UPDATE_ACTION"
-    || root == "EXECUTE_ACTION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ActionHistoryDetails {
   Message: string;
   Action: Action;
 }
-function toActionHistoryDetails(root: JSONValue): ActionHistoryDetails {
-  return prt.readObj({
+function toActionHistoryDetails(root: jsonP.JSONValue): ActionHistoryDetails {
+  return jsonP.readObj({
     required: {
       "Message": "s",
       "Action": toAction,
@@ -1326,20 +1318,20 @@ function toActionHistoryDetails(root: JSONValue): ActionHistoryDetails {
 export interface BudgetPerformanceHistory {
   BudgetName?: string | null;
   BudgetType?: BudgetType | null;
-  CostFilters?: { [key: string]: string[] } | null;
+  CostFilters?: { [key: string]: string[] | null | undefined } | null;
   CostTypes?: CostTypes | null;
   TimeUnit?: TimeUnit | null;
   BudgetedAndActualAmountsList?: BudgetedAndActualAmounts[] | null;
 }
-function toBudgetPerformanceHistory(root: JSONValue): BudgetPerformanceHistory {
-  return prt.readObj({
+function toBudgetPerformanceHistory(root: jsonP.JSONValue): BudgetPerformanceHistory {
+  return jsonP.readObj({
     required: {},
     optional: {
       "BudgetName": "s",
-      "BudgetType": toBudgetType,
-      "CostFilters": x => prt.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+      "BudgetType": (x: jsonP.JSONValue) => cmnP.readEnum<BudgetType>(x),
+      "CostFilters": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
       "CostTypes": toCostTypes,
-      "TimeUnit": toTimeUnit,
+      "TimeUnit": (x: jsonP.JSONValue) => cmnP.readEnum<TimeUnit>(x),
       "BudgetedAndActualAmountsList": [toBudgetedAndActualAmounts],
     },
   }, root);
@@ -1351,8 +1343,8 @@ export interface BudgetedAndActualAmounts {
   ActualAmount?: Spend | null;
   TimePeriod?: TimePeriod | null;
 }
-function toBudgetedAndActualAmounts(root: JSONValue): BudgetedAndActualAmounts {
-  return prt.readObj({
+function toBudgetedAndActualAmounts(root: jsonP.JSONValue): BudgetedAndActualAmounts {
+  return jsonP.readObj({
     required: {},
     optional: {
       "BudgetedAmount": toSpend,

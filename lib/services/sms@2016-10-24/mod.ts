@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class SMS {
   #client: ServiceClient;
@@ -30,15 +30,19 @@ export default class SMS {
   async createApp(
     {abortSignal, ...params}: RequestConfig & CreateAppRequest = {},
   ): Promise<CreateAppResponse> {
-    const body: JSONObject = {...params,
-    serverGroups: params["serverGroups"]?.map(x => fromServerGroup(x)),
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      description: params["description"],
+      roleName: params["roleName"],
+      clientToken: params["clientToken"],
+      serverGroups: params["serverGroups"]?.map(x => fromServerGroup(x)),
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApp",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "appSummary": toAppSummary,
@@ -51,14 +55,23 @@ export default class SMS {
   async createReplicationJob(
     {abortSignal, ...params}: RequestConfig & CreateReplicationJobRequest,
   ): Promise<CreateReplicationJobResponse> {
-    const body: JSONObject = {...params,
-    seedReplicationTime: prt.serializeDate_unixTimestamp(params["seedReplicationTime"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      serverId: params["serverId"],
+      seedReplicationTime: jsonP.serializeDate_unixTimestamp(params["seedReplicationTime"]),
+      frequency: params["frequency"],
+      runOnce: params["runOnce"],
+      licenseType: params["licenseType"],
+      roleName: params["roleName"],
+      description: params["description"],
+      numberOfRecentAmisToKeep: params["numberOfRecentAmisToKeep"],
+      encrypted: params["encrypted"],
+      kmsKeyId: params["kmsKeyId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateReplicationJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "replicationJobId": "s",
@@ -69,13 +82,16 @@ export default class SMS {
   async deleteApp(
     {abortSignal, ...params}: RequestConfig & DeleteAppRequest = {},
   ): Promise<DeleteAppResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+      forceStopAppReplication: params["forceStopAppReplication"],
+      forceTerminateApp: params["forceTerminateApp"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteApp",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -84,13 +100,14 @@ export default class SMS {
   async deleteAppLaunchConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteAppLaunchConfigurationRequest = {},
   ): Promise<DeleteAppLaunchConfigurationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAppLaunchConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -99,13 +116,14 @@ export default class SMS {
   async deleteAppReplicationConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteAppReplicationConfigurationRequest = {},
   ): Promise<DeleteAppReplicationConfigurationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAppReplicationConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -114,13 +132,14 @@ export default class SMS {
   async deleteAppValidationConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteAppValidationConfigurationRequest,
   ): Promise<DeleteAppValidationConfigurationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAppValidationConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -129,13 +148,14 @@ export default class SMS {
   async deleteReplicationJob(
     {abortSignal, ...params}: RequestConfig & DeleteReplicationJobRequest,
   ): Promise<DeleteReplicationJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      replicationJobId: params["replicationJobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteReplicationJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -144,13 +164,13 @@ export default class SMS {
   async deleteServerCatalog(
     {abortSignal, ...params}: RequestConfig & DeleteServerCatalogRequest = {},
   ): Promise<DeleteServerCatalogResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteServerCatalog",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -159,13 +179,14 @@ export default class SMS {
   async disassociateConnector(
     {abortSignal, ...params}: RequestConfig & DisassociateConnectorRequest,
   ): Promise<DisassociateConnectorResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      connectorId: params["connectorId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateConnector",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -174,13 +195,15 @@ export default class SMS {
   async generateChangeSet(
     {abortSignal, ...params}: RequestConfig & GenerateChangeSetRequest = {},
   ): Promise<GenerateChangeSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+      changesetFormat: params["changesetFormat"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GenerateChangeSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "s3Location": toS3Location,
@@ -191,13 +214,15 @@ export default class SMS {
   async generateTemplate(
     {abortSignal, ...params}: RequestConfig & GenerateTemplateRequest = {},
   ): Promise<GenerateTemplateResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+      templateFormat: params["templateFormat"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GenerateTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "s3Location": toS3Location,
@@ -208,13 +233,14 @@ export default class SMS {
   async getApp(
     {abortSignal, ...params}: RequestConfig & GetAppRequest = {},
   ): Promise<GetAppResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetApp",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "appSummary": toAppSummary,
@@ -227,13 +253,14 @@ export default class SMS {
   async getAppLaunchConfiguration(
     {abortSignal, ...params}: RequestConfig & GetAppLaunchConfigurationRequest = {},
   ): Promise<GetAppLaunchConfigurationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAppLaunchConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "appId": "s",
@@ -247,13 +274,14 @@ export default class SMS {
   async getAppReplicationConfiguration(
     {abortSignal, ...params}: RequestConfig & GetAppReplicationConfigurationRequest = {},
   ): Promise<GetAppReplicationConfigurationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAppReplicationConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "serverGroupReplicationConfigurations": [toServerGroupReplicationConfiguration],
@@ -264,13 +292,14 @@ export default class SMS {
   async getAppValidationConfiguration(
     {abortSignal, ...params}: RequestConfig & GetAppValidationConfigurationRequest,
   ): Promise<GetAppValidationConfigurationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAppValidationConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "appValidationConfigurations": [toAppValidationConfiguration],
@@ -282,13 +311,14 @@ export default class SMS {
   async getAppValidationOutput(
     {abortSignal, ...params}: RequestConfig & GetAppValidationOutputRequest,
   ): Promise<GetAppValidationOutputResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAppValidationOutput",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "validationOutputList": [toValidationOutput],
@@ -299,13 +329,15 @@ export default class SMS {
   async getConnectors(
     {abortSignal, ...params}: RequestConfig & GetConnectorsRequest = {},
   ): Promise<GetConnectorsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetConnectors",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "connectorList": [toConnector],
@@ -317,13 +349,16 @@ export default class SMS {
   async getReplicationJobs(
     {abortSignal, ...params}: RequestConfig & GetReplicationJobsRequest = {},
   ): Promise<GetReplicationJobsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      replicationJobId: params["replicationJobId"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetReplicationJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "replicationJobList": [toReplicationJob],
@@ -335,13 +370,16 @@ export default class SMS {
   async getReplicationRuns(
     {abortSignal, ...params}: RequestConfig & GetReplicationRunsRequest,
   ): Promise<GetReplicationRunsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      replicationJobId: params["replicationJobId"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetReplicationRuns",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "replicationJob": toReplicationJob,
@@ -354,18 +392,20 @@ export default class SMS {
   async getServers(
     {abortSignal, ...params}: RequestConfig & GetServersRequest = {},
   ): Promise<GetServersResponse> {
-    const body: JSONObject = {...params,
-    vmServerAddressList: params["vmServerAddressList"]?.map(x => fromVmServerAddress(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+      vmServerAddressList: params["vmServerAddressList"]?.map(x => fromVmServerAddress(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetServers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "lastModifiedOn": "d",
-        "serverCatalogStatus": toServerCatalogStatus,
+        "serverCatalogStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ServerCatalogStatus>(x),
         "serverList": [toServer],
         "nextToken": "s",
       },
@@ -375,13 +415,14 @@ export default class SMS {
   async importAppCatalog(
     {abortSignal, ...params}: RequestConfig & ImportAppCatalogRequest = {},
   ): Promise<ImportAppCatalogResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      roleName: params["roleName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportAppCatalog",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -390,13 +431,13 @@ export default class SMS {
   async importServerCatalog(
     {abortSignal, ...params}: RequestConfig & ImportServerCatalogRequest = {},
   ): Promise<ImportServerCatalogResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportServerCatalog",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -405,13 +446,14 @@ export default class SMS {
   async launchApp(
     {abortSignal, ...params}: RequestConfig & LaunchAppRequest = {},
   ): Promise<LaunchAppResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "LaunchApp",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -420,13 +462,16 @@ export default class SMS {
   async listApps(
     {abortSignal, ...params}: RequestConfig & ListAppsRequest = {},
   ): Promise<ListAppsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      appIds: params["appIds"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListApps",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "apps": [toAppSummary],
@@ -438,14 +483,15 @@ export default class SMS {
   async notifyAppValidationOutput(
     {abortSignal, ...params}: RequestConfig & NotifyAppValidationOutputRequest,
   ): Promise<NotifyAppValidationOutputResponse> {
-    const body: JSONObject = {...params,
-    notificationContext: fromNotificationContext(params["notificationContext"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+      notificationContext: fromNotificationContext(params["notificationContext"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "NotifyAppValidationOutput",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -454,14 +500,17 @@ export default class SMS {
   async putAppLaunchConfiguration(
     {abortSignal, ...params}: RequestConfig & PutAppLaunchConfigurationRequest = {},
   ): Promise<PutAppLaunchConfigurationResponse> {
-    const body: JSONObject = {...params,
-    serverGroupLaunchConfigurations: params["serverGroupLaunchConfigurations"]?.map(x => fromServerGroupLaunchConfiguration(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+      roleName: params["roleName"],
+      autoLaunch: params["autoLaunch"],
+      serverGroupLaunchConfigurations: params["serverGroupLaunchConfigurations"]?.map(x => fromServerGroupLaunchConfiguration(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAppLaunchConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -470,14 +519,15 @@ export default class SMS {
   async putAppReplicationConfiguration(
     {abortSignal, ...params}: RequestConfig & PutAppReplicationConfigurationRequest = {},
   ): Promise<PutAppReplicationConfigurationResponse> {
-    const body: JSONObject = {...params,
-    serverGroupReplicationConfigurations: params["serverGroupReplicationConfigurations"]?.map(x => fromServerGroupReplicationConfiguration(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+      serverGroupReplicationConfigurations: params["serverGroupReplicationConfigurations"]?.map(x => fromServerGroupReplicationConfiguration(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAppReplicationConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -486,15 +536,16 @@ export default class SMS {
   async putAppValidationConfiguration(
     {abortSignal, ...params}: RequestConfig & PutAppValidationConfigurationRequest,
   ): Promise<PutAppValidationConfigurationResponse> {
-    const body: JSONObject = {...params,
-    appValidationConfigurations: params["appValidationConfigurations"]?.map(x => fromAppValidationConfiguration(x)),
-    serverGroupValidationConfigurations: params["serverGroupValidationConfigurations"]?.map(x => fromServerGroupValidationConfiguration(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+      appValidationConfigurations: params["appValidationConfigurations"]?.map(x => fromAppValidationConfiguration(x)),
+      serverGroupValidationConfigurations: params["serverGroupValidationConfigurations"]?.map(x => fromServerGroupValidationConfiguration(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAppValidationConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -503,13 +554,14 @@ export default class SMS {
   async startAppReplication(
     {abortSignal, ...params}: RequestConfig & StartAppReplicationRequest = {},
   ): Promise<StartAppReplicationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartAppReplication",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -518,13 +570,15 @@ export default class SMS {
   async startOnDemandAppReplication(
     {abortSignal, ...params}: RequestConfig & StartOnDemandAppReplicationRequest,
   ): Promise<StartOnDemandAppReplicationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+      description: params["description"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartOnDemandAppReplication",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -533,13 +587,15 @@ export default class SMS {
   async startOnDemandReplicationRun(
     {abortSignal, ...params}: RequestConfig & StartOnDemandReplicationRunRequest,
   ): Promise<StartOnDemandReplicationRunResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      replicationJobId: params["replicationJobId"],
+      description: params["description"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartOnDemandReplicationRun",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "replicationRunId": "s",
@@ -550,13 +606,14 @@ export default class SMS {
   async stopAppReplication(
     {abortSignal, ...params}: RequestConfig & StopAppReplicationRequest = {},
   ): Promise<StopAppReplicationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopAppReplication",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -565,13 +622,14 @@ export default class SMS {
   async terminateApp(
     {abortSignal, ...params}: RequestConfig & TerminateAppRequest = {},
   ): Promise<TerminateAppResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TerminateApp",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -580,15 +638,19 @@ export default class SMS {
   async updateApp(
     {abortSignal, ...params}: RequestConfig & UpdateAppRequest = {},
   ): Promise<UpdateAppResponse> {
-    const body: JSONObject = {...params,
-    serverGroups: params["serverGroups"]?.map(x => fromServerGroup(x)),
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      appId: params["appId"],
+      name: params["name"],
+      description: params["description"],
+      roleName: params["roleName"],
+      serverGroups: params["serverGroups"]?.map(x => fromServerGroup(x)),
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApp",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "appSummary": toAppSummary,
@@ -601,14 +663,22 @@ export default class SMS {
   async updateReplicationJob(
     {abortSignal, ...params}: RequestConfig & UpdateReplicationJobRequest,
   ): Promise<UpdateReplicationJobResponse> {
-    const body: JSONObject = {...params,
-    nextReplicationRunStartTime: prt.serializeDate_unixTimestamp(params["nextReplicationRunStartTime"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      replicationJobId: params["replicationJobId"],
+      frequency: params["frequency"],
+      nextReplicationRunStartTime: jsonP.serializeDate_unixTimestamp(params["nextReplicationRunStartTime"]),
+      licenseType: params["licenseType"],
+      roleName: params["roleName"],
+      description: params["description"],
+      numberOfRecentAmisToKeep: params["numberOfRecentAmisToKeep"],
+      encrypted: params["encrypted"],
+      kmsKeyId: params["kmsKeyId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateReplicationJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1018,14 +1088,16 @@ export interface ServerGroup {
   name?: string | null;
   serverList?: Server[] | null;
 }
-function fromServerGroup(input?: ServerGroup | null): JSONValue {
+function fromServerGroup(input?: ServerGroup | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    serverGroupId: input["serverGroupId"],
+    name: input["name"],
     serverList: input["serverList"]?.map(x => fromServer(x)),
   }
 }
-function toServerGroup(root: JSONValue): ServerGroup {
-  return prt.readObj({
+function toServerGroup(root: jsonP.JSONValue): ServerGroup {
+  return jsonP.readObj({
     required: {},
     optional: {
       "serverGroupId": "s",
@@ -1043,18 +1115,22 @@ export interface Server {
   replicationJobId?: string | null;
   replicationJobTerminated?: boolean | null;
 }
-function fromServer(input?: Server | null): JSONValue {
+function fromServer(input?: Server | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    serverId: input["serverId"],
+    serverType: input["serverType"],
     vmServer: fromVmServer(input["vmServer"]),
+    replicationJobId: input["replicationJobId"],
+    replicationJobTerminated: input["replicationJobTerminated"],
   }
 }
-function toServer(root: JSONValue): Server {
-  return prt.readObj({
+function toServer(root: jsonP.JSONValue): Server {
+  return jsonP.readObj({
     required: {},
     optional: {
       "serverId": "s",
-      "serverType": toServerType,
+      "serverType": (x: jsonP.JSONValue) => cmnP.readEnum<ServerType>(x),
       "vmServer": toVmServer,
       "replicationJobId": "s",
       "replicationJobTerminated": "b",
@@ -1065,13 +1141,7 @@ function toServer(root: JSONValue): Server {
 // refs: 15 - tags: input, named, enum, output
 export type ServerType =
 | "VIRTUAL_MACHINE"
-;
-
-function toServerType(root: JSONValue): ServerType | null {
-  return ( false
-    || root == "VIRTUAL_MACHINE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 15 - tags: input, named, interface, output
 export interface VmServer {
@@ -1081,20 +1151,24 @@ export interface VmServer {
   vmManagerType?: VmManagerType | null;
   vmPath?: string | null;
 }
-function fromVmServer(input?: VmServer | null): JSONValue {
+function fromVmServer(input?: VmServer | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     vmServerAddress: fromVmServerAddress(input["vmServerAddress"]),
+    vmName: input["vmName"],
+    vmManagerName: input["vmManagerName"],
+    vmManagerType: input["vmManagerType"],
+    vmPath: input["vmPath"],
   }
 }
-function toVmServer(root: JSONValue): VmServer {
-  return prt.readObj({
+function toVmServer(root: jsonP.JSONValue): VmServer {
+  return jsonP.readObj({
     required: {},
     optional: {
       "vmServerAddress": toVmServerAddress,
       "vmName": "s",
       "vmManagerName": "s",
-      "vmManagerType": toVmManagerType,
+      "vmManagerType": (x: jsonP.JSONValue) => cmnP.readEnum<VmManagerType>(x),
       "vmPath": "s",
     },
   }, root);
@@ -1105,13 +1179,15 @@ export interface VmServerAddress {
   vmManagerId?: string | null;
   vmId?: string | null;
 }
-function fromVmServerAddress(input?: VmServerAddress | null): JSONValue {
+function fromVmServerAddress(input?: VmServerAddress | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    vmManagerId: input["vmManagerId"],
+    vmId: input["vmId"],
   }
 }
-function toVmServerAddress(root: JSONValue): VmServerAddress {
-  return prt.readObj({
+function toVmServerAddress(root: jsonP.JSONValue): VmServerAddress {
+  return jsonP.readObj({
     required: {},
     optional: {
       "vmManagerId": "s",
@@ -1125,28 +1201,22 @@ export type VmManagerType =
 | "VSPHERE"
 | "SCVMM"
 | "HYPERV-MANAGER"
-;
-
-function toVmManagerType(root: JSONValue): VmManagerType | null {
-  return ( false
-    || root == "VSPHERE"
-    || root == "SCVMM"
-    || root == "HYPERV-MANAGER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface Tag {
   key?: string | null;
   value?: string | null;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    key: input["key"],
+    value: input["value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {},
     optional: {
       "key": "s",
@@ -1159,21 +1229,13 @@ function toTag(root: JSONValue): Tag {
 export type LicenseType =
 | "AWS"
 | "BYOL"
-;
-
-function toLicenseType(root: JSONValue): LicenseType | null {
-  return ( false
-    || root == "AWS"
-    || root == "BYOL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
 export type OutputFormat =
 | "JSON"
 | "YAML"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface NotificationContext {
@@ -1181,9 +1243,12 @@ export interface NotificationContext {
   status?: ValidationStatus | null;
   statusMessage?: string | null;
 }
-function fromNotificationContext(input?: NotificationContext | null): JSONValue {
+function fromNotificationContext(input?: NotificationContext | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    validationId: input["validationId"],
+    status: input["status"],
+    statusMessage: input["statusMessage"],
   }
 }
 
@@ -1194,17 +1259,7 @@ export type ValidationStatus =
 | "IN_PROGRESS"
 | "SUCCEEDED"
 | "FAILED"
-;
-
-function toValidationStatus(root: JSONValue): ValidationStatus | null {
-  return ( false
-    || root == "READY_FOR_VALIDATION"
-    || root == "PENDING"
-    || root == "IN_PROGRESS"
-    || root == "SUCCEEDED"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface ServerGroupLaunchConfiguration {
@@ -1212,14 +1267,16 @@ export interface ServerGroupLaunchConfiguration {
   launchOrder?: number | null;
   serverLaunchConfigurations?: ServerLaunchConfiguration[] | null;
 }
-function fromServerGroupLaunchConfiguration(input?: ServerGroupLaunchConfiguration | null): JSONValue {
+function fromServerGroupLaunchConfiguration(input?: ServerGroupLaunchConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    serverGroupId: input["serverGroupId"],
+    launchOrder: input["launchOrder"],
     serverLaunchConfigurations: input["serverLaunchConfigurations"]?.map(x => fromServerLaunchConfiguration(x)),
   }
 }
-function toServerGroupLaunchConfiguration(root: JSONValue): ServerGroupLaunchConfiguration {
-  return prt.readObj({
+function toServerGroupLaunchConfiguration(root: jsonP.JSONValue): ServerGroupLaunchConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "serverGroupId": "s",
@@ -1244,16 +1301,25 @@ export interface ServerLaunchConfiguration {
   configureScript?: S3Location | null;
   configureScriptType?: ScriptType | null;
 }
-function fromServerLaunchConfiguration(input?: ServerLaunchConfiguration | null): JSONValue {
+function fromServerLaunchConfiguration(input?: ServerLaunchConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     server: fromServer(input["server"]),
+    logicalId: input["logicalId"],
+    vpc: input["vpc"],
+    subnet: input["subnet"],
+    securityGroup: input["securityGroup"],
+    ec2KeyName: input["ec2KeyName"],
     userData: fromUserData(input["userData"]),
+    instanceType: input["instanceType"],
+    associatePublicIpAddress: input["associatePublicIpAddress"],
+    iamInstanceProfileName: input["iamInstanceProfileName"],
     configureScript: fromS3Location(input["configureScript"]),
+    configureScriptType: input["configureScriptType"],
   }
 }
-function toServerLaunchConfiguration(root: JSONValue): ServerLaunchConfiguration {
-  return prt.readObj({
+function toServerLaunchConfiguration(root: jsonP.JSONValue): ServerLaunchConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "server": toServer,
@@ -1267,7 +1333,7 @@ function toServerLaunchConfiguration(root: JSONValue): ServerLaunchConfiguration
       "associatePublicIpAddress": "b",
       "iamInstanceProfileName": "s",
       "configureScript": toS3Location,
-      "configureScriptType": toScriptType,
+      "configureScriptType": (x: jsonP.JSONValue) => cmnP.readEnum<ScriptType>(x),
     },
   }, root);
 }
@@ -1276,14 +1342,14 @@ function toServerLaunchConfiguration(root: JSONValue): ServerLaunchConfiguration
 export interface UserData {
   s3Location?: S3Location | null;
 }
-function fromUserData(input?: UserData | null): JSONValue {
+function fromUserData(input?: UserData | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     s3Location: fromS3Location(input["s3Location"]),
   }
 }
-function toUserData(root: JSONValue): UserData {
-  return prt.readObj({
+function toUserData(root: jsonP.JSONValue): UserData {
+  return jsonP.readObj({
     required: {},
     optional: {
       "s3Location": toS3Location,
@@ -1296,13 +1362,15 @@ export interface S3Location {
   bucket?: string | null;
   key?: string | null;
 }
-function fromS3Location(input?: S3Location | null): JSONValue {
+function fromS3Location(input?: S3Location | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    bucket: input["bucket"],
+    key: input["key"],
   }
 }
-function toS3Location(root: JSONValue): S3Location {
-  return prt.readObj({
+function toS3Location(root: jsonP.JSONValue): S3Location {
+  return jsonP.readObj({
     required: {},
     optional: {
       "bucket": "s",
@@ -1315,28 +1383,22 @@ function toS3Location(root: JSONValue): S3Location {
 export type ScriptType =
 | "SHELL_SCRIPT"
 | "POWERSHELL_SCRIPT"
-;
-
-function toScriptType(root: JSONValue): ScriptType | null {
-  return ( false
-    || root == "SHELL_SCRIPT"
-    || root == "POWERSHELL_SCRIPT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface ServerGroupReplicationConfiguration {
   serverGroupId?: string | null;
   serverReplicationConfigurations?: ServerReplicationConfiguration[] | null;
 }
-function fromServerGroupReplicationConfiguration(input?: ServerGroupReplicationConfiguration | null): JSONValue {
+function fromServerGroupReplicationConfiguration(input?: ServerGroupReplicationConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    serverGroupId: input["serverGroupId"],
     serverReplicationConfigurations: input["serverReplicationConfigurations"]?.map(x => fromServerReplicationConfiguration(x)),
   }
 }
-function toServerGroupReplicationConfiguration(root: JSONValue): ServerGroupReplicationConfiguration {
-  return prt.readObj({
+function toServerGroupReplicationConfiguration(root: jsonP.JSONValue): ServerGroupReplicationConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "serverGroupId": "s",
@@ -1350,15 +1412,15 @@ export interface ServerReplicationConfiguration {
   server?: Server | null;
   serverReplicationParameters?: ServerReplicationParameters | null;
 }
-function fromServerReplicationConfiguration(input?: ServerReplicationConfiguration | null): JSONValue {
+function fromServerReplicationConfiguration(input?: ServerReplicationConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     server: fromServer(input["server"]),
     serverReplicationParameters: fromServerReplicationParameters(input["serverReplicationParameters"]),
   }
 }
-function toServerReplicationConfiguration(root: JSONValue): ServerReplicationConfiguration {
-  return prt.readObj({
+function toServerReplicationConfiguration(root: jsonP.JSONValue): ServerReplicationConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "server": toServer,
@@ -1377,20 +1439,26 @@ export interface ServerReplicationParameters {
   encrypted?: boolean | null;
   kmsKeyId?: string | null;
 }
-function fromServerReplicationParameters(input?: ServerReplicationParameters | null): JSONValue {
+function fromServerReplicationParameters(input?: ServerReplicationParameters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    seedTime: prt.serializeDate_unixTimestamp(input["seedTime"]),
+  return {
+    seedTime: jsonP.serializeDate_unixTimestamp(input["seedTime"]),
+    frequency: input["frequency"],
+    runOnce: input["runOnce"],
+    licenseType: input["licenseType"],
+    numberOfRecentAmisToKeep: input["numberOfRecentAmisToKeep"],
+    encrypted: input["encrypted"],
+    kmsKeyId: input["kmsKeyId"],
   }
 }
-function toServerReplicationParameters(root: JSONValue): ServerReplicationParameters {
-  return prt.readObj({
+function toServerReplicationParameters(root: jsonP.JSONValue): ServerReplicationParameters {
+  return jsonP.readObj({
     required: {},
     optional: {
       "seedTime": "d",
       "frequency": "n",
       "runOnce": "b",
-      "licenseType": toLicenseType,
+      "licenseType": (x: jsonP.JSONValue) => cmnP.readEnum<LicenseType>(x),
       "numberOfRecentAmisToKeep": "n",
       "encrypted": "b",
       "kmsKeyId": "s",
@@ -1405,19 +1473,22 @@ export interface AppValidationConfiguration {
   appValidationStrategy?: AppValidationStrategy | null;
   ssmValidationParameters?: SSMValidationParameters | null;
 }
-function fromAppValidationConfiguration(input?: AppValidationConfiguration | null): JSONValue {
+function fromAppValidationConfiguration(input?: AppValidationConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    validationId: input["validationId"],
+    name: input["name"],
+    appValidationStrategy: input["appValidationStrategy"],
     ssmValidationParameters: fromSSMValidationParameters(input["ssmValidationParameters"]),
   }
 }
-function toAppValidationConfiguration(root: JSONValue): AppValidationConfiguration {
-  return prt.readObj({
+function toAppValidationConfiguration(root: jsonP.JSONValue): AppValidationConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "validationId": "s",
       "name": "s",
-      "appValidationStrategy": toAppValidationStrategy,
+      "appValidationStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<AppValidationStrategy>(x),
       "ssmValidationParameters": toSSMValidationParameters,
     },
   }, root);
@@ -1426,13 +1497,7 @@ function toAppValidationConfiguration(root: JSONValue): AppValidationConfigurati
 // refs: 2 - tags: input, named, enum, output
 export type AppValidationStrategy =
 | "SSM"
-;
-
-function toAppValidationStrategy(root: JSONValue): AppValidationStrategy | null {
-  return ( false
-    || root == "SSM"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface SSMValidationParameters {
@@ -1443,19 +1508,24 @@ export interface SSMValidationParameters {
   executionTimeoutSeconds?: number | null;
   outputS3BucketName?: string | null;
 }
-function fromSSMValidationParameters(input?: SSMValidationParameters | null): JSONValue {
+function fromSSMValidationParameters(input?: SSMValidationParameters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     source: fromSource(input["source"]),
+    instanceId: input["instanceId"],
+    scriptType: input["scriptType"],
+    command: input["command"],
+    executionTimeoutSeconds: input["executionTimeoutSeconds"],
+    outputS3BucketName: input["outputS3BucketName"],
   }
 }
-function toSSMValidationParameters(root: JSONValue): SSMValidationParameters {
-  return prt.readObj({
+function toSSMValidationParameters(root: jsonP.JSONValue): SSMValidationParameters {
+  return jsonP.readObj({
     required: {},
     optional: {
       "source": toSource,
       "instanceId": "s",
-      "scriptType": toScriptType,
+      "scriptType": (x: jsonP.JSONValue) => cmnP.readEnum<ScriptType>(x),
       "command": "s",
       "executionTimeoutSeconds": "n",
       "outputS3BucketName": "s",
@@ -1467,14 +1537,14 @@ function toSSMValidationParameters(root: JSONValue): SSMValidationParameters {
 export interface Source {
   s3Location?: S3Location | null;
 }
-function fromSource(input?: Source | null): JSONValue {
+function fromSource(input?: Source | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     s3Location: fromS3Location(input["s3Location"]),
   }
 }
-function toSource(root: JSONValue): Source {
-  return prt.readObj({
+function toSource(root: jsonP.JSONValue): Source {
+  return jsonP.readObj({
     required: {},
     optional: {
       "s3Location": toS3Location,
@@ -1487,14 +1557,15 @@ export interface ServerGroupValidationConfiguration {
   serverGroupId?: string | null;
   serverValidationConfigurations?: ServerValidationConfiguration[] | null;
 }
-function fromServerGroupValidationConfiguration(input?: ServerGroupValidationConfiguration | null): JSONValue {
+function fromServerGroupValidationConfiguration(input?: ServerGroupValidationConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    serverGroupId: input["serverGroupId"],
     serverValidationConfigurations: input["serverValidationConfigurations"]?.map(x => fromServerValidationConfiguration(x)),
   }
 }
-function toServerGroupValidationConfiguration(root: JSONValue): ServerGroupValidationConfiguration {
-  return prt.readObj({
+function toServerGroupValidationConfiguration(root: jsonP.JSONValue): ServerGroupValidationConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "serverGroupId": "s",
@@ -1511,21 +1582,24 @@ export interface ServerValidationConfiguration {
   serverValidationStrategy?: ServerValidationStrategy | null;
   userDataValidationParameters?: UserDataValidationParameters | null;
 }
-function fromServerValidationConfiguration(input?: ServerValidationConfiguration | null): JSONValue {
+function fromServerValidationConfiguration(input?: ServerValidationConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     server: fromServer(input["server"]),
+    validationId: input["validationId"],
+    name: input["name"],
+    serverValidationStrategy: input["serverValidationStrategy"],
     userDataValidationParameters: fromUserDataValidationParameters(input["userDataValidationParameters"]),
   }
 }
-function toServerValidationConfiguration(root: JSONValue): ServerValidationConfiguration {
-  return prt.readObj({
+function toServerValidationConfiguration(root: jsonP.JSONValue): ServerValidationConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "server": toServer,
       "validationId": "s",
       "name": "s",
-      "serverValidationStrategy": toServerValidationStrategy,
+      "serverValidationStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<ServerValidationStrategy>(x),
       "userDataValidationParameters": toUserDataValidationParameters,
     },
   }, root);
@@ -1534,31 +1608,26 @@ function toServerValidationConfiguration(root: JSONValue): ServerValidationConfi
 // refs: 2 - tags: input, named, enum, output
 export type ServerValidationStrategy =
 | "USERDATA"
-;
-
-function toServerValidationStrategy(root: JSONValue): ServerValidationStrategy | null {
-  return ( false
-    || root == "USERDATA"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface UserDataValidationParameters {
   source?: Source | null;
   scriptType?: ScriptType | null;
 }
-function fromUserDataValidationParameters(input?: UserDataValidationParameters | null): JSONValue {
+function fromUserDataValidationParameters(input?: UserDataValidationParameters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     source: fromSource(input["source"]),
+    scriptType: input["scriptType"],
   }
 }
-function toUserDataValidationParameters(root: JSONValue): UserDataValidationParameters {
-  return prt.readObj({
+function toUserDataValidationParameters(root: jsonP.JSONValue): UserDataValidationParameters {
+  return jsonP.readObj({
     required: {},
     optional: {
       "source": toSource,
-      "scriptType": toScriptType,
+      "scriptType": (x: jsonP.JSONValue) => cmnP.readEnum<ScriptType>(x),
     },
   }, root);
 }
@@ -1585,22 +1654,22 @@ export interface AppSummary {
   totalServerGroups?: number | null;
   totalServers?: number | null;
 }
-function toAppSummary(root: JSONValue): AppSummary {
-  return prt.readObj({
+function toAppSummary(root: jsonP.JSONValue): AppSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "appId": "s",
       "importedAppId": "s",
       "name": "s",
       "description": "s",
-      "status": toAppStatus,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<AppStatus>(x),
       "statusMessage": "s",
-      "replicationConfigurationStatus": toAppReplicationConfigurationStatus,
-      "replicationStatus": toAppReplicationStatus,
+      "replicationConfigurationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AppReplicationConfigurationStatus>(x),
+      "replicationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AppReplicationStatus>(x),
       "replicationStatusMessage": "s",
       "latestReplicationTime": "d",
-      "launchConfigurationStatus": toAppLaunchConfigurationStatus,
-      "launchStatus": toAppLaunchStatus,
+      "launchConfigurationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AppLaunchConfigurationStatus>(x),
+      "launchStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AppLaunchStatus>(x),
       "launchStatusMessage": "s",
       "launchDetails": toLaunchDetails,
       "creationTime": "d",
@@ -1620,29 +1689,13 @@ export type AppStatus =
 | "DELETING"
 | "DELETED"
 | "DELETE_FAILED"
-;
-function toAppStatus(root: JSONValue): AppStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "ACTIVE"
-    || root == "UPDATING"
-    || root == "DELETING"
-    || root == "DELETED"
-    || root == "DELETE_FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, enum
 export type AppReplicationConfigurationStatus =
 | "NOT_CONFIGURED"
 | "CONFIGURED"
-;
-function toAppReplicationConfigurationStatus(root: JSONValue): AppReplicationConfigurationStatus | null {
-  return ( false
-    || root == "NOT_CONFIGURED"
-    || root == "CONFIGURED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, enum
 export type AppReplicationStatus =
@@ -1662,39 +1715,13 @@ export type AppReplicationStatus =
 | "REPLICATION_STOPPING"
 | "REPLICATION_STOP_FAILED"
 | "REPLICATION_STOPPED"
-;
-function toAppReplicationStatus(root: JSONValue): AppReplicationStatus | null {
-  return ( false
-    || root == "READY_FOR_CONFIGURATION"
-    || root == "CONFIGURATION_IN_PROGRESS"
-    || root == "CONFIGURATION_INVALID"
-    || root == "READY_FOR_REPLICATION"
-    || root == "VALIDATION_IN_PROGRESS"
-    || root == "REPLICATION_PENDING"
-    || root == "REPLICATION_IN_PROGRESS"
-    || root == "REPLICATED"
-    || root == "PARTIALLY_REPLICATED"
-    || root == "DELTA_REPLICATION_IN_PROGRESS"
-    || root == "DELTA_REPLICATED"
-    || root == "DELTA_REPLICATION_FAILED"
-    || root == "REPLICATION_FAILED"
-    || root == "REPLICATION_STOPPING"
-    || root == "REPLICATION_STOP_FAILED"
-    || root == "REPLICATION_STOPPED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, enum
 export type AppLaunchConfigurationStatus =
 | "NOT_CONFIGURED"
 | "CONFIGURED"
-;
-function toAppLaunchConfigurationStatus(root: JSONValue): AppLaunchConfigurationStatus | null {
-  return ( false
-    || root == "NOT_CONFIGURED"
-    || root == "CONFIGURED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, enum
 export type AppLaunchStatus =
@@ -1713,26 +1740,7 @@ export type AppLaunchStatus =
 | "TERMINATE_IN_PROGRESS"
 | "TERMINATE_FAILED"
 | "TERMINATED"
-;
-function toAppLaunchStatus(root: JSONValue): AppLaunchStatus | null {
-  return ( false
-    || root == "READY_FOR_CONFIGURATION"
-    || root == "CONFIGURATION_IN_PROGRESS"
-    || root == "CONFIGURATION_INVALID"
-    || root == "READY_FOR_LAUNCH"
-    || root == "VALIDATION_IN_PROGRESS"
-    || root == "LAUNCH_PENDING"
-    || root == "LAUNCH_IN_PROGRESS"
-    || root == "LAUNCHED"
-    || root == "PARTIALLY_LAUNCHED"
-    || root == "DELTA_LAUNCH_IN_PROGRESS"
-    || root == "DELTA_LAUNCH_FAILED"
-    || root == "LAUNCH_FAILED"
-    || root == "TERMINATE_IN_PROGRESS"
-    || root == "TERMINATE_FAILED"
-    || root == "TERMINATED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface LaunchDetails {
@@ -1740,8 +1748,8 @@ export interface LaunchDetails {
   stackName?: string | null;
   stackId?: string | null;
 }
-function toLaunchDetails(root: JSONValue): LaunchDetails {
-  return prt.readObj({
+function toLaunchDetails(root: jsonP.JSONValue): LaunchDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "latestLaunchTime": "d",
@@ -1761,13 +1769,13 @@ export interface ValidationOutput {
   appValidationOutput?: AppValidationOutput | null;
   serverValidationOutput?: ServerValidationOutput | null;
 }
-function toValidationOutput(root: JSONValue): ValidationOutput {
-  return prt.readObj({
+function toValidationOutput(root: jsonP.JSONValue): ValidationOutput {
+  return jsonP.readObj({
     required: {},
     optional: {
       "validationId": "s",
       "name": "s",
-      "status": toValidationStatus,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<ValidationStatus>(x),
       "statusMessage": "s",
       "latestValidationTime": "d",
       "appValidationOutput": toAppValidationOutput,
@@ -1780,8 +1788,8 @@ function toValidationOutput(root: JSONValue): ValidationOutput {
 export interface AppValidationOutput {
   ssmOutput?: SSMOutput | null;
 }
-function toAppValidationOutput(root: JSONValue): AppValidationOutput {
-  return prt.readObj({
+function toAppValidationOutput(root: jsonP.JSONValue): AppValidationOutput {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ssmOutput": toSSMOutput,
@@ -1793,8 +1801,8 @@ function toAppValidationOutput(root: JSONValue): AppValidationOutput {
 export interface SSMOutput {
   s3Location?: S3Location | null;
 }
-function toSSMOutput(root: JSONValue): SSMOutput {
-  return prt.readObj({
+function toSSMOutput(root: jsonP.JSONValue): SSMOutput {
+  return jsonP.readObj({
     required: {},
     optional: {
       "s3Location": toS3Location,
@@ -1806,8 +1814,8 @@ function toSSMOutput(root: JSONValue): SSMOutput {
 export interface ServerValidationOutput {
   server?: Server | null;
 }
-function toServerValidationOutput(root: JSONValue): ServerValidationOutput {
-  return prt.readObj({
+function toServerValidationOutput(root: jsonP.JSONValue): ServerValidationOutput {
+  return jsonP.readObj({
     required: {},
     optional: {
       "server": toServer,
@@ -1828,16 +1836,16 @@ export interface Connector {
   macAddress?: string | null;
   associatedOn?: Date | number | null;
 }
-function toConnector(root: JSONValue): Connector {
-  return prt.readObj({
+function toConnector(root: jsonP.JSONValue): Connector {
+  return jsonP.readObj({
     required: {},
     optional: {
       "connectorId": "s",
       "version": "s",
-      "status": toConnectorStatus,
-      "capabilityList": [toConnectorCapability],
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<ConnectorStatus>(x),
+      "capabilityList": [(x: jsonP.JSONValue) => cmnP.readEnum<ConnectorCapability>(x)],
       "vmManagerName": "s",
-      "vmManagerType": toVmManagerType,
+      "vmManagerType": (x: jsonP.JSONValue) => cmnP.readEnum<VmManagerType>(x),
       "vmManagerId": "s",
       "ipAddress": "s",
       "macAddress": "s",
@@ -1850,13 +1858,7 @@ function toConnector(root: JSONValue): Connector {
 export type ConnectorStatus =
 | "HEALTHY"
 | "UNHEALTHY"
-;
-function toConnectorStatus(root: JSONValue): ConnectorStatus | null {
-  return ( false
-    || root == "HEALTHY"
-    || root == "UNHEALTHY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type ConnectorCapability =
@@ -1865,16 +1867,7 @@ export type ConnectorCapability =
 | "HYPERV-MANAGER"
 | "SNAPSHOT_BATCHING"
 | "SMS_OPTIMIZED"
-;
-function toConnectorCapability(root: JSONValue): ConnectorCapability | null {
-  return ( false
-    || root == "VSPHERE"
-    || root == "SCVMM"
-    || root == "HYPERV-MANAGER"
-    || root == "SNAPSHOT_BATCHING"
-    || root == "SMS_OPTIMIZED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ReplicationJob {
@@ -1897,22 +1890,22 @@ export interface ReplicationJob {
   kmsKeyId?: string | null;
   replicationRunList?: ReplicationRun[] | null;
 }
-function toReplicationJob(root: JSONValue): ReplicationJob {
-  return prt.readObj({
+function toReplicationJob(root: jsonP.JSONValue): ReplicationJob {
+  return jsonP.readObj({
     required: {},
     optional: {
       "replicationJobId": "s",
       "serverId": "s",
-      "serverType": toServerType,
+      "serverType": (x: jsonP.JSONValue) => cmnP.readEnum<ServerType>(x),
       "vmServer": toVmServer,
       "seedReplicationTime": "d",
       "frequency": "n",
       "runOnce": "b",
       "nextReplicationRunStartTime": "d",
-      "licenseType": toLicenseType,
+      "licenseType": (x: jsonP.JSONValue) => cmnP.readEnum<LicenseType>(x),
       "roleName": "s",
       "latestAmiId": "s",
-      "state": toReplicationJobState,
+      "state": (x: jsonP.JSONValue) => cmnP.readEnum<ReplicationJobState>(x),
       "statusMessage": "s",
       "description": "s",
       "numberOfRecentAmisToKeep": "n",
@@ -1933,19 +1926,7 @@ export type ReplicationJobState =
 | "COMPLETED"
 | "PAUSED_ON_FAILURE"
 | "FAILING"
-;
-function toReplicationJobState(root: JSONValue): ReplicationJobState | null {
-  return ( false
-    || root == "PENDING"
-    || root == "ACTIVE"
-    || root == "FAILED"
-    || root == "DELETING"
-    || root == "DELETED"
-    || root == "COMPLETED"
-    || root == "PAUSED_ON_FAILURE"
-    || root == "FAILING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface ReplicationRun {
@@ -1961,13 +1942,13 @@ export interface ReplicationRun {
   encrypted?: boolean | null;
   kmsKeyId?: string | null;
 }
-function toReplicationRun(root: JSONValue): ReplicationRun {
-  return prt.readObj({
+function toReplicationRun(root: jsonP.JSONValue): ReplicationRun {
+  return jsonP.readObj({
     required: {},
     optional: {
       "replicationRunId": "s",
-      "state": toReplicationRunState,
-      "type": toReplicationRunType,
+      "state": (x: jsonP.JSONValue) => cmnP.readEnum<ReplicationRunState>(x),
+      "type": (x: jsonP.JSONValue) => cmnP.readEnum<ReplicationRunType>(x),
       "stageDetails": toReplicationRunStageDetails,
       "statusMessage": "s",
       "amiId": "s",
@@ -1989,38 +1970,21 @@ export type ReplicationRunState =
 | "COMPLETED"
 | "DELETING"
 | "DELETED"
-;
-function toReplicationRunState(root: JSONValue): ReplicationRunState | null {
-  return ( false
-    || root == "PENDING"
-    || root == "MISSED"
-    || root == "ACTIVE"
-    || root == "FAILED"
-    || root == "COMPLETED"
-    || root == "DELETING"
-    || root == "DELETED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, enum
 export type ReplicationRunType =
 | "ON_DEMAND"
 | "AUTOMATIC"
-;
-function toReplicationRunType(root: JSONValue): ReplicationRunType | null {
-  return ( false
-    || root == "ON_DEMAND"
-    || root == "AUTOMATIC"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface ReplicationRunStageDetails {
   stage?: string | null;
   stageProgress?: string | null;
 }
-function toReplicationRunStageDetails(root: JSONValue): ReplicationRunStageDetails {
-  return prt.readObj({
+function toReplicationRunStageDetails(root: jsonP.JSONValue): ReplicationRunStageDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "stage": "s",
@@ -2036,13 +2000,4 @@ export type ServerCatalogStatus =
 | "AVAILABLE"
 | "DELETED"
 | "EXPIRED"
-;
-function toServerCatalogStatus(root: JSONValue): ServerCatalogStatus | null {
-  return ( false
-    || root == "NOT_IMPORTED"
-    || root == "IMPORTING"
-    || root == "AVAILABLE"
-    || root == "DELETED"
-    || root == "EXPIRED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;

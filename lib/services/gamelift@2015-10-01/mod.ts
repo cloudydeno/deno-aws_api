@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class GameLift {
   #client: ServiceClient;
@@ -29,13 +29,16 @@ export default class GameLift {
   async acceptMatch(
     {abortSignal, ...params}: RequestConfig & AcceptMatchInput,
   ): Promise<AcceptMatchOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TicketId: params["TicketId"],
+      PlayerIds: params["PlayerIds"],
+      AcceptanceType: params["AcceptanceType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcceptMatch",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -44,13 +47,16 @@ export default class GameLift {
   async claimGameServer(
     {abortSignal, ...params}: RequestConfig & ClaimGameServerInput,
   ): Promise<ClaimGameServerOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameServerGroupName: params["GameServerGroupName"],
+      GameServerId: params["GameServerId"],
+      GameServerData: params["GameServerData"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ClaimGameServer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameServer": toGameServer,
@@ -61,15 +67,17 @@ export default class GameLift {
   async createAlias(
     {abortSignal, ...params}: RequestConfig & CreateAliasInput,
   ): Promise<CreateAliasOutput> {
-    const body: JSONObject = {...params,
-    RoutingStrategy: fromRoutingStrategy(params["RoutingStrategy"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Description: params["Description"],
+      RoutingStrategy: fromRoutingStrategy(params["RoutingStrategy"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAlias",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Alias": toAlias,
@@ -80,15 +88,18 @@ export default class GameLift {
   async createBuild(
     {abortSignal, ...params}: RequestConfig & CreateBuildInput = {},
   ): Promise<CreateBuildOutput> {
-    const body: JSONObject = {...params,
-    StorageLocation: fromS3Location(params["StorageLocation"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Version: params["Version"],
+      StorageLocation: fromS3Location(params["StorageLocation"]),
+      OperatingSystem: params["OperatingSystem"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBuild",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Build": toBuild,
@@ -101,18 +112,32 @@ export default class GameLift {
   async createFleet(
     {abortSignal, ...params}: RequestConfig & CreateFleetInput,
   ): Promise<CreateFleetOutput> {
-    const body: JSONObject = {...params,
-    EC2InboundPermissions: params["EC2InboundPermissions"]?.map(x => fromIpPermission(x)),
-    RuntimeConfiguration: fromRuntimeConfiguration(params["RuntimeConfiguration"]),
-    ResourceCreationLimitPolicy: fromResourceCreationLimitPolicy(params["ResourceCreationLimitPolicy"]),
-    CertificateConfiguration: fromCertificateConfiguration(params["CertificateConfiguration"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Description: params["Description"],
+      BuildId: params["BuildId"],
+      ScriptId: params["ScriptId"],
+      ServerLaunchPath: params["ServerLaunchPath"],
+      ServerLaunchParameters: params["ServerLaunchParameters"],
+      LogPaths: params["LogPaths"],
+      EC2InstanceType: params["EC2InstanceType"],
+      EC2InboundPermissions: params["EC2InboundPermissions"]?.map(x => fromIpPermission(x)),
+      NewGameSessionProtectionPolicy: params["NewGameSessionProtectionPolicy"],
+      RuntimeConfiguration: fromRuntimeConfiguration(params["RuntimeConfiguration"]),
+      ResourceCreationLimitPolicy: fromResourceCreationLimitPolicy(params["ResourceCreationLimitPolicy"]),
+      MetricGroups: params["MetricGroups"],
+      PeerVpcAwsAccountId: params["PeerVpcAwsAccountId"],
+      PeerVpcId: params["PeerVpcId"],
+      FleetType: params["FleetType"],
+      InstanceRoleArn: params["InstanceRoleArn"],
+      CertificateConfiguration: fromCertificateConfiguration(params["CertificateConfiguration"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFleet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FleetAttributes": toFleetAttributes,
@@ -123,17 +148,24 @@ export default class GameLift {
   async createGameServerGroup(
     {abortSignal, ...params}: RequestConfig & CreateGameServerGroupInput,
   ): Promise<CreateGameServerGroupOutput> {
-    const body: JSONObject = {...params,
-    LaunchTemplate: fromLaunchTemplateSpecification(params["LaunchTemplate"]),
-    InstanceDefinitions: params["InstanceDefinitions"]?.map(x => fromInstanceDefinition(x)),
-    AutoScalingPolicy: fromGameServerGroupAutoScalingPolicy(params["AutoScalingPolicy"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameServerGroupName: params["GameServerGroupName"],
+      RoleArn: params["RoleArn"],
+      MinSize: params["MinSize"],
+      MaxSize: params["MaxSize"],
+      LaunchTemplate: fromLaunchTemplateSpecification(params["LaunchTemplate"]),
+      InstanceDefinitions: params["InstanceDefinitions"]?.map(x => fromInstanceDefinition(x)),
+      AutoScalingPolicy: fromGameServerGroupAutoScalingPolicy(params["AutoScalingPolicy"]),
+      BalancingStrategy: params["BalancingStrategy"],
+      GameServerProtectionPolicy: params["GameServerProtectionPolicy"],
+      VpcSubnets: params["VpcSubnets"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGameServerGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameServerGroup": toGameServerGroup,
@@ -144,14 +176,22 @@ export default class GameLift {
   async createGameSession(
     {abortSignal, ...params}: RequestConfig & CreateGameSessionInput,
   ): Promise<CreateGameSessionOutput> {
-    const body: JSONObject = {...params,
-    GameProperties: params["GameProperties"]?.map(x => fromGameProperty(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+      AliasId: params["AliasId"],
+      MaximumPlayerSessionCount: params["MaximumPlayerSessionCount"],
+      Name: params["Name"],
+      GameProperties: params["GameProperties"]?.map(x => fromGameProperty(x)),
+      CreatorId: params["CreatorId"],
+      GameSessionId: params["GameSessionId"],
+      IdempotencyToken: params["IdempotencyToken"],
+      GameSessionData: params["GameSessionData"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGameSession",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameSession": toGameSession,
@@ -162,16 +202,18 @@ export default class GameLift {
   async createGameSessionQueue(
     {abortSignal, ...params}: RequestConfig & CreateGameSessionQueueInput,
   ): Promise<CreateGameSessionQueueOutput> {
-    const body: JSONObject = {...params,
-    PlayerLatencyPolicies: params["PlayerLatencyPolicies"]?.map(x => fromPlayerLatencyPolicy(x)),
-    Destinations: params["Destinations"]?.map(x => fromGameSessionQueueDestination(x)),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      TimeoutInSeconds: params["TimeoutInSeconds"],
+      PlayerLatencyPolicies: params["PlayerLatencyPolicies"]?.map(x => fromPlayerLatencyPolicy(x)),
+      Destinations: params["Destinations"]?.map(x => fromGameSessionQueueDestination(x)),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGameSessionQueue",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameSessionQueue": toGameSessionQueue,
@@ -182,15 +224,27 @@ export default class GameLift {
   async createMatchmakingConfiguration(
     {abortSignal, ...params}: RequestConfig & CreateMatchmakingConfigurationInput,
   ): Promise<CreateMatchmakingConfigurationOutput> {
-    const body: JSONObject = {...params,
-    GameProperties: params["GameProperties"]?.map(x => fromGameProperty(x)),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Description: params["Description"],
+      GameSessionQueueArns: params["GameSessionQueueArns"],
+      RequestTimeoutSeconds: params["RequestTimeoutSeconds"],
+      AcceptanceTimeoutSeconds: params["AcceptanceTimeoutSeconds"],
+      AcceptanceRequired: params["AcceptanceRequired"],
+      RuleSetName: params["RuleSetName"],
+      NotificationTarget: params["NotificationTarget"],
+      AdditionalPlayerCount: params["AdditionalPlayerCount"],
+      CustomEventData: params["CustomEventData"],
+      GameProperties: params["GameProperties"]?.map(x => fromGameProperty(x)),
+      GameSessionData: params["GameSessionData"],
+      BackfillMode: params["BackfillMode"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMatchmakingConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Configuration": toMatchmakingConfiguration,
@@ -201,14 +255,16 @@ export default class GameLift {
   async createMatchmakingRuleSet(
     {abortSignal, ...params}: RequestConfig & CreateMatchmakingRuleSetInput,
   ): Promise<CreateMatchmakingRuleSetOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      RuleSetBody: params["RuleSetBody"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMatchmakingRuleSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "RuleSet": toMatchmakingRuleSet,
       },
@@ -219,13 +275,16 @@ export default class GameLift {
   async createPlayerSession(
     {abortSignal, ...params}: RequestConfig & CreatePlayerSessionInput,
   ): Promise<CreatePlayerSessionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameSessionId: params["GameSessionId"],
+      PlayerId: params["PlayerId"],
+      PlayerData: params["PlayerData"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePlayerSession",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PlayerSession": toPlayerSession,
@@ -236,13 +295,16 @@ export default class GameLift {
   async createPlayerSessions(
     {abortSignal, ...params}: RequestConfig & CreatePlayerSessionsInput,
   ): Promise<CreatePlayerSessionsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameSessionId: params["GameSessionId"],
+      PlayerIds: params["PlayerIds"],
+      PlayerDataMap: params["PlayerDataMap"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePlayerSessions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PlayerSessions": [toPlayerSession],
@@ -253,16 +315,18 @@ export default class GameLift {
   async createScript(
     {abortSignal, ...params}: RequestConfig & CreateScriptInput = {},
   ): Promise<CreateScriptOutput> {
-    const body: JSONObject = {...params,
-    StorageLocation: fromS3Location(params["StorageLocation"]),
-    ZipFile: prt.serializeBlob(params["ZipFile"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Version: params["Version"],
+      StorageLocation: fromS3Location(params["StorageLocation"]),
+      ZipFile: jsonP.serializeBlob(params["ZipFile"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateScript",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Script": toScript,
@@ -273,13 +337,15 @@ export default class GameLift {
   async createVpcPeeringAuthorization(
     {abortSignal, ...params}: RequestConfig & CreateVpcPeeringAuthorizationInput,
   ): Promise<CreateVpcPeeringAuthorizationOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameLiftAwsAccountId: params["GameLiftAwsAccountId"],
+      PeerVpcId: params["PeerVpcId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVpcPeeringAuthorization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VpcPeeringAuthorization": toVpcPeeringAuthorization,
@@ -290,13 +356,16 @@ export default class GameLift {
   async createVpcPeeringConnection(
     {abortSignal, ...params}: RequestConfig & CreateVpcPeeringConnectionInput,
   ): Promise<CreateVpcPeeringConnectionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+      PeerVpcAwsAccountId: params["PeerVpcAwsAccountId"],
+      PeerVpcId: params["PeerVpcId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVpcPeeringConnection",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -305,8 +374,9 @@ export default class GameLift {
   async deleteAlias(
     {abortSignal, ...params}: RequestConfig & DeleteAliasInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AliasId: params["AliasId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAlias",
@@ -316,8 +386,9 @@ export default class GameLift {
   async deleteBuild(
     {abortSignal, ...params}: RequestConfig & DeleteBuildInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      BuildId: params["BuildId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBuild",
@@ -327,8 +398,9 @@ export default class GameLift {
   async deleteFleet(
     {abortSignal, ...params}: RequestConfig & DeleteFleetInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFleet",
@@ -338,13 +410,15 @@ export default class GameLift {
   async deleteGameServerGroup(
     {abortSignal, ...params}: RequestConfig & DeleteGameServerGroupInput,
   ): Promise<DeleteGameServerGroupOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameServerGroupName: params["GameServerGroupName"],
+      DeleteOption: params["DeleteOption"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteGameServerGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameServerGroup": toGameServerGroup,
@@ -355,13 +429,14 @@ export default class GameLift {
   async deleteGameSessionQueue(
     {abortSignal, ...params}: RequestConfig & DeleteGameSessionQueueInput,
   ): Promise<DeleteGameSessionQueueOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteGameSessionQueue",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -370,13 +445,14 @@ export default class GameLift {
   async deleteMatchmakingConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteMatchmakingConfigurationInput,
   ): Promise<DeleteMatchmakingConfigurationOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMatchmakingConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -385,13 +461,14 @@ export default class GameLift {
   async deleteMatchmakingRuleSet(
     {abortSignal, ...params}: RequestConfig & DeleteMatchmakingRuleSetInput,
   ): Promise<DeleteMatchmakingRuleSetOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMatchmakingRuleSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -400,8 +477,10 @@ export default class GameLift {
   async deleteScalingPolicy(
     {abortSignal, ...params}: RequestConfig & DeleteScalingPolicyInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      FleetId: params["FleetId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteScalingPolicy",
@@ -411,8 +490,9 @@ export default class GameLift {
   async deleteScript(
     {abortSignal, ...params}: RequestConfig & DeleteScriptInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ScriptId: params["ScriptId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteScript",
@@ -422,13 +502,15 @@ export default class GameLift {
   async deleteVpcPeeringAuthorization(
     {abortSignal, ...params}: RequestConfig & DeleteVpcPeeringAuthorizationInput,
   ): Promise<DeleteVpcPeeringAuthorizationOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameLiftAwsAccountId: params["GameLiftAwsAccountId"],
+      PeerVpcId: params["PeerVpcId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteVpcPeeringAuthorization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -437,13 +519,15 @@ export default class GameLift {
   async deleteVpcPeeringConnection(
     {abortSignal, ...params}: RequestConfig & DeleteVpcPeeringConnectionInput,
   ): Promise<DeleteVpcPeeringConnectionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+      VpcPeeringConnectionId: params["VpcPeeringConnectionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteVpcPeeringConnection",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -452,8 +536,10 @@ export default class GameLift {
   async deregisterGameServer(
     {abortSignal, ...params}: RequestConfig & DeregisterGameServerInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameServerGroupName: params["GameServerGroupName"],
+      GameServerId: params["GameServerId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterGameServer",
@@ -463,13 +549,14 @@ export default class GameLift {
   async describeAlias(
     {abortSignal, ...params}: RequestConfig & DescribeAliasInput,
   ): Promise<DescribeAliasOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AliasId: params["AliasId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAlias",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Alias": toAlias,
@@ -480,13 +567,14 @@ export default class GameLift {
   async describeBuild(
     {abortSignal, ...params}: RequestConfig & DescribeBuildInput,
   ): Promise<DescribeBuildOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      BuildId: params["BuildId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBuild",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Build": toBuild,
@@ -497,13 +585,14 @@ export default class GameLift {
   async describeEC2InstanceLimits(
     {abortSignal, ...params}: RequestConfig & DescribeEC2InstanceLimitsInput = {},
   ): Promise<DescribeEC2InstanceLimitsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      EC2InstanceType: params["EC2InstanceType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEC2InstanceLimits",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EC2InstanceLimits": [toEC2InstanceLimit],
@@ -514,13 +603,16 @@ export default class GameLift {
   async describeFleetAttributes(
     {abortSignal, ...params}: RequestConfig & DescribeFleetAttributesInput = {},
   ): Promise<DescribeFleetAttributesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetIds: params["FleetIds"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFleetAttributes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FleetAttributes": [toFleetAttributes],
@@ -532,13 +624,16 @@ export default class GameLift {
   async describeFleetCapacity(
     {abortSignal, ...params}: RequestConfig & DescribeFleetCapacityInput = {},
   ): Promise<DescribeFleetCapacityOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetIds: params["FleetIds"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFleetCapacity",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FleetCapacity": [toFleetCapacity],
@@ -550,15 +645,18 @@ export default class GameLift {
   async describeFleetEvents(
     {abortSignal, ...params}: RequestConfig & DescribeFleetEventsInput,
   ): Promise<DescribeFleetEventsOutput> {
-    const body: JSONObject = {...params,
-    StartTime: prt.serializeDate_unixTimestamp(params["StartTime"]),
-    EndTime: prt.serializeDate_unixTimestamp(params["EndTime"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+      StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
+      EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFleetEvents",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Events": [toEvent],
@@ -570,13 +668,14 @@ export default class GameLift {
   async describeFleetPortSettings(
     {abortSignal, ...params}: RequestConfig & DescribeFleetPortSettingsInput,
   ): Promise<DescribeFleetPortSettingsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFleetPortSettings",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "InboundPermissions": [toIpPermission],
@@ -587,13 +686,16 @@ export default class GameLift {
   async describeFleetUtilization(
     {abortSignal, ...params}: RequestConfig & DescribeFleetUtilizationInput = {},
   ): Promise<DescribeFleetUtilizationOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetIds: params["FleetIds"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFleetUtilization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FleetUtilization": [toFleetUtilization],
@@ -605,13 +707,15 @@ export default class GameLift {
   async describeGameServer(
     {abortSignal, ...params}: RequestConfig & DescribeGameServerInput,
   ): Promise<DescribeGameServerOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameServerGroupName: params["GameServerGroupName"],
+      GameServerId: params["GameServerId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGameServer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameServer": toGameServer,
@@ -622,13 +726,14 @@ export default class GameLift {
   async describeGameServerGroup(
     {abortSignal, ...params}: RequestConfig & DescribeGameServerGroupInput,
   ): Promise<DescribeGameServerGroupOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameServerGroupName: params["GameServerGroupName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGameServerGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameServerGroup": toGameServerGroup,
@@ -639,13 +744,17 @@ export default class GameLift {
   async describeGameServerInstances(
     {abortSignal, ...params}: RequestConfig & DescribeGameServerInstancesInput,
   ): Promise<DescribeGameServerInstancesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameServerGroupName: params["GameServerGroupName"],
+      InstanceIds: params["InstanceIds"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGameServerInstances",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameServerInstances": [toGameServerInstance],
@@ -657,13 +766,19 @@ export default class GameLift {
   async describeGameSessionDetails(
     {abortSignal, ...params}: RequestConfig & DescribeGameSessionDetailsInput = {},
   ): Promise<DescribeGameSessionDetailsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+      GameSessionId: params["GameSessionId"],
+      AliasId: params["AliasId"],
+      StatusFilter: params["StatusFilter"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGameSessionDetails",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameSessionDetails": [toGameSessionDetail],
@@ -675,13 +790,14 @@ export default class GameLift {
   async describeGameSessionPlacement(
     {abortSignal, ...params}: RequestConfig & DescribeGameSessionPlacementInput,
   ): Promise<DescribeGameSessionPlacementOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PlacementId: params["PlacementId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGameSessionPlacement",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameSessionPlacement": toGameSessionPlacement,
@@ -692,13 +808,16 @@ export default class GameLift {
   async describeGameSessionQueues(
     {abortSignal, ...params}: RequestConfig & DescribeGameSessionQueuesInput = {},
   ): Promise<DescribeGameSessionQueuesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Names: params["Names"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGameSessionQueues",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameSessionQueues": [toGameSessionQueue],
@@ -710,13 +829,19 @@ export default class GameLift {
   async describeGameSessions(
     {abortSignal, ...params}: RequestConfig & DescribeGameSessionsInput = {},
   ): Promise<DescribeGameSessionsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+      GameSessionId: params["GameSessionId"],
+      AliasId: params["AliasId"],
+      StatusFilter: params["StatusFilter"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGameSessions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameSessions": [toGameSession],
@@ -728,13 +853,17 @@ export default class GameLift {
   async describeInstances(
     {abortSignal, ...params}: RequestConfig & DescribeInstancesInput,
   ): Promise<DescribeInstancesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+      InstanceId: params["InstanceId"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstances",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Instances": [toInstance],
@@ -746,13 +875,14 @@ export default class GameLift {
   async describeMatchmaking(
     {abortSignal, ...params}: RequestConfig & DescribeMatchmakingInput,
   ): Promise<DescribeMatchmakingOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TicketIds: params["TicketIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMatchmaking",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TicketList": [toMatchmakingTicket],
@@ -763,13 +893,17 @@ export default class GameLift {
   async describeMatchmakingConfigurations(
     {abortSignal, ...params}: RequestConfig & DescribeMatchmakingConfigurationsInput = {},
   ): Promise<DescribeMatchmakingConfigurationsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Names: params["Names"],
+      RuleSetName: params["RuleSetName"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMatchmakingConfigurations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Configurations": [toMatchmakingConfiguration],
@@ -781,13 +915,16 @@ export default class GameLift {
   async describeMatchmakingRuleSets(
     {abortSignal, ...params}: RequestConfig & DescribeMatchmakingRuleSetsInput = {},
   ): Promise<DescribeMatchmakingRuleSetsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Names: params["Names"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMatchmakingRuleSets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "RuleSets": [toMatchmakingRuleSet],
       },
@@ -800,13 +937,19 @@ export default class GameLift {
   async describePlayerSessions(
     {abortSignal, ...params}: RequestConfig & DescribePlayerSessionsInput = {},
   ): Promise<DescribePlayerSessionsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameSessionId: params["GameSessionId"],
+      PlayerId: params["PlayerId"],
+      PlayerSessionId: params["PlayerSessionId"],
+      PlayerSessionStatusFilter: params["PlayerSessionStatusFilter"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePlayerSessions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PlayerSessions": [toPlayerSession],
@@ -818,13 +961,14 @@ export default class GameLift {
   async describeRuntimeConfiguration(
     {abortSignal, ...params}: RequestConfig & DescribeRuntimeConfigurationInput,
   ): Promise<DescribeRuntimeConfigurationOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRuntimeConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RuntimeConfiguration": toRuntimeConfiguration,
@@ -835,13 +979,17 @@ export default class GameLift {
   async describeScalingPolicies(
     {abortSignal, ...params}: RequestConfig & DescribeScalingPoliciesInput,
   ): Promise<DescribeScalingPoliciesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+      StatusFilter: params["StatusFilter"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeScalingPolicies",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ScalingPolicies": [toScalingPolicy],
@@ -853,13 +1001,14 @@ export default class GameLift {
   async describeScript(
     {abortSignal, ...params}: RequestConfig & DescribeScriptInput,
   ): Promise<DescribeScriptOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ScriptId: params["ScriptId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeScript",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Script": toScript,
@@ -870,13 +1019,13 @@ export default class GameLift {
   async describeVpcPeeringAuthorizations(
     {abortSignal, ...params}: RequestConfig & DescribeVpcPeeringAuthorizationsInput = {},
   ): Promise<DescribeVpcPeeringAuthorizationsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVpcPeeringAuthorizations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VpcPeeringAuthorizations": [toVpcPeeringAuthorization],
@@ -887,13 +1036,14 @@ export default class GameLift {
   async describeVpcPeeringConnections(
     {abortSignal, ...params}: RequestConfig & DescribeVpcPeeringConnectionsInput = {},
   ): Promise<DescribeVpcPeeringConnectionsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVpcPeeringConnections",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VpcPeeringConnections": [toVpcPeeringConnection],
@@ -904,13 +1054,14 @@ export default class GameLift {
   async getGameSessionLogUrl(
     {abortSignal, ...params}: RequestConfig & GetGameSessionLogUrlInput,
   ): Promise<GetGameSessionLogUrlOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameSessionId: params["GameSessionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetGameSessionLogUrl",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PreSignedUrl": "s",
@@ -921,13 +1072,15 @@ export default class GameLift {
   async getInstanceAccess(
     {abortSignal, ...params}: RequestConfig & GetInstanceAccessInput,
   ): Promise<GetInstanceAccessOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+      InstanceId: params["InstanceId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInstanceAccess",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "InstanceAccess": toInstanceAccess,
@@ -938,13 +1091,17 @@ export default class GameLift {
   async listAliases(
     {abortSignal, ...params}: RequestConfig & ListAliasesInput = {},
   ): Promise<ListAliasesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RoutingStrategyType: params["RoutingStrategyType"],
+      Name: params["Name"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAliases",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Aliases": [toAlias],
@@ -956,13 +1113,16 @@ export default class GameLift {
   async listBuilds(
     {abortSignal, ...params}: RequestConfig & ListBuildsInput = {},
   ): Promise<ListBuildsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Status: params["Status"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListBuilds",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Builds": [toBuild],
@@ -974,13 +1134,17 @@ export default class GameLift {
   async listFleets(
     {abortSignal, ...params}: RequestConfig & ListFleetsInput = {},
   ): Promise<ListFleetsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      BuildId: params["BuildId"],
+      ScriptId: params["ScriptId"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFleets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FleetIds": ["s"],
@@ -992,13 +1156,15 @@ export default class GameLift {
   async listGameServerGroups(
     {abortSignal, ...params}: RequestConfig & ListGameServerGroupsInput = {},
   ): Promise<ListGameServerGroupsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGameServerGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameServerGroups": [toGameServerGroup],
@@ -1010,13 +1176,17 @@ export default class GameLift {
   async listGameServers(
     {abortSignal, ...params}: RequestConfig & ListGameServersInput,
   ): Promise<ListGameServersOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameServerGroupName: params["GameServerGroupName"],
+      SortOrder: params["SortOrder"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGameServers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameServers": [toGameServer],
@@ -1028,13 +1198,15 @@ export default class GameLift {
   async listScripts(
     {abortSignal, ...params}: RequestConfig & ListScriptsInput = {},
   ): Promise<ListScriptsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListScripts",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Scripts": [toScript],
@@ -1046,13 +1218,14 @@ export default class GameLift {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -1063,14 +1236,23 @@ export default class GameLift {
   async putScalingPolicy(
     {abortSignal, ...params}: RequestConfig & PutScalingPolicyInput,
   ): Promise<PutScalingPolicyOutput> {
-    const body: JSONObject = {...params,
-    TargetConfiguration: fromTargetConfiguration(params["TargetConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      FleetId: params["FleetId"],
+      ScalingAdjustment: params["ScalingAdjustment"],
+      ScalingAdjustmentType: params["ScalingAdjustmentType"],
+      Threshold: params["Threshold"],
+      ComparisonOperator: params["ComparisonOperator"],
+      EvaluationPeriods: params["EvaluationPeriods"],
+      MetricName: params["MetricName"],
+      PolicyType: params["PolicyType"],
+      TargetConfiguration: fromTargetConfiguration(params["TargetConfiguration"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutScalingPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Name": "s",
@@ -1081,13 +1263,18 @@ export default class GameLift {
   async registerGameServer(
     {abortSignal, ...params}: RequestConfig & RegisterGameServerInput,
   ): Promise<RegisterGameServerOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameServerGroupName: params["GameServerGroupName"],
+      GameServerId: params["GameServerId"],
+      InstanceId: params["InstanceId"],
+      ConnectionInfo: params["ConnectionInfo"],
+      GameServerData: params["GameServerData"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterGameServer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameServer": toGameServer,
@@ -1098,13 +1285,14 @@ export default class GameLift {
   async requestUploadCredentials(
     {abortSignal, ...params}: RequestConfig & RequestUploadCredentialsInput,
   ): Promise<RequestUploadCredentialsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      BuildId: params["BuildId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RequestUploadCredentials",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "UploadCredentials": toAwsCredentials,
@@ -1116,13 +1304,14 @@ export default class GameLift {
   async resolveAlias(
     {abortSignal, ...params}: RequestConfig & ResolveAliasInput,
   ): Promise<ResolveAliasOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AliasId: params["AliasId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResolveAlias",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FleetId": "s",
@@ -1134,13 +1323,15 @@ export default class GameLift {
   async resumeGameServerGroup(
     {abortSignal, ...params}: RequestConfig & ResumeGameServerGroupInput,
   ): Promise<ResumeGameServerGroupOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameServerGroupName: params["GameServerGroupName"],
+      ResumeActions: params["ResumeActions"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResumeGameServerGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameServerGroup": toGameServerGroup,
@@ -1151,13 +1342,19 @@ export default class GameLift {
   async searchGameSessions(
     {abortSignal, ...params}: RequestConfig & SearchGameSessionsInput = {},
   ): Promise<SearchGameSessionsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+      AliasId: params["AliasId"],
+      FilterExpression: params["FilterExpression"],
+      SortExpression: params["SortExpression"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchGameSessions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameSessions": [toGameSession],
@@ -1169,13 +1366,15 @@ export default class GameLift {
   async startFleetActions(
     {abortSignal, ...params}: RequestConfig & StartFleetActionsInput,
   ): Promise<StartFleetActionsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+      Actions: params["Actions"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartFleetActions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1184,16 +1383,21 @@ export default class GameLift {
   async startGameSessionPlacement(
     {abortSignal, ...params}: RequestConfig & StartGameSessionPlacementInput,
   ): Promise<StartGameSessionPlacementOutput> {
-    const body: JSONObject = {...params,
-    GameProperties: params["GameProperties"]?.map(x => fromGameProperty(x)),
-    PlayerLatencies: params["PlayerLatencies"]?.map(x => fromPlayerLatency(x)),
-    DesiredPlayerSessions: params["DesiredPlayerSessions"]?.map(x => fromDesiredPlayerSession(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      PlacementId: params["PlacementId"],
+      GameSessionQueueName: params["GameSessionQueueName"],
+      GameProperties: params["GameProperties"]?.map(x => fromGameProperty(x)),
+      MaximumPlayerSessionCount: params["MaximumPlayerSessionCount"],
+      GameSessionName: params["GameSessionName"],
+      PlayerLatencies: params["PlayerLatencies"]?.map(x => fromPlayerLatency(x)),
+      DesiredPlayerSessions: params["DesiredPlayerSessions"]?.map(x => fromDesiredPlayerSession(x)),
+      GameSessionData: params["GameSessionData"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartGameSessionPlacement",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameSessionPlacement": toGameSessionPlacement,
@@ -1204,14 +1408,17 @@ export default class GameLift {
   async startMatchBackfill(
     {abortSignal, ...params}: RequestConfig & StartMatchBackfillInput,
   ): Promise<StartMatchBackfillOutput> {
-    const body: JSONObject = {...params,
-    Players: params["Players"]?.map(x => fromPlayer(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TicketId: params["TicketId"],
+      ConfigurationName: params["ConfigurationName"],
+      GameSessionArn: params["GameSessionArn"],
+      Players: params["Players"]?.map(x => fromPlayer(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartMatchBackfill",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "MatchmakingTicket": toMatchmakingTicket,
@@ -1222,14 +1429,16 @@ export default class GameLift {
   async startMatchmaking(
     {abortSignal, ...params}: RequestConfig & StartMatchmakingInput,
   ): Promise<StartMatchmakingOutput> {
-    const body: JSONObject = {...params,
-    Players: params["Players"]?.map(x => fromPlayer(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TicketId: params["TicketId"],
+      ConfigurationName: params["ConfigurationName"],
+      Players: params["Players"]?.map(x => fromPlayer(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartMatchmaking",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "MatchmakingTicket": toMatchmakingTicket,
@@ -1240,13 +1449,15 @@ export default class GameLift {
   async stopFleetActions(
     {abortSignal, ...params}: RequestConfig & StopFleetActionsInput,
   ): Promise<StopFleetActionsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+      Actions: params["Actions"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopFleetActions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1255,13 +1466,14 @@ export default class GameLift {
   async stopGameSessionPlacement(
     {abortSignal, ...params}: RequestConfig & StopGameSessionPlacementInput,
   ): Promise<StopGameSessionPlacementOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PlacementId: params["PlacementId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopGameSessionPlacement",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameSessionPlacement": toGameSessionPlacement,
@@ -1272,13 +1484,14 @@ export default class GameLift {
   async stopMatchmaking(
     {abortSignal, ...params}: RequestConfig & StopMatchmakingInput,
   ): Promise<StopMatchmakingOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TicketId: params["TicketId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopMatchmaking",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1287,13 +1500,15 @@ export default class GameLift {
   async suspendGameServerGroup(
     {abortSignal, ...params}: RequestConfig & SuspendGameServerGroupInput,
   ): Promise<SuspendGameServerGroupOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameServerGroupName: params["GameServerGroupName"],
+      SuspendActions: params["SuspendActions"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SuspendGameServerGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameServerGroup": toGameServerGroup,
@@ -1304,14 +1519,15 @@ export default class GameLift {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1320,13 +1536,15 @@ export default class GameLift {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1335,14 +1553,17 @@ export default class GameLift {
   async updateAlias(
     {abortSignal, ...params}: RequestConfig & UpdateAliasInput,
   ): Promise<UpdateAliasOutput> {
-    const body: JSONObject = {...params,
-    RoutingStrategy: fromRoutingStrategy(params["RoutingStrategy"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AliasId: params["AliasId"],
+      Name: params["Name"],
+      Description: params["Description"],
+      RoutingStrategy: fromRoutingStrategy(params["RoutingStrategy"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAlias",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Alias": toAlias,
@@ -1353,13 +1574,16 @@ export default class GameLift {
   async updateBuild(
     {abortSignal, ...params}: RequestConfig & UpdateBuildInput,
   ): Promise<UpdateBuildOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      BuildId: params["BuildId"],
+      Name: params["Name"],
+      Version: params["Version"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateBuild",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Build": toBuild,
@@ -1370,14 +1594,19 @@ export default class GameLift {
   async updateFleetAttributes(
     {abortSignal, ...params}: RequestConfig & UpdateFleetAttributesInput,
   ): Promise<UpdateFleetAttributesOutput> {
-    const body: JSONObject = {...params,
-    ResourceCreationLimitPolicy: fromResourceCreationLimitPolicy(params["ResourceCreationLimitPolicy"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+      Name: params["Name"],
+      Description: params["Description"],
+      NewGameSessionProtectionPolicy: params["NewGameSessionProtectionPolicy"],
+      ResourceCreationLimitPolicy: fromResourceCreationLimitPolicy(params["ResourceCreationLimitPolicy"]),
+      MetricGroups: params["MetricGroups"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFleetAttributes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FleetId": "s",
@@ -1388,13 +1617,17 @@ export default class GameLift {
   async updateFleetCapacity(
     {abortSignal, ...params}: RequestConfig & UpdateFleetCapacityInput,
   ): Promise<UpdateFleetCapacityOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+      DesiredInstances: params["DesiredInstances"],
+      MinSize: params["MinSize"],
+      MaxSize: params["MaxSize"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFleetCapacity",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FleetId": "s",
@@ -1405,15 +1638,16 @@ export default class GameLift {
   async updateFleetPortSettings(
     {abortSignal, ...params}: RequestConfig & UpdateFleetPortSettingsInput,
   ): Promise<UpdateFleetPortSettingsOutput> {
-    const body: JSONObject = {...params,
-    InboundPermissionAuthorizations: params["InboundPermissionAuthorizations"]?.map(x => fromIpPermission(x)),
-    InboundPermissionRevocations: params["InboundPermissionRevocations"]?.map(x => fromIpPermission(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+      InboundPermissionAuthorizations: params["InboundPermissionAuthorizations"]?.map(x => fromIpPermission(x)),
+      InboundPermissionRevocations: params["InboundPermissionRevocations"]?.map(x => fromIpPermission(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFleetPortSettings",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FleetId": "s",
@@ -1424,13 +1658,18 @@ export default class GameLift {
   async updateGameServer(
     {abortSignal, ...params}: RequestConfig & UpdateGameServerInput,
   ): Promise<UpdateGameServerOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameServerGroupName: params["GameServerGroupName"],
+      GameServerId: params["GameServerId"],
+      GameServerData: params["GameServerData"],
+      UtilizationStatus: params["UtilizationStatus"],
+      HealthCheck: params["HealthCheck"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGameServer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameServer": toGameServer,
@@ -1441,14 +1680,18 @@ export default class GameLift {
   async updateGameServerGroup(
     {abortSignal, ...params}: RequestConfig & UpdateGameServerGroupInput,
   ): Promise<UpdateGameServerGroupOutput> {
-    const body: JSONObject = {...params,
-    InstanceDefinitions: params["InstanceDefinitions"]?.map(x => fromInstanceDefinition(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameServerGroupName: params["GameServerGroupName"],
+      RoleArn: params["RoleArn"],
+      InstanceDefinitions: params["InstanceDefinitions"]?.map(x => fromInstanceDefinition(x)),
+      GameServerProtectionPolicy: params["GameServerProtectionPolicy"],
+      BalancingStrategy: params["BalancingStrategy"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGameServerGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameServerGroup": toGameServerGroup,
@@ -1459,13 +1702,18 @@ export default class GameLift {
   async updateGameSession(
     {abortSignal, ...params}: RequestConfig & UpdateGameSessionInput,
   ): Promise<UpdateGameSessionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GameSessionId: params["GameSessionId"],
+      MaximumPlayerSessionCount: params["MaximumPlayerSessionCount"],
+      Name: params["Name"],
+      PlayerSessionCreationPolicy: params["PlayerSessionCreationPolicy"],
+      ProtectionPolicy: params["ProtectionPolicy"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGameSession",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameSession": toGameSession,
@@ -1476,15 +1724,17 @@ export default class GameLift {
   async updateGameSessionQueue(
     {abortSignal, ...params}: RequestConfig & UpdateGameSessionQueueInput,
   ): Promise<UpdateGameSessionQueueOutput> {
-    const body: JSONObject = {...params,
-    PlayerLatencyPolicies: params["PlayerLatencyPolicies"]?.map(x => fromPlayerLatencyPolicy(x)),
-    Destinations: params["Destinations"]?.map(x => fromGameSessionQueueDestination(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      TimeoutInSeconds: params["TimeoutInSeconds"],
+      PlayerLatencyPolicies: params["PlayerLatencyPolicies"]?.map(x => fromPlayerLatencyPolicy(x)),
+      Destinations: params["Destinations"]?.map(x => fromGameSessionQueueDestination(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGameSessionQueue",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GameSessionQueue": toGameSessionQueue,
@@ -1495,14 +1745,26 @@ export default class GameLift {
   async updateMatchmakingConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateMatchmakingConfigurationInput,
   ): Promise<UpdateMatchmakingConfigurationOutput> {
-    const body: JSONObject = {...params,
-    GameProperties: params["GameProperties"]?.map(x => fromGameProperty(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Description: params["Description"],
+      GameSessionQueueArns: params["GameSessionQueueArns"],
+      RequestTimeoutSeconds: params["RequestTimeoutSeconds"],
+      AcceptanceTimeoutSeconds: params["AcceptanceTimeoutSeconds"],
+      AcceptanceRequired: params["AcceptanceRequired"],
+      RuleSetName: params["RuleSetName"],
+      NotificationTarget: params["NotificationTarget"],
+      AdditionalPlayerCount: params["AdditionalPlayerCount"],
+      CustomEventData: params["CustomEventData"],
+      GameProperties: params["GameProperties"]?.map(x => fromGameProperty(x)),
+      GameSessionData: params["GameSessionData"],
+      BackfillMode: params["BackfillMode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMatchmakingConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Configuration": toMatchmakingConfiguration,
@@ -1513,14 +1775,15 @@ export default class GameLift {
   async updateRuntimeConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateRuntimeConfigurationInput,
   ): Promise<UpdateRuntimeConfigurationOutput> {
-    const body: JSONObject = {...params,
-    RuntimeConfiguration: fromRuntimeConfiguration(params["RuntimeConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      FleetId: params["FleetId"],
+      RuntimeConfiguration: fromRuntimeConfiguration(params["RuntimeConfiguration"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRuntimeConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RuntimeConfiguration": toRuntimeConfiguration,
@@ -1531,15 +1794,18 @@ export default class GameLift {
   async updateScript(
     {abortSignal, ...params}: RequestConfig & UpdateScriptInput,
   ): Promise<UpdateScriptOutput> {
-    const body: JSONObject = {...params,
-    StorageLocation: fromS3Location(params["StorageLocation"]),
-    ZipFile: prt.serializeBlob(params["ZipFile"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ScriptId: params["ScriptId"],
+      Name: params["Name"],
+      Version: params["Version"],
+      StorageLocation: fromS3Location(params["StorageLocation"]),
+      ZipFile: jsonP.serializeBlob(params["ZipFile"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateScript",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Script": toScript,
@@ -1550,13 +1816,14 @@ export default class GameLift {
   async validateMatchmakingRuleSet(
     {abortSignal, ...params}: RequestConfig & ValidateMatchmakingRuleSetInput,
   ): Promise<ValidateMatchmakingRuleSetOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RuleSetBody: params["RuleSetBody"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ValidateMatchmakingRuleSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Valid": "b",
@@ -1693,7 +1960,7 @@ export interface CreatePlayerSessionInput {
 export interface CreatePlayerSessionsInput {
   GameSessionId: string;
   PlayerIds: string[];
-  PlayerDataMap?: { [key: string]: string } | null;
+  PlayerDataMap?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2672,8 +2939,7 @@ export interface ValidateMatchmakingRuleSetOutput {
 export type AcceptanceType =
 | "ACCEPT"
 | "REJECT"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface RoutingStrategy {
@@ -2681,16 +2947,19 @@ export interface RoutingStrategy {
   FleetId?: string | null;
   Message?: string | null;
 }
-function fromRoutingStrategy(input?: RoutingStrategy | null): JSONValue {
+function fromRoutingStrategy(input?: RoutingStrategy | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Type: input["Type"],
+    FleetId: input["FleetId"],
+    Message: input["Message"],
   }
 }
-function toRoutingStrategy(root: JSONValue): RoutingStrategy {
-  return prt.readObj({
+function toRoutingStrategy(root: jsonP.JSONValue): RoutingStrategy {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Type": toRoutingStrategyType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<RoutingStrategyType>(x),
       "FleetId": "s",
       "Message": "s",
     },
@@ -2701,27 +2970,22 @@ function toRoutingStrategy(root: JSONValue): RoutingStrategy {
 export type RoutingStrategyType =
 | "SIMPLE"
 | "TERMINAL"
-;
-
-function toRoutingStrategyType(root: JSONValue): RoutingStrategyType | null {
-  return ( false
-    || root == "SIMPLE"
-    || root == "TERMINAL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -2737,13 +3001,17 @@ export interface S3Location {
   RoleArn?: string | null;
   ObjectVersion?: string | null;
 }
-function fromS3Location(input?: S3Location | null): JSONValue {
+function fromS3Location(input?: S3Location | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Bucket: input["Bucket"],
+    Key: input["Key"],
+    RoleArn: input["RoleArn"],
+    ObjectVersion: input["ObjectVersion"],
   }
 }
-function toS3Location(root: JSONValue): S3Location {
-  return prt.readObj({
+function toS3Location(root: jsonP.JSONValue): S3Location {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Bucket": "s",
@@ -2759,15 +3027,7 @@ export type OperatingSystem =
 | "WINDOWS_2012"
 | "AMAZON_LINUX"
 | "AMAZON_LINUX_2"
-;
-
-function toOperatingSystem(root: JSONValue): OperatingSystem | null {
-  return ( false
-    || root == "WINDOWS_2012"
-    || root == "AMAZON_LINUX"
-    || root == "AMAZON_LINUX_2"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: input, named, enum, output
 export type EC2InstanceType =
@@ -2829,70 +3089,7 @@ export type EC2InstanceType =
 | "m5.12xlarge"
 | "m5.16xlarge"
 | "m5.24xlarge"
-;
-
-function toEC2InstanceType(root: JSONValue): EC2InstanceType | null {
-  return ( false
-    || root == "t2.micro"
-    || root == "t2.small"
-    || root == "t2.medium"
-    || root == "t2.large"
-    || root == "c3.large"
-    || root == "c3.xlarge"
-    || root == "c3.2xlarge"
-    || root == "c3.4xlarge"
-    || root == "c3.8xlarge"
-    || root == "c4.large"
-    || root == "c4.xlarge"
-    || root == "c4.2xlarge"
-    || root == "c4.4xlarge"
-    || root == "c4.8xlarge"
-    || root == "c5.large"
-    || root == "c5.xlarge"
-    || root == "c5.2xlarge"
-    || root == "c5.4xlarge"
-    || root == "c5.9xlarge"
-    || root == "c5.12xlarge"
-    || root == "c5.18xlarge"
-    || root == "c5.24xlarge"
-    || root == "r3.large"
-    || root == "r3.xlarge"
-    || root == "r3.2xlarge"
-    || root == "r3.4xlarge"
-    || root == "r3.8xlarge"
-    || root == "r4.large"
-    || root == "r4.xlarge"
-    || root == "r4.2xlarge"
-    || root == "r4.4xlarge"
-    || root == "r4.8xlarge"
-    || root == "r4.16xlarge"
-    || root == "r5.large"
-    || root == "r5.xlarge"
-    || root == "r5.2xlarge"
-    || root == "r5.4xlarge"
-    || root == "r5.8xlarge"
-    || root == "r5.12xlarge"
-    || root == "r5.16xlarge"
-    || root == "r5.24xlarge"
-    || root == "m3.medium"
-    || root == "m3.large"
-    || root == "m3.xlarge"
-    || root == "m3.2xlarge"
-    || root == "m4.large"
-    || root == "m4.xlarge"
-    || root == "m4.2xlarge"
-    || root == "m4.4xlarge"
-    || root == "m4.10xlarge"
-    || root == "m5.large"
-    || root == "m5.xlarge"
-    || root == "m5.2xlarge"
-    || root == "m5.4xlarge"
-    || root == "m5.8xlarge"
-    || root == "m5.12xlarge"
-    || root == "m5.16xlarge"
-    || root == "m5.24xlarge"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface IpPermission {
@@ -2901,18 +3098,22 @@ export interface IpPermission {
   IpRange: string;
   Protocol: IpProtocol;
 }
-function fromIpPermission(input?: IpPermission | null): JSONValue {
+function fromIpPermission(input?: IpPermission | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    FromPort: input["FromPort"],
+    ToPort: input["ToPort"],
+    IpRange: input["IpRange"],
+    Protocol: input["Protocol"],
   }
 }
-function toIpPermission(root: JSONValue): IpPermission {
-  return prt.readObj({
+function toIpPermission(root: jsonP.JSONValue): IpPermission {
+  return jsonP.readObj({
     required: {
       "FromPort": "n",
       "ToPort": "n",
       "IpRange": "s",
-      "Protocol": toIpProtocol,
+      "Protocol": (x: jsonP.JSONValue) => cmnP.readEnum<IpProtocol>(x),
     },
     optional: {},
   }, root);
@@ -2922,27 +3123,13 @@ function toIpPermission(root: JSONValue): IpPermission {
 export type IpProtocol =
 | "TCP"
 | "UDP"
-;
-
-function toIpProtocol(root: JSONValue): IpProtocol | null {
-  return ( false
-    || root == "TCP"
-    || root == "UDP"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, enum, output
 export type ProtectionPolicy =
 | "NoProtection"
 | "FullProtection"
-;
-
-function toProtectionPolicy(root: JSONValue): ProtectionPolicy | null {
-  return ( false
-    || root == "NoProtection"
-    || root == "FullProtection"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface RuntimeConfiguration {
@@ -2950,14 +3137,16 @@ export interface RuntimeConfiguration {
   MaxConcurrentGameSessionActivations?: number | null;
   GameSessionActivationTimeoutSeconds?: number | null;
 }
-function fromRuntimeConfiguration(input?: RuntimeConfiguration | null): JSONValue {
+function fromRuntimeConfiguration(input?: RuntimeConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     ServerProcesses: input["ServerProcesses"]?.map(x => fromServerProcess(x)),
+    MaxConcurrentGameSessionActivations: input["MaxConcurrentGameSessionActivations"],
+    GameSessionActivationTimeoutSeconds: input["GameSessionActivationTimeoutSeconds"],
   }
 }
-function toRuntimeConfiguration(root: JSONValue): RuntimeConfiguration {
-  return prt.readObj({
+function toRuntimeConfiguration(root: jsonP.JSONValue): RuntimeConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ServerProcesses": [toServerProcess],
@@ -2973,13 +3162,16 @@ export interface ServerProcess {
   Parameters?: string | null;
   ConcurrentExecutions: number;
 }
-function fromServerProcess(input?: ServerProcess | null): JSONValue {
+function fromServerProcess(input?: ServerProcess | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    LaunchPath: input["LaunchPath"],
+    Parameters: input["Parameters"],
+    ConcurrentExecutions: input["ConcurrentExecutions"],
   }
 }
-function toServerProcess(root: JSONValue): ServerProcess {
-  return prt.readObj({
+function toServerProcess(root: jsonP.JSONValue): ServerProcess {
+  return jsonP.readObj({
     required: {
       "LaunchPath": "s",
       "ConcurrentExecutions": "n",
@@ -2995,13 +3187,15 @@ export interface ResourceCreationLimitPolicy {
   NewGameSessionsPerCreator?: number | null;
   PolicyPeriodInMinutes?: number | null;
 }
-function fromResourceCreationLimitPolicy(input?: ResourceCreationLimitPolicy | null): JSONValue {
+function fromResourceCreationLimitPolicy(input?: ResourceCreationLimitPolicy | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    NewGameSessionsPerCreator: input["NewGameSessionsPerCreator"],
+    PolicyPeriodInMinutes: input["PolicyPeriodInMinutes"],
   }
 }
-function toResourceCreationLimitPolicy(root: JSONValue): ResourceCreationLimitPolicy {
-  return prt.readObj({
+function toResourceCreationLimitPolicy(root: jsonP.JSONValue): ResourceCreationLimitPolicy {
+  return jsonP.readObj({
     required: {},
     optional: {
       "NewGameSessionsPerCreator": "n",
@@ -3014,28 +3208,22 @@ function toResourceCreationLimitPolicy(root: JSONValue): ResourceCreationLimitPo
 export type FleetType =
 | "ON_DEMAND"
 | "SPOT"
-;
-
-function toFleetType(root: JSONValue): FleetType | null {
-  return ( false
-    || root == "ON_DEMAND"
-    || root == "SPOT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface CertificateConfiguration {
   CertificateType: CertificateType;
 }
-function fromCertificateConfiguration(input?: CertificateConfiguration | null): JSONValue {
+function fromCertificateConfiguration(input?: CertificateConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CertificateType: input["CertificateType"],
   }
 }
-function toCertificateConfiguration(root: JSONValue): CertificateConfiguration {
-  return prt.readObj({
+function toCertificateConfiguration(root: jsonP.JSONValue): CertificateConfiguration {
+  return jsonP.readObj({
     required: {
-      "CertificateType": toCertificateType,
+      "CertificateType": (x: jsonP.JSONValue) => cmnP.readEnum<CertificateType>(x),
     },
     optional: {},
   }, root);
@@ -3045,14 +3233,7 @@ function toCertificateConfiguration(root: JSONValue): CertificateConfiguration {
 export type CertificateType =
 | "DISABLED"
 | "GENERATED"
-;
-
-function toCertificateType(root: JSONValue): CertificateType | null {
-  return ( false
-    || root == "DISABLED"
-    || root == "GENERATED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface LaunchTemplateSpecification {
@@ -3060,9 +3241,12 @@ export interface LaunchTemplateSpecification {
   LaunchTemplateName?: string | null;
   Version?: string | null;
 }
-function fromLaunchTemplateSpecification(input?: LaunchTemplateSpecification | null): JSONValue {
+function fromLaunchTemplateSpecification(input?: LaunchTemplateSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    LaunchTemplateId: input["LaunchTemplateId"],
+    LaunchTemplateName: input["LaunchTemplateName"],
+    Version: input["Version"],
   }
 }
 
@@ -3071,15 +3255,17 @@ export interface InstanceDefinition {
   InstanceType: GameServerGroupInstanceType;
   WeightedCapacity?: string | null;
 }
-function fromInstanceDefinition(input?: InstanceDefinition | null): JSONValue {
+function fromInstanceDefinition(input?: InstanceDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    InstanceType: input["InstanceType"],
+    WeightedCapacity: input["WeightedCapacity"],
   }
 }
-function toInstanceDefinition(root: JSONValue): InstanceDefinition {
-  return prt.readObj({
+function toInstanceDefinition(root: jsonP.JSONValue): InstanceDefinition {
+  return jsonP.readObj({
     required: {
-      "InstanceType": toGameServerGroupInstanceType,
+      "InstanceType": (x: jsonP.JSONValue) => cmnP.readEnum<GameServerGroupInstanceType>(x),
     },
     optional: {
       "WeightedCapacity": "s",
@@ -3129,61 +3315,17 @@ export type GameServerGroupInstanceType =
 | "m5.12xlarge"
 | "m5.16xlarge"
 | "m5.24xlarge"
-;
-
-function toGameServerGroupInstanceType(root: JSONValue): GameServerGroupInstanceType | null {
-  return ( false
-    || root == "c4.large"
-    || root == "c4.xlarge"
-    || root == "c4.2xlarge"
-    || root == "c4.4xlarge"
-    || root == "c4.8xlarge"
-    || root == "c5.large"
-    || root == "c5.xlarge"
-    || root == "c5.2xlarge"
-    || root == "c5.4xlarge"
-    || root == "c5.9xlarge"
-    || root == "c5.12xlarge"
-    || root == "c5.18xlarge"
-    || root == "c5.24xlarge"
-    || root == "r4.large"
-    || root == "r4.xlarge"
-    || root == "r4.2xlarge"
-    || root == "r4.4xlarge"
-    || root == "r4.8xlarge"
-    || root == "r4.16xlarge"
-    || root == "r5.large"
-    || root == "r5.xlarge"
-    || root == "r5.2xlarge"
-    || root == "r5.4xlarge"
-    || root == "r5.8xlarge"
-    || root == "r5.12xlarge"
-    || root == "r5.16xlarge"
-    || root == "r5.24xlarge"
-    || root == "m4.large"
-    || root == "m4.xlarge"
-    || root == "m4.2xlarge"
-    || root == "m4.4xlarge"
-    || root == "m4.10xlarge"
-    || root == "m5.large"
-    || root == "m5.xlarge"
-    || root == "m5.2xlarge"
-    || root == "m5.4xlarge"
-    || root == "m5.8xlarge"
-    || root == "m5.12xlarge"
-    || root == "m5.16xlarge"
-    || root == "m5.24xlarge"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface GameServerGroupAutoScalingPolicy {
   EstimatedInstanceWarmup?: number | null;
   TargetTrackingConfiguration: TargetTrackingConfiguration;
 }
-function fromGameServerGroupAutoScalingPolicy(input?: GameServerGroupAutoScalingPolicy | null): JSONValue {
+function fromGameServerGroupAutoScalingPolicy(input?: GameServerGroupAutoScalingPolicy | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    EstimatedInstanceWarmup: input["EstimatedInstanceWarmup"],
     TargetTrackingConfiguration: fromTargetTrackingConfiguration(input["TargetTrackingConfiguration"]),
   }
 }
@@ -3192,9 +3334,10 @@ function fromGameServerGroupAutoScalingPolicy(input?: GameServerGroupAutoScaling
 export interface TargetTrackingConfiguration {
   TargetValue: number;
 }
-function fromTargetTrackingConfiguration(input?: TargetTrackingConfiguration | null): JSONValue {
+function fromTargetTrackingConfiguration(input?: TargetTrackingConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    TargetValue: input["TargetValue"],
   }
 }
 
@@ -3203,41 +3346,28 @@ export type BalancingStrategy =
 | "SPOT_ONLY"
 | "SPOT_PREFERRED"
 | "ON_DEMAND_ONLY"
-;
-
-function toBalancingStrategy(root: JSONValue): BalancingStrategy | null {
-  return ( false
-    || root == "SPOT_ONLY"
-    || root == "SPOT_PREFERRED"
-    || root == "ON_DEMAND_ONLY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 9 - tags: input, named, enum, output
 export type GameServerProtectionPolicy =
 | "NO_PROTECTION"
 | "FULL_PROTECTION"
-;
-
-function toGameServerProtectionPolicy(root: JSONValue): GameServerProtectionPolicy | null {
-  return ( false
-    || root == "NO_PROTECTION"
-    || root == "FULL_PROTECTION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 15 - tags: input, named, interface, output
 export interface GameProperty {
   Key: string;
   Value: string;
 }
-function fromGameProperty(input?: GameProperty | null): JSONValue {
+function fromGameProperty(input?: GameProperty | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toGameProperty(root: JSONValue): GameProperty {
-  return prt.readObj({
+function toGameProperty(root: jsonP.JSONValue): GameProperty {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -3251,13 +3381,15 @@ export interface PlayerLatencyPolicy {
   MaximumIndividualPlayerLatencyMilliseconds?: number | null;
   PolicyDurationSeconds?: number | null;
 }
-function fromPlayerLatencyPolicy(input?: PlayerLatencyPolicy | null): JSONValue {
+function fromPlayerLatencyPolicy(input?: PlayerLatencyPolicy | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MaximumIndividualPlayerLatencyMilliseconds: input["MaximumIndividualPlayerLatencyMilliseconds"],
+    PolicyDurationSeconds: input["PolicyDurationSeconds"],
   }
 }
-function toPlayerLatencyPolicy(root: JSONValue): PlayerLatencyPolicy {
-  return prt.readObj({
+function toPlayerLatencyPolicy(root: jsonP.JSONValue): PlayerLatencyPolicy {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MaximumIndividualPlayerLatencyMilliseconds": "n",
@@ -3270,13 +3402,14 @@ function toPlayerLatencyPolicy(root: JSONValue): PlayerLatencyPolicy {
 export interface GameSessionQueueDestination {
   DestinationArn?: string | null;
 }
-function fromGameSessionQueueDestination(input?: GameSessionQueueDestination | null): JSONValue {
+function fromGameSessionQueueDestination(input?: GameSessionQueueDestination | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DestinationArn: input["DestinationArn"],
   }
 }
-function toGameSessionQueueDestination(root: JSONValue): GameSessionQueueDestination {
-  return prt.readObj({
+function toGameSessionQueueDestination(root: jsonP.JSONValue): GameSessionQueueDestination {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DestinationArn": "s",
@@ -3288,22 +3421,14 @@ function toGameSessionQueueDestination(root: JSONValue): GameSessionQueueDestina
 export type BackfillMode =
 | "AUTOMATIC"
 | "MANUAL"
-;
-
-function toBackfillMode(root: JSONValue): BackfillMode | null {
-  return ( false
-    || root == "AUTOMATIC"
-    || root == "MANUAL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type GameServerGroupDeleteOption =
 | "SAFE_DELETE"
 | "FORCE_DELETE"
 | "RETAIN"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type ScalingStatusType =
@@ -3314,56 +3439,27 @@ export type ScalingStatusType =
 | "DELETING"
 | "DELETED"
 | "ERROR"
-;
-
-function toScalingStatusType(root: JSONValue): ScalingStatusType | null {
-  return ( false
-    || root == "ACTIVE"
-    || root == "UPDATE_REQUESTED"
-    || root == "UPDATING"
-    || root == "DELETE_REQUESTED"
-    || root == "DELETING"
-    || root == "DELETED"
-    || root == "ERROR"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type BuildStatus =
 | "INITIALIZED"
 | "READY"
 | "FAILED"
-;
-
-function toBuildStatus(root: JSONValue): BuildStatus | null {
-  return ( false
-    || root == "INITIALIZED"
-    || root == "READY"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type SortOrder =
 | "ASCENDING"
 | "DESCENDING"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type ScalingAdjustmentType =
 | "ChangeInCapacity"
 | "ExactCapacity"
 | "PercentChangeInCapacity"
-;
-
-function toScalingAdjustmentType(root: JSONValue): ScalingAdjustmentType | null {
-  return ( false
-    || root == "ChangeInCapacity"
-    || root == "ExactCapacity"
-    || root == "PercentChangeInCapacity"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type ComparisonOperatorType =
@@ -3371,16 +3467,7 @@ export type ComparisonOperatorType =
 | "GreaterThanThreshold"
 | "LessThanThreshold"
 | "LessThanOrEqualToThreshold"
-;
-
-function toComparisonOperatorType(root: JSONValue): ComparisonOperatorType | null {
-  return ( false
-    || root == "GreaterThanOrEqualToThreshold"
-    || root == "GreaterThanThreshold"
-    || root == "LessThanThreshold"
-    || root == "LessThanOrEqualToThreshold"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type MetricName =
@@ -3395,48 +3482,26 @@ export type MetricName =
 | "PercentIdleInstances"
 | "QueueDepth"
 | "WaitTime"
-;
-
-function toMetricName(root: JSONValue): MetricName | null {
-  return ( false
-    || root == "ActivatingGameSessions"
-    || root == "ActiveGameSessions"
-    || root == "ActiveInstances"
-    || root == "AvailableGameSessions"
-    || root == "AvailablePlayerSessions"
-    || root == "CurrentPlayerSessions"
-    || root == "IdleInstances"
-    || root == "PercentAvailableGameSessions"
-    || root == "PercentIdleInstances"
-    || root == "QueueDepth"
-    || root == "WaitTime"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type PolicyType =
 | "RuleBased"
 | "TargetBased"
-;
-
-function toPolicyType(root: JSONValue): PolicyType | null {
-  return ( false
-    || root == "RuleBased"
-    || root == "TargetBased"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface TargetConfiguration {
   TargetValue: number;
 }
-function fromTargetConfiguration(input?: TargetConfiguration | null): JSONValue {
+function fromTargetConfiguration(input?: TargetConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    TargetValue: input["TargetValue"],
   }
 }
-function toTargetConfiguration(root: JSONValue): TargetConfiguration {
-  return prt.readObj({
+function toTargetConfiguration(root: jsonP.JSONValue): TargetConfiguration {
+  return jsonP.readObj({
     required: {
       "TargetValue": "n",
     },
@@ -3447,24 +3512,12 @@ function toTargetConfiguration(root: JSONValue): TargetConfiguration {
 // refs: 9 - tags: input, named, enum, output
 export type GameServerGroupAction =
 | "REPLACE_INSTANCE_TYPES"
-;
-
-function toGameServerGroupAction(root: JSONValue): GameServerGroupAction | null {
-  return ( false
-    || root == "REPLACE_INSTANCE_TYPES"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type FleetAction =
 | "AUTO_SCALING"
-;
-
-function toFleetAction(root: JSONValue): FleetAction | null {
-  return ( false
-    || root == "AUTO_SCALING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface PlayerLatency {
@@ -3472,13 +3525,16 @@ export interface PlayerLatency {
   RegionIdentifier?: string | null;
   LatencyInMilliseconds?: number | null;
 }
-function fromPlayerLatency(input?: PlayerLatency | null): JSONValue {
+function fromPlayerLatency(input?: PlayerLatency | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    PlayerId: input["PlayerId"],
+    RegionIdentifier: input["RegionIdentifier"],
+    LatencyInMilliseconds: input["LatencyInMilliseconds"],
   }
 }
-function toPlayerLatency(root: JSONValue): PlayerLatency {
-  return prt.readObj({
+function toPlayerLatency(root: jsonP.JSONValue): PlayerLatency {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PlayerId": "s",
@@ -3493,33 +3549,38 @@ export interface DesiredPlayerSession {
   PlayerId?: string | null;
   PlayerData?: string | null;
 }
-function fromDesiredPlayerSession(input?: DesiredPlayerSession | null): JSONValue {
+function fromDesiredPlayerSession(input?: DesiredPlayerSession | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    PlayerId: input["PlayerId"],
+    PlayerData: input["PlayerData"],
   }
 }
 
 // refs: 5 - tags: input, named, interface, output
 export interface Player {
   PlayerId?: string | null;
-  PlayerAttributes?: { [key: string]: AttributeValue } | null;
+  PlayerAttributes?: { [key: string]: AttributeValue | null | undefined } | null;
   Team?: string | null;
-  LatencyInMs?: { [key: string]: number } | null;
+  LatencyInMs?: { [key: string]: number | null | undefined } | null;
 }
-function fromPlayer(input?: Player | null): JSONValue {
+function fromPlayer(input?: Player | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    PlayerAttributes: prt.serializeMap(input["PlayerAttributes"], x => fromAttributeValue(x)),
+  return {
+    PlayerId: input["PlayerId"],
+    PlayerAttributes: jsonP.serializeMap(input["PlayerAttributes"], x => fromAttributeValue(x)),
+    Team: input["Team"],
+    LatencyInMs: input["LatencyInMs"],
   }
 }
-function toPlayer(root: JSONValue): Player {
-  return prt.readObj({
+function toPlayer(root: jsonP.JSONValue): Player {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PlayerId": "s",
-      "PlayerAttributes": x => prt.readMap(String, toAttributeValue, x),
+      "PlayerAttributes": x => jsonP.readMap(String, toAttributeValue, x),
       "Team": "s",
-      "LatencyInMs": x => prt.readMap(String, Number, x),
+      "LatencyInMs": x => jsonP.readMap(String, Number, x),
     },
   }, root);
 }
@@ -3529,21 +3590,25 @@ export interface AttributeValue {
   S?: string | null;
   N?: number | null;
   SL?: string[] | null;
-  SDM?: { [key: string]: number } | null;
+  SDM?: { [key: string]: number | null | undefined } | null;
 }
-function fromAttributeValue(input?: AttributeValue | null): JSONValue {
+function fromAttributeValue(input?: AttributeValue | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S: input["S"],
+    N: input["N"],
+    SL: input["SL"],
+    SDM: input["SDM"],
   }
 }
-function toAttributeValue(root: JSONValue): AttributeValue {
-  return prt.readObj({
+function toAttributeValue(root: jsonP.JSONValue): AttributeValue {
+  return jsonP.readObj({
     required: {},
     optional: {
       "S": "s",
       "N": "n",
       "SL": ["s"],
-      "SDM": x => prt.readMap(String, Number, x),
+      "SDM": x => jsonP.readMap(String, Number, x),
     },
   }, root);
 }
@@ -3552,33 +3617,18 @@ function toAttributeValue(root: JSONValue): AttributeValue {
 export type GameServerUtilizationStatus =
 | "AVAILABLE"
 | "UTILIZED"
-;
-
-function toGameServerUtilizationStatus(root: JSONValue): GameServerUtilizationStatus | null {
-  return ( false
-    || root == "AVAILABLE"
-    || root == "UTILIZED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type GameServerHealthCheck =
 | "HEALTHY"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, enum, output
 export type PlayerSessionCreationPolicy =
 | "ACCEPT_ALL"
 | "DENY_ALL"
-;
-
-function toPlayerSessionCreationPolicy(root: JSONValue): PlayerSessionCreationPolicy | null {
-  return ( false
-    || root == "ACCEPT_ALL"
-    || root == "DENY_ALL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, interface
 export interface GameServer {
@@ -3594,8 +3644,8 @@ export interface GameServer {
   LastClaimTime?: Date | number | null;
   LastHealthCheckTime?: Date | number | null;
 }
-function toGameServer(root: JSONValue): GameServer {
-  return prt.readObj({
+function toGameServer(root: jsonP.JSONValue): GameServer {
+  return jsonP.readObj({
     required: {},
     optional: {
       "GameServerGroupName": "s",
@@ -3604,8 +3654,8 @@ function toGameServer(root: JSONValue): GameServer {
       "InstanceId": "s",
       "ConnectionInfo": "s",
       "GameServerData": "s",
-      "ClaimStatus": toGameServerClaimStatus,
-      "UtilizationStatus": toGameServerUtilizationStatus,
+      "ClaimStatus": (x: jsonP.JSONValue) => cmnP.readEnum<GameServerClaimStatus>(x),
+      "UtilizationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<GameServerUtilizationStatus>(x),
       "RegistrationTime": "d",
       "LastClaimTime": "d",
       "LastHealthCheckTime": "d",
@@ -3616,12 +3666,7 @@ function toGameServer(root: JSONValue): GameServer {
 // refs: 5 - tags: output, named, enum
 export type GameServerClaimStatus =
 | "CLAIMED"
-;
-function toGameServerClaimStatus(root: JSONValue): GameServerClaimStatus | null {
-  return ( false
-    || root == "CLAIMED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface Alias {
@@ -3633,8 +3678,8 @@ export interface Alias {
   CreationTime?: Date | number | null;
   LastUpdatedTime?: Date | number | null;
 }
-function toAlias(root: JSONValue): Alias {
-  return prt.readObj({
+function toAlias(root: jsonP.JSONValue): Alias {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AliasId": "s",
@@ -3659,17 +3704,17 @@ export interface Build {
   OperatingSystem?: OperatingSystem | null;
   CreationTime?: Date | number | null;
 }
-function toBuild(root: JSONValue): Build {
-  return prt.readObj({
+function toBuild(root: jsonP.JSONValue): Build {
+  return jsonP.readObj({
     required: {},
     optional: {
       "BuildId": "s",
       "BuildArn": "s",
       "Name": "s",
       "Version": "s",
-      "Status": toBuildStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<BuildStatus>(x),
       "SizeOnDisk": "n",
-      "OperatingSystem": toOperatingSystem,
+      "OperatingSystem": (x: jsonP.JSONValue) => cmnP.readEnum<OperatingSystem>(x),
       "CreationTime": "d",
     },
   }, root);
@@ -3681,8 +3726,8 @@ export interface AwsCredentials {
   SecretAccessKey?: string | null;
   SessionToken?: string | null;
 }
-function toAwsCredentials(root: JSONValue): AwsCredentials {
-  return prt.readObj({
+function toAwsCredentials(root: jsonP.JSONValue): AwsCredentials {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AccessKeyId": "s",
@@ -3718,19 +3763,19 @@ export interface FleetAttributes {
   InstanceRoleArn?: string | null;
   CertificateConfiguration?: CertificateConfiguration | null;
 }
-function toFleetAttributes(root: JSONValue): FleetAttributes {
-  return prt.readObj({
+function toFleetAttributes(root: jsonP.JSONValue): FleetAttributes {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FleetId": "s",
       "FleetArn": "s",
-      "FleetType": toFleetType,
-      "InstanceType": toEC2InstanceType,
+      "FleetType": (x: jsonP.JSONValue) => cmnP.readEnum<FleetType>(x),
+      "InstanceType": (x: jsonP.JSONValue) => cmnP.readEnum<EC2InstanceType>(x),
       "Description": "s",
       "Name": "s",
       "CreationTime": "d",
       "TerminationTime": "d",
-      "Status": toFleetStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<FleetStatus>(x),
       "BuildId": "s",
       "BuildArn": "s",
       "ScriptId": "s",
@@ -3738,11 +3783,11 @@ function toFleetAttributes(root: JSONValue): FleetAttributes {
       "ServerLaunchPath": "s",
       "ServerLaunchParameters": "s",
       "LogPaths": ["s"],
-      "NewGameSessionProtectionPolicy": toProtectionPolicy,
-      "OperatingSystem": toOperatingSystem,
+      "NewGameSessionProtectionPolicy": (x: jsonP.JSONValue) => cmnP.readEnum<ProtectionPolicy>(x),
+      "OperatingSystem": (x: jsonP.JSONValue) => cmnP.readEnum<OperatingSystem>(x),
       "ResourceCreationLimitPolicy": toResourceCreationLimitPolicy,
       "MetricGroups": ["s"],
-      "StoppedActions": [toFleetAction],
+      "StoppedActions": [(x: jsonP.JSONValue) => cmnP.readEnum<FleetAction>(x)],
       "InstanceRoleArn": "s",
       "CertificateConfiguration": toCertificateConfiguration,
     },
@@ -3760,20 +3805,7 @@ export type FleetStatus =
 | "DELETING"
 | "ERROR"
 | "TERMINATED"
-;
-function toFleetStatus(root: JSONValue): FleetStatus | null {
-  return ( false
-    || root == "NEW"
-    || root == "DOWNLOADING"
-    || root == "VALIDATING"
-    || root == "BUILDING"
-    || root == "ACTIVATING"
-    || root == "ACTIVE"
-    || root == "DELETING"
-    || root == "ERROR"
-    || root == "TERMINATED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: output, named, interface
 export interface GameServerGroup {
@@ -3790,20 +3822,20 @@ export interface GameServerGroup {
   CreationTime?: Date | number | null;
   LastUpdatedTime?: Date | number | null;
 }
-function toGameServerGroup(root: JSONValue): GameServerGroup {
-  return prt.readObj({
+function toGameServerGroup(root: jsonP.JSONValue): GameServerGroup {
+  return jsonP.readObj({
     required: {},
     optional: {
       "GameServerGroupName": "s",
       "GameServerGroupArn": "s",
       "RoleArn": "s",
       "InstanceDefinitions": [toInstanceDefinition],
-      "BalancingStrategy": toBalancingStrategy,
-      "GameServerProtectionPolicy": toGameServerProtectionPolicy,
+      "BalancingStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<BalancingStrategy>(x),
+      "GameServerProtectionPolicy": (x: jsonP.JSONValue) => cmnP.readEnum<GameServerProtectionPolicy>(x),
       "AutoScalingGroupArn": "s",
-      "Status": toGameServerGroupStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<GameServerGroupStatus>(x),
       "StatusReason": "s",
-      "SuspendedActions": [toGameServerGroupAction],
+      "SuspendedActions": [(x: jsonP.JSONValue) => cmnP.readEnum<GameServerGroupAction>(x)],
       "CreationTime": "d",
       "LastUpdatedTime": "d",
     },
@@ -3819,18 +3851,7 @@ export type GameServerGroupStatus =
 | "DELETING"
 | "DELETED"
 | "ERROR"
-;
-function toGameServerGroupStatus(root: JSONValue): GameServerGroupStatus | null {
-  return ( false
-    || root == "NEW"
-    || root == "ACTIVATING"
-    || root == "ACTIVE"
-    || root == "DELETE_SCHEDULED"
-    || root == "DELETING"
-    || root == "DELETED"
-    || root == "ERROR"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, interface
 export interface GameSession {
@@ -3853,8 +3874,8 @@ export interface GameSession {
   GameSessionData?: string | null;
   MatchmakerData?: string | null;
 }
-function toGameSession(root: JSONValue): GameSession {
-  return prt.readObj({
+function toGameSession(root: jsonP.JSONValue): GameSession {
+  return jsonP.readObj({
     required: {},
     optional: {
       "GameSessionId": "s",
@@ -3865,13 +3886,13 @@ function toGameSession(root: JSONValue): GameSession {
       "TerminationTime": "d",
       "CurrentPlayerSessionCount": "n",
       "MaximumPlayerSessionCount": "n",
-      "Status": toGameSessionStatus,
-      "StatusReason": toGameSessionStatusReason,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<GameSessionStatus>(x),
+      "StatusReason": (x: jsonP.JSONValue) => cmnP.readEnum<GameSessionStatusReason>(x),
       "GameProperties": [toGameProperty],
       "IpAddress": "s",
       "DnsName": "s",
       "Port": "n",
-      "PlayerSessionCreationPolicy": toPlayerSessionCreationPolicy,
+      "PlayerSessionCreationPolicy": (x: jsonP.JSONValue) => cmnP.readEnum<PlayerSessionCreationPolicy>(x),
       "CreatorId": "s",
       "GameSessionData": "s",
       "MatchmakerData": "s",
@@ -3886,26 +3907,12 @@ export type GameSessionStatus =
 | "TERMINATED"
 | "TERMINATING"
 | "ERROR"
-;
-function toGameSessionStatus(root: JSONValue): GameSessionStatus | null {
-  return ( false
-    || root == "ACTIVE"
-    || root == "ACTIVATING"
-    || root == "TERMINATED"
-    || root == "TERMINATING"
-    || root == "ERROR"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, enum
 export type GameSessionStatusReason =
 | "INTERRUPTED"
-;
-function toGameSessionStatusReason(root: JSONValue): GameSessionStatusReason | null {
-  return ( false
-    || root == "INTERRUPTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface GameSessionQueue {
@@ -3915,8 +3922,8 @@ export interface GameSessionQueue {
   PlayerLatencyPolicies?: PlayerLatencyPolicy[] | null;
   Destinations?: GameSessionQueueDestination[] | null;
 }
-function toGameSessionQueue(root: JSONValue): GameSessionQueue {
-  return prt.readObj({
+function toGameSessionQueue(root: jsonP.JSONValue): GameSessionQueue {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -3947,8 +3954,8 @@ export interface MatchmakingConfiguration {
   GameSessionData?: string | null;
   BackfillMode?: BackfillMode | null;
 }
-function toMatchmakingConfiguration(root: JSONValue): MatchmakingConfiguration {
-  return prt.readObj({
+function toMatchmakingConfiguration(root: jsonP.JSONValue): MatchmakingConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -3966,7 +3973,7 @@ function toMatchmakingConfiguration(root: JSONValue): MatchmakingConfiguration {
       "CreationTime": "d",
       "GameProperties": [toGameProperty],
       "GameSessionData": "s",
-      "BackfillMode": toBackfillMode,
+      "BackfillMode": (x: jsonP.JSONValue) => cmnP.readEnum<BackfillMode>(x),
     },
   }, root);
 }
@@ -3978,8 +3985,8 @@ export interface MatchmakingRuleSet {
   RuleSetBody: string;
   CreationTime?: Date | number | null;
 }
-function toMatchmakingRuleSet(root: JSONValue): MatchmakingRuleSet {
-  return prt.readObj({
+function toMatchmakingRuleSet(root: jsonP.JSONValue): MatchmakingRuleSet {
+  return jsonP.readObj({
     required: {
       "RuleSetBody": "s",
     },
@@ -4006,8 +4013,8 @@ export interface PlayerSession {
   Port?: number | null;
   PlayerData?: string | null;
 }
-function toPlayerSession(root: JSONValue): PlayerSession {
-  return prt.readObj({
+function toPlayerSession(root: jsonP.JSONValue): PlayerSession {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PlayerSessionId": "s",
@@ -4017,7 +4024,7 @@ function toPlayerSession(root: JSONValue): PlayerSession {
       "FleetArn": "s",
       "CreationTime": "d",
       "TerminationTime": "d",
-      "Status": toPlayerSessionStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<PlayerSessionStatus>(x),
       "IpAddress": "s",
       "DnsName": "s",
       "Port": "n",
@@ -4032,15 +4039,7 @@ export type PlayerSessionStatus =
 | "ACTIVE"
 | "COMPLETED"
 | "TIMEDOUT"
-;
-function toPlayerSessionStatus(root: JSONValue): PlayerSessionStatus | null {
-  return ( false
-    || root == "RESERVED"
-    || root == "ACTIVE"
-    || root == "COMPLETED"
-    || root == "TIMEDOUT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface Script {
@@ -4052,8 +4051,8 @@ export interface Script {
   CreationTime?: Date | number | null;
   StorageLocation?: S3Location | null;
 }
-function toScript(root: JSONValue): Script {
-  return prt.readObj({
+function toScript(root: jsonP.JSONValue): Script {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ScriptId": "s",
@@ -4075,8 +4074,8 @@ export interface VpcPeeringAuthorization {
   CreationTime?: Date | number | null;
   ExpirationTime?: Date | number | null;
 }
-function toVpcPeeringAuthorization(root: JSONValue): VpcPeeringAuthorization {
-  return prt.readObj({
+function toVpcPeeringAuthorization(root: jsonP.JSONValue): VpcPeeringAuthorization {
+  return jsonP.readObj({
     required: {},
     optional: {
       "GameLiftAwsAccountId": "s",
@@ -4094,11 +4093,11 @@ export interface EC2InstanceLimit {
   CurrentInstances?: number | null;
   InstanceLimit?: number | null;
 }
-function toEC2InstanceLimit(root: JSONValue): EC2InstanceLimit {
-  return prt.readObj({
+function toEC2InstanceLimit(root: jsonP.JSONValue): EC2InstanceLimit {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "EC2InstanceType": toEC2InstanceType,
+      "EC2InstanceType": (x: jsonP.JSONValue) => cmnP.readEnum<EC2InstanceType>(x),
       "CurrentInstances": "n",
       "InstanceLimit": "n",
     },
@@ -4111,12 +4110,12 @@ export interface FleetCapacity {
   InstanceType?: EC2InstanceType | null;
   InstanceCounts?: EC2InstanceCounts | null;
 }
-function toFleetCapacity(root: JSONValue): FleetCapacity {
-  return prt.readObj({
+function toFleetCapacity(root: jsonP.JSONValue): FleetCapacity {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FleetId": "s",
-      "InstanceType": toEC2InstanceType,
+      "InstanceType": (x: jsonP.JSONValue) => cmnP.readEnum<EC2InstanceType>(x),
       "InstanceCounts": toEC2InstanceCounts,
     },
   }, root);
@@ -4132,8 +4131,8 @@ export interface EC2InstanceCounts {
   IDLE?: number | null;
   TERMINATING?: number | null;
 }
-function toEC2InstanceCounts(root: JSONValue): EC2InstanceCounts {
-  return prt.readObj({
+function toEC2InstanceCounts(root: jsonP.JSONValue): EC2InstanceCounts {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DESIRED": "n",
@@ -4156,13 +4155,13 @@ export interface Event {
   EventTime?: Date | number | null;
   PreSignedLogUrl?: string | null;
 }
-function toEvent(root: JSONValue): Event {
-  return prt.readObj({
+function toEvent(root: jsonP.JSONValue): Event {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EventId": "s",
       "ResourceId": "s",
-      "EventCode": toEventCode,
+      "EventCode": (x: jsonP.JSONValue) => cmnP.readEnum<EventCode>(x),
       "Message": "s",
       "EventTime": "d",
       "PreSignedLogUrl": "s",
@@ -4205,44 +4204,7 @@ export type EventCode =
 | "FLEET_VPC_PEERING_FAILED"
 | "FLEET_VPC_PEERING_DELETED"
 | "INSTANCE_INTERRUPTED"
-;
-function toEventCode(root: JSONValue): EventCode | null {
-  return ( false
-    || root == "GENERIC_EVENT"
-    || root == "FLEET_CREATED"
-    || root == "FLEET_DELETED"
-    || root == "FLEET_SCALING_EVENT"
-    || root == "FLEET_STATE_DOWNLOADING"
-    || root == "FLEET_STATE_VALIDATING"
-    || root == "FLEET_STATE_BUILDING"
-    || root == "FLEET_STATE_ACTIVATING"
-    || root == "FLEET_STATE_ACTIVE"
-    || root == "FLEET_STATE_ERROR"
-    || root == "FLEET_INITIALIZATION_FAILED"
-    || root == "FLEET_BINARY_DOWNLOAD_FAILED"
-    || root == "FLEET_VALIDATION_LAUNCH_PATH_NOT_FOUND"
-    || root == "FLEET_VALIDATION_EXECUTABLE_RUNTIME_FAILURE"
-    || root == "FLEET_VALIDATION_TIMED_OUT"
-    || root == "FLEET_ACTIVATION_FAILED"
-    || root == "FLEET_ACTIVATION_FAILED_NO_INSTANCES"
-    || root == "FLEET_NEW_GAME_SESSION_PROTECTION_POLICY_UPDATED"
-    || root == "SERVER_PROCESS_INVALID_PATH"
-    || root == "SERVER_PROCESS_SDK_INITIALIZATION_TIMEOUT"
-    || root == "SERVER_PROCESS_PROCESS_READY_TIMEOUT"
-    || root == "SERVER_PROCESS_CRASHED"
-    || root == "SERVER_PROCESS_TERMINATED_UNHEALTHY"
-    || root == "SERVER_PROCESS_FORCE_TERMINATED"
-    || root == "SERVER_PROCESS_PROCESS_EXIT_TIMEOUT"
-    || root == "GAME_SESSION_ACTIVATION_TIMEOUT"
-    || root == "FLEET_CREATION_EXTRACTING_BUILD"
-    || root == "FLEET_CREATION_RUNNING_INSTALLER"
-    || root == "FLEET_CREATION_VALIDATING_RUNTIME_CONFIG"
-    || root == "FLEET_VPC_PEERING_SUCCEEDED"
-    || root == "FLEET_VPC_PEERING_FAILED"
-    || root == "FLEET_VPC_PEERING_DELETED"
-    || root == "INSTANCE_INTERRUPTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface FleetUtilization {
@@ -4252,8 +4214,8 @@ export interface FleetUtilization {
   CurrentPlayerSessionCount?: number | null;
   MaximumPlayerSessionCount?: number | null;
 }
-function toFleetUtilization(root: JSONValue): FleetUtilization {
-  return prt.readObj({
+function toFleetUtilization(root: jsonP.JSONValue): FleetUtilization {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FleetId": "s",
@@ -4272,14 +4234,14 @@ export interface GameServerInstance {
   InstanceId?: string | null;
   InstanceStatus?: GameServerInstanceStatus | null;
 }
-function toGameServerInstance(root: JSONValue): GameServerInstance {
-  return prt.readObj({
+function toGameServerInstance(root: jsonP.JSONValue): GameServerInstance {
+  return jsonP.readObj({
     required: {},
     optional: {
       "GameServerGroupName": "s",
       "GameServerGroupArn": "s",
       "InstanceId": "s",
-      "InstanceStatus": toGameServerInstanceStatus,
+      "InstanceStatus": (x: jsonP.JSONValue) => cmnP.readEnum<GameServerInstanceStatus>(x),
     },
   }, root);
 }
@@ -4289,26 +4251,19 @@ export type GameServerInstanceStatus =
 | "ACTIVE"
 | "DRAINING"
 | "SPOT_TERMINATING"
-;
-function toGameServerInstanceStatus(root: JSONValue): GameServerInstanceStatus | null {
-  return ( false
-    || root == "ACTIVE"
-    || root == "DRAINING"
-    || root == "SPOT_TERMINATING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface GameSessionDetail {
   GameSession?: GameSession | null;
   ProtectionPolicy?: ProtectionPolicy | null;
 }
-function toGameSessionDetail(root: JSONValue): GameSessionDetail {
-  return prt.readObj({
+function toGameSessionDetail(root: jsonP.JSONValue): GameSessionDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "GameSession": toGameSession,
-      "ProtectionPolicy": toProtectionPolicy,
+      "ProtectionPolicy": (x: jsonP.JSONValue) => cmnP.readEnum<ProtectionPolicy>(x),
     },
   }, root);
 }
@@ -4334,13 +4289,13 @@ export interface GameSessionPlacement {
   GameSessionData?: string | null;
   MatchmakerData?: string | null;
 }
-function toGameSessionPlacement(root: JSONValue): GameSessionPlacement {
-  return prt.readObj({
+function toGameSessionPlacement(root: jsonP.JSONValue): GameSessionPlacement {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PlacementId": "s",
       "GameSessionQueueName": "s",
-      "Status": toGameSessionPlacementState,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<GameSessionPlacementState>(x),
       "GameProperties": [toGameProperty],
       "MaximumPlayerSessionCount": "n",
       "GameSessionName": "s",
@@ -4367,24 +4322,15 @@ export type GameSessionPlacementState =
 | "CANCELLED"
 | "TIMED_OUT"
 | "FAILED"
-;
-function toGameSessionPlacementState(root: JSONValue): GameSessionPlacementState | null {
-  return ( false
-    || root == "PENDING"
-    || root == "FULFILLED"
-    || root == "CANCELLED"
-    || root == "TIMED_OUT"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface PlacedPlayerSession {
   PlayerId?: string | null;
   PlayerSessionId?: string | null;
 }
-function toPlacedPlayerSession(root: JSONValue): PlacedPlayerSession {
-  return prt.readObj({
+function toPlacedPlayerSession(root: jsonP.JSONValue): PlacedPlayerSession {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PlayerId": "s",
@@ -4404,17 +4350,17 @@ export interface Instance {
   Status?: InstanceStatus | null;
   CreationTime?: Date | number | null;
 }
-function toInstance(root: JSONValue): Instance {
-  return prt.readObj({
+function toInstance(root: jsonP.JSONValue): Instance {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FleetId": "s",
       "InstanceId": "s",
       "IpAddress": "s",
       "DnsName": "s",
-      "OperatingSystem": toOperatingSystem,
-      "Type": toEC2InstanceType,
-      "Status": toInstanceStatus,
+      "OperatingSystem": (x: jsonP.JSONValue) => cmnP.readEnum<OperatingSystem>(x),
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<EC2InstanceType>(x),
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceStatus>(x),
       "CreationTime": "d",
     },
   }, root);
@@ -4425,14 +4371,7 @@ export type InstanceStatus =
 | "PENDING"
 | "ACTIVE"
 | "TERMINATING"
-;
-function toInstanceStatus(root: JSONValue): InstanceStatus | null {
-  return ( false
-    || root == "PENDING"
-    || root == "ACTIVE"
-    || root == "TERMINATING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface MatchmakingTicket {
@@ -4448,14 +4387,14 @@ export interface MatchmakingTicket {
   GameSessionConnectionInfo?: GameSessionConnectionInfo | null;
   EstimatedWaitTime?: number | null;
 }
-function toMatchmakingTicket(root: JSONValue): MatchmakingTicket {
-  return prt.readObj({
+function toMatchmakingTicket(root: jsonP.JSONValue): MatchmakingTicket {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TicketId": "s",
       "ConfigurationName": "s",
       "ConfigurationArn": "s",
-      "Status": toMatchmakingConfigurationStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<MatchmakingConfigurationStatus>(x),
       "StatusReason": "s",
       "StatusMessage": "s",
       "StartTime": "d",
@@ -4477,19 +4416,7 @@ export type MatchmakingConfigurationStatus =
 | "REQUIRES_ACCEPTANCE"
 | "SEARCHING"
 | "TIMED_OUT"
-;
-function toMatchmakingConfigurationStatus(root: JSONValue): MatchmakingConfigurationStatus | null {
-  return ( false
-    || root == "CANCELLED"
-    || root == "COMPLETED"
-    || root == "FAILED"
-    || root == "PLACING"
-    || root == "QUEUED"
-    || root == "REQUIRES_ACCEPTANCE"
-    || root == "SEARCHING"
-    || root == "TIMED_OUT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface GameSessionConnectionInfo {
@@ -4499,8 +4426,8 @@ export interface GameSessionConnectionInfo {
   Port?: number | null;
   MatchedPlayerSessions?: MatchedPlayerSession[] | null;
 }
-function toGameSessionConnectionInfo(root: JSONValue): GameSessionConnectionInfo {
-  return prt.readObj({
+function toGameSessionConnectionInfo(root: jsonP.JSONValue): GameSessionConnectionInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "GameSessionArn": "s",
@@ -4517,8 +4444,8 @@ export interface MatchedPlayerSession {
   PlayerId?: string | null;
   PlayerSessionId?: string | null;
 }
-function toMatchedPlayerSession(root: JSONValue): MatchedPlayerSession {
-  return prt.readObj({
+function toMatchedPlayerSession(root: jsonP.JSONValue): MatchedPlayerSession {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PlayerId": "s",
@@ -4541,20 +4468,20 @@ export interface ScalingPolicy {
   PolicyType?: PolicyType | null;
   TargetConfiguration?: TargetConfiguration | null;
 }
-function toScalingPolicy(root: JSONValue): ScalingPolicy {
-  return prt.readObj({
+function toScalingPolicy(root: jsonP.JSONValue): ScalingPolicy {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FleetId": "s",
       "Name": "s",
-      "Status": toScalingStatusType,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ScalingStatusType>(x),
       "ScalingAdjustment": "n",
-      "ScalingAdjustmentType": toScalingAdjustmentType,
-      "ComparisonOperator": toComparisonOperatorType,
+      "ScalingAdjustmentType": (x: jsonP.JSONValue) => cmnP.readEnum<ScalingAdjustmentType>(x),
+      "ComparisonOperator": (x: jsonP.JSONValue) => cmnP.readEnum<ComparisonOperatorType>(x),
       "Threshold": "n",
       "EvaluationPeriods": "n",
-      "MetricName": toMetricName,
-      "PolicyType": toPolicyType,
+      "MetricName": (x: jsonP.JSONValue) => cmnP.readEnum<MetricName>(x),
+      "PolicyType": (x: jsonP.JSONValue) => cmnP.readEnum<PolicyType>(x),
       "TargetConfiguration": toTargetConfiguration,
     },
   }, root);
@@ -4570,8 +4497,8 @@ export interface VpcPeeringConnection {
   PeerVpcId?: string | null;
   GameLiftVpcId?: string | null;
 }
-function toVpcPeeringConnection(root: JSONValue): VpcPeeringConnection {
-  return prt.readObj({
+function toVpcPeeringConnection(root: jsonP.JSONValue): VpcPeeringConnection {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FleetId": "s",
@@ -4590,8 +4517,8 @@ export interface VpcPeeringConnectionStatus {
   Code?: string | null;
   Message?: string | null;
 }
-function toVpcPeeringConnectionStatus(root: JSONValue): VpcPeeringConnectionStatus {
-  return prt.readObj({
+function toVpcPeeringConnectionStatus(root: jsonP.JSONValue): VpcPeeringConnectionStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Code": "s",
@@ -4608,14 +4535,14 @@ export interface InstanceAccess {
   OperatingSystem?: OperatingSystem | null;
   Credentials?: InstanceCredentials | null;
 }
-function toInstanceAccess(root: JSONValue): InstanceAccess {
-  return prt.readObj({
+function toInstanceAccess(root: jsonP.JSONValue): InstanceAccess {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FleetId": "s",
       "InstanceId": "s",
       "IpAddress": "s",
-      "OperatingSystem": toOperatingSystem,
+      "OperatingSystem": (x: jsonP.JSONValue) => cmnP.readEnum<OperatingSystem>(x),
       "Credentials": toInstanceCredentials,
     },
   }, root);
@@ -4626,8 +4553,8 @@ export interface InstanceCredentials {
   UserName?: string | null;
   Secret?: string | null;
 }
-function toInstanceCredentials(root: JSONValue): InstanceCredentials {
-  return prt.readObj({
+function toInstanceCredentials(root: jsonP.JSONValue): InstanceCredentials {
+  return jsonP.readObj({
     required: {},
     optional: {
       "UserName": "s",

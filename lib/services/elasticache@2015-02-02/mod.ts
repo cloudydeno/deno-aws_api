@@ -5,8 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 
 export default class ElastiCache {
   #client: ServiceClient;
@@ -31,12 +32,12 @@ export default class ElastiCache {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceName", (params["ResourceName"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTagsToResource",
     });
-    const xml = readXmlResult(await resp.text(), "AddTagsToResourceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "AddTagsToResourceResult");
     return {
       TagList: xml.getList("TagList", "Tag").map(Tag_Parse),
     };
@@ -54,7 +55,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "AuthorizeCacheSecurityGroupIngress",
     });
-    const xml = readXmlResult(await resp.text(), "AuthorizeCacheSecurityGroupIngressResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "AuthorizeCacheSecurityGroupIngressResult");
     return {
       CacheSecurityGroup: xml.first("CacheSecurityGroup", false, CacheSecurityGroup_Parse),
     };
@@ -65,14 +66,14 @@ export default class ElastiCache {
   ): Promise<UpdateActionResultsMessage> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["ReplicationGroupIds"]) prt.appendList(body, prefix+"ReplicationGroupIds", params["ReplicationGroupIds"], {"entryPrefix":".member."})
-    if (params["CacheClusterIds"]) prt.appendList(body, prefix+"CacheClusterIds", params["CacheClusterIds"], {"entryPrefix":".member."})
+    if (params["ReplicationGroupIds"]) qsP.appendList(body, prefix+"ReplicationGroupIds", params["ReplicationGroupIds"], {"entryPrefix":".member."})
+    if (params["CacheClusterIds"]) qsP.appendList(body, prefix+"CacheClusterIds", params["CacheClusterIds"], {"entryPrefix":".member."})
     body.append(prefix+"ServiceUpdateName", (params["ServiceUpdateName"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchApplyUpdateAction",
     });
-    const xml = readXmlResult(await resp.text(), "BatchApplyUpdateActionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "BatchApplyUpdateActionResult");
     return {
       ProcessedUpdateActions: xml.getList("ProcessedUpdateActions", "ProcessedUpdateAction").map(ProcessedUpdateAction_Parse),
       UnprocessedUpdateActions: xml.getList("UnprocessedUpdateActions", "UnprocessedUpdateAction").map(UnprocessedUpdateAction_Parse),
@@ -84,14 +85,14 @@ export default class ElastiCache {
   ): Promise<UpdateActionResultsMessage> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["ReplicationGroupIds"]) prt.appendList(body, prefix+"ReplicationGroupIds", params["ReplicationGroupIds"], {"entryPrefix":".member."})
-    if (params["CacheClusterIds"]) prt.appendList(body, prefix+"CacheClusterIds", params["CacheClusterIds"], {"entryPrefix":".member."})
+    if (params["ReplicationGroupIds"]) qsP.appendList(body, prefix+"ReplicationGroupIds", params["ReplicationGroupIds"], {"entryPrefix":".member."})
+    if (params["CacheClusterIds"]) qsP.appendList(body, prefix+"CacheClusterIds", params["CacheClusterIds"], {"entryPrefix":".member."})
     body.append(prefix+"ServiceUpdateName", (params["ServiceUpdateName"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchStopUpdateAction",
     });
-    const xml = readXmlResult(await resp.text(), "BatchStopUpdateActionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "BatchStopUpdateActionResult");
     return {
       ProcessedUpdateActions: xml.getList("ProcessedUpdateActions", "ProcessedUpdateAction").map(ProcessedUpdateAction_Parse),
       UnprocessedUpdateActions: xml.getList("UnprocessedUpdateActions", "UnprocessedUpdateAction").map(UnprocessedUpdateAction_Parse),
@@ -109,7 +110,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "CompleteMigration",
     });
-    const xml = readXmlResult(await resp.text(), "CompleteMigrationResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CompleteMigrationResult");
     return {
       ReplicationGroup: xml.first("ReplicationGroup", false, ReplicationGroup_Parse),
     };
@@ -128,7 +129,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "CopySnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "CopySnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CopySnapshotResult");
     return {
       Snapshot: xml.first("Snapshot", false, Snapshot_Parse),
     };
@@ -143,17 +144,17 @@ export default class ElastiCache {
     if ("ReplicationGroupId" in params) body.append(prefix+"ReplicationGroupId", (params["ReplicationGroupId"] ?? '').toString());
     if ("AZMode" in params) body.append(prefix+"AZMode", (params["AZMode"] ?? '').toString());
     if ("PreferredAvailabilityZone" in params) body.append(prefix+"PreferredAvailabilityZone", (params["PreferredAvailabilityZone"] ?? '').toString());
-    if (params["PreferredAvailabilityZones"]) prt.appendList(body, prefix+"PreferredAvailabilityZones", params["PreferredAvailabilityZones"], {"entryPrefix":".PreferredAvailabilityZone."})
+    if (params["PreferredAvailabilityZones"]) qsP.appendList(body, prefix+"PreferredAvailabilityZones", params["PreferredAvailabilityZones"], {"entryPrefix":".PreferredAvailabilityZone."})
     if ("NumCacheNodes" in params) body.append(prefix+"NumCacheNodes", (params["NumCacheNodes"] ?? '').toString());
     if ("CacheNodeType" in params) body.append(prefix+"CacheNodeType", (params["CacheNodeType"] ?? '').toString());
     if ("Engine" in params) body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
     if ("EngineVersion" in params) body.append(prefix+"EngineVersion", (params["EngineVersion"] ?? '').toString());
     if ("CacheParameterGroupName" in params) body.append(prefix+"CacheParameterGroupName", (params["CacheParameterGroupName"] ?? '').toString());
     if ("CacheSubnetGroupName" in params) body.append(prefix+"CacheSubnetGroupName", (params["CacheSubnetGroupName"] ?? '').toString());
-    if (params["CacheSecurityGroupNames"]) prt.appendList(body, prefix+"CacheSecurityGroupNames", params["CacheSecurityGroupNames"], {"entryPrefix":".CacheSecurityGroupName."})
-    if (params["SecurityGroupIds"]) prt.appendList(body, prefix+"SecurityGroupIds", params["SecurityGroupIds"], {"entryPrefix":".SecurityGroupId."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
-    if (params["SnapshotArns"]) prt.appendList(body, prefix+"SnapshotArns", params["SnapshotArns"], {"entryPrefix":".SnapshotArn."})
+    if (params["CacheSecurityGroupNames"]) qsP.appendList(body, prefix+"CacheSecurityGroupNames", params["CacheSecurityGroupNames"], {"entryPrefix":".CacheSecurityGroupName."})
+    if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+"SecurityGroupIds", params["SecurityGroupIds"], {"entryPrefix":".SecurityGroupId."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["SnapshotArns"]) qsP.appendList(body, prefix+"SnapshotArns", params["SnapshotArns"], {"entryPrefix":".SnapshotArn."})
     if ("SnapshotName" in params) body.append(prefix+"SnapshotName", (params["SnapshotName"] ?? '').toString());
     if ("PreferredMaintenanceWindow" in params) body.append(prefix+"PreferredMaintenanceWindow", (params["PreferredMaintenanceWindow"] ?? '').toString());
     if ("Port" in params) body.append(prefix+"Port", (params["Port"] ?? '').toString());
@@ -164,12 +165,12 @@ export default class ElastiCache {
     if ("AuthToken" in params) body.append(prefix+"AuthToken", (params["AuthToken"] ?? '').toString());
     if ("OutpostMode" in params) body.append(prefix+"OutpostMode", (params["OutpostMode"] ?? '').toString());
     if ("PreferredOutpostArn" in params) body.append(prefix+"PreferredOutpostArn", (params["PreferredOutpostArn"] ?? '').toString());
-    if (params["PreferredOutpostArns"]) prt.appendList(body, prefix+"PreferredOutpostArns", params["PreferredOutpostArns"], {"entryPrefix":".PreferredOutpostArn."})
+    if (params["PreferredOutpostArns"]) qsP.appendList(body, prefix+"PreferredOutpostArns", params["PreferredOutpostArns"], {"entryPrefix":".PreferredOutpostArn."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCacheCluster",
     });
-    const xml = readXmlResult(await resp.text(), "CreateCacheClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateCacheClusterResult");
     return {
       CacheCluster: xml.first("CacheCluster", false, CacheCluster_Parse),
     };
@@ -187,7 +188,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "CreateCacheParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateCacheParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateCacheParameterGroupResult");
     return {
       CacheParameterGroup: xml.first("CacheParameterGroup", false, CacheParameterGroup_Parse),
     };
@@ -204,7 +205,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "CreateCacheSecurityGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateCacheSecurityGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateCacheSecurityGroupResult");
     return {
       CacheSecurityGroup: xml.first("CacheSecurityGroup", false, CacheSecurityGroup_Parse),
     };
@@ -217,12 +218,12 @@ export default class ElastiCache {
     const prefix = '';
     body.append(prefix+"CacheSubnetGroupName", (params["CacheSubnetGroupName"] ?? '').toString());
     body.append(prefix+"CacheSubnetGroupDescription", (params["CacheSubnetGroupDescription"] ?? '').toString());
-    if (params["SubnetIds"]) prt.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
+    if (params["SubnetIds"]) qsP.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCacheSubnetGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateCacheSubnetGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateCacheSubnetGroupResult");
     return {
       CacheSubnetGroup: xml.first("CacheSubnetGroup", false, CacheSubnetGroup_Parse),
     };
@@ -240,7 +241,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "CreateGlobalReplicationGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateGlobalReplicationGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateGlobalReplicationGroupResult");
     return {
       GlobalReplicationGroup: xml.first("GlobalReplicationGroup", false, GlobalReplicationGroup_Parse),
     };
@@ -258,19 +259,19 @@ export default class ElastiCache {
     if ("AutomaticFailoverEnabled" in params) body.append(prefix+"AutomaticFailoverEnabled", (params["AutomaticFailoverEnabled"] ?? '').toString());
     if ("MultiAZEnabled" in params) body.append(prefix+"MultiAZEnabled", (params["MultiAZEnabled"] ?? '').toString());
     if ("NumCacheClusters" in params) body.append(prefix+"NumCacheClusters", (params["NumCacheClusters"] ?? '').toString());
-    if (params["PreferredCacheClusterAZs"]) prt.appendList(body, prefix+"PreferredCacheClusterAZs", params["PreferredCacheClusterAZs"], {"entryPrefix":".AvailabilityZone."})
+    if (params["PreferredCacheClusterAZs"]) qsP.appendList(body, prefix+"PreferredCacheClusterAZs", params["PreferredCacheClusterAZs"], {"entryPrefix":".AvailabilityZone."})
     if ("NumNodeGroups" in params) body.append(prefix+"NumNodeGroups", (params["NumNodeGroups"] ?? '').toString());
     if ("ReplicasPerNodeGroup" in params) body.append(prefix+"ReplicasPerNodeGroup", (params["ReplicasPerNodeGroup"] ?? '').toString());
-    if (params["NodeGroupConfiguration"]) prt.appendList(body, prefix+"NodeGroupConfiguration", params["NodeGroupConfiguration"], {"appender":NodeGroupConfiguration_Serialize,"entryPrefix":".NodeGroupConfiguration."})
+    if (params["NodeGroupConfiguration"]) qsP.appendList(body, prefix+"NodeGroupConfiguration", params["NodeGroupConfiguration"], {"appender":NodeGroupConfiguration_Serialize,"entryPrefix":".NodeGroupConfiguration."})
     if ("CacheNodeType" in params) body.append(prefix+"CacheNodeType", (params["CacheNodeType"] ?? '').toString());
     if ("Engine" in params) body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
     if ("EngineVersion" in params) body.append(prefix+"EngineVersion", (params["EngineVersion"] ?? '').toString());
     if ("CacheParameterGroupName" in params) body.append(prefix+"CacheParameterGroupName", (params["CacheParameterGroupName"] ?? '').toString());
     if ("CacheSubnetGroupName" in params) body.append(prefix+"CacheSubnetGroupName", (params["CacheSubnetGroupName"] ?? '').toString());
-    if (params["CacheSecurityGroupNames"]) prt.appendList(body, prefix+"CacheSecurityGroupNames", params["CacheSecurityGroupNames"], {"entryPrefix":".CacheSecurityGroupName."})
-    if (params["SecurityGroupIds"]) prt.appendList(body, prefix+"SecurityGroupIds", params["SecurityGroupIds"], {"entryPrefix":".SecurityGroupId."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
-    if (params["SnapshotArns"]) prt.appendList(body, prefix+"SnapshotArns", params["SnapshotArns"], {"entryPrefix":".SnapshotArn."})
+    if (params["CacheSecurityGroupNames"]) qsP.appendList(body, prefix+"CacheSecurityGroupNames", params["CacheSecurityGroupNames"], {"entryPrefix":".CacheSecurityGroupName."})
+    if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+"SecurityGroupIds", params["SecurityGroupIds"], {"entryPrefix":".SecurityGroupId."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["SnapshotArns"]) qsP.appendList(body, prefix+"SnapshotArns", params["SnapshotArns"], {"entryPrefix":".SnapshotArn."})
     if ("SnapshotName" in params) body.append(prefix+"SnapshotName", (params["SnapshotName"] ?? '').toString());
     if ("PreferredMaintenanceWindow" in params) body.append(prefix+"PreferredMaintenanceWindow", (params["PreferredMaintenanceWindow"] ?? '').toString());
     if ("Port" in params) body.append(prefix+"Port", (params["Port"] ?? '').toString());
@@ -282,12 +283,12 @@ export default class ElastiCache {
     if ("TransitEncryptionEnabled" in params) body.append(prefix+"TransitEncryptionEnabled", (params["TransitEncryptionEnabled"] ?? '').toString());
     if ("AtRestEncryptionEnabled" in params) body.append(prefix+"AtRestEncryptionEnabled", (params["AtRestEncryptionEnabled"] ?? '').toString());
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
-    if (params["UserGroupIds"]) prt.appendList(body, prefix+"UserGroupIds", params["UserGroupIds"], {"entryPrefix":".member."})
+    if (params["UserGroupIds"]) qsP.appendList(body, prefix+"UserGroupIds", params["UserGroupIds"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateReplicationGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateReplicationGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateReplicationGroupResult");
     return {
       ReplicationGroup: xml.first("ReplicationGroup", false, ReplicationGroup_Parse),
     };
@@ -306,7 +307,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "CreateSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "CreateSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateSnapshotResult");
     return {
       Snapshot: xml.first("Snapshot", false, Snapshot_Parse),
     };
@@ -320,14 +321,14 @@ export default class ElastiCache {
     body.append(prefix+"UserId", (params["UserId"] ?? '').toString());
     body.append(prefix+"UserName", (params["UserName"] ?? '').toString());
     body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
-    if (params["Passwords"]) prt.appendList(body, prefix+"Passwords", params["Passwords"], {"entryPrefix":".member."})
+    if (params["Passwords"]) qsP.appendList(body, prefix+"Passwords", params["Passwords"], {"entryPrefix":".member."})
     body.append(prefix+"AccessString", (params["AccessString"] ?? '').toString());
     if ("NoPasswordRequired" in params) body.append(prefix+"NoPasswordRequired", (params["NoPasswordRequired"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUser",
     });
-    const xml = readXmlResult(await resp.text(), "CreateUserResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateUserResult");
     return User_Parse(xml);
   }
 
@@ -338,12 +339,12 @@ export default class ElastiCache {
     const prefix = '';
     body.append(prefix+"UserGroupId", (params["UserGroupId"] ?? '').toString());
     body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
-    if (params["UserIds"]) prt.appendList(body, prefix+"UserIds", params["UserIds"], {"entryPrefix":".member."})
+    if (params["UserIds"]) qsP.appendList(body, prefix+"UserIds", params["UserIds"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUserGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateUserGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateUserGroupResult");
     return UserGroup_Parse(xml);
   }
 
@@ -354,14 +355,14 @@ export default class ElastiCache {
     const prefix = '';
     body.append(prefix+"GlobalReplicationGroupId", (params["GlobalReplicationGroupId"] ?? '').toString());
     body.append(prefix+"NodeGroupCount", (params["NodeGroupCount"] ?? '').toString());
-    if (params["GlobalNodeGroupsToRemove"]) prt.appendList(body, prefix+"GlobalNodeGroupsToRemove", params["GlobalNodeGroupsToRemove"], {"entryPrefix":".GlobalNodeGroupId."})
-    if (params["GlobalNodeGroupsToRetain"]) prt.appendList(body, prefix+"GlobalNodeGroupsToRetain", params["GlobalNodeGroupsToRetain"], {"entryPrefix":".GlobalNodeGroupId."})
+    if (params["GlobalNodeGroupsToRemove"]) qsP.appendList(body, prefix+"GlobalNodeGroupsToRemove", params["GlobalNodeGroupsToRemove"], {"entryPrefix":".GlobalNodeGroupId."})
+    if (params["GlobalNodeGroupsToRetain"]) qsP.appendList(body, prefix+"GlobalNodeGroupsToRetain", params["GlobalNodeGroupsToRetain"], {"entryPrefix":".GlobalNodeGroupId."})
     body.append(prefix+"ApplyImmediately", (params["ApplyImmediately"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DecreaseNodeGroupsInGlobalReplicationGroup",
     });
-    const xml = readXmlResult(await resp.text(), "DecreaseNodeGroupsInGlobalReplicationGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DecreaseNodeGroupsInGlobalReplicationGroupResult");
     return {
       GlobalReplicationGroup: xml.first("GlobalReplicationGroup", false, GlobalReplicationGroup_Parse),
     };
@@ -374,14 +375,14 @@ export default class ElastiCache {
     const prefix = '';
     body.append(prefix+"ReplicationGroupId", (params["ReplicationGroupId"] ?? '').toString());
     if ("NewReplicaCount" in params) body.append(prefix+"NewReplicaCount", (params["NewReplicaCount"] ?? '').toString());
-    if (params["ReplicaConfiguration"]) prt.appendList(body, prefix+"ReplicaConfiguration", params["ReplicaConfiguration"], {"appender":ConfigureShard_Serialize,"entryPrefix":".ConfigureShard."})
-    if (params["ReplicasToRemove"]) prt.appendList(body, prefix+"ReplicasToRemove", params["ReplicasToRemove"], {"entryPrefix":".member."})
+    if (params["ReplicaConfiguration"]) qsP.appendList(body, prefix+"ReplicaConfiguration", params["ReplicaConfiguration"], {"appender":ConfigureShard_Serialize,"entryPrefix":".ConfigureShard."})
+    if (params["ReplicasToRemove"]) qsP.appendList(body, prefix+"ReplicasToRemove", params["ReplicasToRemove"], {"entryPrefix":".member."})
     body.append(prefix+"ApplyImmediately", (params["ApplyImmediately"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DecreaseReplicaCount",
     });
-    const xml = readXmlResult(await resp.text(), "DecreaseReplicaCountResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DecreaseReplicaCountResult");
     return {
       ReplicationGroup: xml.first("ReplicationGroup", false, ReplicationGroup_Parse),
     };
@@ -398,7 +399,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DeleteCacheCluster",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteCacheClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteCacheClusterResult");
     return {
       CacheCluster: xml.first("CacheCluster", false, CacheCluster_Parse),
     };
@@ -451,7 +452,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DeleteGlobalReplicationGroup",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteGlobalReplicationGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteGlobalReplicationGroupResult");
     return {
       GlobalReplicationGroup: xml.first("GlobalReplicationGroup", false, GlobalReplicationGroup_Parse),
     };
@@ -469,7 +470,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DeleteReplicationGroup",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteReplicationGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteReplicationGroupResult");
     return {
       ReplicationGroup: xml.first("ReplicationGroup", false, ReplicationGroup_Parse),
     };
@@ -485,7 +486,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DeleteSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteSnapshotResult");
     return {
       Snapshot: xml.first("Snapshot", false, Snapshot_Parse),
     };
@@ -501,7 +502,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DeleteUser",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteUserResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteUserResult");
     return User_Parse(xml);
   }
 
@@ -515,7 +516,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DeleteUserGroup",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteUserGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteUserGroupResult");
     return UserGroup_Parse(xml);
   }
 
@@ -533,7 +534,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DescribeCacheClusters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeCacheClustersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeCacheClustersResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -557,7 +558,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DescribeCacheEngineVersions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeCacheEngineVersionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeCacheEngineVersionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -578,7 +579,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DescribeCacheParameterGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeCacheParameterGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeCacheParameterGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -600,7 +601,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DescribeCacheParameters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeCacheParametersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeCacheParametersResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -622,7 +623,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DescribeCacheSecurityGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeCacheSecurityGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeCacheSecurityGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -643,7 +644,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DescribeCacheSubnetGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeCacheSubnetGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeCacheSubnetGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -664,7 +665,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DescribeEngineDefaultParameters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEngineDefaultParametersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEngineDefaultParametersResult");
     return {
       EngineDefaults: xml.first("EngineDefaults", false, EngineDefaults_Parse),
     };
@@ -677,8 +678,8 @@ export default class ElastiCache {
     const prefix = '';
     if ("SourceIdentifier" in params) body.append(prefix+"SourceIdentifier", (params["SourceIdentifier"] ?? '').toString());
     if ("SourceType" in params) body.append(prefix+"SourceType", (params["SourceType"] ?? '').toString());
-    if ("StartTime" in params) body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
-    if ("EndTime" in params) body.append(prefix+"EndTime", prt.encodeDate_iso8601(params["EndTime"]));
+    if ("StartTime" in params) body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+    if ("EndTime" in params) body.append(prefix+"EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
     if ("Duration" in params) body.append(prefix+"Duration", (params["Duration"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
@@ -686,7 +687,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DescribeEvents",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEventsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEventsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -708,7 +709,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DescribeGlobalReplicationGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeGlobalReplicationGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeGlobalReplicationGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -729,7 +730,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DescribeReplicationGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeReplicationGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeReplicationGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -755,7 +756,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DescribeReservedCacheNodes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeReservedCacheNodesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeReservedCacheNodesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -780,7 +781,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DescribeReservedCacheNodesOfferings",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeReservedCacheNodesOfferingsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeReservedCacheNodesOfferingsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -795,14 +796,14 @@ export default class ElastiCache {
     const body = new URLSearchParams;
     const prefix = '';
     if ("ServiceUpdateName" in params) body.append(prefix+"ServiceUpdateName", (params["ServiceUpdateName"] ?? '').toString());
-    if (params["ServiceUpdateStatus"]) prt.appendList(body, prefix+"ServiceUpdateStatus", params["ServiceUpdateStatus"], {"entryPrefix":".member."})
+    if (params["ServiceUpdateStatus"]) qsP.appendList(body, prefix+"ServiceUpdateStatus", params["ServiceUpdateStatus"], {"entryPrefix":".member."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeServiceUpdates",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeServiceUpdatesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeServiceUpdatesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -827,7 +828,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DescribeSnapshots",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeSnapshotsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeSnapshotsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -842,12 +843,12 @@ export default class ElastiCache {
     const body = new URLSearchParams;
     const prefix = '';
     if ("ServiceUpdateName" in params) body.append(prefix+"ServiceUpdateName", (params["ServiceUpdateName"] ?? '').toString());
-    if (params["ReplicationGroupIds"]) prt.appendList(body, prefix+"ReplicationGroupIds", params["ReplicationGroupIds"], {"entryPrefix":".member."})
-    if (params["CacheClusterIds"]) prt.appendList(body, prefix+"CacheClusterIds", params["CacheClusterIds"], {"entryPrefix":".member."})
+    if (params["ReplicationGroupIds"]) qsP.appendList(body, prefix+"ReplicationGroupIds", params["ReplicationGroupIds"], {"entryPrefix":".member."})
+    if (params["CacheClusterIds"]) qsP.appendList(body, prefix+"CacheClusterIds", params["CacheClusterIds"], {"entryPrefix":".member."})
     if ("Engine" in params) body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
-    if (params["ServiceUpdateStatus"]) prt.appendList(body, prefix+"ServiceUpdateStatus", params["ServiceUpdateStatus"], {"entryPrefix":".member."})
+    if (params["ServiceUpdateStatus"]) qsP.appendList(body, prefix+"ServiceUpdateStatus", params["ServiceUpdateStatus"], {"entryPrefix":".member."})
     if (params["ServiceUpdateTimeRange"] != null) TimeRangeFilter_Serialize(body, prefix+"ServiceUpdateTimeRange", params["ServiceUpdateTimeRange"]);
-    if (params["UpdateActionStatus"]) prt.appendList(body, prefix+"UpdateActionStatus", params["UpdateActionStatus"], {"entryPrefix":".member."})
+    if (params["UpdateActionStatus"]) qsP.appendList(body, prefix+"UpdateActionStatus", params["UpdateActionStatus"], {"entryPrefix":".member."})
     if ("ShowNodeLevelUpdateStatus" in params) body.append(prefix+"ShowNodeLevelUpdateStatus", (params["ShowNodeLevelUpdateStatus"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
@@ -855,7 +856,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DescribeUpdateActions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeUpdateActionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeUpdateActionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -876,7 +877,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DescribeUserGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeUserGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeUserGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -892,14 +893,14 @@ export default class ElastiCache {
     const prefix = '';
     if ("Engine" in params) body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
     if ("UserId" in params) body.append(prefix+"UserId", (params["UserId"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".member."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".member."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUsers",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeUsersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeUsersResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -920,7 +921,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DisassociateGlobalReplicationGroup",
     });
-    const xml = readXmlResult(await resp.text(), "DisassociateGlobalReplicationGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DisassociateGlobalReplicationGroupResult");
     return {
       GlobalReplicationGroup: xml.first("GlobalReplicationGroup", false, GlobalReplicationGroup_Parse),
     };
@@ -938,7 +939,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "FailoverGlobalReplicationGroup",
     });
-    const xml = readXmlResult(await resp.text(), "FailoverGlobalReplicationGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "FailoverGlobalReplicationGroupResult");
     return {
       GlobalReplicationGroup: xml.first("GlobalReplicationGroup", false, GlobalReplicationGroup_Parse),
     };
@@ -951,13 +952,13 @@ export default class ElastiCache {
     const prefix = '';
     body.append(prefix+"GlobalReplicationGroupId", (params["GlobalReplicationGroupId"] ?? '').toString());
     body.append(prefix+"NodeGroupCount", (params["NodeGroupCount"] ?? '').toString());
-    if (params["RegionalConfigurations"]) prt.appendList(body, prefix+"RegionalConfigurations", params["RegionalConfigurations"], {"appender":RegionalConfiguration_Serialize,"entryPrefix":".RegionalConfiguration."})
+    if (params["RegionalConfigurations"]) qsP.appendList(body, prefix+"RegionalConfigurations", params["RegionalConfigurations"], {"appender":RegionalConfiguration_Serialize,"entryPrefix":".RegionalConfiguration."})
     body.append(prefix+"ApplyImmediately", (params["ApplyImmediately"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "IncreaseNodeGroupsInGlobalReplicationGroup",
     });
-    const xml = readXmlResult(await resp.text(), "IncreaseNodeGroupsInGlobalReplicationGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "IncreaseNodeGroupsInGlobalReplicationGroupResult");
     return {
       GlobalReplicationGroup: xml.first("GlobalReplicationGroup", false, GlobalReplicationGroup_Parse),
     };
@@ -970,13 +971,13 @@ export default class ElastiCache {
     const prefix = '';
     body.append(prefix+"ReplicationGroupId", (params["ReplicationGroupId"] ?? '').toString());
     if ("NewReplicaCount" in params) body.append(prefix+"NewReplicaCount", (params["NewReplicaCount"] ?? '').toString());
-    if (params["ReplicaConfiguration"]) prt.appendList(body, prefix+"ReplicaConfiguration", params["ReplicaConfiguration"], {"appender":ConfigureShard_Serialize,"entryPrefix":".ConfigureShard."})
+    if (params["ReplicaConfiguration"]) qsP.appendList(body, prefix+"ReplicaConfiguration", params["ReplicaConfiguration"], {"appender":ConfigureShard_Serialize,"entryPrefix":".ConfigureShard."})
     body.append(prefix+"ApplyImmediately", (params["ApplyImmediately"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "IncreaseReplicaCount",
     });
-    const xml = readXmlResult(await resp.text(), "IncreaseReplicaCountResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "IncreaseReplicaCountResult");
     return {
       ReplicationGroup: xml.first("ReplicationGroup", false, ReplicationGroup_Parse),
     };
@@ -993,7 +994,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "ListAllowedNodeTypeModifications",
     });
-    const xml = readXmlResult(await resp.text(), "ListAllowedNodeTypeModificationsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListAllowedNodeTypeModificationsResult");
     return {
       ScaleUpModifications: xml.getList("ScaleUpModifications", "member").map(x => x.content ?? ''),
       ScaleDownModifications: xml.getList("ScaleDownModifications", "member").map(x => x.content ?? ''),
@@ -1010,7 +1011,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    const xml = readXmlResult(await resp.text(), "ListTagsForResourceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListTagsForResourceResult");
     return {
       TagList: xml.getList("TagList", "Tag").map(Tag_Parse),
     };
@@ -1023,11 +1024,11 @@ export default class ElastiCache {
     const prefix = '';
     body.append(prefix+"CacheClusterId", (params["CacheClusterId"] ?? '').toString());
     if ("NumCacheNodes" in params) body.append(prefix+"NumCacheNodes", (params["NumCacheNodes"] ?? '').toString());
-    if (params["CacheNodeIdsToRemove"]) prt.appendList(body, prefix+"CacheNodeIdsToRemove", params["CacheNodeIdsToRemove"], {"entryPrefix":".CacheNodeId."})
+    if (params["CacheNodeIdsToRemove"]) qsP.appendList(body, prefix+"CacheNodeIdsToRemove", params["CacheNodeIdsToRemove"], {"entryPrefix":".CacheNodeId."})
     if ("AZMode" in params) body.append(prefix+"AZMode", (params["AZMode"] ?? '').toString());
-    if (params["NewAvailabilityZones"]) prt.appendList(body, prefix+"NewAvailabilityZones", params["NewAvailabilityZones"], {"entryPrefix":".PreferredAvailabilityZone."})
-    if (params["CacheSecurityGroupNames"]) prt.appendList(body, prefix+"CacheSecurityGroupNames", params["CacheSecurityGroupNames"], {"entryPrefix":".CacheSecurityGroupName."})
-    if (params["SecurityGroupIds"]) prt.appendList(body, prefix+"SecurityGroupIds", params["SecurityGroupIds"], {"entryPrefix":".SecurityGroupId."})
+    if (params["NewAvailabilityZones"]) qsP.appendList(body, prefix+"NewAvailabilityZones", params["NewAvailabilityZones"], {"entryPrefix":".PreferredAvailabilityZone."})
+    if (params["CacheSecurityGroupNames"]) qsP.appendList(body, prefix+"CacheSecurityGroupNames", params["CacheSecurityGroupNames"], {"entryPrefix":".CacheSecurityGroupName."})
+    if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+"SecurityGroupIds", params["SecurityGroupIds"], {"entryPrefix":".SecurityGroupId."})
     if ("PreferredMaintenanceWindow" in params) body.append(prefix+"PreferredMaintenanceWindow", (params["PreferredMaintenanceWindow"] ?? '').toString());
     if ("NotificationTopicArn" in params) body.append(prefix+"NotificationTopicArn", (params["NotificationTopicArn"] ?? '').toString());
     if ("CacheParameterGroupName" in params) body.append(prefix+"CacheParameterGroupName", (params["CacheParameterGroupName"] ?? '').toString());
@@ -1044,7 +1045,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "ModifyCacheCluster",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyCacheClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyCacheClusterResult");
     return {
       CacheCluster: xml.first("CacheCluster", false, CacheCluster_Parse),
     };
@@ -1056,12 +1057,12 @@ export default class ElastiCache {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"CacheParameterGroupName", (params["CacheParameterGroupName"] ?? '').toString());
-    if (params["ParameterNameValues"]) prt.appendList(body, prefix+"ParameterNameValues", params["ParameterNameValues"], {"appender":ParameterNameValue_Serialize,"entryPrefix":".ParameterNameValue."})
+    if (params["ParameterNameValues"]) qsP.appendList(body, prefix+"ParameterNameValues", params["ParameterNameValues"], {"appender":ParameterNameValue_Serialize,"entryPrefix":".ParameterNameValue."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyCacheParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyCacheParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyCacheParameterGroupResult");
     return xml.strings({
       optional: {"CacheParameterGroupName":true},
     });
@@ -1074,12 +1075,12 @@ export default class ElastiCache {
     const prefix = '';
     body.append(prefix+"CacheSubnetGroupName", (params["CacheSubnetGroupName"] ?? '').toString());
     if ("CacheSubnetGroupDescription" in params) body.append(prefix+"CacheSubnetGroupDescription", (params["CacheSubnetGroupDescription"] ?? '').toString());
-    if (params["SubnetIds"]) prt.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
+    if (params["SubnetIds"]) qsP.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyCacheSubnetGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyCacheSubnetGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyCacheSubnetGroupResult");
     return {
       CacheSubnetGroup: xml.first("CacheSubnetGroup", false, CacheSubnetGroup_Parse),
     };
@@ -1100,7 +1101,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "ModifyGlobalReplicationGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyGlobalReplicationGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyGlobalReplicationGroupResult");
     return {
       GlobalReplicationGroup: xml.first("GlobalReplicationGroup", false, GlobalReplicationGroup_Parse),
     };
@@ -1118,8 +1119,8 @@ export default class ElastiCache {
     if ("AutomaticFailoverEnabled" in params) body.append(prefix+"AutomaticFailoverEnabled", (params["AutomaticFailoverEnabled"] ?? '').toString());
     if ("MultiAZEnabled" in params) body.append(prefix+"MultiAZEnabled", (params["MultiAZEnabled"] ?? '').toString());
     if ("NodeGroupId" in params) body.append(prefix+"NodeGroupId", (params["NodeGroupId"] ?? '').toString());
-    if (params["CacheSecurityGroupNames"]) prt.appendList(body, prefix+"CacheSecurityGroupNames", params["CacheSecurityGroupNames"], {"entryPrefix":".CacheSecurityGroupName."})
-    if (params["SecurityGroupIds"]) prt.appendList(body, prefix+"SecurityGroupIds", params["SecurityGroupIds"], {"entryPrefix":".SecurityGroupId."})
+    if (params["CacheSecurityGroupNames"]) qsP.appendList(body, prefix+"CacheSecurityGroupNames", params["CacheSecurityGroupNames"], {"entryPrefix":".CacheSecurityGroupName."})
+    if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+"SecurityGroupIds", params["SecurityGroupIds"], {"entryPrefix":".SecurityGroupId."})
     if ("PreferredMaintenanceWindow" in params) body.append(prefix+"PreferredMaintenanceWindow", (params["PreferredMaintenanceWindow"] ?? '').toString());
     if ("NotificationTopicArn" in params) body.append(prefix+"NotificationTopicArn", (params["NotificationTopicArn"] ?? '').toString());
     if ("CacheParameterGroupName" in params) body.append(prefix+"CacheParameterGroupName", (params["CacheParameterGroupName"] ?? '').toString());
@@ -1132,14 +1133,14 @@ export default class ElastiCache {
     if ("CacheNodeType" in params) body.append(prefix+"CacheNodeType", (params["CacheNodeType"] ?? '').toString());
     if ("AuthToken" in params) body.append(prefix+"AuthToken", (params["AuthToken"] ?? '').toString());
     if ("AuthTokenUpdateStrategy" in params) body.append(prefix+"AuthTokenUpdateStrategy", (params["AuthTokenUpdateStrategy"] ?? '').toString());
-    if (params["UserGroupIdsToAdd"]) prt.appendList(body, prefix+"UserGroupIdsToAdd", params["UserGroupIdsToAdd"], {"entryPrefix":".member."})
-    if (params["UserGroupIdsToRemove"]) prt.appendList(body, prefix+"UserGroupIdsToRemove", params["UserGroupIdsToRemove"], {"entryPrefix":".member."})
+    if (params["UserGroupIdsToAdd"]) qsP.appendList(body, prefix+"UserGroupIdsToAdd", params["UserGroupIdsToAdd"], {"entryPrefix":".member."})
+    if (params["UserGroupIdsToRemove"]) qsP.appendList(body, prefix+"UserGroupIdsToRemove", params["UserGroupIdsToRemove"], {"entryPrefix":".member."})
     if ("RemoveUserGroups" in params) body.append(prefix+"RemoveUserGroups", (params["RemoveUserGroups"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyReplicationGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyReplicationGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyReplicationGroupResult");
     return {
       ReplicationGroup: xml.first("ReplicationGroup", false, ReplicationGroup_Parse),
     };
@@ -1153,14 +1154,14 @@ export default class ElastiCache {
     body.append(prefix+"ReplicationGroupId", (params["ReplicationGroupId"] ?? '').toString());
     body.append(prefix+"NodeGroupCount", (params["NodeGroupCount"] ?? '').toString());
     body.append(prefix+"ApplyImmediately", (params["ApplyImmediately"] ?? '').toString());
-    if (params["ReshardingConfiguration"]) prt.appendList(body, prefix+"ReshardingConfiguration", params["ReshardingConfiguration"], {"appender":ReshardingConfiguration_Serialize,"entryPrefix":".ReshardingConfiguration."})
-    if (params["NodeGroupsToRemove"]) prt.appendList(body, prefix+"NodeGroupsToRemove", params["NodeGroupsToRemove"], {"entryPrefix":".NodeGroupToRemove."})
-    if (params["NodeGroupsToRetain"]) prt.appendList(body, prefix+"NodeGroupsToRetain", params["NodeGroupsToRetain"], {"entryPrefix":".NodeGroupToRetain."})
+    if (params["ReshardingConfiguration"]) qsP.appendList(body, prefix+"ReshardingConfiguration", params["ReshardingConfiguration"], {"appender":ReshardingConfiguration_Serialize,"entryPrefix":".ReshardingConfiguration."})
+    if (params["NodeGroupsToRemove"]) qsP.appendList(body, prefix+"NodeGroupsToRemove", params["NodeGroupsToRemove"], {"entryPrefix":".NodeGroupToRemove."})
+    if (params["NodeGroupsToRetain"]) qsP.appendList(body, prefix+"NodeGroupsToRetain", params["NodeGroupsToRetain"], {"entryPrefix":".NodeGroupToRetain."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyReplicationGroupShardConfiguration",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyReplicationGroupShardConfigurationResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyReplicationGroupShardConfigurationResult");
     return {
       ReplicationGroup: xml.first("ReplicationGroup", false, ReplicationGroup_Parse),
     };
@@ -1174,13 +1175,13 @@ export default class ElastiCache {
     body.append(prefix+"UserId", (params["UserId"] ?? '').toString());
     if ("AccessString" in params) body.append(prefix+"AccessString", (params["AccessString"] ?? '').toString());
     if ("AppendAccessString" in params) body.append(prefix+"AppendAccessString", (params["AppendAccessString"] ?? '').toString());
-    if (params["Passwords"]) prt.appendList(body, prefix+"Passwords", params["Passwords"], {"entryPrefix":".member."})
+    if (params["Passwords"]) qsP.appendList(body, prefix+"Passwords", params["Passwords"], {"entryPrefix":".member."})
     if ("NoPasswordRequired" in params) body.append(prefix+"NoPasswordRequired", (params["NoPasswordRequired"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyUser",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyUserResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyUserResult");
     return User_Parse(xml);
   }
 
@@ -1190,13 +1191,13 @@ export default class ElastiCache {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"UserGroupId", (params["UserGroupId"] ?? '').toString());
-    if (params["UserIdsToAdd"]) prt.appendList(body, prefix+"UserIdsToAdd", params["UserIdsToAdd"], {"entryPrefix":".member."})
-    if (params["UserIdsToRemove"]) prt.appendList(body, prefix+"UserIdsToRemove", params["UserIdsToRemove"], {"entryPrefix":".member."})
+    if (params["UserIdsToAdd"]) qsP.appendList(body, prefix+"UserIdsToAdd", params["UserIdsToAdd"], {"entryPrefix":".member."})
+    if (params["UserIdsToRemove"]) qsP.appendList(body, prefix+"UserIdsToRemove", params["UserIdsToRemove"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyUserGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyUserGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyUserGroupResult");
     return UserGroup_Parse(xml);
   }
 
@@ -1212,7 +1213,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "PurchaseReservedCacheNodesOffering",
     });
-    const xml = readXmlResult(await resp.text(), "PurchaseReservedCacheNodesOfferingResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "PurchaseReservedCacheNodesOfferingResult");
     return {
       ReservedCacheNode: xml.first("ReservedCacheNode", false, ReservedCacheNode_Parse),
     };
@@ -1229,7 +1230,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "RebalanceSlotsInGlobalReplicationGroup",
     });
-    const xml = readXmlResult(await resp.text(), "RebalanceSlotsInGlobalReplicationGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RebalanceSlotsInGlobalReplicationGroupResult");
     return {
       GlobalReplicationGroup: xml.first("GlobalReplicationGroup", false, GlobalReplicationGroup_Parse),
     };
@@ -1241,12 +1242,12 @@ export default class ElastiCache {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"CacheClusterId", (params["CacheClusterId"] ?? '').toString());
-    if (params["CacheNodeIdsToReboot"]) prt.appendList(body, prefix+"CacheNodeIdsToReboot", params["CacheNodeIdsToReboot"], {"entryPrefix":".CacheNodeId."})
+    if (params["CacheNodeIdsToReboot"]) qsP.appendList(body, prefix+"CacheNodeIdsToReboot", params["CacheNodeIdsToReboot"], {"entryPrefix":".CacheNodeId."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RebootCacheCluster",
     });
-    const xml = readXmlResult(await resp.text(), "RebootCacheClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RebootCacheClusterResult");
     return {
       CacheCluster: xml.first("CacheCluster", false, CacheCluster_Parse),
     };
@@ -1258,12 +1259,12 @@ export default class ElastiCache {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceName", (params["ResourceName"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTagsFromResource",
     });
-    const xml = readXmlResult(await resp.text(), "RemoveTagsFromResourceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RemoveTagsFromResourceResult");
     return {
       TagList: xml.getList("TagList", "Tag").map(Tag_Parse),
     };
@@ -1276,12 +1277,12 @@ export default class ElastiCache {
     const prefix = '';
     body.append(prefix+"CacheParameterGroupName", (params["CacheParameterGroupName"] ?? '').toString());
     if ("ResetAllParameters" in params) body.append(prefix+"ResetAllParameters", (params["ResetAllParameters"] ?? '').toString());
-    if (params["ParameterNameValues"]) prt.appendList(body, prefix+"ParameterNameValues", params["ParameterNameValues"], {"appender":ParameterNameValue_Serialize,"entryPrefix":".ParameterNameValue."})
+    if (params["ParameterNameValues"]) qsP.appendList(body, prefix+"ParameterNameValues", params["ParameterNameValues"], {"appender":ParameterNameValue_Serialize,"entryPrefix":".ParameterNameValue."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResetCacheParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ResetCacheParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ResetCacheParameterGroupResult");
     return xml.strings({
       optional: {"CacheParameterGroupName":true},
     });
@@ -1299,7 +1300,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "RevokeCacheSecurityGroupIngress",
     });
-    const xml = readXmlResult(await resp.text(), "RevokeCacheSecurityGroupIngressResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RevokeCacheSecurityGroupIngressResult");
     return {
       CacheSecurityGroup: xml.first("CacheSecurityGroup", false, CacheSecurityGroup_Parse),
     };
@@ -1311,12 +1312,12 @@ export default class ElastiCache {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ReplicationGroupId", (params["ReplicationGroupId"] ?? '').toString());
-    if (params["CustomerNodeEndpointList"]) prt.appendList(body, prefix+"CustomerNodeEndpointList", params["CustomerNodeEndpointList"], {"appender":CustomerNodeEndpoint_Serialize,"entryPrefix":".member."})
+    if (params["CustomerNodeEndpointList"]) qsP.appendList(body, prefix+"CustomerNodeEndpointList", params["CustomerNodeEndpointList"], {"appender":CustomerNodeEndpoint_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartMigration",
     });
-    const xml = readXmlResult(await resp.text(), "StartMigrationResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "StartMigrationResult");
     return {
       ReplicationGroup: xml.first("ReplicationGroup", false, ReplicationGroup_Parse),
     };
@@ -1333,7 +1334,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "TestFailover",
     });
-    const xml = readXmlResult(await resp.text(), "TestFailoverResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "TestFailoverResult");
     return {
       ReplicationGroup: xml.first("ReplicationGroup", false, ReplicationGroup_Parse),
     };
@@ -1351,7 +1352,7 @@ export default class ElastiCache {
     const errMessage = 'ResourceNotReady: Resource is not in the state CacheClusterAvailable';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeCacheClusters(params);
-      const field = resp["CacheClusters"].flatMap(x => x["CacheClusterStatus"]);
+      const field = resp?.CacheClusters?.flatMap(x => x?.CacheClusterStatus);
       if (field.every(x => x === "available")) return resp;
       if (field.some(x => x === "deleted")) throw new Error(errMessage);
       if (field.some(x => x === "deleting")) throw new Error(errMessage);
@@ -1373,7 +1374,7 @@ export default class ElastiCache {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeCacheClusters(params);
-        const field = resp["CacheClusters"].flatMap(x => x["CacheClusterStatus"]);
+        const field = resp?.CacheClusters?.flatMap(x => x?.CacheClusterStatus);
         if (field.every(x => x === "deleted")) return resp;
         if (field.some(x => x === "available")) throw new Error(errMessage);
         if (field.some(x => x === "creating")) throw new Error(errMessage);
@@ -1400,7 +1401,7 @@ export default class ElastiCache {
     const errMessage = 'ResourceNotReady: Resource is not in the state ReplicationGroupAvailable';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeReplicationGroups(params);
-      const field = resp["ReplicationGroups"].flatMap(x => x["Status"]);
+      const field = resp?.ReplicationGroups?.flatMap(x => x?.Status);
       if (field.every(x => x === "available")) return resp;
       if (field.some(x => x === "deleted")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
@@ -1419,7 +1420,7 @@ export default class ElastiCache {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeReplicationGroups(params);
-        const field = resp["ReplicationGroups"].flatMap(x => x["Status"]);
+        const field = resp?.ReplicationGroups?.flatMap(x => x?.Status);
         if (field.every(x => x === "deleted")) return resp;
         if (field.some(x => x === "available")) throw new Error(errMessage);
       } catch (err) {
@@ -2076,7 +2077,7 @@ export interface User {
   Authentication?: Authentication | null;
   ARN?: string | null;
 }
-function User_Parse(node: XmlNode): User {
+function User_Parse(node: xmlP.XmlNode): User {
   return {
     ...node.strings({
       optional: {"UserId":true,"UserName":true,"Status":true,"Engine":true,"AccessString":true,"ARN":true},
@@ -2096,7 +2097,7 @@ export interface UserGroup {
   ReplicationGroups: string[];
   ARN?: string | null;
 }
-function UserGroup_Parse(node: XmlNode): UserGroup {
+function UserGroup_Parse(node: xmlP.XmlNode): UserGroup {
   return {
     ...node.strings({
       optional: {"UserGroupId":true,"Status":true,"Engine":true,"ARN":true},
@@ -2334,7 +2335,7 @@ function Tag_Serialize(body: URLSearchParams, prefix: string, params: Tag) {
     if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
     if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function Tag_Parse(node: XmlNode): Tag {
+function Tag_Parse(node: xmlP.XmlNode): Tag {
   return node.strings({
     optional: {"Key":true,"Value":true},
   });
@@ -2344,15 +2345,13 @@ function Tag_Parse(node: XmlNode): Tag {
 export type AZMode =
 | "single-az"
 | "cross-az"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type OutpostMode =
 | "single-outpost"
 | "cross-outpost"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface NodeGroupConfiguration {
@@ -2369,11 +2368,11 @@ function NodeGroupConfiguration_Serialize(body: URLSearchParams, prefix: string,
     if ("Slots" in params) body.append(prefix+".Slots", (params["Slots"] ?? '').toString());
     if ("ReplicaCount" in params) body.append(prefix+".ReplicaCount", (params["ReplicaCount"] ?? '').toString());
     if ("PrimaryAvailabilityZone" in params) body.append(prefix+".PrimaryAvailabilityZone", (params["PrimaryAvailabilityZone"] ?? '').toString());
-    if (params["ReplicaAvailabilityZones"]) prt.appendList(body, prefix+".ReplicaAvailabilityZones", params["ReplicaAvailabilityZones"], {"entryPrefix":".AvailabilityZone."})
+    if (params["ReplicaAvailabilityZones"]) qsP.appendList(body, prefix+".ReplicaAvailabilityZones", params["ReplicaAvailabilityZones"], {"entryPrefix":".AvailabilityZone."})
     if ("PrimaryOutpostArn" in params) body.append(prefix+".PrimaryOutpostArn", (params["PrimaryOutpostArn"] ?? '').toString());
-    if (params["ReplicaOutpostArns"]) prt.appendList(body, prefix+".ReplicaOutpostArns", params["ReplicaOutpostArns"], {"entryPrefix":".OutpostArn."})
+    if (params["ReplicaOutpostArns"]) qsP.appendList(body, prefix+".ReplicaOutpostArns", params["ReplicaOutpostArns"], {"entryPrefix":".OutpostArn."})
 }
-function NodeGroupConfiguration_Parse(node: XmlNode): NodeGroupConfiguration {
+function NodeGroupConfiguration_Parse(node: xmlP.XmlNode): NodeGroupConfiguration {
   return {
     ...node.strings({
       optional: {"NodeGroupId":true,"Slots":true,"PrimaryAvailabilityZone":true,"PrimaryOutpostArn":true},
@@ -2394,8 +2393,8 @@ export interface ConfigureShard {
 function ConfigureShard_Serialize(body: URLSearchParams, prefix: string, params: ConfigureShard) {
     body.append(prefix+".NodeGroupId", (params["NodeGroupId"] ?? '').toString());
     body.append(prefix+".NewReplicaCount", (params["NewReplicaCount"] ?? '').toString());
-    if (params["PreferredAvailabilityZones"]) prt.appendList(body, prefix+".PreferredAvailabilityZones", params["PreferredAvailabilityZones"], {"entryPrefix":".PreferredAvailabilityZone."})
-    if (params["PreferredOutpostArns"]) prt.appendList(body, prefix+".PreferredOutpostArns", params["PreferredOutpostArns"], {"entryPrefix":".PreferredOutpostArn."})
+    if (params["PreferredAvailabilityZones"]) qsP.appendList(body, prefix+".PreferredAvailabilityZones", params["PreferredAvailabilityZones"], {"entryPrefix":".PreferredAvailabilityZone."})
+    if (params["PreferredOutpostArns"]) qsP.appendList(body, prefix+".PreferredOutpostArns", params["PreferredOutpostArns"], {"entryPrefix":".PreferredOutpostArn."})
 }
 
 // refs: 2 - tags: input, named, enum, output
@@ -2407,18 +2406,14 @@ export type SourceType =
 | "replication-group"
 | "user"
 | "user-group"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type ServiceUpdateStatus =
 | "available"
 | "cancelled"
 | "expired"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface TimeRangeFilter {
@@ -2426,8 +2421,8 @@ export interface TimeRangeFilter {
   EndTime?: Date | number | null;
 }
 function TimeRangeFilter_Serialize(body: URLSearchParams, prefix: string, params: TimeRangeFilter) {
-    if ("StartTime" in params) body.append(prefix+".StartTime", prt.encodeDate_iso8601(params["StartTime"]));
-    if ("EndTime" in params) body.append(prefix+".EndTime", prt.encodeDate_iso8601(params["EndTime"]));
+    if ("StartTime" in params) body.append(prefix+".StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+    if ("EndTime" in params) body.append(prefix+".EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
 }
 
 // refs: 3 - tags: input, named, enum, output
@@ -2441,9 +2436,7 @@ export type UpdateActionStatus =
 | "scheduling"
 | "scheduled"
 | "not-applicable"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface Filter {
@@ -2452,7 +2445,7 @@ export interface Filter {
 }
 function Filter_Serialize(body: URLSearchParams, prefix: string, params: Filter) {
     body.append(prefix+".Name", (params["Name"] ?? '').toString());
-    if (params["Values"]) prt.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
+    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
 }
 
 // refs: 1 - tags: input, named, interface
@@ -2464,7 +2457,7 @@ export interface RegionalConfiguration {
 function RegionalConfiguration_Serialize(body: URLSearchParams, prefix: string, params: RegionalConfiguration) {
     body.append(prefix+".ReplicationGroupId", (params["ReplicationGroupId"] ?? '').toString());
     body.append(prefix+".ReplicationGroupRegion", (params["ReplicationGroupRegion"] ?? '').toString());
-    if (params["ReshardingConfiguration"]) prt.appendList(body, prefix+".ReshardingConfiguration", params["ReshardingConfiguration"], {"appender":ReshardingConfiguration_Serialize,"entryPrefix":".ReshardingConfiguration."})
+    if (params["ReshardingConfiguration"]) qsP.appendList(body, prefix+".ReshardingConfiguration", params["ReshardingConfiguration"], {"appender":ReshardingConfiguration_Serialize,"entryPrefix":".ReshardingConfiguration."})
 }
 
 // refs: 2 - tags: input, named, interface
@@ -2474,7 +2467,7 @@ export interface ReshardingConfiguration {
 }
 function ReshardingConfiguration_Serialize(body: URLSearchParams, prefix: string, params: ReshardingConfiguration) {
     if ("NodeGroupId" in params) body.append(prefix+".NodeGroupId", (params["NodeGroupId"] ?? '').toString());
-    if (params["PreferredAvailabilityZones"]) prt.appendList(body, prefix+".PreferredAvailabilityZones", params["PreferredAvailabilityZones"], {"entryPrefix":".AvailabilityZone."})
+    if (params["PreferredAvailabilityZones"]) qsP.appendList(body, prefix+".PreferredAvailabilityZones", params["PreferredAvailabilityZones"], {"entryPrefix":".AvailabilityZone."})
 }
 
 // refs: 2 - tags: input, named, enum
@@ -2482,8 +2475,7 @@ export type AuthTokenUpdateStrategyType =
 | "SET"
 | "ROTATE"
 | "DELETE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface ParameterNameValue {
@@ -2513,7 +2505,7 @@ export interface CacheSecurityGroup {
   EC2SecurityGroups: EC2SecurityGroup[];
   ARN?: string | null;
 }
-function CacheSecurityGroup_Parse(node: XmlNode): CacheSecurityGroup {
+function CacheSecurityGroup_Parse(node: xmlP.XmlNode): CacheSecurityGroup {
   return {
     ...node.strings({
       optional: {"OwnerId":true,"CacheSecurityGroupName":true,"Description":true,"ARN":true},
@@ -2528,7 +2520,7 @@ export interface EC2SecurityGroup {
   EC2SecurityGroupName?: string | null;
   EC2SecurityGroupOwnerId?: string | null;
 }
-function EC2SecurityGroup_Parse(node: XmlNode): EC2SecurityGroup {
+function EC2SecurityGroup_Parse(node: xmlP.XmlNode): EC2SecurityGroup {
   return node.strings({
     optional: {"Status":true,"EC2SecurityGroupName":true,"EC2SecurityGroupOwnerId":true},
   });
@@ -2541,7 +2533,7 @@ export interface ProcessedUpdateAction {
   ServiceUpdateName?: string | null;
   UpdateActionStatus?: UpdateActionStatus | null;
 }
-function ProcessedUpdateAction_Parse(node: XmlNode): ProcessedUpdateAction {
+function ProcessedUpdateAction_Parse(node: xmlP.XmlNode): ProcessedUpdateAction {
   return {
     ...node.strings({
       optional: {"ReplicationGroupId":true,"CacheClusterId":true,"ServiceUpdateName":true},
@@ -2558,7 +2550,7 @@ export interface UnprocessedUpdateAction {
   ErrorType?: string | null;
   ErrorMessage?: string | null;
 }
-function UnprocessedUpdateAction_Parse(node: XmlNode): UnprocessedUpdateAction {
+function UnprocessedUpdateAction_Parse(node: xmlP.XmlNode): UnprocessedUpdateAction {
   return node.strings({
     optional: {"ReplicationGroupId":true,"CacheClusterId":true,"ServiceUpdateName":true,"ErrorType":true,"ErrorMessage":true},
   });
@@ -2590,7 +2582,7 @@ export interface ReplicationGroup {
   ARN?: string | null;
   UserGroupIds: string[];
 }
-function ReplicationGroup_Parse(node: XmlNode): ReplicationGroup {
+function ReplicationGroup_Parse(node: xmlP.XmlNode): ReplicationGroup {
   return {
     ...node.strings({
       optional: {"ReplicationGroupId":true,"Description":true,"Status":true,"SnapshottingClusterId":true,"SnapshotWindow":true,"CacheNodeType":true,"KmsKeyId":true,"ARN":true},
@@ -2605,7 +2597,7 @@ function ReplicationGroup_Parse(node: XmlNode): ReplicationGroup {
     SnapshotRetentionLimit: node.first("SnapshotRetentionLimit", false, x => parseInt(x.content ?? '0')),
     ClusterEnabled: node.first("ClusterEnabled", false, x => x.content === 'true'),
     AuthTokenEnabled: node.first("AuthTokenEnabled", false, x => x.content === 'true'),
-    AuthTokenLastModifiedDate: node.first("AuthTokenLastModifiedDate", false, x => parseTimestamp(x.content)),
+    AuthTokenLastModifiedDate: node.first("AuthTokenLastModifiedDate", false, x => xmlP.parseTimestamp(x.content)),
     TransitEncryptionEnabled: node.first("TransitEncryptionEnabled", false, x => x.content === 'true'),
     AtRestEncryptionEnabled: node.first("AtRestEncryptionEnabled", false, x => x.content === 'true'),
     MemberClustersOutpostArns: node.getList("MemberClustersOutpostArns", "ReplicationGroupOutpostArn").map(x => x.content ?? ''),
@@ -2618,7 +2610,7 @@ export interface GlobalReplicationGroupInfo {
   GlobalReplicationGroupId?: string | null;
   GlobalReplicationGroupMemberRole?: string | null;
 }
-function GlobalReplicationGroupInfo_Parse(node: XmlNode): GlobalReplicationGroupInfo {
+function GlobalReplicationGroupInfo_Parse(node: xmlP.XmlNode): GlobalReplicationGroupInfo {
   return node.strings({
     optional: {"GlobalReplicationGroupId":true,"GlobalReplicationGroupMemberRole":true},
   });
@@ -2632,7 +2624,7 @@ export interface ReplicationGroupPendingModifiedValues {
   AuthTokenStatus?: AuthTokenUpdateStatus | null;
   UserGroups?: UserGroupsUpdateStatus | null;
 }
-function ReplicationGroupPendingModifiedValues_Parse(node: XmlNode): ReplicationGroupPendingModifiedValues {
+function ReplicationGroupPendingModifiedValues_Parse(node: xmlP.XmlNode): ReplicationGroupPendingModifiedValues {
   return {
     ...node.strings({
       optional: {"PrimaryClusterId":true},
@@ -2648,14 +2640,13 @@ function ReplicationGroupPendingModifiedValues_Parse(node: XmlNode): Replication
 export type PendingAutomaticFailoverStatus =
 | "enabled"
 | "disabled"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: output, named, interface
 export interface ReshardingStatus {
   SlotMigration?: SlotMigration | null;
 }
-function ReshardingStatus_Parse(node: XmlNode): ReshardingStatus {
+function ReshardingStatus_Parse(node: xmlP.XmlNode): ReshardingStatus {
   return {
     SlotMigration: node.first("SlotMigration", false, SlotMigration_Parse),
   };
@@ -2665,7 +2656,7 @@ function ReshardingStatus_Parse(node: XmlNode): ReshardingStatus {
 export interface SlotMigration {
   ProgressPercentage?: number | null;
 }
-function SlotMigration_Parse(node: XmlNode): SlotMigration {
+function SlotMigration_Parse(node: xmlP.XmlNode): SlotMigration {
   return {
     ProgressPercentage: node.first("ProgressPercentage", false, x => parseFloat(x.content ?? '0')),
   };
@@ -2675,15 +2666,14 @@ function SlotMigration_Parse(node: XmlNode): SlotMigration {
 export type AuthTokenUpdateStatus =
 | "SETTING"
 | "ROTATING"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: output, named, interface
 export interface UserGroupsUpdateStatus {
   UserGroupIdsToAdd: string[];
   UserGroupIdsToRemove: string[];
 }
-function UserGroupsUpdateStatus_Parse(node: XmlNode): UserGroupsUpdateStatus {
+function UserGroupsUpdateStatus_Parse(node: xmlP.XmlNode): UserGroupsUpdateStatus {
   return {
     UserGroupIdsToAdd: node.getList("UserGroupIdsToAdd", "member").map(x => x.content ?? ''),
     UserGroupIdsToRemove: node.getList("UserGroupIdsToRemove", "member").map(x => x.content ?? ''),
@@ -2699,7 +2689,7 @@ export interface NodeGroup {
   Slots?: string | null;
   NodeGroupMembers: NodeGroupMember[];
 }
-function NodeGroup_Parse(node: XmlNode): NodeGroup {
+function NodeGroup_Parse(node: xmlP.XmlNode): NodeGroup {
   return {
     ...node.strings({
       optional: {"NodeGroupId":true,"Status":true,"Slots":true},
@@ -2715,7 +2705,7 @@ export interface Endpoint {
   Address?: string | null;
   Port?: number | null;
 }
-function Endpoint_Parse(node: XmlNode): Endpoint {
+function Endpoint_Parse(node: xmlP.XmlNode): Endpoint {
   return {
     ...node.strings({
       optional: {"Address":true},
@@ -2733,7 +2723,7 @@ export interface NodeGroupMember {
   PreferredOutpostArn?: string | null;
   CurrentRole?: string | null;
 }
-function NodeGroupMember_Parse(node: XmlNode): NodeGroupMember {
+function NodeGroupMember_Parse(node: xmlP.XmlNode): NodeGroupMember {
   return {
     ...node.strings({
       optional: {"CacheClusterId":true,"CacheNodeId":true,"PreferredAvailabilityZone":true,"PreferredOutpostArn":true,"CurrentRole":true},
@@ -2748,15 +2738,13 @@ export type AutomaticFailoverStatus =
 | "disabled"
 | "enabling"
 | "disabling"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: output, named, enum
 export type MultiAZStatus =
 | "enabled"
 | "disabled"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface Snapshot {
@@ -2788,13 +2776,13 @@ export interface Snapshot {
   KmsKeyId?: string | null;
   ARN?: string | null;
 }
-function Snapshot_Parse(node: XmlNode): Snapshot {
+function Snapshot_Parse(node: xmlP.XmlNode): Snapshot {
   return {
     ...node.strings({
       optional: {"SnapshotName":true,"ReplicationGroupId":true,"ReplicationGroupDescription":true,"CacheClusterId":true,"SnapshotStatus":true,"SnapshotSource":true,"CacheNodeType":true,"Engine":true,"EngineVersion":true,"PreferredAvailabilityZone":true,"PreferredOutpostArn":true,"PreferredMaintenanceWindow":true,"TopicArn":true,"CacheParameterGroupName":true,"CacheSubnetGroupName":true,"VpcId":true,"SnapshotWindow":true,"KmsKeyId":true,"ARN":true},
     }),
     NumCacheNodes: node.first("NumCacheNodes", false, x => parseInt(x.content ?? '0')),
-    CacheClusterCreateTime: node.first("CacheClusterCreateTime", false, x => parseTimestamp(x.content)),
+    CacheClusterCreateTime: node.first("CacheClusterCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     Port: node.first("Port", false, x => parseInt(x.content ?? '0')),
     AutoMinorVersionUpgrade: node.first("AutoMinorVersionUpgrade", false, x => x.content === 'true'),
     SnapshotRetentionLimit: node.first("SnapshotRetentionLimit", false, x => parseInt(x.content ?? '0')),
@@ -2814,14 +2802,14 @@ export interface NodeSnapshot {
   CacheNodeCreateTime?: Date | number | null;
   SnapshotCreateTime?: Date | number | null;
 }
-function NodeSnapshot_Parse(node: XmlNode): NodeSnapshot {
+function NodeSnapshot_Parse(node: xmlP.XmlNode): NodeSnapshot {
   return {
     ...node.strings({
       optional: {"CacheClusterId":true,"NodeGroupId":true,"CacheNodeId":true,"CacheSize":true},
     }),
     NodeGroupConfiguration: node.first("NodeGroupConfiguration", false, NodeGroupConfiguration_Parse),
-    CacheNodeCreateTime: node.first("CacheNodeCreateTime", false, x => parseTimestamp(x.content)),
-    SnapshotCreateTime: node.first("SnapshotCreateTime", false, x => parseTimestamp(x.content)),
+    CacheNodeCreateTime: node.first("CacheNodeCreateTime", false, x => xmlP.parseTimestamp(x.content)),
+    SnapshotCreateTime: node.first("SnapshotCreateTime", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -2856,14 +2844,14 @@ export interface CacheCluster {
   AtRestEncryptionEnabled?: boolean | null;
   ARN?: string | null;
 }
-function CacheCluster_Parse(node: XmlNode): CacheCluster {
+function CacheCluster_Parse(node: xmlP.XmlNode): CacheCluster {
   return {
     ...node.strings({
       optional: {"CacheClusterId":true,"ClientDownloadLandingPage":true,"CacheNodeType":true,"Engine":true,"EngineVersion":true,"CacheClusterStatus":true,"PreferredAvailabilityZone":true,"PreferredOutpostArn":true,"PreferredMaintenanceWindow":true,"CacheSubnetGroupName":true,"ReplicationGroupId":true,"SnapshotWindow":true,"ARN":true},
     }),
     ConfigurationEndpoint: node.first("ConfigurationEndpoint", false, Endpoint_Parse),
     NumCacheNodes: node.first("NumCacheNodes", false, x => parseInt(x.content ?? '0')),
-    CacheClusterCreateTime: node.first("CacheClusterCreateTime", false, x => parseTimestamp(x.content)),
+    CacheClusterCreateTime: node.first("CacheClusterCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     PendingModifiedValues: node.first("PendingModifiedValues", false, PendingModifiedValues_Parse),
     NotificationConfiguration: node.first("NotificationConfiguration", false, NotificationConfiguration_Parse),
     CacheSecurityGroups: node.getList("CacheSecurityGroups", "CacheSecurityGroup").map(CacheSecurityGroupMembership_Parse),
@@ -2873,7 +2861,7 @@ function CacheCluster_Parse(node: XmlNode): CacheCluster {
     SecurityGroups: node.getList("SecurityGroups", "member").map(SecurityGroupMembership_Parse),
     SnapshotRetentionLimit: node.first("SnapshotRetentionLimit", false, x => parseInt(x.content ?? '0')),
     AuthTokenEnabled: node.first("AuthTokenEnabled", false, x => x.content === 'true'),
-    AuthTokenLastModifiedDate: node.first("AuthTokenLastModifiedDate", false, x => parseTimestamp(x.content)),
+    AuthTokenLastModifiedDate: node.first("AuthTokenLastModifiedDate", false, x => xmlP.parseTimestamp(x.content)),
     TransitEncryptionEnabled: node.first("TransitEncryptionEnabled", false, x => x.content === 'true'),
     AtRestEncryptionEnabled: node.first("AtRestEncryptionEnabled", false, x => x.content === 'true'),
   };
@@ -2887,7 +2875,7 @@ export interface PendingModifiedValues {
   CacheNodeType?: string | null;
   AuthTokenStatus?: AuthTokenUpdateStatus | null;
 }
-function PendingModifiedValues_Parse(node: XmlNode): PendingModifiedValues {
+function PendingModifiedValues_Parse(node: xmlP.XmlNode): PendingModifiedValues {
   return {
     ...node.strings({
       optional: {"EngineVersion":true,"CacheNodeType":true},
@@ -2903,7 +2891,7 @@ export interface NotificationConfiguration {
   TopicArn?: string | null;
   TopicStatus?: string | null;
 }
-function NotificationConfiguration_Parse(node: XmlNode): NotificationConfiguration {
+function NotificationConfiguration_Parse(node: xmlP.XmlNode): NotificationConfiguration {
   return node.strings({
     optional: {"TopicArn":true,"TopicStatus":true},
   });
@@ -2914,7 +2902,7 @@ export interface CacheSecurityGroupMembership {
   CacheSecurityGroupName?: string | null;
   Status?: string | null;
 }
-function CacheSecurityGroupMembership_Parse(node: XmlNode): CacheSecurityGroupMembership {
+function CacheSecurityGroupMembership_Parse(node: xmlP.XmlNode): CacheSecurityGroupMembership {
   return node.strings({
     optional: {"CacheSecurityGroupName":true,"Status":true},
   });
@@ -2926,7 +2914,7 @@ export interface CacheParameterGroupStatus {
   ParameterApplyStatus?: string | null;
   CacheNodeIdsToReboot: string[];
 }
-function CacheParameterGroupStatus_Parse(node: XmlNode): CacheParameterGroupStatus {
+function CacheParameterGroupStatus_Parse(node: xmlP.XmlNode): CacheParameterGroupStatus {
   return {
     ...node.strings({
       optional: {"CacheParameterGroupName":true,"ParameterApplyStatus":true},
@@ -2946,12 +2934,12 @@ export interface CacheNode {
   CustomerAvailabilityZone?: string | null;
   CustomerOutpostArn?: string | null;
 }
-function CacheNode_Parse(node: XmlNode): CacheNode {
+function CacheNode_Parse(node: xmlP.XmlNode): CacheNode {
   return {
     ...node.strings({
       optional: {"CacheNodeId":true,"CacheNodeStatus":true,"ParameterGroupStatus":true,"SourceCacheNodeId":true,"CustomerAvailabilityZone":true,"CustomerOutpostArn":true},
     }),
-    CacheNodeCreateTime: node.first("CacheNodeCreateTime", false, x => parseTimestamp(x.content)),
+    CacheNodeCreateTime: node.first("CacheNodeCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     Endpoint: node.first("Endpoint", false, Endpoint_Parse),
   };
 }
@@ -2961,7 +2949,7 @@ export interface SecurityGroupMembership {
   SecurityGroupId?: string | null;
   Status?: string | null;
 }
-function SecurityGroupMembership_Parse(node: XmlNode): SecurityGroupMembership {
+function SecurityGroupMembership_Parse(node: xmlP.XmlNode): SecurityGroupMembership {
   return node.strings({
     optional: {"SecurityGroupId":true,"Status":true},
   });
@@ -2975,7 +2963,7 @@ export interface CacheParameterGroup {
   IsGlobal?: boolean | null;
   ARN?: string | null;
 }
-function CacheParameterGroup_Parse(node: XmlNode): CacheParameterGroup {
+function CacheParameterGroup_Parse(node: xmlP.XmlNode): CacheParameterGroup {
   return {
     ...node.strings({
       optional: {"CacheParameterGroupName":true,"CacheParameterGroupFamily":true,"Description":true,"ARN":true},
@@ -2992,7 +2980,7 @@ export interface CacheSubnetGroup {
   Subnets: Subnet[];
   ARN?: string | null;
 }
-function CacheSubnetGroup_Parse(node: XmlNode): CacheSubnetGroup {
+function CacheSubnetGroup_Parse(node: xmlP.XmlNode): CacheSubnetGroup {
   return {
     ...node.strings({
       optional: {"CacheSubnetGroupName":true,"CacheSubnetGroupDescription":true,"VpcId":true,"ARN":true},
@@ -3007,7 +2995,7 @@ export interface Subnet {
   SubnetAvailabilityZone?: AvailabilityZone | null;
   SubnetOutpost?: SubnetOutpost | null;
 }
-function Subnet_Parse(node: XmlNode): Subnet {
+function Subnet_Parse(node: xmlP.XmlNode): Subnet {
   return {
     ...node.strings({
       optional: {"SubnetIdentifier":true},
@@ -3021,7 +3009,7 @@ function Subnet_Parse(node: XmlNode): Subnet {
 export interface AvailabilityZone {
   Name?: string | null;
 }
-function AvailabilityZone_Parse(node: XmlNode): AvailabilityZone {
+function AvailabilityZone_Parse(node: xmlP.XmlNode): AvailabilityZone {
   return node.strings({
     optional: {"Name":true},
   });
@@ -3031,7 +3019,7 @@ function AvailabilityZone_Parse(node: XmlNode): AvailabilityZone {
 export interface SubnetOutpost {
   SubnetOutpostArn?: string | null;
 }
-function SubnetOutpost_Parse(node: XmlNode): SubnetOutpost {
+function SubnetOutpost_Parse(node: xmlP.XmlNode): SubnetOutpost {
   return node.strings({
     optional: {"SubnetOutpostArn":true},
   });
@@ -3053,7 +3041,7 @@ export interface GlobalReplicationGroup {
   AtRestEncryptionEnabled?: boolean | null;
   ARN?: string | null;
 }
-function GlobalReplicationGroup_Parse(node: XmlNode): GlobalReplicationGroup {
+function GlobalReplicationGroup_Parse(node: xmlP.XmlNode): GlobalReplicationGroup {
   return {
     ...node.strings({
       optional: {"GlobalReplicationGroupId":true,"GlobalReplicationGroupDescription":true,"Status":true,"CacheNodeType":true,"Engine":true,"EngineVersion":true,"ARN":true},
@@ -3075,7 +3063,7 @@ export interface GlobalReplicationGroupMember {
   AutomaticFailover?: AutomaticFailoverStatus | null;
   Status?: string | null;
 }
-function GlobalReplicationGroupMember_Parse(node: XmlNode): GlobalReplicationGroupMember {
+function GlobalReplicationGroupMember_Parse(node: xmlP.XmlNode): GlobalReplicationGroupMember {
   return {
     ...node.strings({
       optional: {"ReplicationGroupId":true,"ReplicationGroupRegion":true,"Role":true,"Status":true},
@@ -3089,7 +3077,7 @@ export interface GlobalNodeGroup {
   GlobalNodeGroupId?: string | null;
   Slots?: string | null;
 }
-function GlobalNodeGroup_Parse(node: XmlNode): GlobalNodeGroup {
+function GlobalNodeGroup_Parse(node: xmlP.XmlNode): GlobalNodeGroup {
   return node.strings({
     optional: {"GlobalNodeGroupId":true,"Slots":true},
   });
@@ -3100,7 +3088,7 @@ export interface Authentication {
   Type?: AuthenticationType | null;
   PasswordCount?: number | null;
 }
-function Authentication_Parse(node: XmlNode): Authentication {
+function Authentication_Parse(node: xmlP.XmlNode): Authentication {
   return {
     Type: node.first("Type", false, x => (x.content ?? '') as AuthenticationType),
     PasswordCount: node.first("PasswordCount", false, x => parseInt(x.content ?? '0')),
@@ -3111,15 +3099,14 @@ function Authentication_Parse(node: XmlNode): Authentication {
 export type AuthenticationType =
 | "password"
 | "no-password"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface UserGroupPendingChanges {
   UserIdsToRemove: string[];
   UserIdsToAdd: string[];
 }
-function UserGroupPendingChanges_Parse(node: XmlNode): UserGroupPendingChanges {
+function UserGroupPendingChanges_Parse(node: xmlP.XmlNode): UserGroupPendingChanges {
   return {
     UserIdsToRemove: node.getList("UserIdsToRemove", "member").map(x => x.content ?? ''),
     UserIdsToAdd: node.getList("UserIdsToAdd", "member").map(x => x.content ?? ''),
@@ -3134,7 +3121,7 @@ export interface CacheEngineVersion {
   CacheEngineDescription?: string | null;
   CacheEngineVersionDescription?: string | null;
 }
-function CacheEngineVersion_Parse(node: XmlNode): CacheEngineVersion {
+function CacheEngineVersion_Parse(node: xmlP.XmlNode): CacheEngineVersion {
   return node.strings({
     optional: {"Engine":true,"EngineVersion":true,"CacheParameterGroupFamily":true,"CacheEngineDescription":true,"CacheEngineVersionDescription":true},
   });
@@ -3152,7 +3139,7 @@ export interface Parameter {
   MinimumEngineVersion?: string | null;
   ChangeType?: ChangeType | null;
 }
-function Parameter_Parse(node: XmlNode): Parameter {
+function Parameter_Parse(node: xmlP.XmlNode): Parameter {
   return {
     ...node.strings({
       optional: {"ParameterName":true,"ParameterValue":true,"Description":true,"Source":true,"DataType":true,"AllowedValues":true,"MinimumEngineVersion":true},
@@ -3166,8 +3153,7 @@ function Parameter_Parse(node: XmlNode): Parameter {
 export type ChangeType =
 | "immediate"
 | "requires-reboot"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface CacheNodeTypeSpecificParameter {
@@ -3181,7 +3167,7 @@ export interface CacheNodeTypeSpecificParameter {
   CacheNodeTypeSpecificValues: CacheNodeTypeSpecificValue[];
   ChangeType?: ChangeType | null;
 }
-function CacheNodeTypeSpecificParameter_Parse(node: XmlNode): CacheNodeTypeSpecificParameter {
+function CacheNodeTypeSpecificParameter_Parse(node: xmlP.XmlNode): CacheNodeTypeSpecificParameter {
   return {
     ...node.strings({
       optional: {"ParameterName":true,"Description":true,"Source":true,"DataType":true,"AllowedValues":true,"MinimumEngineVersion":true},
@@ -3197,7 +3183,7 @@ export interface CacheNodeTypeSpecificValue {
   CacheNodeType?: string | null;
   Value?: string | null;
 }
-function CacheNodeTypeSpecificValue_Parse(node: XmlNode): CacheNodeTypeSpecificValue {
+function CacheNodeTypeSpecificValue_Parse(node: xmlP.XmlNode): CacheNodeTypeSpecificValue {
   return node.strings({
     optional: {"CacheNodeType":true,"Value":true},
   });
@@ -3210,7 +3196,7 @@ export interface EngineDefaults {
   Parameters: Parameter[];
   CacheNodeTypeSpecificParameters: CacheNodeTypeSpecificParameter[];
 }
-function EngineDefaults_Parse(node: XmlNode): EngineDefaults {
+function EngineDefaults_Parse(node: xmlP.XmlNode): EngineDefaults {
   return {
     ...node.strings({
       optional: {"CacheParameterGroupFamily":true,"Marker":true},
@@ -3227,13 +3213,13 @@ export interface Event {
   Message?: string | null;
   Date?: Date | number | null;
 }
-function Event_Parse(node: XmlNode): Event {
+function Event_Parse(node: xmlP.XmlNode): Event {
   return {
     ...node.strings({
       optional: {"SourceIdentifier":true,"Message":true},
     }),
     SourceType: node.first("SourceType", false, x => (x.content ?? '') as SourceType),
-    Date: node.first("Date", false, x => parseTimestamp(x.content)),
+    Date: node.first("Date", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -3253,12 +3239,12 @@ export interface ReservedCacheNode {
   RecurringCharges: RecurringCharge[];
   ReservationARN?: string | null;
 }
-function ReservedCacheNode_Parse(node: XmlNode): ReservedCacheNode {
+function ReservedCacheNode_Parse(node: xmlP.XmlNode): ReservedCacheNode {
   return {
     ...node.strings({
       optional: {"ReservedCacheNodeId":true,"ReservedCacheNodesOfferingId":true,"CacheNodeType":true,"ProductDescription":true,"OfferingType":true,"State":true,"ReservationARN":true},
     }),
-    StartTime: node.first("StartTime", false, x => parseTimestamp(x.content)),
+    StartTime: node.first("StartTime", false, x => xmlP.parseTimestamp(x.content)),
     Duration: node.first("Duration", false, x => parseInt(x.content ?? '0')),
     FixedPrice: node.first("FixedPrice", false, x => parseFloat(x.content ?? '0')),
     UsagePrice: node.first("UsagePrice", false, x => parseFloat(x.content ?? '0')),
@@ -3272,7 +3258,7 @@ export interface RecurringCharge {
   RecurringChargeAmount?: number | null;
   RecurringChargeFrequency?: string | null;
 }
-function RecurringCharge_Parse(node: XmlNode): RecurringCharge {
+function RecurringCharge_Parse(node: xmlP.XmlNode): RecurringCharge {
   return {
     ...node.strings({
       optional: {"RecurringChargeFrequency":true},
@@ -3292,7 +3278,7 @@ export interface ReservedCacheNodesOffering {
   OfferingType?: string | null;
   RecurringCharges: RecurringCharge[];
 }
-function ReservedCacheNodesOffering_Parse(node: XmlNode): ReservedCacheNodesOffering {
+function ReservedCacheNodesOffering_Parse(node: xmlP.XmlNode): ReservedCacheNodesOffering {
   return {
     ...node.strings({
       optional: {"ReservedCacheNodesOfferingId":true,"CacheNodeType":true,"ProductDescription":true,"OfferingType":true},
@@ -3319,15 +3305,15 @@ export interface ServiceUpdate {
   AutoUpdateAfterRecommendedApplyByDate?: boolean | null;
   EstimatedUpdateTime?: string | null;
 }
-function ServiceUpdate_Parse(node: XmlNode): ServiceUpdate {
+function ServiceUpdate_Parse(node: xmlP.XmlNode): ServiceUpdate {
   return {
     ...node.strings({
       optional: {"ServiceUpdateName":true,"ServiceUpdateDescription":true,"Engine":true,"EngineVersion":true,"EstimatedUpdateTime":true},
     }),
-    ServiceUpdateReleaseDate: node.first("ServiceUpdateReleaseDate", false, x => parseTimestamp(x.content)),
-    ServiceUpdateEndDate: node.first("ServiceUpdateEndDate", false, x => parseTimestamp(x.content)),
+    ServiceUpdateReleaseDate: node.first("ServiceUpdateReleaseDate", false, x => xmlP.parseTimestamp(x.content)),
+    ServiceUpdateEndDate: node.first("ServiceUpdateEndDate", false, x => xmlP.parseTimestamp(x.content)),
     ServiceUpdateSeverity: node.first("ServiceUpdateSeverity", false, x => (x.content ?? '') as ServiceUpdateSeverity),
-    ServiceUpdateRecommendedApplyByDate: node.first("ServiceUpdateRecommendedApplyByDate", false, x => parseTimestamp(x.content)),
+    ServiceUpdateRecommendedApplyByDate: node.first("ServiceUpdateRecommendedApplyByDate", false, x => xmlP.parseTimestamp(x.content)),
     ServiceUpdateStatus: node.first("ServiceUpdateStatus", false, x => (x.content ?? '') as ServiceUpdateStatus),
     ServiceUpdateType: node.first("ServiceUpdateType", false, x => (x.content ?? '') as ServiceUpdateType),
     AutoUpdateAfterRecommendedApplyByDate: node.first("AutoUpdateAfterRecommendedApplyByDate", false, x => x.content === 'true'),
@@ -3340,14 +3326,12 @@ export type ServiceUpdateSeverity =
 | "important"
 | "medium"
 | "low"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type ServiceUpdateType =
 | "security-update"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface UpdateAction {
@@ -3369,19 +3353,19 @@ export interface UpdateAction {
   EstimatedUpdateTime?: string | null;
   Engine?: string | null;
 }
-function UpdateAction_Parse(node: XmlNode): UpdateAction {
+function UpdateAction_Parse(node: xmlP.XmlNode): UpdateAction {
   return {
     ...node.strings({
       optional: {"ReplicationGroupId":true,"CacheClusterId":true,"ServiceUpdateName":true,"NodesUpdated":true,"EstimatedUpdateTime":true,"Engine":true},
     }),
-    ServiceUpdateReleaseDate: node.first("ServiceUpdateReleaseDate", false, x => parseTimestamp(x.content)),
+    ServiceUpdateReleaseDate: node.first("ServiceUpdateReleaseDate", false, x => xmlP.parseTimestamp(x.content)),
     ServiceUpdateSeverity: node.first("ServiceUpdateSeverity", false, x => (x.content ?? '') as ServiceUpdateSeverity),
     ServiceUpdateStatus: node.first("ServiceUpdateStatus", false, x => (x.content ?? '') as ServiceUpdateStatus),
-    ServiceUpdateRecommendedApplyByDate: node.first("ServiceUpdateRecommendedApplyByDate", false, x => parseTimestamp(x.content)),
+    ServiceUpdateRecommendedApplyByDate: node.first("ServiceUpdateRecommendedApplyByDate", false, x => xmlP.parseTimestamp(x.content)),
     ServiceUpdateType: node.first("ServiceUpdateType", false, x => (x.content ?? '') as ServiceUpdateType),
-    UpdateActionAvailableDate: node.first("UpdateActionAvailableDate", false, x => parseTimestamp(x.content)),
+    UpdateActionAvailableDate: node.first("UpdateActionAvailableDate", false, x => xmlP.parseTimestamp(x.content)),
     UpdateActionStatus: node.first("UpdateActionStatus", false, x => (x.content ?? '') as UpdateActionStatus),
-    UpdateActionStatusModifiedDate: node.first("UpdateActionStatusModifiedDate", false, x => parseTimestamp(x.content)),
+    UpdateActionStatusModifiedDate: node.first("UpdateActionStatusModifiedDate", false, x => xmlP.parseTimestamp(x.content)),
     SlaMet: node.first("SlaMet", false, x => (x.content ?? '') as SlaMet),
     NodeGroupUpdateStatus: node.getList("NodeGroupUpdateStatus", "NodeGroupUpdateStatus").map(NodeGroupUpdateStatus_Parse),
     CacheNodeUpdateStatus: node.getList("CacheNodeUpdateStatus", "CacheNodeUpdateStatus").map(CacheNodeUpdateStatus_Parse),
@@ -3393,15 +3377,14 @@ export type SlaMet =
 | "yes"
 | "no"
 | "n/a"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface NodeGroupUpdateStatus {
   NodeGroupId?: string | null;
   NodeGroupMemberUpdateStatus: NodeGroupMemberUpdateStatus[];
 }
-function NodeGroupUpdateStatus_Parse(node: XmlNode): NodeGroupUpdateStatus {
+function NodeGroupUpdateStatus_Parse(node: xmlP.XmlNode): NodeGroupUpdateStatus {
   return {
     ...node.strings({
       optional: {"NodeGroupId":true},
@@ -3422,18 +3405,18 @@ export interface NodeGroupMemberUpdateStatus {
   NodeUpdateInitiatedDate?: Date | number | null;
   NodeUpdateStatusModifiedDate?: Date | number | null;
 }
-function NodeGroupMemberUpdateStatus_Parse(node: XmlNode): NodeGroupMemberUpdateStatus {
+function NodeGroupMemberUpdateStatus_Parse(node: xmlP.XmlNode): NodeGroupMemberUpdateStatus {
   return {
     ...node.strings({
       optional: {"CacheClusterId":true,"CacheNodeId":true},
     }),
     NodeUpdateStatus: node.first("NodeUpdateStatus", false, x => (x.content ?? '') as NodeUpdateStatus),
-    NodeDeletionDate: node.first("NodeDeletionDate", false, x => parseTimestamp(x.content)),
-    NodeUpdateStartDate: node.first("NodeUpdateStartDate", false, x => parseTimestamp(x.content)),
-    NodeUpdateEndDate: node.first("NodeUpdateEndDate", false, x => parseTimestamp(x.content)),
+    NodeDeletionDate: node.first("NodeDeletionDate", false, x => xmlP.parseTimestamp(x.content)),
+    NodeUpdateStartDate: node.first("NodeUpdateStartDate", false, x => xmlP.parseTimestamp(x.content)),
+    NodeUpdateEndDate: node.first("NodeUpdateEndDate", false, x => xmlP.parseTimestamp(x.content)),
     NodeUpdateInitiatedBy: node.first("NodeUpdateInitiatedBy", false, x => (x.content ?? '') as NodeUpdateInitiatedBy),
-    NodeUpdateInitiatedDate: node.first("NodeUpdateInitiatedDate", false, x => parseTimestamp(x.content)),
-    NodeUpdateStatusModifiedDate: node.first("NodeUpdateStatusModifiedDate", false, x => parseTimestamp(x.content)),
+    NodeUpdateInitiatedDate: node.first("NodeUpdateInitiatedDate", false, x => xmlP.parseTimestamp(x.content)),
+    NodeUpdateStatusModifiedDate: node.first("NodeUpdateStatusModifiedDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -3445,15 +3428,13 @@ export type NodeUpdateStatus =
 | "stopping"
 | "stopped"
 | "complete"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type NodeUpdateInitiatedBy =
 | "system"
 | "customer"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface CacheNodeUpdateStatus {
@@ -3466,17 +3447,17 @@ export interface CacheNodeUpdateStatus {
   NodeUpdateInitiatedDate?: Date | number | null;
   NodeUpdateStatusModifiedDate?: Date | number | null;
 }
-function CacheNodeUpdateStatus_Parse(node: XmlNode): CacheNodeUpdateStatus {
+function CacheNodeUpdateStatus_Parse(node: xmlP.XmlNode): CacheNodeUpdateStatus {
   return {
     ...node.strings({
       optional: {"CacheNodeId":true},
     }),
     NodeUpdateStatus: node.first("NodeUpdateStatus", false, x => (x.content ?? '') as NodeUpdateStatus),
-    NodeDeletionDate: node.first("NodeDeletionDate", false, x => parseTimestamp(x.content)),
-    NodeUpdateStartDate: node.first("NodeUpdateStartDate", false, x => parseTimestamp(x.content)),
-    NodeUpdateEndDate: node.first("NodeUpdateEndDate", false, x => parseTimestamp(x.content)),
+    NodeDeletionDate: node.first("NodeDeletionDate", false, x => xmlP.parseTimestamp(x.content)),
+    NodeUpdateStartDate: node.first("NodeUpdateStartDate", false, x => xmlP.parseTimestamp(x.content)),
+    NodeUpdateEndDate: node.first("NodeUpdateEndDate", false, x => xmlP.parseTimestamp(x.content)),
     NodeUpdateInitiatedBy: node.first("NodeUpdateInitiatedBy", false, x => (x.content ?? '') as NodeUpdateInitiatedBy),
-    NodeUpdateInitiatedDate: node.first("NodeUpdateInitiatedDate", false, x => parseTimestamp(x.content)),
-    NodeUpdateStatusModifiedDate: node.first("NodeUpdateStatusModifiedDate", false, x => parseTimestamp(x.content)),
+    NodeUpdateInitiatedDate: node.first("NodeUpdateInitiatedDate", false, x => xmlP.parseTimestamp(x.content)),
+    NodeUpdateStatusModifiedDate: node.first("NodeUpdateStatusModifiedDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }

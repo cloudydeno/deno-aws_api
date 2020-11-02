@@ -5,9 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
-
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 import * as Base64 from "https://deno.land/x/base64@v0.2.1/mod.ts";
 
 export default class IAM {
@@ -130,7 +130,7 @@ export default class IAM {
       abortSignal, body,
       action: "CreateAccessKey",
     });
-    const xml = readXmlResult(await resp.text(), "CreateAccessKeyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateAccessKeyResult");
     return {
       AccessKey: xml.first("AccessKey", true, AccessKey_Parse),
     };
@@ -159,7 +159,7 @@ export default class IAM {
       abortSignal, body,
       action: "CreateGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateGroupResult");
     return {
       Group: xml.first("Group", true, Group_Parse),
     };
@@ -176,7 +176,7 @@ export default class IAM {
       abortSignal, body,
       action: "CreateInstanceProfile",
     });
-    const xml = readXmlResult(await resp.text(), "CreateInstanceProfileResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateInstanceProfileResult");
     return {
       InstanceProfile: xml.first("InstanceProfile", true, InstanceProfile_Parse),
     };
@@ -194,7 +194,7 @@ export default class IAM {
       abortSignal, body,
       action: "CreateLoginProfile",
     });
-    const xml = readXmlResult(await resp.text(), "CreateLoginProfileResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateLoginProfileResult");
     return {
       LoginProfile: xml.first("LoginProfile", true, LoginProfile_Parse),
     };
@@ -206,13 +206,13 @@ export default class IAM {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"Url", (params["Url"] ?? '').toString());
-    if (params["ClientIDList"]) prt.appendList(body, prefix+"ClientIDList", params["ClientIDList"], {"entryPrefix":".member."})
-    if (params["ThumbprintList"]) prt.appendList(body, prefix+"ThumbprintList", params["ThumbprintList"], {"entryPrefix":".member."})
+    if (params["ClientIDList"]) qsP.appendList(body, prefix+"ClientIDList", params["ClientIDList"], {"entryPrefix":".member."})
+    if (params["ThumbprintList"]) qsP.appendList(body, prefix+"ThumbprintList", params["ThumbprintList"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateOpenIDConnectProvider",
     });
-    const xml = readXmlResult(await resp.text(), "CreateOpenIDConnectProviderResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateOpenIDConnectProviderResult");
     return xml.strings({
       optional: {"OpenIDConnectProviderArn":true},
     });
@@ -231,7 +231,7 @@ export default class IAM {
       abortSignal, body,
       action: "CreatePolicy",
     });
-    const xml = readXmlResult(await resp.text(), "CreatePolicyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreatePolicyResult");
     return {
       Policy: xml.first("Policy", false, Policy_Parse),
     };
@@ -249,7 +249,7 @@ export default class IAM {
       abortSignal, body,
       action: "CreatePolicyVersion",
     });
-    const xml = readXmlResult(await resp.text(), "CreatePolicyVersionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreatePolicyVersionResult");
     return {
       PolicyVersion: xml.first("PolicyVersion", false, PolicyVersion_Parse),
     };
@@ -266,12 +266,12 @@ export default class IAM {
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     if ("MaxSessionDuration" in params) body.append(prefix+"MaxSessionDuration", (params["MaxSessionDuration"] ?? '').toString());
     if ("PermissionsBoundary" in params) body.append(prefix+"PermissionsBoundary", (params["PermissionsBoundary"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRole",
     });
-    const xml = readXmlResult(await resp.text(), "CreateRoleResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateRoleResult");
     return {
       Role: xml.first("Role", true, Role_Parse),
     };
@@ -288,7 +288,7 @@ export default class IAM {
       abortSignal, body,
       action: "CreateSAMLProvider",
     });
-    const xml = readXmlResult(await resp.text(), "CreateSAMLProviderResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateSAMLProviderResult");
     return xml.strings({
       optional: {"SAMLProviderArn":true},
     });
@@ -306,7 +306,7 @@ export default class IAM {
       abortSignal, body,
       action: "CreateServiceLinkedRole",
     });
-    const xml = readXmlResult(await resp.text(), "CreateServiceLinkedRoleResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateServiceLinkedRoleResult");
     return {
       Role: xml.first("Role", false, Role_Parse),
     };
@@ -323,7 +323,7 @@ export default class IAM {
       abortSignal, body,
       action: "CreateServiceSpecificCredential",
     });
-    const xml = readXmlResult(await resp.text(), "CreateServiceSpecificCredentialResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateServiceSpecificCredentialResult");
     return {
       ServiceSpecificCredential: xml.first("ServiceSpecificCredential", false, ServiceSpecificCredential_Parse),
     };
@@ -337,12 +337,12 @@ export default class IAM {
     if ("Path" in params) body.append(prefix+"Path", (params["Path"] ?? '').toString());
     body.append(prefix+"UserName", (params["UserName"] ?? '').toString());
     if ("PermissionsBoundary" in params) body.append(prefix+"PermissionsBoundary", (params["PermissionsBoundary"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUser",
     });
-    const xml = readXmlResult(await resp.text(), "CreateUserResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateUserResult");
     return {
       User: xml.first("User", false, User_Parse),
     };
@@ -359,7 +359,7 @@ export default class IAM {
       abortSignal, body,
       action: "CreateVirtualMFADevice",
     });
-    const xml = readXmlResult(await resp.text(), "CreateVirtualMFADeviceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateVirtualMFADeviceResult");
     return {
       VirtualMFADevice: xml.first("VirtualMFADevice", true, VirtualMFADevice_Parse),
     };
@@ -582,7 +582,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteServiceLinkedRole",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteServiceLinkedRoleResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteServiceLinkedRoleResult");
     return xml.strings({
       required: {"DeletionTaskId":true},
     });
@@ -724,7 +724,7 @@ export default class IAM {
       abortSignal,
       action: "GenerateCredentialReport",
     });
-    const xml = readXmlResult(await resp.text(), "GenerateCredentialReportResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GenerateCredentialReportResult");
     return {
       ...xml.strings({
         optional: {"Description":true},
@@ -744,7 +744,7 @@ export default class IAM {
       abortSignal, body,
       action: "GenerateOrganizationsAccessReport",
     });
-    const xml = readXmlResult(await resp.text(), "GenerateOrganizationsAccessReportResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GenerateOrganizationsAccessReportResult");
     return xml.strings({
       optional: {"JobId":true},
     });
@@ -761,7 +761,7 @@ export default class IAM {
       abortSignal, body,
       action: "GenerateServiceLastAccessedDetails",
     });
-    const xml = readXmlResult(await resp.text(), "GenerateServiceLastAccessedDetailsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GenerateServiceLastAccessedDetailsResult");
     return xml.strings({
       optional: {"JobId":true},
     });
@@ -777,7 +777,7 @@ export default class IAM {
       abortSignal, body,
       action: "GetAccessKeyLastUsed",
     });
-    const xml = readXmlResult(await resp.text(), "GetAccessKeyLastUsedResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetAccessKeyLastUsedResult");
     return {
       ...xml.strings({
         optional: {"UserName":true},
@@ -791,14 +791,14 @@ export default class IAM {
   ): Promise<GetAccountAuthorizationDetailsResponse> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filter"]) prt.appendList(body, prefix+"Filter", params["Filter"], {"entryPrefix":".member."})
+    if (params["Filter"]) qsP.appendList(body, prefix+"Filter", params["Filter"], {"entryPrefix":".member."})
     if ("MaxItems" in params) body.append(prefix+"MaxItems", (params["MaxItems"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAccountAuthorizationDetails",
     });
-    const xml = readXmlResult(await resp.text(), "GetAccountAuthorizationDetailsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetAccountAuthorizationDetailsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -818,7 +818,7 @@ export default class IAM {
       abortSignal,
       action: "GetAccountPasswordPolicy",
     });
-    const xml = readXmlResult(await resp.text(), "GetAccountPasswordPolicyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetAccountPasswordPolicyResult");
     return {
       PasswordPolicy: xml.first("PasswordPolicy", true, PasswordPolicy_Parse),
     };
@@ -831,9 +831,9 @@ export default class IAM {
       abortSignal,
       action: "GetAccountSummary",
     });
-    const xml = readXmlResult(await resp.text(), "GetAccountSummaryResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetAccountSummaryResult");
     return {
-      SummaryMap: readXmlMap(xml.getList("SummaryMap", "entry"), x => parseInt(x.content ?? '0'), {}),
+      SummaryMap: xmlP.readXmlMap(xml.getList("SummaryMap", "entry"), x => parseInt(x.content ?? '0'), {}),
     };
   }
 
@@ -842,12 +842,12 @@ export default class IAM {
   ): Promise<GetContextKeysForPolicyResponse> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["PolicyInputList"]) prt.appendList(body, prefix+"PolicyInputList", params["PolicyInputList"], {"entryPrefix":".member."})
+    if (params["PolicyInputList"]) qsP.appendList(body, prefix+"PolicyInputList", params["PolicyInputList"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetContextKeysForCustomPolicy",
     });
-    const xml = readXmlResult(await resp.text(), "GetContextKeysForCustomPolicyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetContextKeysForCustomPolicyResult");
     return {
       ContextKeyNames: xml.getList("ContextKeyNames", "member").map(x => x.content ?? ''),
     };
@@ -859,12 +859,12 @@ export default class IAM {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"PolicySourceArn", (params["PolicySourceArn"] ?? '').toString());
-    if (params["PolicyInputList"]) prt.appendList(body, prefix+"PolicyInputList", params["PolicyInputList"], {"entryPrefix":".member."})
+    if (params["PolicyInputList"]) qsP.appendList(body, prefix+"PolicyInputList", params["PolicyInputList"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetContextKeysForPrincipalPolicy",
     });
-    const xml = readXmlResult(await resp.text(), "GetContextKeysForPrincipalPolicyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetContextKeysForPrincipalPolicyResult");
     return {
       ContextKeyNames: xml.getList("ContextKeyNames", "member").map(x => x.content ?? ''),
     };
@@ -877,11 +877,11 @@ export default class IAM {
       abortSignal,
       action: "GetCredentialReport",
     });
-    const xml = readXmlResult(await resp.text(), "GetCredentialReportResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetCredentialReportResult");
     return {
       Content: xml.first("Content", false, x => Base64.toUint8Array(x.content ?? '')),
       ReportFormat: xml.first("ReportFormat", false, x => (x.content ?? '') as ReportFormatType),
-      GeneratedTime: xml.first("GeneratedTime", false, x => parseTimestamp(x.content)),
+      GeneratedTime: xml.first("GeneratedTime", false, x => xmlP.parseTimestamp(x.content)),
     };
   }
 
@@ -897,7 +897,7 @@ export default class IAM {
       abortSignal, body,
       action: "GetGroup",
     });
-    const xml = readXmlResult(await resp.text(), "GetGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetGroupResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -919,7 +919,7 @@ export default class IAM {
       abortSignal, body,
       action: "GetGroupPolicy",
     });
-    const xml = readXmlResult(await resp.text(), "GetGroupPolicyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetGroupPolicyResult");
     return xml.strings({
       required: {"GroupName":true,"PolicyName":true,"PolicyDocument":true},
     });
@@ -935,7 +935,7 @@ export default class IAM {
       abortSignal, body,
       action: "GetInstanceProfile",
     });
-    const xml = readXmlResult(await resp.text(), "GetInstanceProfileResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetInstanceProfileResult");
     return {
       InstanceProfile: xml.first("InstanceProfile", true, InstanceProfile_Parse),
     };
@@ -951,7 +951,7 @@ export default class IAM {
       abortSignal, body,
       action: "GetLoginProfile",
     });
-    const xml = readXmlResult(await resp.text(), "GetLoginProfileResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetLoginProfileResult");
     return {
       LoginProfile: xml.first("LoginProfile", true, LoginProfile_Parse),
     };
@@ -967,14 +967,14 @@ export default class IAM {
       abortSignal, body,
       action: "GetOpenIDConnectProvider",
     });
-    const xml = readXmlResult(await resp.text(), "GetOpenIDConnectProviderResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetOpenIDConnectProviderResult");
     return {
       ...xml.strings({
         optional: {"Url":true},
       }),
       ClientIDList: xml.getList("ClientIDList", "member").map(x => x.content ?? ''),
       ThumbprintList: xml.getList("ThumbprintList", "member").map(x => x.content ?? ''),
-      CreateDate: xml.first("CreateDate", false, x => parseTimestamp(x.content)),
+      CreateDate: xml.first("CreateDate", false, x => xmlP.parseTimestamp(x.content)),
     };
   }
 
@@ -991,14 +991,14 @@ export default class IAM {
       abortSignal, body,
       action: "GetOrganizationsAccessReport",
     });
-    const xml = readXmlResult(await resp.text(), "GetOrganizationsAccessReportResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetOrganizationsAccessReportResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
       }),
       JobStatus: xml.first("JobStatus", true, x => (x.content ?? '') as jobStatusType),
-      JobCreationDate: xml.first("JobCreationDate", true, x => parseTimestamp(x.content)),
-      JobCompletionDate: xml.first("JobCompletionDate", false, x => parseTimestamp(x.content)),
+      JobCreationDate: xml.first("JobCreationDate", true, x => xmlP.parseTimestamp(x.content)),
+      JobCompletionDate: xml.first("JobCompletionDate", false, x => xmlP.parseTimestamp(x.content)),
       NumberOfServicesAccessible: xml.first("NumberOfServicesAccessible", false, x => parseInt(x.content ?? '0')),
       NumberOfServicesNotAccessed: xml.first("NumberOfServicesNotAccessed", false, x => parseInt(x.content ?? '0')),
       AccessDetails: xml.getList("AccessDetails", "member").map(AccessDetail_Parse),
@@ -1017,7 +1017,7 @@ export default class IAM {
       abortSignal, body,
       action: "GetPolicy",
     });
-    const xml = readXmlResult(await resp.text(), "GetPolicyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetPolicyResult");
     return {
       Policy: xml.first("Policy", false, Policy_Parse),
     };
@@ -1034,7 +1034,7 @@ export default class IAM {
       abortSignal, body,
       action: "GetPolicyVersion",
     });
-    const xml = readXmlResult(await resp.text(), "GetPolicyVersionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetPolicyVersionResult");
     return {
       PolicyVersion: xml.first("PolicyVersion", false, PolicyVersion_Parse),
     };
@@ -1050,7 +1050,7 @@ export default class IAM {
       abortSignal, body,
       action: "GetRole",
     });
-    const xml = readXmlResult(await resp.text(), "GetRoleResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetRoleResult");
     return {
       Role: xml.first("Role", true, Role_Parse),
     };
@@ -1067,7 +1067,7 @@ export default class IAM {
       abortSignal, body,
       action: "GetRolePolicy",
     });
-    const xml = readXmlResult(await resp.text(), "GetRolePolicyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetRolePolicyResult");
     return xml.strings({
       required: {"RoleName":true,"PolicyName":true,"PolicyDocument":true},
     });
@@ -1083,13 +1083,13 @@ export default class IAM {
       abortSignal, body,
       action: "GetSAMLProvider",
     });
-    const xml = readXmlResult(await resp.text(), "GetSAMLProviderResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetSAMLProviderResult");
     return {
       ...xml.strings({
         optional: {"SAMLMetadataDocument":true},
       }),
-      CreateDate: xml.first("CreateDate", false, x => parseTimestamp(x.content)),
-      ValidUntil: xml.first("ValidUntil", false, x => parseTimestamp(x.content)),
+      CreateDate: xml.first("CreateDate", false, x => xmlP.parseTimestamp(x.content)),
+      ValidUntil: xml.first("ValidUntil", false, x => xmlP.parseTimestamp(x.content)),
     };
   }
 
@@ -1105,7 +1105,7 @@ export default class IAM {
       abortSignal, body,
       action: "GetSSHPublicKey",
     });
-    const xml = readXmlResult(await resp.text(), "GetSSHPublicKeyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetSSHPublicKeyResult");
     return {
       SSHPublicKey: xml.first("SSHPublicKey", false, SSHPublicKey_Parse),
     };
@@ -1121,7 +1121,7 @@ export default class IAM {
       abortSignal, body,
       action: "GetServerCertificate",
     });
-    const xml = readXmlResult(await resp.text(), "GetServerCertificateResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetServerCertificateResult");
     return {
       ServerCertificate: xml.first("ServerCertificate", true, ServerCertificate_Parse),
     };
@@ -1139,16 +1139,16 @@ export default class IAM {
       abortSignal, body,
       action: "GetServiceLastAccessedDetails",
     });
-    const xml = readXmlResult(await resp.text(), "GetServiceLastAccessedDetailsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetServiceLastAccessedDetailsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
       }),
       JobStatus: xml.first("JobStatus", true, x => (x.content ?? '') as jobStatusType),
       JobType: xml.first("JobType", false, x => (x.content ?? '') as AccessAdvisorUsageGranularityType),
-      JobCreationDate: xml.first("JobCreationDate", true, x => parseTimestamp(x.content)),
+      JobCreationDate: xml.first("JobCreationDate", true, x => xmlP.parseTimestamp(x.content)),
       ServicesLastAccessed: xml.getList("ServicesLastAccessed", "member").map(ServiceLastAccessed_Parse),
-      JobCompletionDate: xml.first("JobCompletionDate", true, x => parseTimestamp(x.content)),
+      JobCompletionDate: xml.first("JobCompletionDate", true, x => xmlP.parseTimestamp(x.content)),
       IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
       Error: xml.first("Error", false, ErrorDetails_Parse),
     };
@@ -1167,14 +1167,14 @@ export default class IAM {
       abortSignal, body,
       action: "GetServiceLastAccessedDetailsWithEntities",
     });
-    const xml = readXmlResult(await resp.text(), "GetServiceLastAccessedDetailsWithEntitiesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetServiceLastAccessedDetailsWithEntitiesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
       }),
       JobStatus: xml.first("JobStatus", true, x => (x.content ?? '') as jobStatusType),
-      JobCreationDate: xml.first("JobCreationDate", true, x => parseTimestamp(x.content)),
-      JobCompletionDate: xml.first("JobCompletionDate", true, x => parseTimestamp(x.content)),
+      JobCreationDate: xml.first("JobCreationDate", true, x => xmlP.parseTimestamp(x.content)),
+      JobCompletionDate: xml.first("JobCompletionDate", true, x => xmlP.parseTimestamp(x.content)),
       EntityDetailsList: xml.getList("EntityDetailsList", "member").map(EntityDetails_Parse),
       IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
       Error: xml.first("Error", false, ErrorDetails_Parse),
@@ -1191,7 +1191,7 @@ export default class IAM {
       abortSignal, body,
       action: "GetServiceLinkedRoleDeletionStatus",
     });
-    const xml = readXmlResult(await resp.text(), "GetServiceLinkedRoleDeletionStatusResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetServiceLinkedRoleDeletionStatusResult");
     return {
       Status: xml.first("Status", true, x => (x.content ?? '') as DeletionTaskStatusType),
       Reason: xml.first("Reason", false, DeletionTaskFailureReasonType_Parse),
@@ -1208,7 +1208,7 @@ export default class IAM {
       abortSignal, body,
       action: "GetUser",
     });
-    const xml = readXmlResult(await resp.text(), "GetUserResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetUserResult");
     return {
       User: xml.first("User", true, User_Parse),
     };
@@ -1225,7 +1225,7 @@ export default class IAM {
       abortSignal, body,
       action: "GetUserPolicy",
     });
-    const xml = readXmlResult(await resp.text(), "GetUserPolicyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetUserPolicyResult");
     return xml.strings({
       required: {"UserName":true,"PolicyName":true,"PolicyDocument":true},
     });
@@ -1243,7 +1243,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListAccessKeys",
     });
-    const xml = readXmlResult(await resp.text(), "ListAccessKeysResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListAccessKeysResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1264,7 +1264,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListAccountAliases",
     });
-    const xml = readXmlResult(await resp.text(), "ListAccountAliasesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListAccountAliasesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1287,7 +1287,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListAttachedGroupPolicies",
     });
-    const xml = readXmlResult(await resp.text(), "ListAttachedGroupPoliciesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListAttachedGroupPoliciesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1310,7 +1310,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListAttachedRolePolicies",
     });
-    const xml = readXmlResult(await resp.text(), "ListAttachedRolePoliciesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListAttachedRolePoliciesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1333,7 +1333,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListAttachedUserPolicies",
     });
-    const xml = readXmlResult(await resp.text(), "ListAttachedUserPoliciesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListAttachedUserPoliciesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1358,7 +1358,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListEntitiesForPolicy",
     });
-    const xml = readXmlResult(await resp.text(), "ListEntitiesForPolicyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListEntitiesForPolicyResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1382,7 +1382,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListGroupPolicies",
     });
-    const xml = readXmlResult(await resp.text(), "ListGroupPoliciesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListGroupPoliciesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1404,7 +1404,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListGroups",
     });
-    const xml = readXmlResult(await resp.text(), "ListGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1426,7 +1426,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListGroupsForUser",
     });
-    const xml = readXmlResult(await resp.text(), "ListGroupsForUserResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListGroupsForUserResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1448,7 +1448,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListInstanceProfiles",
     });
-    const xml = readXmlResult(await resp.text(), "ListInstanceProfilesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListInstanceProfilesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1470,7 +1470,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListInstanceProfilesForRole",
     });
-    const xml = readXmlResult(await resp.text(), "ListInstanceProfilesForRoleResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListInstanceProfilesForRoleResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1492,7 +1492,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListMFADevices",
     });
-    const xml = readXmlResult(await resp.text(), "ListMFADevicesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListMFADevicesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1512,7 +1512,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListOpenIDConnectProviders",
     });
-    const xml = readXmlResult(await resp.text(), "ListOpenIDConnectProvidersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListOpenIDConnectProvidersResult");
     return {
       OpenIDConnectProviderList: xml.getList("OpenIDConnectProviderList", "member").map(OpenIDConnectProviderListEntry_Parse),
     };
@@ -1533,7 +1533,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListPolicies",
     });
-    const xml = readXmlResult(await resp.text(), "ListPoliciesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListPoliciesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1550,12 +1550,12 @@ export default class IAM {
     const prefix = '';
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     body.append(prefix+"Arn", (params["Arn"] ?? '').toString());
-    if (params["ServiceNamespaces"]) prt.appendList(body, prefix+"ServiceNamespaces", params["ServiceNamespaces"], {"entryPrefix":".member."})
+    if (params["ServiceNamespaces"]) qsP.appendList(body, prefix+"ServiceNamespaces", params["ServiceNamespaces"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPoliciesGrantingServiceAccess",
     });
-    const xml = readXmlResult(await resp.text(), "ListPoliciesGrantingServiceAccessResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListPoliciesGrantingServiceAccessResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1577,7 +1577,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListPolicyVersions",
     });
-    const xml = readXmlResult(await resp.text(), "ListPolicyVersionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListPolicyVersionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1599,7 +1599,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListRolePolicies",
     });
-    const xml = readXmlResult(await resp.text(), "ListRolePoliciesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListRolePoliciesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1621,7 +1621,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListRoleTags",
     });
-    const xml = readXmlResult(await resp.text(), "ListRoleTagsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListRoleTagsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1643,7 +1643,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListRoles",
     });
-    const xml = readXmlResult(await resp.text(), "ListRolesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListRolesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1663,7 +1663,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListSAMLProviders",
     });
-    const xml = readXmlResult(await resp.text(), "ListSAMLProvidersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListSAMLProvidersResult");
     return {
       SAMLProviderList: xml.getList("SAMLProviderList", "member").map(SAMLProviderListEntry_Parse),
     };
@@ -1681,7 +1681,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListSSHPublicKeys",
     });
-    const xml = readXmlResult(await resp.text(), "ListSSHPublicKeysResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListSSHPublicKeysResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1703,7 +1703,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListServerCertificates",
     });
-    const xml = readXmlResult(await resp.text(), "ListServerCertificatesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListServerCertificatesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1724,7 +1724,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListServiceSpecificCredentials",
     });
-    const xml = readXmlResult(await resp.text(), "ListServiceSpecificCredentialsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListServiceSpecificCredentialsResult");
     return {
       ServiceSpecificCredentials: xml.getList("ServiceSpecificCredentials", "member").map(ServiceSpecificCredentialMetadata_Parse),
     };
@@ -1742,7 +1742,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListSigningCertificates",
     });
-    const xml = readXmlResult(await resp.text(), "ListSigningCertificatesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListSigningCertificatesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1764,7 +1764,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListUserPolicies",
     });
-    const xml = readXmlResult(await resp.text(), "ListUserPoliciesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListUserPoliciesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1786,7 +1786,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListUserTags",
     });
-    const xml = readXmlResult(await resp.text(), "ListUserTagsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListUserTagsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1808,7 +1808,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListUsers",
     });
-    const xml = readXmlResult(await resp.text(), "ListUsersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListUsersResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1830,7 +1830,7 @@ export default class IAM {
       abortSignal, body,
       action: "ListVirtualMFADevices",
     });
-    const xml = readXmlResult(await resp.text(), "ListVirtualMFADevicesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListVirtualMFADevicesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1958,7 +1958,7 @@ export default class IAM {
       abortSignal, body,
       action: "ResetServiceSpecificCredential",
     });
-    const xml = readXmlResult(await resp.text(), "ResetServiceSpecificCredentialResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ResetServiceSpecificCredentialResult");
     return {
       ServiceSpecificCredential: xml.first("ServiceSpecificCredential", false, ServiceSpecificCredential_Parse),
     };
@@ -2009,14 +2009,14 @@ export default class IAM {
   ): Promise<SimulatePolicyResponse> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["PolicyInputList"]) prt.appendList(body, prefix+"PolicyInputList", params["PolicyInputList"], {"entryPrefix":".member."})
-    if (params["PermissionsBoundaryPolicyInputList"]) prt.appendList(body, prefix+"PermissionsBoundaryPolicyInputList", params["PermissionsBoundaryPolicyInputList"], {"entryPrefix":".member."})
-    if (params["ActionNames"]) prt.appendList(body, prefix+"ActionNames", params["ActionNames"], {"entryPrefix":".member."})
-    if (params["ResourceArns"]) prt.appendList(body, prefix+"ResourceArns", params["ResourceArns"], {"entryPrefix":".member."})
+    if (params["PolicyInputList"]) qsP.appendList(body, prefix+"PolicyInputList", params["PolicyInputList"], {"entryPrefix":".member."})
+    if (params["PermissionsBoundaryPolicyInputList"]) qsP.appendList(body, prefix+"PermissionsBoundaryPolicyInputList", params["PermissionsBoundaryPolicyInputList"], {"entryPrefix":".member."})
+    if (params["ActionNames"]) qsP.appendList(body, prefix+"ActionNames", params["ActionNames"], {"entryPrefix":".member."})
+    if (params["ResourceArns"]) qsP.appendList(body, prefix+"ResourceArns", params["ResourceArns"], {"entryPrefix":".member."})
     if ("ResourcePolicy" in params) body.append(prefix+"ResourcePolicy", (params["ResourcePolicy"] ?? '').toString());
     if ("ResourceOwner" in params) body.append(prefix+"ResourceOwner", (params["ResourceOwner"] ?? '').toString());
     if ("CallerArn" in params) body.append(prefix+"CallerArn", (params["CallerArn"] ?? '').toString());
-    if (params["ContextEntries"]) prt.appendList(body, prefix+"ContextEntries", params["ContextEntries"], {"appender":ContextEntry_Serialize,"entryPrefix":".member."})
+    if (params["ContextEntries"]) qsP.appendList(body, prefix+"ContextEntries", params["ContextEntries"], {"appender":ContextEntry_Serialize,"entryPrefix":".member."})
     if ("ResourceHandlingOption" in params) body.append(prefix+"ResourceHandlingOption", (params["ResourceHandlingOption"] ?? '').toString());
     if ("MaxItems" in params) body.append(prefix+"MaxItems", (params["MaxItems"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
@@ -2024,7 +2024,7 @@ export default class IAM {
       abortSignal, body,
       action: "SimulateCustomPolicy",
     });
-    const xml = readXmlResult(await resp.text(), "SimulateCustomPolicyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SimulateCustomPolicyResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -2040,14 +2040,14 @@ export default class IAM {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"PolicySourceArn", (params["PolicySourceArn"] ?? '').toString());
-    if (params["PolicyInputList"]) prt.appendList(body, prefix+"PolicyInputList", params["PolicyInputList"], {"entryPrefix":".member."})
-    if (params["PermissionsBoundaryPolicyInputList"]) prt.appendList(body, prefix+"PermissionsBoundaryPolicyInputList", params["PermissionsBoundaryPolicyInputList"], {"entryPrefix":".member."})
-    if (params["ActionNames"]) prt.appendList(body, prefix+"ActionNames", params["ActionNames"], {"entryPrefix":".member."})
-    if (params["ResourceArns"]) prt.appendList(body, prefix+"ResourceArns", params["ResourceArns"], {"entryPrefix":".member."})
+    if (params["PolicyInputList"]) qsP.appendList(body, prefix+"PolicyInputList", params["PolicyInputList"], {"entryPrefix":".member."})
+    if (params["PermissionsBoundaryPolicyInputList"]) qsP.appendList(body, prefix+"PermissionsBoundaryPolicyInputList", params["PermissionsBoundaryPolicyInputList"], {"entryPrefix":".member."})
+    if (params["ActionNames"]) qsP.appendList(body, prefix+"ActionNames", params["ActionNames"], {"entryPrefix":".member."})
+    if (params["ResourceArns"]) qsP.appendList(body, prefix+"ResourceArns", params["ResourceArns"], {"entryPrefix":".member."})
     if ("ResourcePolicy" in params) body.append(prefix+"ResourcePolicy", (params["ResourcePolicy"] ?? '').toString());
     if ("ResourceOwner" in params) body.append(prefix+"ResourceOwner", (params["ResourceOwner"] ?? '').toString());
     if ("CallerArn" in params) body.append(prefix+"CallerArn", (params["CallerArn"] ?? '').toString());
-    if (params["ContextEntries"]) prt.appendList(body, prefix+"ContextEntries", params["ContextEntries"], {"appender":ContextEntry_Serialize,"entryPrefix":".member."})
+    if (params["ContextEntries"]) qsP.appendList(body, prefix+"ContextEntries", params["ContextEntries"], {"appender":ContextEntry_Serialize,"entryPrefix":".member."})
     if ("ResourceHandlingOption" in params) body.append(prefix+"ResourceHandlingOption", (params["ResourceHandlingOption"] ?? '').toString());
     if ("MaxItems" in params) body.append(prefix+"MaxItems", (params["MaxItems"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
@@ -2055,7 +2055,7 @@ export default class IAM {
       abortSignal, body,
       action: "SimulatePrincipalPolicy",
     });
-    const xml = readXmlResult(await resp.text(), "SimulatePrincipalPolicyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SimulatePrincipalPolicyResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -2071,7 +2071,7 @@ export default class IAM {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"RoleName", (params["RoleName"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagRole",
@@ -2084,7 +2084,7 @@ export default class IAM {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"UserName", (params["UserName"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagUser",
@@ -2097,7 +2097,7 @@ export default class IAM {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"RoleName", (params["RoleName"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagRole",
@@ -2110,7 +2110,7 @@ export default class IAM {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"UserName", (params["UserName"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagUser",
@@ -2198,7 +2198,7 @@ export default class IAM {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"OpenIDConnectProviderArn", (params["OpenIDConnectProviderArn"] ?? '').toString());
-    if (params["ThumbprintList"]) prt.appendList(body, prefix+"ThumbprintList", params["ThumbprintList"], {"entryPrefix":".member."})
+    if (params["ThumbprintList"]) qsP.appendList(body, prefix+"ThumbprintList", params["ThumbprintList"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateOpenIDConnectProviderThumbprint",
@@ -2217,7 +2217,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateRole",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateRoleResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateRoleResult");
     return {};
   }
 
@@ -2232,7 +2232,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateRoleDescription",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateRoleDescriptionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateRoleDescriptionResult");
     return {
       Role: xml.first("Role", false, Role_Parse),
     };
@@ -2249,7 +2249,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateSAMLProvider",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateSAMLProviderResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateSAMLProviderResult");
     return xml.strings({
       optional: {"SAMLProviderArn":true},
     });
@@ -2336,7 +2336,7 @@ export default class IAM {
       abortSignal, body,
       action: "UploadSSHPublicKey",
     });
-    const xml = readXmlResult(await resp.text(), "UploadSSHPublicKeyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UploadSSHPublicKeyResult");
     return {
       SSHPublicKey: xml.first("SSHPublicKey", false, SSHPublicKey_Parse),
     };
@@ -2356,7 +2356,7 @@ export default class IAM {
       abortSignal, body,
       action: "UploadServerCertificate",
     });
-    const xml = readXmlResult(await resp.text(), "UploadServerCertificateResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UploadServerCertificateResult");
     return {
       ServerCertificateMetadata: xml.first("ServerCertificateMetadata", false, ServerCertificateMetadata_Parse),
     };
@@ -2373,7 +2373,7 @@ export default class IAM {
       abortSignal, body,
       action: "UploadSigningCertificate",
     });
-    const xml = readXmlResult(await resp.text(), "UploadSigningCertificateResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UploadSigningCertificateResult");
     return {
       Certificate: xml.first("Certificate", true, SigningCertificate_Parse),
     };
@@ -3434,7 +3434,7 @@ export interface GetAccountPasswordPolicyResponse {
 
 // refs: 1 - tags: named, output
 export interface GetAccountSummaryResponse {
-  SummaryMap: { [key in summaryKeyType]: number };
+  SummaryMap: { [key in summaryKeyType]: number | null | undefined };
 }
 
 // refs: 1 - tags: named, output
@@ -3817,7 +3817,7 @@ function Tag_Serialize(body: URLSearchParams, prefix: string, params: Tag) {
     body.append(prefix+".Key", (params["Key"] ?? '').toString());
     body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function Tag_Parse(node: XmlNode): Tag {
+function Tag_Parse(node: xmlP.XmlNode): Tag {
   return node.strings({
     required: {"Key":true,"Value":true},
   });
@@ -3827,9 +3827,7 @@ function Tag_Parse(node: XmlNode): Tag {
 export type AccessAdvisorUsageGranularityType =
 | "SERVICE_LEVEL"
 | "ACTION_LEVEL"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
 export type EntityType =
@@ -3838,8 +3836,7 @@ export type EntityType =
 | "Group"
 | "LocalManagedPolicy"
 | "AWSManagedPolicy"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type sortKeyType =
@@ -3847,45 +3844,39 @@ export type sortKeyType =
 | "SERVICE_NAMESPACE_DESCENDING"
 | "LAST_AUTHENTICATED_TIME_ASCENDING"
 | "LAST_AUTHENTICATED_TIME_DESCENDING"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type encodingType =
 | "SSH"
 | "PEM"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
 export type PolicyUsageType =
 | "PermissionsPolicy"
 | "PermissionsBoundary"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type policyScopeType =
 | "All"
 | "AWS"
 | "Local"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type assignmentStatusType =
 | "Assigned"
 | "Unassigned"
 | "Any"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type globalEndpointTokenVersion =
 | "v1Token"
 | "v2Token"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface ContextEntry {
@@ -3895,7 +3886,7 @@ export interface ContextEntry {
 }
 function ContextEntry_Serialize(body: URLSearchParams, prefix: string, params: ContextEntry) {
     if ("ContextKeyName" in params) body.append(prefix+".ContextKeyName", (params["ContextKeyName"] ?? '').toString());
-    if (params["ContextKeyValues"]) prt.appendList(body, prefix+".ContextKeyValues", params["ContextKeyValues"], {"entryPrefix":".member."})
+    if (params["ContextKeyValues"]) qsP.appendList(body, prefix+".ContextKeyValues", params["ContextKeyValues"], {"entryPrefix":".member."})
     if ("ContextKeyType" in params) body.append(prefix+".ContextKeyType", (params["ContextKeyType"] ?? '').toString());
 }
 
@@ -3913,16 +3904,13 @@ export type ContextKeyTypeEnum =
 | "binaryList"
 | "date"
 | "dateList"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 14 - tags: input, named, enum, output
 export type statusType =
 | "Active"
 | "Inactive"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AccessKey {
@@ -3932,13 +3920,13 @@ export interface AccessKey {
   SecretAccessKey: string;
   CreateDate?: Date | number | null;
 }
-function AccessKey_Parse(node: XmlNode): AccessKey {
+function AccessKey_Parse(node: xmlP.XmlNode): AccessKey {
   return {
     ...node.strings({
       required: {"UserName":true,"AccessKeyId":true,"SecretAccessKey":true},
     }),
     Status: node.first("Status", true, x => (x.content ?? '') as statusType),
-    CreateDate: node.first("CreateDate", false, x => parseTimestamp(x.content)),
+    CreateDate: node.first("CreateDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -3950,12 +3938,12 @@ export interface Group {
   Arn: string;
   CreateDate: Date | number;
 }
-function Group_Parse(node: XmlNode): Group {
+function Group_Parse(node: xmlP.XmlNode): Group {
   return {
     ...node.strings({
       required: {"Path":true,"GroupName":true,"GroupId":true,"Arn":true},
     }),
-    CreateDate: node.first("CreateDate", true, x => parseTimestamp(x.content)),
+    CreateDate: node.first("CreateDate", true, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -3968,12 +3956,12 @@ export interface InstanceProfile {
   CreateDate: Date | number;
   Roles: Role[];
 }
-function InstanceProfile_Parse(node: XmlNode): InstanceProfile {
+function InstanceProfile_Parse(node: xmlP.XmlNode): InstanceProfile {
   return {
     ...node.strings({
       required: {"Path":true,"InstanceProfileName":true,"InstanceProfileId":true,"Arn":true},
     }),
-    CreateDate: node.first("CreateDate", true, x => parseTimestamp(x.content)),
+    CreateDate: node.first("CreateDate", true, x => xmlP.parseTimestamp(x.content)),
     Roles: node.getList("Roles", "member").map(Role_Parse),
   };
 }
@@ -3992,13 +3980,13 @@ export interface Role {
   Tags: Tag[];
   RoleLastUsed?: RoleLastUsed | null;
 }
-function Role_Parse(node: XmlNode): Role {
+function Role_Parse(node: xmlP.XmlNode): Role {
   return {
     ...node.strings({
       required: {"Path":true,"RoleName":true,"RoleId":true,"Arn":true},
       optional: {"AssumeRolePolicyDocument":true,"Description":true},
     }),
-    CreateDate: node.first("CreateDate", true, x => parseTimestamp(x.content)),
+    CreateDate: node.first("CreateDate", true, x => xmlP.parseTimestamp(x.content)),
     MaxSessionDuration: node.first("MaxSessionDuration", false, x => parseInt(x.content ?? '0')),
     PermissionsBoundary: node.first("PermissionsBoundary", false, AttachedPermissionsBoundary_Parse),
     Tags: node.getList("Tags", "member").map(Tag_Parse),
@@ -4011,7 +3999,7 @@ export interface AttachedPermissionsBoundary {
   PermissionsBoundaryType?: PermissionsBoundaryAttachmentType | null;
   PermissionsBoundaryArn?: string | null;
 }
-function AttachedPermissionsBoundary_Parse(node: XmlNode): AttachedPermissionsBoundary {
+function AttachedPermissionsBoundary_Parse(node: xmlP.XmlNode): AttachedPermissionsBoundary {
   return {
     ...node.strings({
       optional: {"PermissionsBoundaryArn":true},
@@ -4023,20 +4011,19 @@ function AttachedPermissionsBoundary_Parse(node: XmlNode): AttachedPermissionsBo
 // refs: 18 - tags: output, named, enum
 export type PermissionsBoundaryAttachmentType =
 | "PermissionsBoundaryPolicy"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 11 - tags: output, named, interface
 export interface RoleLastUsed {
   LastUsedDate?: Date | number | null;
   Region?: string | null;
 }
-function RoleLastUsed_Parse(node: XmlNode): RoleLastUsed {
+function RoleLastUsed_Parse(node: xmlP.XmlNode): RoleLastUsed {
   return {
     ...node.strings({
       optional: {"Region":true},
     }),
-    LastUsedDate: node.first("LastUsedDate", false, x => parseTimestamp(x.content)),
+    LastUsedDate: node.first("LastUsedDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4046,12 +4033,12 @@ export interface LoginProfile {
   CreateDate: Date | number;
   PasswordResetRequired?: boolean | null;
 }
-function LoginProfile_Parse(node: XmlNode): LoginProfile {
+function LoginProfile_Parse(node: xmlP.XmlNode): LoginProfile {
   return {
     ...node.strings({
       required: {"UserName":true},
     }),
-    CreateDate: node.first("CreateDate", true, x => parseTimestamp(x.content)),
+    CreateDate: node.first("CreateDate", true, x => xmlP.parseTimestamp(x.content)),
     PasswordResetRequired: node.first("PasswordResetRequired", false, x => x.content === 'true'),
   };
 }
@@ -4070,7 +4057,7 @@ export interface Policy {
   CreateDate?: Date | number | null;
   UpdateDate?: Date | number | null;
 }
-function Policy_Parse(node: XmlNode): Policy {
+function Policy_Parse(node: xmlP.XmlNode): Policy {
   return {
     ...node.strings({
       optional: {"PolicyName":true,"PolicyId":true,"Arn":true,"Path":true,"DefaultVersionId":true,"Description":true},
@@ -4078,8 +4065,8 @@ function Policy_Parse(node: XmlNode): Policy {
     AttachmentCount: node.first("AttachmentCount", false, x => parseInt(x.content ?? '0')),
     PermissionsBoundaryUsageCount: node.first("PermissionsBoundaryUsageCount", false, x => parseInt(x.content ?? '0')),
     IsAttachable: node.first("IsAttachable", false, x => x.content === 'true'),
-    CreateDate: node.first("CreateDate", false, x => parseTimestamp(x.content)),
-    UpdateDate: node.first("UpdateDate", false, x => parseTimestamp(x.content)),
+    CreateDate: node.first("CreateDate", false, x => xmlP.parseTimestamp(x.content)),
+    UpdateDate: node.first("UpdateDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4090,13 +4077,13 @@ export interface PolicyVersion {
   IsDefaultVersion?: boolean | null;
   CreateDate?: Date | number | null;
 }
-function PolicyVersion_Parse(node: XmlNode): PolicyVersion {
+function PolicyVersion_Parse(node: xmlP.XmlNode): PolicyVersion {
   return {
     ...node.strings({
       optional: {"Document":true,"VersionId":true},
     }),
     IsDefaultVersion: node.first("IsDefaultVersion", false, x => x.content === 'true'),
-    CreateDate: node.first("CreateDate", false, x => parseTimestamp(x.content)),
+    CreateDate: node.first("CreateDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4110,12 +4097,12 @@ export interface ServiceSpecificCredential {
   UserName: string;
   Status: statusType;
 }
-function ServiceSpecificCredential_Parse(node: XmlNode): ServiceSpecificCredential {
+function ServiceSpecificCredential_Parse(node: xmlP.XmlNode): ServiceSpecificCredential {
   return {
     ...node.strings({
       required: {"ServiceName":true,"ServiceUserName":true,"ServicePassword":true,"ServiceSpecificCredentialId":true,"UserName":true},
     }),
-    CreateDate: node.first("CreateDate", true, x => parseTimestamp(x.content)),
+    CreateDate: node.first("CreateDate", true, x => xmlP.parseTimestamp(x.content)),
     Status: node.first("Status", true, x => (x.content ?? '') as statusType),
   };
 }
@@ -4131,13 +4118,13 @@ export interface User {
   PermissionsBoundary?: AttachedPermissionsBoundary | null;
   Tags: Tag[];
 }
-function User_Parse(node: XmlNode): User {
+function User_Parse(node: xmlP.XmlNode): User {
   return {
     ...node.strings({
       required: {"Path":true,"UserName":true,"UserId":true,"Arn":true},
     }),
-    CreateDate: node.first("CreateDate", true, x => parseTimestamp(x.content)),
-    PasswordLastUsed: node.first("PasswordLastUsed", false, x => parseTimestamp(x.content)),
+    CreateDate: node.first("CreateDate", true, x => xmlP.parseTimestamp(x.content)),
+    PasswordLastUsed: node.first("PasswordLastUsed", false, x => xmlP.parseTimestamp(x.content)),
     PermissionsBoundary: node.first("PermissionsBoundary", false, AttachedPermissionsBoundary_Parse),
     Tags: node.getList("Tags", "member").map(Tag_Parse),
   };
@@ -4151,7 +4138,7 @@ export interface VirtualMFADevice {
   User?: User | null;
   EnableDate?: Date | number | null;
 }
-function VirtualMFADevice_Parse(node: XmlNode): VirtualMFADevice {
+function VirtualMFADevice_Parse(node: xmlP.XmlNode): VirtualMFADevice {
   return {
     ...node.strings({
       required: {"SerialNumber":true},
@@ -4159,7 +4146,7 @@ function VirtualMFADevice_Parse(node: XmlNode): VirtualMFADevice {
     Base32StringSeed: node.first("Base32StringSeed", false, x => Base64.toUint8Array(x.content ?? '')),
     QRCodePNG: node.first("QRCodePNG", false, x => Base64.toUint8Array(x.content ?? '')),
     User: node.first("User", false, User_Parse),
-    EnableDate: node.first("EnableDate", false, x => parseTimestamp(x.content)),
+    EnableDate: node.first("EnableDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4168,8 +4155,7 @@ export type ReportStateType =
 | "STARTED"
 | "INPROGRESS"
 | "COMPLETE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AccessKeyLastUsed {
@@ -4177,12 +4163,12 @@ export interface AccessKeyLastUsed {
   ServiceName: string;
   Region: string;
 }
-function AccessKeyLastUsed_Parse(node: XmlNode): AccessKeyLastUsed {
+function AccessKeyLastUsed_Parse(node: xmlP.XmlNode): AccessKeyLastUsed {
   return {
     ...node.strings({
       required: {"ServiceName":true,"Region":true},
     }),
-    LastUsedDate: node.first("LastUsedDate", true, x => parseTimestamp(x.content)),
+    LastUsedDate: node.first("LastUsedDate", true, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4199,12 +4185,12 @@ export interface UserDetail {
   PermissionsBoundary?: AttachedPermissionsBoundary | null;
   Tags: Tag[];
 }
-function UserDetail_Parse(node: XmlNode): UserDetail {
+function UserDetail_Parse(node: xmlP.XmlNode): UserDetail {
   return {
     ...node.strings({
       optional: {"Path":true,"UserName":true,"UserId":true,"Arn":true},
     }),
-    CreateDate: node.first("CreateDate", false, x => parseTimestamp(x.content)),
+    CreateDate: node.first("CreateDate", false, x => xmlP.parseTimestamp(x.content)),
     UserPolicyList: node.getList("UserPolicyList", "member").map(PolicyDetail_Parse),
     GroupList: node.getList("GroupList", "member").map(x => x.content ?? ''),
     AttachedManagedPolicies: node.getList("AttachedManagedPolicies", "member").map(AttachedPolicy_Parse),
@@ -4218,7 +4204,7 @@ export interface PolicyDetail {
   PolicyName?: string | null;
   PolicyDocument?: string | null;
 }
-function PolicyDetail_Parse(node: XmlNode): PolicyDetail {
+function PolicyDetail_Parse(node: xmlP.XmlNode): PolicyDetail {
   return node.strings({
     optional: {"PolicyName":true,"PolicyDocument":true},
   });
@@ -4229,7 +4215,7 @@ export interface AttachedPolicy {
   PolicyName?: string | null;
   PolicyArn?: string | null;
 }
-function AttachedPolicy_Parse(node: XmlNode): AttachedPolicy {
+function AttachedPolicy_Parse(node: xmlP.XmlNode): AttachedPolicy {
   return node.strings({
     optional: {"PolicyName":true,"PolicyArn":true},
   });
@@ -4245,12 +4231,12 @@ export interface GroupDetail {
   GroupPolicyList: PolicyDetail[];
   AttachedManagedPolicies: AttachedPolicy[];
 }
-function GroupDetail_Parse(node: XmlNode): GroupDetail {
+function GroupDetail_Parse(node: xmlP.XmlNode): GroupDetail {
   return {
     ...node.strings({
       optional: {"Path":true,"GroupName":true,"GroupId":true,"Arn":true},
     }),
-    CreateDate: node.first("CreateDate", false, x => parseTimestamp(x.content)),
+    CreateDate: node.first("CreateDate", false, x => xmlP.parseTimestamp(x.content)),
     GroupPolicyList: node.getList("GroupPolicyList", "member").map(PolicyDetail_Parse),
     AttachedManagedPolicies: node.getList("AttachedManagedPolicies", "member").map(AttachedPolicy_Parse),
   };
@@ -4271,12 +4257,12 @@ export interface RoleDetail {
   Tags: Tag[];
   RoleLastUsed?: RoleLastUsed | null;
 }
-function RoleDetail_Parse(node: XmlNode): RoleDetail {
+function RoleDetail_Parse(node: xmlP.XmlNode): RoleDetail {
   return {
     ...node.strings({
       optional: {"Path":true,"RoleName":true,"RoleId":true,"Arn":true,"AssumeRolePolicyDocument":true},
     }),
-    CreateDate: node.first("CreateDate", false, x => parseTimestamp(x.content)),
+    CreateDate: node.first("CreateDate", false, x => xmlP.parseTimestamp(x.content)),
     InstanceProfileList: node.getList("InstanceProfileList", "member").map(InstanceProfile_Parse),
     RolePolicyList: node.getList("RolePolicyList", "member").map(PolicyDetail_Parse),
     AttachedManagedPolicies: node.getList("AttachedManagedPolicies", "member").map(AttachedPolicy_Parse),
@@ -4301,7 +4287,7 @@ export interface ManagedPolicyDetail {
   UpdateDate?: Date | number | null;
   PolicyVersionList: PolicyVersion[];
 }
-function ManagedPolicyDetail_Parse(node: XmlNode): ManagedPolicyDetail {
+function ManagedPolicyDetail_Parse(node: xmlP.XmlNode): ManagedPolicyDetail {
   return {
     ...node.strings({
       optional: {"PolicyName":true,"PolicyId":true,"Arn":true,"Path":true,"DefaultVersionId":true,"Description":true},
@@ -4309,8 +4295,8 @@ function ManagedPolicyDetail_Parse(node: XmlNode): ManagedPolicyDetail {
     AttachmentCount: node.first("AttachmentCount", false, x => parseInt(x.content ?? '0')),
     PermissionsBoundaryUsageCount: node.first("PermissionsBoundaryUsageCount", false, x => parseInt(x.content ?? '0')),
     IsAttachable: node.first("IsAttachable", false, x => x.content === 'true'),
-    CreateDate: node.first("CreateDate", false, x => parseTimestamp(x.content)),
-    UpdateDate: node.first("UpdateDate", false, x => parseTimestamp(x.content)),
+    CreateDate: node.first("CreateDate", false, x => xmlP.parseTimestamp(x.content)),
+    UpdateDate: node.first("UpdateDate", false, x => xmlP.parseTimestamp(x.content)),
     PolicyVersionList: node.getList("PolicyVersionList", "member").map(PolicyVersion_Parse),
   };
 }
@@ -4328,7 +4314,7 @@ export interface PasswordPolicy {
   PasswordReusePrevention?: number | null;
   HardExpiry?: boolean | null;
 }
-function PasswordPolicy_Parse(node: XmlNode): PasswordPolicy {
+function PasswordPolicy_Parse(node: xmlP.XmlNode): PasswordPolicy {
   return {
     MinimumPasswordLength: node.first("MinimumPasswordLength", false, x => parseInt(x.content ?? '0')),
     RequireSymbols: node.first("RequireSymbols", false, x => x.content === 'true'),
@@ -4371,22 +4357,19 @@ export type summaryKeyType =
 | "PolicyVersionsInUseQuota"
 | "VersionsPerPolicyQuota"
 | "GlobalEndpointTokenVersion"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type ReportFormatType =
 | "text/csv"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, enum
 export type jobStatusType =
 | "IN_PROGRESS"
 | "COMPLETED"
 | "FAILED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AccessDetail {
@@ -4397,13 +4380,13 @@ export interface AccessDetail {
   LastAuthenticatedTime?: Date | number | null;
   TotalAuthenticatedEntities?: number | null;
 }
-function AccessDetail_Parse(node: XmlNode): AccessDetail {
+function AccessDetail_Parse(node: xmlP.XmlNode): AccessDetail {
   return {
     ...node.strings({
       required: {"ServiceName":true,"ServiceNamespace":true},
       optional: {"Region":true,"EntityPath":true},
     }),
-    LastAuthenticatedTime: node.first("LastAuthenticatedTime", false, x => parseTimestamp(x.content)),
+    LastAuthenticatedTime: node.first("LastAuthenticatedTime", false, x => xmlP.parseTimestamp(x.content)),
     TotalAuthenticatedEntities: node.first("TotalAuthenticatedEntities", false, x => parseInt(x.content ?? '0')),
   };
 }
@@ -4413,7 +4396,7 @@ export interface ErrorDetails {
   Message: string;
   Code: string;
 }
-function ErrorDetails_Parse(node: XmlNode): ErrorDetails {
+function ErrorDetails_Parse(node: xmlP.XmlNode): ErrorDetails {
   return node.strings({
     required: {"Message":true,"Code":true},
   });
@@ -4428,13 +4411,13 @@ export interface SSHPublicKey {
   Status: statusType;
   UploadDate?: Date | number | null;
 }
-function SSHPublicKey_Parse(node: XmlNode): SSHPublicKey {
+function SSHPublicKey_Parse(node: xmlP.XmlNode): SSHPublicKey {
   return {
     ...node.strings({
       required: {"UserName":true,"SSHPublicKeyId":true,"Fingerprint":true,"SSHPublicKeyBody":true},
     }),
     Status: node.first("Status", true, x => (x.content ?? '') as statusType),
-    UploadDate: node.first("UploadDate", false, x => parseTimestamp(x.content)),
+    UploadDate: node.first("UploadDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4444,7 +4427,7 @@ export interface ServerCertificate {
   CertificateBody: string;
   CertificateChain?: string | null;
 }
-function ServerCertificate_Parse(node: XmlNode): ServerCertificate {
+function ServerCertificate_Parse(node: xmlP.XmlNode): ServerCertificate {
   return {
     ...node.strings({
       required: {"CertificateBody":true},
@@ -4463,13 +4446,13 @@ export interface ServerCertificateMetadata {
   UploadDate?: Date | number | null;
   Expiration?: Date | number | null;
 }
-function ServerCertificateMetadata_Parse(node: XmlNode): ServerCertificateMetadata {
+function ServerCertificateMetadata_Parse(node: xmlP.XmlNode): ServerCertificateMetadata {
   return {
     ...node.strings({
       required: {"Path":true,"ServerCertificateName":true,"ServerCertificateId":true,"Arn":true},
     }),
-    UploadDate: node.first("UploadDate", false, x => parseTimestamp(x.content)),
-    Expiration: node.first("Expiration", false, x => parseTimestamp(x.content)),
+    UploadDate: node.first("UploadDate", false, x => xmlP.parseTimestamp(x.content)),
+    Expiration: node.first("Expiration", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4483,13 +4466,13 @@ export interface ServiceLastAccessed {
   TotalAuthenticatedEntities?: number | null;
   TrackedActionsLastAccessed: TrackedActionLastAccessed[];
 }
-function ServiceLastAccessed_Parse(node: XmlNode): ServiceLastAccessed {
+function ServiceLastAccessed_Parse(node: xmlP.XmlNode): ServiceLastAccessed {
   return {
     ...node.strings({
       required: {"ServiceName":true,"ServiceNamespace":true},
       optional: {"LastAuthenticatedEntity":true,"LastAuthenticatedRegion":true},
     }),
-    LastAuthenticated: node.first("LastAuthenticated", false, x => parseTimestamp(x.content)),
+    LastAuthenticated: node.first("LastAuthenticated", false, x => xmlP.parseTimestamp(x.content)),
     TotalAuthenticatedEntities: node.first("TotalAuthenticatedEntities", false, x => parseInt(x.content ?? '0')),
     TrackedActionsLastAccessed: node.getList("TrackedActionsLastAccessed", "member").map(TrackedActionLastAccessed_Parse),
   };
@@ -4502,12 +4485,12 @@ export interface TrackedActionLastAccessed {
   LastAccessedTime?: Date | number | null;
   LastAccessedRegion?: string | null;
 }
-function TrackedActionLastAccessed_Parse(node: XmlNode): TrackedActionLastAccessed {
+function TrackedActionLastAccessed_Parse(node: xmlP.XmlNode): TrackedActionLastAccessed {
   return {
     ...node.strings({
       optional: {"ActionName":true,"LastAccessedEntity":true,"LastAccessedRegion":true},
     }),
-    LastAccessedTime: node.first("LastAccessedTime", false, x => parseTimestamp(x.content)),
+    LastAccessedTime: node.first("LastAccessedTime", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4516,10 +4499,10 @@ export interface EntityDetails {
   EntityInfo: EntityInfo;
   LastAuthenticated?: Date | number | null;
 }
-function EntityDetails_Parse(node: XmlNode): EntityDetails {
+function EntityDetails_Parse(node: xmlP.XmlNode): EntityDetails {
   return {
     EntityInfo: node.first("EntityInfo", true, EntityInfo_Parse),
-    LastAuthenticated: node.first("LastAuthenticated", false, x => parseTimestamp(x.content)),
+    LastAuthenticated: node.first("LastAuthenticated", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4531,7 +4514,7 @@ export interface EntityInfo {
   Id: string;
   Path?: string | null;
 }
-function EntityInfo_Parse(node: XmlNode): EntityInfo {
+function EntityInfo_Parse(node: xmlP.XmlNode): EntityInfo {
   return {
     ...node.strings({
       required: {"Arn":true,"Name":true,"Id":true},
@@ -4546,8 +4529,7 @@ export type policyOwnerEntityType =
 | "USER"
 | "ROLE"
 | "GROUP"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type DeletionTaskStatusType =
@@ -4555,15 +4537,14 @@ export type DeletionTaskStatusType =
 | "IN_PROGRESS"
 | "FAILED"
 | "NOT_STARTED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface DeletionTaskFailureReasonType {
   Reason?: string | null;
   RoleUsageList: RoleUsageType[];
 }
-function DeletionTaskFailureReasonType_Parse(node: XmlNode): DeletionTaskFailureReasonType {
+function DeletionTaskFailureReasonType_Parse(node: xmlP.XmlNode): DeletionTaskFailureReasonType {
   return {
     ...node.strings({
       optional: {"Reason":true},
@@ -4577,7 +4558,7 @@ export interface RoleUsageType {
   Region?: string | null;
   Resources: string[];
 }
-function RoleUsageType_Parse(node: XmlNode): RoleUsageType {
+function RoleUsageType_Parse(node: xmlP.XmlNode): RoleUsageType {
   return {
     ...node.strings({
       optional: {"Region":true},
@@ -4593,13 +4574,13 @@ export interface AccessKeyMetadata {
   Status?: statusType | null;
   CreateDate?: Date | number | null;
 }
-function AccessKeyMetadata_Parse(node: XmlNode): AccessKeyMetadata {
+function AccessKeyMetadata_Parse(node: xmlP.XmlNode): AccessKeyMetadata {
   return {
     ...node.strings({
       optional: {"UserName":true,"AccessKeyId":true},
     }),
     Status: node.first("Status", false, x => (x.content ?? '') as statusType),
-    CreateDate: node.first("CreateDate", false, x => parseTimestamp(x.content)),
+    CreateDate: node.first("CreateDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4608,7 +4589,7 @@ export interface PolicyGroup {
   GroupName?: string | null;
   GroupId?: string | null;
 }
-function PolicyGroup_Parse(node: XmlNode): PolicyGroup {
+function PolicyGroup_Parse(node: xmlP.XmlNode): PolicyGroup {
   return node.strings({
     optional: {"GroupName":true,"GroupId":true},
   });
@@ -4619,7 +4600,7 @@ export interface PolicyUser {
   UserName?: string | null;
   UserId?: string | null;
 }
-function PolicyUser_Parse(node: XmlNode): PolicyUser {
+function PolicyUser_Parse(node: xmlP.XmlNode): PolicyUser {
   return node.strings({
     optional: {"UserName":true,"UserId":true},
   });
@@ -4630,7 +4611,7 @@ export interface PolicyRole {
   RoleName?: string | null;
   RoleId?: string | null;
 }
-function PolicyRole_Parse(node: XmlNode): PolicyRole {
+function PolicyRole_Parse(node: xmlP.XmlNode): PolicyRole {
   return node.strings({
     optional: {"RoleName":true,"RoleId":true},
   });
@@ -4642,12 +4623,12 @@ export interface MFADevice {
   SerialNumber: string;
   EnableDate: Date | number;
 }
-function MFADevice_Parse(node: XmlNode): MFADevice {
+function MFADevice_Parse(node: xmlP.XmlNode): MFADevice {
   return {
     ...node.strings({
       required: {"UserName":true,"SerialNumber":true},
     }),
-    EnableDate: node.first("EnableDate", true, x => parseTimestamp(x.content)),
+    EnableDate: node.first("EnableDate", true, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4655,7 +4636,7 @@ function MFADevice_Parse(node: XmlNode): MFADevice {
 export interface OpenIDConnectProviderListEntry {
   Arn?: string | null;
 }
-function OpenIDConnectProviderListEntry_Parse(node: XmlNode): OpenIDConnectProviderListEntry {
+function OpenIDConnectProviderListEntry_Parse(node: xmlP.XmlNode): OpenIDConnectProviderListEntry {
   return node.strings({
     optional: {"Arn":true},
   });
@@ -4666,7 +4647,7 @@ export interface ListPoliciesGrantingServiceAccessEntry {
   ServiceNamespace?: string | null;
   Policies: PolicyGrantingServiceAccess[];
 }
-function ListPoliciesGrantingServiceAccessEntry_Parse(node: XmlNode): ListPoliciesGrantingServiceAccessEntry {
+function ListPoliciesGrantingServiceAccessEntry_Parse(node: xmlP.XmlNode): ListPoliciesGrantingServiceAccessEntry {
   return {
     ...node.strings({
       optional: {"ServiceNamespace":true},
@@ -4683,7 +4664,7 @@ export interface PolicyGrantingServiceAccess {
   EntityType?: policyOwnerEntityType | null;
   EntityName?: string | null;
 }
-function PolicyGrantingServiceAccess_Parse(node: XmlNode): PolicyGrantingServiceAccess {
+function PolicyGrantingServiceAccess_Parse(node: xmlP.XmlNode): PolicyGrantingServiceAccess {
   return {
     ...node.strings({
       required: {"PolicyName":true},
@@ -4698,8 +4679,7 @@ function PolicyGrantingServiceAccess_Parse(node: XmlNode): PolicyGrantingService
 export type policyType =
 | "INLINE"
 | "MANAGED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface SAMLProviderListEntry {
@@ -4707,13 +4687,13 @@ export interface SAMLProviderListEntry {
   ValidUntil?: Date | number | null;
   CreateDate?: Date | number | null;
 }
-function SAMLProviderListEntry_Parse(node: XmlNode): SAMLProviderListEntry {
+function SAMLProviderListEntry_Parse(node: xmlP.XmlNode): SAMLProviderListEntry {
   return {
     ...node.strings({
       optional: {"Arn":true},
     }),
-    ValidUntil: node.first("ValidUntil", false, x => parseTimestamp(x.content)),
-    CreateDate: node.first("CreateDate", false, x => parseTimestamp(x.content)),
+    ValidUntil: node.first("ValidUntil", false, x => xmlP.parseTimestamp(x.content)),
+    CreateDate: node.first("CreateDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4724,13 +4704,13 @@ export interface SSHPublicKeyMetadata {
   Status: statusType;
   UploadDate: Date | number;
 }
-function SSHPublicKeyMetadata_Parse(node: XmlNode): SSHPublicKeyMetadata {
+function SSHPublicKeyMetadata_Parse(node: xmlP.XmlNode): SSHPublicKeyMetadata {
   return {
     ...node.strings({
       required: {"UserName":true,"SSHPublicKeyId":true},
     }),
     Status: node.first("Status", true, x => (x.content ?? '') as statusType),
-    UploadDate: node.first("UploadDate", true, x => parseTimestamp(x.content)),
+    UploadDate: node.first("UploadDate", true, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4743,13 +4723,13 @@ export interface ServiceSpecificCredentialMetadata {
   ServiceSpecificCredentialId: string;
   ServiceName: string;
 }
-function ServiceSpecificCredentialMetadata_Parse(node: XmlNode): ServiceSpecificCredentialMetadata {
+function ServiceSpecificCredentialMetadata_Parse(node: xmlP.XmlNode): ServiceSpecificCredentialMetadata {
   return {
     ...node.strings({
       required: {"UserName":true,"ServiceUserName":true,"ServiceSpecificCredentialId":true,"ServiceName":true},
     }),
     Status: node.first("Status", true, x => (x.content ?? '') as statusType),
-    CreateDate: node.first("CreateDate", true, x => parseTimestamp(x.content)),
+    CreateDate: node.first("CreateDate", true, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4761,13 +4741,13 @@ export interface SigningCertificate {
   Status: statusType;
   UploadDate?: Date | number | null;
 }
-function SigningCertificate_Parse(node: XmlNode): SigningCertificate {
+function SigningCertificate_Parse(node: xmlP.XmlNode): SigningCertificate {
   return {
     ...node.strings({
       required: {"UserName":true,"CertificateId":true,"CertificateBody":true},
     }),
     Status: node.first("Status", true, x => (x.content ?? '') as statusType),
-    UploadDate: node.first("UploadDate", false, x => parseTimestamp(x.content)),
+    UploadDate: node.first("UploadDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4780,10 +4760,10 @@ export interface EvaluationResult {
   MissingContextValues: string[];
   OrganizationsDecisionDetail?: OrganizationsDecisionDetail | null;
   PermissionsBoundaryDecisionDetail?: PermissionsBoundaryDecisionDetail | null;
-  EvalDecisionDetails: { [key: string]: PolicyEvaluationDecisionType };
+  EvalDecisionDetails: { [key: string]: PolicyEvaluationDecisionType | null | undefined };
   ResourceSpecificResults: ResourceSpecificResult[];
 }
-function EvaluationResult_Parse(node: XmlNode): EvaluationResult {
+function EvaluationResult_Parse(node: xmlP.XmlNode): EvaluationResult {
   return {
     ...node.strings({
       required: {"EvalActionName":true},
@@ -4794,7 +4774,7 @@ function EvaluationResult_Parse(node: XmlNode): EvaluationResult {
     MissingContextValues: node.getList("MissingContextValues", "member").map(x => x.content ?? ''),
     OrganizationsDecisionDetail: node.first("OrganizationsDecisionDetail", false, OrganizationsDecisionDetail_Parse),
     PermissionsBoundaryDecisionDetail: node.first("PermissionsBoundaryDecisionDetail", false, PermissionsBoundaryDecisionDetail_Parse),
-    EvalDecisionDetails: readXmlMap(node.getList("EvalDecisionDetails", "entry"), x => (x.content ?? '') as PolicyEvaluationDecisionType, {}),
+    EvalDecisionDetails: xmlP.readXmlMap(node.getList("EvalDecisionDetails", "entry"), x => (x.content ?? '') as PolicyEvaluationDecisionType, {}),
     ResourceSpecificResults: node.getList("ResourceSpecificResults", "member").map(ResourceSpecificResult_Parse),
   };
 }
@@ -4804,8 +4784,7 @@ export type PolicyEvaluationDecisionType =
 | "allowed"
 | "explicitDeny"
 | "implicitDeny"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface Statement {
@@ -4814,7 +4793,7 @@ export interface Statement {
   StartPosition?: Position | null;
   EndPosition?: Position | null;
 }
-function Statement_Parse(node: XmlNode): Statement {
+function Statement_Parse(node: xmlP.XmlNode): Statement {
   return {
     ...node.strings({
       optional: {"SourcePolicyId":true},
@@ -4834,15 +4813,14 @@ export type PolicySourceType =
 | "user-managed"
 | "resource"
 | "none"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface Position {
   Line?: number | null;
   Column?: number | null;
 }
-function Position_Parse(node: XmlNode): Position {
+function Position_Parse(node: xmlP.XmlNode): Position {
   return {
     Line: node.first("Line", false, x => parseInt(x.content ?? '0')),
     Column: node.first("Column", false, x => parseInt(x.content ?? '0')),
@@ -4853,7 +4831,7 @@ function Position_Parse(node: XmlNode): Position {
 export interface OrganizationsDecisionDetail {
   AllowedByOrganizations?: boolean | null;
 }
-function OrganizationsDecisionDetail_Parse(node: XmlNode): OrganizationsDecisionDetail {
+function OrganizationsDecisionDetail_Parse(node: xmlP.XmlNode): OrganizationsDecisionDetail {
   return {
     AllowedByOrganizations: node.first("AllowedByOrganizations", false, x => x.content === 'true'),
   };
@@ -4863,7 +4841,7 @@ function OrganizationsDecisionDetail_Parse(node: XmlNode): OrganizationsDecision
 export interface PermissionsBoundaryDecisionDetail {
   AllowedByPermissionsBoundary?: boolean | null;
 }
-function PermissionsBoundaryDecisionDetail_Parse(node: XmlNode): PermissionsBoundaryDecisionDetail {
+function PermissionsBoundaryDecisionDetail_Parse(node: xmlP.XmlNode): PermissionsBoundaryDecisionDetail {
   return {
     AllowedByPermissionsBoundary: node.first("AllowedByPermissionsBoundary", false, x => x.content === 'true'),
   };
@@ -4875,10 +4853,10 @@ export interface ResourceSpecificResult {
   EvalResourceDecision: PolicyEvaluationDecisionType;
   MatchedStatements: Statement[];
   MissingContextValues: string[];
-  EvalDecisionDetails: { [key: string]: PolicyEvaluationDecisionType };
+  EvalDecisionDetails: { [key: string]: PolicyEvaluationDecisionType | null | undefined };
   PermissionsBoundaryDecisionDetail?: PermissionsBoundaryDecisionDetail | null;
 }
-function ResourceSpecificResult_Parse(node: XmlNode): ResourceSpecificResult {
+function ResourceSpecificResult_Parse(node: xmlP.XmlNode): ResourceSpecificResult {
   return {
     ...node.strings({
       required: {"EvalResourceName":true},
@@ -4886,7 +4864,7 @@ function ResourceSpecificResult_Parse(node: XmlNode): ResourceSpecificResult {
     EvalResourceDecision: node.first("EvalResourceDecision", true, x => (x.content ?? '') as PolicyEvaluationDecisionType),
     MatchedStatements: node.getList("MatchedStatements", "member").map(Statement_Parse),
     MissingContextValues: node.getList("MissingContextValues", "member").map(x => x.content ?? ''),
-    EvalDecisionDetails: readXmlMap(node.getList("EvalDecisionDetails", "entry"), x => (x.content ?? '') as PolicyEvaluationDecisionType, {}),
+    EvalDecisionDetails: xmlP.readXmlMap(node.getList("EvalDecisionDetails", "entry"), x => (x.content ?? '') as PolicyEvaluationDecisionType, {}),
     PermissionsBoundaryDecisionDetail: node.first("PermissionsBoundaryDecisionDetail", false, PermissionsBoundaryDecisionDetail_Parse),
   };
 }

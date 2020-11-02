@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class ComputeOptimizer {
   #client: ServiceClient;
@@ -30,14 +30,17 @@ export default class ComputeOptimizer {
   async describeRecommendationExportJobs(
     {abortSignal, ...params}: RequestConfig & DescribeRecommendationExportJobsRequest = {},
   ): Promise<DescribeRecommendationExportJobsResponse> {
-    const body: JSONObject = {...params,
-    filters: params["filters"]?.map(x => fromJobFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      jobIds: params["jobIds"],
+      filters: params["filters"]?.map(x => fromJobFilter(x)),
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRecommendationExportJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "recommendationExportJobs": [toRecommendationExportJob],
@@ -49,15 +52,19 @@ export default class ComputeOptimizer {
   async exportAutoScalingGroupRecommendations(
     {abortSignal, ...params}: RequestConfig & ExportAutoScalingGroupRecommendationsRequest,
   ): Promise<ExportAutoScalingGroupRecommendationsResponse> {
-    const body: JSONObject = {...params,
-    filters: params["filters"]?.map(x => fromFilter(x)),
-    s3DestinationConfig: fromS3DestinationConfig(params["s3DestinationConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      accountIds: params["accountIds"],
+      filters: params["filters"]?.map(x => fromFilter(x)),
+      fieldsToExport: params["fieldsToExport"],
+      s3DestinationConfig: fromS3DestinationConfig(params["s3DestinationConfig"]),
+      fileFormat: params["fileFormat"],
+      includeMemberAccounts: params["includeMemberAccounts"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExportAutoScalingGroupRecommendations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "jobId": "s",
@@ -69,15 +76,19 @@ export default class ComputeOptimizer {
   async exportEC2InstanceRecommendations(
     {abortSignal, ...params}: RequestConfig & ExportEC2InstanceRecommendationsRequest,
   ): Promise<ExportEC2InstanceRecommendationsResponse> {
-    const body: JSONObject = {...params,
-    filters: params["filters"]?.map(x => fromFilter(x)),
-    s3DestinationConfig: fromS3DestinationConfig(params["s3DestinationConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      accountIds: params["accountIds"],
+      filters: params["filters"]?.map(x => fromFilter(x)),
+      fieldsToExport: params["fieldsToExport"],
+      s3DestinationConfig: fromS3DestinationConfig(params["s3DestinationConfig"]),
+      fileFormat: params["fileFormat"],
+      includeMemberAccounts: params["includeMemberAccounts"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExportEC2InstanceRecommendations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "jobId": "s",
@@ -89,14 +100,18 @@ export default class ComputeOptimizer {
   async getAutoScalingGroupRecommendations(
     {abortSignal, ...params}: RequestConfig & GetAutoScalingGroupRecommendationsRequest = {},
   ): Promise<GetAutoScalingGroupRecommendationsResponse> {
-    const body: JSONObject = {...params,
-    filters: params["filters"]?.map(x => fromFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      accountIds: params["accountIds"],
+      autoScalingGroupArns: params["autoScalingGroupArns"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+      filters: params["filters"]?.map(x => fromFilter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAutoScalingGroupRecommendations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "nextToken": "s",
@@ -109,14 +124,18 @@ export default class ComputeOptimizer {
   async getEC2InstanceRecommendations(
     {abortSignal, ...params}: RequestConfig & GetEC2InstanceRecommendationsRequest = {},
   ): Promise<GetEC2InstanceRecommendationsResponse> {
-    const body: JSONObject = {...params,
-    filters: params["filters"]?.map(x => fromFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      instanceArns: params["instanceArns"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+      filters: params["filters"]?.map(x => fromFilter(x)),
+      accountIds: params["accountIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEC2InstanceRecommendations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "nextToken": "s",
@@ -129,15 +148,18 @@ export default class ComputeOptimizer {
   async getEC2RecommendationProjectedMetrics(
     {abortSignal, ...params}: RequestConfig & GetEC2RecommendationProjectedMetricsRequest,
   ): Promise<GetEC2RecommendationProjectedMetricsResponse> {
-    const body: JSONObject = {...params,
-    startTime: prt.serializeDate_unixTimestamp(params["startTime"]),
-    endTime: prt.serializeDate_unixTimestamp(params["endTime"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      instanceArn: params["instanceArn"],
+      stat: params["stat"],
+      period: params["period"],
+      startTime: jsonP.serializeDate_unixTimestamp(params["startTime"]),
+      endTime: jsonP.serializeDate_unixTimestamp(params["endTime"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEC2RecommendationProjectedMetrics",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "recommendedOptionProjectedMetrics": [toRecommendedOptionProjectedMetric],
@@ -148,16 +170,16 @@ export default class ComputeOptimizer {
   async getEnrollmentStatus(
     {abortSignal, ...params}: RequestConfig & GetEnrollmentStatusRequest = {},
   ): Promise<GetEnrollmentStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEnrollmentStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "status": toStatus,
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
         "statusReason": "s",
         "memberAccountsEnrolled": "b",
       },
@@ -167,13 +189,16 @@ export default class ComputeOptimizer {
   async getRecommendationSummaries(
     {abortSignal, ...params}: RequestConfig & GetRecommendationSummariesRequest = {},
   ): Promise<GetRecommendationSummariesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      accountIds: params["accountIds"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRecommendationSummaries",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "nextToken": "s",
@@ -185,16 +210,18 @@ export default class ComputeOptimizer {
   async updateEnrollmentStatus(
     {abortSignal, ...params}: RequestConfig & UpdateEnrollmentStatusRequest,
   ): Promise<UpdateEnrollmentStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      status: params["status"],
+      includeMemberAccounts: params["includeMemberAccounts"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEnrollmentStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "status": toStatus,
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
         "statusReason": "s",
       },
     }, await resp.json());
@@ -335,9 +362,11 @@ export interface JobFilter {
   name?: JobFilterName | null;
   values?: string[] | null;
 }
-function fromJobFilter(input?: JobFilter | null): JSONValue {
+function fromJobFilter(input?: JobFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    values: input["values"],
   }
 }
 
@@ -345,17 +374,18 @@ function fromJobFilter(input?: JobFilter | null): JSONValue {
 export type JobFilterName =
 | "ResourceType"
 | "JobStatus"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface
 export interface Filter {
   name?: FilterName | null;
   values?: string[] | null;
 }
-function fromFilter(input?: Filter | null): JSONValue {
+function fromFilter(input?: Filter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    values: input["values"],
   }
 }
 
@@ -363,8 +393,7 @@ function fromFilter(input?: Filter | null): JSONValue {
 export type FilterName =
 | "Finding"
 | "RecommendationSourceType"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ExportableAutoScalingGroupField =
@@ -405,25 +434,25 @@ export type ExportableAutoScalingGroupField =
 | "RecommendationOptionsStorage"
 | "RecommendationOptionsNetwork"
 | "LastRefreshTimestamp"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface S3DestinationConfig {
   bucket?: string | null;
   keyPrefix?: string | null;
 }
-function fromS3DestinationConfig(input?: S3DestinationConfig | null): JSONValue {
+function fromS3DestinationConfig(input?: S3DestinationConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    bucket: input["bucket"],
+    keyPrefix: input["keyPrefix"],
   }
 }
 
 // refs: 2 - tags: input, named, enum
 export type FileFormat =
 | "Csv"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ExportableInstanceField =
@@ -460,21 +489,13 @@ export type ExportableInstanceField =
 | "RecommendationsSourcesRecommendationSourceArn"
 | "RecommendationsSourcesRecommendationSourceType"
 | "LastRefreshTimestamp"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type MetricStatistic =
 | "Maximum"
 | "Average"
-;
-
-function toMetricStatistic(root: JSONValue): MetricStatistic | null {
-  return ( false
-    || root == "Maximum"
-    || root == "Average"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type Status =
@@ -482,16 +503,7 @@ export type Status =
 | "Inactive"
 | "Pending"
 | "Failed"
-;
-
-function toStatus(root: JSONValue): Status | null {
-  return ( false
-    || root == "Active"
-    || root == "Inactive"
-    || root == "Pending"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface RecommendationExportJob {
@@ -503,14 +515,14 @@ export interface RecommendationExportJob {
   lastUpdatedTimestamp?: Date | number | null;
   failureReason?: string | null;
 }
-function toRecommendationExportJob(root: JSONValue): RecommendationExportJob {
-  return prt.readObj({
+function toRecommendationExportJob(root: jsonP.JSONValue): RecommendationExportJob {
+  return jsonP.readObj({
     required: {},
     optional: {
       "jobId": "s",
       "destination": toExportDestination,
-      "resourceType": toResourceType,
-      "status": toJobStatus,
+      "resourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       "creationTimestamp": "d",
       "lastUpdatedTimestamp": "d",
       "failureReason": "s",
@@ -522,8 +534,8 @@ function toRecommendationExportJob(root: JSONValue): RecommendationExportJob {
 export interface ExportDestination {
   s3?: S3Destination | null;
 }
-function toExportDestination(root: JSONValue): ExportDestination {
-  return prt.readObj({
+function toExportDestination(root: jsonP.JSONValue): ExportDestination {
+  return jsonP.readObj({
     required: {},
     optional: {
       "s3": toS3Destination,
@@ -537,8 +549,8 @@ export interface S3Destination {
   key?: string | null;
   metadataKey?: string | null;
 }
-function toS3Destination(root: JSONValue): S3Destination {
-  return prt.readObj({
+function toS3Destination(root: jsonP.JSONValue): S3Destination {
+  return jsonP.readObj({
     required: {},
     optional: {
       "bucket": "s",
@@ -552,13 +564,7 @@ function toS3Destination(root: JSONValue): S3Destination {
 export type ResourceType =
 | "Ec2Instance"
 | "AutoScalingGroup"
-;
-function toResourceType(root: JSONValue): ResourceType | null {
-  return ( false
-    || root == "Ec2Instance"
-    || root == "AutoScalingGroup"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type JobStatus =
@@ -566,15 +572,7 @@ export type JobStatus =
 | "InProgress"
 | "Complete"
 | "Failed"
-;
-function toJobStatus(root: JSONValue): JobStatus | null {
-  return ( false
-    || root == "Queued"
-    || root == "InProgress"
-    || root == "Complete"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AutoScalingGroupRecommendation {
@@ -588,14 +586,14 @@ export interface AutoScalingGroupRecommendation {
   recommendationOptions?: AutoScalingGroupRecommendationOption[] | null;
   lastRefreshTimestamp?: Date | number | null;
 }
-function toAutoScalingGroupRecommendation(root: JSONValue): AutoScalingGroupRecommendation {
-  return prt.readObj({
+function toAutoScalingGroupRecommendation(root: jsonP.JSONValue): AutoScalingGroupRecommendation {
+  return jsonP.readObj({
     required: {},
     optional: {
       "accountId": "s",
       "autoScalingGroupArn": "s",
       "autoScalingGroupName": "s",
-      "finding": toFinding,
+      "finding": (x: jsonP.JSONValue) => cmnP.readEnum<Finding>(x),
       "utilizationMetrics": [toUtilizationMetric],
       "lookBackPeriodInDays": "n",
       "currentConfiguration": toAutoScalingGroupConfiguration,
@@ -611,15 +609,7 @@ export type Finding =
 | "Overprovisioned"
 | "Optimized"
 | "NotOptimized"
-;
-function toFinding(root: JSONValue): Finding | null {
-  return ( false
-    || root == "Underprovisioned"
-    || root == "Overprovisioned"
-    || root == "Optimized"
-    || root == "NotOptimized"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface UtilizationMetric {
@@ -627,12 +617,12 @@ export interface UtilizationMetric {
   statistic?: MetricStatistic | null;
   value?: number | null;
 }
-function toUtilizationMetric(root: JSONValue): UtilizationMetric {
-  return prt.readObj({
+function toUtilizationMetric(root: jsonP.JSONValue): UtilizationMetric {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "name": toMetricName,
-      "statistic": toMetricStatistic,
+      "name": (x: jsonP.JSONValue) => cmnP.readEnum<MetricName>(x),
+      "statistic": (x: jsonP.JSONValue) => cmnP.readEnum<MetricStatistic>(x),
       "value": "n",
     },
   }, root);
@@ -646,17 +636,7 @@ export type MetricName =
 | "EBS_WRITE_OPS_PER_SECOND"
 | "EBS_READ_BYTES_PER_SECOND"
 | "EBS_WRITE_BYTES_PER_SECOND"
-;
-function toMetricName(root: JSONValue): MetricName | null {
-  return ( false
-    || root == "Cpu"
-    || root == "Memory"
-    || root == "EBS_READ_OPS_PER_SECOND"
-    || root == "EBS_WRITE_OPS_PER_SECOND"
-    || root == "EBS_READ_BYTES_PER_SECOND"
-    || root == "EBS_WRITE_BYTES_PER_SECOND"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface AutoScalingGroupConfiguration {
@@ -665,8 +645,8 @@ export interface AutoScalingGroupConfiguration {
   maxSize?: number | null;
   instanceType?: string | null;
 }
-function toAutoScalingGroupConfiguration(root: JSONValue): AutoScalingGroupConfiguration {
-  return prt.readObj({
+function toAutoScalingGroupConfiguration(root: jsonP.JSONValue): AutoScalingGroupConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "desiredCapacity": "n",
@@ -684,8 +664,8 @@ export interface AutoScalingGroupRecommendationOption {
   performanceRisk?: number | null;
   rank?: number | null;
 }
-function toAutoScalingGroupRecommendationOption(root: JSONValue): AutoScalingGroupRecommendationOption {
-  return prt.readObj({
+function toAutoScalingGroupRecommendationOption(root: jsonP.JSONValue): AutoScalingGroupRecommendationOption {
+  return jsonP.readObj({
     required: {},
     optional: {
       "configuration": toAutoScalingGroupConfiguration,
@@ -702,8 +682,8 @@ export interface GetRecommendationError {
   code?: string | null;
   message?: string | null;
 }
-function toGetRecommendationError(root: JSONValue): GetRecommendationError {
-  return prt.readObj({
+function toGetRecommendationError(root: jsonP.JSONValue): GetRecommendationError {
+  return jsonP.readObj({
     required: {},
     optional: {
       "identifier": "s",
@@ -726,15 +706,15 @@ export interface InstanceRecommendation {
   recommendationSources?: RecommendationSource[] | null;
   lastRefreshTimestamp?: Date | number | null;
 }
-function toInstanceRecommendation(root: JSONValue): InstanceRecommendation {
-  return prt.readObj({
+function toInstanceRecommendation(root: jsonP.JSONValue): InstanceRecommendation {
+  return jsonP.readObj({
     required: {},
     optional: {
       "instanceArn": "s",
       "accountId": "s",
       "instanceName": "s",
       "currentInstanceType": "s",
-      "finding": toFinding,
+      "finding": (x: jsonP.JSONValue) => cmnP.readEnum<Finding>(x),
       "utilizationMetrics": [toUtilizationMetric],
       "lookBackPeriodInDays": "n",
       "recommendationOptions": [toInstanceRecommendationOption],
@@ -751,8 +731,8 @@ export interface InstanceRecommendationOption {
   performanceRisk?: number | null;
   rank?: number | null;
 }
-function toInstanceRecommendationOption(root: JSONValue): InstanceRecommendationOption {
-  return prt.readObj({
+function toInstanceRecommendationOption(root: jsonP.JSONValue): InstanceRecommendationOption {
+  return jsonP.readObj({
     required: {},
     optional: {
       "instanceType": "s",
@@ -768,12 +748,12 @@ export interface RecommendationSource {
   recommendationSourceArn?: string | null;
   recommendationSourceType?: RecommendationSourceType | null;
 }
-function toRecommendationSource(root: JSONValue): RecommendationSource {
-  return prt.readObj({
+function toRecommendationSource(root: jsonP.JSONValue): RecommendationSource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "recommendationSourceArn": "s",
-      "recommendationSourceType": toRecommendationSourceType,
+      "recommendationSourceType": (x: jsonP.JSONValue) => cmnP.readEnum<RecommendationSourceType>(x),
     },
   }, root);
 }
@@ -782,13 +762,7 @@ function toRecommendationSource(root: JSONValue): RecommendationSource {
 export type RecommendationSourceType =
 | "Ec2Instance"
 | "AutoScalingGroup"
-;
-function toRecommendationSourceType(root: JSONValue): RecommendationSourceType | null {
-  return ( false
-    || root == "Ec2Instance"
-    || root == "AutoScalingGroup"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface RecommendedOptionProjectedMetric {
@@ -796,8 +770,8 @@ export interface RecommendedOptionProjectedMetric {
   rank?: number | null;
   projectedMetrics?: ProjectedMetric[] | null;
 }
-function toRecommendedOptionProjectedMetric(root: JSONValue): RecommendedOptionProjectedMetric {
-  return prt.readObj({
+function toRecommendedOptionProjectedMetric(root: jsonP.JSONValue): RecommendedOptionProjectedMetric {
+  return jsonP.readObj({
     required: {},
     optional: {
       "recommendedInstanceType": "s",
@@ -813,11 +787,11 @@ export interface ProjectedMetric {
   timestamps?: (Date | number)[] | null;
   values?: number[] | null;
 }
-function toProjectedMetric(root: JSONValue): ProjectedMetric {
-  return prt.readObj({
+function toProjectedMetric(root: jsonP.JSONValue): ProjectedMetric {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "name": toMetricName,
+      "name": (x: jsonP.JSONValue) => cmnP.readEnum<MetricName>(x),
       "timestamps": ["d"],
       "values": ["n"],
     },
@@ -830,12 +804,12 @@ export interface RecommendationSummary {
   recommendationResourceType?: RecommendationSourceType | null;
   accountId?: string | null;
 }
-function toRecommendationSummary(root: JSONValue): RecommendationSummary {
-  return prt.readObj({
+function toRecommendationSummary(root: jsonP.JSONValue): RecommendationSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "summaries": [toSummary],
-      "recommendationResourceType": toRecommendationSourceType,
+      "recommendationResourceType": (x: jsonP.JSONValue) => cmnP.readEnum<RecommendationSourceType>(x),
       "accountId": "s",
     },
   }, root);
@@ -846,11 +820,11 @@ export interface Summary {
   name?: Finding | null;
   value?: number | null;
 }
-function toSummary(root: JSONValue): Summary {
-  return prt.readObj({
+function toSummary(root: jsonP.JSONValue): Summary {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "name": toFinding,
+      "name": (x: jsonP.JSONValue) => cmnP.readEnum<Finding>(x),
       "value": "n",
     },
   }, root);

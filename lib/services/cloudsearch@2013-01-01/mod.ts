@@ -5,8 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 
 export default class CloudSearch {
   #client: ServiceClient;
@@ -35,7 +36,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "BuildSuggesters",
     });
-    const xml = readXmlResult(await resp.text(), "BuildSuggestersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "BuildSuggestersResult");
     return {
       FieldNames: xml.getList("FieldNames", "member").map(x => x.content ?? ''),
     };
@@ -51,7 +52,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "CreateDomain",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDomainResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDomainResult");
     return {
       DomainStatus: xml.first("DomainStatus", false, DomainStatus_Parse),
     };
@@ -68,7 +69,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DefineAnalysisScheme",
     });
-    const xml = readXmlResult(await resp.text(), "DefineAnalysisSchemeResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DefineAnalysisSchemeResult");
     return {
       AnalysisScheme: xml.first("AnalysisScheme", true, AnalysisSchemeStatus_Parse),
     };
@@ -85,7 +86,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DefineExpression",
     });
-    const xml = readXmlResult(await resp.text(), "DefineExpressionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DefineExpressionResult");
     return {
       Expression: xml.first("Expression", true, ExpressionStatus_Parse),
     };
@@ -102,7 +103,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DefineIndexField",
     });
-    const xml = readXmlResult(await resp.text(), "DefineIndexFieldResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DefineIndexFieldResult");
     return {
       IndexField: xml.first("IndexField", true, IndexFieldStatus_Parse),
     };
@@ -119,7 +120,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DefineSuggester",
     });
-    const xml = readXmlResult(await resp.text(), "DefineSuggesterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DefineSuggesterResult");
     return {
       Suggester: xml.first("Suggester", true, SuggesterStatus_Parse),
     };
@@ -136,7 +137,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DeleteAnalysisScheme",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteAnalysisSchemeResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteAnalysisSchemeResult");
     return {
       AnalysisScheme: xml.first("AnalysisScheme", true, AnalysisSchemeStatus_Parse),
     };
@@ -152,7 +153,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DeleteDomain",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteDomainResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDomainResult");
     return {
       DomainStatus: xml.first("DomainStatus", false, DomainStatus_Parse),
     };
@@ -169,7 +170,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DeleteExpression",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteExpressionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteExpressionResult");
     return {
       Expression: xml.first("Expression", true, ExpressionStatus_Parse),
     };
@@ -186,7 +187,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DeleteIndexField",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteIndexFieldResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteIndexFieldResult");
     return {
       IndexField: xml.first("IndexField", true, IndexFieldStatus_Parse),
     };
@@ -203,7 +204,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DeleteSuggester",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteSuggesterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteSuggesterResult");
     return {
       Suggester: xml.first("Suggester", true, SuggesterStatus_Parse),
     };
@@ -215,13 +216,13 @@ export default class CloudSearch {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DomainName", (params["DomainName"] ?? '').toString());
-    if (params["AnalysisSchemeNames"]) prt.appendList(body, prefix+"AnalysisSchemeNames", params["AnalysisSchemeNames"], {"entryPrefix":".member."})
+    if (params["AnalysisSchemeNames"]) qsP.appendList(body, prefix+"AnalysisSchemeNames", params["AnalysisSchemeNames"], {"entryPrefix":".member."})
     if ("Deployed" in params) body.append(prefix+"Deployed", (params["Deployed"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAnalysisSchemes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeAnalysisSchemesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeAnalysisSchemesResult");
     return {
       AnalysisSchemes: xml.getList("AnalysisSchemes", "member").map(AnalysisSchemeStatus_Parse),
     };
@@ -238,7 +239,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DescribeAvailabilityOptions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeAvailabilityOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeAvailabilityOptionsResult");
     return {
       AvailabilityOptions: xml.first("AvailabilityOptions", false, AvailabilityOptionsStatus_Parse),
     };
@@ -255,7 +256,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DescribeDomainEndpointOptions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDomainEndpointOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDomainEndpointOptionsResult");
     return {
       DomainEndpointOptions: xml.first("DomainEndpointOptions", false, DomainEndpointOptionsStatus_Parse),
     };
@@ -266,12 +267,12 @@ export default class CloudSearch {
   ): Promise<DescribeDomainsResponse> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["DomainNames"]) prt.appendList(body, prefix+"DomainNames", params["DomainNames"], {"entryPrefix":".member."})
+    if (params["DomainNames"]) qsP.appendList(body, prefix+"DomainNames", params["DomainNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDomains",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDomainsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDomainsResult");
     return {
       DomainStatusList: xml.getList("DomainStatusList", "member").map(DomainStatus_Parse),
     };
@@ -283,13 +284,13 @@ export default class CloudSearch {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DomainName", (params["DomainName"] ?? '').toString());
-    if (params["ExpressionNames"]) prt.appendList(body, prefix+"ExpressionNames", params["ExpressionNames"], {"entryPrefix":".member."})
+    if (params["ExpressionNames"]) qsP.appendList(body, prefix+"ExpressionNames", params["ExpressionNames"], {"entryPrefix":".member."})
     if ("Deployed" in params) body.append(prefix+"Deployed", (params["Deployed"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeExpressions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeExpressionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeExpressionsResult");
     return {
       Expressions: xml.getList("Expressions", "member").map(ExpressionStatus_Parse),
     };
@@ -301,13 +302,13 @@ export default class CloudSearch {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DomainName", (params["DomainName"] ?? '').toString());
-    if (params["FieldNames"]) prt.appendList(body, prefix+"FieldNames", params["FieldNames"], {"entryPrefix":".member."})
+    if (params["FieldNames"]) qsP.appendList(body, prefix+"FieldNames", params["FieldNames"], {"entryPrefix":".member."})
     if ("Deployed" in params) body.append(prefix+"Deployed", (params["Deployed"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeIndexFields",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeIndexFieldsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeIndexFieldsResult");
     return {
       IndexFields: xml.getList("IndexFields", "member").map(IndexFieldStatus_Parse),
     };
@@ -323,7 +324,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DescribeScalingParameters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeScalingParametersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeScalingParametersResult");
     return {
       ScalingParameters: xml.first("ScalingParameters", true, ScalingParametersStatus_Parse),
     };
@@ -340,7 +341,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DescribeServiceAccessPolicies",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeServiceAccessPoliciesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeServiceAccessPoliciesResult");
     return {
       AccessPolicies: xml.first("AccessPolicies", true, AccessPoliciesStatus_Parse),
     };
@@ -352,13 +353,13 @@ export default class CloudSearch {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DomainName", (params["DomainName"] ?? '').toString());
-    if (params["SuggesterNames"]) prt.appendList(body, prefix+"SuggesterNames", params["SuggesterNames"], {"entryPrefix":".member."})
+    if (params["SuggesterNames"]) qsP.appendList(body, prefix+"SuggesterNames", params["SuggesterNames"], {"entryPrefix":".member."})
     if ("Deployed" in params) body.append(prefix+"Deployed", (params["Deployed"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSuggesters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeSuggestersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeSuggestersResult");
     return {
       Suggesters: xml.getList("Suggesters", "member").map(SuggesterStatus_Parse),
     };
@@ -374,7 +375,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "IndexDocuments",
     });
-    const xml = readXmlResult(await resp.text(), "IndexDocumentsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "IndexDocumentsResult");
     return {
       FieldNames: xml.getList("FieldNames", "member").map(x => x.content ?? ''),
     };
@@ -387,9 +388,9 @@ export default class CloudSearch {
       abortSignal,
       action: "ListDomainNames",
     });
-    const xml = readXmlResult(await resp.text(), "ListDomainNamesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListDomainNamesResult");
     return {
-      DomainNames: readXmlMap(xml.getList("DomainNames", "entry"), x => x.content ?? '', {}),
+      DomainNames: xmlP.readXmlMap(xml.getList("DomainNames", "entry"), x => x.content ?? '', {}),
     };
   }
 
@@ -404,7 +405,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "UpdateAvailabilityOptions",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateAvailabilityOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateAvailabilityOptionsResult");
     return {
       AvailabilityOptions: xml.first("AvailabilityOptions", false, AvailabilityOptionsStatus_Parse),
     };
@@ -421,7 +422,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "UpdateDomainEndpointOptions",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateDomainEndpointOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateDomainEndpointOptionsResult");
     return {
       DomainEndpointOptions: xml.first("DomainEndpointOptions", false, DomainEndpointOptionsStatus_Parse),
     };
@@ -438,7 +439,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "UpdateScalingParameters",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateScalingParametersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateScalingParametersResult");
     return {
       ScalingParameters: xml.first("ScalingParameters", true, ScalingParametersStatus_Parse),
     };
@@ -455,7 +456,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "UpdateServiceAccessPolicies",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateServiceAccessPoliciesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateServiceAccessPoliciesResult");
     return {
       AccessPolicies: xml.first("AccessPolicies", true, AccessPoliciesStatus_Parse),
     };
@@ -718,7 +719,7 @@ export interface IndexDocumentsResponse {
 
 // refs: 1 - tags: named, output
 export interface ListDomainNamesResponse {
-  DomainNames: { [key: string]: string };
+  DomainNames: { [key: string]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, output
@@ -752,7 +753,7 @@ function AnalysisScheme_Serialize(body: URLSearchParams, prefix: string, params:
     body.append(prefix+".AnalysisSchemeLanguage", (params["AnalysisSchemeLanguage"] ?? '').toString());
     if (params["AnalysisOptions"] != null) AnalysisOptions_Serialize(body, prefix+".AnalysisOptions", params["AnalysisOptions"]);
 }
-function AnalysisScheme_Parse(node: XmlNode): AnalysisScheme {
+function AnalysisScheme_Parse(node: xmlP.XmlNode): AnalysisScheme {
   return {
     ...node.strings({
       required: {"AnalysisSchemeName":true},
@@ -799,9 +800,7 @@ export type AnalysisSchemeLanguage =
 | "tr"
 | "zh-Hans"
 | "zh-Hant"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface AnalysisOptions {
@@ -818,7 +817,7 @@ function AnalysisOptions_Serialize(body: URLSearchParams, prefix: string, params
     if ("JapaneseTokenizationDictionary" in params) body.append(prefix+".JapaneseTokenizationDictionary", (params["JapaneseTokenizationDictionary"] ?? '').toString());
     if ("AlgorithmicStemming" in params) body.append(prefix+".AlgorithmicStemming", (params["AlgorithmicStemming"] ?? '').toString());
 }
-function AnalysisOptions_Parse(node: XmlNode): AnalysisOptions {
+function AnalysisOptions_Parse(node: xmlP.XmlNode): AnalysisOptions {
   return {
     ...node.strings({
       optional: {"Synonyms":true,"Stopwords":true,"StemmingDictionary":true,"JapaneseTokenizationDictionary":true},
@@ -833,9 +832,7 @@ export type AlgorithmicStemming =
 | "minimal"
 | "light"
 | "full"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface Expression {
@@ -846,7 +843,7 @@ function Expression_Serialize(body: URLSearchParams, prefix: string, params: Exp
     body.append(prefix+".ExpressionName", (params["ExpressionName"] ?? '').toString());
     body.append(prefix+".ExpressionValue", (params["ExpressionValue"] ?? '').toString());
 }
-function Expression_Parse(node: XmlNode): Expression {
+function Expression_Parse(node: xmlP.XmlNode): Expression {
   return node.strings({
     required: {"ExpressionName":true,"ExpressionValue":true},
   });
@@ -883,7 +880,7 @@ function IndexField_Serialize(body: URLSearchParams, prefix: string, params: Ind
     if (params["TextArrayOptions"] != null) TextArrayOptions_Serialize(body, prefix+".TextArrayOptions", params["TextArrayOptions"]);
     if (params["DateArrayOptions"] != null) DateArrayOptions_Serialize(body, prefix+".DateArrayOptions", params["DateArrayOptions"]);
 }
-function IndexField_Parse(node: XmlNode): IndexField {
+function IndexField_Parse(node: xmlP.XmlNode): IndexField {
   return {
     ...node.strings({
       required: {"IndexFieldName":true},
@@ -916,9 +913,7 @@ export type IndexFieldType =
 | "literal-array"
 | "text-array"
 | "date-array"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface IntOptions {
@@ -937,7 +932,7 @@ function IntOptions_Serialize(body: URLSearchParams, prefix: string, params: Int
     if ("ReturnEnabled" in params) body.append(prefix+".ReturnEnabled", (params["ReturnEnabled"] ?? '').toString());
     if ("SortEnabled" in params) body.append(prefix+".SortEnabled", (params["SortEnabled"] ?? '').toString());
 }
-function IntOptions_Parse(node: XmlNode): IntOptions {
+function IntOptions_Parse(node: xmlP.XmlNode): IntOptions {
   return {
     ...node.strings({
       optional: {"SourceField":true},
@@ -967,7 +962,7 @@ function DoubleOptions_Serialize(body: URLSearchParams, prefix: string, params: 
     if ("ReturnEnabled" in params) body.append(prefix+".ReturnEnabled", (params["ReturnEnabled"] ?? '').toString());
     if ("SortEnabled" in params) body.append(prefix+".SortEnabled", (params["SortEnabled"] ?? '').toString());
 }
-function DoubleOptions_Parse(node: XmlNode): DoubleOptions {
+function DoubleOptions_Parse(node: xmlP.XmlNode): DoubleOptions {
   return {
     ...node.strings({
       optional: {"SourceField":true},
@@ -997,7 +992,7 @@ function LiteralOptions_Serialize(body: URLSearchParams, prefix: string, params:
     if ("ReturnEnabled" in params) body.append(prefix+".ReturnEnabled", (params["ReturnEnabled"] ?? '').toString());
     if ("SortEnabled" in params) body.append(prefix+".SortEnabled", (params["SortEnabled"] ?? '').toString());
 }
-function LiteralOptions_Parse(node: XmlNode): LiteralOptions {
+function LiteralOptions_Parse(node: xmlP.XmlNode): LiteralOptions {
   return {
     ...node.strings({
       optional: {"DefaultValue":true,"SourceField":true},
@@ -1026,7 +1021,7 @@ function TextOptions_Serialize(body: URLSearchParams, prefix: string, params: Te
     if ("HighlightEnabled" in params) body.append(prefix+".HighlightEnabled", (params["HighlightEnabled"] ?? '').toString());
     if ("AnalysisScheme" in params) body.append(prefix+".AnalysisScheme", (params["AnalysisScheme"] ?? '').toString());
 }
-function TextOptions_Parse(node: XmlNode): TextOptions {
+function TextOptions_Parse(node: xmlP.XmlNode): TextOptions {
   return {
     ...node.strings({
       optional: {"DefaultValue":true,"SourceField":true,"AnalysisScheme":true},
@@ -1054,7 +1049,7 @@ function DateOptions_Serialize(body: URLSearchParams, prefix: string, params: Da
     if ("ReturnEnabled" in params) body.append(prefix+".ReturnEnabled", (params["ReturnEnabled"] ?? '').toString());
     if ("SortEnabled" in params) body.append(prefix+".SortEnabled", (params["SortEnabled"] ?? '').toString());
 }
-function DateOptions_Parse(node: XmlNode): DateOptions {
+function DateOptions_Parse(node: xmlP.XmlNode): DateOptions {
   return {
     ...node.strings({
       optional: {"DefaultValue":true,"SourceField":true},
@@ -1083,7 +1078,7 @@ function LatLonOptions_Serialize(body: URLSearchParams, prefix: string, params: 
     if ("ReturnEnabled" in params) body.append(prefix+".ReturnEnabled", (params["ReturnEnabled"] ?? '').toString());
     if ("SortEnabled" in params) body.append(prefix+".SortEnabled", (params["SortEnabled"] ?? '').toString());
 }
-function LatLonOptions_Parse(node: XmlNode): LatLonOptions {
+function LatLonOptions_Parse(node: xmlP.XmlNode): LatLonOptions {
   return {
     ...node.strings({
       optional: {"DefaultValue":true,"SourceField":true},
@@ -1110,7 +1105,7 @@ function IntArrayOptions_Serialize(body: URLSearchParams, prefix: string, params
     if ("SearchEnabled" in params) body.append(prefix+".SearchEnabled", (params["SearchEnabled"] ?? '').toString());
     if ("ReturnEnabled" in params) body.append(prefix+".ReturnEnabled", (params["ReturnEnabled"] ?? '').toString());
 }
-function IntArrayOptions_Parse(node: XmlNode): IntArrayOptions {
+function IntArrayOptions_Parse(node: xmlP.XmlNode): IntArrayOptions {
   return {
     ...node.strings({
       optional: {"SourceFields":true},
@@ -1137,7 +1132,7 @@ function DoubleArrayOptions_Serialize(body: URLSearchParams, prefix: string, par
     if ("SearchEnabled" in params) body.append(prefix+".SearchEnabled", (params["SearchEnabled"] ?? '').toString());
     if ("ReturnEnabled" in params) body.append(prefix+".ReturnEnabled", (params["ReturnEnabled"] ?? '').toString());
 }
-function DoubleArrayOptions_Parse(node: XmlNode): DoubleArrayOptions {
+function DoubleArrayOptions_Parse(node: xmlP.XmlNode): DoubleArrayOptions {
   return {
     ...node.strings({
       optional: {"SourceFields":true},
@@ -1164,7 +1159,7 @@ function LiteralArrayOptions_Serialize(body: URLSearchParams, prefix: string, pa
     if ("SearchEnabled" in params) body.append(prefix+".SearchEnabled", (params["SearchEnabled"] ?? '').toString());
     if ("ReturnEnabled" in params) body.append(prefix+".ReturnEnabled", (params["ReturnEnabled"] ?? '').toString());
 }
-function LiteralArrayOptions_Parse(node: XmlNode): LiteralArrayOptions {
+function LiteralArrayOptions_Parse(node: xmlP.XmlNode): LiteralArrayOptions {
   return {
     ...node.strings({
       optional: {"DefaultValue":true,"SourceFields":true},
@@ -1190,7 +1185,7 @@ function TextArrayOptions_Serialize(body: URLSearchParams, prefix: string, param
     if ("HighlightEnabled" in params) body.append(prefix+".HighlightEnabled", (params["HighlightEnabled"] ?? '').toString());
     if ("AnalysisScheme" in params) body.append(prefix+".AnalysisScheme", (params["AnalysisScheme"] ?? '').toString());
 }
-function TextArrayOptions_Parse(node: XmlNode): TextArrayOptions {
+function TextArrayOptions_Parse(node: xmlP.XmlNode): TextArrayOptions {
   return {
     ...node.strings({
       optional: {"DefaultValue":true,"SourceFields":true,"AnalysisScheme":true},
@@ -1215,7 +1210,7 @@ function DateArrayOptions_Serialize(body: URLSearchParams, prefix: string, param
     if ("SearchEnabled" in params) body.append(prefix+".SearchEnabled", (params["SearchEnabled"] ?? '').toString());
     if ("ReturnEnabled" in params) body.append(prefix+".ReturnEnabled", (params["ReturnEnabled"] ?? '').toString());
 }
-function DateArrayOptions_Parse(node: XmlNode): DateArrayOptions {
+function DateArrayOptions_Parse(node: xmlP.XmlNode): DateArrayOptions {
   return {
     ...node.strings({
       optional: {"DefaultValue":true,"SourceFields":true},
@@ -1235,7 +1230,7 @@ function Suggester_Serialize(body: URLSearchParams, prefix: string, params: Sugg
     body.append(prefix+".SuggesterName", (params["SuggesterName"] ?? '').toString());
     DocumentSuggesterOptions_Serialize(body, prefix+".DocumentSuggesterOptions", params["DocumentSuggesterOptions"]);
 }
-function Suggester_Parse(node: XmlNode): Suggester {
+function Suggester_Parse(node: xmlP.XmlNode): Suggester {
   return {
     ...node.strings({
       required: {"SuggesterName":true},
@@ -1255,7 +1250,7 @@ function DocumentSuggesterOptions_Serialize(body: URLSearchParams, prefix: strin
     if ("FuzzyMatching" in params) body.append(prefix+".FuzzyMatching", (params["FuzzyMatching"] ?? '').toString());
     if ("SortExpression" in params) body.append(prefix+".SortExpression", (params["SortExpression"] ?? '').toString());
 }
-function DocumentSuggesterOptions_Parse(node: XmlNode): DocumentSuggesterOptions {
+function DocumentSuggesterOptions_Parse(node: xmlP.XmlNode): DocumentSuggesterOptions {
   return {
     ...node.strings({
       required: {"SourceField":true},
@@ -1270,9 +1265,7 @@ export type SuggesterFuzzyMatching =
 | "none"
 | "low"
 | "high"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface DomainEndpointOptions {
@@ -1283,7 +1276,7 @@ function DomainEndpointOptions_Serialize(body: URLSearchParams, prefix: string, 
     if ("EnforceHTTPS" in params) body.append(prefix+".EnforceHTTPS", (params["EnforceHTTPS"] ?? '').toString());
     if ("TLSSecurityPolicy" in params) body.append(prefix+".TLSSecurityPolicy", (params["TLSSecurityPolicy"] ?? '').toString());
 }
-function DomainEndpointOptions_Parse(node: XmlNode): DomainEndpointOptions {
+function DomainEndpointOptions_Parse(node: xmlP.XmlNode): DomainEndpointOptions {
   return {
     EnforceHTTPS: node.first("EnforceHTTPS", false, x => x.content === 'true'),
     TLSSecurityPolicy: node.first("TLSSecurityPolicy", false, x => (x.content ?? '') as TLSSecurityPolicy),
@@ -1294,9 +1287,7 @@ function DomainEndpointOptions_Parse(node: XmlNode): DomainEndpointOptions {
 export type TLSSecurityPolicy =
 | "Policy-Min-TLS-1-0-2019-07"
 | "Policy-Min-TLS-1-2-2019-07"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface ScalingParameters {
@@ -1309,7 +1300,7 @@ function ScalingParameters_Serialize(body: URLSearchParams, prefix: string, para
     if ("DesiredReplicationCount" in params) body.append(prefix+".DesiredReplicationCount", (params["DesiredReplicationCount"] ?? '').toString());
     if ("DesiredPartitionCount" in params) body.append(prefix+".DesiredPartitionCount", (params["DesiredPartitionCount"] ?? '').toString());
 }
-function ScalingParameters_Parse(node: XmlNode): ScalingParameters {
+function ScalingParameters_Parse(node: xmlP.XmlNode): ScalingParameters {
   return {
     DesiredInstanceType: node.first("DesiredInstanceType", false, x => (x.content ?? '') as PartitionInstanceType),
     DesiredReplicationCount: node.first("DesiredReplicationCount", false, x => parseInt(x.content ?? '0')),
@@ -1327,9 +1318,7 @@ export type PartitionInstanceType =
 | "search.m3.large"
 | "search.m3.xlarge"
 | "search.m3.2xlarge"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface DomainStatus {
@@ -1347,7 +1336,7 @@ export interface DomainStatus {
   SearchInstanceCount?: number | null;
   Limits?: Limits | null;
 }
-function DomainStatus_Parse(node: XmlNode): DomainStatus {
+function DomainStatus_Parse(node: xmlP.XmlNode): DomainStatus {
   return {
     ...node.strings({
       required: {"DomainId":true,"DomainName":true},
@@ -1369,7 +1358,7 @@ function DomainStatus_Parse(node: XmlNode): DomainStatus {
 export interface ServiceEndpoint {
   Endpoint?: string | null;
 }
-function ServiceEndpoint_Parse(node: XmlNode): ServiceEndpoint {
+function ServiceEndpoint_Parse(node: xmlP.XmlNode): ServiceEndpoint {
   return node.strings({
     optional: {"Endpoint":true},
   });
@@ -1380,7 +1369,7 @@ export interface Limits {
   MaximumReplicationCount: number;
   MaximumPartitionCount: number;
 }
-function Limits_Parse(node: XmlNode): Limits {
+function Limits_Parse(node: xmlP.XmlNode): Limits {
   return {
     MaximumReplicationCount: node.first("MaximumReplicationCount", true, x => parseInt(x.content ?? '0')),
     MaximumPartitionCount: node.first("MaximumPartitionCount", true, x => parseInt(x.content ?? '0')),
@@ -1392,7 +1381,7 @@ export interface AnalysisSchemeStatus {
   Options: AnalysisScheme;
   Status: OptionStatus;
 }
-function AnalysisSchemeStatus_Parse(node: XmlNode): AnalysisSchemeStatus {
+function AnalysisSchemeStatus_Parse(node: xmlP.XmlNode): AnalysisSchemeStatus {
   return {
     Options: node.first("Options", true, AnalysisScheme_Parse),
     Status: node.first("Status", true, OptionStatus_Parse),
@@ -1407,10 +1396,10 @@ export interface OptionStatus {
   State: OptionState;
   PendingDeletion?: boolean | null;
 }
-function OptionStatus_Parse(node: XmlNode): OptionStatus {
+function OptionStatus_Parse(node: xmlP.XmlNode): OptionStatus {
   return {
-    CreationDate: node.first("CreationDate", true, x => parseTimestamp(x.content)),
-    UpdateDate: node.first("UpdateDate", true, x => parseTimestamp(x.content)),
+    CreationDate: node.first("CreationDate", true, x => xmlP.parseTimestamp(x.content)),
+    UpdateDate: node.first("UpdateDate", true, x => xmlP.parseTimestamp(x.content)),
     UpdateVersion: node.first("UpdateVersion", false, x => parseInt(x.content ?? '0')),
     State: node.first("State", true, x => (x.content ?? '') as OptionState),
     PendingDeletion: node.first("PendingDeletion", false, x => x.content === 'true'),
@@ -1423,15 +1412,14 @@ export type OptionState =
 | "Processing"
 | "Active"
 | "FailedToValidate"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface ExpressionStatus {
   Options: Expression;
   Status: OptionStatus;
 }
-function ExpressionStatus_Parse(node: XmlNode): ExpressionStatus {
+function ExpressionStatus_Parse(node: xmlP.XmlNode): ExpressionStatus {
   return {
     Options: node.first("Options", true, Expression_Parse),
     Status: node.first("Status", true, OptionStatus_Parse),
@@ -1443,7 +1431,7 @@ export interface IndexFieldStatus {
   Options: IndexField;
   Status: OptionStatus;
 }
-function IndexFieldStatus_Parse(node: XmlNode): IndexFieldStatus {
+function IndexFieldStatus_Parse(node: xmlP.XmlNode): IndexFieldStatus {
   return {
     Options: node.first("Options", true, IndexField_Parse),
     Status: node.first("Status", true, OptionStatus_Parse),
@@ -1455,7 +1443,7 @@ export interface SuggesterStatus {
   Options: Suggester;
   Status: OptionStatus;
 }
-function SuggesterStatus_Parse(node: XmlNode): SuggesterStatus {
+function SuggesterStatus_Parse(node: xmlP.XmlNode): SuggesterStatus {
   return {
     Options: node.first("Options", true, Suggester_Parse),
     Status: node.first("Status", true, OptionStatus_Parse),
@@ -1467,7 +1455,7 @@ export interface AvailabilityOptionsStatus {
   Options: boolean;
   Status: OptionStatus;
 }
-function AvailabilityOptionsStatus_Parse(node: XmlNode): AvailabilityOptionsStatus {
+function AvailabilityOptionsStatus_Parse(node: xmlP.XmlNode): AvailabilityOptionsStatus {
   return {
     Options: node.first("Options", true, x => x.content === 'true'),
     Status: node.first("Status", true, OptionStatus_Parse),
@@ -1479,7 +1467,7 @@ export interface DomainEndpointOptionsStatus {
   Options: DomainEndpointOptions;
   Status: OptionStatus;
 }
-function DomainEndpointOptionsStatus_Parse(node: XmlNode): DomainEndpointOptionsStatus {
+function DomainEndpointOptionsStatus_Parse(node: xmlP.XmlNode): DomainEndpointOptionsStatus {
   return {
     Options: node.first("Options", true, DomainEndpointOptions_Parse),
     Status: node.first("Status", true, OptionStatus_Parse),
@@ -1491,7 +1479,7 @@ export interface ScalingParametersStatus {
   Options: ScalingParameters;
   Status: OptionStatus;
 }
-function ScalingParametersStatus_Parse(node: XmlNode): ScalingParametersStatus {
+function ScalingParametersStatus_Parse(node: xmlP.XmlNode): ScalingParametersStatus {
   return {
     Options: node.first("Options", true, ScalingParameters_Parse),
     Status: node.first("Status", true, OptionStatus_Parse),
@@ -1503,7 +1491,7 @@ export interface AccessPoliciesStatus {
   Options: string;
   Status: OptionStatus;
 }
-function AccessPoliciesStatus_Parse(node: XmlNode): AccessPoliciesStatus {
+function AccessPoliciesStatus_Parse(node: xmlP.XmlNode): AccessPoliciesStatus {
   return {
     ...node.strings({
       required: {"Options":true},

@@ -5,10 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }
@@ -35,13 +34,14 @@ export default class Comprehend {
   async batchDetectDominantLanguage(
     {abortSignal, ...params}: RequestConfig & BatchDetectDominantLanguageRequest,
   ): Promise<BatchDetectDominantLanguageResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TextList: params["TextList"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDetectDominantLanguage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ResultList": [toBatchDetectDominantLanguageItemResult],
         "ErrorList": [toBatchItemError],
@@ -53,13 +53,15 @@ export default class Comprehend {
   async batchDetectEntities(
     {abortSignal, ...params}: RequestConfig & BatchDetectEntitiesRequest,
   ): Promise<BatchDetectEntitiesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TextList: params["TextList"],
+      LanguageCode: params["LanguageCode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDetectEntities",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ResultList": [toBatchDetectEntitiesItemResult],
         "ErrorList": [toBatchItemError],
@@ -71,13 +73,15 @@ export default class Comprehend {
   async batchDetectKeyPhrases(
     {abortSignal, ...params}: RequestConfig & BatchDetectKeyPhrasesRequest,
   ): Promise<BatchDetectKeyPhrasesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TextList: params["TextList"],
+      LanguageCode: params["LanguageCode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDetectKeyPhrases",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ResultList": [toBatchDetectKeyPhrasesItemResult],
         "ErrorList": [toBatchItemError],
@@ -89,13 +93,15 @@ export default class Comprehend {
   async batchDetectSentiment(
     {abortSignal, ...params}: RequestConfig & BatchDetectSentimentRequest,
   ): Promise<BatchDetectSentimentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TextList: params["TextList"],
+      LanguageCode: params["LanguageCode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDetectSentiment",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ResultList": [toBatchDetectSentimentItemResult],
         "ErrorList": [toBatchItemError],
@@ -107,13 +113,15 @@ export default class Comprehend {
   async batchDetectSyntax(
     {abortSignal, ...params}: RequestConfig & BatchDetectSyntaxRequest,
   ): Promise<BatchDetectSyntaxResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TextList: params["TextList"],
+      LanguageCode: params["LanguageCode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDetectSyntax",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ResultList": [toBatchDetectSyntaxItemResult],
         "ErrorList": [toBatchItemError],
@@ -125,13 +133,15 @@ export default class Comprehend {
   async classifyDocument(
     {abortSignal, ...params}: RequestConfig & ClassifyDocumentRequest,
   ): Promise<ClassifyDocumentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Text: params["Text"],
+      EndpointArn: params["EndpointArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ClassifyDocument",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Classes": [toDocumentClass],
@@ -143,18 +153,23 @@ export default class Comprehend {
   async createDocumentClassifier(
     {abortSignal, ...params}: RequestConfig & CreateDocumentClassifierRequest,
   ): Promise<CreateDocumentClassifierResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-    InputDataConfig: fromDocumentClassifierInputDataConfig(params["InputDataConfig"]),
-    OutputDataConfig: fromDocumentClassifierOutputDataConfig(params["OutputDataConfig"]),
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    VpcConfig: fromVpcConfig(params["VpcConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DocumentClassifierName: params["DocumentClassifierName"],
+      DataAccessRoleArn: params["DataAccessRoleArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      InputDataConfig: fromDocumentClassifierInputDataConfig(params["InputDataConfig"]),
+      OutputDataConfig: fromDocumentClassifierOutputDataConfig(params["OutputDataConfig"]),
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      LanguageCode: params["LanguageCode"],
+      VolumeKmsKeyId: params["VolumeKmsKeyId"],
+      VpcConfig: fromVpcConfig(params["VpcConfig"]),
+      Mode: params["Mode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDocumentClassifier",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DocumentClassifierArn": "s",
@@ -165,15 +180,18 @@ export default class Comprehend {
   async createEndpoint(
     {abortSignal, ...params}: RequestConfig & CreateEndpointRequest,
   ): Promise<CreateEndpointResponse> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      EndpointName: params["EndpointName"],
+      ModelArn: params["ModelArn"],
+      DesiredInferenceUnits: params["DesiredInferenceUnits"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEndpoint",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EndpointArn": "s",
@@ -184,17 +202,21 @@ export default class Comprehend {
   async createEntityRecognizer(
     {abortSignal, ...params}: RequestConfig & CreateEntityRecognizerRequest,
   ): Promise<CreateEntityRecognizerResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-    InputDataConfig: fromEntityRecognizerInputDataConfig(params["InputDataConfig"]),
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    VpcConfig: fromVpcConfig(params["VpcConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      RecognizerName: params["RecognizerName"],
+      DataAccessRoleArn: params["DataAccessRoleArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      InputDataConfig: fromEntityRecognizerInputDataConfig(params["InputDataConfig"]),
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      LanguageCode: params["LanguageCode"],
+      VolumeKmsKeyId: params["VolumeKmsKeyId"],
+      VpcConfig: fromVpcConfig(params["VpcConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEntityRecognizer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EntityRecognizerArn": "s",
@@ -205,13 +227,14 @@ export default class Comprehend {
   async deleteDocumentClassifier(
     {abortSignal, ...params}: RequestConfig & DeleteDocumentClassifierRequest,
   ): Promise<DeleteDocumentClassifierResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DocumentClassifierArn: params["DocumentClassifierArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDocumentClassifier",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -220,13 +243,14 @@ export default class Comprehend {
   async deleteEndpoint(
     {abortSignal, ...params}: RequestConfig & DeleteEndpointRequest,
   ): Promise<DeleteEndpointResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      EndpointArn: params["EndpointArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEndpoint",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -235,13 +259,14 @@ export default class Comprehend {
   async deleteEntityRecognizer(
     {abortSignal, ...params}: RequestConfig & DeleteEntityRecognizerRequest,
   ): Promise<DeleteEntityRecognizerResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      EntityRecognizerArn: params["EntityRecognizerArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEntityRecognizer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -250,13 +275,14 @@ export default class Comprehend {
   async describeDocumentClassificationJob(
     {abortSignal, ...params}: RequestConfig & DescribeDocumentClassificationJobRequest,
   ): Promise<DescribeDocumentClassificationJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDocumentClassificationJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DocumentClassificationJobProperties": toDocumentClassificationJobProperties,
@@ -267,13 +293,14 @@ export default class Comprehend {
   async describeDocumentClassifier(
     {abortSignal, ...params}: RequestConfig & DescribeDocumentClassifierRequest,
   ): Promise<DescribeDocumentClassifierResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DocumentClassifierArn: params["DocumentClassifierArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDocumentClassifier",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DocumentClassifierProperties": toDocumentClassifierProperties,
@@ -284,13 +311,14 @@ export default class Comprehend {
   async describeDominantLanguageDetectionJob(
     {abortSignal, ...params}: RequestConfig & DescribeDominantLanguageDetectionJobRequest,
   ): Promise<DescribeDominantLanguageDetectionJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDominantLanguageDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DominantLanguageDetectionJobProperties": toDominantLanguageDetectionJobProperties,
@@ -301,13 +329,14 @@ export default class Comprehend {
   async describeEndpoint(
     {abortSignal, ...params}: RequestConfig & DescribeEndpointRequest,
   ): Promise<DescribeEndpointResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      EndpointArn: params["EndpointArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEndpoint",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EndpointProperties": toEndpointProperties,
@@ -318,13 +347,14 @@ export default class Comprehend {
   async describeEntitiesDetectionJob(
     {abortSignal, ...params}: RequestConfig & DescribeEntitiesDetectionJobRequest,
   ): Promise<DescribeEntitiesDetectionJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEntitiesDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EntitiesDetectionJobProperties": toEntitiesDetectionJobProperties,
@@ -335,13 +365,14 @@ export default class Comprehend {
   async describeEntityRecognizer(
     {abortSignal, ...params}: RequestConfig & DescribeEntityRecognizerRequest,
   ): Promise<DescribeEntityRecognizerResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      EntityRecognizerArn: params["EntityRecognizerArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEntityRecognizer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EntityRecognizerProperties": toEntityRecognizerProperties,
@@ -352,13 +383,14 @@ export default class Comprehend {
   async describeKeyPhrasesDetectionJob(
     {abortSignal, ...params}: RequestConfig & DescribeKeyPhrasesDetectionJobRequest,
   ): Promise<DescribeKeyPhrasesDetectionJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeKeyPhrasesDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "KeyPhrasesDetectionJobProperties": toKeyPhrasesDetectionJobProperties,
@@ -369,13 +401,14 @@ export default class Comprehend {
   async describePiiEntitiesDetectionJob(
     {abortSignal, ...params}: RequestConfig & DescribePiiEntitiesDetectionJobRequest,
   ): Promise<DescribePiiEntitiesDetectionJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePiiEntitiesDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PiiEntitiesDetectionJobProperties": toPiiEntitiesDetectionJobProperties,
@@ -386,13 +419,14 @@ export default class Comprehend {
   async describeSentimentDetectionJob(
     {abortSignal, ...params}: RequestConfig & DescribeSentimentDetectionJobRequest,
   ): Promise<DescribeSentimentDetectionJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSentimentDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SentimentDetectionJobProperties": toSentimentDetectionJobProperties,
@@ -403,13 +437,14 @@ export default class Comprehend {
   async describeTopicsDetectionJob(
     {abortSignal, ...params}: RequestConfig & DescribeTopicsDetectionJobRequest,
   ): Promise<DescribeTopicsDetectionJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTopicsDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TopicsDetectionJobProperties": toTopicsDetectionJobProperties,
@@ -420,13 +455,14 @@ export default class Comprehend {
   async detectDominantLanguage(
     {abortSignal, ...params}: RequestConfig & DetectDominantLanguageRequest,
   ): Promise<DetectDominantLanguageResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Text: params["Text"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectDominantLanguage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Languages": [toDominantLanguage],
@@ -437,13 +473,16 @@ export default class Comprehend {
   async detectEntities(
     {abortSignal, ...params}: RequestConfig & DetectEntitiesRequest,
   ): Promise<DetectEntitiesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Text: params["Text"],
+      LanguageCode: params["LanguageCode"],
+      EndpointArn: params["EndpointArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectEntities",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Entities": [toEntity],
@@ -454,13 +493,15 @@ export default class Comprehend {
   async detectKeyPhrases(
     {abortSignal, ...params}: RequestConfig & DetectKeyPhrasesRequest,
   ): Promise<DetectKeyPhrasesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Text: params["Text"],
+      LanguageCode: params["LanguageCode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectKeyPhrases",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "KeyPhrases": [toKeyPhrase],
@@ -471,13 +512,15 @@ export default class Comprehend {
   async detectPiiEntities(
     {abortSignal, ...params}: RequestConfig & DetectPiiEntitiesRequest,
   ): Promise<DetectPiiEntitiesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Text: params["Text"],
+      LanguageCode: params["LanguageCode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectPiiEntities",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Entities": [toPiiEntity],
@@ -488,16 +531,18 @@ export default class Comprehend {
   async detectSentiment(
     {abortSignal, ...params}: RequestConfig & DetectSentimentRequest,
   ): Promise<DetectSentimentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Text: params["Text"],
+      LanguageCode: params["LanguageCode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectSentiment",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Sentiment": toSentimentType,
+        "Sentiment": (x: jsonP.JSONValue) => cmnP.readEnum<SentimentType>(x),
         "SentimentScore": toSentimentScore,
       },
     }, await resp.json());
@@ -506,13 +551,15 @@ export default class Comprehend {
   async detectSyntax(
     {abortSignal, ...params}: RequestConfig & DetectSyntaxRequest,
   ): Promise<DetectSyntaxResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Text: params["Text"],
+      LanguageCode: params["LanguageCode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectSyntax",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SyntaxTokens": [toSyntaxToken],
@@ -523,14 +570,16 @@ export default class Comprehend {
   async listDocumentClassificationJobs(
     {abortSignal, ...params}: RequestConfig & ListDocumentClassificationJobsRequest = {},
   ): Promise<ListDocumentClassificationJobsResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromDocumentClassificationJobFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filter: fromDocumentClassificationJobFilter(params["Filter"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDocumentClassificationJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DocumentClassificationJobPropertiesList": [toDocumentClassificationJobProperties],
@@ -542,14 +591,16 @@ export default class Comprehend {
   async listDocumentClassifiers(
     {abortSignal, ...params}: RequestConfig & ListDocumentClassifiersRequest = {},
   ): Promise<ListDocumentClassifiersResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromDocumentClassifierFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filter: fromDocumentClassifierFilter(params["Filter"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDocumentClassifiers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DocumentClassifierPropertiesList": [toDocumentClassifierProperties],
@@ -561,14 +612,16 @@ export default class Comprehend {
   async listDominantLanguageDetectionJobs(
     {abortSignal, ...params}: RequestConfig & ListDominantLanguageDetectionJobsRequest = {},
   ): Promise<ListDominantLanguageDetectionJobsResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromDominantLanguageDetectionJobFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filter: fromDominantLanguageDetectionJobFilter(params["Filter"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDominantLanguageDetectionJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DominantLanguageDetectionJobPropertiesList": [toDominantLanguageDetectionJobProperties],
@@ -580,14 +633,16 @@ export default class Comprehend {
   async listEndpoints(
     {abortSignal, ...params}: RequestConfig & ListEndpointsRequest = {},
   ): Promise<ListEndpointsResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromEndpointFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filter: fromEndpointFilter(params["Filter"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEndpoints",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EndpointPropertiesList": [toEndpointProperties],
@@ -599,14 +654,16 @@ export default class Comprehend {
   async listEntitiesDetectionJobs(
     {abortSignal, ...params}: RequestConfig & ListEntitiesDetectionJobsRequest = {},
   ): Promise<ListEntitiesDetectionJobsResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromEntitiesDetectionJobFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filter: fromEntitiesDetectionJobFilter(params["Filter"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEntitiesDetectionJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EntitiesDetectionJobPropertiesList": [toEntitiesDetectionJobProperties],
@@ -618,14 +675,16 @@ export default class Comprehend {
   async listEntityRecognizers(
     {abortSignal, ...params}: RequestConfig & ListEntityRecognizersRequest = {},
   ): Promise<ListEntityRecognizersResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromEntityRecognizerFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filter: fromEntityRecognizerFilter(params["Filter"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEntityRecognizers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EntityRecognizerPropertiesList": [toEntityRecognizerProperties],
@@ -637,14 +696,16 @@ export default class Comprehend {
   async listKeyPhrasesDetectionJobs(
     {abortSignal, ...params}: RequestConfig & ListKeyPhrasesDetectionJobsRequest = {},
   ): Promise<ListKeyPhrasesDetectionJobsResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromKeyPhrasesDetectionJobFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filter: fromKeyPhrasesDetectionJobFilter(params["Filter"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListKeyPhrasesDetectionJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "KeyPhrasesDetectionJobPropertiesList": [toKeyPhrasesDetectionJobProperties],
@@ -656,14 +717,16 @@ export default class Comprehend {
   async listPiiEntitiesDetectionJobs(
     {abortSignal, ...params}: RequestConfig & ListPiiEntitiesDetectionJobsRequest = {},
   ): Promise<ListPiiEntitiesDetectionJobsResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromPiiEntitiesDetectionJobFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filter: fromPiiEntitiesDetectionJobFilter(params["Filter"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPiiEntitiesDetectionJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PiiEntitiesDetectionJobPropertiesList": [toPiiEntitiesDetectionJobProperties],
@@ -675,14 +738,16 @@ export default class Comprehend {
   async listSentimentDetectionJobs(
     {abortSignal, ...params}: RequestConfig & ListSentimentDetectionJobsRequest = {},
   ): Promise<ListSentimentDetectionJobsResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromSentimentDetectionJobFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filter: fromSentimentDetectionJobFilter(params["Filter"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSentimentDetectionJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SentimentDetectionJobPropertiesList": [toSentimentDetectionJobProperties],
@@ -694,13 +759,14 @@ export default class Comprehend {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResourceArn": "s",
@@ -712,14 +778,16 @@ export default class Comprehend {
   async listTopicsDetectionJobs(
     {abortSignal, ...params}: RequestConfig & ListTopicsDetectionJobsRequest = {},
   ): Promise<ListTopicsDetectionJobsResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromTopicsDetectionJobFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filter: fromTopicsDetectionJobFilter(params["Filter"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTopicsDetectionJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TopicsDetectionJobPropertiesList": [toTopicsDetectionJobProperties],
@@ -731,21 +799,25 @@ export default class Comprehend {
   async startDocumentClassificationJob(
     {abortSignal, ...params}: RequestConfig & StartDocumentClassificationJobRequest,
   ): Promise<StartDocumentClassificationJobResponse> {
-    const body: JSONObject = {...params,
-    InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
-    OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    VpcConfig: fromVpcConfig(params["VpcConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobName: params["JobName"],
+      DocumentClassifierArn: params["DocumentClassifierArn"],
+      InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
+      OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
+      DataAccessRoleArn: params["DataAccessRoleArn"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      VolumeKmsKeyId: params["VolumeKmsKeyId"],
+      VpcConfig: fromVpcConfig(params["VpcConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartDocumentClassificationJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
-        "JobStatus": toJobStatus,
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       },
     }, await resp.json());
   }
@@ -753,21 +825,24 @@ export default class Comprehend {
   async startDominantLanguageDetectionJob(
     {abortSignal, ...params}: RequestConfig & StartDominantLanguageDetectionJobRequest,
   ): Promise<StartDominantLanguageDetectionJobResponse> {
-    const body: JSONObject = {...params,
-    InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
-    OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    VpcConfig: fromVpcConfig(params["VpcConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
+      OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
+      DataAccessRoleArn: params["DataAccessRoleArn"],
+      JobName: params["JobName"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      VolumeKmsKeyId: params["VolumeKmsKeyId"],
+      VpcConfig: fromVpcConfig(params["VpcConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartDominantLanguageDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
-        "JobStatus": toJobStatus,
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       },
     }, await resp.json());
   }
@@ -775,21 +850,26 @@ export default class Comprehend {
   async startEntitiesDetectionJob(
     {abortSignal, ...params}: RequestConfig & StartEntitiesDetectionJobRequest,
   ): Promise<StartEntitiesDetectionJobResponse> {
-    const body: JSONObject = {...params,
-    InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
-    OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    VpcConfig: fromVpcConfig(params["VpcConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
+      OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
+      DataAccessRoleArn: params["DataAccessRoleArn"],
+      JobName: params["JobName"],
+      EntityRecognizerArn: params["EntityRecognizerArn"],
+      LanguageCode: params["LanguageCode"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      VolumeKmsKeyId: params["VolumeKmsKeyId"],
+      VpcConfig: fromVpcConfig(params["VpcConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartEntitiesDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
-        "JobStatus": toJobStatus,
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       },
     }, await resp.json());
   }
@@ -797,21 +877,25 @@ export default class Comprehend {
   async startKeyPhrasesDetectionJob(
     {abortSignal, ...params}: RequestConfig & StartKeyPhrasesDetectionJobRequest,
   ): Promise<StartKeyPhrasesDetectionJobResponse> {
-    const body: JSONObject = {...params,
-    InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
-    OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    VpcConfig: fromVpcConfig(params["VpcConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
+      OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
+      DataAccessRoleArn: params["DataAccessRoleArn"],
+      JobName: params["JobName"],
+      LanguageCode: params["LanguageCode"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      VolumeKmsKeyId: params["VolumeKmsKeyId"],
+      VpcConfig: fromVpcConfig(params["VpcConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartKeyPhrasesDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
-        "JobStatus": toJobStatus,
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       },
     }, await resp.json());
   }
@@ -819,21 +903,25 @@ export default class Comprehend {
   async startPiiEntitiesDetectionJob(
     {abortSignal, ...params}: RequestConfig & StartPiiEntitiesDetectionJobRequest,
   ): Promise<StartPiiEntitiesDetectionJobResponse> {
-    const body: JSONObject = {...params,
-    InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
-    OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
-    RedactionConfig: fromRedactionConfig(params["RedactionConfig"]),
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
+      OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
+      Mode: params["Mode"],
+      RedactionConfig: fromRedactionConfig(params["RedactionConfig"]),
+      DataAccessRoleArn: params["DataAccessRoleArn"],
+      JobName: params["JobName"],
+      LanguageCode: params["LanguageCode"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartPiiEntitiesDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
-        "JobStatus": toJobStatus,
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       },
     }, await resp.json());
   }
@@ -841,21 +929,25 @@ export default class Comprehend {
   async startSentimentDetectionJob(
     {abortSignal, ...params}: RequestConfig & StartSentimentDetectionJobRequest,
   ): Promise<StartSentimentDetectionJobResponse> {
-    const body: JSONObject = {...params,
-    InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
-    OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    VpcConfig: fromVpcConfig(params["VpcConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
+      OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
+      DataAccessRoleArn: params["DataAccessRoleArn"],
+      JobName: params["JobName"],
+      LanguageCode: params["LanguageCode"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      VolumeKmsKeyId: params["VolumeKmsKeyId"],
+      VpcConfig: fromVpcConfig(params["VpcConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartSentimentDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
-        "JobStatus": toJobStatus,
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       },
     }, await resp.json());
   }
@@ -863,21 +955,25 @@ export default class Comprehend {
   async startTopicsDetectionJob(
     {abortSignal, ...params}: RequestConfig & StartTopicsDetectionJobRequest,
   ): Promise<StartTopicsDetectionJobResponse> {
-    const body: JSONObject = {...params,
-    InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
-    OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    VpcConfig: fromVpcConfig(params["VpcConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
+      OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
+      DataAccessRoleArn: params["DataAccessRoleArn"],
+      JobName: params["JobName"],
+      NumberOfTopics: params["NumberOfTopics"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      VolumeKmsKeyId: params["VolumeKmsKeyId"],
+      VpcConfig: fromVpcConfig(params["VpcConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartTopicsDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
-        "JobStatus": toJobStatus,
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       },
     }, await resp.json());
   }
@@ -885,17 +981,18 @@ export default class Comprehend {
   async stopDominantLanguageDetectionJob(
     {abortSignal, ...params}: RequestConfig & StopDominantLanguageDetectionJobRequest,
   ): Promise<StopDominantLanguageDetectionJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopDominantLanguageDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
-        "JobStatus": toJobStatus,
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       },
     }, await resp.json());
   }
@@ -903,17 +1000,18 @@ export default class Comprehend {
   async stopEntitiesDetectionJob(
     {abortSignal, ...params}: RequestConfig & StopEntitiesDetectionJobRequest,
   ): Promise<StopEntitiesDetectionJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopEntitiesDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
-        "JobStatus": toJobStatus,
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       },
     }, await resp.json());
   }
@@ -921,17 +1019,18 @@ export default class Comprehend {
   async stopKeyPhrasesDetectionJob(
     {abortSignal, ...params}: RequestConfig & StopKeyPhrasesDetectionJobRequest,
   ): Promise<StopKeyPhrasesDetectionJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopKeyPhrasesDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
-        "JobStatus": toJobStatus,
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       },
     }, await resp.json());
   }
@@ -939,17 +1038,18 @@ export default class Comprehend {
   async stopPiiEntitiesDetectionJob(
     {abortSignal, ...params}: RequestConfig & StopPiiEntitiesDetectionJobRequest,
   ): Promise<StopPiiEntitiesDetectionJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopPiiEntitiesDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
-        "JobStatus": toJobStatus,
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       },
     }, await resp.json());
   }
@@ -957,17 +1057,18 @@ export default class Comprehend {
   async stopSentimentDetectionJob(
     {abortSignal, ...params}: RequestConfig & StopSentimentDetectionJobRequest,
   ): Promise<StopSentimentDetectionJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopSentimentDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
-        "JobStatus": toJobStatus,
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       },
     }, await resp.json());
   }
@@ -975,13 +1076,14 @@ export default class Comprehend {
   async stopTrainingDocumentClassifier(
     {abortSignal, ...params}: RequestConfig & StopTrainingDocumentClassifierRequest,
   ): Promise<StopTrainingDocumentClassifierResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DocumentClassifierArn: params["DocumentClassifierArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopTrainingDocumentClassifier",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -990,13 +1092,14 @@ export default class Comprehend {
   async stopTrainingEntityRecognizer(
     {abortSignal, ...params}: RequestConfig & StopTrainingEntityRecognizerRequest,
   ): Promise<StopTrainingEntityRecognizerResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      EntityRecognizerArn: params["EntityRecognizerArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopTrainingEntityRecognizer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1005,14 +1108,15 @@ export default class Comprehend {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1021,13 +1125,15 @@ export default class Comprehend {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1036,13 +1142,15 @@ export default class Comprehend {
   async updateEndpoint(
     {abortSignal, ...params}: RequestConfig & UpdateEndpointRequest,
   ): Promise<UpdateEndpointResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      EndpointArn: params["EndpointArn"],
+      DesiredInferenceUnits: params["DesiredInferenceUnits"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEndpoint",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1749,24 +1857,7 @@ export type LanguageCode =
 | "ko"
 | "zh"
 | "zh-TW"
-;
-
-function toLanguageCode(root: JSONValue): LanguageCode | null {
-  return ( false
-    || root == "en"
-    || root == "es"
-    || root == "fr"
-    || root == "de"
-    || root == "it"
-    || root == "pt"
-    || root == "ar"
-    || root == "hi"
-    || root == "ja"
-    || root == "ko"
-    || root == "zh"
-    || root == "zh-TW"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
 export type SyntaxLanguageCode =
@@ -1776,21 +1867,22 @@ export type SyntaxLanguageCode =
 | "de"
 | "it"
 | "pt"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value?: string | null;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
     },
@@ -1807,17 +1899,20 @@ export interface DocumentClassifierInputDataConfig {
   LabelDelimiter?: string | null;
   AugmentedManifests?: AugmentedManifestsListItem[] | null;
 }
-function fromDocumentClassifierInputDataConfig(input?: DocumentClassifierInputDataConfig | null): JSONValue {
+function fromDocumentClassifierInputDataConfig(input?: DocumentClassifierInputDataConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DataFormat: input["DataFormat"],
+    S3Uri: input["S3Uri"],
+    LabelDelimiter: input["LabelDelimiter"],
     AugmentedManifests: input["AugmentedManifests"]?.map(x => fromAugmentedManifestsListItem(x)),
   }
 }
-function toDocumentClassifierInputDataConfig(root: JSONValue): DocumentClassifierInputDataConfig {
-  return prt.readObj({
+function toDocumentClassifierInputDataConfig(root: jsonP.JSONValue): DocumentClassifierInputDataConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "DataFormat": toDocumentClassifierDataFormat,
+      "DataFormat": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentClassifierDataFormat>(x),
       "S3Uri": "s",
       "LabelDelimiter": "s",
       "AugmentedManifests": [toAugmentedManifestsListItem],
@@ -1829,27 +1924,22 @@ function toDocumentClassifierInputDataConfig(root: JSONValue): DocumentClassifie
 export type DocumentClassifierDataFormat =
 | "COMPREHEND_CSV"
 | "AUGMENTED_MANIFEST"
-;
-
-function toDocumentClassifierDataFormat(root: JSONValue): DocumentClassifierDataFormat | null {
-  return ( false
-    || root == "COMPREHEND_CSV"
-    || root == "AUGMENTED_MANIFEST"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface AugmentedManifestsListItem {
   S3Uri: string;
   AttributeNames: string[];
 }
-function fromAugmentedManifestsListItem(input?: AugmentedManifestsListItem | null): JSONValue {
+function fromAugmentedManifestsListItem(input?: AugmentedManifestsListItem | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Uri: input["S3Uri"],
+    AttributeNames: input["AttributeNames"],
   }
 }
-function toAugmentedManifestsListItem(root: JSONValue): AugmentedManifestsListItem {
-  return prt.readObj({
+function toAugmentedManifestsListItem(root: jsonP.JSONValue): AugmentedManifestsListItem {
+  return jsonP.readObj({
     required: {
       "S3Uri": "s",
       "AttributeNames": ["s"],
@@ -1863,13 +1953,15 @@ export interface DocumentClassifierOutputDataConfig {
   S3Uri?: string | null;
   KmsKeyId?: string | null;
 }
-function fromDocumentClassifierOutputDataConfig(input?: DocumentClassifierOutputDataConfig | null): JSONValue {
+function fromDocumentClassifierOutputDataConfig(input?: DocumentClassifierOutputDataConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Uri: input["S3Uri"],
+    KmsKeyId: input["KmsKeyId"],
   }
 }
-function toDocumentClassifierOutputDataConfig(root: JSONValue): DocumentClassifierOutputDataConfig {
-  return prt.readObj({
+function toDocumentClassifierOutputDataConfig(root: jsonP.JSONValue): DocumentClassifierOutputDataConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "S3Uri": "s",
@@ -1883,13 +1975,15 @@ export interface VpcConfig {
   SecurityGroupIds: string[];
   Subnets: string[];
 }
-function fromVpcConfig(input?: VpcConfig | null): JSONValue {
+function fromVpcConfig(input?: VpcConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SecurityGroupIds: input["SecurityGroupIds"],
+    Subnets: input["Subnets"],
   }
 }
-function toVpcConfig(root: JSONValue): VpcConfig {
-  return prt.readObj({
+function toVpcConfig(root: jsonP.JSONValue): VpcConfig {
+  return jsonP.readObj({
     required: {
       "SecurityGroupIds": ["s"],
       "Subnets": ["s"],
@@ -1902,14 +1996,7 @@ function toVpcConfig(root: JSONValue): VpcConfig {
 export type DocumentClassifierMode =
 | "MULTI_CLASS"
 | "MULTI_LABEL"
-;
-
-function toDocumentClassifierMode(root: JSONValue): DocumentClassifierMode | null {
-  return ( false
-    || root == "MULTI_CLASS"
-    || root == "MULTI_LABEL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface EntityRecognizerInputDataConfig {
@@ -1920,9 +2007,10 @@ export interface EntityRecognizerInputDataConfig {
   EntityList?: EntityRecognizerEntityList | null;
   AugmentedManifests?: AugmentedManifestsListItem[] | null;
 }
-function fromEntityRecognizerInputDataConfig(input?: EntityRecognizerInputDataConfig | null): JSONValue {
+function fromEntityRecognizerInputDataConfig(input?: EntityRecognizerInputDataConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DataFormat: input["DataFormat"],
     EntityTypes: input["EntityTypes"]?.map(x => fromEntityTypesListItem(x)),
     Documents: fromEntityRecognizerDocuments(input["Documents"]),
     Annotations: fromEntityRecognizerAnnotations(input["Annotations"]),
@@ -1930,13 +2018,13 @@ function fromEntityRecognizerInputDataConfig(input?: EntityRecognizerInputDataCo
     AugmentedManifests: input["AugmentedManifests"]?.map(x => fromAugmentedManifestsListItem(x)),
   }
 }
-function toEntityRecognizerInputDataConfig(root: JSONValue): EntityRecognizerInputDataConfig {
-  return prt.readObj({
+function toEntityRecognizerInputDataConfig(root: jsonP.JSONValue): EntityRecognizerInputDataConfig {
+  return jsonP.readObj({
     required: {
       "EntityTypes": [toEntityTypesListItem],
     },
     optional: {
-      "DataFormat": toEntityRecognizerDataFormat,
+      "DataFormat": (x: jsonP.JSONValue) => cmnP.readEnum<EntityRecognizerDataFormat>(x),
       "Documents": toEntityRecognizerDocuments,
       "Annotations": toEntityRecognizerAnnotations,
       "EntityList": toEntityRecognizerEntityList,
@@ -1949,26 +2037,20 @@ function toEntityRecognizerInputDataConfig(root: JSONValue): EntityRecognizerInp
 export type EntityRecognizerDataFormat =
 | "COMPREHEND_CSV"
 | "AUGMENTED_MANIFEST"
-;
-
-function toEntityRecognizerDataFormat(root: JSONValue): EntityRecognizerDataFormat | null {
-  return ( false
-    || root == "COMPREHEND_CSV"
-    || root == "AUGMENTED_MANIFEST"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface EntityTypesListItem {
   Type: string;
 }
-function fromEntityTypesListItem(input?: EntityTypesListItem | null): JSONValue {
+function fromEntityTypesListItem(input?: EntityTypesListItem | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Type: input["Type"],
   }
 }
-function toEntityTypesListItem(root: JSONValue): EntityTypesListItem {
-  return prt.readObj({
+function toEntityTypesListItem(root: jsonP.JSONValue): EntityTypesListItem {
+  return jsonP.readObj({
     required: {
       "Type": "s",
     },
@@ -1980,13 +2062,14 @@ function toEntityTypesListItem(root: JSONValue): EntityTypesListItem {
 export interface EntityRecognizerDocuments {
   S3Uri: string;
 }
-function fromEntityRecognizerDocuments(input?: EntityRecognizerDocuments | null): JSONValue {
+function fromEntityRecognizerDocuments(input?: EntityRecognizerDocuments | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Uri: input["S3Uri"],
   }
 }
-function toEntityRecognizerDocuments(root: JSONValue): EntityRecognizerDocuments {
-  return prt.readObj({
+function toEntityRecognizerDocuments(root: jsonP.JSONValue): EntityRecognizerDocuments {
+  return jsonP.readObj({
     required: {
       "S3Uri": "s",
     },
@@ -1998,13 +2081,14 @@ function toEntityRecognizerDocuments(root: JSONValue): EntityRecognizerDocuments
 export interface EntityRecognizerAnnotations {
   S3Uri: string;
 }
-function fromEntityRecognizerAnnotations(input?: EntityRecognizerAnnotations | null): JSONValue {
+function fromEntityRecognizerAnnotations(input?: EntityRecognizerAnnotations | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Uri: input["S3Uri"],
   }
 }
-function toEntityRecognizerAnnotations(root: JSONValue): EntityRecognizerAnnotations {
-  return prt.readObj({
+function toEntityRecognizerAnnotations(root: jsonP.JSONValue): EntityRecognizerAnnotations {
+  return jsonP.readObj({
     required: {
       "S3Uri": "s",
     },
@@ -2016,13 +2100,14 @@ function toEntityRecognizerAnnotations(root: JSONValue): EntityRecognizerAnnotat
 export interface EntityRecognizerEntityList {
   S3Uri: string;
 }
-function fromEntityRecognizerEntityList(input?: EntityRecognizerEntityList | null): JSONValue {
+function fromEntityRecognizerEntityList(input?: EntityRecognizerEntityList | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Uri: input["S3Uri"],
   }
 }
-function toEntityRecognizerEntityList(root: JSONValue): EntityRecognizerEntityList {
-  return prt.readObj({
+function toEntityRecognizerEntityList(root: jsonP.JSONValue): EntityRecognizerEntityList {
+  return jsonP.readObj({
     required: {
       "S3Uri": "s",
     },
@@ -2037,11 +2122,13 @@ export interface DocumentClassificationJobFilter {
   SubmitTimeBefore?: Date | number | null;
   SubmitTimeAfter?: Date | number | null;
 }
-function fromDocumentClassificationJobFilter(input?: DocumentClassificationJobFilter | null): JSONValue {
+function fromDocumentClassificationJobFilter(input?: DocumentClassificationJobFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    SubmitTimeBefore: prt.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
-    SubmitTimeAfter: prt.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
+  return {
+    JobName: input["JobName"],
+    JobStatus: input["JobStatus"],
+    SubmitTimeBefore: jsonP.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
+    SubmitTimeAfter: jsonP.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
   }
 }
 
@@ -2053,18 +2140,7 @@ export type JobStatus =
 | "FAILED"
 | "STOP_REQUESTED"
 | "STOPPED"
-;
-
-function toJobStatus(root: JSONValue): JobStatus | null {
-  return ( false
-    || root == "SUBMITTED"
-    || root == "IN_PROGRESS"
-    || root == "COMPLETED"
-    || root == "FAILED"
-    || root == "STOP_REQUESTED"
-    || root == "STOPPED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface DocumentClassifierFilter {
@@ -2072,11 +2148,12 @@ export interface DocumentClassifierFilter {
   SubmitTimeBefore?: Date | number | null;
   SubmitTimeAfter?: Date | number | null;
 }
-function fromDocumentClassifierFilter(input?: DocumentClassifierFilter | null): JSONValue {
+function fromDocumentClassifierFilter(input?: DocumentClassifierFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    SubmitTimeBefore: prt.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
-    SubmitTimeAfter: prt.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
+  return {
+    Status: input["Status"],
+    SubmitTimeBefore: jsonP.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
+    SubmitTimeAfter: jsonP.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
   }
 }
 
@@ -2089,19 +2166,7 @@ export type ModelStatus =
 | "STOPPED"
 | "IN_ERROR"
 | "TRAINED"
-;
-
-function toModelStatus(root: JSONValue): ModelStatus | null {
-  return ( false
-    || root == "SUBMITTED"
-    || root == "TRAINING"
-    || root == "DELETING"
-    || root == "STOP_REQUESTED"
-    || root == "STOPPED"
-    || root == "IN_ERROR"
-    || root == "TRAINED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface DominantLanguageDetectionJobFilter {
@@ -2110,11 +2175,13 @@ export interface DominantLanguageDetectionJobFilter {
   SubmitTimeBefore?: Date | number | null;
   SubmitTimeAfter?: Date | number | null;
 }
-function fromDominantLanguageDetectionJobFilter(input?: DominantLanguageDetectionJobFilter | null): JSONValue {
+function fromDominantLanguageDetectionJobFilter(input?: DominantLanguageDetectionJobFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    SubmitTimeBefore: prt.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
-    SubmitTimeAfter: prt.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
+  return {
+    JobName: input["JobName"],
+    JobStatus: input["JobStatus"],
+    SubmitTimeBefore: jsonP.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
+    SubmitTimeAfter: jsonP.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
   }
 }
 
@@ -2125,11 +2192,13 @@ export interface EndpointFilter {
   CreationTimeBefore?: Date | number | null;
   CreationTimeAfter?: Date | number | null;
 }
-function fromEndpointFilter(input?: EndpointFilter | null): JSONValue {
+function fromEndpointFilter(input?: EndpointFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    CreationTimeBefore: prt.serializeDate_unixTimestamp(input["CreationTimeBefore"]),
-    CreationTimeAfter: prt.serializeDate_unixTimestamp(input["CreationTimeAfter"]),
+  return {
+    ModelArn: input["ModelArn"],
+    Status: input["Status"],
+    CreationTimeBefore: jsonP.serializeDate_unixTimestamp(input["CreationTimeBefore"]),
+    CreationTimeAfter: jsonP.serializeDate_unixTimestamp(input["CreationTimeAfter"]),
   }
 }
 
@@ -2140,17 +2209,7 @@ export type EndpointStatus =
 | "FAILED"
 | "IN_SERVICE"
 | "UPDATING"
-;
-
-function toEndpointStatus(root: JSONValue): EndpointStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "DELETING"
-    || root == "FAILED"
-    || root == "IN_SERVICE"
-    || root == "UPDATING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface EntitiesDetectionJobFilter {
@@ -2159,11 +2218,13 @@ export interface EntitiesDetectionJobFilter {
   SubmitTimeBefore?: Date | number | null;
   SubmitTimeAfter?: Date | number | null;
 }
-function fromEntitiesDetectionJobFilter(input?: EntitiesDetectionJobFilter | null): JSONValue {
+function fromEntitiesDetectionJobFilter(input?: EntitiesDetectionJobFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    SubmitTimeBefore: prt.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
-    SubmitTimeAfter: prt.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
+  return {
+    JobName: input["JobName"],
+    JobStatus: input["JobStatus"],
+    SubmitTimeBefore: jsonP.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
+    SubmitTimeAfter: jsonP.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
   }
 }
 
@@ -2173,11 +2234,12 @@ export interface EntityRecognizerFilter {
   SubmitTimeBefore?: Date | number | null;
   SubmitTimeAfter?: Date | number | null;
 }
-function fromEntityRecognizerFilter(input?: EntityRecognizerFilter | null): JSONValue {
+function fromEntityRecognizerFilter(input?: EntityRecognizerFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    SubmitTimeBefore: prt.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
-    SubmitTimeAfter: prt.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
+  return {
+    Status: input["Status"],
+    SubmitTimeBefore: jsonP.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
+    SubmitTimeAfter: jsonP.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
   }
 }
 
@@ -2188,11 +2250,13 @@ export interface KeyPhrasesDetectionJobFilter {
   SubmitTimeBefore?: Date | number | null;
   SubmitTimeAfter?: Date | number | null;
 }
-function fromKeyPhrasesDetectionJobFilter(input?: KeyPhrasesDetectionJobFilter | null): JSONValue {
+function fromKeyPhrasesDetectionJobFilter(input?: KeyPhrasesDetectionJobFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    SubmitTimeBefore: prt.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
-    SubmitTimeAfter: prt.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
+  return {
+    JobName: input["JobName"],
+    JobStatus: input["JobStatus"],
+    SubmitTimeBefore: jsonP.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
+    SubmitTimeAfter: jsonP.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
   }
 }
 
@@ -2203,11 +2267,13 @@ export interface PiiEntitiesDetectionJobFilter {
   SubmitTimeBefore?: Date | number | null;
   SubmitTimeAfter?: Date | number | null;
 }
-function fromPiiEntitiesDetectionJobFilter(input?: PiiEntitiesDetectionJobFilter | null): JSONValue {
+function fromPiiEntitiesDetectionJobFilter(input?: PiiEntitiesDetectionJobFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    SubmitTimeBefore: prt.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
-    SubmitTimeAfter: prt.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
+  return {
+    JobName: input["JobName"],
+    JobStatus: input["JobStatus"],
+    SubmitTimeBefore: jsonP.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
+    SubmitTimeAfter: jsonP.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
   }
 }
 
@@ -2218,11 +2284,13 @@ export interface SentimentDetectionJobFilter {
   SubmitTimeBefore?: Date | number | null;
   SubmitTimeAfter?: Date | number | null;
 }
-function fromSentimentDetectionJobFilter(input?: SentimentDetectionJobFilter | null): JSONValue {
+function fromSentimentDetectionJobFilter(input?: SentimentDetectionJobFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    SubmitTimeBefore: prt.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
-    SubmitTimeAfter: prt.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
+  return {
+    JobName: input["JobName"],
+    JobStatus: input["JobStatus"],
+    SubmitTimeBefore: jsonP.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
+    SubmitTimeAfter: jsonP.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
   }
 }
 
@@ -2233,11 +2301,13 @@ export interface TopicsDetectionJobFilter {
   SubmitTimeBefore?: Date | number | null;
   SubmitTimeAfter?: Date | number | null;
 }
-function fromTopicsDetectionJobFilter(input?: TopicsDetectionJobFilter | null): JSONValue {
+function fromTopicsDetectionJobFilter(input?: TopicsDetectionJobFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    SubmitTimeBefore: prt.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
-    SubmitTimeAfter: prt.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
+  return {
+    JobName: input["JobName"],
+    JobStatus: input["JobStatus"],
+    SubmitTimeBefore: jsonP.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
+    SubmitTimeAfter: jsonP.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
   }
 }
 
@@ -2246,18 +2316,20 @@ export interface InputDataConfig {
   S3Uri: string;
   InputFormat?: InputFormat | null;
 }
-function fromInputDataConfig(input?: InputDataConfig | null): JSONValue {
+function fromInputDataConfig(input?: InputDataConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Uri: input["S3Uri"],
+    InputFormat: input["InputFormat"],
   }
 }
-function toInputDataConfig(root: JSONValue): InputDataConfig {
-  return prt.readObj({
+function toInputDataConfig(root: jsonP.JSONValue): InputDataConfig {
+  return jsonP.readObj({
     required: {
       "S3Uri": "s",
     },
     optional: {
-      "InputFormat": toInputFormat,
+      "InputFormat": (x: jsonP.JSONValue) => cmnP.readEnum<InputFormat>(x),
     },
   }, root);
 }
@@ -2266,27 +2338,22 @@ function toInputDataConfig(root: JSONValue): InputDataConfig {
 export type InputFormat =
 | "ONE_DOC_PER_FILE"
 | "ONE_DOC_PER_LINE"
-;
-
-function toInputFormat(root: JSONValue): InputFormat | null {
-  return ( false
-    || root == "ONE_DOC_PER_FILE"
-    || root == "ONE_DOC_PER_LINE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 19 - tags: input, named, interface, output
 export interface OutputDataConfig {
   S3Uri: string;
   KmsKeyId?: string | null;
 }
-function fromOutputDataConfig(input?: OutputDataConfig | null): JSONValue {
+function fromOutputDataConfig(input?: OutputDataConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Uri: input["S3Uri"],
+    KmsKeyId: input["KmsKeyId"],
   }
 }
-function toOutputDataConfig(root: JSONValue): OutputDataConfig {
-  return prt.readObj({
+function toOutputDataConfig(root: jsonP.JSONValue): OutputDataConfig {
+  return jsonP.readObj({
     required: {
       "S3Uri": "s",
     },
@@ -2300,14 +2367,7 @@ function toOutputDataConfig(root: JSONValue): OutputDataConfig {
 export type PiiEntitiesDetectionMode =
 | "ONLY_REDACTION"
 | "ONLY_OFFSETS"
-;
-
-function toPiiEntitiesDetectionMode(root: JSONValue): PiiEntitiesDetectionMode | null {
-  return ( false
-    || root == "ONLY_REDACTION"
-    || root == "ONLY_OFFSETS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface RedactionConfig {
@@ -2315,17 +2375,20 @@ export interface RedactionConfig {
   MaskMode?: PiiEntitiesDetectionMaskMode | null;
   MaskCharacter?: string | null;
 }
-function fromRedactionConfig(input?: RedactionConfig | null): JSONValue {
+function fromRedactionConfig(input?: RedactionConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    PiiEntityTypes: input["PiiEntityTypes"],
+    MaskMode: input["MaskMode"],
+    MaskCharacter: input["MaskCharacter"],
   }
 }
-function toRedactionConfig(root: JSONValue): RedactionConfig {
-  return prt.readObj({
+function toRedactionConfig(root: jsonP.JSONValue): RedactionConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "PiiEntityTypes": [toPiiEntityType],
-      "MaskMode": toPiiEntitiesDetectionMaskMode,
+      "PiiEntityTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<PiiEntityType>(x)],
+      "MaskMode": (x: jsonP.JSONValue) => cmnP.readEnum<PiiEntitiesDetectionMaskMode>(x),
       "MaskCharacter": "s",
     },
   }, root);
@@ -2356,56 +2419,21 @@ export type PiiEntityType =
 | "IP_ADDRESS"
 | "MAC_ADDRESS"
 | "ALL"
-;
-
-function toPiiEntityType(root: JSONValue): PiiEntityType | null {
-  return ( false
-    || root == "BANK_ACCOUNT_NUMBER"
-    || root == "BANK_ROUTING"
-    || root == "CREDIT_DEBIT_NUMBER"
-    || root == "CREDIT_DEBIT_CVV"
-    || root == "CREDIT_DEBIT_EXPIRY"
-    || root == "PIN"
-    || root == "EMAIL"
-    || root == "ADDRESS"
-    || root == "NAME"
-    || root == "PHONE"
-    || root == "SSN"
-    || root == "DATE_TIME"
-    || root == "PASSPORT_NUMBER"
-    || root == "DRIVER_ID"
-    || root == "URL"
-    || root == "AGE"
-    || root == "USERNAME"
-    || root == "PASSWORD"
-    || root == "AWS_ACCESS_KEY"
-    || root == "AWS_SECRET_KEY"
-    || root == "IP_ADDRESS"
-    || root == "MAC_ADDRESS"
-    || root == "ALL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type PiiEntitiesDetectionMaskMode =
 | "MASK"
 | "REPLACE_WITH_PII_ENTITY_TYPE"
-;
-
-function toPiiEntitiesDetectionMaskMode(root: JSONValue): PiiEntitiesDetectionMaskMode | null {
-  return ( false
-    || root == "MASK"
-    || root == "REPLACE_WITH_PII_ENTITY_TYPE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface BatchDetectDominantLanguageItemResult {
   Index?: number | null;
   Languages?: DominantLanguage[] | null;
 }
-function toBatchDetectDominantLanguageItemResult(root: JSONValue): BatchDetectDominantLanguageItemResult {
-  return prt.readObj({
+function toBatchDetectDominantLanguageItemResult(root: jsonP.JSONValue): BatchDetectDominantLanguageItemResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Index": "n",
@@ -2419,8 +2447,8 @@ export interface DominantLanguage {
   LanguageCode?: string | null;
   Score?: number | null;
 }
-function toDominantLanguage(root: JSONValue): DominantLanguage {
-  return prt.readObj({
+function toDominantLanguage(root: jsonP.JSONValue): DominantLanguage {
+  return jsonP.readObj({
     required: {},
     optional: {
       "LanguageCode": "s",
@@ -2435,8 +2463,8 @@ export interface BatchItemError {
   ErrorCode?: string | null;
   ErrorMessage?: string | null;
 }
-function toBatchItemError(root: JSONValue): BatchItemError {
-  return prt.readObj({
+function toBatchItemError(root: jsonP.JSONValue): BatchItemError {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Index": "n",
@@ -2451,8 +2479,8 @@ export interface BatchDetectEntitiesItemResult {
   Index?: number | null;
   Entities?: Entity[] | null;
 }
-function toBatchDetectEntitiesItemResult(root: JSONValue): BatchDetectEntitiesItemResult {
-  return prt.readObj({
+function toBatchDetectEntitiesItemResult(root: jsonP.JSONValue): BatchDetectEntitiesItemResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Index": "n",
@@ -2469,12 +2497,12 @@ export interface Entity {
   BeginOffset?: number | null;
   EndOffset?: number | null;
 }
-function toEntity(root: JSONValue): Entity {
-  return prt.readObj({
+function toEntity(root: jsonP.JSONValue): Entity {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Score": "n",
-      "Type": toEntityType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<EntityType>(x),
       "Text": "s",
       "BeginOffset": "n",
       "EndOffset": "n",
@@ -2493,28 +2521,15 @@ export type EntityType =
 | "QUANTITY"
 | "TITLE"
 | "OTHER"
-;
-function toEntityType(root: JSONValue): EntityType | null {
-  return ( false
-    || root == "PERSON"
-    || root == "LOCATION"
-    || root == "ORGANIZATION"
-    || root == "COMMERCIAL_ITEM"
-    || root == "EVENT"
-    || root == "DATE"
-    || root == "QUANTITY"
-    || root == "TITLE"
-    || root == "OTHER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface BatchDetectKeyPhrasesItemResult {
   Index?: number | null;
   KeyPhrases?: KeyPhrase[] | null;
 }
-function toBatchDetectKeyPhrasesItemResult(root: JSONValue): BatchDetectKeyPhrasesItemResult {
-  return prt.readObj({
+function toBatchDetectKeyPhrasesItemResult(root: jsonP.JSONValue): BatchDetectKeyPhrasesItemResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Index": "n",
@@ -2530,8 +2545,8 @@ export interface KeyPhrase {
   BeginOffset?: number | null;
   EndOffset?: number | null;
 }
-function toKeyPhrase(root: JSONValue): KeyPhrase {
-  return prt.readObj({
+function toKeyPhrase(root: jsonP.JSONValue): KeyPhrase {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Score": "n",
@@ -2548,12 +2563,12 @@ export interface BatchDetectSentimentItemResult {
   Sentiment?: SentimentType | null;
   SentimentScore?: SentimentScore | null;
 }
-function toBatchDetectSentimentItemResult(root: JSONValue): BatchDetectSentimentItemResult {
-  return prt.readObj({
+function toBatchDetectSentimentItemResult(root: jsonP.JSONValue): BatchDetectSentimentItemResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Index": "n",
-      "Sentiment": toSentimentType,
+      "Sentiment": (x: jsonP.JSONValue) => cmnP.readEnum<SentimentType>(x),
       "SentimentScore": toSentimentScore,
     },
   }, root);
@@ -2565,15 +2580,7 @@ export type SentimentType =
 | "NEGATIVE"
 | "NEUTRAL"
 | "MIXED"
-;
-function toSentimentType(root: JSONValue): SentimentType | null {
-  return ( false
-    || root == "POSITIVE"
-    || root == "NEGATIVE"
-    || root == "NEUTRAL"
-    || root == "MIXED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface SentimentScore {
@@ -2582,8 +2589,8 @@ export interface SentimentScore {
   Neutral?: number | null;
   Mixed?: number | null;
 }
-function toSentimentScore(root: JSONValue): SentimentScore {
-  return prt.readObj({
+function toSentimentScore(root: jsonP.JSONValue): SentimentScore {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Positive": "n",
@@ -2599,8 +2606,8 @@ export interface BatchDetectSyntaxItemResult {
   Index?: number | null;
   SyntaxTokens?: SyntaxToken[] | null;
 }
-function toBatchDetectSyntaxItemResult(root: JSONValue): BatchDetectSyntaxItemResult {
-  return prt.readObj({
+function toBatchDetectSyntaxItemResult(root: jsonP.JSONValue): BatchDetectSyntaxItemResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Index": "n",
@@ -2617,8 +2624,8 @@ export interface SyntaxToken {
   EndOffset?: number | null;
   PartOfSpeech?: PartOfSpeechTag | null;
 }
-function toSyntaxToken(root: JSONValue): SyntaxToken {
-  return prt.readObj({
+function toSyntaxToken(root: jsonP.JSONValue): SyntaxToken {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TokenId": "n",
@@ -2635,11 +2642,11 @@ export interface PartOfSpeechTag {
   Tag?: PartOfSpeechTagType | null;
   Score?: number | null;
 }
-function toPartOfSpeechTag(root: JSONValue): PartOfSpeechTag {
-  return prt.readObj({
+function toPartOfSpeechTag(root: jsonP.JSONValue): PartOfSpeechTag {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Tag": toPartOfSpeechTagType,
+      "Tag": (x: jsonP.JSONValue) => cmnP.readEnum<PartOfSpeechTagType>(x),
       "Score": "n",
     },
   }, root);
@@ -2665,37 +2672,15 @@ export type PartOfSpeechTagType =
 | "SCONJ"
 | "SYM"
 | "VERB"
-;
-function toPartOfSpeechTagType(root: JSONValue): PartOfSpeechTagType | null {
-  return ( false
-    || root == "ADJ"
-    || root == "ADP"
-    || root == "ADV"
-    || root == "AUX"
-    || root == "CONJ"
-    || root == "CCONJ"
-    || root == "DET"
-    || root == "INTJ"
-    || root == "NOUN"
-    || root == "NUM"
-    || root == "O"
-    || root == "PART"
-    || root == "PRON"
-    || root == "PROPN"
-    || root == "PUNCT"
-    || root == "SCONJ"
-    || root == "SYM"
-    || root == "VERB"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface DocumentClass {
   Name?: string | null;
   Score?: number | null;
 }
-function toDocumentClass(root: JSONValue): DocumentClass {
-  return prt.readObj({
+function toDocumentClass(root: jsonP.JSONValue): DocumentClass {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -2709,8 +2694,8 @@ export interface DocumentLabel {
   Name?: string | null;
   Score?: number | null;
 }
-function toDocumentLabel(root: JSONValue): DocumentLabel {
-  return prt.readObj({
+function toDocumentLabel(root: jsonP.JSONValue): DocumentLabel {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -2734,13 +2719,13 @@ export interface DocumentClassificationJobProperties {
   VolumeKmsKeyId?: string | null;
   VpcConfig?: VpcConfig | null;
 }
-function toDocumentClassificationJobProperties(root: JSONValue): DocumentClassificationJobProperties {
-  return prt.readObj({
+function toDocumentClassificationJobProperties(root: jsonP.JSONValue): DocumentClassificationJobProperties {
+  return jsonP.readObj({
     required: {},
     optional: {
       "JobId": "s",
       "JobName": "s",
-      "JobStatus": toJobStatus,
+      "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       "Message": "s",
       "SubmitTime": "d",
       "EndTime": "d",
@@ -2772,13 +2757,13 @@ export interface DocumentClassifierProperties {
   VpcConfig?: VpcConfig | null;
   Mode?: DocumentClassifierMode | null;
 }
-function toDocumentClassifierProperties(root: JSONValue): DocumentClassifierProperties {
-  return prt.readObj({
+function toDocumentClassifierProperties(root: jsonP.JSONValue): DocumentClassifierProperties {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DocumentClassifierArn": "s",
-      "LanguageCode": toLanguageCode,
-      "Status": toModelStatus,
+      "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ModelStatus>(x),
       "Message": "s",
       "SubmitTime": "d",
       "EndTime": "d",
@@ -2790,7 +2775,7 @@ function toDocumentClassifierProperties(root: JSONValue): DocumentClassifierProp
       "DataAccessRoleArn": "s",
       "VolumeKmsKeyId": "s",
       "VpcConfig": toVpcConfig,
-      "Mode": toDocumentClassifierMode,
+      "Mode": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentClassifierMode>(x),
     },
   }, root);
 }
@@ -2802,8 +2787,8 @@ export interface ClassifierMetadata {
   NumberOfTestDocuments?: number | null;
   EvaluationMetrics?: ClassifierEvaluationMetrics | null;
 }
-function toClassifierMetadata(root: JSONValue): ClassifierMetadata {
-  return prt.readObj({
+function toClassifierMetadata(root: jsonP.JSONValue): ClassifierMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "NumberOfLabels": "n",
@@ -2825,8 +2810,8 @@ export interface ClassifierEvaluationMetrics {
   MicroF1Score?: number | null;
   HammingLoss?: number | null;
 }
-function toClassifierEvaluationMetrics(root: JSONValue): ClassifierEvaluationMetrics {
-  return prt.readObj({
+function toClassifierEvaluationMetrics(root: jsonP.JSONValue): ClassifierEvaluationMetrics {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Accuracy": "n",
@@ -2855,13 +2840,13 @@ export interface DominantLanguageDetectionJobProperties {
   VolumeKmsKeyId?: string | null;
   VpcConfig?: VpcConfig | null;
 }
-function toDominantLanguageDetectionJobProperties(root: JSONValue): DominantLanguageDetectionJobProperties {
-  return prt.readObj({
+function toDominantLanguageDetectionJobProperties(root: jsonP.JSONValue): DominantLanguageDetectionJobProperties {
+  return jsonP.readObj({
     required: {},
     optional: {
       "JobId": "s",
       "JobName": "s",
-      "JobStatus": toJobStatus,
+      "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       "Message": "s",
       "SubmitTime": "d",
       "EndTime": "d",
@@ -2885,12 +2870,12 @@ export interface EndpointProperties {
   CreationTime?: Date | number | null;
   LastModifiedTime?: Date | number | null;
 }
-function toEndpointProperties(root: JSONValue): EndpointProperties {
-  return prt.readObj({
+function toEndpointProperties(root: jsonP.JSONValue): EndpointProperties {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EndpointArn": "s",
-      "Status": toEndpointStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<EndpointStatus>(x),
       "Message": "s",
       "ModelArn": "s",
       "DesiredInferenceUnits": "n",
@@ -2917,20 +2902,20 @@ export interface EntitiesDetectionJobProperties {
   VolumeKmsKeyId?: string | null;
   VpcConfig?: VpcConfig | null;
 }
-function toEntitiesDetectionJobProperties(root: JSONValue): EntitiesDetectionJobProperties {
-  return prt.readObj({
+function toEntitiesDetectionJobProperties(root: jsonP.JSONValue): EntitiesDetectionJobProperties {
+  return jsonP.readObj({
     required: {},
     optional: {
       "JobId": "s",
       "JobName": "s",
-      "JobStatus": toJobStatus,
+      "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       "Message": "s",
       "SubmitTime": "d",
       "EndTime": "d",
       "EntityRecognizerArn": "s",
       "InputDataConfig": toInputDataConfig,
       "OutputDataConfig": toOutputDataConfig,
-      "LanguageCode": toLanguageCode,
+      "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
       "DataAccessRoleArn": "s",
       "VolumeKmsKeyId": "s",
       "VpcConfig": toVpcConfig,
@@ -2954,13 +2939,13 @@ export interface EntityRecognizerProperties {
   VolumeKmsKeyId?: string | null;
   VpcConfig?: VpcConfig | null;
 }
-function toEntityRecognizerProperties(root: JSONValue): EntityRecognizerProperties {
-  return prt.readObj({
+function toEntityRecognizerProperties(root: jsonP.JSONValue): EntityRecognizerProperties {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EntityRecognizerArn": "s",
-      "LanguageCode": toLanguageCode,
-      "Status": toModelStatus,
+      "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ModelStatus>(x),
       "Message": "s",
       "SubmitTime": "d",
       "EndTime": "d",
@@ -2982,8 +2967,8 @@ export interface EntityRecognizerMetadata {
   EvaluationMetrics?: EntityRecognizerEvaluationMetrics | null;
   EntityTypes?: EntityRecognizerMetadataEntityTypesListItem[] | null;
 }
-function toEntityRecognizerMetadata(root: JSONValue): EntityRecognizerMetadata {
-  return prt.readObj({
+function toEntityRecognizerMetadata(root: jsonP.JSONValue): EntityRecognizerMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "NumberOfTrainedDocuments": "n",
@@ -3000,8 +2985,8 @@ export interface EntityRecognizerEvaluationMetrics {
   Recall?: number | null;
   F1Score?: number | null;
 }
-function toEntityRecognizerEvaluationMetrics(root: JSONValue): EntityRecognizerEvaluationMetrics {
-  return prt.readObj({
+function toEntityRecognizerEvaluationMetrics(root: jsonP.JSONValue): EntityRecognizerEvaluationMetrics {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Precision": "n",
@@ -3017,8 +3002,8 @@ export interface EntityRecognizerMetadataEntityTypesListItem {
   EvaluationMetrics?: EntityTypesEvaluationMetrics | null;
   NumberOfTrainMentions?: number | null;
 }
-function toEntityRecognizerMetadataEntityTypesListItem(root: JSONValue): EntityRecognizerMetadataEntityTypesListItem {
-  return prt.readObj({
+function toEntityRecognizerMetadataEntityTypesListItem(root: jsonP.JSONValue): EntityRecognizerMetadataEntityTypesListItem {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Type": "s",
@@ -3034,8 +3019,8 @@ export interface EntityTypesEvaluationMetrics {
   Recall?: number | null;
   F1Score?: number | null;
 }
-function toEntityTypesEvaluationMetrics(root: JSONValue): EntityTypesEvaluationMetrics {
-  return prt.readObj({
+function toEntityTypesEvaluationMetrics(root: jsonP.JSONValue): EntityTypesEvaluationMetrics {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Precision": "n",
@@ -3060,19 +3045,19 @@ export interface KeyPhrasesDetectionJobProperties {
   VolumeKmsKeyId?: string | null;
   VpcConfig?: VpcConfig | null;
 }
-function toKeyPhrasesDetectionJobProperties(root: JSONValue): KeyPhrasesDetectionJobProperties {
-  return prt.readObj({
+function toKeyPhrasesDetectionJobProperties(root: jsonP.JSONValue): KeyPhrasesDetectionJobProperties {
+  return jsonP.readObj({
     required: {},
     optional: {
       "JobId": "s",
       "JobName": "s",
-      "JobStatus": toJobStatus,
+      "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       "Message": "s",
       "SubmitTime": "d",
       "EndTime": "d",
       "InputDataConfig": toInputDataConfig,
       "OutputDataConfig": toOutputDataConfig,
-      "LanguageCode": toLanguageCode,
+      "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
       "DataAccessRoleArn": "s",
       "VolumeKmsKeyId": "s",
       "VpcConfig": toVpcConfig,
@@ -3095,22 +3080,22 @@ export interface PiiEntitiesDetectionJobProperties {
   DataAccessRoleArn?: string | null;
   Mode?: PiiEntitiesDetectionMode | null;
 }
-function toPiiEntitiesDetectionJobProperties(root: JSONValue): PiiEntitiesDetectionJobProperties {
-  return prt.readObj({
+function toPiiEntitiesDetectionJobProperties(root: jsonP.JSONValue): PiiEntitiesDetectionJobProperties {
+  return jsonP.readObj({
     required: {},
     optional: {
       "JobId": "s",
       "JobName": "s",
-      "JobStatus": toJobStatus,
+      "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       "Message": "s",
       "SubmitTime": "d",
       "EndTime": "d",
       "InputDataConfig": toInputDataConfig,
       "OutputDataConfig": toPiiOutputDataConfig,
       "RedactionConfig": toRedactionConfig,
-      "LanguageCode": toLanguageCode,
+      "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
       "DataAccessRoleArn": "s",
-      "Mode": toPiiEntitiesDetectionMode,
+      "Mode": (x: jsonP.JSONValue) => cmnP.readEnum<PiiEntitiesDetectionMode>(x),
     },
   }, root);
 }
@@ -3120,8 +3105,8 @@ export interface PiiOutputDataConfig {
   S3Uri: string;
   KmsKeyId?: string | null;
 }
-function toPiiOutputDataConfig(root: JSONValue): PiiOutputDataConfig {
-  return prt.readObj({
+function toPiiOutputDataConfig(root: jsonP.JSONValue): PiiOutputDataConfig {
+  return jsonP.readObj({
     required: {
       "S3Uri": "s",
     },
@@ -3146,19 +3131,19 @@ export interface SentimentDetectionJobProperties {
   VolumeKmsKeyId?: string | null;
   VpcConfig?: VpcConfig | null;
 }
-function toSentimentDetectionJobProperties(root: JSONValue): SentimentDetectionJobProperties {
-  return prt.readObj({
+function toSentimentDetectionJobProperties(root: jsonP.JSONValue): SentimentDetectionJobProperties {
+  return jsonP.readObj({
     required: {},
     optional: {
       "JobId": "s",
       "JobName": "s",
-      "JobStatus": toJobStatus,
+      "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       "Message": "s",
       "SubmitTime": "d",
       "EndTime": "d",
       "InputDataConfig": toInputDataConfig,
       "OutputDataConfig": toOutputDataConfig,
-      "LanguageCode": toLanguageCode,
+      "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
       "DataAccessRoleArn": "s",
       "VolumeKmsKeyId": "s",
       "VpcConfig": toVpcConfig,
@@ -3181,13 +3166,13 @@ export interface TopicsDetectionJobProperties {
   VolumeKmsKeyId?: string | null;
   VpcConfig?: VpcConfig | null;
 }
-function toTopicsDetectionJobProperties(root: JSONValue): TopicsDetectionJobProperties {
-  return prt.readObj({
+function toTopicsDetectionJobProperties(root: jsonP.JSONValue): TopicsDetectionJobProperties {
+  return jsonP.readObj({
     required: {},
     optional: {
       "JobId": "s",
       "JobName": "s",
-      "JobStatus": toJobStatus,
+      "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       "Message": "s",
       "SubmitTime": "d",
       "EndTime": "d",
@@ -3208,12 +3193,12 @@ export interface PiiEntity {
   BeginOffset?: number | null;
   EndOffset?: number | null;
 }
-function toPiiEntity(root: JSONValue): PiiEntity {
-  return prt.readObj({
+function toPiiEntity(root: jsonP.JSONValue): PiiEntity {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Score": "n",
-      "Type": toPiiEntityType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<PiiEntityType>(x),
       "BeginOffset": "n",
       "EndOffset": "n",
     },

@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class ConfigService {
   #client: ServiceClient;
@@ -30,14 +30,15 @@ export default class ConfigService {
   async batchGetAggregateResourceConfig(
     {abortSignal, ...params}: RequestConfig & BatchGetAggregateResourceConfigRequest,
   ): Promise<BatchGetAggregateResourceConfigResponse> {
-    const body: JSONObject = {...params,
-    ResourceIdentifiers: params["ResourceIdentifiers"]?.map(x => fromAggregateResourceIdentifier(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
+      ResourceIdentifiers: params["ResourceIdentifiers"]?.map(x => fromAggregateResourceIdentifier(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetAggregateResourceConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BaseConfigurationItems": [toBaseConfigurationItem],
@@ -49,14 +50,14 @@ export default class ConfigService {
   async batchGetResourceConfig(
     {abortSignal, ...params}: RequestConfig & BatchGetResourceConfigRequest,
   ): Promise<BatchGetResourceConfigResponse> {
-    const body: JSONObject = {...params,
-    resourceKeys: params["resourceKeys"]?.map(x => fromResourceKey(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceKeys: params["resourceKeys"]?.map(x => fromResourceKey(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetResourceConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "baseConfigurationItems": [toBaseConfigurationItem],
@@ -68,8 +69,10 @@ export default class ConfigService {
   async deleteAggregationAuthorization(
     {abortSignal, ...params}: RequestConfig & DeleteAggregationAuthorizationRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AuthorizedAccountId: params["AuthorizedAccountId"],
+      AuthorizedAwsRegion: params["AuthorizedAwsRegion"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAggregationAuthorization",
@@ -79,8 +82,9 @@ export default class ConfigService {
   async deleteConfigRule(
     {abortSignal, ...params}: RequestConfig & DeleteConfigRuleRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigRuleName: params["ConfigRuleName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteConfigRule",
@@ -90,8 +94,9 @@ export default class ConfigService {
   async deleteConfigurationAggregator(
     {abortSignal, ...params}: RequestConfig & DeleteConfigurationAggregatorRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteConfigurationAggregator",
@@ -101,8 +106,9 @@ export default class ConfigService {
   async deleteConfigurationRecorder(
     {abortSignal, ...params}: RequestConfig & DeleteConfigurationRecorderRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigurationRecorderName: params["ConfigurationRecorderName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteConfigurationRecorder",
@@ -112,8 +118,9 @@ export default class ConfigService {
   async deleteConformancePack(
     {abortSignal, ...params}: RequestConfig & DeleteConformancePackRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConformancePackName: params["ConformancePackName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteConformancePack",
@@ -123,8 +130,9 @@ export default class ConfigService {
   async deleteDeliveryChannel(
     {abortSignal, ...params}: RequestConfig & DeleteDeliveryChannelRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeliveryChannelName: params["DeliveryChannelName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDeliveryChannel",
@@ -134,13 +142,14 @@ export default class ConfigService {
   async deleteEvaluationResults(
     {abortSignal, ...params}: RequestConfig & DeleteEvaluationResultsRequest,
   ): Promise<DeleteEvaluationResultsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigRuleName: params["ConfigRuleName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEvaluationResults",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -149,8 +158,9 @@ export default class ConfigService {
   async deleteOrganizationConfigRule(
     {abortSignal, ...params}: RequestConfig & DeleteOrganizationConfigRuleRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationConfigRuleName: params["OrganizationConfigRuleName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteOrganizationConfigRule",
@@ -160,8 +170,9 @@ export default class ConfigService {
   async deleteOrganizationConformancePack(
     {abortSignal, ...params}: RequestConfig & DeleteOrganizationConformancePackRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationConformancePackName: params["OrganizationConformancePackName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteOrganizationConformancePack",
@@ -171,8 +182,10 @@ export default class ConfigService {
   async deletePendingAggregationRequest(
     {abortSignal, ...params}: RequestConfig & DeletePendingAggregationRequestRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RequesterAccountId: params["RequesterAccountId"],
+      RequesterAwsRegion: params["RequesterAwsRegion"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePendingAggregationRequest",
@@ -182,13 +195,15 @@ export default class ConfigService {
   async deleteRemediationConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteRemediationConfigurationRequest,
   ): Promise<DeleteRemediationConfigurationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigRuleName: params["ConfigRuleName"],
+      ResourceType: params["ResourceType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRemediationConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -197,14 +212,15 @@ export default class ConfigService {
   async deleteRemediationExceptions(
     {abortSignal, ...params}: RequestConfig & DeleteRemediationExceptionsRequest,
   ): Promise<DeleteRemediationExceptionsResponse> {
-    const body: JSONObject = {...params,
-    ResourceKeys: params["ResourceKeys"]?.map(x => fromRemediationExceptionResourceKey(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigRuleName: params["ConfigRuleName"],
+      ResourceKeys: params["ResourceKeys"]?.map(x => fromRemediationExceptionResourceKey(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRemediationExceptions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FailedBatches": [toFailedDeleteRemediationExceptionsBatch],
@@ -215,8 +231,10 @@ export default class ConfigService {
   async deleteResourceConfig(
     {abortSignal, ...params}: RequestConfig & DeleteResourceConfigRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceType: params["ResourceType"],
+      ResourceId: params["ResourceId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteResourceConfig",
@@ -226,8 +244,9 @@ export default class ConfigService {
   async deleteRetentionConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteRetentionConfigurationRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RetentionConfigurationName: params["RetentionConfigurationName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRetentionConfiguration",
@@ -237,13 +256,14 @@ export default class ConfigService {
   async deliverConfigSnapshot(
     {abortSignal, ...params}: RequestConfig & DeliverConfigSnapshotRequest,
   ): Promise<DeliverConfigSnapshotResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      deliveryChannelName: params["deliveryChannelName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeliverConfigSnapshot",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "configSnapshotId": "s",
@@ -254,14 +274,17 @@ export default class ConfigService {
   async describeAggregateComplianceByConfigRules(
     {abortSignal, ...params}: RequestConfig & DescribeAggregateComplianceByConfigRulesRequest,
   ): Promise<DescribeAggregateComplianceByConfigRulesResponse> {
-    const body: JSONObject = {...params,
-    Filters: fromConfigRuleComplianceFilters(params["Filters"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
+      Filters: fromConfigRuleComplianceFilters(params["Filters"]),
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAggregateComplianceByConfigRules",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AggregateComplianceByConfigRules": [toAggregateComplianceByConfigRule],
@@ -273,13 +296,15 @@ export default class ConfigService {
   async describeAggregationAuthorizations(
     {abortSignal, ...params}: RequestConfig & DescribeAggregationAuthorizationsRequest = {},
   ): Promise<DescribeAggregationAuthorizationsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAggregationAuthorizations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AggregationAuthorizations": [toAggregationAuthorization],
@@ -291,13 +316,16 @@ export default class ConfigService {
   async describeComplianceByConfigRule(
     {abortSignal, ...params}: RequestConfig & DescribeComplianceByConfigRuleRequest = {},
   ): Promise<DescribeComplianceByConfigRuleResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigRuleNames: params["ConfigRuleNames"],
+      ComplianceTypes: params["ComplianceTypes"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeComplianceByConfigRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ComplianceByConfigRules": [toComplianceByConfigRule],
@@ -309,13 +337,18 @@ export default class ConfigService {
   async describeComplianceByResource(
     {abortSignal, ...params}: RequestConfig & DescribeComplianceByResourceRequest = {},
   ): Promise<DescribeComplianceByResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceType: params["ResourceType"],
+      ResourceId: params["ResourceId"],
+      ComplianceTypes: params["ComplianceTypes"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeComplianceByResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ComplianceByResources": [toComplianceByResource],
@@ -327,13 +360,16 @@ export default class ConfigService {
   async describeConfigRuleEvaluationStatus(
     {abortSignal, ...params}: RequestConfig & DescribeConfigRuleEvaluationStatusRequest = {},
   ): Promise<DescribeConfigRuleEvaluationStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigRuleNames: params["ConfigRuleNames"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConfigRuleEvaluationStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConfigRulesEvaluationStatus": [toConfigRuleEvaluationStatus],
@@ -345,13 +381,15 @@ export default class ConfigService {
   async describeConfigRules(
     {abortSignal, ...params}: RequestConfig & DescribeConfigRulesRequest = {},
   ): Promise<DescribeConfigRulesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigRuleNames: params["ConfigRuleNames"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConfigRules",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConfigRules": [toConfigRule],
@@ -363,13 +401,17 @@ export default class ConfigService {
   async describeConfigurationAggregatorSourcesStatus(
     {abortSignal, ...params}: RequestConfig & DescribeConfigurationAggregatorSourcesStatusRequest,
   ): Promise<DescribeConfigurationAggregatorSourcesStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
+      UpdateStatus: params["UpdateStatus"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConfigurationAggregatorSourcesStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AggregatedSourceStatusList": [toAggregatedSourceStatus],
@@ -381,13 +423,16 @@ export default class ConfigService {
   async describeConfigurationAggregators(
     {abortSignal, ...params}: RequestConfig & DescribeConfigurationAggregatorsRequest = {},
   ): Promise<DescribeConfigurationAggregatorsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigurationAggregatorNames: params["ConfigurationAggregatorNames"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConfigurationAggregators",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConfigurationAggregators": [toConfigurationAggregator],
@@ -399,13 +444,14 @@ export default class ConfigService {
   async describeConfigurationRecorderStatus(
     {abortSignal, ...params}: RequestConfig & DescribeConfigurationRecorderStatusRequest = {},
   ): Promise<DescribeConfigurationRecorderStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigurationRecorderNames: params["ConfigurationRecorderNames"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConfigurationRecorderStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConfigurationRecordersStatus": [toConfigurationRecorderStatus],
@@ -416,13 +462,14 @@ export default class ConfigService {
   async describeConfigurationRecorders(
     {abortSignal, ...params}: RequestConfig & DescribeConfigurationRecordersRequest = {},
   ): Promise<DescribeConfigurationRecordersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigurationRecorderNames: params["ConfigurationRecorderNames"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConfigurationRecorders",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConfigurationRecorders": [toConfigurationRecorder],
@@ -433,14 +480,17 @@ export default class ConfigService {
   async describeConformancePackCompliance(
     {abortSignal, ...params}: RequestConfig & DescribeConformancePackComplianceRequest,
   ): Promise<DescribeConformancePackComplianceResponse> {
-    const body: JSONObject = {...params,
-    Filters: fromConformancePackComplianceFilters(params["Filters"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConformancePackName: params["ConformancePackName"],
+      Filters: fromConformancePackComplianceFilters(params["Filters"]),
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConformancePackCompliance",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ConformancePackName": "s",
         "ConformancePackRuleComplianceList": [toConformancePackRuleCompliance],
@@ -454,13 +504,16 @@ export default class ConfigService {
   async describeConformancePackStatus(
     {abortSignal, ...params}: RequestConfig & DescribeConformancePackStatusRequest = {},
   ): Promise<DescribeConformancePackStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConformancePackNames: params["ConformancePackNames"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConformancePackStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConformancePackStatusDetails": [toConformancePackStatusDetail],
@@ -472,13 +525,16 @@ export default class ConfigService {
   async describeConformancePacks(
     {abortSignal, ...params}: RequestConfig & DescribeConformancePacksRequest = {},
   ): Promise<DescribeConformancePacksResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConformancePackNames: params["ConformancePackNames"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConformancePacks",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConformancePackDetails": [toConformancePackDetail],
@@ -490,13 +546,14 @@ export default class ConfigService {
   async describeDeliveryChannelStatus(
     {abortSignal, ...params}: RequestConfig & DescribeDeliveryChannelStatusRequest = {},
   ): Promise<DescribeDeliveryChannelStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeliveryChannelNames: params["DeliveryChannelNames"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDeliveryChannelStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DeliveryChannelsStatus": [toDeliveryChannelStatus],
@@ -507,13 +564,14 @@ export default class ConfigService {
   async describeDeliveryChannels(
     {abortSignal, ...params}: RequestConfig & DescribeDeliveryChannelsRequest = {},
   ): Promise<DescribeDeliveryChannelsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeliveryChannelNames: params["DeliveryChannelNames"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDeliveryChannels",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DeliveryChannels": [toDeliveryChannel],
@@ -524,13 +582,16 @@ export default class ConfigService {
   async describeOrganizationConfigRuleStatuses(
     {abortSignal, ...params}: RequestConfig & DescribeOrganizationConfigRuleStatusesRequest = {},
   ): Promise<DescribeOrganizationConfigRuleStatusesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationConfigRuleNames: params["OrganizationConfigRuleNames"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOrganizationConfigRuleStatuses",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OrganizationConfigRuleStatuses": [toOrganizationConfigRuleStatus],
@@ -542,13 +603,16 @@ export default class ConfigService {
   async describeOrganizationConfigRules(
     {abortSignal, ...params}: RequestConfig & DescribeOrganizationConfigRulesRequest = {},
   ): Promise<DescribeOrganizationConfigRulesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationConfigRuleNames: params["OrganizationConfigRuleNames"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOrganizationConfigRules",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OrganizationConfigRules": [toOrganizationConfigRule],
@@ -560,13 +624,16 @@ export default class ConfigService {
   async describeOrganizationConformancePackStatuses(
     {abortSignal, ...params}: RequestConfig & DescribeOrganizationConformancePackStatusesRequest = {},
   ): Promise<DescribeOrganizationConformancePackStatusesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationConformancePackNames: params["OrganizationConformancePackNames"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOrganizationConformancePackStatuses",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OrganizationConformancePackStatuses": [toOrganizationConformancePackStatus],
@@ -578,13 +645,16 @@ export default class ConfigService {
   async describeOrganizationConformancePacks(
     {abortSignal, ...params}: RequestConfig & DescribeOrganizationConformancePacksRequest = {},
   ): Promise<DescribeOrganizationConformancePacksResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationConformancePackNames: params["OrganizationConformancePackNames"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOrganizationConformancePacks",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OrganizationConformancePacks": [toOrganizationConformancePack],
@@ -596,13 +666,15 @@ export default class ConfigService {
   async describePendingAggregationRequests(
     {abortSignal, ...params}: RequestConfig & DescribePendingAggregationRequestsRequest = {},
   ): Promise<DescribePendingAggregationRequestsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePendingAggregationRequests",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PendingAggregationRequests": [toPendingAggregationRequest],
@@ -614,13 +686,14 @@ export default class ConfigService {
   async describeRemediationConfigurations(
     {abortSignal, ...params}: RequestConfig & DescribeRemediationConfigurationsRequest,
   ): Promise<DescribeRemediationConfigurationsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigRuleNames: params["ConfigRuleNames"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRemediationConfigurations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RemediationConfigurations": [toRemediationConfiguration],
@@ -631,14 +704,17 @@ export default class ConfigService {
   async describeRemediationExceptions(
     {abortSignal, ...params}: RequestConfig & DescribeRemediationExceptionsRequest,
   ): Promise<DescribeRemediationExceptionsResponse> {
-    const body: JSONObject = {...params,
-    ResourceKeys: params["ResourceKeys"]?.map(x => fromRemediationExceptionResourceKey(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigRuleName: params["ConfigRuleName"],
+      ResourceKeys: params["ResourceKeys"]?.map(x => fromRemediationExceptionResourceKey(x)),
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRemediationExceptions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RemediationExceptions": [toRemediationException],
@@ -650,14 +726,17 @@ export default class ConfigService {
   async describeRemediationExecutionStatus(
     {abortSignal, ...params}: RequestConfig & DescribeRemediationExecutionStatusRequest,
   ): Promise<DescribeRemediationExecutionStatusResponse> {
-    const body: JSONObject = {...params,
-    ResourceKeys: params["ResourceKeys"]?.map(x => fromResourceKey(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigRuleName: params["ConfigRuleName"],
+      ResourceKeys: params["ResourceKeys"]?.map(x => fromResourceKey(x)),
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRemediationExecutionStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RemediationExecutionStatuses": [toRemediationExecutionStatus],
@@ -669,13 +748,15 @@ export default class ConfigService {
   async describeRetentionConfigurations(
     {abortSignal, ...params}: RequestConfig & DescribeRetentionConfigurationsRequest = {},
   ): Promise<DescribeRetentionConfigurationsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RetentionConfigurationNames: params["RetentionConfigurationNames"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRetentionConfigurations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RetentionConfigurations": [toRetentionConfiguration],
@@ -687,13 +768,20 @@ export default class ConfigService {
   async getAggregateComplianceDetailsByConfigRule(
     {abortSignal, ...params}: RequestConfig & GetAggregateComplianceDetailsByConfigRuleRequest,
   ): Promise<GetAggregateComplianceDetailsByConfigRuleResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
+      ConfigRuleName: params["ConfigRuleName"],
+      AccountId: params["AccountId"],
+      AwsRegion: params["AwsRegion"],
+      ComplianceType: params["ComplianceType"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAggregateComplianceDetailsByConfigRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AggregateEvaluationResults": [toAggregateEvaluationResult],
@@ -705,14 +793,18 @@ export default class ConfigService {
   async getAggregateConfigRuleComplianceSummary(
     {abortSignal, ...params}: RequestConfig & GetAggregateConfigRuleComplianceSummaryRequest,
   ): Promise<GetAggregateConfigRuleComplianceSummaryResponse> {
-    const body: JSONObject = {...params,
-    Filters: fromConfigRuleComplianceSummaryFilters(params["Filters"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
+      Filters: fromConfigRuleComplianceSummaryFilters(params["Filters"]),
+      GroupByKey: params["GroupByKey"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAggregateConfigRuleComplianceSummary",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GroupByKey": "s",
@@ -725,14 +817,18 @@ export default class ConfigService {
   async getAggregateDiscoveredResourceCounts(
     {abortSignal, ...params}: RequestConfig & GetAggregateDiscoveredResourceCountsRequest,
   ): Promise<GetAggregateDiscoveredResourceCountsResponse> {
-    const body: JSONObject = {...params,
-    Filters: fromResourceCountFilters(params["Filters"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
+      Filters: fromResourceCountFilters(params["Filters"]),
+      GroupByKey: params["GroupByKey"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAggregateDiscoveredResourceCounts",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "TotalDiscoveredResources": "n",
       },
@@ -747,14 +843,15 @@ export default class ConfigService {
   async getAggregateResourceConfig(
     {abortSignal, ...params}: RequestConfig & GetAggregateResourceConfigRequest,
   ): Promise<GetAggregateResourceConfigResponse> {
-    const body: JSONObject = {...params,
-    ResourceIdentifier: fromAggregateResourceIdentifier(params["ResourceIdentifier"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
+      ResourceIdentifier: fromAggregateResourceIdentifier(params["ResourceIdentifier"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAggregateResourceConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConfigurationItem": toConfigurationItem,
@@ -765,13 +862,17 @@ export default class ConfigService {
   async getComplianceDetailsByConfigRule(
     {abortSignal, ...params}: RequestConfig & GetComplianceDetailsByConfigRuleRequest,
   ): Promise<GetComplianceDetailsByConfigRuleResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigRuleName: params["ConfigRuleName"],
+      ComplianceTypes: params["ComplianceTypes"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetComplianceDetailsByConfigRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EvaluationResults": [toEvaluationResult],
@@ -783,13 +884,17 @@ export default class ConfigService {
   async getComplianceDetailsByResource(
     {abortSignal, ...params}: RequestConfig & GetComplianceDetailsByResourceRequest,
   ): Promise<GetComplianceDetailsByResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceType: params["ResourceType"],
+      ResourceId: params["ResourceId"],
+      ComplianceTypes: params["ComplianceTypes"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetComplianceDetailsByResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EvaluationResults": [toEvaluationResult],
@@ -805,7 +910,7 @@ export default class ConfigService {
       abortSignal,
       action: "GetComplianceSummaryByConfigRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ComplianceSummary": toComplianceSummary,
@@ -816,13 +921,14 @@ export default class ConfigService {
   async getComplianceSummaryByResourceType(
     {abortSignal, ...params}: RequestConfig & GetComplianceSummaryByResourceTypeRequest = {},
   ): Promise<GetComplianceSummaryByResourceTypeResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceTypes: params["ResourceTypes"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetComplianceSummaryByResourceType",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ComplianceSummariesByResourceType": [toComplianceSummaryByResourceType],
@@ -833,14 +939,17 @@ export default class ConfigService {
   async getConformancePackComplianceDetails(
     {abortSignal, ...params}: RequestConfig & GetConformancePackComplianceDetailsRequest,
   ): Promise<GetConformancePackComplianceDetailsResponse> {
-    const body: JSONObject = {...params,
-    Filters: fromConformancePackEvaluationFilters(params["Filters"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConformancePackName: params["ConformancePackName"],
+      Filters: fromConformancePackEvaluationFilters(params["Filters"]),
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetConformancePackComplianceDetails",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ConformancePackName": "s",
       },
@@ -854,13 +963,16 @@ export default class ConfigService {
   async getConformancePackComplianceSummary(
     {abortSignal, ...params}: RequestConfig & GetConformancePackComplianceSummaryRequest,
   ): Promise<GetConformancePackComplianceSummaryResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConformancePackNames: params["ConformancePackNames"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetConformancePackComplianceSummary",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConformancePackComplianceSummaryList": [toConformancePackComplianceSummary],
@@ -872,13 +984,16 @@ export default class ConfigService {
   async getDiscoveredResourceCounts(
     {abortSignal, ...params}: RequestConfig & GetDiscoveredResourceCountsRequest = {},
   ): Promise<GetDiscoveredResourceCountsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceTypes: params["resourceTypes"],
+      limit: params["limit"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDiscoveredResourceCounts",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "totalDiscoveredResources": "n",
@@ -891,14 +1006,17 @@ export default class ConfigService {
   async getOrganizationConfigRuleDetailedStatus(
     {abortSignal, ...params}: RequestConfig & GetOrganizationConfigRuleDetailedStatusRequest,
   ): Promise<GetOrganizationConfigRuleDetailedStatusResponse> {
-    const body: JSONObject = {...params,
-    Filters: fromStatusDetailFilters(params["Filters"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationConfigRuleName: params["OrganizationConfigRuleName"],
+      Filters: fromStatusDetailFilters(params["Filters"]),
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetOrganizationConfigRuleDetailedStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OrganizationConfigRuleDetailedStatus": [toMemberAccountStatus],
@@ -910,14 +1028,17 @@ export default class ConfigService {
   async getOrganizationConformancePackDetailedStatus(
     {abortSignal, ...params}: RequestConfig & GetOrganizationConformancePackDetailedStatusRequest,
   ): Promise<GetOrganizationConformancePackDetailedStatusResponse> {
-    const body: JSONObject = {...params,
-    Filters: fromOrganizationResourceDetailedStatusFilters(params["Filters"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationConformancePackName: params["OrganizationConformancePackName"],
+      Filters: fromOrganizationResourceDetailedStatusFilters(params["Filters"]),
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetOrganizationConformancePackDetailedStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OrganizationConformancePackDetailedStatuses": [toOrganizationConformancePackDetailedStatus],
@@ -929,15 +1050,20 @@ export default class ConfigService {
   async getResourceConfigHistory(
     {abortSignal, ...params}: RequestConfig & GetResourceConfigHistoryRequest,
   ): Promise<GetResourceConfigHistoryResponse> {
-    const body: JSONObject = {...params,
-    laterTime: prt.serializeDate_unixTimestamp(params["laterTime"]),
-    earlierTime: prt.serializeDate_unixTimestamp(params["earlierTime"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceType: params["resourceType"],
+      resourceId: params["resourceId"],
+      laterTime: jsonP.serializeDate_unixTimestamp(params["laterTime"]),
+      earlierTime: jsonP.serializeDate_unixTimestamp(params["earlierTime"]),
+      chronologicalOrder: params["chronologicalOrder"],
+      limit: params["limit"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResourceConfigHistory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "configurationItems": [toConfigurationItem],
@@ -949,14 +1075,18 @@ export default class ConfigService {
   async listAggregateDiscoveredResources(
     {abortSignal, ...params}: RequestConfig & ListAggregateDiscoveredResourcesRequest,
   ): Promise<ListAggregateDiscoveredResourcesResponse> {
-    const body: JSONObject = {...params,
-    Filters: fromResourceFilters(params["Filters"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
+      ResourceType: params["ResourceType"],
+      Filters: fromResourceFilters(params["Filters"]),
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAggregateDiscoveredResources",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResourceIdentifiers": [toAggregateResourceIdentifier],
@@ -968,13 +1098,19 @@ export default class ConfigService {
   async listDiscoveredResources(
     {abortSignal, ...params}: RequestConfig & ListDiscoveredResourcesRequest,
   ): Promise<ListDiscoveredResourcesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceType: params["resourceType"],
+      resourceIds: params["resourceIds"],
+      resourceName: params["resourceName"],
+      limit: params["limit"],
+      includeDeletedResources: params["includeDeletedResources"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDiscoveredResources",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "resourceIdentifiers": [toResourceIdentifier],
@@ -986,13 +1122,16 @@ export default class ConfigService {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -1004,14 +1143,16 @@ export default class ConfigService {
   async putAggregationAuthorization(
     {abortSignal, ...params}: RequestConfig & PutAggregationAuthorizationRequest,
   ): Promise<PutAggregationAuthorizationResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AuthorizedAccountId: params["AuthorizedAccountId"],
+      AuthorizedAwsRegion: params["AuthorizedAwsRegion"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAggregationAuthorization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AggregationAuthorization": toAggregationAuthorization,
@@ -1022,10 +1163,10 @@ export default class ConfigService {
   async putConfigRule(
     {abortSignal, ...params}: RequestConfig & PutConfigRuleRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    ConfigRule: fromConfigRule(params["ConfigRule"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigRule: fromConfigRule(params["ConfigRule"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutConfigRule",
@@ -1035,16 +1176,17 @@ export default class ConfigService {
   async putConfigurationAggregator(
     {abortSignal, ...params}: RequestConfig & PutConfigurationAggregatorRequest,
   ): Promise<PutConfigurationAggregatorResponse> {
-    const body: JSONObject = {...params,
-    AccountAggregationSources: params["AccountAggregationSources"]?.map(x => fromAccountAggregationSource(x)),
-    OrganizationAggregationSource: fromOrganizationAggregationSource(params["OrganizationAggregationSource"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
+      AccountAggregationSources: params["AccountAggregationSources"]?.map(x => fromAccountAggregationSource(x)),
+      OrganizationAggregationSource: fromOrganizationAggregationSource(params["OrganizationAggregationSource"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutConfigurationAggregator",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConfigurationAggregator": toConfigurationAggregator,
@@ -1055,9 +1197,9 @@ export default class ConfigService {
   async putConfigurationRecorder(
     {abortSignal, ...params}: RequestConfig & PutConfigurationRecorderRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    ConfigurationRecorder: fromConfigurationRecorder(params["ConfigurationRecorder"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigurationRecorder: fromConfigurationRecorder(params["ConfigurationRecorder"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutConfigurationRecorder",
@@ -1067,14 +1209,19 @@ export default class ConfigService {
   async putConformancePack(
     {abortSignal, ...params}: RequestConfig & PutConformancePackRequest,
   ): Promise<PutConformancePackResponse> {
-    const body: JSONObject = {...params,
-    ConformancePackInputParameters: params["ConformancePackInputParameters"]?.map(x => fromConformancePackInputParameter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConformancePackName: params["ConformancePackName"],
+      TemplateS3Uri: params["TemplateS3Uri"],
+      TemplateBody: params["TemplateBody"],
+      DeliveryS3Bucket: params["DeliveryS3Bucket"],
+      DeliveryS3KeyPrefix: params["DeliveryS3KeyPrefix"],
+      ConformancePackInputParameters: params["ConformancePackInputParameters"]?.map(x => fromConformancePackInputParameter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutConformancePack",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConformancePackArn": "s",
@@ -1085,9 +1232,9 @@ export default class ConfigService {
   async putDeliveryChannel(
     {abortSignal, ...params}: RequestConfig & PutDeliveryChannelRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    DeliveryChannel: fromDeliveryChannel(params["DeliveryChannel"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeliveryChannel: fromDeliveryChannel(params["DeliveryChannel"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutDeliveryChannel",
@@ -1097,14 +1244,16 @@ export default class ConfigService {
   async putEvaluations(
     {abortSignal, ...params}: RequestConfig & PutEvaluationsRequest,
   ): Promise<PutEvaluationsResponse> {
-    const body: JSONObject = {...params,
-    Evaluations: params["Evaluations"]?.map(x => fromEvaluation(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Evaluations: params["Evaluations"]?.map(x => fromEvaluation(x)),
+      ResultToken: params["ResultToken"],
+      TestMode: params["TestMode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutEvaluations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FailedEvaluations": [toEvaluation],
@@ -1115,15 +1264,17 @@ export default class ConfigService {
   async putOrganizationConfigRule(
     {abortSignal, ...params}: RequestConfig & PutOrganizationConfigRuleRequest,
   ): Promise<PutOrganizationConfigRuleResponse> {
-    const body: JSONObject = {...params,
-    OrganizationManagedRuleMetadata: fromOrganizationManagedRuleMetadata(params["OrganizationManagedRuleMetadata"]),
-    OrganizationCustomRuleMetadata: fromOrganizationCustomRuleMetadata(params["OrganizationCustomRuleMetadata"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationConfigRuleName: params["OrganizationConfigRuleName"],
+      OrganizationManagedRuleMetadata: fromOrganizationManagedRuleMetadata(params["OrganizationManagedRuleMetadata"]),
+      OrganizationCustomRuleMetadata: fromOrganizationCustomRuleMetadata(params["OrganizationCustomRuleMetadata"]),
+      ExcludedAccounts: params["ExcludedAccounts"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutOrganizationConfigRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OrganizationConfigRuleArn": "s",
@@ -1134,14 +1285,20 @@ export default class ConfigService {
   async putOrganizationConformancePack(
     {abortSignal, ...params}: RequestConfig & PutOrganizationConformancePackRequest,
   ): Promise<PutOrganizationConformancePackResponse> {
-    const body: JSONObject = {...params,
-    ConformancePackInputParameters: params["ConformancePackInputParameters"]?.map(x => fromConformancePackInputParameter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      OrganizationConformancePackName: params["OrganizationConformancePackName"],
+      TemplateS3Uri: params["TemplateS3Uri"],
+      TemplateBody: params["TemplateBody"],
+      DeliveryS3Bucket: params["DeliveryS3Bucket"],
+      DeliveryS3KeyPrefix: params["DeliveryS3KeyPrefix"],
+      ConformancePackInputParameters: params["ConformancePackInputParameters"]?.map(x => fromConformancePackInputParameter(x)),
+      ExcludedAccounts: params["ExcludedAccounts"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutOrganizationConformancePack",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OrganizationConformancePackArn": "s",
@@ -1152,14 +1309,14 @@ export default class ConfigService {
   async putRemediationConfigurations(
     {abortSignal, ...params}: RequestConfig & PutRemediationConfigurationsRequest,
   ): Promise<PutRemediationConfigurationsResponse> {
-    const body: JSONObject = {...params,
-    RemediationConfigurations: params["RemediationConfigurations"]?.map(x => fromRemediationConfiguration(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      RemediationConfigurations: params["RemediationConfigurations"]?.map(x => fromRemediationConfiguration(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRemediationConfigurations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FailedBatches": [toFailedRemediationBatch],
@@ -1170,15 +1327,17 @@ export default class ConfigService {
   async putRemediationExceptions(
     {abortSignal, ...params}: RequestConfig & PutRemediationExceptionsRequest,
   ): Promise<PutRemediationExceptionsResponse> {
-    const body: JSONObject = {...params,
-    ResourceKeys: params["ResourceKeys"]?.map(x => fromRemediationExceptionResourceKey(x)),
-    ExpirationTime: prt.serializeDate_unixTimestamp(params["ExpirationTime"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigRuleName: params["ConfigRuleName"],
+      ResourceKeys: params["ResourceKeys"]?.map(x => fromRemediationExceptionResourceKey(x)),
+      Message: params["Message"],
+      ExpirationTime: jsonP.serializeDate_unixTimestamp(params["ExpirationTime"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRemediationExceptions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FailedBatches": [toFailedRemediationExceptionBatch],
@@ -1189,8 +1348,14 @@ export default class ConfigService {
   async putResourceConfig(
     {abortSignal, ...params}: RequestConfig & PutResourceConfigRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceType: params["ResourceType"],
+      SchemaVersionId: params["SchemaVersionId"],
+      ResourceId: params["ResourceId"],
+      ResourceName: params["ResourceName"],
+      Configuration: params["Configuration"],
+      Tags: params["Tags"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutResourceConfig",
@@ -1200,13 +1365,14 @@ export default class ConfigService {
   async putRetentionConfiguration(
     {abortSignal, ...params}: RequestConfig & PutRetentionConfigurationRequest,
   ): Promise<PutRetentionConfigurationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RetentionPeriodInDays: params["RetentionPeriodInDays"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRetentionConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RetentionConfiguration": toRetentionConfiguration,
@@ -1217,13 +1383,18 @@ export default class ConfigService {
   async selectAggregateResourceConfig(
     {abortSignal, ...params}: RequestConfig & SelectAggregateResourceConfigRequest,
   ): Promise<SelectAggregateResourceConfigResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Expression: params["Expression"],
+      ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
+      Limit: params["Limit"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SelectAggregateResourceConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Results": ["s"],
@@ -1236,13 +1407,16 @@ export default class ConfigService {
   async selectResourceConfig(
     {abortSignal, ...params}: RequestConfig & SelectResourceConfigRequest,
   ): Promise<SelectResourceConfigResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Expression: params["Expression"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SelectResourceConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Results": ["s"],
@@ -1255,13 +1429,14 @@ export default class ConfigService {
   async startConfigRulesEvaluation(
     {abortSignal, ...params}: RequestConfig & StartConfigRulesEvaluationRequest = {},
   ): Promise<StartConfigRulesEvaluationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigRuleNames: params["ConfigRuleNames"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartConfigRulesEvaluation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1270,8 +1445,9 @@ export default class ConfigService {
   async startConfigurationRecorder(
     {abortSignal, ...params}: RequestConfig & StartConfigurationRecorderRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigurationRecorderName: params["ConfigurationRecorderName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartConfigurationRecorder",
@@ -1281,14 +1457,15 @@ export default class ConfigService {
   async startRemediationExecution(
     {abortSignal, ...params}: RequestConfig & StartRemediationExecutionRequest,
   ): Promise<StartRemediationExecutionResponse> {
-    const body: JSONObject = {...params,
-    ResourceKeys: params["ResourceKeys"]?.map(x => fromResourceKey(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigRuleName: params["ConfigRuleName"],
+      ResourceKeys: params["ResourceKeys"]?.map(x => fromResourceKey(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartRemediationExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FailureMessage": "s",
@@ -1300,8 +1477,9 @@ export default class ConfigService {
   async stopConfigurationRecorder(
     {abortSignal, ...params}: RequestConfig & StopConfigurationRecorderRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ConfigurationRecorderName: params["ConfigurationRecorderName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopConfigurationRecorder",
@@ -1311,9 +1489,10 @@ export default class ConfigService {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -1323,8 +1502,10 @@ export default class ConfigService {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -1803,7 +1984,7 @@ export interface PutResourceConfigRequest {
   ResourceId: string;
   ResourceName?: string | null;
   Configuration: string;
-  Tags?: { [key: string]: string } | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2211,18 +2392,23 @@ export interface AggregateResourceIdentifier {
   ResourceType: ResourceType;
   ResourceName?: string | null;
 }
-function fromAggregateResourceIdentifier(input?: AggregateResourceIdentifier | null): JSONValue {
+function fromAggregateResourceIdentifier(input?: AggregateResourceIdentifier | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SourceAccountId: input["SourceAccountId"],
+    SourceRegion: input["SourceRegion"],
+    ResourceId: input["ResourceId"],
+    ResourceType: input["ResourceType"],
+    ResourceName: input["ResourceName"],
   }
 }
-function toAggregateResourceIdentifier(root: JSONValue): AggregateResourceIdentifier {
-  return prt.readObj({
+function toAggregateResourceIdentifier(root: jsonP.JSONValue): AggregateResourceIdentifier {
+  return jsonP.readObj({
     required: {
       "SourceAccountId": "s",
       "SourceRegion": "s",
       "ResourceId": "s",
-      "ResourceType": toResourceType,
+      "ResourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
     },
     optional: {
       "ResourceName": "s",
@@ -2325,120 +2511,24 @@ export type ResourceType =
 | "AWS::SecretsManager::Secret"
 | "AWS::SNS::Topic"
 | "AWS::SSM::FileData"
-;
-
-function toResourceType(root: JSONValue): ResourceType | null {
-  return ( false
-    || root == "AWS::EC2::CustomerGateway"
-    || root == "AWS::EC2::EIP"
-    || root == "AWS::EC2::Host"
-    || root == "AWS::EC2::Instance"
-    || root == "AWS::EC2::InternetGateway"
-    || root == "AWS::EC2::NetworkAcl"
-    || root == "AWS::EC2::NetworkInterface"
-    || root == "AWS::EC2::RouteTable"
-    || root == "AWS::EC2::SecurityGroup"
-    || root == "AWS::EC2::Subnet"
-    || root == "AWS::CloudTrail::Trail"
-    || root == "AWS::EC2::Volume"
-    || root == "AWS::EC2::VPC"
-    || root == "AWS::EC2::VPNConnection"
-    || root == "AWS::EC2::VPNGateway"
-    || root == "AWS::EC2::RegisteredHAInstance"
-    || root == "AWS::EC2::NatGateway"
-    || root == "AWS::EC2::EgressOnlyInternetGateway"
-    || root == "AWS::EC2::VPCEndpoint"
-    || root == "AWS::EC2::VPCEndpointService"
-    || root == "AWS::EC2::FlowLog"
-    || root == "AWS::EC2::VPCPeeringConnection"
-    || root == "AWS::Elasticsearch::Domain"
-    || root == "AWS::IAM::Group"
-    || root == "AWS::IAM::Policy"
-    || root == "AWS::IAM::Role"
-    || root == "AWS::IAM::User"
-    || root == "AWS::ElasticLoadBalancingV2::LoadBalancer"
-    || root == "AWS::ACM::Certificate"
-    || root == "AWS::RDS::DBInstance"
-    || root == "AWS::RDS::DBSubnetGroup"
-    || root == "AWS::RDS::DBSecurityGroup"
-    || root == "AWS::RDS::DBSnapshot"
-    || root == "AWS::RDS::DBCluster"
-    || root == "AWS::RDS::DBClusterSnapshot"
-    || root == "AWS::RDS::EventSubscription"
-    || root == "AWS::S3::Bucket"
-    || root == "AWS::S3::AccountPublicAccessBlock"
-    || root == "AWS::Redshift::Cluster"
-    || root == "AWS::Redshift::ClusterSnapshot"
-    || root == "AWS::Redshift::ClusterParameterGroup"
-    || root == "AWS::Redshift::ClusterSecurityGroup"
-    || root == "AWS::Redshift::ClusterSubnetGroup"
-    || root == "AWS::Redshift::EventSubscription"
-    || root == "AWS::SSM::ManagedInstanceInventory"
-    || root == "AWS::CloudWatch::Alarm"
-    || root == "AWS::CloudFormation::Stack"
-    || root == "AWS::ElasticLoadBalancing::LoadBalancer"
-    || root == "AWS::AutoScaling::AutoScalingGroup"
-    || root == "AWS::AutoScaling::LaunchConfiguration"
-    || root == "AWS::AutoScaling::ScalingPolicy"
-    || root == "AWS::AutoScaling::ScheduledAction"
-    || root == "AWS::DynamoDB::Table"
-    || root == "AWS::CodeBuild::Project"
-    || root == "AWS::WAF::RateBasedRule"
-    || root == "AWS::WAF::Rule"
-    || root == "AWS::WAF::RuleGroup"
-    || root == "AWS::WAF::WebACL"
-    || root == "AWS::WAFRegional::RateBasedRule"
-    || root == "AWS::WAFRegional::Rule"
-    || root == "AWS::WAFRegional::RuleGroup"
-    || root == "AWS::WAFRegional::WebACL"
-    || root == "AWS::CloudFront::Distribution"
-    || root == "AWS::CloudFront::StreamingDistribution"
-    || root == "AWS::Lambda::Function"
-    || root == "AWS::ElasticBeanstalk::Application"
-    || root == "AWS::ElasticBeanstalk::ApplicationVersion"
-    || root == "AWS::ElasticBeanstalk::Environment"
-    || root == "AWS::WAFv2::WebACL"
-    || root == "AWS::WAFv2::RuleGroup"
-    || root == "AWS::WAFv2::IPSet"
-    || root == "AWS::WAFv2::RegexPatternSet"
-    || root == "AWS::WAFv2::ManagedRuleSet"
-    || root == "AWS::XRay::EncryptionConfig"
-    || root == "AWS::SSM::AssociationCompliance"
-    || root == "AWS::SSM::PatchCompliance"
-    || root == "AWS::Shield::Protection"
-    || root == "AWS::ShieldRegional::Protection"
-    || root == "AWS::Config::ResourceCompliance"
-    || root == "AWS::ApiGateway::Stage"
-    || root == "AWS::ApiGateway::RestApi"
-    || root == "AWS::ApiGatewayV2::Stage"
-    || root == "AWS::ApiGatewayV2::Api"
-    || root == "AWS::CodePipeline::Pipeline"
-    || root == "AWS::ServiceCatalog::CloudFormationProvisionedProduct"
-    || root == "AWS::ServiceCatalog::CloudFormationProduct"
-    || root == "AWS::ServiceCatalog::Portfolio"
-    || root == "AWS::SQS::Queue"
-    || root == "AWS::KMS::Key"
-    || root == "AWS::QLDB::Ledger"
-    || root == "AWS::SecretsManager::Secret"
-    || root == "AWS::SNS::Topic"
-    || root == "AWS::SSM::FileData"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface ResourceKey {
   resourceType: ResourceType;
   resourceId: string;
 }
-function fromResourceKey(input?: ResourceKey | null): JSONValue {
+function fromResourceKey(input?: ResourceKey | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    resourceType: input["resourceType"],
+    resourceId: input["resourceId"],
   }
 }
-function toResourceKey(root: JSONValue): ResourceKey {
-  return prt.readObj({
+function toResourceKey(root: jsonP.JSONValue): ResourceKey {
+  return jsonP.readObj({
     required: {
-      "resourceType": toResourceType,
+      "resourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
       "resourceId": "s",
     },
     optional: {},
@@ -2450,13 +2540,15 @@ export interface RemediationExceptionResourceKey {
   ResourceType?: string | null;
   ResourceId?: string | null;
 }
-function fromRemediationExceptionResourceKey(input?: RemediationExceptionResourceKey | null): JSONValue {
+function fromRemediationExceptionResourceKey(input?: RemediationExceptionResourceKey | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ResourceType: input["ResourceType"],
+    ResourceId: input["ResourceId"],
   }
 }
-function toRemediationExceptionResourceKey(root: JSONValue): RemediationExceptionResourceKey {
-  return prt.readObj({
+function toRemediationExceptionResourceKey(root: jsonP.JSONValue): RemediationExceptionResourceKey {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ResourceType": "s",
@@ -2472,9 +2564,13 @@ export interface ConfigRuleComplianceFilters {
   AccountId?: string | null;
   AwsRegion?: string | null;
 }
-function fromConfigRuleComplianceFilters(input?: ConfigRuleComplianceFilters | null): JSONValue {
+function fromConfigRuleComplianceFilters(input?: ConfigRuleComplianceFilters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ConfigRuleName: input["ConfigRuleName"],
+    ComplianceType: input["ComplianceType"],
+    AccountId: input["AccountId"],
+    AwsRegion: input["AwsRegion"],
   }
 }
 
@@ -2484,40 +2580,25 @@ export type ComplianceType =
 | "NON_COMPLIANT"
 | "NOT_APPLICABLE"
 | "INSUFFICIENT_DATA"
-;
-
-function toComplianceType(root: JSONValue): ComplianceType | null {
-  return ( false
-    || root == "COMPLIANT"
-    || root == "NON_COMPLIANT"
-    || root == "NOT_APPLICABLE"
-    || root == "INSUFFICIENT_DATA"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type AggregatedSourceStatusType =
 | "FAILED"
 | "SUCCEEDED"
 | "OUTDATED"
-;
-
-function toAggregatedSourceStatusType(root: JSONValue): AggregatedSourceStatusType | null {
-  return ( false
-    || root == "FAILED"
-    || root == "SUCCEEDED"
-    || root == "OUTDATED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ConformancePackComplianceFilters {
   ConfigRuleNames?: string[] | null;
   ComplianceType?: ConformancePackComplianceType | null;
 }
-function fromConformancePackComplianceFilters(input?: ConformancePackComplianceFilters | null): JSONValue {
+function fromConformancePackComplianceFilters(input?: ConformancePackComplianceFilters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ConfigRuleNames: input["ConfigRuleNames"],
+    ComplianceType: input["ComplianceType"],
   }
 }
 
@@ -2525,23 +2606,18 @@ function fromConformancePackComplianceFilters(input?: ConformancePackComplianceF
 export type ConformancePackComplianceType =
 | "COMPLIANT"
 | "NON_COMPLIANT"
-;
-
-function toConformancePackComplianceType(root: JSONValue): ConformancePackComplianceType | null {
-  return ( false
-    || root == "COMPLIANT"
-    || root == "NON_COMPLIANT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ConfigRuleComplianceSummaryFilters {
   AccountId?: string | null;
   AwsRegion?: string | null;
 }
-function fromConfigRuleComplianceSummaryFilters(input?: ConfigRuleComplianceSummaryFilters | null): JSONValue {
+function fromConfigRuleComplianceSummaryFilters(input?: ConfigRuleComplianceSummaryFilters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AccountId: input["AccountId"],
+    AwsRegion: input["AwsRegion"],
   }
 }
 
@@ -2549,8 +2625,7 @@ function fromConfigRuleComplianceSummaryFilters(input?: ConfigRuleComplianceSumm
 export type ConfigRuleComplianceSummaryGroupKey =
 | "ACCOUNT_ID"
 | "AWS_REGION"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ResourceCountFilters {
@@ -2558,9 +2633,12 @@ export interface ResourceCountFilters {
   AccountId?: string | null;
   Region?: string | null;
 }
-function fromResourceCountFilters(input?: ResourceCountFilters | null): JSONValue {
+function fromResourceCountFilters(input?: ResourceCountFilters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ResourceType: input["ResourceType"],
+    AccountId: input["AccountId"],
+    Region: input["Region"],
   }
 }
 
@@ -2569,8 +2647,7 @@ export type ResourceCountGroupKey =
 | "RESOURCE_TYPE"
 | "ACCOUNT_ID"
 | "AWS_REGION"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ConformancePackEvaluationFilters {
@@ -2579,9 +2656,13 @@ export interface ConformancePackEvaluationFilters {
   ResourceType?: string | null;
   ResourceIds?: string[] | null;
 }
-function fromConformancePackEvaluationFilters(input?: ConformancePackEvaluationFilters | null): JSONValue {
+function fromConformancePackEvaluationFilters(input?: ConformancePackEvaluationFilters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ConfigRuleNames: input["ConfigRuleNames"],
+    ComplianceType: input["ComplianceType"],
+    ResourceType: input["ResourceType"],
+    ResourceIds: input["ResourceIds"],
   }
 }
 
@@ -2590,9 +2671,11 @@ export interface StatusDetailFilters {
   AccountId?: string | null;
   MemberAccountRuleStatus?: MemberAccountRuleStatus | null;
 }
-function fromStatusDetailFilters(input?: StatusDetailFilters | null): JSONValue {
+function fromStatusDetailFilters(input?: StatusDetailFilters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AccountId: input["AccountId"],
+    MemberAccountRuleStatus: input["MemberAccountRuleStatus"],
   }
 }
 
@@ -2607,30 +2690,18 @@ export type MemberAccountRuleStatus =
 | "UPDATE_SUCCESSFUL"
 | "UPDATE_IN_PROGRESS"
 | "UPDATE_FAILED"
-;
-
-function toMemberAccountRuleStatus(root: JSONValue): MemberAccountRuleStatus | null {
-  return ( false
-    || root == "CREATE_SUCCESSFUL"
-    || root == "CREATE_IN_PROGRESS"
-    || root == "CREATE_FAILED"
-    || root == "DELETE_SUCCESSFUL"
-    || root == "DELETE_FAILED"
-    || root == "DELETE_IN_PROGRESS"
-    || root == "UPDATE_SUCCESSFUL"
-    || root == "UPDATE_IN_PROGRESS"
-    || root == "UPDATE_FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface OrganizationResourceDetailedStatusFilters {
   AccountId?: string | null;
   Status?: OrganizationResourceDetailedStatus | null;
 }
-function fromOrganizationResourceDetailedStatusFilters(input?: OrganizationResourceDetailedStatusFilters | null): JSONValue {
+function fromOrganizationResourceDetailedStatusFilters(input?: OrganizationResourceDetailedStatusFilters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AccountId: input["AccountId"],
+    Status: input["Status"],
   }
 }
 
@@ -2645,28 +2716,13 @@ export type OrganizationResourceDetailedStatus =
 | "UPDATE_SUCCESSFUL"
 | "UPDATE_IN_PROGRESS"
 | "UPDATE_FAILED"
-;
-
-function toOrganizationResourceDetailedStatus(root: JSONValue): OrganizationResourceDetailedStatus | null {
-  return ( false
-    || root == "CREATE_SUCCESSFUL"
-    || root == "CREATE_IN_PROGRESS"
-    || root == "CREATE_FAILED"
-    || root == "DELETE_SUCCESSFUL"
-    || root == "DELETE_FAILED"
-    || root == "DELETE_IN_PROGRESS"
-    || root == "UPDATE_SUCCESSFUL"
-    || root == "UPDATE_IN_PROGRESS"
-    || root == "UPDATE_FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ChronologicalOrder =
 | "Reverse"
 | "Forward"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ResourceFilters {
@@ -2675,9 +2731,13 @@ export interface ResourceFilters {
   ResourceName?: string | null;
   Region?: string | null;
 }
-function fromResourceFilters(input?: ResourceFilters | null): JSONValue {
+function fromResourceFilters(input?: ResourceFilters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AccountId: input["AccountId"],
+    ResourceId: input["ResourceId"],
+    ResourceName: input["ResourceName"],
+    Region: input["Region"],
   }
 }
 
@@ -2686,13 +2746,15 @@ export interface Tag {
   Key?: string | null;
   Value?: string | null;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Key": "s",
@@ -2714,15 +2776,23 @@ export interface ConfigRule {
   ConfigRuleState?: ConfigRuleState | null;
   CreatedBy?: string | null;
 }
-function fromConfigRule(input?: ConfigRule | null): JSONValue {
+function fromConfigRule(input?: ConfigRule | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ConfigRuleName: input["ConfigRuleName"],
+    ConfigRuleArn: input["ConfigRuleArn"],
+    ConfigRuleId: input["ConfigRuleId"],
+    Description: input["Description"],
     Scope: fromScope(input["Scope"]),
     Source: fromSource(input["Source"]),
+    InputParameters: input["InputParameters"],
+    MaximumExecutionFrequency: input["MaximumExecutionFrequency"],
+    ConfigRuleState: input["ConfigRuleState"],
+    CreatedBy: input["CreatedBy"],
   }
 }
-function toConfigRule(root: JSONValue): ConfigRule {
-  return prt.readObj({
+function toConfigRule(root: jsonP.JSONValue): ConfigRule {
+  return jsonP.readObj({
     required: {
       "Source": toSource,
     },
@@ -2733,8 +2803,8 @@ function toConfigRule(root: JSONValue): ConfigRule {
       "Description": "s",
       "Scope": toScope,
       "InputParameters": "s",
-      "MaximumExecutionFrequency": toMaximumExecutionFrequency,
-      "ConfigRuleState": toConfigRuleState,
+      "MaximumExecutionFrequency": (x: jsonP.JSONValue) => cmnP.readEnum<MaximumExecutionFrequency>(x),
+      "ConfigRuleState": (x: jsonP.JSONValue) => cmnP.readEnum<ConfigRuleState>(x),
       "CreatedBy": "s",
     },
   }, root);
@@ -2747,13 +2817,17 @@ export interface Scope {
   TagValue?: string | null;
   ComplianceResourceId?: string | null;
 }
-function fromScope(input?: Scope | null): JSONValue {
+function fromScope(input?: Scope | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ComplianceResourceTypes: input["ComplianceResourceTypes"],
+    TagKey: input["TagKey"],
+    TagValue: input["TagValue"],
+    ComplianceResourceId: input["ComplianceResourceId"],
   }
 }
-function toScope(root: JSONValue): Scope {
-  return prt.readObj({
+function toScope(root: jsonP.JSONValue): Scope {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ComplianceResourceTypes": ["s"],
@@ -2770,16 +2844,18 @@ export interface Source {
   SourceIdentifier: string;
   SourceDetails?: SourceDetail[] | null;
 }
-function fromSource(input?: Source | null): JSONValue {
+function fromSource(input?: Source | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Owner: input["Owner"],
+    SourceIdentifier: input["SourceIdentifier"],
     SourceDetails: input["SourceDetails"]?.map(x => fromSourceDetail(x)),
   }
 }
-function toSource(root: JSONValue): Source {
-  return prt.readObj({
+function toSource(root: jsonP.JSONValue): Source {
+  return jsonP.readObj({
     required: {
-      "Owner": toOwner,
+      "Owner": (x: jsonP.JSONValue) => cmnP.readEnum<Owner>(x),
       "SourceIdentifier": "s",
     },
     optional: {
@@ -2792,14 +2868,7 @@ function toSource(root: JSONValue): Source {
 export type Owner =
 | "CUSTOM_LAMBDA"
 | "AWS"
-;
-
-function toOwner(root: JSONValue): Owner | null {
-  return ( false
-    || root == "CUSTOM_LAMBDA"
-    || root == "AWS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface SourceDetail {
@@ -2807,18 +2876,21 @@ export interface SourceDetail {
   MessageType?: MessageType | null;
   MaximumExecutionFrequency?: MaximumExecutionFrequency | null;
 }
-function fromSourceDetail(input?: SourceDetail | null): JSONValue {
+function fromSourceDetail(input?: SourceDetail | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    EventSource: input["EventSource"],
+    MessageType: input["MessageType"],
+    MaximumExecutionFrequency: input["MaximumExecutionFrequency"],
   }
 }
-function toSourceDetail(root: JSONValue): SourceDetail {
-  return prt.readObj({
+function toSourceDetail(root: jsonP.JSONValue): SourceDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "EventSource": toEventSource,
-      "MessageType": toMessageType,
-      "MaximumExecutionFrequency": toMaximumExecutionFrequency,
+      "EventSource": (x: jsonP.JSONValue) => cmnP.readEnum<EventSource>(x),
+      "MessageType": (x: jsonP.JSONValue) => cmnP.readEnum<MessageType>(x),
+      "MaximumExecutionFrequency": (x: jsonP.JSONValue) => cmnP.readEnum<MaximumExecutionFrequency>(x),
     },
   }, root);
 }
@@ -2826,13 +2898,7 @@ function toSourceDetail(root: JSONValue): SourceDetail {
 // refs: 2 - tags: input, named, enum, output
 export type EventSource =
 | "aws.config"
-;
-
-function toEventSource(root: JSONValue): EventSource | null {
-  return ( false
-    || root == "aws.config"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type MessageType =
@@ -2840,16 +2906,7 @@ export type MessageType =
 | "ConfigurationSnapshotDeliveryCompleted"
 | "ScheduledNotification"
 | "OversizedConfigurationItemChangeNotification"
-;
-
-function toMessageType(root: JSONValue): MessageType | null {
-  return ( false
-    || root == "ConfigurationItemChangeNotification"
-    || root == "ConfigurationSnapshotDeliveryCompleted"
-    || root == "ScheduledNotification"
-    || root == "OversizedConfigurationItemChangeNotification"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, enum, output
 export type MaximumExecutionFrequency =
@@ -2858,17 +2915,7 @@ export type MaximumExecutionFrequency =
 | "Six_Hours"
 | "Twelve_Hours"
 | "TwentyFour_Hours"
-;
-
-function toMaximumExecutionFrequency(root: JSONValue): MaximumExecutionFrequency | null {
-  return ( false
-    || root == "One_Hour"
-    || root == "Three_Hours"
-    || root == "Six_Hours"
-    || root == "Twelve_Hours"
-    || root == "TwentyFour_Hours"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type ConfigRuleState =
@@ -2876,16 +2923,7 @@ export type ConfigRuleState =
 | "DELETING"
 | "DELETING_RESULTS"
 | "EVALUATING"
-;
-
-function toConfigRuleState(root: JSONValue): ConfigRuleState | null {
-  return ( false
-    || root == "ACTIVE"
-    || root == "DELETING"
-    || root == "DELETING_RESULTS"
-    || root == "EVALUATING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface AccountAggregationSource {
@@ -2893,13 +2931,16 @@ export interface AccountAggregationSource {
   AllAwsRegions?: boolean | null;
   AwsRegions?: string[] | null;
 }
-function fromAccountAggregationSource(input?: AccountAggregationSource | null): JSONValue {
+function fromAccountAggregationSource(input?: AccountAggregationSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AccountIds: input["AccountIds"],
+    AllAwsRegions: input["AllAwsRegions"],
+    AwsRegions: input["AwsRegions"],
   }
 }
-function toAccountAggregationSource(root: JSONValue): AccountAggregationSource {
-  return prt.readObj({
+function toAccountAggregationSource(root: jsonP.JSONValue): AccountAggregationSource {
+  return jsonP.readObj({
     required: {
       "AccountIds": ["s"],
     },
@@ -2916,13 +2957,16 @@ export interface OrganizationAggregationSource {
   AwsRegions?: string[] | null;
   AllAwsRegions?: boolean | null;
 }
-function fromOrganizationAggregationSource(input?: OrganizationAggregationSource | null): JSONValue {
+function fromOrganizationAggregationSource(input?: OrganizationAggregationSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RoleArn: input["RoleArn"],
+    AwsRegions: input["AwsRegions"],
+    AllAwsRegions: input["AllAwsRegions"],
   }
 }
-function toOrganizationAggregationSource(root: JSONValue): OrganizationAggregationSource {
-  return prt.readObj({
+function toOrganizationAggregationSource(root: jsonP.JSONValue): OrganizationAggregationSource {
+  return jsonP.readObj({
     required: {
       "RoleArn": "s",
     },
@@ -2939,14 +2983,16 @@ export interface ConfigurationRecorder {
   roleARN?: string | null;
   recordingGroup?: RecordingGroup | null;
 }
-function fromConfigurationRecorder(input?: ConfigurationRecorder | null): JSONValue {
+function fromConfigurationRecorder(input?: ConfigurationRecorder | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    roleARN: input["roleARN"],
     recordingGroup: fromRecordingGroup(input["recordingGroup"]),
   }
 }
-function toConfigurationRecorder(root: JSONValue): ConfigurationRecorder {
-  return prt.readObj({
+function toConfigurationRecorder(root: jsonP.JSONValue): ConfigurationRecorder {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -2962,18 +3008,21 @@ export interface RecordingGroup {
   includeGlobalResourceTypes?: boolean | null;
   resourceTypes?: ResourceType[] | null;
 }
-function fromRecordingGroup(input?: RecordingGroup | null): JSONValue {
+function fromRecordingGroup(input?: RecordingGroup | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    allSupported: input["allSupported"],
+    includeGlobalResourceTypes: input["includeGlobalResourceTypes"],
+    resourceTypes: input["resourceTypes"],
   }
 }
-function toRecordingGroup(root: JSONValue): RecordingGroup {
-  return prt.readObj({
+function toRecordingGroup(root: jsonP.JSONValue): RecordingGroup {
+  return jsonP.readObj({
     required: {},
     optional: {
       "allSupported": "b",
       "includeGlobalResourceTypes": "b",
-      "resourceTypes": [toResourceType],
+      "resourceTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x)],
     },
   }, root);
 }
@@ -2983,13 +3032,15 @@ export interface ConformancePackInputParameter {
   ParameterName: string;
   ParameterValue: string;
 }
-function fromConformancePackInputParameter(input?: ConformancePackInputParameter | null): JSONValue {
+function fromConformancePackInputParameter(input?: ConformancePackInputParameter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ParameterName: input["ParameterName"],
+    ParameterValue: input["ParameterValue"],
   }
 }
-function toConformancePackInputParameter(root: JSONValue): ConformancePackInputParameter {
-  return prt.readObj({
+function toConformancePackInputParameter(root: jsonP.JSONValue): ConformancePackInputParameter {
+  return jsonP.readObj({
     required: {
       "ParameterName": "s",
       "ParameterValue": "s",
@@ -3006,14 +3057,18 @@ export interface DeliveryChannel {
   snsTopicARN?: string | null;
   configSnapshotDeliveryProperties?: ConfigSnapshotDeliveryProperties | null;
 }
-function fromDeliveryChannel(input?: DeliveryChannel | null): JSONValue {
+function fromDeliveryChannel(input?: DeliveryChannel | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    s3BucketName: input["s3BucketName"],
+    s3KeyPrefix: input["s3KeyPrefix"],
+    snsTopicARN: input["snsTopicARN"],
     configSnapshotDeliveryProperties: fromConfigSnapshotDeliveryProperties(input["configSnapshotDeliveryProperties"]),
   }
 }
-function toDeliveryChannel(root: JSONValue): DeliveryChannel {
-  return prt.readObj({
+function toDeliveryChannel(root: jsonP.JSONValue): DeliveryChannel {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -3029,16 +3084,17 @@ function toDeliveryChannel(root: JSONValue): DeliveryChannel {
 export interface ConfigSnapshotDeliveryProperties {
   deliveryFrequency?: MaximumExecutionFrequency | null;
 }
-function fromConfigSnapshotDeliveryProperties(input?: ConfigSnapshotDeliveryProperties | null): JSONValue {
+function fromConfigSnapshotDeliveryProperties(input?: ConfigSnapshotDeliveryProperties | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    deliveryFrequency: input["deliveryFrequency"],
   }
 }
-function toConfigSnapshotDeliveryProperties(root: JSONValue): ConfigSnapshotDeliveryProperties {
-  return prt.readObj({
+function toConfigSnapshotDeliveryProperties(root: jsonP.JSONValue): ConfigSnapshotDeliveryProperties {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "deliveryFrequency": toMaximumExecutionFrequency,
+      "deliveryFrequency": (x: jsonP.JSONValue) => cmnP.readEnum<MaximumExecutionFrequency>(x),
     },
   }, root);
 }
@@ -3051,18 +3107,22 @@ export interface Evaluation {
   Annotation?: string | null;
   OrderingTimestamp: Date | number;
 }
-function fromEvaluation(input?: Evaluation | null): JSONValue {
+function fromEvaluation(input?: Evaluation | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    OrderingTimestamp: prt.serializeDate_unixTimestamp(input["OrderingTimestamp"]),
+  return {
+    ComplianceResourceType: input["ComplianceResourceType"],
+    ComplianceResourceId: input["ComplianceResourceId"],
+    ComplianceType: input["ComplianceType"],
+    Annotation: input["Annotation"],
+    OrderingTimestamp: jsonP.serializeDate_unixTimestamp(input["OrderingTimestamp"]),
   }
 }
-function toEvaluation(root: JSONValue): Evaluation {
-  return prt.readObj({
+function toEvaluation(root: jsonP.JSONValue): Evaluation {
+  return jsonP.readObj({
     required: {
       "ComplianceResourceType": "s",
       "ComplianceResourceId": "s",
-      "ComplianceType": toComplianceType,
+      "ComplianceType": (x: jsonP.JSONValue) => cmnP.readEnum<ComplianceType>(x),
       "OrderingTimestamp": "d",
     },
     optional: {
@@ -3082,20 +3142,28 @@ export interface OrganizationManagedRuleMetadata {
   TagKeyScope?: string | null;
   TagValueScope?: string | null;
 }
-function fromOrganizationManagedRuleMetadata(input?: OrganizationManagedRuleMetadata | null): JSONValue {
+function fromOrganizationManagedRuleMetadata(input?: OrganizationManagedRuleMetadata | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Description: input["Description"],
+    RuleIdentifier: input["RuleIdentifier"],
+    InputParameters: input["InputParameters"],
+    MaximumExecutionFrequency: input["MaximumExecutionFrequency"],
+    ResourceTypesScope: input["ResourceTypesScope"],
+    ResourceIdScope: input["ResourceIdScope"],
+    TagKeyScope: input["TagKeyScope"],
+    TagValueScope: input["TagValueScope"],
   }
 }
-function toOrganizationManagedRuleMetadata(root: JSONValue): OrganizationManagedRuleMetadata {
-  return prt.readObj({
+function toOrganizationManagedRuleMetadata(root: jsonP.JSONValue): OrganizationManagedRuleMetadata {
+  return jsonP.readObj({
     required: {
       "RuleIdentifier": "s",
     },
     optional: {
       "Description": "s",
       "InputParameters": "s",
-      "MaximumExecutionFrequency": toMaximumExecutionFrequency,
+      "MaximumExecutionFrequency": (x: jsonP.JSONValue) => cmnP.readEnum<MaximumExecutionFrequency>(x),
       "ResourceTypesScope": ["s"],
       "ResourceIdScope": "s",
       "TagKeyScope": "s",
@@ -3116,21 +3184,30 @@ export interface OrganizationCustomRuleMetadata {
   TagKeyScope?: string | null;
   TagValueScope?: string | null;
 }
-function fromOrganizationCustomRuleMetadata(input?: OrganizationCustomRuleMetadata | null): JSONValue {
+function fromOrganizationCustomRuleMetadata(input?: OrganizationCustomRuleMetadata | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Description: input["Description"],
+    LambdaFunctionArn: input["LambdaFunctionArn"],
+    OrganizationConfigRuleTriggerTypes: input["OrganizationConfigRuleTriggerTypes"],
+    InputParameters: input["InputParameters"],
+    MaximumExecutionFrequency: input["MaximumExecutionFrequency"],
+    ResourceTypesScope: input["ResourceTypesScope"],
+    ResourceIdScope: input["ResourceIdScope"],
+    TagKeyScope: input["TagKeyScope"],
+    TagValueScope: input["TagValueScope"],
   }
 }
-function toOrganizationCustomRuleMetadata(root: JSONValue): OrganizationCustomRuleMetadata {
-  return prt.readObj({
+function toOrganizationCustomRuleMetadata(root: jsonP.JSONValue): OrganizationCustomRuleMetadata {
+  return jsonP.readObj({
     required: {
       "LambdaFunctionArn": "s",
-      "OrganizationConfigRuleTriggerTypes": [toOrganizationConfigRuleTriggerType],
+      "OrganizationConfigRuleTriggerTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<OrganizationConfigRuleTriggerType>(x)],
     },
     optional: {
       "Description": "s",
       "InputParameters": "s",
-      "MaximumExecutionFrequency": toMaximumExecutionFrequency,
+      "MaximumExecutionFrequency": (x: jsonP.JSONValue) => cmnP.readEnum<MaximumExecutionFrequency>(x),
       "ResourceTypesScope": ["s"],
       "ResourceIdScope": "s",
       "TagKeyScope": "s",
@@ -3144,15 +3221,7 @@ export type OrganizationConfigRuleTriggerType =
 | "ConfigurationItemChangeNotification"
 | "OversizedConfigurationItemChangeNotification"
 | "ScheduledNotification"
-;
-
-function toOrganizationConfigRuleTriggerType(root: JSONValue): OrganizationConfigRuleTriggerType | null {
-  return ( false
-    || root == "ConfigurationItemChangeNotification"
-    || root == "OversizedConfigurationItemChangeNotification"
-    || root == "ScheduledNotification"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface RemediationConfiguration {
@@ -3160,7 +3229,7 @@ export interface RemediationConfiguration {
   TargetType: RemediationTargetType;
   TargetId: string;
   TargetVersion?: string | null;
-  Parameters?: { [key: string]: RemediationParameterValue } | null;
+  Parameters?: { [key: string]: RemediationParameterValue | null | undefined } | null;
   ResourceType?: string | null;
   Automatic?: boolean | null;
   ExecutionControls?: ExecutionControls | null;
@@ -3169,23 +3238,33 @@ export interface RemediationConfiguration {
   Arn?: string | null;
   CreatedByService?: string | null;
 }
-function fromRemediationConfiguration(input?: RemediationConfiguration | null): JSONValue {
+function fromRemediationConfiguration(input?: RemediationConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Parameters: prt.serializeMap(input["Parameters"], x => fromRemediationParameterValue(x)),
+  return {
+    ConfigRuleName: input["ConfigRuleName"],
+    TargetType: input["TargetType"],
+    TargetId: input["TargetId"],
+    TargetVersion: input["TargetVersion"],
+    Parameters: jsonP.serializeMap(input["Parameters"], x => fromRemediationParameterValue(x)),
+    ResourceType: input["ResourceType"],
+    Automatic: input["Automatic"],
     ExecutionControls: fromExecutionControls(input["ExecutionControls"]),
+    MaximumAutomaticAttempts: input["MaximumAutomaticAttempts"],
+    RetryAttemptSeconds: input["RetryAttemptSeconds"],
+    Arn: input["Arn"],
+    CreatedByService: input["CreatedByService"],
   }
 }
-function toRemediationConfiguration(root: JSONValue): RemediationConfiguration {
-  return prt.readObj({
+function toRemediationConfiguration(root: jsonP.JSONValue): RemediationConfiguration {
+  return jsonP.readObj({
     required: {
       "ConfigRuleName": "s",
-      "TargetType": toRemediationTargetType,
+      "TargetType": (x: jsonP.JSONValue) => cmnP.readEnum<RemediationTargetType>(x),
       "TargetId": "s",
     },
     optional: {
       "TargetVersion": "s",
-      "Parameters": x => prt.readMap(String, toRemediationParameterValue, x),
+      "Parameters": x => jsonP.readMap(String, toRemediationParameterValue, x),
       "ResourceType": "s",
       "Automatic": "b",
       "ExecutionControls": toExecutionControls,
@@ -3200,28 +3279,22 @@ function toRemediationConfiguration(root: JSONValue): RemediationConfiguration {
 // refs: 3 - tags: input, named, enum, output
 export type RemediationTargetType =
 | "SSM_DOCUMENT"
-;
-
-function toRemediationTargetType(root: JSONValue): RemediationTargetType | null {
-  return ( false
-    || root == "SSM_DOCUMENT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface RemediationParameterValue {
   ResourceValue?: ResourceValue | null;
   StaticValue?: StaticValue | null;
 }
-function fromRemediationParameterValue(input?: RemediationParameterValue | null): JSONValue {
+function fromRemediationParameterValue(input?: RemediationParameterValue | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     ResourceValue: fromResourceValue(input["ResourceValue"]),
     StaticValue: fromStaticValue(input["StaticValue"]),
   }
 }
-function toRemediationParameterValue(root: JSONValue): RemediationParameterValue {
-  return prt.readObj({
+function toRemediationParameterValue(root: jsonP.JSONValue): RemediationParameterValue {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ResourceValue": toResourceValue,
@@ -3234,15 +3307,16 @@ function toRemediationParameterValue(root: JSONValue): RemediationParameterValue
 export interface ResourceValue {
   Value: ResourceValueType;
 }
-function fromResourceValue(input?: ResourceValue | null): JSONValue {
+function fromResourceValue(input?: ResourceValue | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Value: input["Value"],
   }
 }
-function toResourceValue(root: JSONValue): ResourceValue {
-  return prt.readObj({
+function toResourceValue(root: jsonP.JSONValue): ResourceValue {
+  return jsonP.readObj({
     required: {
-      "Value": toResourceValueType,
+      "Value": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceValueType>(x),
     },
     optional: {},
   }, root);
@@ -3251,25 +3325,20 @@ function toResourceValue(root: JSONValue): ResourceValue {
 // refs: 3 - tags: input, named, enum, output
 export type ResourceValueType =
 | "RESOURCE_ID"
-;
-
-function toResourceValueType(root: JSONValue): ResourceValueType | null {
-  return ( false
-    || root == "RESOURCE_ID"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface StaticValue {
   Values: string[];
 }
-function fromStaticValue(input?: StaticValue | null): JSONValue {
+function fromStaticValue(input?: StaticValue | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Values: input["Values"],
   }
 }
-function toStaticValue(root: JSONValue): StaticValue {
-  return prt.readObj({
+function toStaticValue(root: jsonP.JSONValue): StaticValue {
+  return jsonP.readObj({
     required: {
       "Values": ["s"],
     },
@@ -3281,14 +3350,14 @@ function toStaticValue(root: JSONValue): StaticValue {
 export interface ExecutionControls {
   SsmControls?: SsmControls | null;
 }
-function fromExecutionControls(input?: ExecutionControls | null): JSONValue {
+function fromExecutionControls(input?: ExecutionControls | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     SsmControls: fromSsmControls(input["SsmControls"]),
   }
 }
-function toExecutionControls(root: JSONValue): ExecutionControls {
-  return prt.readObj({
+function toExecutionControls(root: jsonP.JSONValue): ExecutionControls {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SsmControls": toSsmControls,
@@ -3301,13 +3370,15 @@ export interface SsmControls {
   ConcurrentExecutionRatePercentage?: number | null;
   ErrorPercentage?: number | null;
 }
-function fromSsmControls(input?: SsmControls | null): JSONValue {
+function fromSsmControls(input?: SsmControls | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ConcurrentExecutionRatePercentage: input["ConcurrentExecutionRatePercentage"],
+    ErrorPercentage: input["ErrorPercentage"],
   }
 }
-function toSsmControls(root: JSONValue): SsmControls {
-  return prt.readObj({
+function toSsmControls(root: jsonP.JSONValue): SsmControls {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ConcurrentExecutionRatePercentage": "n",
@@ -3331,26 +3402,26 @@ export interface BaseConfigurationItem {
   availabilityZone?: string | null;
   resourceCreationTime?: Date | number | null;
   configuration?: string | null;
-  supplementaryConfiguration?: { [key: string]: string } | null;
+  supplementaryConfiguration?: { [key: string]: string | null | undefined } | null;
 }
-function toBaseConfigurationItem(root: JSONValue): BaseConfigurationItem {
-  return prt.readObj({
+function toBaseConfigurationItem(root: jsonP.JSONValue): BaseConfigurationItem {
+  return jsonP.readObj({
     required: {},
     optional: {
       "version": "s",
       "accountId": "s",
       "configurationItemCaptureTime": "d",
-      "configurationItemStatus": toConfigurationItemStatus,
+      "configurationItemStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ConfigurationItemStatus>(x),
       "configurationStateId": "s",
       "arn": "s",
-      "resourceType": toResourceType,
+      "resourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
       "resourceId": "s",
       "resourceName": "s",
       "awsRegion": "s",
       "availabilityZone": "s",
       "resourceCreationTime": "d",
       "configuration": "s",
-      "supplementaryConfiguration": x => prt.readMap(String, String, x),
+      "supplementaryConfiguration": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -3362,24 +3433,15 @@ export type ConfigurationItemStatus =
 | "ResourceNotRecorded"
 | "ResourceDeleted"
 | "ResourceDeletedNotRecorded"
-;
-function toConfigurationItemStatus(root: JSONValue): ConfigurationItemStatus | null {
-  return ( false
-    || root == "OK"
-    || root == "ResourceDiscovered"
-    || root == "ResourceNotRecorded"
-    || root == "ResourceDeleted"
-    || root == "ResourceDeletedNotRecorded"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface FailedDeleteRemediationExceptionsBatch {
   FailureMessage?: string | null;
   FailedItems?: RemediationExceptionResourceKey[] | null;
 }
-function toFailedDeleteRemediationExceptionsBatch(root: JSONValue): FailedDeleteRemediationExceptionsBatch {
-  return prt.readObj({
+function toFailedDeleteRemediationExceptionsBatch(root: jsonP.JSONValue): FailedDeleteRemediationExceptionsBatch {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FailureMessage": "s",
@@ -3395,8 +3457,8 @@ export interface AggregateComplianceByConfigRule {
   AccountId?: string | null;
   AwsRegion?: string | null;
 }
-function toAggregateComplianceByConfigRule(root: JSONValue): AggregateComplianceByConfigRule {
-  return prt.readObj({
+function toAggregateComplianceByConfigRule(root: jsonP.JSONValue): AggregateComplianceByConfigRule {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ConfigRuleName": "s",
@@ -3412,11 +3474,11 @@ export interface Compliance {
   ComplianceType?: ComplianceType | null;
   ComplianceContributorCount?: ComplianceContributorCount | null;
 }
-function toCompliance(root: JSONValue): Compliance {
-  return prt.readObj({
+function toCompliance(root: jsonP.JSONValue): Compliance {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "ComplianceType": toComplianceType,
+      "ComplianceType": (x: jsonP.JSONValue) => cmnP.readEnum<ComplianceType>(x),
       "ComplianceContributorCount": toComplianceContributorCount,
     },
   }, root);
@@ -3427,8 +3489,8 @@ export interface ComplianceContributorCount {
   CappedCount?: number | null;
   CapExceeded?: boolean | null;
 }
-function toComplianceContributorCount(root: JSONValue): ComplianceContributorCount {
-  return prt.readObj({
+function toComplianceContributorCount(root: jsonP.JSONValue): ComplianceContributorCount {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CappedCount": "n",
@@ -3444,8 +3506,8 @@ export interface AggregationAuthorization {
   AuthorizedAwsRegion?: string | null;
   CreationTime?: Date | number | null;
 }
-function toAggregationAuthorization(root: JSONValue): AggregationAuthorization {
-  return prt.readObj({
+function toAggregationAuthorization(root: jsonP.JSONValue): AggregationAuthorization {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AggregationAuthorizationArn": "s",
@@ -3461,8 +3523,8 @@ export interface ComplianceByConfigRule {
   ConfigRuleName?: string | null;
   Compliance?: Compliance | null;
 }
-function toComplianceByConfigRule(root: JSONValue): ComplianceByConfigRule {
-  return prt.readObj({
+function toComplianceByConfigRule(root: jsonP.JSONValue): ComplianceByConfigRule {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ConfigRuleName": "s",
@@ -3477,8 +3539,8 @@ export interface ComplianceByResource {
   ResourceId?: string | null;
   Compliance?: Compliance | null;
 }
-function toComplianceByResource(root: JSONValue): ComplianceByResource {
-  return prt.readObj({
+function toComplianceByResource(root: jsonP.JSONValue): ComplianceByResource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ResourceType": "s",
@@ -3503,8 +3565,8 @@ export interface ConfigRuleEvaluationStatus {
   LastErrorMessage?: string | null;
   FirstEvaluationStarted?: boolean | null;
 }
-function toConfigRuleEvaluationStatus(root: JSONValue): ConfigRuleEvaluationStatus {
-  return prt.readObj({
+function toConfigRuleEvaluationStatus(root: jsonP.JSONValue): ConfigRuleEvaluationStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ConfigRuleName": "s",
@@ -3533,14 +3595,14 @@ export interface AggregatedSourceStatus {
   LastErrorCode?: string | null;
   LastErrorMessage?: string | null;
 }
-function toAggregatedSourceStatus(root: JSONValue): AggregatedSourceStatus {
-  return prt.readObj({
+function toAggregatedSourceStatus(root: jsonP.JSONValue): AggregatedSourceStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SourceId": "s",
-      "SourceType": toAggregatedSourceType,
+      "SourceType": (x: jsonP.JSONValue) => cmnP.readEnum<AggregatedSourceType>(x),
       "AwsRegion": "s",
-      "LastUpdateStatus": toAggregatedSourceStatusType,
+      "LastUpdateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AggregatedSourceStatusType>(x),
       "LastUpdateTime": "d",
       "LastErrorCode": "s",
       "LastErrorMessage": "s",
@@ -3552,13 +3614,7 @@ function toAggregatedSourceStatus(root: JSONValue): AggregatedSourceStatus {
 export type AggregatedSourceType =
 | "ACCOUNT"
 | "ORGANIZATION"
-;
-function toAggregatedSourceType(root: JSONValue): AggregatedSourceType | null {
-  return ( false
-    || root == "ACCOUNT"
-    || root == "ORGANIZATION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ConfigurationAggregator {
@@ -3570,8 +3626,8 @@ export interface ConfigurationAggregator {
   LastUpdatedTime?: Date | number | null;
   CreatedBy?: string | null;
 }
-function toConfigurationAggregator(root: JSONValue): ConfigurationAggregator {
-  return prt.readObj({
+function toConfigurationAggregator(root: jsonP.JSONValue): ConfigurationAggregator {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ConfigurationAggregatorName": "s",
@@ -3596,15 +3652,15 @@ export interface ConfigurationRecorderStatus {
   lastErrorMessage?: string | null;
   lastStatusChangeTime?: Date | number | null;
 }
-function toConfigurationRecorderStatus(root: JSONValue): ConfigurationRecorderStatus {
-  return prt.readObj({
+function toConfigurationRecorderStatus(root: jsonP.JSONValue): ConfigurationRecorderStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
       "lastStartTime": "d",
       "lastStopTime": "d",
       "recording": "b",
-      "lastStatus": toRecorderStatus,
+      "lastStatus": (x: jsonP.JSONValue) => cmnP.readEnum<RecorderStatus>(x),
       "lastErrorCode": "s",
       "lastErrorMessage": "s",
       "lastStatusChangeTime": "d",
@@ -3617,26 +3673,19 @@ export type RecorderStatus =
 | "Pending"
 | "Success"
 | "Failure"
-;
-function toRecorderStatus(root: JSONValue): RecorderStatus | null {
-  return ( false
-    || root == "Pending"
-    || root == "Success"
-    || root == "Failure"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ConformancePackRuleCompliance {
   ConfigRuleName?: string | null;
   ComplianceType?: ConformancePackComplianceType | null;
 }
-function toConformancePackRuleCompliance(root: JSONValue): ConformancePackRuleCompliance {
-  return prt.readObj({
+function toConformancePackRuleCompliance(root: jsonP.JSONValue): ConformancePackRuleCompliance {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ConfigRuleName": "s",
-      "ComplianceType": toConformancePackComplianceType,
+      "ComplianceType": (x: jsonP.JSONValue) => cmnP.readEnum<ConformancePackComplianceType>(x),
     },
   }, root);
 }
@@ -3652,13 +3701,13 @@ export interface ConformancePackStatusDetail {
   LastUpdateRequestedTime: Date | number;
   LastUpdateCompletedTime?: Date | number | null;
 }
-function toConformancePackStatusDetail(root: JSONValue): ConformancePackStatusDetail {
-  return prt.readObj({
+function toConformancePackStatusDetail(root: jsonP.JSONValue): ConformancePackStatusDetail {
+  return jsonP.readObj({
     required: {
       "ConformancePackName": "s",
       "ConformancePackId": "s",
       "ConformancePackArn": "s",
-      "ConformancePackState": toConformancePackState,
+      "ConformancePackState": (x: jsonP.JSONValue) => cmnP.readEnum<ConformancePackState>(x),
       "StackArn": "s",
       "LastUpdateRequestedTime": "d",
     },
@@ -3676,16 +3725,7 @@ export type ConformancePackState =
 | "CREATE_FAILED"
 | "DELETE_IN_PROGRESS"
 | "DELETE_FAILED"
-;
-function toConformancePackState(root: JSONValue): ConformancePackState | null {
-  return ( false
-    || root == "CREATE_IN_PROGRESS"
-    || root == "CREATE_COMPLETE"
-    || root == "CREATE_FAILED"
-    || root == "DELETE_IN_PROGRESS"
-    || root == "DELETE_FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ConformancePackDetail {
@@ -3698,8 +3738,8 @@ export interface ConformancePackDetail {
   LastUpdateRequestedTime?: Date | number | null;
   CreatedBy?: string | null;
 }
-function toConformancePackDetail(root: JSONValue): ConformancePackDetail {
-  return prt.readObj({
+function toConformancePackDetail(root: jsonP.JSONValue): ConformancePackDetail {
+  return jsonP.readObj({
     required: {
       "ConformancePackName": "s",
       "ConformancePackArn": "s",
@@ -3722,8 +3762,8 @@ export interface DeliveryChannelStatus {
   configHistoryDeliveryInfo?: ConfigExportDeliveryInfo | null;
   configStreamDeliveryInfo?: ConfigStreamDeliveryInfo | null;
 }
-function toDeliveryChannelStatus(root: JSONValue): DeliveryChannelStatus {
-  return prt.readObj({
+function toDeliveryChannelStatus(root: jsonP.JSONValue): DeliveryChannelStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -3743,11 +3783,11 @@ export interface ConfigExportDeliveryInfo {
   lastSuccessfulTime?: Date | number | null;
   nextDeliveryTime?: Date | number | null;
 }
-function toConfigExportDeliveryInfo(root: JSONValue): ConfigExportDeliveryInfo {
-  return prt.readObj({
+function toConfigExportDeliveryInfo(root: jsonP.JSONValue): ConfigExportDeliveryInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "lastStatus": toDeliveryStatus,
+      "lastStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeliveryStatus>(x),
       "lastErrorCode": "s",
       "lastErrorMessage": "s",
       "lastAttemptTime": "d",
@@ -3762,14 +3802,7 @@ export type DeliveryStatus =
 | "Success"
 | "Failure"
 | "Not_Applicable"
-;
-function toDeliveryStatus(root: JSONValue): DeliveryStatus | null {
-  return ( false
-    || root == "Success"
-    || root == "Failure"
-    || root == "Not_Applicable"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ConfigStreamDeliveryInfo {
@@ -3778,11 +3811,11 @@ export interface ConfigStreamDeliveryInfo {
   lastErrorMessage?: string | null;
   lastStatusChangeTime?: Date | number | null;
 }
-function toConfigStreamDeliveryInfo(root: JSONValue): ConfigStreamDeliveryInfo {
-  return prt.readObj({
+function toConfigStreamDeliveryInfo(root: jsonP.JSONValue): ConfigStreamDeliveryInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "lastStatus": toDeliveryStatus,
+      "lastStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeliveryStatus>(x),
       "lastErrorCode": "s",
       "lastErrorMessage": "s",
       "lastStatusChangeTime": "d",
@@ -3798,11 +3831,11 @@ export interface OrganizationConfigRuleStatus {
   ErrorMessage?: string | null;
   LastUpdateTime?: Date | number | null;
 }
-function toOrganizationConfigRuleStatus(root: JSONValue): OrganizationConfigRuleStatus {
-  return prt.readObj({
+function toOrganizationConfigRuleStatus(root: jsonP.JSONValue): OrganizationConfigRuleStatus {
+  return jsonP.readObj({
     required: {
       "OrganizationConfigRuleName": "s",
-      "OrganizationRuleStatus": toOrganizationRuleStatus,
+      "OrganizationRuleStatus": (x: jsonP.JSONValue) => cmnP.readEnum<OrganizationRuleStatus>(x),
     },
     optional: {
       "ErrorCode": "s",
@@ -3823,20 +3856,7 @@ export type OrganizationRuleStatus =
 | "UPDATE_SUCCESSFUL"
 | "UPDATE_IN_PROGRESS"
 | "UPDATE_FAILED"
-;
-function toOrganizationRuleStatus(root: JSONValue): OrganizationRuleStatus | null {
-  return ( false
-    || root == "CREATE_SUCCESSFUL"
-    || root == "CREATE_IN_PROGRESS"
-    || root == "CREATE_FAILED"
-    || root == "DELETE_SUCCESSFUL"
-    || root == "DELETE_FAILED"
-    || root == "DELETE_IN_PROGRESS"
-    || root == "UPDATE_SUCCESSFUL"
-    || root == "UPDATE_IN_PROGRESS"
-    || root == "UPDATE_FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface OrganizationConfigRule {
@@ -3847,8 +3867,8 @@ export interface OrganizationConfigRule {
   ExcludedAccounts?: string[] | null;
   LastUpdateTime?: Date | number | null;
 }
-function toOrganizationConfigRule(root: JSONValue): OrganizationConfigRule {
-  return prt.readObj({
+function toOrganizationConfigRule(root: jsonP.JSONValue): OrganizationConfigRule {
+  return jsonP.readObj({
     required: {
       "OrganizationConfigRuleName": "s",
       "OrganizationConfigRuleArn": "s",
@@ -3870,11 +3890,11 @@ export interface OrganizationConformancePackStatus {
   ErrorMessage?: string | null;
   LastUpdateTime?: Date | number | null;
 }
-function toOrganizationConformancePackStatus(root: JSONValue): OrganizationConformancePackStatus {
-  return prt.readObj({
+function toOrganizationConformancePackStatus(root: jsonP.JSONValue): OrganizationConformancePackStatus {
+  return jsonP.readObj({
     required: {
       "OrganizationConformancePackName": "s",
-      "Status": toOrganizationResourceStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<OrganizationResourceStatus>(x),
     },
     optional: {
       "ErrorCode": "s",
@@ -3895,20 +3915,7 @@ export type OrganizationResourceStatus =
 | "UPDATE_SUCCESSFUL"
 | "UPDATE_IN_PROGRESS"
 | "UPDATE_FAILED"
-;
-function toOrganizationResourceStatus(root: JSONValue): OrganizationResourceStatus | null {
-  return ( false
-    || root == "CREATE_SUCCESSFUL"
-    || root == "CREATE_IN_PROGRESS"
-    || root == "CREATE_FAILED"
-    || root == "DELETE_SUCCESSFUL"
-    || root == "DELETE_FAILED"
-    || root == "DELETE_IN_PROGRESS"
-    || root == "UPDATE_SUCCESSFUL"
-    || root == "UPDATE_IN_PROGRESS"
-    || root == "UPDATE_FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface OrganizationConformancePack {
@@ -3920,8 +3927,8 @@ export interface OrganizationConformancePack {
   ExcludedAccounts?: string[] | null;
   LastUpdateTime: Date | number;
 }
-function toOrganizationConformancePack(root: JSONValue): OrganizationConformancePack {
-  return prt.readObj({
+function toOrganizationConformancePack(root: jsonP.JSONValue): OrganizationConformancePack {
+  return jsonP.readObj({
     required: {
       "OrganizationConformancePackName": "s",
       "OrganizationConformancePackArn": "s",
@@ -3941,8 +3948,8 @@ export interface PendingAggregationRequest {
   RequesterAccountId?: string | null;
   RequesterAwsRegion?: string | null;
 }
-function toPendingAggregationRequest(root: JSONValue): PendingAggregationRequest {
-  return prt.readObj({
+function toPendingAggregationRequest(root: jsonP.JSONValue): PendingAggregationRequest {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RequesterAccountId": "s",
@@ -3959,8 +3966,8 @@ export interface RemediationException {
   Message?: string | null;
   ExpirationTime?: Date | number | null;
 }
-function toRemediationException(root: JSONValue): RemediationException {
-  return prt.readObj({
+function toRemediationException(root: jsonP.JSONValue): RemediationException {
+  return jsonP.readObj({
     required: {
       "ConfigRuleName": "s",
       "ResourceType": "s",
@@ -3981,12 +3988,12 @@ export interface RemediationExecutionStatus {
   InvocationTime?: Date | number | null;
   LastUpdatedTime?: Date | number | null;
 }
-function toRemediationExecutionStatus(root: JSONValue): RemediationExecutionStatus {
-  return prt.readObj({
+function toRemediationExecutionStatus(root: jsonP.JSONValue): RemediationExecutionStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ResourceKey": toResourceKey,
-      "State": toRemediationExecutionState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<RemediationExecutionState>(x),
       "StepDetails": [toRemediationExecutionStep],
       "InvocationTime": "d",
       "LastUpdatedTime": "d",
@@ -4000,15 +4007,7 @@ export type RemediationExecutionState =
 | "IN_PROGRESS"
 | "SUCCEEDED"
 | "FAILED"
-;
-function toRemediationExecutionState(root: JSONValue): RemediationExecutionState | null {
-  return ( false
-    || root == "QUEUED"
-    || root == "IN_PROGRESS"
-    || root == "SUCCEEDED"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface RemediationExecutionStep {
@@ -4018,12 +4017,12 @@ export interface RemediationExecutionStep {
   StartTime?: Date | number | null;
   StopTime?: Date | number | null;
 }
-function toRemediationExecutionStep(root: JSONValue): RemediationExecutionStep {
-  return prt.readObj({
+function toRemediationExecutionStep(root: jsonP.JSONValue): RemediationExecutionStep {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
-      "State": toRemediationExecutionStepState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<RemediationExecutionStepState>(x),
       "ErrorMessage": "s",
       "StartTime": "d",
       "StopTime": "d",
@@ -4036,22 +4035,15 @@ export type RemediationExecutionStepState =
 | "SUCCEEDED"
 | "PENDING"
 | "FAILED"
-;
-function toRemediationExecutionStepState(root: JSONValue): RemediationExecutionStepState | null {
-  return ( false
-    || root == "SUCCEEDED"
-    || root == "PENDING"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface RetentionConfiguration {
   Name: string;
   RetentionPeriodInDays: number;
 }
-function toRetentionConfiguration(root: JSONValue): RetentionConfiguration {
-  return prt.readObj({
+function toRetentionConfiguration(root: jsonP.JSONValue): RetentionConfiguration {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "RetentionPeriodInDays": "n",
@@ -4070,12 +4062,12 @@ export interface AggregateEvaluationResult {
   AccountId?: string | null;
   AwsRegion?: string | null;
 }
-function toAggregateEvaluationResult(root: JSONValue): AggregateEvaluationResult {
-  return prt.readObj({
+function toAggregateEvaluationResult(root: jsonP.JSONValue): AggregateEvaluationResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EvaluationResultIdentifier": toEvaluationResultIdentifier,
-      "ComplianceType": toComplianceType,
+      "ComplianceType": (x: jsonP.JSONValue) => cmnP.readEnum<ComplianceType>(x),
       "ResultRecordedTime": "d",
       "ConfigRuleInvokedTime": "d",
       "Annotation": "s",
@@ -4090,8 +4082,8 @@ export interface EvaluationResultIdentifier {
   EvaluationResultQualifier?: EvaluationResultQualifier | null;
   OrderingTimestamp?: Date | number | null;
 }
-function toEvaluationResultIdentifier(root: JSONValue): EvaluationResultIdentifier {
-  return prt.readObj({
+function toEvaluationResultIdentifier(root: jsonP.JSONValue): EvaluationResultIdentifier {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EvaluationResultQualifier": toEvaluationResultQualifier,
@@ -4106,8 +4098,8 @@ export interface EvaluationResultQualifier {
   ResourceType?: string | null;
   ResourceId?: string | null;
 }
-function toEvaluationResultQualifier(root: JSONValue): EvaluationResultQualifier {
-  return prt.readObj({
+function toEvaluationResultQualifier(root: jsonP.JSONValue): EvaluationResultQualifier {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ConfigRuleName": "s",
@@ -4122,8 +4114,8 @@ export interface AggregateComplianceCount {
   GroupName?: string | null;
   ComplianceSummary?: ComplianceSummary | null;
 }
-function toAggregateComplianceCount(root: JSONValue): AggregateComplianceCount {
-  return prt.readObj({
+function toAggregateComplianceCount(root: jsonP.JSONValue): AggregateComplianceCount {
+  return jsonP.readObj({
     required: {},
     optional: {
       "GroupName": "s",
@@ -4138,8 +4130,8 @@ export interface ComplianceSummary {
   NonCompliantResourceCount?: ComplianceContributorCount | null;
   ComplianceSummaryTimestamp?: Date | number | null;
 }
-function toComplianceSummary(root: JSONValue): ComplianceSummary {
-  return prt.readObj({
+function toComplianceSummary(root: jsonP.JSONValue): ComplianceSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CompliantResourceCount": toComplianceContributorCount,
@@ -4154,8 +4146,8 @@ export interface GroupedResourceCount {
   GroupName: string;
   ResourceCount: number;
 }
-function toGroupedResourceCount(root: JSONValue): GroupedResourceCount {
-  return prt.readObj({
+function toGroupedResourceCount(root: jsonP.JSONValue): GroupedResourceCount {
+  return jsonP.readObj({
     required: {
       "GroupName": "s",
       "ResourceCount": "n",
@@ -4179,34 +4171,34 @@ export interface ConfigurationItem {
   awsRegion?: string | null;
   availabilityZone?: string | null;
   resourceCreationTime?: Date | number | null;
-  tags?: { [key: string]: string } | null;
+  tags?: { [key: string]: string | null | undefined } | null;
   relatedEvents?: string[] | null;
   relationships?: Relationship[] | null;
   configuration?: string | null;
-  supplementaryConfiguration?: { [key: string]: string } | null;
+  supplementaryConfiguration?: { [key: string]: string | null | undefined } | null;
 }
-function toConfigurationItem(root: JSONValue): ConfigurationItem {
-  return prt.readObj({
+function toConfigurationItem(root: jsonP.JSONValue): ConfigurationItem {
+  return jsonP.readObj({
     required: {},
     optional: {
       "version": "s",
       "accountId": "s",
       "configurationItemCaptureTime": "d",
-      "configurationItemStatus": toConfigurationItemStatus,
+      "configurationItemStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ConfigurationItemStatus>(x),
       "configurationStateId": "s",
       "configurationItemMD5Hash": "s",
       "arn": "s",
-      "resourceType": toResourceType,
+      "resourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
       "resourceId": "s",
       "resourceName": "s",
       "awsRegion": "s",
       "availabilityZone": "s",
       "resourceCreationTime": "d",
-      "tags": x => prt.readMap(String, String, x),
+      "tags": x => jsonP.readMap(String, String, x),
       "relatedEvents": ["s"],
       "relationships": [toRelationship],
       "configuration": "s",
-      "supplementaryConfiguration": x => prt.readMap(String, String, x),
+      "supplementaryConfiguration": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -4218,11 +4210,11 @@ export interface Relationship {
   resourceName?: string | null;
   relationshipName?: string | null;
 }
-function toRelationship(root: JSONValue): Relationship {
-  return prt.readObj({
+function toRelationship(root: jsonP.JSONValue): Relationship {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "resourceType": toResourceType,
+      "resourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
       "resourceId": "s",
       "resourceName": "s",
       "relationshipName": "s",
@@ -4239,12 +4231,12 @@ export interface EvaluationResult {
   Annotation?: string | null;
   ResultToken?: string | null;
 }
-function toEvaluationResult(root: JSONValue): EvaluationResult {
-  return prt.readObj({
+function toEvaluationResult(root: jsonP.JSONValue): EvaluationResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EvaluationResultIdentifier": toEvaluationResultIdentifier,
-      "ComplianceType": toComplianceType,
+      "ComplianceType": (x: jsonP.JSONValue) => cmnP.readEnum<ComplianceType>(x),
       "ResultRecordedTime": "d",
       "ConfigRuleInvokedTime": "d",
       "Annotation": "s",
@@ -4258,8 +4250,8 @@ export interface ComplianceSummaryByResourceType {
   ResourceType?: string | null;
   ComplianceSummary?: ComplianceSummary | null;
 }
-function toComplianceSummaryByResourceType(root: JSONValue): ComplianceSummaryByResourceType {
-  return prt.readObj({
+function toComplianceSummaryByResourceType(root: jsonP.JSONValue): ComplianceSummaryByResourceType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ResourceType": "s",
@@ -4276,10 +4268,10 @@ export interface ConformancePackEvaluationResult {
   ResultRecordedTime: Date | number;
   Annotation?: string | null;
 }
-function toConformancePackEvaluationResult(root: JSONValue): ConformancePackEvaluationResult {
-  return prt.readObj({
+function toConformancePackEvaluationResult(root: jsonP.JSONValue): ConformancePackEvaluationResult {
+  return jsonP.readObj({
     required: {
-      "ComplianceType": toConformancePackComplianceType,
+      "ComplianceType": (x: jsonP.JSONValue) => cmnP.readEnum<ConformancePackComplianceType>(x),
       "EvaluationResultIdentifier": toEvaluationResultIdentifier,
       "ConfigRuleInvokedTime": "d",
       "ResultRecordedTime": "d",
@@ -4295,11 +4287,11 @@ export interface ConformancePackComplianceSummary {
   ConformancePackName: string;
   ConformancePackComplianceStatus: ConformancePackComplianceType;
 }
-function toConformancePackComplianceSummary(root: JSONValue): ConformancePackComplianceSummary {
-  return prt.readObj({
+function toConformancePackComplianceSummary(root: jsonP.JSONValue): ConformancePackComplianceSummary {
+  return jsonP.readObj({
     required: {
       "ConformancePackName": "s",
-      "ConformancePackComplianceStatus": toConformancePackComplianceType,
+      "ConformancePackComplianceStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ConformancePackComplianceType>(x),
     },
     optional: {},
   }, root);
@@ -4310,11 +4302,11 @@ export interface ResourceCount {
   resourceType?: ResourceType | null;
   count?: number | null;
 }
-function toResourceCount(root: JSONValue): ResourceCount {
-  return prt.readObj({
+function toResourceCount(root: jsonP.JSONValue): ResourceCount {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "resourceType": toResourceType,
+      "resourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
       "count": "n",
     },
   }, root);
@@ -4329,12 +4321,12 @@ export interface MemberAccountStatus {
   ErrorMessage?: string | null;
   LastUpdateTime?: Date | number | null;
 }
-function toMemberAccountStatus(root: JSONValue): MemberAccountStatus {
-  return prt.readObj({
+function toMemberAccountStatus(root: jsonP.JSONValue): MemberAccountStatus {
+  return jsonP.readObj({
     required: {
       "AccountId": "s",
       "ConfigRuleName": "s",
-      "MemberAccountRuleStatus": toMemberAccountRuleStatus,
+      "MemberAccountRuleStatus": (x: jsonP.JSONValue) => cmnP.readEnum<MemberAccountRuleStatus>(x),
     },
     optional: {
       "ErrorCode": "s",
@@ -4353,12 +4345,12 @@ export interface OrganizationConformancePackDetailedStatus {
   ErrorMessage?: string | null;
   LastUpdateTime?: Date | number | null;
 }
-function toOrganizationConformancePackDetailedStatus(root: JSONValue): OrganizationConformancePackDetailedStatus {
-  return prt.readObj({
+function toOrganizationConformancePackDetailedStatus(root: jsonP.JSONValue): OrganizationConformancePackDetailedStatus {
+  return jsonP.readObj({
     required: {
       "AccountId": "s",
       "ConformancePackName": "s",
-      "Status": toOrganizationResourceDetailedStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<OrganizationResourceDetailedStatus>(x),
     },
     optional: {
       "ErrorCode": "s",
@@ -4375,11 +4367,11 @@ export interface ResourceIdentifier {
   resourceName?: string | null;
   resourceDeletionTime?: Date | number | null;
 }
-function toResourceIdentifier(root: JSONValue): ResourceIdentifier {
-  return prt.readObj({
+function toResourceIdentifier(root: jsonP.JSONValue): ResourceIdentifier {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "resourceType": toResourceType,
+      "resourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
       "resourceId": "s",
       "resourceName": "s",
       "resourceDeletionTime": "d",
@@ -4392,8 +4384,8 @@ export interface FailedRemediationBatch {
   FailureMessage?: string | null;
   FailedItems?: RemediationConfiguration[] | null;
 }
-function toFailedRemediationBatch(root: JSONValue): FailedRemediationBatch {
-  return prt.readObj({
+function toFailedRemediationBatch(root: jsonP.JSONValue): FailedRemediationBatch {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FailureMessage": "s",
@@ -4407,8 +4399,8 @@ export interface FailedRemediationExceptionBatch {
   FailureMessage?: string | null;
   FailedItems?: RemediationException[] | null;
 }
-function toFailedRemediationExceptionBatch(root: JSONValue): FailedRemediationExceptionBatch {
-  return prt.readObj({
+function toFailedRemediationExceptionBatch(root: jsonP.JSONValue): FailedRemediationExceptionBatch {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FailureMessage": "s",
@@ -4421,8 +4413,8 @@ function toFailedRemediationExceptionBatch(root: JSONValue): FailedRemediationEx
 export interface QueryInfo {
   SelectFields?: FieldInfo[] | null;
 }
-function toQueryInfo(root: JSONValue): QueryInfo {
-  return prt.readObj({
+function toQueryInfo(root: jsonP.JSONValue): QueryInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SelectFields": [toFieldInfo],
@@ -4434,8 +4426,8 @@ function toQueryInfo(root: JSONValue): QueryInfo {
 export interface FieldInfo {
   Name?: string | null;
 }
-function toFieldInfo(root: JSONValue): FieldInfo {
-  return prt.readObj({
+function toFieldInfo(root: jsonP.JSONValue): FieldInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",

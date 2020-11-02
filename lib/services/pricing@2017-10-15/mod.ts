@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class Pricing {
   #client: ServiceClient;
@@ -31,13 +31,17 @@ export default class Pricing {
   async describeServices(
     {abortSignal, ...params}: RequestConfig & DescribeServicesRequest = {},
   ): Promise<DescribeServicesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceCode: params["ServiceCode"],
+      FormatVersion: params["FormatVersion"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeServices",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Services": [toService],
@@ -50,13 +54,17 @@ export default class Pricing {
   async getAttributeValues(
     {abortSignal, ...params}: RequestConfig & GetAttributeValuesRequest,
   ): Promise<GetAttributeValuesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceCode: params["ServiceCode"],
+      AttributeName: params["AttributeName"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAttributeValues",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AttributeValues": [toAttributeValue],
@@ -68,18 +76,22 @@ export default class Pricing {
   async getProducts(
     {abortSignal, ...params}: RequestConfig & GetProductsRequest = {},
   ): Promise<GetProductsResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceCode: params["ServiceCode"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+      FormatVersion: params["FormatVersion"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetProducts",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FormatVersion": "s",
-        "PriceList": ["s"],
+        "PriceList": [jsonP.readJsonValue],
         "NextToken": "s",
       },
     }, await resp.json());
@@ -128,7 +140,7 @@ export interface GetAttributeValuesResponse {
 // refs: 1 - tags: named, output
 export interface GetProductsResponse {
   FormatVersion?: string | null;
-  PriceList?: string[] | null;
+  PriceList?: jsonP.JSONValue[] | null;
   NextToken?: string | null;
 }
 
@@ -138,25 +150,27 @@ export interface Filter {
   Field: string;
   Value: string;
 }
-function fromFilter(input?: Filter | null): JSONValue {
+function fromFilter(input?: Filter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Type: input["Type"],
+    Field: input["Field"],
+    Value: input["Value"],
   }
 }
 
 // refs: 1 - tags: input, named, enum
 export type FilterType =
 | "TERM_MATCH"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Service {
   ServiceCode?: string | null;
   AttributeNames?: string[] | null;
 }
-function toService(root: JSONValue): Service {
-  return prt.readObj({
+function toService(root: jsonP.JSONValue): Service {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ServiceCode": "s",
@@ -169,8 +183,8 @@ function toService(root: JSONValue): Service {
 export interface AttributeValue {
   Value?: string | null;
 }
-function toAttributeValue(root: JSONValue): AttributeValue {
-  return prt.readObj({
+function toAttributeValue(root: jsonP.JSONValue): AttributeValue {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Value": "s",

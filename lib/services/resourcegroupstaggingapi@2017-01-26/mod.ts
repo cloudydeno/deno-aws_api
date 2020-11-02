@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class ResourceGroupsTaggingAPI {
   #client: ServiceClient;
@@ -29,13 +29,13 @@ export default class ResourceGroupsTaggingAPI {
   async describeReportCreation(
     {abortSignal, ...params}: RequestConfig & DescribeReportCreationInput = {},
   ): Promise<DescribeReportCreationOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeReportCreation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Status": "s",
@@ -48,13 +48,20 @@ export default class ResourceGroupsTaggingAPI {
   async getComplianceSummary(
     {abortSignal, ...params}: RequestConfig & GetComplianceSummaryInput = {},
   ): Promise<GetComplianceSummaryOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TargetIdFilters: params["TargetIdFilters"],
+      RegionFilters: params["RegionFilters"],
+      ResourceTypeFilters: params["ResourceTypeFilters"],
+      TagKeyFilters: params["TagKeyFilters"],
+      GroupBy: params["GroupBy"],
+      MaxResults: params["MaxResults"],
+      PaginationToken: params["PaginationToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetComplianceSummary",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SummaryList": [toSummary],
@@ -66,14 +73,20 @@ export default class ResourceGroupsTaggingAPI {
   async getResources(
     {abortSignal, ...params}: RequestConfig & GetResourcesInput = {},
   ): Promise<GetResourcesOutput> {
-    const body: JSONObject = {...params,
-    TagFilters: params["TagFilters"]?.map(x => fromTagFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      PaginationToken: params["PaginationToken"],
+      TagFilters: params["TagFilters"]?.map(x => fromTagFilter(x)),
+      ResourcesPerPage: params["ResourcesPerPage"],
+      TagsPerPage: params["TagsPerPage"],
+      ResourceTypeFilters: params["ResourceTypeFilters"],
+      IncludeComplianceDetails: params["IncludeComplianceDetails"],
+      ExcludeCompliantResources: params["ExcludeCompliantResources"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResources",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PaginationToken": "s",
@@ -85,13 +98,14 @@ export default class ResourceGroupsTaggingAPI {
   async getTagKeys(
     {abortSignal, ...params}: RequestConfig & GetTagKeysInput = {},
   ): Promise<GetTagKeysOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PaginationToken: params["PaginationToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTagKeys",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PaginationToken": "s",
@@ -103,13 +117,15 @@ export default class ResourceGroupsTaggingAPI {
   async getTagValues(
     {abortSignal, ...params}: RequestConfig & GetTagValuesInput,
   ): Promise<GetTagValuesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PaginationToken: params["PaginationToken"],
+      Key: params["Key"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTagValues",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PaginationToken": "s",
@@ -121,13 +137,14 @@ export default class ResourceGroupsTaggingAPI {
   async startReportCreation(
     {abortSignal, ...params}: RequestConfig & StartReportCreationInput,
   ): Promise<StartReportCreationOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      S3Bucket: params["S3Bucket"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartReportCreation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -136,16 +153,18 @@ export default class ResourceGroupsTaggingAPI {
   async tagResources(
     {abortSignal, ...params}: RequestConfig & TagResourcesInput,
   ): Promise<TagResourcesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARNList: params["ResourceARNList"],
+      Tags: params["Tags"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResources",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "FailedResourcesMap": x => prt.readMap(String, toFailureInfo, x),
+        "FailedResourcesMap": x => jsonP.readMap(String, toFailureInfo, x),
       },
     }, await resp.json());
   }
@@ -153,16 +172,18 @@ export default class ResourceGroupsTaggingAPI {
   async untagResources(
     {abortSignal, ...params}: RequestConfig & UntagResourcesInput,
   ): Promise<UntagResourcesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARNList: params["ResourceARNList"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResources",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "FailedResourcesMap": x => prt.readMap(String, toFailureInfo, x),
+        "FailedResourcesMap": x => jsonP.readMap(String, toFailureInfo, x),
       },
     }, await resp.json());
   }
@@ -214,7 +235,7 @@ export interface StartReportCreationInput {
 // refs: 1 - tags: named, input
 export interface TagResourcesInput {
   ResourceARNList: string[];
-  Tags: { [key: string]: string };
+  Tags: { [key: string]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, input
@@ -260,12 +281,12 @@ export interface StartReportCreationOutput {
 
 // refs: 1 - tags: named, output
 export interface TagResourcesOutput {
-  FailedResourcesMap?: { [key: string]: FailureInfo } | null;
+  FailedResourcesMap?: { [key: string]: FailureInfo | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output
 export interface UntagResourcesOutput {
-  FailedResourcesMap?: { [key: string]: FailureInfo } | null;
+  FailedResourcesMap?: { [key: string]: FailureInfo | null | undefined } | null;
 }
 
 // refs: 1 - tags: input, named, enum
@@ -273,17 +294,18 @@ export type GroupByAttribute =
 | "TARGET_ID"
 | "REGION"
 | "RESOURCE_TYPE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface TagFilter {
   Key?: string | null;
   Values?: string[] | null;
 }
-function fromTagFilter(input?: TagFilter | null): JSONValue {
+function fromTagFilter(input?: TagFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
   }
 }
 
@@ -296,13 +318,13 @@ export interface Summary {
   ResourceType?: string | null;
   NonCompliantResources?: number | null;
 }
-function toSummary(root: JSONValue): Summary {
-  return prt.readObj({
+function toSummary(root: jsonP.JSONValue): Summary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "LastUpdated": "s",
       "TargetId": "s",
-      "TargetIdType": toTargetIdType,
+      "TargetIdType": (x: jsonP.JSONValue) => cmnP.readEnum<TargetIdType>(x),
       "Region": "s",
       "ResourceType": "s",
       "NonCompliantResources": "n",
@@ -315,14 +337,7 @@ export type TargetIdType =
 | "ACCOUNT"
 | "OU"
 | "ROOT"
-;
-function toTargetIdType(root: JSONValue): TargetIdType | null {
-  return ( false
-    || root == "ACCOUNT"
-    || root == "OU"
-    || root == "ROOT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ResourceTagMapping {
@@ -330,8 +345,8 @@ export interface ResourceTagMapping {
   Tags?: Tag[] | null;
   ComplianceDetails?: ComplianceDetails | null;
 }
-function toResourceTagMapping(root: JSONValue): ResourceTagMapping {
-  return prt.readObj({
+function toResourceTagMapping(root: jsonP.JSONValue): ResourceTagMapping {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ResourceARN": "s",
@@ -346,8 +361,8 @@ export interface Tag {
   Key: string;
   Value: string;
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -362,8 +377,8 @@ export interface ComplianceDetails {
   KeysWithNoncompliantValues?: string[] | null;
   ComplianceStatus?: boolean | null;
 }
-function toComplianceDetails(root: JSONValue): ComplianceDetails {
-  return prt.readObj({
+function toComplianceDetails(root: jsonP.JSONValue): ComplianceDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "NoncompliantKeys": ["s"],
@@ -379,12 +394,12 @@ export interface FailureInfo {
   ErrorCode?: ErrorCode | null;
   ErrorMessage?: string | null;
 }
-function toFailureInfo(root: JSONValue): FailureInfo {
-  return prt.readObj({
+function toFailureInfo(root: jsonP.JSONValue): FailureInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "StatusCode": "n",
-      "ErrorCode": toErrorCode,
+      "ErrorCode": (x: jsonP.JSONValue) => cmnP.readEnum<ErrorCode>(x),
       "ErrorMessage": "s",
     },
   }, root);
@@ -394,10 +409,4 @@ function toFailureInfo(root: JSONValue): FailureInfo {
 export type ErrorCode =
 | "InternalServiceException"
 | "InvalidParameterException"
-;
-function toErrorCode(root: JSONValue): ErrorCode | null {
-  return ( false
-    || root == "InternalServiceException"
-    || root == "InvalidParameterException"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;

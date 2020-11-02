@@ -5,10 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }
@@ -35,14 +34,15 @@ export default class Route53Resolver {
   async associateResolverEndpointIpAddress(
     {abortSignal, ...params}: RequestConfig & AssociateResolverEndpointIpAddressRequest,
   ): Promise<AssociateResolverEndpointIpAddressResponse> {
-    const body: JSONObject = {...params,
-    IpAddress: fromIpAddressUpdate(params["IpAddress"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResolverEndpointId: params["ResolverEndpointId"],
+      IpAddress: fromIpAddressUpdate(params["IpAddress"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateResolverEndpointIpAddress",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverEndpoint": toResolverEndpoint,
@@ -53,13 +53,15 @@ export default class Route53Resolver {
   async associateResolverQueryLogConfig(
     {abortSignal, ...params}: RequestConfig & AssociateResolverQueryLogConfigRequest,
   ): Promise<AssociateResolverQueryLogConfigResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResolverQueryLogConfigId: params["ResolverQueryLogConfigId"],
+      ResourceId: params["ResourceId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateResolverQueryLogConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverQueryLogConfigAssociation": toResolverQueryLogConfigAssociation,
@@ -70,13 +72,16 @@ export default class Route53Resolver {
   async associateResolverRule(
     {abortSignal, ...params}: RequestConfig & AssociateResolverRuleRequest,
   ): Promise<AssociateResolverRuleResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResolverRuleId: params["ResolverRuleId"],
+      Name: params["Name"],
+      VPCId: params["VPCId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateResolverRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverRuleAssociation": toResolverRuleAssociation,
@@ -87,15 +92,19 @@ export default class Route53Resolver {
   async createResolverEndpoint(
     {abortSignal, ...params}: RequestConfig & CreateResolverEndpointRequest,
   ): Promise<CreateResolverEndpointResponse> {
-    const body: JSONObject = {...params,
-    IpAddresses: params["IpAddresses"]?.map(x => fromIpAddressRequest(x)),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CreatorRequestId: params["CreatorRequestId"],
+      Name: params["Name"],
+      SecurityGroupIds: params["SecurityGroupIds"],
+      Direction: params["Direction"],
+      IpAddresses: params["IpAddresses"]?.map(x => fromIpAddressRequest(x)),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateResolverEndpoint",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverEndpoint": toResolverEndpoint,
@@ -106,15 +115,17 @@ export default class Route53Resolver {
   async createResolverQueryLogConfig(
     {abortSignal, ...params}: RequestConfig & CreateResolverQueryLogConfigRequest,
   ): Promise<CreateResolverQueryLogConfigResponse> {
-    const body: JSONObject = {...params,
-    CreatorRequestId: params["CreatorRequestId"] ?? generateIdemptToken(),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      DestinationArn: params["DestinationArn"],
+      CreatorRequestId: params["CreatorRequestId"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateResolverQueryLogConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverQueryLogConfig": toResolverQueryLogConfig,
@@ -125,15 +136,20 @@ export default class Route53Resolver {
   async createResolverRule(
     {abortSignal, ...params}: RequestConfig & CreateResolverRuleRequest,
   ): Promise<CreateResolverRuleResponse> {
-    const body: JSONObject = {...params,
-    TargetIps: params["TargetIps"]?.map(x => fromTargetAddress(x)),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CreatorRequestId: params["CreatorRequestId"],
+      Name: params["Name"],
+      RuleType: params["RuleType"],
+      DomainName: params["DomainName"],
+      TargetIps: params["TargetIps"]?.map(x => fromTargetAddress(x)),
+      ResolverEndpointId: params["ResolverEndpointId"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateResolverRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverRule": toResolverRule,
@@ -144,13 +160,14 @@ export default class Route53Resolver {
   async deleteResolverEndpoint(
     {abortSignal, ...params}: RequestConfig & DeleteResolverEndpointRequest,
   ): Promise<DeleteResolverEndpointResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResolverEndpointId: params["ResolverEndpointId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteResolverEndpoint",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverEndpoint": toResolverEndpoint,
@@ -161,13 +178,14 @@ export default class Route53Resolver {
   async deleteResolverQueryLogConfig(
     {abortSignal, ...params}: RequestConfig & DeleteResolverQueryLogConfigRequest,
   ): Promise<DeleteResolverQueryLogConfigResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResolverQueryLogConfigId: params["ResolverQueryLogConfigId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteResolverQueryLogConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverQueryLogConfig": toResolverQueryLogConfig,
@@ -178,13 +196,14 @@ export default class Route53Resolver {
   async deleteResolverRule(
     {abortSignal, ...params}: RequestConfig & DeleteResolverRuleRequest,
   ): Promise<DeleteResolverRuleResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResolverRuleId: params["ResolverRuleId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteResolverRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverRule": toResolverRule,
@@ -195,14 +214,15 @@ export default class Route53Resolver {
   async disassociateResolverEndpointIpAddress(
     {abortSignal, ...params}: RequestConfig & DisassociateResolverEndpointIpAddressRequest,
   ): Promise<DisassociateResolverEndpointIpAddressResponse> {
-    const body: JSONObject = {...params,
-    IpAddress: fromIpAddressUpdate(params["IpAddress"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResolverEndpointId: params["ResolverEndpointId"],
+      IpAddress: fromIpAddressUpdate(params["IpAddress"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateResolverEndpointIpAddress",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverEndpoint": toResolverEndpoint,
@@ -213,13 +233,15 @@ export default class Route53Resolver {
   async disassociateResolverQueryLogConfig(
     {abortSignal, ...params}: RequestConfig & DisassociateResolverQueryLogConfigRequest,
   ): Promise<DisassociateResolverQueryLogConfigResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResolverQueryLogConfigId: params["ResolverQueryLogConfigId"],
+      ResourceId: params["ResourceId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateResolverQueryLogConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverQueryLogConfigAssociation": toResolverQueryLogConfigAssociation,
@@ -230,13 +252,15 @@ export default class Route53Resolver {
   async disassociateResolverRule(
     {abortSignal, ...params}: RequestConfig & DisassociateResolverRuleRequest,
   ): Promise<DisassociateResolverRuleResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VPCId: params["VPCId"],
+      ResolverRuleId: params["ResolverRuleId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateResolverRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverRuleAssociation": toResolverRuleAssociation,
@@ -247,13 +271,14 @@ export default class Route53Resolver {
   async getResolverEndpoint(
     {abortSignal, ...params}: RequestConfig & GetResolverEndpointRequest,
   ): Promise<GetResolverEndpointResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResolverEndpointId: params["ResolverEndpointId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResolverEndpoint",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverEndpoint": toResolverEndpoint,
@@ -264,13 +289,14 @@ export default class Route53Resolver {
   async getResolverQueryLogConfig(
     {abortSignal, ...params}: RequestConfig & GetResolverQueryLogConfigRequest,
   ): Promise<GetResolverQueryLogConfigResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResolverQueryLogConfigId: params["ResolverQueryLogConfigId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResolverQueryLogConfig",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverQueryLogConfig": toResolverQueryLogConfig,
@@ -281,13 +307,14 @@ export default class Route53Resolver {
   async getResolverQueryLogConfigAssociation(
     {abortSignal, ...params}: RequestConfig & GetResolverQueryLogConfigAssociationRequest,
   ): Promise<GetResolverQueryLogConfigAssociationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResolverQueryLogConfigAssociationId: params["ResolverQueryLogConfigAssociationId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResolverQueryLogConfigAssociation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverQueryLogConfigAssociation": toResolverQueryLogConfigAssociation,
@@ -298,13 +325,14 @@ export default class Route53Resolver {
   async getResolverQueryLogConfigPolicy(
     {abortSignal, ...params}: RequestConfig & GetResolverQueryLogConfigPolicyRequest,
   ): Promise<GetResolverQueryLogConfigPolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Arn: params["Arn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResolverQueryLogConfigPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverQueryLogConfigPolicy": "s",
@@ -315,13 +343,14 @@ export default class Route53Resolver {
   async getResolverRule(
     {abortSignal, ...params}: RequestConfig & GetResolverRuleRequest,
   ): Promise<GetResolverRuleResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResolverRuleId: params["ResolverRuleId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResolverRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverRule": toResolverRule,
@@ -332,13 +361,14 @@ export default class Route53Resolver {
   async getResolverRuleAssociation(
     {abortSignal, ...params}: RequestConfig & GetResolverRuleAssociationRequest,
   ): Promise<GetResolverRuleAssociationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResolverRuleAssociationId: params["ResolverRuleAssociationId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResolverRuleAssociation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverRuleAssociation": toResolverRuleAssociation,
@@ -349,13 +379,14 @@ export default class Route53Resolver {
   async getResolverRulePolicy(
     {abortSignal, ...params}: RequestConfig & GetResolverRulePolicyRequest,
   ): Promise<GetResolverRulePolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Arn: params["Arn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResolverRulePolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverRulePolicy": "s",
@@ -366,13 +397,16 @@ export default class Route53Resolver {
   async listResolverEndpointIpAddresses(
     {abortSignal, ...params}: RequestConfig & ListResolverEndpointIpAddressesRequest,
   ): Promise<ListResolverEndpointIpAddressesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResolverEndpointId: params["ResolverEndpointId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResolverEndpointIpAddresses",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -385,14 +419,16 @@ export default class Route53Resolver {
   async listResolverEndpoints(
     {abortSignal, ...params}: RequestConfig & ListResolverEndpointsRequest = {},
   ): Promise<ListResolverEndpointsResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResolverEndpoints",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -405,14 +441,18 @@ export default class Route53Resolver {
   async listResolverQueryLogConfigAssociations(
     {abortSignal, ...params}: RequestConfig & ListResolverQueryLogConfigAssociationsRequest = {},
   ): Promise<ListResolverQueryLogConfigAssociationsResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResolverQueryLogConfigAssociations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -426,14 +466,18 @@ export default class Route53Resolver {
   async listResolverQueryLogConfigs(
     {abortSignal, ...params}: RequestConfig & ListResolverQueryLogConfigsRequest = {},
   ): Promise<ListResolverQueryLogConfigsResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+      SortBy: params["SortBy"],
+      SortOrder: params["SortOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResolverQueryLogConfigs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -447,14 +491,16 @@ export default class Route53Resolver {
   async listResolverRuleAssociations(
     {abortSignal, ...params}: RequestConfig & ListResolverRuleAssociationsRequest = {},
   ): Promise<ListResolverRuleAssociationsResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResolverRuleAssociations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -467,14 +513,16 @@ export default class Route53Resolver {
   async listResolverRules(
     {abortSignal, ...params}: RequestConfig & ListResolverRulesRequest = {},
   ): Promise<ListResolverRulesResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResolverRules",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -487,13 +535,16 @@ export default class Route53Resolver {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -505,13 +556,15 @@ export default class Route53Resolver {
   async putResolverQueryLogConfigPolicy(
     {abortSignal, ...params}: RequestConfig & PutResolverQueryLogConfigPolicyRequest,
   ): Promise<PutResolverQueryLogConfigPolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Arn: params["Arn"],
+      ResolverQueryLogConfigPolicy: params["ResolverQueryLogConfigPolicy"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutResolverQueryLogConfigPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ReturnValue": "b",
@@ -522,13 +575,15 @@ export default class Route53Resolver {
   async putResolverRulePolicy(
     {abortSignal, ...params}: RequestConfig & PutResolverRulePolicyRequest,
   ): Promise<PutResolverRulePolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Arn: params["Arn"],
+      ResolverRulePolicy: params["ResolverRulePolicy"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutResolverRulePolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ReturnValue": "b",
@@ -539,14 +594,15 @@ export default class Route53Resolver {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -555,13 +611,15 @@ export default class Route53Resolver {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -570,13 +628,15 @@ export default class Route53Resolver {
   async updateResolverEndpoint(
     {abortSignal, ...params}: RequestConfig & UpdateResolverEndpointRequest,
   ): Promise<UpdateResolverEndpointResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResolverEndpointId: params["ResolverEndpointId"],
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateResolverEndpoint",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverEndpoint": toResolverEndpoint,
@@ -587,14 +647,15 @@ export default class Route53Resolver {
   async updateResolverRule(
     {abortSignal, ...params}: RequestConfig & UpdateResolverRuleRequest,
   ): Promise<UpdateResolverRuleResponse> {
-    const body: JSONObject = {...params,
-    Config: fromResolverRuleConfig(params["Config"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResolverRuleId: params["ResolverRuleId"],
+      Config: fromResolverRuleConfig(params["Config"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateResolverRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResolverRule": toResolverRule,
@@ -988,9 +1049,12 @@ export interface IpAddressUpdate {
   SubnetId?: string | null;
   Ip?: string | null;
 }
-function fromIpAddressUpdate(input?: IpAddressUpdate | null): JSONValue {
+function fromIpAddressUpdate(input?: IpAddressUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    IpId: input["IpId"],
+    SubnetId: input["SubnetId"],
+    Ip: input["Ip"],
   }
 }
 
@@ -998,23 +1062,18 @@ function fromIpAddressUpdate(input?: IpAddressUpdate | null): JSONValue {
 export type ResolverEndpointDirection =
 | "INBOUND"
 | "OUTBOUND"
-;
-
-function toResolverEndpointDirection(root: JSONValue): ResolverEndpointDirection | null {
-  return ( false
-    || root == "INBOUND"
-    || root == "OUTBOUND"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface IpAddressRequest {
   SubnetId: string;
   Ip?: string | null;
 }
-function fromIpAddressRequest(input?: IpAddressRequest | null): JSONValue {
+function fromIpAddressRequest(input?: IpAddressRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SubnetId: input["SubnetId"],
+    Ip: input["Ip"],
   }
 }
 
@@ -1023,13 +1082,15 @@ export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -1043,28 +1104,22 @@ export type RuleTypeOption =
 | "FORWARD"
 | "SYSTEM"
 | "RECURSIVE"
-;
-
-function toRuleTypeOption(root: JSONValue): RuleTypeOption | null {
-  return ( false
-    || root == "FORWARD"
-    || root == "SYSTEM"
-    || root == "RECURSIVE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: input, named, interface, output
 export interface TargetAddress {
   Ip: string;
   Port?: number | null;
 }
-function fromTargetAddress(input?: TargetAddress | null): JSONValue {
+function fromTargetAddress(input?: TargetAddress | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Ip: input["Ip"],
+    Port: input["Port"],
   }
 }
-function toTargetAddress(root: JSONValue): TargetAddress {
-  return prt.readObj({
+function toTargetAddress(root: jsonP.JSONValue): TargetAddress {
+  return jsonP.readObj({
     required: {
       "Ip": "s",
     },
@@ -1079,9 +1134,11 @@ export interface Filter {
   Name?: string | null;
   Values?: string[] | null;
 }
-function fromFilter(input?: Filter | null): JSONValue {
+function fromFilter(input?: Filter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Values: input["Values"],
   }
 }
 
@@ -1089,8 +1146,7 @@ function fromFilter(input?: Filter | null): JSONValue {
 export type SortOrder =
 | "ASCENDING"
 | "DESCENDING"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ResolverRuleConfig {
@@ -1098,10 +1154,12 @@ export interface ResolverRuleConfig {
   TargetIps?: TargetAddress[] | null;
   ResolverEndpointId?: string | null;
 }
-function fromResolverRuleConfig(input?: ResolverRuleConfig | null): JSONValue {
+function fromResolverRuleConfig(input?: ResolverRuleConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
     TargetIps: input["TargetIps"]?.map(x => fromTargetAddress(x)),
+    ResolverEndpointId: input["ResolverEndpointId"],
   }
 }
 
@@ -1120,8 +1178,8 @@ export interface ResolverEndpoint {
   CreationTime?: string | null;
   ModificationTime?: string | null;
 }
-function toResolverEndpoint(root: JSONValue): ResolverEndpoint {
-  return prt.readObj({
+function toResolverEndpoint(root: jsonP.JSONValue): ResolverEndpoint {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
@@ -1129,10 +1187,10 @@ function toResolverEndpoint(root: JSONValue): ResolverEndpoint {
       "Arn": "s",
       "Name": "s",
       "SecurityGroupIds": ["s"],
-      "Direction": toResolverEndpointDirection,
+      "Direction": (x: jsonP.JSONValue) => cmnP.readEnum<ResolverEndpointDirection>(x),
       "IpAddressCount": "n",
       "HostVPCId": "s",
-      "Status": toResolverEndpointStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ResolverEndpointStatus>(x),
       "StatusMessage": "s",
       "CreationTime": "s",
       "ModificationTime": "s",
@@ -1148,17 +1206,7 @@ export type ResolverEndpointStatus =
 | "AUTO_RECOVERING"
 | "ACTION_NEEDED"
 | "DELETING"
-;
-function toResolverEndpointStatus(root: JSONValue): ResolverEndpointStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "OPERATIONAL"
-    || root == "UPDATING"
-    || root == "AUTO_RECOVERING"
-    || root == "ACTION_NEEDED"
-    || root == "DELETING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface ResolverQueryLogConfigAssociation {
@@ -1170,15 +1218,15 @@ export interface ResolverQueryLogConfigAssociation {
   ErrorMessage?: string | null;
   CreationTime?: string | null;
 }
-function toResolverQueryLogConfigAssociation(root: JSONValue): ResolverQueryLogConfigAssociation {
-  return prt.readObj({
+function toResolverQueryLogConfigAssociation(root: jsonP.JSONValue): ResolverQueryLogConfigAssociation {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "ResolverQueryLogConfigId": "s",
       "ResourceId": "s",
-      "Status": toResolverQueryLogConfigAssociationStatus,
-      "Error": toResolverQueryLogConfigAssociationError,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ResolverQueryLogConfigAssociationStatus>(x),
+      "Error": (x: jsonP.JSONValue) => cmnP.readEnum<ResolverQueryLogConfigAssociationError>(x),
       "ErrorMessage": "s",
       "CreationTime": "s",
     },
@@ -1192,16 +1240,7 @@ export type ResolverQueryLogConfigAssociationStatus =
 | "ACTION_NEEDED"
 | "DELETING"
 | "FAILED"
-;
-function toResolverQueryLogConfigAssociationStatus(root: JSONValue): ResolverQueryLogConfigAssociationStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "ACTIVE"
-    || root == "ACTION_NEEDED"
-    || root == "DELETING"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, enum
 export type ResolverQueryLogConfigAssociationError =
@@ -1209,15 +1248,7 @@ export type ResolverQueryLogConfigAssociationError =
 | "DESTINATION_NOT_FOUND"
 | "ACCESS_DENIED"
 | "INTERNAL_SERVICE_ERROR"
-;
-function toResolverQueryLogConfigAssociationError(root: JSONValue): ResolverQueryLogConfigAssociationError | null {
-  return ( false
-    || root == "NONE"
-    || root == "DESTINATION_NOT_FOUND"
-    || root == "ACCESS_DENIED"
-    || root == "INTERNAL_SERVICE_ERROR"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface ResolverRuleAssociation {
@@ -1228,15 +1259,15 @@ export interface ResolverRuleAssociation {
   Status?: ResolverRuleAssociationStatus | null;
   StatusMessage?: string | null;
 }
-function toResolverRuleAssociation(root: JSONValue): ResolverRuleAssociation {
-  return prt.readObj({
+function toResolverRuleAssociation(root: jsonP.JSONValue): ResolverRuleAssociation {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "ResolverRuleId": "s",
       "Name": "s",
       "VPCId": "s",
-      "Status": toResolverRuleAssociationStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ResolverRuleAssociationStatus>(x),
       "StatusMessage": "s",
     },
   }, root);
@@ -1249,16 +1280,7 @@ export type ResolverRuleAssociationStatus =
 | "DELETING"
 | "FAILED"
 | "OVERRIDDEN"
-;
-function toResolverRuleAssociationStatus(root: JSONValue): ResolverRuleAssociationStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "COMPLETE"
-    || root == "DELETING"
-    || root == "FAILED"
-    || root == "OVERRIDDEN"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface ResolverQueryLogConfig {
@@ -1273,14 +1295,14 @@ export interface ResolverQueryLogConfig {
   CreatorRequestId?: string | null;
   CreationTime?: string | null;
 }
-function toResolverQueryLogConfig(root: JSONValue): ResolverQueryLogConfig {
-  return prt.readObj({
+function toResolverQueryLogConfig(root: jsonP.JSONValue): ResolverQueryLogConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "OwnerId": "s",
-      "Status": toResolverQueryLogConfigStatus,
-      "ShareStatus": toShareStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ResolverQueryLogConfigStatus>(x),
+      "ShareStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ShareStatus>(x),
       "AssociationCount": "n",
       "Arn": "s",
       "Name": "s",
@@ -1297,29 +1319,14 @@ export type ResolverQueryLogConfigStatus =
 | "CREATED"
 | "DELETING"
 | "FAILED"
-;
-function toResolverQueryLogConfigStatus(root: JSONValue): ResolverQueryLogConfigStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "CREATED"
-    || root == "DELETING"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 9 - tags: output, named, enum
 export type ShareStatus =
 | "NOT_SHARED"
 | "SHARED_WITH_ME"
 | "SHARED_BY_ME"
-;
-function toShareStatus(root: JSONValue): ShareStatus | null {
-  return ( false
-    || root == "NOT_SHARED"
-    || root == "SHARED_WITH_ME"
-    || root == "SHARED_BY_ME"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, interface
 export interface ResolverRule {
@@ -1338,22 +1345,22 @@ export interface ResolverRule {
   CreationTime?: string | null;
   ModificationTime?: string | null;
 }
-function toResolverRule(root: JSONValue): ResolverRule {
-  return prt.readObj({
+function toResolverRule(root: jsonP.JSONValue): ResolverRule {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "CreatorRequestId": "s",
       "Arn": "s",
       "DomainName": "s",
-      "Status": toResolverRuleStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ResolverRuleStatus>(x),
       "StatusMessage": "s",
-      "RuleType": toRuleTypeOption,
+      "RuleType": (x: jsonP.JSONValue) => cmnP.readEnum<RuleTypeOption>(x),
       "Name": "s",
       "TargetIps": [toTargetAddress],
       "ResolverEndpointId": "s",
       "OwnerId": "s",
-      "ShareStatus": toShareStatus,
+      "ShareStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ShareStatus>(x),
       "CreationTime": "s",
       "ModificationTime": "s",
     },
@@ -1366,15 +1373,7 @@ export type ResolverRuleStatus =
 | "DELETING"
 | "UPDATING"
 | "FAILED"
-;
-function toResolverRuleStatus(root: JSONValue): ResolverRuleStatus | null {
-  return ( false
-    || root == "COMPLETE"
-    || root == "DELETING"
-    || root == "UPDATING"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface IpAddressResponse {
@@ -1386,14 +1385,14 @@ export interface IpAddressResponse {
   CreationTime?: string | null;
   ModificationTime?: string | null;
 }
-function toIpAddressResponse(root: JSONValue): IpAddressResponse {
-  return prt.readObj({
+function toIpAddressResponse(root: jsonP.JSONValue): IpAddressResponse {
+  return jsonP.readObj({
     required: {},
     optional: {
       "IpId": "s",
       "SubnetId": "s",
       "Ip": "s",
-      "Status": toIpAddressStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<IpAddressStatus>(x),
       "StatusMessage": "s",
       "CreationTime": "s",
       "ModificationTime": "s",
@@ -1413,18 +1412,4 @@ export type IpAddressStatus =
 | "FAILED_RESOURCE_GONE"
 | "DELETING"
 | "DELETE_FAILED_FAS_EXPIRED"
-;
-function toIpAddressStatus(root: JSONValue): IpAddressStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "FAILED_CREATION"
-    || root == "ATTACHING"
-    || root == "ATTACHED"
-    || root == "REMAP_DETACHING"
-    || root == "REMAP_ATTACHING"
-    || root == "DETACHING"
-    || root == "FAILED_RESOURCE_GONE"
-    || root == "DELETING"
-    || root == "DELETE_FAILED_FAS_EXPIRED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;

@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class FraudDetector {
   #client: ServiceClient;
@@ -29,15 +29,15 @@ export default class FraudDetector {
   async batchCreateVariable(
     {abortSignal, ...params}: RequestConfig & BatchCreateVariableRequest,
   ): Promise<BatchCreateVariableResult> {
-    const body: JSONObject = {...params,
-    variableEntries: params["variableEntries"]?.map(x => fromVariableEntry(x)),
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      variableEntries: params["variableEntries"]?.map(x => fromVariableEntry(x)),
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchCreateVariable",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "errors": [toBatchCreateVariableError],
@@ -48,13 +48,14 @@ export default class FraudDetector {
   async batchGetVariable(
     {abortSignal, ...params}: RequestConfig & BatchGetVariableRequest,
   ): Promise<BatchGetVariableResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      names: params["names"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetVariable",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "variables": [toVariable],
@@ -66,21 +67,25 @@ export default class FraudDetector {
   async createDetectorVersion(
     {abortSignal, ...params}: RequestConfig & CreateDetectorVersionRequest,
   ): Promise<CreateDetectorVersionResult> {
-    const body: JSONObject = {...params,
-    rules: params["rules"]?.map(x => fromRule(x)),
-    modelVersions: params["modelVersions"]?.map(x => fromModelVersion(x)),
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      detectorId: params["detectorId"],
+      description: params["description"],
+      externalModelEndpoints: params["externalModelEndpoints"],
+      rules: params["rules"]?.map(x => fromRule(x)),
+      modelVersions: params["modelVersions"]?.map(x => fromModelVersion(x)),
+      ruleExecutionMode: params["ruleExecutionMode"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDetectorVersion",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "detectorId": "s",
         "detectorVersionId": "s",
-        "status": toDetectorVersionStatus,
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<DetectorVersionStatus>(x),
       },
     }, await resp.json());
   }
@@ -88,14 +93,18 @@ export default class FraudDetector {
   async createModel(
     {abortSignal, ...params}: RequestConfig & CreateModelRequest,
   ): Promise<CreateModelResult> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      modelId: params["modelId"],
+      modelType: params["modelType"],
+      description: params["description"],
+      eventTypeName: params["eventTypeName"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateModel",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -104,20 +113,23 @@ export default class FraudDetector {
   async createModelVersion(
     {abortSignal, ...params}: RequestConfig & CreateModelVersionRequest,
   ): Promise<CreateModelVersionResult> {
-    const body: JSONObject = {...params,
-    trainingDataSchema: fromTrainingDataSchema(params["trainingDataSchema"]),
-    externalEventsDetail: fromExternalEventsDetail(params["externalEventsDetail"]),
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      modelId: params["modelId"],
+      modelType: params["modelType"],
+      trainingDataSource: params["trainingDataSource"],
+      trainingDataSchema: fromTrainingDataSchema(params["trainingDataSchema"]),
+      externalEventsDetail: fromExternalEventsDetail(params["externalEventsDetail"]),
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateModelVersion",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "modelId": "s",
-        "modelType": toModelTypeEnum,
+        "modelType": (x: jsonP.JSONValue) => cmnP.readEnum<ModelTypeEnum>(x),
         "modelVersionNumber": "s",
         "status": "s",
       },
@@ -127,14 +139,20 @@ export default class FraudDetector {
   async createRule(
     {abortSignal, ...params}: RequestConfig & CreateRuleRequest,
   ): Promise<CreateRuleResult> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ruleId: params["ruleId"],
+      detectorId: params["detectorId"],
+      description: params["description"],
+      expression: params["expression"],
+      language: params["language"],
+      outcomes: params["outcomes"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "rule": toRule,
@@ -145,14 +163,20 @@ export default class FraudDetector {
   async createVariable(
     {abortSignal, ...params}: RequestConfig & CreateVariableRequest,
   ): Promise<CreateVariableResult> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      dataType: params["dataType"],
+      dataSource: params["dataSource"],
+      defaultValue: params["defaultValue"],
+      description: params["description"],
+      variableType: params["variableType"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVariable",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -161,13 +185,14 @@ export default class FraudDetector {
   async deleteDetector(
     {abortSignal, ...params}: RequestConfig & DeleteDetectorRequest,
   ): Promise<DeleteDetectorResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      detectorId: params["detectorId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDetector",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -176,13 +201,15 @@ export default class FraudDetector {
   async deleteDetectorVersion(
     {abortSignal, ...params}: RequestConfig & DeleteDetectorVersionRequest,
   ): Promise<DeleteDetectorVersionResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      detectorId: params["detectorId"],
+      detectorVersionId: params["detectorVersionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDetectorVersion",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -191,13 +218,15 @@ export default class FraudDetector {
   async deleteEvent(
     {abortSignal, ...params}: RequestConfig & DeleteEventRequest,
   ): Promise<DeleteEventResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      eventId: params["eventId"],
+      eventTypeName: params["eventTypeName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEvent",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -206,14 +235,14 @@ export default class FraudDetector {
   async deleteRule(
     {abortSignal, ...params}: RequestConfig & DeleteRuleRequest,
   ): Promise<DeleteRuleResult> {
-    const body: JSONObject = {...params,
-    rule: fromRule(params["rule"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      rule: fromRule(params["rule"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -222,13 +251,16 @@ export default class FraudDetector {
   async describeDetector(
     {abortSignal, ...params}: RequestConfig & DescribeDetectorRequest,
   ): Promise<DescribeDetectorResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      detectorId: params["detectorId"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDetector",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "detectorId": "s",
@@ -242,13 +274,18 @@ export default class FraudDetector {
   async describeModelVersions(
     {abortSignal, ...params}: RequestConfig & DescribeModelVersionsRequest = {},
   ): Promise<DescribeModelVersionsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      modelId: params["modelId"],
+      modelVersionNumber: params["modelVersionNumber"],
+      modelType: params["modelType"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeModelVersions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "modelVersionDetails": [toModelVersionDetail],
@@ -260,13 +297,15 @@ export default class FraudDetector {
   async getDetectorVersion(
     {abortSignal, ...params}: RequestConfig & GetDetectorVersionRequest,
   ): Promise<GetDetectorVersionResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      detectorId: params["detectorId"],
+      detectorVersionId: params["detectorVersionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDetectorVersion",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "detectorId": "s",
@@ -275,10 +314,10 @@ export default class FraudDetector {
         "externalModelEndpoints": ["s"],
         "modelVersions": [toModelVersion],
         "rules": [toRule],
-        "status": toDetectorVersionStatus,
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<DetectorVersionStatus>(x),
         "lastUpdatedTime": "s",
         "createdTime": "s",
-        "ruleExecutionMode": toRuleExecutionMode,
+        "ruleExecutionMode": (x: jsonP.JSONValue) => cmnP.readEnum<RuleExecutionMode>(x),
         "arn": "s",
       },
     }, await resp.json());
@@ -287,13 +326,16 @@ export default class FraudDetector {
   async getDetectors(
     {abortSignal, ...params}: RequestConfig & GetDetectorsRequest = {},
   ): Promise<GetDetectorsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      detectorId: params["detectorId"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDetectors",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "detectors": [toDetector],
@@ -305,13 +347,16 @@ export default class FraudDetector {
   async getEntityTypes(
     {abortSignal, ...params}: RequestConfig & GetEntityTypesRequest = {},
   ): Promise<GetEntityTypesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEntityTypes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "entityTypes": [toEntityType],
@@ -323,15 +368,21 @@ export default class FraudDetector {
   async getEventPrediction(
     {abortSignal, ...params}: RequestConfig & GetEventPredictionRequest,
   ): Promise<GetEventPredictionResult> {
-    const body: JSONObject = {...params,
-    entities: params["entities"]?.map(x => fromEntity(x)),
-    externalModelEndpointDataBlobs: prt.serializeMap(params["externalModelEndpointDataBlobs"], x => fromModelEndpointDataBlob(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      detectorId: params["detectorId"],
+      detectorVersionId: params["detectorVersionId"],
+      eventId: params["eventId"],
+      eventTypeName: params["eventTypeName"],
+      entities: params["entities"]?.map(x => fromEntity(x)),
+      eventTimestamp: params["eventTimestamp"],
+      eventVariables: params["eventVariables"],
+      externalModelEndpointDataBlobs: jsonP.serializeMap(params["externalModelEndpointDataBlobs"], x => fromModelEndpointDataBlob(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEventPrediction",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "modelScores": [toModelScores],
@@ -343,13 +394,16 @@ export default class FraudDetector {
   async getEventTypes(
     {abortSignal, ...params}: RequestConfig & GetEventTypesRequest = {},
   ): Promise<GetEventTypesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEventTypes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "eventTypes": [toEventType],
@@ -361,13 +415,16 @@ export default class FraudDetector {
   async getExternalModels(
     {abortSignal, ...params}: RequestConfig & GetExternalModelsRequest = {},
   ): Promise<GetExternalModelsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      modelEndpoint: params["modelEndpoint"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetExternalModels",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "externalModels": [toExternalModel],
@@ -383,7 +440,7 @@ export default class FraudDetector {
       abortSignal,
       action: "GetKMSEncryptionKey",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "kmsKey": toKMSKey,
@@ -394,13 +451,16 @@ export default class FraudDetector {
   async getLabels(
     {abortSignal, ...params}: RequestConfig & GetLabelsRequest = {},
   ): Promise<GetLabelsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetLabels",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "labels": [toLabel],
@@ -412,19 +472,22 @@ export default class FraudDetector {
   async getModelVersion(
     {abortSignal, ...params}: RequestConfig & GetModelVersionRequest,
   ): Promise<GetModelVersionResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      modelId: params["modelId"],
+      modelType: params["modelType"],
+      modelVersionNumber: params["modelVersionNumber"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetModelVersion",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "modelId": "s",
-        "modelType": toModelTypeEnum,
+        "modelType": (x: jsonP.JSONValue) => cmnP.readEnum<ModelTypeEnum>(x),
         "modelVersionNumber": "s",
-        "trainingDataSource": toTrainingDataSourceEnum,
+        "trainingDataSource": (x: jsonP.JSONValue) => cmnP.readEnum<TrainingDataSourceEnum>(x),
         "trainingDataSchema": toTrainingDataSchema,
         "externalEventsDetail": toExternalEventsDetail,
         "status": "s",
@@ -436,13 +499,17 @@ export default class FraudDetector {
   async getModels(
     {abortSignal, ...params}: RequestConfig & GetModelsRequest = {},
   ): Promise<GetModelsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      modelId: params["modelId"],
+      modelType: params["modelType"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetModels",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "nextToken": "s",
@@ -454,13 +521,16 @@ export default class FraudDetector {
   async getOutcomes(
     {abortSignal, ...params}: RequestConfig & GetOutcomesRequest = {},
   ): Promise<GetOutcomesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetOutcomes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "outcomes": [toOutcome],
@@ -472,13 +542,18 @@ export default class FraudDetector {
   async getRules(
     {abortSignal, ...params}: RequestConfig & GetRulesRequest,
   ): Promise<GetRulesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ruleId: params["ruleId"],
+      detectorId: params["detectorId"],
+      ruleVersion: params["ruleVersion"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRules",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ruleDetails": [toRuleDetail],
@@ -490,13 +565,16 @@ export default class FraudDetector {
   async getVariables(
     {abortSignal, ...params}: RequestConfig & GetVariablesRequest = {},
   ): Promise<GetVariablesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetVariables",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "variables": [toVariable],
@@ -508,13 +586,16 @@ export default class FraudDetector {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceARN: params["resourceARN"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "tags": [toTag],
@@ -526,14 +607,17 @@ export default class FraudDetector {
   async putDetector(
     {abortSignal, ...params}: RequestConfig & PutDetectorRequest,
   ): Promise<PutDetectorResult> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      detectorId: params["detectorId"],
+      description: params["description"],
+      eventTypeName: params["eventTypeName"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutDetector",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -542,14 +626,16 @@ export default class FraudDetector {
   async putEntityType(
     {abortSignal, ...params}: RequestConfig & PutEntityTypeRequest,
   ): Promise<PutEntityTypeResult> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      description: params["description"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutEntityType",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -558,14 +644,19 @@ export default class FraudDetector {
   async putEventType(
     {abortSignal, ...params}: RequestConfig & PutEventTypeRequest,
   ): Promise<PutEventTypeResult> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      description: params["description"],
+      eventVariables: params["eventVariables"],
+      labels: params["labels"],
+      entityTypes: params["entityTypes"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutEventType",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -574,16 +665,20 @@ export default class FraudDetector {
   async putExternalModel(
     {abortSignal, ...params}: RequestConfig & PutExternalModelRequest,
   ): Promise<PutExternalModelResult> {
-    const body: JSONObject = {...params,
-    inputConfiguration: fromModelInputConfiguration(params["inputConfiguration"]),
-    outputConfiguration: fromModelOutputConfiguration(params["outputConfiguration"]),
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      modelEndpoint: params["modelEndpoint"],
+      modelSource: params["modelSource"],
+      invokeModelEndpointRoleArn: params["invokeModelEndpointRoleArn"],
+      inputConfiguration: fromModelInputConfiguration(params["inputConfiguration"]),
+      outputConfiguration: fromModelOutputConfiguration(params["outputConfiguration"]),
+      modelEndpointStatus: params["modelEndpointStatus"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutExternalModel",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -592,13 +687,14 @@ export default class FraudDetector {
   async putKMSEncryptionKey(
     {abortSignal, ...params}: RequestConfig & PutKMSEncryptionKeyRequest,
   ): Promise<PutKMSEncryptionKeyResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      kmsEncryptionKeyArn: params["kmsEncryptionKeyArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutKMSEncryptionKey",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -607,14 +703,16 @@ export default class FraudDetector {
   async putLabel(
     {abortSignal, ...params}: RequestConfig & PutLabelRequest,
   ): Promise<PutLabelResult> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      description: params["description"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutLabel",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -623,14 +721,16 @@ export default class FraudDetector {
   async putOutcome(
     {abortSignal, ...params}: RequestConfig & PutOutcomeRequest,
   ): Promise<PutOutcomeResult> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      description: params["description"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutOutcome",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -639,14 +739,15 @@ export default class FraudDetector {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResult> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceARN: params["resourceARN"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -655,13 +756,15 @@ export default class FraudDetector {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceARN: params["resourceARN"],
+      tagKeys: params["tagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -670,15 +773,20 @@ export default class FraudDetector {
   async updateDetectorVersion(
     {abortSignal, ...params}: RequestConfig & UpdateDetectorVersionRequest,
   ): Promise<UpdateDetectorVersionResult> {
-    const body: JSONObject = {...params,
-    rules: params["rules"]?.map(x => fromRule(x)),
-    modelVersions: params["modelVersions"]?.map(x => fromModelVersion(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      detectorId: params["detectorId"],
+      detectorVersionId: params["detectorVersionId"],
+      externalModelEndpoints: params["externalModelEndpoints"],
+      rules: params["rules"]?.map(x => fromRule(x)),
+      description: params["description"],
+      modelVersions: params["modelVersions"]?.map(x => fromModelVersion(x)),
+      ruleExecutionMode: params["ruleExecutionMode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDetectorVersion",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -687,13 +795,16 @@ export default class FraudDetector {
   async updateDetectorVersionMetadata(
     {abortSignal, ...params}: RequestConfig & UpdateDetectorVersionMetadataRequest,
   ): Promise<UpdateDetectorVersionMetadataResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      detectorId: params["detectorId"],
+      detectorVersionId: params["detectorVersionId"],
+      description: params["description"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDetectorVersionMetadata",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -702,13 +813,16 @@ export default class FraudDetector {
   async updateDetectorVersionStatus(
     {abortSignal, ...params}: RequestConfig & UpdateDetectorVersionStatusRequest,
   ): Promise<UpdateDetectorVersionStatusResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      detectorId: params["detectorId"],
+      detectorVersionId: params["detectorVersionId"],
+      status: params["status"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDetectorVersionStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -717,13 +831,16 @@ export default class FraudDetector {
   async updateModel(
     {abortSignal, ...params}: RequestConfig & UpdateModelRequest,
   ): Promise<UpdateModelResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      modelId: params["modelId"],
+      modelType: params["modelType"],
+      description: params["description"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateModel",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -732,19 +849,22 @@ export default class FraudDetector {
   async updateModelVersion(
     {abortSignal, ...params}: RequestConfig & UpdateModelVersionRequest,
   ): Promise<UpdateModelVersionResult> {
-    const body: JSONObject = {...params,
-    externalEventsDetail: fromExternalEventsDetail(params["externalEventsDetail"]),
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      modelId: params["modelId"],
+      modelType: params["modelType"],
+      majorVersionNumber: params["majorVersionNumber"],
+      externalEventsDetail: fromExternalEventsDetail(params["externalEventsDetail"]),
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateModelVersion",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "modelId": "s",
-        "modelType": toModelTypeEnum,
+        "modelType": (x: jsonP.JSONValue) => cmnP.readEnum<ModelTypeEnum>(x),
         "modelVersionNumber": "s",
         "status": "s",
       },
@@ -754,13 +874,17 @@ export default class FraudDetector {
   async updateModelVersionStatus(
     {abortSignal, ...params}: RequestConfig & UpdateModelVersionStatusRequest,
   ): Promise<UpdateModelVersionStatusResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      modelId: params["modelId"],
+      modelType: params["modelType"],
+      modelVersionNumber: params["modelVersionNumber"],
+      status: params["status"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateModelVersionStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -769,14 +893,15 @@ export default class FraudDetector {
   async updateRuleMetadata(
     {abortSignal, ...params}: RequestConfig & UpdateRuleMetadataRequest,
   ): Promise<UpdateRuleMetadataResult> {
-    const body: JSONObject = {...params,
-    rule: fromRule(params["rule"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      rule: fromRule(params["rule"]),
+      description: params["description"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRuleMetadata",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -785,15 +910,19 @@ export default class FraudDetector {
   async updateRuleVersion(
     {abortSignal, ...params}: RequestConfig & UpdateRuleVersionRequest,
   ): Promise<UpdateRuleVersionResult> {
-    const body: JSONObject = {...params,
-    rule: fromRule(params["rule"]),
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      rule: fromRule(params["rule"]),
+      description: params["description"],
+      expression: params["expression"],
+      language: params["language"],
+      outcomes: params["outcomes"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRuleVersion",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "rule": toRule,
@@ -804,13 +933,17 @@ export default class FraudDetector {
   async updateVariable(
     {abortSignal, ...params}: RequestConfig & UpdateVariableRequest,
   ): Promise<UpdateVariableResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      defaultValue: params["defaultValue"],
+      description: params["description"],
+      variableType: params["variableType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateVariable",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -947,8 +1080,8 @@ export interface GetEventPredictionRequest {
   eventTypeName: string;
   entities: Entity[];
   eventTimestamp: string;
-  eventVariables: { [key: string]: string };
-  externalModelEndpointDataBlobs?: { [key: string]: ModelEndpointDataBlob } | null;
+  eventVariables: { [key: string]: string | null | undefined };
+  externalModelEndpointDataBlobs?: { [key: string]: ModelEndpointDataBlob | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1410,9 +1543,15 @@ export interface VariableEntry {
   description?: string | null;
   variableType?: string | null;
 }
-function fromVariableEntry(input?: VariableEntry | null): JSONValue {
+function fromVariableEntry(input?: VariableEntry | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    dataType: input["dataType"],
+    dataSource: input["dataSource"],
+    defaultValue: input["defaultValue"],
+    description: input["description"],
+    variableType: input["variableType"],
   }
 }
 
@@ -1421,13 +1560,15 @@ export interface Tag {
   key: string;
   value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    key: input["key"],
+    value: input["value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "key": "s",
       "value": "s",
@@ -1442,13 +1583,16 @@ export interface Rule {
   ruleId: string;
   ruleVersion: string;
 }
-function fromRule(input?: Rule | null): JSONValue {
+function fromRule(input?: Rule | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    detectorId: input["detectorId"],
+    ruleId: input["ruleId"],
+    ruleVersion: input["ruleVersion"],
   }
 }
-function toRule(root: JSONValue): Rule {
-  return prt.readObj({
+function toRule(root: jsonP.JSONValue): Rule {
+  return jsonP.readObj({
     required: {
       "detectorId": "s",
       "ruleId": "s",
@@ -1465,16 +1609,20 @@ export interface ModelVersion {
   modelVersionNumber: string;
   arn?: string | null;
 }
-function fromModelVersion(input?: ModelVersion | null): JSONValue {
+function fromModelVersion(input?: ModelVersion | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    modelId: input["modelId"],
+    modelType: input["modelType"],
+    modelVersionNumber: input["modelVersionNumber"],
+    arn: input["arn"],
   }
 }
-function toModelVersion(root: JSONValue): ModelVersion {
-  return prt.readObj({
+function toModelVersion(root: jsonP.JSONValue): ModelVersion {
+  return jsonP.readObj({
     required: {
       "modelId": "s",
-      "modelType": toModelTypeEnum,
+      "modelType": (x: jsonP.JSONValue) => cmnP.readEnum<ModelTypeEnum>(x),
       "modelVersionNumber": "s",
     },
     optional: {
@@ -1486,51 +1634,33 @@ function toModelVersion(root: JSONValue): ModelVersion {
 // refs: 17 - tags: input, named, enum, output
 export type ModelTypeEnum =
 | "ONLINE_FRAUD_INSIGHTS"
-;
-
-function toModelTypeEnum(root: JSONValue): ModelTypeEnum | null {
-  return ( false
-    || root == "ONLINE_FRAUD_INSIGHTS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type RuleExecutionMode =
 | "ALL_MATCHED"
 | "FIRST_MATCHED"
-;
-
-function toRuleExecutionMode(root: JSONValue): RuleExecutionMode | null {
-  return ( false
-    || root == "ALL_MATCHED"
-    || root == "FIRST_MATCHED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type TrainingDataSourceEnum =
 | "EXTERNAL_EVENTS"
-;
-
-function toTrainingDataSourceEnum(root: JSONValue): TrainingDataSourceEnum | null {
-  return ( false
-    || root == "EXTERNAL_EVENTS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface TrainingDataSchema {
   modelVariables: string[];
   labelSchema: LabelSchema;
 }
-function fromTrainingDataSchema(input?: TrainingDataSchema | null): JSONValue {
+function fromTrainingDataSchema(input?: TrainingDataSchema | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    modelVariables: input["modelVariables"],
     labelSchema: fromLabelSchema(input["labelSchema"]),
   }
 }
-function toTrainingDataSchema(root: JSONValue): TrainingDataSchema {
-  return prt.readObj({
+function toTrainingDataSchema(root: jsonP.JSONValue): TrainingDataSchema {
+  return jsonP.readObj({
     required: {
       "modelVariables": ["s"],
       "labelSchema": toLabelSchema,
@@ -1541,17 +1671,18 @@ function toTrainingDataSchema(root: JSONValue): TrainingDataSchema {
 
 // refs: 3 - tags: input, named, interface, output
 export interface LabelSchema {
-  labelMapper: { [key: string]: string[] };
+  labelMapper: { [key: string]: string[] | null | undefined };
 }
-function fromLabelSchema(input?: LabelSchema | null): JSONValue {
+function fromLabelSchema(input?: LabelSchema | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    labelMapper: input["labelMapper"],
   }
 }
-function toLabelSchema(root: JSONValue): LabelSchema {
-  return prt.readObj({
+function toLabelSchema(root: jsonP.JSONValue): LabelSchema {
+  return jsonP.readObj({
     required: {
-      "labelMapper": x => prt.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+      "labelMapper": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
     },
     optional: {},
   }, root);
@@ -1562,13 +1693,15 @@ export interface ExternalEventsDetail {
   dataLocation: string;
   dataAccessRoleArn: string;
 }
-function fromExternalEventsDetail(input?: ExternalEventsDetail | null): JSONValue {
+function fromExternalEventsDetail(input?: ExternalEventsDetail | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    dataLocation: input["dataLocation"],
+    dataAccessRoleArn: input["dataAccessRoleArn"],
   }
 }
-function toExternalEventsDetail(root: JSONValue): ExternalEventsDetail {
-  return prt.readObj({
+function toExternalEventsDetail(root: jsonP.JSONValue): ExternalEventsDetail {
+  return jsonP.readObj({
     required: {
       "dataLocation": "s",
       "dataAccessRoleArn": "s",
@@ -1580,13 +1713,7 @@ function toExternalEventsDetail(root: JSONValue): ExternalEventsDetail {
 // refs: 3 - tags: input, named, enum, output
 export type Language =
 | "DETECTORPL"
-;
-
-function toLanguage(root: JSONValue): Language | null {
-  return ( false
-    || root == "DETECTORPL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type DataType =
@@ -1594,40 +1721,25 @@ export type DataType =
 | "INTEGER"
 | "FLOAT"
 | "BOOLEAN"
-;
-
-function toDataType(root: JSONValue): DataType | null {
-  return ( false
-    || root == "STRING"
-    || root == "INTEGER"
-    || root == "FLOAT"
-    || root == "BOOLEAN"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type DataSource =
 | "EVENT"
 | "MODEL_SCORE"
 | "EXTERNAL_MODEL_SCORE"
-;
-
-function toDataSource(root: JSONValue): DataSource | null {
-  return ( false
-    || root == "EVENT"
-    || root == "MODEL_SCORE"
-    || root == "EXTERNAL_MODEL_SCORE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface Entity {
   entityType: string;
   entityId: string;
 }
-function fromEntity(input?: Entity | null): JSONValue {
+function fromEntity(input?: Entity | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    entityType: input["entityType"],
+    entityId: input["entityId"],
   }
 }
 
@@ -1636,23 +1748,18 @@ export interface ModelEndpointDataBlob {
   byteBuffer?: Uint8Array | string | null;
   contentType?: string | null;
 }
-function fromModelEndpointDataBlob(input?: ModelEndpointDataBlob | null): JSONValue {
+function fromModelEndpointDataBlob(input?: ModelEndpointDataBlob | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    byteBuffer: prt.serializeBlob(input["byteBuffer"]),
+  return {
+    byteBuffer: jsonP.serializeBlob(input["byteBuffer"]),
+    contentType: input["contentType"],
   }
 }
 
 // refs: 2 - tags: input, named, enum, output
 export type ModelSource =
 | "SAGEMAKER"
-;
-
-function toModelSource(root: JSONValue): ModelSource | null {
-  return ( false
-    || root == "SAGEMAKER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface ModelInputConfiguration {
@@ -1662,19 +1769,24 @@ export interface ModelInputConfiguration {
   jsonInputTemplate?: string | null;
   csvInputTemplate?: string | null;
 }
-function fromModelInputConfiguration(input?: ModelInputConfiguration | null): JSONValue {
+function fromModelInputConfiguration(input?: ModelInputConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    eventTypeName: input["eventTypeName"],
+    format: input["format"],
+    useEventVariables: input["useEventVariables"],
+    jsonInputTemplate: input["jsonInputTemplate"],
+    csvInputTemplate: input["csvInputTemplate"],
   }
 }
-function toModelInputConfiguration(root: JSONValue): ModelInputConfiguration {
-  return prt.readObj({
+function toModelInputConfiguration(root: jsonP.JSONValue): ModelInputConfiguration {
+  return jsonP.readObj({
     required: {
       "useEventVariables": "b",
     },
     optional: {
       "eventTypeName": "s",
-      "format": toModelInputDataFormat,
+      "format": (x: jsonP.JSONValue) => cmnP.readEnum<ModelInputDataFormat>(x),
       "jsonInputTemplate": "s",
       "csvInputTemplate": "s",
     },
@@ -1685,34 +1797,30 @@ function toModelInputConfiguration(root: JSONValue): ModelInputConfiguration {
 export type ModelInputDataFormat =
 | "TEXT_CSV"
 | "APPLICATION_JSON"
-;
-
-function toModelInputDataFormat(root: JSONValue): ModelInputDataFormat | null {
-  return ( false
-    || root == "TEXT_CSV"
-    || root == "APPLICATION_JSON"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface ModelOutputConfiguration {
   format: ModelOutputDataFormat;
-  jsonKeyToVariableMap?: { [key: string]: string } | null;
-  csvIndexToVariableMap?: { [key: string]: string } | null;
+  jsonKeyToVariableMap?: { [key: string]: string | null | undefined } | null;
+  csvIndexToVariableMap?: { [key: string]: string | null | undefined } | null;
 }
-function fromModelOutputConfiguration(input?: ModelOutputConfiguration | null): JSONValue {
+function fromModelOutputConfiguration(input?: ModelOutputConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    format: input["format"],
+    jsonKeyToVariableMap: input["jsonKeyToVariableMap"],
+    csvIndexToVariableMap: input["csvIndexToVariableMap"],
   }
 }
-function toModelOutputConfiguration(root: JSONValue): ModelOutputConfiguration {
-  return prt.readObj({
+function toModelOutputConfiguration(root: jsonP.JSONValue): ModelOutputConfiguration {
+  return jsonP.readObj({
     required: {
-      "format": toModelOutputDataFormat,
+      "format": (x: jsonP.JSONValue) => cmnP.readEnum<ModelOutputDataFormat>(x),
     },
     optional: {
-      "jsonKeyToVariableMap": x => prt.readMap(String, String, x),
-      "csvIndexToVariableMap": x => prt.readMap(String, String, x),
+      "jsonKeyToVariableMap": x => jsonP.readMap(String, String, x),
+      "csvIndexToVariableMap": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -1721,49 +1829,26 @@ function toModelOutputConfiguration(root: JSONValue): ModelOutputConfiguration {
 export type ModelOutputDataFormat =
 | "TEXT_CSV"
 | "APPLICATION_JSONLINES"
-;
-
-function toModelOutputDataFormat(root: JSONValue): ModelOutputDataFormat | null {
-  return ( false
-    || root == "TEXT_CSV"
-    || root == "APPLICATION_JSONLINES"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type ModelEndpointStatus =
 | "ASSOCIATED"
 | "DISSOCIATED"
-;
-
-function toModelEndpointStatus(root: JSONValue): ModelEndpointStatus | null {
-  return ( false
-    || root == "ASSOCIATED"
-    || root == "DISSOCIATED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type DetectorVersionStatus =
 | "DRAFT"
 | "ACTIVE"
 | "INACTIVE"
-;
-
-function toDetectorVersionStatus(root: JSONValue): DetectorVersionStatus | null {
-  return ( false
-    || root == "DRAFT"
-    || root == "ACTIVE"
-    || root == "INACTIVE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ModelVersionStatus =
 | "ACTIVE"
 | "INACTIVE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface BatchCreateVariableError {
@@ -1771,8 +1856,8 @@ export interface BatchCreateVariableError {
   code?: number | null;
   message?: string | null;
 }
-function toBatchCreateVariableError(root: JSONValue): BatchCreateVariableError {
-  return prt.readObj({
+function toBatchCreateVariableError(root: jsonP.JSONValue): BatchCreateVariableError {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1794,13 +1879,13 @@ export interface Variable {
   createdTime?: string | null;
   arn?: string | null;
 }
-function toVariable(root: JSONValue): Variable {
-  return prt.readObj({
+function toVariable(root: jsonP.JSONValue): Variable {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
-      "dataType": toDataType,
-      "dataSource": toDataSource,
+      "dataType": (x: jsonP.JSONValue) => cmnP.readEnum<DataType>(x),
+      "dataSource": (x: jsonP.JSONValue) => cmnP.readEnum<DataSource>(x),
       "defaultValue": "s",
       "description": "s",
       "variableType": "s",
@@ -1817,8 +1902,8 @@ export interface BatchGetVariableError {
   code?: number | null;
   message?: string | null;
 }
-function toBatchGetVariableError(root: JSONValue): BatchGetVariableError {
-  return prt.readObj({
+function toBatchGetVariableError(root: jsonP.JSONValue): BatchGetVariableError {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1835,12 +1920,12 @@ export interface DetectorVersionSummary {
   description?: string | null;
   lastUpdatedTime?: string | null;
 }
-function toDetectorVersionSummary(root: JSONValue): DetectorVersionSummary {
-  return prt.readObj({
+function toDetectorVersionSummary(root: jsonP.JSONValue): DetectorVersionSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "detectorVersionId": "s",
-      "status": toDetectorVersionStatus,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<DetectorVersionStatus>(x),
       "description": "s",
       "lastUpdatedTime": "s",
     },
@@ -1861,15 +1946,15 @@ export interface ModelVersionDetail {
   createdTime?: string | null;
   arn?: string | null;
 }
-function toModelVersionDetail(root: JSONValue): ModelVersionDetail {
-  return prt.readObj({
+function toModelVersionDetail(root: jsonP.JSONValue): ModelVersionDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "modelId": "s",
-      "modelType": toModelTypeEnum,
+      "modelType": (x: jsonP.JSONValue) => cmnP.readEnum<ModelTypeEnum>(x),
       "modelVersionNumber": "s",
       "status": "s",
-      "trainingDataSource": toTrainingDataSourceEnum,
+      "trainingDataSource": (x: jsonP.JSONValue) => cmnP.readEnum<TrainingDataSourceEnum>(x),
       "trainingDataSchema": toTrainingDataSchema,
       "externalEventsDetail": toExternalEventsDetail,
       "trainingResult": toTrainingResult,
@@ -1885,8 +1970,8 @@ export interface TrainingResult {
   dataValidationMetrics?: DataValidationMetrics | null;
   trainingMetrics?: TrainingMetrics | null;
 }
-function toTrainingResult(root: JSONValue): TrainingResult {
-  return prt.readObj({
+function toTrainingResult(root: jsonP.JSONValue): TrainingResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "dataValidationMetrics": toDataValidationMetrics,
@@ -1900,8 +1985,8 @@ export interface DataValidationMetrics {
   fileLevelMessages?: FileValidationMessage[] | null;
   fieldLevelMessages?: FieldValidationMessage[] | null;
 }
-function toDataValidationMetrics(root: JSONValue): DataValidationMetrics {
-  return prt.readObj({
+function toDataValidationMetrics(root: jsonP.JSONValue): DataValidationMetrics {
+  return jsonP.readObj({
     required: {},
     optional: {
       "fileLevelMessages": [toFileValidationMessage],
@@ -1916,8 +2001,8 @@ export interface FileValidationMessage {
   content?: string | null;
   type?: string | null;
 }
-function toFileValidationMessage(root: JSONValue): FileValidationMessage {
-  return prt.readObj({
+function toFileValidationMessage(root: jsonP.JSONValue): FileValidationMessage {
+  return jsonP.readObj({
     required: {},
     optional: {
       "title": "s",
@@ -1935,8 +2020,8 @@ export interface FieldValidationMessage {
   content?: string | null;
   type?: string | null;
 }
-function toFieldValidationMessage(root: JSONValue): FieldValidationMessage {
-  return prt.readObj({
+function toFieldValidationMessage(root: jsonP.JSONValue): FieldValidationMessage {
+  return jsonP.readObj({
     required: {},
     optional: {
       "fieldName": "s",
@@ -1953,8 +2038,8 @@ export interface TrainingMetrics {
   auc?: number | null;
   metricDataPoints?: MetricDataPoint[] | null;
 }
-function toTrainingMetrics(root: JSONValue): TrainingMetrics {
-  return prt.readObj({
+function toTrainingMetrics(root: jsonP.JSONValue): TrainingMetrics {
+  return jsonP.readObj({
     required: {},
     optional: {
       "auc": "n",
@@ -1970,8 +2055,8 @@ export interface MetricDataPoint {
   tpr?: number | null;
   threshold?: number | null;
 }
-function toMetricDataPoint(root: JSONValue): MetricDataPoint {
-  return prt.readObj({
+function toMetricDataPoint(root: jsonP.JSONValue): MetricDataPoint {
+  return jsonP.readObj({
     required: {},
     optional: {
       "fpr": "n",
@@ -1991,8 +2076,8 @@ export interface Detector {
   createdTime?: string | null;
   arn?: string | null;
 }
-function toDetector(root: JSONValue): Detector {
-  return prt.readObj({
+function toDetector(root: jsonP.JSONValue): Detector {
+  return jsonP.readObj({
     required: {},
     optional: {
       "detectorId": "s",
@@ -2013,8 +2098,8 @@ export interface EntityType {
   createdTime?: string | null;
   arn?: string | null;
 }
-function toEntityType(root: JSONValue): EntityType {
-  return prt.readObj({
+function toEntityType(root: jsonP.JSONValue): EntityType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -2029,14 +2114,14 @@ function toEntityType(root: JSONValue): EntityType {
 // refs: 1 - tags: output, named, interface
 export interface ModelScores {
   modelVersion?: ModelVersion | null;
-  scores?: { [key: string]: number } | null;
+  scores?: { [key: string]: number | null | undefined } | null;
 }
-function toModelScores(root: JSONValue): ModelScores {
-  return prt.readObj({
+function toModelScores(root: jsonP.JSONValue): ModelScores {
+  return jsonP.readObj({
     required: {},
     optional: {
       "modelVersion": toModelVersion,
-      "scores": x => prt.readMap(String, Number, x),
+      "scores": x => jsonP.readMap(String, Number, x),
     },
   }, root);
 }
@@ -2046,8 +2131,8 @@ export interface RuleResult {
   ruleId?: string | null;
   outcomes?: string[] | null;
 }
-function toRuleResult(root: JSONValue): RuleResult {
-  return prt.readObj({
+function toRuleResult(root: jsonP.JSONValue): RuleResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ruleId": "s",
@@ -2067,8 +2152,8 @@ export interface EventType {
   createdTime?: string | null;
   arn?: string | null;
 }
-function toEventType(root: JSONValue): EventType {
-  return prt.readObj({
+function toEventType(root: jsonP.JSONValue): EventType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -2095,16 +2180,16 @@ export interface ExternalModel {
   createdTime?: string | null;
   arn?: string | null;
 }
-function toExternalModel(root: JSONValue): ExternalModel {
-  return prt.readObj({
+function toExternalModel(root: jsonP.JSONValue): ExternalModel {
+  return jsonP.readObj({
     required: {},
     optional: {
       "modelEndpoint": "s",
-      "modelSource": toModelSource,
+      "modelSource": (x: jsonP.JSONValue) => cmnP.readEnum<ModelSource>(x),
       "invokeModelEndpointRoleArn": "s",
       "inputConfiguration": toModelInputConfiguration,
       "outputConfiguration": toModelOutputConfiguration,
-      "modelEndpointStatus": toModelEndpointStatus,
+      "modelEndpointStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ModelEndpointStatus>(x),
       "lastUpdatedTime": "s",
       "createdTime": "s",
       "arn": "s",
@@ -2116,8 +2201,8 @@ function toExternalModel(root: JSONValue): ExternalModel {
 export interface KMSKey {
   kmsEncryptionKeyArn?: string | null;
 }
-function toKMSKey(root: JSONValue): KMSKey {
-  return prt.readObj({
+function toKMSKey(root: jsonP.JSONValue): KMSKey {
+  return jsonP.readObj({
     required: {},
     optional: {
       "kmsEncryptionKeyArn": "s",
@@ -2133,8 +2218,8 @@ export interface Label {
   createdTime?: string | null;
   arn?: string | null;
 }
-function toLabel(root: JSONValue): Label {
-  return prt.readObj({
+function toLabel(root: jsonP.JSONValue): Label {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -2156,12 +2241,12 @@ export interface Model {
   lastUpdatedTime?: string | null;
   arn?: string | null;
 }
-function toModel(root: JSONValue): Model {
-  return prt.readObj({
+function toModel(root: jsonP.JSONValue): Model {
+  return jsonP.readObj({
     required: {},
     optional: {
       "modelId": "s",
-      "modelType": toModelTypeEnum,
+      "modelType": (x: jsonP.JSONValue) => cmnP.readEnum<ModelTypeEnum>(x),
       "description": "s",
       "eventTypeName": "s",
       "createdTime": "s",
@@ -2179,8 +2264,8 @@ export interface Outcome {
   createdTime?: string | null;
   arn?: string | null;
 }
-function toOutcome(root: JSONValue): Outcome {
-  return prt.readObj({
+function toOutcome(root: jsonP.JSONValue): Outcome {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -2205,8 +2290,8 @@ export interface RuleDetail {
   createdTime?: string | null;
   arn?: string | null;
 }
-function toRuleDetail(root: JSONValue): RuleDetail {
-  return prt.readObj({
+function toRuleDetail(root: jsonP.JSONValue): RuleDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ruleId": "s",
@@ -2214,7 +2299,7 @@ function toRuleDetail(root: JSONValue): RuleDetail {
       "detectorId": "s",
       "ruleVersion": "s",
       "expression": "s",
-      "language": toLanguage,
+      "language": (x: jsonP.JSONValue) => cmnP.readEnum<Language>(x),
       "outcomes": ["s"],
       "lastUpdatedTime": "s",
       "createdTime": "s",

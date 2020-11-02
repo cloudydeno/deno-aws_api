@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class ApplicationAutoScaling {
   #client: ServiceClient;
@@ -30,13 +30,17 @@ export default class ApplicationAutoScaling {
   async deleteScalingPolicy(
     {abortSignal, ...params}: RequestConfig & DeleteScalingPolicyRequest,
   ): Promise<DeleteScalingPolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PolicyName: params["PolicyName"],
+      ServiceNamespace: params["ServiceNamespace"],
+      ResourceId: params["ResourceId"],
+      ScalableDimension: params["ScalableDimension"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteScalingPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -45,13 +49,17 @@ export default class ApplicationAutoScaling {
   async deleteScheduledAction(
     {abortSignal, ...params}: RequestConfig & DeleteScheduledActionRequest,
   ): Promise<DeleteScheduledActionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceNamespace: params["ServiceNamespace"],
+      ScheduledActionName: params["ScheduledActionName"],
+      ResourceId: params["ResourceId"],
+      ScalableDimension: params["ScalableDimension"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteScheduledAction",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -60,13 +68,16 @@ export default class ApplicationAutoScaling {
   async deregisterScalableTarget(
     {abortSignal, ...params}: RequestConfig & DeregisterScalableTargetRequest,
   ): Promise<DeregisterScalableTargetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceNamespace: params["ServiceNamespace"],
+      ResourceId: params["ResourceId"],
+      ScalableDimension: params["ScalableDimension"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterScalableTarget",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -75,13 +86,18 @@ export default class ApplicationAutoScaling {
   async describeScalableTargets(
     {abortSignal, ...params}: RequestConfig & DescribeScalableTargetsRequest,
   ): Promise<DescribeScalableTargetsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceNamespace: params["ServiceNamespace"],
+      ResourceIds: params["ResourceIds"],
+      ScalableDimension: params["ScalableDimension"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeScalableTargets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ScalableTargets": [toScalableTarget],
@@ -93,13 +109,18 @@ export default class ApplicationAutoScaling {
   async describeScalingActivities(
     {abortSignal, ...params}: RequestConfig & DescribeScalingActivitiesRequest,
   ): Promise<DescribeScalingActivitiesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceNamespace: params["ServiceNamespace"],
+      ResourceId: params["ResourceId"],
+      ScalableDimension: params["ScalableDimension"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeScalingActivities",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ScalingActivities": [toScalingActivity],
@@ -111,13 +132,19 @@ export default class ApplicationAutoScaling {
   async describeScalingPolicies(
     {abortSignal, ...params}: RequestConfig & DescribeScalingPoliciesRequest,
   ): Promise<DescribeScalingPoliciesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PolicyNames: params["PolicyNames"],
+      ServiceNamespace: params["ServiceNamespace"],
+      ResourceId: params["ResourceId"],
+      ScalableDimension: params["ScalableDimension"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeScalingPolicies",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ScalingPolicies": [toScalingPolicy],
@@ -129,13 +156,19 @@ export default class ApplicationAutoScaling {
   async describeScheduledActions(
     {abortSignal, ...params}: RequestConfig & DescribeScheduledActionsRequest,
   ): Promise<DescribeScheduledActionsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ScheduledActionNames: params["ScheduledActionNames"],
+      ServiceNamespace: params["ServiceNamespace"],
+      ResourceId: params["ResourceId"],
+      ScalableDimension: params["ScalableDimension"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeScheduledActions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ScheduledActions": [toScheduledAction],
@@ -147,15 +180,20 @@ export default class ApplicationAutoScaling {
   async putScalingPolicy(
     {abortSignal, ...params}: RequestConfig & PutScalingPolicyRequest,
   ): Promise<PutScalingPolicyResponse> {
-    const body: JSONObject = {...params,
-    StepScalingPolicyConfiguration: fromStepScalingPolicyConfiguration(params["StepScalingPolicyConfiguration"]),
-    TargetTrackingScalingPolicyConfiguration: fromTargetTrackingScalingPolicyConfiguration(params["TargetTrackingScalingPolicyConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      PolicyName: params["PolicyName"],
+      ServiceNamespace: params["ServiceNamespace"],
+      ResourceId: params["ResourceId"],
+      ScalableDimension: params["ScalableDimension"],
+      PolicyType: params["PolicyType"],
+      StepScalingPolicyConfiguration: fromStepScalingPolicyConfiguration(params["StepScalingPolicyConfiguration"]),
+      TargetTrackingScalingPolicyConfiguration: fromTargetTrackingScalingPolicyConfiguration(params["TargetTrackingScalingPolicyConfiguration"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutScalingPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "PolicyARN": "s",
       },
@@ -168,16 +206,21 @@ export default class ApplicationAutoScaling {
   async putScheduledAction(
     {abortSignal, ...params}: RequestConfig & PutScheduledActionRequest,
   ): Promise<PutScheduledActionResponse> {
-    const body: JSONObject = {...params,
-    StartTime: prt.serializeDate_unixTimestamp(params["StartTime"]),
-    EndTime: prt.serializeDate_unixTimestamp(params["EndTime"]),
-    ScalableTargetAction: fromScalableTargetAction(params["ScalableTargetAction"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceNamespace: params["ServiceNamespace"],
+      Schedule: params["Schedule"],
+      ScheduledActionName: params["ScheduledActionName"],
+      ResourceId: params["ResourceId"],
+      ScalableDimension: params["ScalableDimension"],
+      StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
+      EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
+      ScalableTargetAction: fromScalableTargetAction(params["ScalableTargetAction"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutScheduledAction",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -186,14 +229,20 @@ export default class ApplicationAutoScaling {
   async registerScalableTarget(
     {abortSignal, ...params}: RequestConfig & RegisterScalableTargetRequest,
   ): Promise<RegisterScalableTargetResponse> {
-    const body: JSONObject = {...params,
-    SuspendedState: fromSuspendedState(params["SuspendedState"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceNamespace: params["ServiceNamespace"],
+      ResourceId: params["ResourceId"],
+      ScalableDimension: params["ScalableDimension"],
+      MinCapacity: params["MinCapacity"],
+      MaxCapacity: params["MaxCapacity"],
+      RoleARN: params["RoleARN"],
+      SuspendedState: fromSuspendedState(params["SuspendedState"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterScalableTarget",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -360,24 +409,7 @@ export type ServiceNamespace =
 | "lambda"
 | "cassandra"
 | "kafka"
-;
-
-function toServiceNamespace(root: JSONValue): ServiceNamespace | null {
-  return ( false
-    || root == "ecs"
-    || root == "elasticmapreduce"
-    || root == "ec2"
-    || root == "appstream"
-    || root == "dynamodb"
-    || root == "rds"
-    || root == "sagemaker"
-    || root == "custom-resource"
-    || root == "comprehend"
-    || root == "lambda"
-    || root == "cassandra"
-    || root == "kafka"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 14 - tags: input, named, enum, output
 export type ScalableDimension =
@@ -398,42 +430,13 @@ export type ScalableDimension =
 | "cassandra:table:ReadCapacityUnits"
 | "cassandra:table:WriteCapacityUnits"
 | "kafka:broker-storage:VolumeSize"
-;
-
-function toScalableDimension(root: JSONValue): ScalableDimension | null {
-  return ( false
-    || root == "ecs:service:DesiredCount"
-    || root == "ec2:spot-fleet-request:TargetCapacity"
-    || root == "elasticmapreduce:instancegroup:InstanceCount"
-    || root == "appstream:fleet:DesiredCapacity"
-    || root == "dynamodb:table:ReadCapacityUnits"
-    || root == "dynamodb:table:WriteCapacityUnits"
-    || root == "dynamodb:index:ReadCapacityUnits"
-    || root == "dynamodb:index:WriteCapacityUnits"
-    || root == "rds:cluster:ReadReplicaCount"
-    || root == "sagemaker:variant:DesiredInstanceCount"
-    || root == "custom-resource:ResourceType:Property"
-    || root == "comprehend:document-classifier-endpoint:DesiredInferenceUnits"
-    || root == "comprehend:entity-recognizer-endpoint:DesiredInferenceUnits"
-    || root == "lambda:function:ProvisionedConcurrency"
-    || root == "cassandra:table:ReadCapacityUnits"
-    || root == "cassandra:table:WriteCapacityUnits"
-    || root == "kafka:broker-storage:VolumeSize"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type PolicyType =
 | "StepScaling"
 | "TargetTrackingScaling"
-;
-
-function toPolicyType(root: JSONValue): PolicyType | null {
-  return ( false
-    || root == "StepScaling"
-    || root == "TargetTrackingScaling"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface StepScalingPolicyConfiguration {
@@ -443,21 +446,25 @@ export interface StepScalingPolicyConfiguration {
   Cooldown?: number | null;
   MetricAggregationType?: MetricAggregationType | null;
 }
-function fromStepScalingPolicyConfiguration(input?: StepScalingPolicyConfiguration | null): JSONValue {
+function fromStepScalingPolicyConfiguration(input?: StepScalingPolicyConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AdjustmentType: input["AdjustmentType"],
     StepAdjustments: input["StepAdjustments"]?.map(x => fromStepAdjustment(x)),
+    MinAdjustmentMagnitude: input["MinAdjustmentMagnitude"],
+    Cooldown: input["Cooldown"],
+    MetricAggregationType: input["MetricAggregationType"],
   }
 }
-function toStepScalingPolicyConfiguration(root: JSONValue): StepScalingPolicyConfiguration {
-  return prt.readObj({
+function toStepScalingPolicyConfiguration(root: jsonP.JSONValue): StepScalingPolicyConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "AdjustmentType": toAdjustmentType,
+      "AdjustmentType": (x: jsonP.JSONValue) => cmnP.readEnum<AdjustmentType>(x),
       "StepAdjustments": [toStepAdjustment],
       "MinAdjustmentMagnitude": "n",
       "Cooldown": "n",
-      "MetricAggregationType": toMetricAggregationType,
+      "MetricAggregationType": (x: jsonP.JSONValue) => cmnP.readEnum<MetricAggregationType>(x),
     },
   }, root);
 }
@@ -467,15 +474,7 @@ export type AdjustmentType =
 | "ChangeInCapacity"
 | "PercentChangeInCapacity"
 | "ExactCapacity"
-;
-
-function toAdjustmentType(root: JSONValue): AdjustmentType | null {
-  return ( false
-    || root == "ChangeInCapacity"
-    || root == "PercentChangeInCapacity"
-    || root == "ExactCapacity"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface StepAdjustment {
@@ -483,13 +482,16 @@ export interface StepAdjustment {
   MetricIntervalUpperBound?: number | null;
   ScalingAdjustment: number;
 }
-function fromStepAdjustment(input?: StepAdjustment | null): JSONValue {
+function fromStepAdjustment(input?: StepAdjustment | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MetricIntervalLowerBound: input["MetricIntervalLowerBound"],
+    MetricIntervalUpperBound: input["MetricIntervalUpperBound"],
+    ScalingAdjustment: input["ScalingAdjustment"],
   }
 }
-function toStepAdjustment(root: JSONValue): StepAdjustment {
-  return prt.readObj({
+function toStepAdjustment(root: jsonP.JSONValue): StepAdjustment {
+  return jsonP.readObj({
     required: {
       "ScalingAdjustment": "n",
     },
@@ -505,15 +507,7 @@ export type MetricAggregationType =
 | "Average"
 | "Minimum"
 | "Maximum"
-;
-
-function toMetricAggregationType(root: JSONValue): MetricAggregationType | null {
-  return ( false
-    || root == "Average"
-    || root == "Minimum"
-    || root == "Maximum"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface TargetTrackingScalingPolicyConfiguration {
@@ -524,15 +518,19 @@ export interface TargetTrackingScalingPolicyConfiguration {
   ScaleInCooldown?: number | null;
   DisableScaleIn?: boolean | null;
 }
-function fromTargetTrackingScalingPolicyConfiguration(input?: TargetTrackingScalingPolicyConfiguration | null): JSONValue {
+function fromTargetTrackingScalingPolicyConfiguration(input?: TargetTrackingScalingPolicyConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    TargetValue: input["TargetValue"],
     PredefinedMetricSpecification: fromPredefinedMetricSpecification(input["PredefinedMetricSpecification"]),
     CustomizedMetricSpecification: fromCustomizedMetricSpecification(input["CustomizedMetricSpecification"]),
+    ScaleOutCooldown: input["ScaleOutCooldown"],
+    ScaleInCooldown: input["ScaleInCooldown"],
+    DisableScaleIn: input["DisableScaleIn"],
   }
 }
-function toTargetTrackingScalingPolicyConfiguration(root: JSONValue): TargetTrackingScalingPolicyConfiguration {
-  return prt.readObj({
+function toTargetTrackingScalingPolicyConfiguration(root: jsonP.JSONValue): TargetTrackingScalingPolicyConfiguration {
+  return jsonP.readObj({
     required: {
       "TargetValue": "n",
     },
@@ -551,15 +549,17 @@ export interface PredefinedMetricSpecification {
   PredefinedMetricType: MetricType;
   ResourceLabel?: string | null;
 }
-function fromPredefinedMetricSpecification(input?: PredefinedMetricSpecification | null): JSONValue {
+function fromPredefinedMetricSpecification(input?: PredefinedMetricSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    PredefinedMetricType: input["PredefinedMetricType"],
+    ResourceLabel: input["ResourceLabel"],
   }
 }
-function toPredefinedMetricSpecification(root: JSONValue): PredefinedMetricSpecification {
-  return prt.readObj({
+function toPredefinedMetricSpecification(root: jsonP.JSONValue): PredefinedMetricSpecification {
+  return jsonP.readObj({
     required: {
-      "PredefinedMetricType": toMetricType,
+      "PredefinedMetricType": (x: jsonP.JSONValue) => cmnP.readEnum<MetricType>(x),
     },
     optional: {
       "ResourceLabel": "s",
@@ -586,29 +586,7 @@ export type MetricType =
 | "CassandraReadCapacityUtilization"
 | "CassandraWriteCapacityUtilization"
 | "KafkaBrokerStorageUtilization"
-;
-
-function toMetricType(root: JSONValue): MetricType | null {
-  return ( false
-    || root == "DynamoDBReadCapacityUtilization"
-    || root == "DynamoDBWriteCapacityUtilization"
-    || root == "ALBRequestCountPerTarget"
-    || root == "RDSReaderAverageCPUUtilization"
-    || root == "RDSReaderAverageDatabaseConnections"
-    || root == "EC2SpotFleetRequestAverageCPUUtilization"
-    || root == "EC2SpotFleetRequestAverageNetworkIn"
-    || root == "EC2SpotFleetRequestAverageNetworkOut"
-    || root == "SageMakerVariantInvocationsPerInstance"
-    || root == "ECSServiceAverageCPUUtilization"
-    || root == "ECSServiceAverageMemoryUtilization"
-    || root == "AppStreamAverageCapacityUtilization"
-    || root == "ComprehendInferenceUtilization"
-    || root == "LambdaProvisionedConcurrencyUtilization"
-    || root == "CassandraReadCapacityUtilization"
-    || root == "CassandraWriteCapacityUtilization"
-    || root == "KafkaBrokerStorageUtilization"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface CustomizedMetricSpecification {
@@ -618,18 +596,22 @@ export interface CustomizedMetricSpecification {
   Statistic: MetricStatistic;
   Unit?: string | null;
 }
-function fromCustomizedMetricSpecification(input?: CustomizedMetricSpecification | null): JSONValue {
+function fromCustomizedMetricSpecification(input?: CustomizedMetricSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MetricName: input["MetricName"],
+    Namespace: input["Namespace"],
     Dimensions: input["Dimensions"]?.map(x => fromMetricDimension(x)),
+    Statistic: input["Statistic"],
+    Unit: input["Unit"],
   }
 }
-function toCustomizedMetricSpecification(root: JSONValue): CustomizedMetricSpecification {
-  return prt.readObj({
+function toCustomizedMetricSpecification(root: jsonP.JSONValue): CustomizedMetricSpecification {
+  return jsonP.readObj({
     required: {
       "MetricName": "s",
       "Namespace": "s",
-      "Statistic": toMetricStatistic,
+      "Statistic": (x: jsonP.JSONValue) => cmnP.readEnum<MetricStatistic>(x),
     },
     optional: {
       "Dimensions": [toMetricDimension],
@@ -643,13 +625,15 @@ export interface MetricDimension {
   Name: string;
   Value: string;
 }
-function fromMetricDimension(input?: MetricDimension | null): JSONValue {
+function fromMetricDimension(input?: MetricDimension | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Value: input["Value"],
   }
 }
-function toMetricDimension(root: JSONValue): MetricDimension {
-  return prt.readObj({
+function toMetricDimension(root: jsonP.JSONValue): MetricDimension {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "Value": "s",
@@ -665,30 +649,22 @@ export type MetricStatistic =
 | "Maximum"
 | "SampleCount"
 | "Sum"
-;
-
-function toMetricStatistic(root: JSONValue): MetricStatistic | null {
-  return ( false
-    || root == "Average"
-    || root == "Minimum"
-    || root == "Maximum"
-    || root == "SampleCount"
-    || root == "Sum"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface ScalableTargetAction {
   MinCapacity?: number | null;
   MaxCapacity?: number | null;
 }
-function fromScalableTargetAction(input?: ScalableTargetAction | null): JSONValue {
+function fromScalableTargetAction(input?: ScalableTargetAction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MinCapacity: input["MinCapacity"],
+    MaxCapacity: input["MaxCapacity"],
   }
 }
-function toScalableTargetAction(root: JSONValue): ScalableTargetAction {
-  return prt.readObj({
+function toScalableTargetAction(root: jsonP.JSONValue): ScalableTargetAction {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MinCapacity": "n",
@@ -703,13 +679,16 @@ export interface SuspendedState {
   DynamicScalingOutSuspended?: boolean | null;
   ScheduledScalingSuspended?: boolean | null;
 }
-function fromSuspendedState(input?: SuspendedState | null): JSONValue {
+function fromSuspendedState(input?: SuspendedState | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DynamicScalingInSuspended: input["DynamicScalingInSuspended"],
+    DynamicScalingOutSuspended: input["DynamicScalingOutSuspended"],
+    ScheduledScalingSuspended: input["ScheduledScalingSuspended"],
   }
 }
-function toSuspendedState(root: JSONValue): SuspendedState {
-  return prt.readObj({
+function toSuspendedState(root: jsonP.JSONValue): SuspendedState {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DynamicScalingInSuspended": "b",
@@ -730,12 +709,12 @@ export interface ScalableTarget {
   CreationTime: Date | number;
   SuspendedState?: SuspendedState | null;
 }
-function toScalableTarget(root: JSONValue): ScalableTarget {
-  return prt.readObj({
+function toScalableTarget(root: jsonP.JSONValue): ScalableTarget {
+  return jsonP.readObj({
     required: {
-      "ServiceNamespace": toServiceNamespace,
+      "ServiceNamespace": (x: jsonP.JSONValue) => cmnP.readEnum<ServiceNamespace>(x),
       "ResourceId": "s",
-      "ScalableDimension": toScalableDimension,
+      "ScalableDimension": (x: jsonP.JSONValue) => cmnP.readEnum<ScalableDimension>(x),
       "MinCapacity": "n",
       "MaxCapacity": "n",
       "RoleARN": "s",
@@ -761,17 +740,17 @@ export interface ScalingActivity {
   StatusMessage?: string | null;
   Details?: string | null;
 }
-function toScalingActivity(root: JSONValue): ScalingActivity {
-  return prt.readObj({
+function toScalingActivity(root: jsonP.JSONValue): ScalingActivity {
+  return jsonP.readObj({
     required: {
       "ActivityId": "s",
-      "ServiceNamespace": toServiceNamespace,
+      "ServiceNamespace": (x: jsonP.JSONValue) => cmnP.readEnum<ServiceNamespace>(x),
       "ResourceId": "s",
-      "ScalableDimension": toScalableDimension,
+      "ScalableDimension": (x: jsonP.JSONValue) => cmnP.readEnum<ScalableDimension>(x),
       "Description": "s",
       "Cause": "s",
       "StartTime": "d",
-      "StatusCode": toScalingActivityStatusCode,
+      "StatusCode": (x: jsonP.JSONValue) => cmnP.readEnum<ScalingActivityStatusCode>(x),
     },
     optional: {
       "EndTime": "d",
@@ -789,17 +768,7 @@ export type ScalingActivityStatusCode =
 | "Overridden"
 | "Unfulfilled"
 | "Failed"
-;
-function toScalingActivityStatusCode(root: JSONValue): ScalingActivityStatusCode | null {
-  return ( false
-    || root == "Pending"
-    || root == "InProgress"
-    || root == "Successful"
-    || root == "Overridden"
-    || root == "Unfulfilled"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ScalingPolicy {
@@ -814,15 +783,15 @@ export interface ScalingPolicy {
   Alarms?: Alarm[] | null;
   CreationTime: Date | number;
 }
-function toScalingPolicy(root: JSONValue): ScalingPolicy {
-  return prt.readObj({
+function toScalingPolicy(root: jsonP.JSONValue): ScalingPolicy {
+  return jsonP.readObj({
     required: {
       "PolicyARN": "s",
       "PolicyName": "s",
-      "ServiceNamespace": toServiceNamespace,
+      "ServiceNamespace": (x: jsonP.JSONValue) => cmnP.readEnum<ServiceNamespace>(x),
       "ResourceId": "s",
-      "ScalableDimension": toScalableDimension,
-      "PolicyType": toPolicyType,
+      "ScalableDimension": (x: jsonP.JSONValue) => cmnP.readEnum<ScalableDimension>(x),
+      "PolicyType": (x: jsonP.JSONValue) => cmnP.readEnum<PolicyType>(x),
       "CreationTime": "d",
     },
     optional: {
@@ -838,8 +807,8 @@ export interface Alarm {
   AlarmName: string;
   AlarmARN: string;
 }
-function toAlarm(root: JSONValue): Alarm {
-  return prt.readObj({
+function toAlarm(root: jsonP.JSONValue): Alarm {
+  return jsonP.readObj({
     required: {
       "AlarmName": "s",
       "AlarmARN": "s",
@@ -861,18 +830,18 @@ export interface ScheduledAction {
   ScalableTargetAction?: ScalableTargetAction | null;
   CreationTime: Date | number;
 }
-function toScheduledAction(root: JSONValue): ScheduledAction {
-  return prt.readObj({
+function toScheduledAction(root: jsonP.JSONValue): ScheduledAction {
+  return jsonP.readObj({
     required: {
       "ScheduledActionName": "s",
       "ScheduledActionARN": "s",
-      "ServiceNamespace": toServiceNamespace,
+      "ServiceNamespace": (x: jsonP.JSONValue) => cmnP.readEnum<ServiceNamespace>(x),
       "Schedule": "s",
       "ResourceId": "s",
       "CreationTime": "d",
     },
     optional: {
-      "ScalableDimension": toScalableDimension,
+      "ScalableDimension": (x: jsonP.JSONValue) => cmnP.readEnum<ScalableDimension>(x),
       "StartTime": "d",
       "EndTime": "d",
       "ScalableTargetAction": toScalableTargetAction,

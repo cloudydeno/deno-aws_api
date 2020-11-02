@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class IoTThingsGraph {
   #client: ServiceClient;
@@ -30,13 +30,16 @@ export default class IoTThingsGraph {
   async associateEntityToThing(
     {abortSignal, ...params}: RequestConfig & AssociateEntityToThingRequest,
   ): Promise<AssociateEntityToThingResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      thingName: params["thingName"],
+      entityId: params["entityId"],
+      namespaceVersion: params["namespaceVersion"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateEntityToThing",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -45,14 +48,15 @@ export default class IoTThingsGraph {
   async createFlowTemplate(
     {abortSignal, ...params}: RequestConfig & CreateFlowTemplateRequest,
   ): Promise<CreateFlowTemplateResponse> {
-    const body: JSONObject = {...params,
-    definition: fromDefinitionDocument(params["definition"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      definition: fromDefinitionDocument(params["definition"]),
+      compatibleNamespaceVersion: params["compatibleNamespaceVersion"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFlowTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "summary": toFlowTemplateSummary,
@@ -63,16 +67,20 @@ export default class IoTThingsGraph {
   async createSystemInstance(
     {abortSignal, ...params}: RequestConfig & CreateSystemInstanceRequest,
   ): Promise<CreateSystemInstanceResponse> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-    definition: fromDefinitionDocument(params["definition"]),
-    metricsConfiguration: fromMetricsConfiguration(params["metricsConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      tags: params["tags"]?.map(x => fromTag(x)),
+      definition: fromDefinitionDocument(params["definition"]),
+      target: params["target"],
+      greengrassGroupName: params["greengrassGroupName"],
+      s3BucketName: params["s3BucketName"],
+      metricsConfiguration: fromMetricsConfiguration(params["metricsConfiguration"]),
+      flowActionsRoleArn: params["flowActionsRoleArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSystemInstance",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "summary": toSystemInstanceSummary,
@@ -83,14 +91,15 @@ export default class IoTThingsGraph {
   async createSystemTemplate(
     {abortSignal, ...params}: RequestConfig & CreateSystemTemplateRequest,
   ): Promise<CreateSystemTemplateResponse> {
-    const body: JSONObject = {...params,
-    definition: fromDefinitionDocument(params["definition"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      definition: fromDefinitionDocument(params["definition"]),
+      compatibleNamespaceVersion: params["compatibleNamespaceVersion"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSystemTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "summary": toSystemTemplateSummary,
@@ -101,13 +110,14 @@ export default class IoTThingsGraph {
   async deleteFlowTemplate(
     {abortSignal, ...params}: RequestConfig & DeleteFlowTemplateRequest,
   ): Promise<DeleteFlowTemplateResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFlowTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -116,13 +126,13 @@ export default class IoTThingsGraph {
   async deleteNamespace(
     {abortSignal, ...params}: RequestConfig & DeleteNamespaceRequest = {},
   ): Promise<DeleteNamespaceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteNamespace",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "namespaceArn": "s",
@@ -134,13 +144,14 @@ export default class IoTThingsGraph {
   async deleteSystemInstance(
     {abortSignal, ...params}: RequestConfig & DeleteSystemInstanceRequest = {},
   ): Promise<DeleteSystemInstanceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSystemInstance",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -149,13 +160,14 @@ export default class IoTThingsGraph {
   async deleteSystemTemplate(
     {abortSignal, ...params}: RequestConfig & DeleteSystemTemplateRequest,
   ): Promise<DeleteSystemTemplateResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSystemTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -164,13 +176,14 @@ export default class IoTThingsGraph {
   async deploySystemInstance(
     {abortSignal, ...params}: RequestConfig & DeploySystemInstanceRequest = {},
   ): Promise<DeploySystemInstanceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeploySystemInstance",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "summary": toSystemInstanceSummary,
       },
@@ -183,13 +196,14 @@ export default class IoTThingsGraph {
   async deprecateFlowTemplate(
     {abortSignal, ...params}: RequestConfig & DeprecateFlowTemplateRequest,
   ): Promise<DeprecateFlowTemplateResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeprecateFlowTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -198,13 +212,14 @@ export default class IoTThingsGraph {
   async deprecateSystemTemplate(
     {abortSignal, ...params}: RequestConfig & DeprecateSystemTemplateRequest,
   ): Promise<DeprecateSystemTemplateResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeprecateSystemTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -213,13 +228,14 @@ export default class IoTThingsGraph {
   async describeNamespace(
     {abortSignal, ...params}: RequestConfig & DescribeNamespaceRequest = {},
   ): Promise<DescribeNamespaceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      namespaceName: params["namespaceName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNamespace",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "namespaceArn": "s",
@@ -234,13 +250,15 @@ export default class IoTThingsGraph {
   async dissociateEntityFromThing(
     {abortSignal, ...params}: RequestConfig & DissociateEntityFromThingRequest,
   ): Promise<DissociateEntityFromThingResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      thingName: params["thingName"],
+      entityType: params["entityType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DissociateEntityFromThing",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -249,13 +267,15 @@ export default class IoTThingsGraph {
   async getEntities(
     {abortSignal, ...params}: RequestConfig & GetEntitiesRequest,
   ): Promise<GetEntitiesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ids: params["ids"],
+      namespaceVersion: params["namespaceVersion"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEntities",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "descriptions": [toEntityDescription],
@@ -266,13 +286,15 @@ export default class IoTThingsGraph {
   async getFlowTemplate(
     {abortSignal, ...params}: RequestConfig & GetFlowTemplateRequest,
   ): Promise<GetFlowTemplateResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+      revisionNumber: params["revisionNumber"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetFlowTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "description": toFlowTemplateDescription,
@@ -283,13 +305,16 @@ export default class IoTThingsGraph {
   async getFlowTemplateRevisions(
     {abortSignal, ...params}: RequestConfig & GetFlowTemplateRevisionsRequest,
   ): Promise<GetFlowTemplateRevisionsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetFlowTemplateRevisions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "summaries": [toFlowTemplateSummary],
@@ -301,19 +326,19 @@ export default class IoTThingsGraph {
   async getNamespaceDeletionStatus(
     {abortSignal, ...params}: RequestConfig & GetNamespaceDeletionStatusRequest = {},
   ): Promise<GetNamespaceDeletionStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetNamespaceDeletionStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "namespaceArn": "s",
         "namespaceName": "s",
-        "status": toNamespaceDeletionStatus,
-        "errorCode": toNamespaceDeletionStatusErrorCodes,
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<NamespaceDeletionStatus>(x),
+        "errorCode": (x: jsonP.JSONValue) => cmnP.readEnum<NamespaceDeletionStatusErrorCodes>(x),
         "errorMessage": "s",
       },
     }, await resp.json());
@@ -322,13 +347,14 @@ export default class IoTThingsGraph {
   async getSystemInstance(
     {abortSignal, ...params}: RequestConfig & GetSystemInstanceRequest,
   ): Promise<GetSystemInstanceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSystemInstance",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "description": toSystemInstanceDescription,
@@ -339,13 +365,15 @@ export default class IoTThingsGraph {
   async getSystemTemplate(
     {abortSignal, ...params}: RequestConfig & GetSystemTemplateRequest,
   ): Promise<GetSystemTemplateResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+      revisionNumber: params["revisionNumber"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSystemTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "description": toSystemTemplateDescription,
@@ -356,13 +384,16 @@ export default class IoTThingsGraph {
   async getSystemTemplateRevisions(
     {abortSignal, ...params}: RequestConfig & GetSystemTemplateRevisionsRequest,
   ): Promise<GetSystemTemplateRevisionsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSystemTemplateRevisions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "summaries": [toSystemTemplateSummary],
@@ -374,16 +405,17 @@ export default class IoTThingsGraph {
   async getUploadStatus(
     {abortSignal, ...params}: RequestConfig & GetUploadStatusRequest,
   ): Promise<GetUploadStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      uploadId: params["uploadId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetUploadStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "uploadId": "s",
-        "uploadStatus": toUploadStatus,
+        "uploadStatus": (x: jsonP.JSONValue) => cmnP.readEnum<UploadStatus>(x),
         "createdDate": "d",
       },
       optional: {
@@ -398,13 +430,16 @@ export default class IoTThingsGraph {
   async listFlowExecutionMessages(
     {abortSignal, ...params}: RequestConfig & ListFlowExecutionMessagesRequest,
   ): Promise<ListFlowExecutionMessagesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      flowExecutionId: params["flowExecutionId"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFlowExecutionMessages",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "messages": [toFlowExecutionMessage],
@@ -416,13 +451,16 @@ export default class IoTThingsGraph {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      maxResults: params["maxResults"],
+      resourceArn: params["resourceArn"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "tags": [toTag],
@@ -434,14 +472,18 @@ export default class IoTThingsGraph {
   async searchEntities(
     {abortSignal, ...params}: RequestConfig & SearchEntitiesRequest,
   ): Promise<SearchEntitiesResponse> {
-    const body: JSONObject = {...params,
-    filters: params["filters"]?.map(x => fromEntityFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      entityTypes: params["entityTypes"],
+      filters: params["filters"]?.map(x => fromEntityFilter(x)),
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+      namespaceVersion: params["namespaceVersion"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchEntities",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "descriptions": [toEntityDescription],
@@ -453,15 +495,19 @@ export default class IoTThingsGraph {
   async searchFlowExecutions(
     {abortSignal, ...params}: RequestConfig & SearchFlowExecutionsRequest,
   ): Promise<SearchFlowExecutionsResponse> {
-    const body: JSONObject = {...params,
-    startTime: prt.serializeDate_unixTimestamp(params["startTime"]),
-    endTime: prt.serializeDate_unixTimestamp(params["endTime"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      systemInstanceId: params["systemInstanceId"],
+      flowExecutionId: params["flowExecutionId"],
+      startTime: jsonP.serializeDate_unixTimestamp(params["startTime"]),
+      endTime: jsonP.serializeDate_unixTimestamp(params["endTime"]),
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchFlowExecutions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "summaries": [toFlowExecutionSummary],
@@ -473,14 +519,16 @@ export default class IoTThingsGraph {
   async searchFlowTemplates(
     {abortSignal, ...params}: RequestConfig & SearchFlowTemplatesRequest = {},
   ): Promise<SearchFlowTemplatesResponse> {
-    const body: JSONObject = {...params,
-    filters: params["filters"]?.map(x => fromFlowTemplateFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      filters: params["filters"]?.map(x => fromFlowTemplateFilter(x)),
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchFlowTemplates",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "summaries": [toFlowTemplateSummary],
@@ -492,14 +540,16 @@ export default class IoTThingsGraph {
   async searchSystemInstances(
     {abortSignal, ...params}: RequestConfig & SearchSystemInstancesRequest = {},
   ): Promise<SearchSystemInstancesResponse> {
-    const body: JSONObject = {...params,
-    filters: params["filters"]?.map(x => fromSystemInstanceFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      filters: params["filters"]?.map(x => fromSystemInstanceFilter(x)),
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchSystemInstances",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "summaries": [toSystemInstanceSummary],
@@ -511,14 +561,16 @@ export default class IoTThingsGraph {
   async searchSystemTemplates(
     {abortSignal, ...params}: RequestConfig & SearchSystemTemplatesRequest = {},
   ): Promise<SearchSystemTemplatesResponse> {
-    const body: JSONObject = {...params,
-    filters: params["filters"]?.map(x => fromSystemTemplateFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      filters: params["filters"]?.map(x => fromSystemTemplateFilter(x)),
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchSystemTemplates",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "summaries": [toSystemTemplateSummary],
@@ -530,13 +582,17 @@ export default class IoTThingsGraph {
   async searchThings(
     {abortSignal, ...params}: RequestConfig & SearchThingsRequest,
   ): Promise<SearchThingsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      entityId: params["entityId"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+      namespaceVersion: params["namespaceVersion"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchThings",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "things": [toThing],
@@ -548,14 +604,15 @@ export default class IoTThingsGraph {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceArn: params["resourceArn"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -564,13 +621,14 @@ export default class IoTThingsGraph {
   async undeploySystemInstance(
     {abortSignal, ...params}: RequestConfig & UndeploySystemInstanceRequest = {},
   ): Promise<UndeploySystemInstanceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UndeploySystemInstance",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "summary": toSystemInstanceSummary,
@@ -581,13 +639,15 @@ export default class IoTThingsGraph {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceArn: params["resourceArn"],
+      tagKeys: params["tagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -596,14 +656,16 @@ export default class IoTThingsGraph {
   async updateFlowTemplate(
     {abortSignal, ...params}: RequestConfig & UpdateFlowTemplateRequest,
   ): Promise<UpdateFlowTemplateResponse> {
-    const body: JSONObject = {...params,
-    definition: fromDefinitionDocument(params["definition"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+      definition: fromDefinitionDocument(params["definition"]),
+      compatibleNamespaceVersion: params["compatibleNamespaceVersion"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFlowTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "summary": toFlowTemplateSummary,
@@ -614,14 +676,16 @@ export default class IoTThingsGraph {
   async updateSystemTemplate(
     {abortSignal, ...params}: RequestConfig & UpdateSystemTemplateRequest,
   ): Promise<UpdateSystemTemplateResponse> {
-    const body: JSONObject = {...params,
-    definition: fromDefinitionDocument(params["definition"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      id: params["id"],
+      definition: fromDefinitionDocument(params["definition"]),
+      compatibleNamespaceVersion: params["compatibleNamespaceVersion"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSystemTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "summary": toSystemTemplateSummary,
@@ -632,14 +696,16 @@ export default class IoTThingsGraph {
   async uploadEntityDefinitions(
     {abortSignal, ...params}: RequestConfig & UploadEntityDefinitionsRequest = {},
   ): Promise<UploadEntityDefinitionsResponse> {
-    const body: JSONObject = {...params,
-    document: fromDefinitionDocument(params["document"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      document: fromDefinitionDocument(params["document"]),
+      syncWithPublicNamespace: params["syncWithPublicNamespace"],
+      deprecateExistingEntities: params["deprecateExistingEntities"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UploadEntityDefinitions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "uploadId": "s",
       },
@@ -1067,15 +1133,17 @@ export interface DefinitionDocument {
   language: DefinitionLanguage;
   text: string;
 }
-function fromDefinitionDocument(input?: DefinitionDocument | null): JSONValue {
+function fromDefinitionDocument(input?: DefinitionDocument | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    language: input["language"],
+    text: input["text"],
   }
 }
-function toDefinitionDocument(root: JSONValue): DefinitionDocument {
-  return prt.readObj({
+function toDefinitionDocument(root: jsonP.JSONValue): DefinitionDocument {
+  return jsonP.readObj({
     required: {
-      "language": toDefinitionLanguage,
+      "language": (x: jsonP.JSONValue) => cmnP.readEnum<DefinitionLanguage>(x),
       "text": "s",
     },
     optional: {},
@@ -1085,26 +1153,22 @@ function toDefinitionDocument(root: JSONValue): DefinitionDocument {
 // refs: 11 - tags: input, named, enum, output
 export type DefinitionLanguage =
 | "GRAPHQL"
-;
-
-function toDefinitionLanguage(root: JSONValue): DefinitionLanguage | null {
-  return ( false
-    || root == "GRAPHQL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface Tag {
   key: string;
   value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    key: input["key"],
+    value: input["value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "key": "s",
       "value": "s",
@@ -1117,27 +1181,22 @@ function toTag(root: JSONValue): Tag {
 export type DeploymentTarget =
 | "GREENGRASS"
 | "CLOUD"
-;
-
-function toDeploymentTarget(root: JSONValue): DeploymentTarget | null {
-  return ( false
-    || root == "GREENGRASS"
-    || root == "CLOUD"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface MetricsConfiguration {
   cloudMetricEnabled?: boolean | null;
   metricRuleRoleArn?: string | null;
 }
-function fromMetricsConfiguration(input?: MetricsConfiguration | null): JSONValue {
+function fromMetricsConfiguration(input?: MetricsConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    cloudMetricEnabled: input["cloudMetricEnabled"],
+    metricRuleRoleArn: input["metricRuleRoleArn"],
   }
 }
-function toMetricsConfiguration(root: JSONValue): MetricsConfiguration {
-  return prt.readObj({
+function toMetricsConfiguration(root: jsonP.JSONValue): MetricsConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "cloudMetricEnabled": "b",
@@ -1158,31 +1217,18 @@ export type EntityType =
 | "PROPERTY"
 | "MAPPING"
 | "ENUM"
-;
-
-function toEntityType(root: JSONValue): EntityType | null {
-  return ( false
-    || root == "DEVICE"
-    || root == "SERVICE"
-    || root == "DEVICE_MODEL"
-    || root == "CAPABILITY"
-    || root == "STATE"
-    || root == "ACTION"
-    || root == "EVENT"
-    || root == "PROPERTY"
-    || root == "MAPPING"
-    || root == "ENUM"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface EntityFilter {
   name?: EntityFilterName | null;
   value?: string[] | null;
 }
-function fromEntityFilter(input?: EntityFilter | null): JSONValue {
+function fromEntityFilter(input?: EntityFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    value: input["value"],
   }
 }
 
@@ -1192,34 +1238,36 @@ export type EntityFilterName =
 | "NAMESPACE"
 | "SEMANTIC_TYPE_PATH"
 | "REFERENCED_ENTITY_ID"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface FlowTemplateFilter {
   name: FlowTemplateFilterName;
   value: string[];
 }
-function fromFlowTemplateFilter(input?: FlowTemplateFilter | null): JSONValue {
+function fromFlowTemplateFilter(input?: FlowTemplateFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    value: input["value"],
   }
 }
 
 // refs: 1 - tags: input, named, enum
 export type FlowTemplateFilterName =
 | "DEVICE_MODEL_ID"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface SystemInstanceFilter {
   name?: SystemInstanceFilterName | null;
   value?: string[] | null;
 }
-function fromSystemInstanceFilter(input?: SystemInstanceFilter | null): JSONValue {
+function fromSystemInstanceFilter(input?: SystemInstanceFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    value: input["value"],
   }
 }
 
@@ -1228,25 +1276,25 @@ export type SystemInstanceFilterName =
 | "SYSTEM_TEMPLATE_ID"
 | "STATUS"
 | "GREENGRASS_GROUP_NAME"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface SystemTemplateFilter {
   name: SystemTemplateFilterName;
   value: string[];
 }
-function fromSystemTemplateFilter(input?: SystemTemplateFilter | null): JSONValue {
+function fromSystemTemplateFilter(input?: SystemTemplateFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    value: input["value"],
   }
 }
 
 // refs: 1 - tags: input, named, enum
 export type SystemTemplateFilterName =
 | "FLOW_TEMPLATE_ID"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, interface
 export interface FlowTemplateSummary {
@@ -1255,8 +1303,8 @@ export interface FlowTemplateSummary {
   revisionNumber?: number | null;
   createdAt?: Date | number | null;
 }
-function toFlowTemplateSummary(root: JSONValue): FlowTemplateSummary {
-  return prt.readObj({
+function toFlowTemplateSummary(root: jsonP.JSONValue): FlowTemplateSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "id": "s",
@@ -1279,14 +1327,14 @@ export interface SystemInstanceSummary {
   greengrassGroupId?: string | null;
   greengrassGroupVersionId?: string | null;
 }
-function toSystemInstanceSummary(root: JSONValue): SystemInstanceSummary {
-  return prt.readObj({
+function toSystemInstanceSummary(root: jsonP.JSONValue): SystemInstanceSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "id": "s",
       "arn": "s",
-      "status": toSystemInstanceDeploymentStatus,
-      "target": toDeploymentTarget,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<SystemInstanceDeploymentStatus>(x),
+      "target": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentTarget>(x),
       "greengrassGroupName": "s",
       "createdAt": "d",
       "updatedAt": "d",
@@ -1306,19 +1354,7 @@ export type SystemInstanceDeploymentStatus =
 | "FAILED"
 | "PENDING_DELETE"
 | "DELETED_IN_TARGET"
-;
-function toSystemInstanceDeploymentStatus(root: JSONValue): SystemInstanceDeploymentStatus | null {
-  return ( false
-    || root == "NOT_DEPLOYED"
-    || root == "BOOTSTRAP"
-    || root == "DEPLOY_IN_PROGRESS"
-    || root == "DEPLOYED_IN_TARGET"
-    || root == "UNDEPLOY_IN_PROGRESS"
-    || root == "FAILED"
-    || root == "PENDING_DELETE"
-    || root == "DELETED_IN_TARGET"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, interface
 export interface SystemTemplateSummary {
@@ -1327,8 +1363,8 @@ export interface SystemTemplateSummary {
   revisionNumber?: number | null;
   createdAt?: Date | number | null;
 }
-function toSystemTemplateSummary(root: JSONValue): SystemTemplateSummary {
-  return prt.readObj({
+function toSystemTemplateSummary(root: jsonP.JSONValue): SystemTemplateSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "id": "s",
@@ -1347,13 +1383,13 @@ export interface EntityDescription {
   createdAt?: Date | number | null;
   definition?: DefinitionDocument | null;
 }
-function toEntityDescription(root: JSONValue): EntityDescription {
-  return prt.readObj({
+function toEntityDescription(root: jsonP.JSONValue): EntityDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "id": "s",
       "arn": "s",
-      "type": toEntityType,
+      "type": (x: jsonP.JSONValue) => cmnP.readEnum<EntityType>(x),
       "createdAt": "d",
       "definition": toDefinitionDocument,
     },
@@ -1366,8 +1402,8 @@ export interface FlowTemplateDescription {
   definition?: DefinitionDocument | null;
   validatedNamespaceVersion?: number | null;
 }
-function toFlowTemplateDescription(root: JSONValue): FlowTemplateDescription {
-  return prt.readObj({
+function toFlowTemplateDescription(root: jsonP.JSONValue): FlowTemplateDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "summary": toFlowTemplateSummary,
@@ -1382,24 +1418,12 @@ export type NamespaceDeletionStatus =
 | "IN_PROGRESS"
 | "SUCCEEDED"
 | "FAILED"
-;
-function toNamespaceDeletionStatus(root: JSONValue): NamespaceDeletionStatus | null {
-  return ( false
-    || root == "IN_PROGRESS"
-    || root == "SUCCEEDED"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type NamespaceDeletionStatusErrorCodes =
 | "VALIDATION_FAILED"
-;
-function toNamespaceDeletionStatusErrorCodes(root: JSONValue): NamespaceDeletionStatusErrorCodes | null {
-  return ( false
-    || root == "VALIDATION_FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface SystemInstanceDescription {
@@ -1411,8 +1435,8 @@ export interface SystemInstanceDescription {
   validatedDependencyRevisions?: DependencyRevision[] | null;
   flowActionsRoleArn?: string | null;
 }
-function toSystemInstanceDescription(root: JSONValue): SystemInstanceDescription {
-  return prt.readObj({
+function toSystemInstanceDescription(root: jsonP.JSONValue): SystemInstanceDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "summary": toSystemInstanceSummary,
@@ -1431,8 +1455,8 @@ export interface DependencyRevision {
   id?: string | null;
   revisionNumber?: number | null;
 }
-function toDependencyRevision(root: JSONValue): DependencyRevision {
-  return prt.readObj({
+function toDependencyRevision(root: jsonP.JSONValue): DependencyRevision {
+  return jsonP.readObj({
     required: {},
     optional: {
       "id": "s",
@@ -1447,8 +1471,8 @@ export interface SystemTemplateDescription {
   definition?: DefinitionDocument | null;
   validatedNamespaceVersion?: number | null;
 }
-function toSystemTemplateDescription(root: JSONValue): SystemTemplateDescription {
-  return prt.readObj({
+function toSystemTemplateDescription(root: jsonP.JSONValue): SystemTemplateDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "summary": toSystemTemplateSummary,
@@ -1463,14 +1487,7 @@ export type UploadStatus =
 | "IN_PROGRESS"
 | "SUCCEEDED"
 | "FAILED"
-;
-function toUploadStatus(root: JSONValue): UploadStatus | null {
-  return ( false
-    || root == "IN_PROGRESS"
-    || root == "SUCCEEDED"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface FlowExecutionMessage {
@@ -1479,12 +1496,12 @@ export interface FlowExecutionMessage {
   timestamp?: Date | number | null;
   payload?: string | null;
 }
-function toFlowExecutionMessage(root: JSONValue): FlowExecutionMessage {
-  return prt.readObj({
+function toFlowExecutionMessage(root: jsonP.JSONValue): FlowExecutionMessage {
+  return jsonP.readObj({
     required: {},
     optional: {
       "messageId": "s",
-      "eventType": toFlowExecutionEventType,
+      "eventType": (x: jsonP.JSONValue) => cmnP.readEnum<FlowExecutionEventType>(x),
       "timestamp": "d",
       "payload": "s",
     },
@@ -1510,28 +1527,7 @@ export type FlowExecutionEventType =
 | "THING_ACTION_TASK_FAILED"
 | "THING_ACTION_TASK_SUCCEEDED"
 | "ACKNOWLEDGE_TASK_MESSAGE"
-;
-function toFlowExecutionEventType(root: JSONValue): FlowExecutionEventType | null {
-  return ( false
-    || root == "EXECUTION_STARTED"
-    || root == "EXECUTION_FAILED"
-    || root == "EXECUTION_ABORTED"
-    || root == "EXECUTION_SUCCEEDED"
-    || root == "STEP_STARTED"
-    || root == "STEP_FAILED"
-    || root == "STEP_SUCCEEDED"
-    || root == "ACTIVITY_SCHEDULED"
-    || root == "ACTIVITY_STARTED"
-    || root == "ACTIVITY_FAILED"
-    || root == "ACTIVITY_SUCCEEDED"
-    || root == "START_FLOW_EXECUTION_TASK"
-    || root == "SCHEDULE_NEXT_READY_STEPS_TASK"
-    || root == "THING_ACTION_TASK"
-    || root == "THING_ACTION_TASK_FAILED"
-    || root == "THING_ACTION_TASK_SUCCEEDED"
-    || root == "ACKNOWLEDGE_TASK_MESSAGE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface FlowExecutionSummary {
@@ -1542,12 +1538,12 @@ export interface FlowExecutionSummary {
   createdAt?: Date | number | null;
   updatedAt?: Date | number | null;
 }
-function toFlowExecutionSummary(root: JSONValue): FlowExecutionSummary {
-  return prt.readObj({
+function toFlowExecutionSummary(root: jsonP.JSONValue): FlowExecutionSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "flowExecutionId": "s",
-      "status": toFlowExecutionStatus,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<FlowExecutionStatus>(x),
       "systemInstanceId": "s",
       "flowTemplateId": "s",
       "createdAt": "d",
@@ -1562,23 +1558,15 @@ export type FlowExecutionStatus =
 | "ABORTED"
 | "SUCCEEDED"
 | "FAILED"
-;
-function toFlowExecutionStatus(root: JSONValue): FlowExecutionStatus | null {
-  return ( false
-    || root == "RUNNING"
-    || root == "ABORTED"
-    || root == "SUCCEEDED"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Thing {
   thingArn?: string | null;
   thingName?: string | null;
 }
-function toThing(root: JSONValue): Thing {
-  return prt.readObj({
+function toThing(root: jsonP.JSONValue): Thing {
+  return jsonP.readObj({
     required: {},
     optional: {
       "thingArn": "s",

@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class IdentityStore {
   #client: ServiceClient;
@@ -31,13 +31,15 @@ export default class IdentityStore {
   async describeGroup(
     {abortSignal, ...params}: RequestConfig & DescribeGroupRequest,
   ): Promise<DescribeGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      IdentityStoreId: params["IdentityStoreId"],
+      GroupId: params["GroupId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "GroupId": "s",
         "DisplayName": "s",
@@ -49,13 +51,15 @@ export default class IdentityStore {
   async describeUser(
     {abortSignal, ...params}: RequestConfig & DescribeUserRequest,
   ): Promise<DescribeUserResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      IdentityStoreId: params["IdentityStoreId"],
+      UserId: params["UserId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUser",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "UserName": "s",
         "UserId": "s",
@@ -67,14 +71,17 @@ export default class IdentityStore {
   async listGroups(
     {abortSignal, ...params}: RequestConfig & ListGroupsRequest,
   ): Promise<ListGroupsResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      IdentityStoreId: params["IdentityStoreId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Groups": [toGroup],
       },
@@ -87,14 +94,17 @@ export default class IdentityStore {
   async listUsers(
     {abortSignal, ...params}: RequestConfig & ListUsersRequest,
   ): Promise<ListUsersResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      IdentityStoreId: params["IdentityStoreId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUsers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Users": [toUser],
       },
@@ -163,9 +173,11 @@ export interface Filter {
   AttributePath: string;
   AttributeValue: string;
 }
-function fromFilter(input?: Filter | null): JSONValue {
+function fromFilter(input?: Filter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AttributePath: input["AttributePath"],
+    AttributeValue: input["AttributeValue"],
   }
 }
 
@@ -174,8 +186,8 @@ export interface Group {
   GroupId: string;
   DisplayName: string;
 }
-function toGroup(root: JSONValue): Group {
-  return prt.readObj({
+function toGroup(root: jsonP.JSONValue): Group {
+  return jsonP.readObj({
     required: {
       "GroupId": "s",
       "DisplayName": "s",
@@ -189,8 +201,8 @@ export interface User {
   UserName: string;
   UserId: string;
 }
-function toUser(root: JSONValue): User {
-  return prt.readObj({
+function toUser(root: jsonP.JSONValue): User {
+  return jsonP.readObj({
     required: {
       "UserName": "s",
       "UserId": "s",

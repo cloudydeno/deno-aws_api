@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class MarketplaceMetering {
   #client: ServiceClient;
@@ -30,14 +30,15 @@ export default class MarketplaceMetering {
   async batchMeterUsage(
     {abortSignal, ...params}: RequestConfig & BatchMeterUsageRequest,
   ): Promise<BatchMeterUsageResult> {
-    const body: JSONObject = {...params,
-    UsageRecords: params["UsageRecords"]?.map(x => fromUsageRecord(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      UsageRecords: params["UsageRecords"]?.map(x => fromUsageRecord(x)),
+      ProductCode: params["ProductCode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchMeterUsage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Results": [toUsageRecordResult],
@@ -49,14 +50,18 @@ export default class MarketplaceMetering {
   async meterUsage(
     {abortSignal, ...params}: RequestConfig & MeterUsageRequest,
   ): Promise<MeterUsageResult> {
-    const body: JSONObject = {...params,
-    Timestamp: prt.serializeDate_unixTimestamp(params["Timestamp"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProductCode: params["ProductCode"],
+      Timestamp: jsonP.serializeDate_unixTimestamp(params["Timestamp"]),
+      UsageDimension: params["UsageDimension"],
+      UsageQuantity: params["UsageQuantity"],
+      DryRun: params["DryRun"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MeterUsage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "MeteringRecordId": "s",
@@ -67,13 +72,16 @@ export default class MarketplaceMetering {
   async registerUsage(
     {abortSignal, ...params}: RequestConfig & RegisterUsageRequest,
   ): Promise<RegisterUsageResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProductCode: params["ProductCode"],
+      PublicKeyVersion: params["PublicKeyVersion"],
+      Nonce: params["Nonce"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterUsage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PublicKeyRotationTimestamp": "d",
@@ -85,13 +93,14 @@ export default class MarketplaceMetering {
   async resolveCustomer(
     {abortSignal, ...params}: RequestConfig & ResolveCustomerRequest,
   ): Promise<ResolveCustomerResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RegistrationToken: params["RegistrationToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResolveCustomer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CustomerIdentifier": "s",
@@ -159,14 +168,17 @@ export interface UsageRecord {
   Dimension: string;
   Quantity?: number | null;
 }
-function fromUsageRecord(input?: UsageRecord | null): JSONValue {
+function fromUsageRecord(input?: UsageRecord | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Timestamp: prt.serializeDate_unixTimestamp(input["Timestamp"]),
+  return {
+    Timestamp: jsonP.serializeDate_unixTimestamp(input["Timestamp"]),
+    CustomerIdentifier: input["CustomerIdentifier"],
+    Dimension: input["Dimension"],
+    Quantity: input["Quantity"],
   }
 }
-function toUsageRecord(root: JSONValue): UsageRecord {
-  return prt.readObj({
+function toUsageRecord(root: jsonP.JSONValue): UsageRecord {
+  return jsonP.readObj({
     required: {
       "Timestamp": "d",
       "CustomerIdentifier": "s",
@@ -184,13 +196,13 @@ export interface UsageRecordResult {
   MeteringRecordId?: string | null;
   Status?: UsageRecordResultStatus | null;
 }
-function toUsageRecordResult(root: JSONValue): UsageRecordResult {
-  return prt.readObj({
+function toUsageRecordResult(root: jsonP.JSONValue): UsageRecordResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "UsageRecord": toUsageRecord,
       "MeteringRecordId": "s",
-      "Status": toUsageRecordResultStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<UsageRecordResultStatus>(x),
     },
   }, root);
 }
@@ -200,11 +212,4 @@ export type UsageRecordResultStatus =
 | "Success"
 | "CustomerNotSubscribed"
 | "DuplicateRecord"
-;
-function toUsageRecordResultStatus(root: JSONValue): UsageRecordResultStatus | null {
-  return ( false
-    || root == "Success"
-    || root == "CustomerNotSubscribed"
-    || root == "DuplicateRecord"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;

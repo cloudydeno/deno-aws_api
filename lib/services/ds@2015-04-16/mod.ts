@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class DirectoryService {
   #client: ServiceClient;
@@ -30,13 +30,14 @@ export default class DirectoryService {
   async acceptSharedDirectory(
     {abortSignal, ...params}: RequestConfig & AcceptSharedDirectoryRequest,
   ): Promise<AcceptSharedDirectoryResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SharedDirectoryId: params["SharedDirectoryId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcceptSharedDirectory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SharedDirectory": toSharedDirectory,
@@ -47,14 +48,16 @@ export default class DirectoryService {
   async addIpRoutes(
     {abortSignal, ...params}: RequestConfig & AddIpRoutesRequest,
   ): Promise<AddIpRoutesResult> {
-    const body: JSONObject = {...params,
-    IpRoutes: params["IpRoutes"]?.map(x => fromIpRoute(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      IpRoutes: params["IpRoutes"]?.map(x => fromIpRoute(x)),
+      UpdateSecurityGroupForDirectoryControllers: params["UpdateSecurityGroupForDirectoryControllers"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddIpRoutes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -63,14 +66,15 @@ export default class DirectoryService {
   async addTagsToResource(
     {abortSignal, ...params}: RequestConfig & AddTagsToResourceRequest,
   ): Promise<AddTagsToResourceResult> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTagsToResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -79,13 +83,15 @@ export default class DirectoryService {
   async cancelSchemaExtension(
     {abortSignal, ...params}: RequestConfig & CancelSchemaExtensionRequest,
   ): Promise<CancelSchemaExtensionResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      SchemaExtensionId: params["SchemaExtensionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelSchemaExtension",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -94,15 +100,20 @@ export default class DirectoryService {
   async connectDirectory(
     {abortSignal, ...params}: RequestConfig & ConnectDirectoryRequest,
   ): Promise<ConnectDirectoryResult> {
-    const body: JSONObject = {...params,
-    ConnectSettings: fromDirectoryConnectSettings(params["ConnectSettings"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      ShortName: params["ShortName"],
+      Password: params["Password"],
+      Description: params["Description"],
+      Size: params["Size"],
+      ConnectSettings: fromDirectoryConnectSettings(params["ConnectSettings"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ConnectDirectory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DirectoryId": "s",
@@ -113,13 +124,15 @@ export default class DirectoryService {
   async createAlias(
     {abortSignal, ...params}: RequestConfig & CreateAliasRequest,
   ): Promise<CreateAliasResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      Alias: params["Alias"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAlias",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DirectoryId": "s",
@@ -131,14 +144,18 @@ export default class DirectoryService {
   async createComputer(
     {abortSignal, ...params}: RequestConfig & CreateComputerRequest,
   ): Promise<CreateComputerResult> {
-    const body: JSONObject = {...params,
-    ComputerAttributes: params["ComputerAttributes"]?.map(x => fromAttribute(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      ComputerName: params["ComputerName"],
+      Password: params["Password"],
+      OrganizationalUnitDistinguishedName: params["OrganizationalUnitDistinguishedName"],
+      ComputerAttributes: params["ComputerAttributes"]?.map(x => fromAttribute(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateComputer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Computer": toComputer,
@@ -149,13 +166,16 @@ export default class DirectoryService {
   async createConditionalForwarder(
     {abortSignal, ...params}: RequestConfig & CreateConditionalForwarderRequest,
   ): Promise<CreateConditionalForwarderResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      RemoteDomainName: params["RemoteDomainName"],
+      DnsIpAddrs: params["DnsIpAddrs"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateConditionalForwarder",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -164,15 +184,20 @@ export default class DirectoryService {
   async createDirectory(
     {abortSignal, ...params}: RequestConfig & CreateDirectoryRequest,
   ): Promise<CreateDirectoryResult> {
-    const body: JSONObject = {...params,
-    VpcSettings: fromDirectoryVpcSettings(params["VpcSettings"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      ShortName: params["ShortName"],
+      Password: params["Password"],
+      Description: params["Description"],
+      Size: params["Size"],
+      VpcSettings: fromDirectoryVpcSettings(params["VpcSettings"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDirectory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DirectoryId": "s",
@@ -183,13 +208,15 @@ export default class DirectoryService {
   async createLogSubscription(
     {abortSignal, ...params}: RequestConfig & CreateLogSubscriptionRequest,
   ): Promise<CreateLogSubscriptionResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      LogGroupName: params["LogGroupName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLogSubscription",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -198,15 +225,20 @@ export default class DirectoryService {
   async createMicrosoftAD(
     {abortSignal, ...params}: RequestConfig & CreateMicrosoftADRequest,
   ): Promise<CreateMicrosoftADResult> {
-    const body: JSONObject = {...params,
-    VpcSettings: fromDirectoryVpcSettings(params["VpcSettings"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      ShortName: params["ShortName"],
+      Password: params["Password"],
+      Description: params["Description"],
+      VpcSettings: fromDirectoryVpcSettings(params["VpcSettings"]),
+      Edition: params["Edition"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMicrosoftAD",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DirectoryId": "s",
@@ -217,13 +249,15 @@ export default class DirectoryService {
   async createSnapshot(
     {abortSignal, ...params}: RequestConfig & CreateSnapshotRequest,
   ): Promise<CreateSnapshotResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSnapshot",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SnapshotId": "s",
@@ -234,13 +268,20 @@ export default class DirectoryService {
   async createTrust(
     {abortSignal, ...params}: RequestConfig & CreateTrustRequest,
   ): Promise<CreateTrustResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      RemoteDomainName: params["RemoteDomainName"],
+      TrustPassword: params["TrustPassword"],
+      TrustDirection: params["TrustDirection"],
+      TrustType: params["TrustType"],
+      ConditionalForwarderIpAddrs: params["ConditionalForwarderIpAddrs"],
+      SelectiveAuth: params["SelectiveAuth"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTrust",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TrustId": "s",
@@ -251,13 +292,15 @@ export default class DirectoryService {
   async deleteConditionalForwarder(
     {abortSignal, ...params}: RequestConfig & DeleteConditionalForwarderRequest,
   ): Promise<DeleteConditionalForwarderResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      RemoteDomainName: params["RemoteDomainName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteConditionalForwarder",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -266,13 +309,14 @@ export default class DirectoryService {
   async deleteDirectory(
     {abortSignal, ...params}: RequestConfig & DeleteDirectoryRequest,
   ): Promise<DeleteDirectoryResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDirectory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DirectoryId": "s",
@@ -283,13 +327,14 @@ export default class DirectoryService {
   async deleteLogSubscription(
     {abortSignal, ...params}: RequestConfig & DeleteLogSubscriptionRequest,
   ): Promise<DeleteLogSubscriptionResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLogSubscription",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -298,13 +343,14 @@ export default class DirectoryService {
   async deleteSnapshot(
     {abortSignal, ...params}: RequestConfig & DeleteSnapshotRequest,
   ): Promise<DeleteSnapshotResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SnapshotId: params["SnapshotId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSnapshot",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SnapshotId": "s",
@@ -315,13 +361,15 @@ export default class DirectoryService {
   async deleteTrust(
     {abortSignal, ...params}: RequestConfig & DeleteTrustRequest,
   ): Promise<DeleteTrustResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrustId: params["TrustId"],
+      DeleteAssociatedConditionalForwarder: params["DeleteAssociatedConditionalForwarder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTrust",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TrustId": "s",
@@ -332,13 +380,15 @@ export default class DirectoryService {
   async deregisterCertificate(
     {abortSignal, ...params}: RequestConfig & DeregisterCertificateRequest,
   ): Promise<DeregisterCertificateResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      CertificateId: params["CertificateId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterCertificate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -347,13 +397,15 @@ export default class DirectoryService {
   async deregisterEventTopic(
     {abortSignal, ...params}: RequestConfig & DeregisterEventTopicRequest,
   ): Promise<DeregisterEventTopicResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      TopicName: params["TopicName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterEventTopic",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -362,13 +414,15 @@ export default class DirectoryService {
   async describeCertificate(
     {abortSignal, ...params}: RequestConfig & DescribeCertificateRequest,
   ): Promise<DescribeCertificateResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      CertificateId: params["CertificateId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCertificate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Certificate": toCertificate,
@@ -379,13 +433,15 @@ export default class DirectoryService {
   async describeConditionalForwarders(
     {abortSignal, ...params}: RequestConfig & DescribeConditionalForwardersRequest,
   ): Promise<DescribeConditionalForwardersResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      RemoteDomainNames: params["RemoteDomainNames"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConditionalForwarders",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConditionalForwarders": [toConditionalForwarder],
@@ -396,13 +452,16 @@ export default class DirectoryService {
   async describeDirectories(
     {abortSignal, ...params}: RequestConfig & DescribeDirectoriesRequest = {},
   ): Promise<DescribeDirectoriesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryIds: params["DirectoryIds"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDirectories",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DirectoryDescriptions": [toDirectoryDescription],
@@ -414,13 +473,17 @@ export default class DirectoryService {
   async describeDomainControllers(
     {abortSignal, ...params}: RequestConfig & DescribeDomainControllersRequest,
   ): Promise<DescribeDomainControllersResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      DomainControllerIds: params["DomainControllerIds"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDomainControllers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DomainControllers": [toDomainController],
@@ -432,13 +495,15 @@ export default class DirectoryService {
   async describeEventTopics(
     {abortSignal, ...params}: RequestConfig & DescribeEventTopicsRequest = {},
   ): Promise<DescribeEventTopicsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      TopicNames: params["TopicNames"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventTopics",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EventTopics": [toEventTopic],
@@ -449,13 +514,17 @@ export default class DirectoryService {
   async describeLDAPSSettings(
     {abortSignal, ...params}: RequestConfig & DescribeLDAPSSettingsRequest,
   ): Promise<DescribeLDAPSSettingsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      Type: params["Type"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLDAPSSettings",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LDAPSSettingsInfo": [toLDAPSSettingInfo],
@@ -467,13 +536,17 @@ export default class DirectoryService {
   async describeSharedDirectories(
     {abortSignal, ...params}: RequestConfig & DescribeSharedDirectoriesRequest,
   ): Promise<DescribeSharedDirectoriesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OwnerDirectoryId: params["OwnerDirectoryId"],
+      SharedDirectoryIds: params["SharedDirectoryIds"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSharedDirectories",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SharedDirectories": [toSharedDirectory],
@@ -485,13 +558,17 @@ export default class DirectoryService {
   async describeSnapshots(
     {abortSignal, ...params}: RequestConfig & DescribeSnapshotsRequest = {},
   ): Promise<DescribeSnapshotsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      SnapshotIds: params["SnapshotIds"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSnapshots",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Snapshots": [toSnapshot],
@@ -503,13 +580,17 @@ export default class DirectoryService {
   async describeTrusts(
     {abortSignal, ...params}: RequestConfig & DescribeTrustsRequest = {},
   ): Promise<DescribeTrustsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      TrustIds: params["TrustIds"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrusts",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Trusts": [toTrust],
@@ -521,13 +602,15 @@ export default class DirectoryService {
   async disableLDAPS(
     {abortSignal, ...params}: RequestConfig & DisableLDAPSRequest,
   ): Promise<DisableLDAPSResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      Type: params["Type"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableLDAPS",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -536,13 +619,14 @@ export default class DirectoryService {
   async disableRadius(
     {abortSignal, ...params}: RequestConfig & DisableRadiusRequest,
   ): Promise<DisableRadiusResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableRadius",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -551,13 +635,16 @@ export default class DirectoryService {
   async disableSso(
     {abortSignal, ...params}: RequestConfig & DisableSsoRequest,
   ): Promise<DisableSsoResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      UserName: params["UserName"],
+      Password: params["Password"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableSso",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -566,13 +653,15 @@ export default class DirectoryService {
   async enableLDAPS(
     {abortSignal, ...params}: RequestConfig & EnableLDAPSRequest,
   ): Promise<EnableLDAPSResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      Type: params["Type"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableLDAPS",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -581,14 +670,15 @@ export default class DirectoryService {
   async enableRadius(
     {abortSignal, ...params}: RequestConfig & EnableRadiusRequest,
   ): Promise<EnableRadiusResult> {
-    const body: JSONObject = {...params,
-    RadiusSettings: fromRadiusSettings(params["RadiusSettings"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      RadiusSettings: fromRadiusSettings(params["RadiusSettings"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableRadius",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -597,13 +687,16 @@ export default class DirectoryService {
   async enableSso(
     {abortSignal, ...params}: RequestConfig & EnableSsoRequest,
   ): Promise<EnableSsoResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      UserName: params["UserName"],
+      Password: params["Password"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableSso",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -612,13 +705,13 @@ export default class DirectoryService {
   async getDirectoryLimits(
     {abortSignal, ...params}: RequestConfig & GetDirectoryLimitsRequest = {},
   ): Promise<GetDirectoryLimitsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDirectoryLimits",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DirectoryLimits": toDirectoryLimits,
@@ -629,13 +722,14 @@ export default class DirectoryService {
   async getSnapshotLimits(
     {abortSignal, ...params}: RequestConfig & GetSnapshotLimitsRequest,
   ): Promise<GetSnapshotLimitsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSnapshotLimits",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SnapshotLimits": toSnapshotLimits,
@@ -646,13 +740,16 @@ export default class DirectoryService {
   async listCertificates(
     {abortSignal, ...params}: RequestConfig & ListCertificatesRequest,
   ): Promise<ListCertificatesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCertificates",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -664,13 +761,16 @@ export default class DirectoryService {
   async listIpRoutes(
     {abortSignal, ...params}: RequestConfig & ListIpRoutesRequest,
   ): Promise<ListIpRoutesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListIpRoutes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "IpRoutesInfo": [toIpRouteInfo],
@@ -682,13 +782,16 @@ export default class DirectoryService {
   async listLogSubscriptions(
     {abortSignal, ...params}: RequestConfig & ListLogSubscriptionsRequest = {},
   ): Promise<ListLogSubscriptionsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLogSubscriptions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LogSubscriptions": [toLogSubscription],
@@ -700,13 +803,16 @@ export default class DirectoryService {
   async listSchemaExtensions(
     {abortSignal, ...params}: RequestConfig & ListSchemaExtensionsRequest,
   ): Promise<ListSchemaExtensionsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSchemaExtensions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SchemaExtensionsInfo": [toSchemaExtensionInfo],
@@ -718,13 +824,16 @@ export default class DirectoryService {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -736,13 +845,15 @@ export default class DirectoryService {
   async registerCertificate(
     {abortSignal, ...params}: RequestConfig & RegisterCertificateRequest,
   ): Promise<RegisterCertificateResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      CertificateData: params["CertificateData"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterCertificate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CertificateId": "s",
@@ -753,13 +864,15 @@ export default class DirectoryService {
   async registerEventTopic(
     {abortSignal, ...params}: RequestConfig & RegisterEventTopicRequest,
   ): Promise<RegisterEventTopicResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      TopicName: params["TopicName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterEventTopic",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -768,13 +881,14 @@ export default class DirectoryService {
   async rejectSharedDirectory(
     {abortSignal, ...params}: RequestConfig & RejectSharedDirectoryRequest,
   ): Promise<RejectSharedDirectoryResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SharedDirectoryId: params["SharedDirectoryId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RejectSharedDirectory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SharedDirectoryId": "s",
@@ -785,13 +899,15 @@ export default class DirectoryService {
   async removeIpRoutes(
     {abortSignal, ...params}: RequestConfig & RemoveIpRoutesRequest,
   ): Promise<RemoveIpRoutesResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      CidrIps: params["CidrIps"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveIpRoutes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -800,13 +916,15 @@ export default class DirectoryService {
   async removeTagsFromResource(
     {abortSignal, ...params}: RequestConfig & RemoveTagsFromResourceRequest,
   ): Promise<RemoveTagsFromResourceResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTagsFromResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -815,13 +933,16 @@ export default class DirectoryService {
   async resetUserPassword(
     {abortSignal, ...params}: RequestConfig & ResetUserPasswordRequest,
   ): Promise<ResetUserPasswordResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      UserName: params["UserName"],
+      NewPassword: params["NewPassword"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResetUserPassword",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -830,13 +951,14 @@ export default class DirectoryService {
   async restoreFromSnapshot(
     {abortSignal, ...params}: RequestConfig & RestoreFromSnapshotRequest,
   ): Promise<RestoreFromSnapshotResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SnapshotId: params["SnapshotId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreFromSnapshot",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -845,14 +967,17 @@ export default class DirectoryService {
   async shareDirectory(
     {abortSignal, ...params}: RequestConfig & ShareDirectoryRequest,
   ): Promise<ShareDirectoryResult> {
-    const body: JSONObject = {...params,
-    ShareTarget: fromShareTarget(params["ShareTarget"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      ShareNotes: params["ShareNotes"],
+      ShareTarget: fromShareTarget(params["ShareTarget"]),
+      ShareMethod: params["ShareMethod"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ShareDirectory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SharedDirectoryId": "s",
@@ -863,13 +988,17 @@ export default class DirectoryService {
   async startSchemaExtension(
     {abortSignal, ...params}: RequestConfig & StartSchemaExtensionRequest,
   ): Promise<StartSchemaExtensionResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      CreateSnapshotBeforeSchemaExtension: params["CreateSnapshotBeforeSchemaExtension"],
+      LdifContent: params["LdifContent"],
+      Description: params["Description"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartSchemaExtension",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SchemaExtensionId": "s",
@@ -880,14 +1009,15 @@ export default class DirectoryService {
   async unshareDirectory(
     {abortSignal, ...params}: RequestConfig & UnshareDirectoryRequest,
   ): Promise<UnshareDirectoryResult> {
-    const body: JSONObject = {...params,
-    UnshareTarget: fromUnshareTarget(params["UnshareTarget"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      UnshareTarget: fromUnshareTarget(params["UnshareTarget"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UnshareDirectory",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SharedDirectoryId": "s",
@@ -898,13 +1028,16 @@ export default class DirectoryService {
   async updateConditionalForwarder(
     {abortSignal, ...params}: RequestConfig & UpdateConditionalForwarderRequest,
   ): Promise<UpdateConditionalForwarderResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      RemoteDomainName: params["RemoteDomainName"],
+      DnsIpAddrs: params["DnsIpAddrs"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateConditionalForwarder",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -913,13 +1046,15 @@ export default class DirectoryService {
   async updateNumberOfDomainControllers(
     {abortSignal, ...params}: RequestConfig & UpdateNumberOfDomainControllersRequest,
   ): Promise<UpdateNumberOfDomainControllersResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      DesiredNumber: params["DesiredNumber"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateNumberOfDomainControllers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -928,14 +1063,15 @@ export default class DirectoryService {
   async updateRadius(
     {abortSignal, ...params}: RequestConfig & UpdateRadiusRequest,
   ): Promise<UpdateRadiusResult> {
-    const body: JSONObject = {...params,
-    RadiusSettings: fromRadiusSettings(params["RadiusSettings"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DirectoryId: params["DirectoryId"],
+      RadiusSettings: fromRadiusSettings(params["RadiusSettings"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRadius",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -944,13 +1080,15 @@ export default class DirectoryService {
   async updateTrust(
     {abortSignal, ...params}: RequestConfig & UpdateTrustRequest,
   ): Promise<UpdateTrustResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrustId: params["TrustId"],
+      SelectiveAuth: params["SelectiveAuth"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTrust",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RequestId": "s",
@@ -962,13 +1100,14 @@ export default class DirectoryService {
   async verifyTrust(
     {abortSignal, ...params}: RequestConfig & VerifyTrustRequest,
   ): Promise<VerifyTrustResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrustId: params["TrustId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "VerifyTrust",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TrustId": "s",
@@ -1638,9 +1777,11 @@ export interface IpRoute {
   CidrIp?: string | null;
   Description?: string | null;
 }
-function fromIpRoute(input?: IpRoute | null): JSONValue {
+function fromIpRoute(input?: IpRoute | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CidrIp: input["CidrIp"],
+    Description: input["Description"],
   }
 }
 
@@ -1649,13 +1790,15 @@ export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -1668,14 +1811,7 @@ function toTag(root: JSONValue): Tag {
 export type DirectorySize =
 | "Small"
 | "Large"
-;
-
-function toDirectorySize(root: JSONValue): DirectorySize | null {
-  return ( false
-    || root == "Small"
-    || root == "Large"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface DirectoryConnectSettings {
@@ -1684,9 +1820,13 @@ export interface DirectoryConnectSettings {
   CustomerDnsIps: string[];
   CustomerUserName: string;
 }
-function fromDirectoryConnectSettings(input?: DirectoryConnectSettings | null): JSONValue {
+function fromDirectoryConnectSettings(input?: DirectoryConnectSettings | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    VpcId: input["VpcId"],
+    SubnetIds: input["SubnetIds"],
+    CustomerDnsIps: input["CustomerDnsIps"],
+    CustomerUserName: input["CustomerUserName"],
   }
 }
 
@@ -1695,13 +1835,15 @@ export interface Attribute {
   Name?: string | null;
   Value?: string | null;
 }
-function fromAttribute(input?: Attribute | null): JSONValue {
+function fromAttribute(input?: Attribute | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Value: input["Value"],
   }
 }
-function toAttribute(root: JSONValue): Attribute {
-  return prt.readObj({
+function toAttribute(root: jsonP.JSONValue): Attribute {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -1715,9 +1857,11 @@ export interface DirectoryVpcSettings {
   VpcId: string;
   SubnetIds: string[];
 }
-function fromDirectoryVpcSettings(input?: DirectoryVpcSettings | null): JSONValue {
+function fromDirectoryVpcSettings(input?: DirectoryVpcSettings | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    VpcId: input["VpcId"],
+    SubnetIds: input["SubnetIds"],
   }
 }
 
@@ -1725,61 +1869,31 @@ function fromDirectoryVpcSettings(input?: DirectoryVpcSettings | null): JSONValu
 export type DirectoryEdition =
 | "Enterprise"
 | "Standard"
-;
-
-function toDirectoryEdition(root: JSONValue): DirectoryEdition | null {
-  return ( false
-    || root == "Enterprise"
-    || root == "Standard"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type TrustDirection =
 | "One-Way: Outgoing"
 | "One-Way: Incoming"
 | "Two-Way"
-;
-
-function toTrustDirection(root: JSONValue): TrustDirection | null {
-  return ( false
-    || root == "One-Way: Outgoing"
-    || root == "One-Way: Incoming"
-    || root == "Two-Way"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type TrustType =
 | "Forest"
 | "External"
-;
-
-function toTrustType(root: JSONValue): TrustType | null {
-  return ( false
-    || root == "Forest"
-    || root == "External"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type SelectiveAuth =
 | "Enabled"
 | "Disabled"
-;
-
-function toSelectiveAuth(root: JSONValue): SelectiveAuth | null {
-  return ( false
-    || root == "Enabled"
-    || root == "Disabled"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum
 export type LDAPSType =
 | "Client"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface RadiusSettings {
@@ -1792,13 +1906,21 @@ export interface RadiusSettings {
   DisplayLabel?: string | null;
   UseSameUsername?: boolean | null;
 }
-function fromRadiusSettings(input?: RadiusSettings | null): JSONValue {
+function fromRadiusSettings(input?: RadiusSettings | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RadiusServers: input["RadiusServers"],
+    RadiusPort: input["RadiusPort"],
+    RadiusTimeout: input["RadiusTimeout"],
+    RadiusRetries: input["RadiusRetries"],
+    SharedSecret: input["SharedSecret"],
+    AuthenticationProtocol: input["AuthenticationProtocol"],
+    DisplayLabel: input["DisplayLabel"],
+    UseSameUsername: input["UseSameUsername"],
   }
 }
-function toRadiusSettings(root: JSONValue): RadiusSettings {
-  return prt.readObj({
+function toRadiusSettings(root: jsonP.JSONValue): RadiusSettings {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RadiusServers": ["s"],
@@ -1806,7 +1928,7 @@ function toRadiusSettings(root: JSONValue): RadiusSettings {
       "RadiusTimeout": "n",
       "RadiusRetries": "n",
       "SharedSecret": "s",
-      "AuthenticationProtocol": toRadiusAuthenticationProtocol,
+      "AuthenticationProtocol": (x: jsonP.JSONValue) => cmnP.readEnum<RadiusAuthenticationProtocol>(x),
       "DisplayLabel": "s",
       "UseSameUsername": "b",
     },
@@ -1819,55 +1941,42 @@ export type RadiusAuthenticationProtocol =
 | "CHAP"
 | "MS-CHAPv1"
 | "MS-CHAPv2"
-;
-
-function toRadiusAuthenticationProtocol(root: JSONValue): RadiusAuthenticationProtocol | null {
-  return ( false
-    || root == "PAP"
-    || root == "CHAP"
-    || root == "MS-CHAPv1"
-    || root == "MS-CHAPv2"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ShareTarget {
   Id: string;
   Type: TargetType;
 }
-function fromShareTarget(input?: ShareTarget | null): JSONValue {
+function fromShareTarget(input?: ShareTarget | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Id: input["Id"],
+    Type: input["Type"],
   }
 }
 
 // refs: 2 - tags: input, named, enum
 export type TargetType =
 | "ACCOUNT"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type ShareMethod =
 | "ORGANIZATIONS"
 | "HANDSHAKE"
-;
-
-function toShareMethod(root: JSONValue): ShareMethod | null {
-  return ( false
-    || root == "ORGANIZATIONS"
-    || root == "HANDSHAKE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface UnshareTarget {
   Id: string;
   Type: TargetType;
 }
-function fromUnshareTarget(input?: UnshareTarget | null): JSONValue {
+function fromUnshareTarget(input?: UnshareTarget | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Id: input["Id"],
+    Type: input["Type"],
   }
 }
 
@@ -1883,16 +1992,16 @@ export interface SharedDirectory {
   CreatedDateTime?: Date | number | null;
   LastUpdatedDateTime?: Date | number | null;
 }
-function toSharedDirectory(root: JSONValue): SharedDirectory {
-  return prt.readObj({
+function toSharedDirectory(root: jsonP.JSONValue): SharedDirectory {
+  return jsonP.readObj({
     required: {},
     optional: {
       "OwnerAccountId": "s",
       "OwnerDirectoryId": "s",
-      "ShareMethod": toShareMethod,
+      "ShareMethod": (x: jsonP.JSONValue) => cmnP.readEnum<ShareMethod>(x),
       "SharedAccountId": "s",
       "SharedDirectoryId": "s",
-      "ShareStatus": toShareStatus,
+      "ShareStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ShareStatus>(x),
       "ShareNotes": "s",
       "CreatedDateTime": "d",
       "LastUpdatedDateTime": "d",
@@ -1911,20 +2020,7 @@ export type ShareStatus =
 | "ShareFailed"
 | "Deleted"
 | "Deleting"
-;
-function toShareStatus(root: JSONValue): ShareStatus | null {
-  return ( false
-    || root == "Shared"
-    || root == "PendingAcceptance"
-    || root == "Rejected"
-    || root == "Rejecting"
-    || root == "RejectFailed"
-    || root == "Sharing"
-    || root == "ShareFailed"
-    || root == "Deleted"
-    || root == "Deleting"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Computer {
@@ -1932,8 +2028,8 @@ export interface Computer {
   ComputerName?: string | null;
   ComputerAttributes?: Attribute[] | null;
 }
-function toComputer(root: JSONValue): Computer {
-  return prt.readObj({
+function toComputer(root: jsonP.JSONValue): Computer {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ComputerId": "s",
@@ -1952,12 +2048,12 @@ export interface Certificate {
   RegisteredDateTime?: Date | number | null;
   ExpiryDateTime?: Date | number | null;
 }
-function toCertificate(root: JSONValue): Certificate {
-  return prt.readObj({
+function toCertificate(root: jsonP.JSONValue): Certificate {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CertificateId": "s",
-      "State": toCertificateState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<CertificateState>(x),
       "StateReason": "s",
       "CommonName": "s",
       "RegisteredDateTime": "d",
@@ -1974,17 +2070,7 @@ export type CertificateState =
 | "Deregistering"
 | "Deregistered"
 | "DeregisterFailed"
-;
-function toCertificateState(root: JSONValue): CertificateState | null {
-  return ( false
-    || root == "Registering"
-    || root == "Registered"
-    || root == "RegisterFailed"
-    || root == "Deregistering"
-    || root == "Deregistered"
-    || root == "DeregisterFailed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ConditionalForwarder {
@@ -1992,13 +2078,13 @@ export interface ConditionalForwarder {
   DnsIpAddrs?: string[] | null;
   ReplicationScope?: ReplicationScope | null;
 }
-function toConditionalForwarder(root: JSONValue): ConditionalForwarder {
-  return prt.readObj({
+function toConditionalForwarder(root: jsonP.JSONValue): ConditionalForwarder {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RemoteDomainName": "s",
       "DnsIpAddrs": ["s"],
-      "ReplicationScope": toReplicationScope,
+      "ReplicationScope": (x: jsonP.JSONValue) => cmnP.readEnum<ReplicationScope>(x),
     },
   }, root);
 }
@@ -2006,12 +2092,7 @@ function toConditionalForwarder(root: JSONValue): ConditionalForwarder {
 // refs: 1 - tags: output, named, enum
 export type ReplicationScope =
 | "Domain"
-;
-function toReplicationScope(root: JSONValue): ReplicationScope | null {
-  return ( false
-    || root == "Domain"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface DirectoryDescription {
@@ -2040,30 +2121,30 @@ export interface DirectoryDescription {
   DesiredNumberOfDomainControllers?: number | null;
   OwnerDirectoryDescription?: OwnerDirectoryDescription | null;
 }
-function toDirectoryDescription(root: JSONValue): DirectoryDescription {
-  return prt.readObj({
+function toDirectoryDescription(root: jsonP.JSONValue): DirectoryDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DirectoryId": "s",
       "Name": "s",
       "ShortName": "s",
-      "Size": toDirectorySize,
-      "Edition": toDirectoryEdition,
+      "Size": (x: jsonP.JSONValue) => cmnP.readEnum<DirectorySize>(x),
+      "Edition": (x: jsonP.JSONValue) => cmnP.readEnum<DirectoryEdition>(x),
       "Alias": "s",
       "AccessUrl": "s",
       "Description": "s",
       "DnsIpAddrs": ["s"],
-      "Stage": toDirectoryStage,
-      "ShareStatus": toShareStatus,
-      "ShareMethod": toShareMethod,
+      "Stage": (x: jsonP.JSONValue) => cmnP.readEnum<DirectoryStage>(x),
+      "ShareStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ShareStatus>(x),
+      "ShareMethod": (x: jsonP.JSONValue) => cmnP.readEnum<ShareMethod>(x),
       "ShareNotes": "s",
       "LaunchTime": "d",
       "StageLastUpdatedDateTime": "d",
-      "Type": toDirectoryType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<DirectoryType>(x),
       "VpcSettings": toDirectoryVpcSettingsDescription,
       "ConnectSettings": toDirectoryConnectSettingsDescription,
       "RadiusSettings": toRadiusSettings,
-      "RadiusStatus": toRadiusStatus,
+      "RadiusStatus": (x: jsonP.JSONValue) => cmnP.readEnum<RadiusStatus>(x),
       "StageReason": "s",
       "SsoEnabled": "b",
       "DesiredNumberOfDomainControllers": "n",
@@ -2085,22 +2166,7 @@ export type DirectoryStage =
 | "Deleting"
 | "Deleted"
 | "Failed"
-;
-function toDirectoryStage(root: JSONValue): DirectoryStage | null {
-  return ( false
-    || root == "Requested"
-    || root == "Creating"
-    || root == "Created"
-    || root == "Active"
-    || root == "Inoperable"
-    || root == "Impaired"
-    || root == "Restoring"
-    || root == "RestoreFailed"
-    || root == "Deleting"
-    || root == "Deleted"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type DirectoryType =
@@ -2108,15 +2174,7 @@ export type DirectoryType =
 | "ADConnector"
 | "MicrosoftAD"
 | "SharedMicrosoftAD"
-;
-function toDirectoryType(root: JSONValue): DirectoryType | null {
-  return ( false
-    || root == "SimpleAD"
-    || root == "ADConnector"
-    || root == "MicrosoftAD"
-    || root == "SharedMicrosoftAD"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface DirectoryVpcSettingsDescription {
@@ -2125,8 +2183,8 @@ export interface DirectoryVpcSettingsDescription {
   SecurityGroupId?: string | null;
   AvailabilityZones?: string[] | null;
 }
-function toDirectoryVpcSettingsDescription(root: JSONValue): DirectoryVpcSettingsDescription {
-  return prt.readObj({
+function toDirectoryVpcSettingsDescription(root: jsonP.JSONValue): DirectoryVpcSettingsDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "VpcId": "s",
@@ -2146,8 +2204,8 @@ export interface DirectoryConnectSettingsDescription {
   AvailabilityZones?: string[] | null;
   ConnectIps?: string[] | null;
 }
-function toDirectoryConnectSettingsDescription(root: JSONValue): DirectoryConnectSettingsDescription {
-  return prt.readObj({
+function toDirectoryConnectSettingsDescription(root: jsonP.JSONValue): DirectoryConnectSettingsDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "VpcId": "s",
@@ -2165,14 +2223,7 @@ export type RadiusStatus =
 | "Creating"
 | "Completed"
 | "Failed"
-;
-function toRadiusStatus(root: JSONValue): RadiusStatus | null {
-  return ( false
-    || root == "Creating"
-    || root == "Completed"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface OwnerDirectoryDescription {
@@ -2183,8 +2234,8 @@ export interface OwnerDirectoryDescription {
   RadiusSettings?: RadiusSettings | null;
   RadiusStatus?: RadiusStatus | null;
 }
-function toOwnerDirectoryDescription(root: JSONValue): OwnerDirectoryDescription {
-  return prt.readObj({
+function toOwnerDirectoryDescription(root: jsonP.JSONValue): OwnerDirectoryDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DirectoryId": "s",
@@ -2192,7 +2243,7 @@ function toOwnerDirectoryDescription(root: JSONValue): OwnerDirectoryDescription
       "DnsIpAddrs": ["s"],
       "VpcSettings": toDirectoryVpcSettingsDescription,
       "RadiusSettings": toRadiusSettings,
-      "RadiusStatus": toRadiusStatus,
+      "RadiusStatus": (x: jsonP.JSONValue) => cmnP.readEnum<RadiusStatus>(x),
     },
   }, root);
 }
@@ -2210,8 +2261,8 @@ export interface DomainController {
   LaunchTime?: Date | number | null;
   StatusLastUpdatedDateTime?: Date | number | null;
 }
-function toDomainController(root: JSONValue): DomainController {
-  return prt.readObj({
+function toDomainController(root: jsonP.JSONValue): DomainController {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DirectoryId": "s",
@@ -2220,7 +2271,7 @@ function toDomainController(root: JSONValue): DomainController {
       "VpcId": "s",
       "SubnetId": "s",
       "AvailabilityZone": "s",
-      "Status": toDomainControllerStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<DomainControllerStatus>(x),
       "StatusReason": "s",
       "LaunchTime": "d",
       "StatusLastUpdatedDateTime": "d",
@@ -2237,18 +2288,7 @@ export type DomainControllerStatus =
 | "Deleting"
 | "Deleted"
 | "Failed"
-;
-function toDomainControllerStatus(root: JSONValue): DomainControllerStatus | null {
-  return ( false
-    || root == "Creating"
-    || root == "Active"
-    || root == "Impaired"
-    || root == "Restoring"
-    || root == "Deleting"
-    || root == "Deleted"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface EventTopic {
@@ -2258,15 +2298,15 @@ export interface EventTopic {
   CreatedDateTime?: Date | number | null;
   Status?: TopicStatus | null;
 }
-function toEventTopic(root: JSONValue): EventTopic {
-  return prt.readObj({
+function toEventTopic(root: jsonP.JSONValue): EventTopic {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DirectoryId": "s",
       "TopicName": "s",
       "TopicArn": "s",
       "CreatedDateTime": "d",
-      "Status": toTopicStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<TopicStatus>(x),
     },
   }, root);
 }
@@ -2277,15 +2317,7 @@ export type TopicStatus =
 | "Topic not found"
 | "Failed"
 | "Deleted"
-;
-function toTopicStatus(root: JSONValue): TopicStatus | null {
-  return ( false
-    || root == "Registered"
-    || root == "Topic not found"
-    || root == "Failed"
-    || root == "Deleted"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface LDAPSSettingInfo {
@@ -2293,11 +2325,11 @@ export interface LDAPSSettingInfo {
   LDAPSStatusReason?: string | null;
   LastUpdatedDateTime?: Date | number | null;
 }
-function toLDAPSSettingInfo(root: JSONValue): LDAPSSettingInfo {
-  return prt.readObj({
+function toLDAPSSettingInfo(root: jsonP.JSONValue): LDAPSSettingInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "LDAPSStatus": toLDAPSStatus,
+      "LDAPSStatus": (x: jsonP.JSONValue) => cmnP.readEnum<LDAPSStatus>(x),
       "LDAPSStatusReason": "s",
       "LastUpdatedDateTime": "d",
     },
@@ -2310,15 +2342,7 @@ export type LDAPSStatus =
 | "Enabled"
 | "EnableFailed"
 | "Disabled"
-;
-function toLDAPSStatus(root: JSONValue): LDAPSStatus | null {
-  return ( false
-    || root == "Enabling"
-    || root == "Enabled"
-    || root == "EnableFailed"
-    || root == "Disabled"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Snapshot {
@@ -2329,15 +2353,15 @@ export interface Snapshot {
   Status?: SnapshotStatus | null;
   StartTime?: Date | number | null;
 }
-function toSnapshot(root: JSONValue): Snapshot {
-  return prt.readObj({
+function toSnapshot(root: jsonP.JSONValue): Snapshot {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DirectoryId": "s",
       "SnapshotId": "s",
-      "Type": toSnapshotType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<SnapshotType>(x),
       "Name": "s",
-      "Status": toSnapshotStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<SnapshotStatus>(x),
       "StartTime": "d",
     },
   }, root);
@@ -2347,27 +2371,14 @@ function toSnapshot(root: JSONValue): Snapshot {
 export type SnapshotType =
 | "Auto"
 | "Manual"
-;
-function toSnapshotType(root: JSONValue): SnapshotType | null {
-  return ( false
-    || root == "Auto"
-    || root == "Manual"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type SnapshotStatus =
 | "Creating"
 | "Completed"
 | "Failed"
-;
-function toSnapshotStatus(root: JSONValue): SnapshotStatus | null {
-  return ( false
-    || root == "Creating"
-    || root == "Completed"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Trust {
@@ -2383,21 +2394,21 @@ export interface Trust {
   TrustStateReason?: string | null;
   SelectiveAuth?: SelectiveAuth | null;
 }
-function toTrust(root: JSONValue): Trust {
-  return prt.readObj({
+function toTrust(root: jsonP.JSONValue): Trust {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DirectoryId": "s",
       "TrustId": "s",
       "RemoteDomainName": "s",
-      "TrustType": toTrustType,
-      "TrustDirection": toTrustDirection,
-      "TrustState": toTrustState,
+      "TrustType": (x: jsonP.JSONValue) => cmnP.readEnum<TrustType>(x),
+      "TrustDirection": (x: jsonP.JSONValue) => cmnP.readEnum<TrustDirection>(x),
+      "TrustState": (x: jsonP.JSONValue) => cmnP.readEnum<TrustState>(x),
       "CreatedDateTime": "d",
       "LastUpdatedDateTime": "d",
       "StateLastUpdatedDateTime": "d",
       "TrustStateReason": "s",
-      "SelectiveAuth": toSelectiveAuth,
+      "SelectiveAuth": (x: jsonP.JSONValue) => cmnP.readEnum<SelectiveAuth>(x),
     },
   }, root);
 }
@@ -2415,22 +2426,7 @@ export type TrustState =
 | "Deleting"
 | "Deleted"
 | "Failed"
-;
-function toTrustState(root: JSONValue): TrustState | null {
-  return ( false
-    || root == "Creating"
-    || root == "Created"
-    || root == "Verifying"
-    || root == "VerifyFailed"
-    || root == "Verified"
-    || root == "Updating"
-    || root == "UpdateFailed"
-    || root == "Updated"
-    || root == "Deleting"
-    || root == "Deleted"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface DirectoryLimits {
@@ -2444,8 +2440,8 @@ export interface DirectoryLimits {
   ConnectedDirectoriesCurrentCount?: number | null;
   ConnectedDirectoriesLimitReached?: boolean | null;
 }
-function toDirectoryLimits(root: JSONValue): DirectoryLimits {
-  return prt.readObj({
+function toDirectoryLimits(root: jsonP.JSONValue): DirectoryLimits {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CloudOnlyDirectoriesLimit": "n",
@@ -2467,8 +2463,8 @@ export interface SnapshotLimits {
   ManualSnapshotsCurrentCount?: number | null;
   ManualSnapshotsLimitReached?: boolean | null;
 }
-function toSnapshotLimits(root: JSONValue): SnapshotLimits {
-  return prt.readObj({
+function toSnapshotLimits(root: jsonP.JSONValue): SnapshotLimits {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ManualSnapshotsLimit": "n",
@@ -2485,13 +2481,13 @@ export interface CertificateInfo {
   State?: CertificateState | null;
   ExpiryDateTime?: Date | number | null;
 }
-function toCertificateInfo(root: JSONValue): CertificateInfo {
-  return prt.readObj({
+function toCertificateInfo(root: jsonP.JSONValue): CertificateInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CertificateId": "s",
       "CommonName": "s",
-      "State": toCertificateState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<CertificateState>(x),
       "ExpiryDateTime": "d",
     },
   }, root);
@@ -2506,13 +2502,13 @@ export interface IpRouteInfo {
   IpRouteStatusReason?: string | null;
   Description?: string | null;
 }
-function toIpRouteInfo(root: JSONValue): IpRouteInfo {
-  return prt.readObj({
+function toIpRouteInfo(root: jsonP.JSONValue): IpRouteInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DirectoryId": "s",
       "CidrIp": "s",
-      "IpRouteStatusMsg": toIpRouteStatusMsg,
+      "IpRouteStatusMsg": (x: jsonP.JSONValue) => cmnP.readEnum<IpRouteStatusMsg>(x),
       "AddedDateTime": "d",
       "IpRouteStatusReason": "s",
       "Description": "s",
@@ -2528,17 +2524,7 @@ export type IpRouteStatusMsg =
 | "Removed"
 | "AddFailed"
 | "RemoveFailed"
-;
-function toIpRouteStatusMsg(root: JSONValue): IpRouteStatusMsg | null {
-  return ( false
-    || root == "Adding"
-    || root == "Added"
-    || root == "Removing"
-    || root == "Removed"
-    || root == "AddFailed"
-    || root == "RemoveFailed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface LogSubscription {
@@ -2546,8 +2532,8 @@ export interface LogSubscription {
   LogGroupName?: string | null;
   SubscriptionCreatedDateTime?: Date | number | null;
 }
-function toLogSubscription(root: JSONValue): LogSubscription {
-  return prt.readObj({
+function toLogSubscription(root: jsonP.JSONValue): LogSubscription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DirectoryId": "s",
@@ -2567,14 +2553,14 @@ export interface SchemaExtensionInfo {
   StartDateTime?: Date | number | null;
   EndDateTime?: Date | number | null;
 }
-function toSchemaExtensionInfo(root: JSONValue): SchemaExtensionInfo {
-  return prt.readObj({
+function toSchemaExtensionInfo(root: jsonP.JSONValue): SchemaExtensionInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DirectoryId": "s",
       "SchemaExtensionId": "s",
       "Description": "s",
-      "SchemaExtensionStatus": toSchemaExtensionStatus,
+      "SchemaExtensionStatus": (x: jsonP.JSONValue) => cmnP.readEnum<SchemaExtensionStatus>(x),
       "SchemaExtensionStatusReason": "s",
       "StartDateTime": "d",
       "EndDateTime": "d",
@@ -2593,17 +2579,4 @@ export type SchemaExtensionStatus =
 | "Cancelled"
 | "Failed"
 | "Completed"
-;
-function toSchemaExtensionStatus(root: JSONValue): SchemaExtensionStatus | null {
-  return ( false
-    || root == "Initializing"
-    || root == "CreatingSnapshot"
-    || root == "UpdatingSchema"
-    || root == "Replicating"
-    || root == "CancelInProgress"
-    || root == "RollbackInProgress"
-    || root == "Cancelled"
-    || root == "Failed"
-    || root == "Completed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;

@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class ACMPCA {
   #client: ServiceClient;
@@ -30,16 +30,18 @@ export default class ACMPCA {
   async createCertificateAuthority(
     {abortSignal, ...params}: RequestConfig & CreateCertificateAuthorityRequest,
   ): Promise<CreateCertificateAuthorityResponse> {
-    const body: JSONObject = {...params,
-    CertificateAuthorityConfiguration: fromCertificateAuthorityConfiguration(params["CertificateAuthorityConfiguration"]),
-    RevocationConfiguration: fromRevocationConfiguration(params["RevocationConfiguration"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CertificateAuthorityConfiguration: fromCertificateAuthorityConfiguration(params["CertificateAuthorityConfiguration"]),
+      RevocationConfiguration: fromRevocationConfiguration(params["RevocationConfiguration"]),
+      CertificateAuthorityType: params["CertificateAuthorityType"],
+      IdempotencyToken: params["IdempotencyToken"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCertificateAuthority",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CertificateAuthorityArn": "s",
@@ -50,13 +52,16 @@ export default class ACMPCA {
   async createCertificateAuthorityAuditReport(
     {abortSignal, ...params}: RequestConfig & CreateCertificateAuthorityAuditReportRequest,
   ): Promise<CreateCertificateAuthorityAuditReportResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+      S3BucketName: params["S3BucketName"],
+      AuditReportResponseFormat: params["AuditReportResponseFormat"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCertificateAuthorityAuditReport",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AuditReportId": "s",
@@ -68,8 +73,12 @@ export default class ACMPCA {
   async createPermission(
     {abortSignal, ...params}: RequestConfig & CreatePermissionRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+      Principal: params["Principal"],
+      SourceAccount: params["SourceAccount"],
+      Actions: params["Actions"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePermission",
@@ -79,8 +88,10 @@ export default class ACMPCA {
   async deleteCertificateAuthority(
     {abortSignal, ...params}: RequestConfig & DeleteCertificateAuthorityRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+      PermanentDeletionTimeInDays: params["PermanentDeletionTimeInDays"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCertificateAuthority",
@@ -90,8 +101,11 @@ export default class ACMPCA {
   async deletePermission(
     {abortSignal, ...params}: RequestConfig & DeletePermissionRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+      Principal: params["Principal"],
+      SourceAccount: params["SourceAccount"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePermission",
@@ -101,8 +115,9 @@ export default class ACMPCA {
   async deletePolicy(
     {abortSignal, ...params}: RequestConfig & DeletePolicyRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePolicy",
@@ -112,13 +127,14 @@ export default class ACMPCA {
   async describeCertificateAuthority(
     {abortSignal, ...params}: RequestConfig & DescribeCertificateAuthorityRequest,
   ): Promise<DescribeCertificateAuthorityResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCertificateAuthority",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CertificateAuthority": toCertificateAuthority,
@@ -129,16 +145,18 @@ export default class ACMPCA {
   async describeCertificateAuthorityAuditReport(
     {abortSignal, ...params}: RequestConfig & DescribeCertificateAuthorityAuditReportRequest,
   ): Promise<DescribeCertificateAuthorityAuditReportResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+      AuditReportId: params["AuditReportId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCertificateAuthorityAuditReport",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "AuditReportStatus": toAuditReportStatus,
+        "AuditReportStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AuditReportStatus>(x),
         "S3BucketName": "s",
         "S3Key": "s",
         "CreatedAt": "d",
@@ -149,13 +167,15 @@ export default class ACMPCA {
   async getCertificate(
     {abortSignal, ...params}: RequestConfig & GetCertificateRequest,
   ): Promise<GetCertificateResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+      CertificateArn: params["CertificateArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCertificate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Certificate": "s",
@@ -167,13 +187,14 @@ export default class ACMPCA {
   async getCertificateAuthorityCertificate(
     {abortSignal, ...params}: RequestConfig & GetCertificateAuthorityCertificateRequest,
   ): Promise<GetCertificateAuthorityCertificateResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCertificateAuthorityCertificate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Certificate": "s",
@@ -185,13 +206,14 @@ export default class ACMPCA {
   async getCertificateAuthorityCsr(
     {abortSignal, ...params}: RequestConfig & GetCertificateAuthorityCsrRequest,
   ): Promise<GetCertificateAuthorityCsrResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCertificateAuthorityCsr",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Csr": "s",
@@ -202,13 +224,14 @@ export default class ACMPCA {
   async getPolicy(
     {abortSignal, ...params}: RequestConfig & GetPolicyRequest,
   ): Promise<GetPolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Policy": "s",
@@ -219,10 +242,11 @@ export default class ACMPCA {
   async importCertificateAuthorityCertificate(
     {abortSignal, ...params}: RequestConfig & ImportCertificateAuthorityCertificateRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    Certificate: prt.serializeBlob(params["Certificate"]),
-    CertificateChain: prt.serializeBlob(params["CertificateChain"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+      Certificate: jsonP.serializeBlob(params["Certificate"]),
+      CertificateChain: jsonP.serializeBlob(params["CertificateChain"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportCertificateAuthorityCertificate",
@@ -232,15 +256,19 @@ export default class ACMPCA {
   async issueCertificate(
     {abortSignal, ...params}: RequestConfig & IssueCertificateRequest,
   ): Promise<IssueCertificateResponse> {
-    const body: JSONObject = {...params,
-    Csr: prt.serializeBlob(params["Csr"]),
-    Validity: fromValidity(params["Validity"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+      Csr: jsonP.serializeBlob(params["Csr"]),
+      SigningAlgorithm: params["SigningAlgorithm"],
+      TemplateArn: params["TemplateArn"],
+      Validity: fromValidity(params["Validity"]),
+      IdempotencyToken: params["IdempotencyToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "IssueCertificate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CertificateArn": "s",
@@ -251,13 +279,16 @@ export default class ACMPCA {
   async listCertificateAuthorities(
     {abortSignal, ...params}: RequestConfig & ListCertificateAuthoritiesRequest = {},
   ): Promise<ListCertificateAuthoritiesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      ResourceOwner: params["ResourceOwner"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCertificateAuthorities",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CertificateAuthorities": [toCertificateAuthority],
@@ -269,13 +300,16 @@ export default class ACMPCA {
   async listPermissions(
     {abortSignal, ...params}: RequestConfig & ListPermissionsRequest,
   ): Promise<ListPermissionsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPermissions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Permissions": [toPermission],
@@ -287,13 +321,16 @@ export default class ACMPCA {
   async listTags(
     {abortSignal, ...params}: RequestConfig & ListTagsRequest,
   ): Promise<ListTagsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -305,8 +342,10 @@ export default class ACMPCA {
   async putPolicy(
     {abortSignal, ...params}: RequestConfig & PutPolicyRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      Policy: params["Policy"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutPolicy",
@@ -316,8 +355,9 @@ export default class ACMPCA {
   async restoreCertificateAuthority(
     {abortSignal, ...params}: RequestConfig & RestoreCertificateAuthorityRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreCertificateAuthority",
@@ -327,8 +367,11 @@ export default class ACMPCA {
   async revokeCertificate(
     {abortSignal, ...params}: RequestConfig & RevokeCertificateRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+      CertificateSerial: params["CertificateSerial"],
+      RevocationReason: params["RevocationReason"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RevokeCertificate",
@@ -338,9 +381,10 @@ export default class ACMPCA {
   async tagCertificateAuthority(
     {abortSignal, ...params}: RequestConfig & TagCertificateAuthorityRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagCertificateAuthority",
@@ -350,9 +394,10 @@ export default class ACMPCA {
   async untagCertificateAuthority(
     {abortSignal, ...params}: RequestConfig & UntagCertificateAuthorityRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagCertificateAuthority",
@@ -362,9 +407,11 @@ export default class ACMPCA {
   async updateCertificateAuthority(
     {abortSignal, ...params}: RequestConfig & UpdateCertificateAuthorityRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    RevocationConfiguration: fromRevocationConfiguration(params["RevocationConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CertificateAuthorityArn: params["CertificateAuthorityArn"],
+      RevocationConfiguration: fromRevocationConfiguration(params["RevocationConfiguration"]),
+      Status: params["Status"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateCertificateAuthority",
@@ -423,7 +470,7 @@ export default class ACMPCA {
     const errMessage = 'ResourceNotReady: Resource is not in the state AuditReportCreated';
     for (let i = 0; i < 60; i++) {
       const resp = await this.describeCertificateAuthorityAuditReport(params);
-      const field = resp["AuditReportStatus"];
+      const field = resp?.AuditReportStatus;
       if (field === "SUCCESS") return resp;
       if (field === "FAILED") throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 3000));
@@ -657,17 +704,19 @@ export interface CertificateAuthorityConfiguration {
   SigningAlgorithm: SigningAlgorithm;
   Subject: ASN1Subject;
 }
-function fromCertificateAuthorityConfiguration(input?: CertificateAuthorityConfiguration | null): JSONValue {
+function fromCertificateAuthorityConfiguration(input?: CertificateAuthorityConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    KeyAlgorithm: input["KeyAlgorithm"],
+    SigningAlgorithm: input["SigningAlgorithm"],
     Subject: fromASN1Subject(input["Subject"]),
   }
 }
-function toCertificateAuthorityConfiguration(root: JSONValue): CertificateAuthorityConfiguration {
-  return prt.readObj({
+function toCertificateAuthorityConfiguration(root: jsonP.JSONValue): CertificateAuthorityConfiguration {
+  return jsonP.readObj({
     required: {
-      "KeyAlgorithm": toKeyAlgorithm,
-      "SigningAlgorithm": toSigningAlgorithm,
+      "KeyAlgorithm": (x: jsonP.JSONValue) => cmnP.readEnum<KeyAlgorithm>(x),
+      "SigningAlgorithm": (x: jsonP.JSONValue) => cmnP.readEnum<SigningAlgorithm>(x),
       "Subject": toASN1Subject,
     },
     optional: {},
@@ -680,16 +729,7 @@ export type KeyAlgorithm =
 | "RSA_4096"
 | "EC_prime256v1"
 | "EC_secp384r1"
-;
-
-function toKeyAlgorithm(root: JSONValue): KeyAlgorithm | null {
-  return ( false
-    || root == "RSA_2048"
-    || root == "RSA_4096"
-    || root == "EC_prime256v1"
-    || root == "EC_secp384r1"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type SigningAlgorithm =
@@ -699,18 +739,7 @@ export type SigningAlgorithm =
 | "SHA256WITHRSA"
 | "SHA384WITHRSA"
 | "SHA512WITHRSA"
-;
-
-function toSigningAlgorithm(root: JSONValue): SigningAlgorithm | null {
-  return ( false
-    || root == "SHA256WITHECDSA"
-    || root == "SHA384WITHECDSA"
-    || root == "SHA512WITHECDSA"
-    || root == "SHA256WITHRSA"
-    || root == "SHA384WITHRSA"
-    || root == "SHA512WITHRSA"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface ASN1Subject {
@@ -729,13 +758,27 @@ export interface ASN1Subject {
   Pseudonym?: string | null;
   GenerationQualifier?: string | null;
 }
-function fromASN1Subject(input?: ASN1Subject | null): JSONValue {
+function fromASN1Subject(input?: ASN1Subject | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Country: input["Country"],
+    Organization: input["Organization"],
+    OrganizationalUnit: input["OrganizationalUnit"],
+    DistinguishedNameQualifier: input["DistinguishedNameQualifier"],
+    State: input["State"],
+    CommonName: input["CommonName"],
+    SerialNumber: input["SerialNumber"],
+    Locality: input["Locality"],
+    Title: input["Title"],
+    Surname: input["Surname"],
+    GivenName: input["GivenName"],
+    Initials: input["Initials"],
+    Pseudonym: input["Pseudonym"],
+    GenerationQualifier: input["GenerationQualifier"],
   }
 }
-function toASN1Subject(root: JSONValue): ASN1Subject {
-  return prt.readObj({
+function toASN1Subject(root: jsonP.JSONValue): ASN1Subject {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Country": "s",
@@ -760,14 +803,14 @@ function toASN1Subject(root: JSONValue): ASN1Subject {
 export interface RevocationConfiguration {
   CrlConfiguration?: CrlConfiguration | null;
 }
-function fromRevocationConfiguration(input?: RevocationConfiguration | null): JSONValue {
+function fromRevocationConfiguration(input?: RevocationConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     CrlConfiguration: fromCrlConfiguration(input["CrlConfiguration"]),
   }
 }
-function toRevocationConfiguration(root: JSONValue): RevocationConfiguration {
-  return prt.readObj({
+function toRevocationConfiguration(root: jsonP.JSONValue): RevocationConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CrlConfiguration": toCrlConfiguration,
@@ -782,13 +825,17 @@ export interface CrlConfiguration {
   CustomCname?: string | null;
   S3BucketName?: string | null;
 }
-function fromCrlConfiguration(input?: CrlConfiguration | null): JSONValue {
+function fromCrlConfiguration(input?: CrlConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Enabled: input["Enabled"],
+    ExpirationInDays: input["ExpirationInDays"],
+    CustomCname: input["CustomCname"],
+    S3BucketName: input["S3BucketName"],
   }
 }
-function toCrlConfiguration(root: JSONValue): CrlConfiguration {
-  return prt.readObj({
+function toCrlConfiguration(root: jsonP.JSONValue): CrlConfiguration {
+  return jsonP.readObj({
     required: {
       "Enabled": "b",
     },
@@ -804,27 +851,22 @@ function toCrlConfiguration(root: JSONValue): CrlConfiguration {
 export type CertificateAuthorityType =
 | "ROOT"
 | "SUBORDINATE"
-;
-
-function toCertificateAuthorityType(root: JSONValue): CertificateAuthorityType | null {
-  return ( false
-    || root == "ROOT"
-    || root == "SUBORDINATE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value?: string | null;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
     },
@@ -838,32 +880,25 @@ function toTag(root: JSONValue): Tag {
 export type AuditReportResponseFormat =
 | "JSON"
 | "CSV"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type ActionType =
 | "IssueCertificate"
 | "GetCertificate"
 | "ListPermissions"
-;
-
-function toActionType(root: JSONValue): ActionType | null {
-  return ( false
-    || root == "IssueCertificate"
-    || root == "GetCertificate"
-    || root == "ListPermissions"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface Validity {
   Value: number;
   Type: ValidityPeriodType;
 }
-function fromValidity(input?: Validity | null): JSONValue {
+function fromValidity(input?: Validity | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Value: input["Value"],
+    Type: input["Type"],
   }
 }
 
@@ -874,15 +909,13 @@ export type ValidityPeriodType =
 | "DAYS"
 | "MONTHS"
 | "YEARS"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ResourceOwner =
 | "SELF"
 | "OTHER_ACCOUNTS"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type RevocationReason =
@@ -894,8 +927,7 @@ export type RevocationReason =
 | "CESSATION_OF_OPERATION"
 | "PRIVILEGE_WITHDRAWN"
 | "A_A_COMPROMISE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type CertificateAuthorityStatus =
@@ -906,19 +938,7 @@ export type CertificateAuthorityStatus =
 | "DISABLED"
 | "EXPIRED"
 | "FAILED"
-;
-
-function toCertificateAuthorityStatus(root: JSONValue): CertificateAuthorityStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "PENDING_CERTIFICATE"
-    || root == "ACTIVE"
-    || root == "DELETED"
-    || root == "DISABLED"
-    || root == "EXPIRED"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface CertificateAuthority {
@@ -936,20 +956,20 @@ export interface CertificateAuthority {
   RevocationConfiguration?: RevocationConfiguration | null;
   RestorableUntil?: Date | number | null;
 }
-function toCertificateAuthority(root: JSONValue): CertificateAuthority {
-  return prt.readObj({
+function toCertificateAuthority(root: jsonP.JSONValue): CertificateAuthority {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Arn": "s",
       "OwnerAccount": "s",
       "CreatedAt": "d",
       "LastStateChangeAt": "d",
-      "Type": toCertificateAuthorityType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<CertificateAuthorityType>(x),
       "Serial": "s",
-      "Status": toCertificateAuthorityStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<CertificateAuthorityStatus>(x),
       "NotBefore": "d",
       "NotAfter": "d",
-      "FailureReason": toFailureReason,
+      "FailureReason": (x: jsonP.JSONValue) => cmnP.readEnum<FailureReason>(x),
       "CertificateAuthorityConfiguration": toCertificateAuthorityConfiguration,
       "RevocationConfiguration": toRevocationConfiguration,
       "RestorableUntil": "d",
@@ -962,28 +982,14 @@ export type FailureReason =
 | "REQUEST_TIMED_OUT"
 | "UNSUPPORTED_ALGORITHM"
 | "OTHER"
-;
-function toFailureReason(root: JSONValue): FailureReason | null {
-  return ( false
-    || root == "REQUEST_TIMED_OUT"
-    || root == "UNSUPPORTED_ALGORITHM"
-    || root == "OTHER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type AuditReportStatus =
 | "CREATING"
 | "SUCCESS"
 | "FAILED"
-;
-function toAuditReportStatus(root: JSONValue): AuditReportStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "SUCCESS"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Permission {
@@ -994,15 +1000,15 @@ export interface Permission {
   Actions?: ActionType[] | null;
   Policy?: string | null;
 }
-function toPermission(root: JSONValue): Permission {
-  return prt.readObj({
+function toPermission(root: jsonP.JSONValue): Permission {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CertificateAuthorityArn": "s",
       "CreatedAt": "d",
       "Principal": "s",
       "SourceAccount": "s",
-      "Actions": [toActionType],
+      "Actions": [(x: jsonP.JSONValue) => cmnP.readEnum<ActionType>(x)],
       "Policy": "s",
     },
   }, root);

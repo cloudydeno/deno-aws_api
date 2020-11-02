@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class LakeFormation {
   #client: ServiceClient;
@@ -30,14 +30,15 @@ export default class LakeFormation {
   async batchGrantPermissions(
     {abortSignal, ...params}: RequestConfig & BatchGrantPermissionsRequest,
   ): Promise<BatchGrantPermissionsResponse> {
-    const body: JSONObject = {...params,
-    Entries: params["Entries"]?.map(x => fromBatchPermissionsRequestEntry(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CatalogId: params["CatalogId"],
+      Entries: params["Entries"]?.map(x => fromBatchPermissionsRequestEntry(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGrantPermissions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Failures": [toBatchPermissionsFailureEntry],
@@ -48,14 +49,15 @@ export default class LakeFormation {
   async batchRevokePermissions(
     {abortSignal, ...params}: RequestConfig & BatchRevokePermissionsRequest,
   ): Promise<BatchRevokePermissionsResponse> {
-    const body: JSONObject = {...params,
-    Entries: params["Entries"]?.map(x => fromBatchPermissionsRequestEntry(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CatalogId: params["CatalogId"],
+      Entries: params["Entries"]?.map(x => fromBatchPermissionsRequestEntry(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchRevokePermissions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Failures": [toBatchPermissionsFailureEntry],
@@ -66,13 +68,14 @@ export default class LakeFormation {
   async deregisterResource(
     {abortSignal, ...params}: RequestConfig & DeregisterResourceRequest,
   ): Promise<DeregisterResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -81,13 +84,14 @@ export default class LakeFormation {
   async describeResource(
     {abortSignal, ...params}: RequestConfig & DescribeResourceRequest,
   ): Promise<DescribeResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResourceInfo": toResourceInfo,
@@ -98,13 +102,14 @@ export default class LakeFormation {
   async getDataLakeSettings(
     {abortSignal, ...params}: RequestConfig & GetDataLakeSettingsRequest = {},
   ): Promise<GetDataLakeSettingsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CatalogId: params["CatalogId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDataLakeSettings",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DataLakeSettings": toDataLakeSettings,
@@ -115,13 +120,17 @@ export default class LakeFormation {
   async getEffectivePermissionsForPath(
     {abortSignal, ...params}: RequestConfig & GetEffectivePermissionsForPathRequest,
   ): Promise<GetEffectivePermissionsForPathResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CatalogId: params["CatalogId"],
+      ResourceArn: params["ResourceArn"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEffectivePermissionsForPath",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Permissions": [toPrincipalResourcePermissions],
@@ -133,15 +142,18 @@ export default class LakeFormation {
   async grantPermissions(
     {abortSignal, ...params}: RequestConfig & GrantPermissionsRequest,
   ): Promise<GrantPermissionsResponse> {
-    const body: JSONObject = {...params,
-    Principal: fromDataLakePrincipal(params["Principal"]),
-    Resource: fromResource(params["Resource"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CatalogId: params["CatalogId"],
+      Principal: fromDataLakePrincipal(params["Principal"]),
+      Resource: fromResource(params["Resource"]),
+      Permissions: params["Permissions"],
+      PermissionsWithGrantOption: params["PermissionsWithGrantOption"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GrantPermissions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -150,15 +162,19 @@ export default class LakeFormation {
   async listPermissions(
     {abortSignal, ...params}: RequestConfig & ListPermissionsRequest = {},
   ): Promise<ListPermissionsResponse> {
-    const body: JSONObject = {...params,
-    Principal: fromDataLakePrincipal(params["Principal"]),
-    Resource: fromResource(params["Resource"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CatalogId: params["CatalogId"],
+      Principal: fromDataLakePrincipal(params["Principal"]),
+      ResourceType: params["ResourceType"],
+      Resource: fromResource(params["Resource"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPermissions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PrincipalResourcePermissions": [toPrincipalResourcePermissions],
@@ -170,14 +186,16 @@ export default class LakeFormation {
   async listResources(
     {abortSignal, ...params}: RequestConfig & ListResourcesRequest = {},
   ): Promise<ListResourcesResponse> {
-    const body: JSONObject = {...params,
-    FilterConditionList: params["FilterConditionList"]?.map(x => fromFilterCondition(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      FilterConditionList: params["FilterConditionList"]?.map(x => fromFilterCondition(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResources",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResourceInfoList": [toResourceInfo],
@@ -189,14 +207,15 @@ export default class LakeFormation {
   async putDataLakeSettings(
     {abortSignal, ...params}: RequestConfig & PutDataLakeSettingsRequest,
   ): Promise<PutDataLakeSettingsResponse> {
-    const body: JSONObject = {...params,
-    DataLakeSettings: fromDataLakeSettings(params["DataLakeSettings"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CatalogId: params["CatalogId"],
+      DataLakeSettings: fromDataLakeSettings(params["DataLakeSettings"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutDataLakeSettings",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -205,13 +224,16 @@ export default class LakeFormation {
   async registerResource(
     {abortSignal, ...params}: RequestConfig & RegisterResourceRequest,
   ): Promise<RegisterResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      UseServiceLinkedRole: params["UseServiceLinkedRole"],
+      RoleArn: params["RoleArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -220,15 +242,18 @@ export default class LakeFormation {
   async revokePermissions(
     {abortSignal, ...params}: RequestConfig & RevokePermissionsRequest,
   ): Promise<RevokePermissionsResponse> {
-    const body: JSONObject = {...params,
-    Principal: fromDataLakePrincipal(params["Principal"]),
-    Resource: fromResource(params["Resource"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CatalogId: params["CatalogId"],
+      Principal: fromDataLakePrincipal(params["Principal"]),
+      Resource: fromResource(params["Resource"]),
+      Permissions: params["Permissions"],
+      PermissionsWithGrantOption: params["PermissionsWithGrantOption"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RevokePermissions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -237,13 +262,15 @@ export default class LakeFormation {
   async updateResource(
     {abortSignal, ...params}: RequestConfig & UpdateResourceRequest,
   ): Promise<UpdateResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RoleArn: params["RoleArn"],
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -410,23 +437,26 @@ export interface BatchPermissionsRequestEntry {
   Permissions?: Permission[] | null;
   PermissionsWithGrantOption?: Permission[] | null;
 }
-function fromBatchPermissionsRequestEntry(input?: BatchPermissionsRequestEntry | null): JSONValue {
+function fromBatchPermissionsRequestEntry(input?: BatchPermissionsRequestEntry | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Id: input["Id"],
     Principal: fromDataLakePrincipal(input["Principal"]),
     Resource: fromResource(input["Resource"]),
+    Permissions: input["Permissions"],
+    PermissionsWithGrantOption: input["PermissionsWithGrantOption"],
   }
 }
-function toBatchPermissionsRequestEntry(root: JSONValue): BatchPermissionsRequestEntry {
-  return prt.readObj({
+function toBatchPermissionsRequestEntry(root: jsonP.JSONValue): BatchPermissionsRequestEntry {
+  return jsonP.readObj({
     required: {
       "Id": "s",
     },
     optional: {
       "Principal": toDataLakePrincipal,
       "Resource": toResource,
-      "Permissions": [toPermission],
-      "PermissionsWithGrantOption": [toPermission],
+      "Permissions": [(x: jsonP.JSONValue) => cmnP.readEnum<Permission>(x)],
+      "PermissionsWithGrantOption": [(x: jsonP.JSONValue) => cmnP.readEnum<Permission>(x)],
     },
   }, root);
 }
@@ -435,13 +465,14 @@ function toBatchPermissionsRequestEntry(root: JSONValue): BatchPermissionsReques
 export interface DataLakePrincipal {
   DataLakePrincipalIdentifier?: string | null;
 }
-function fromDataLakePrincipal(input?: DataLakePrincipal | null): JSONValue {
+function fromDataLakePrincipal(input?: DataLakePrincipal | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DataLakePrincipalIdentifier: input["DataLakePrincipalIdentifier"],
   }
 }
-function toDataLakePrincipal(root: JSONValue): DataLakePrincipal {
-  return prt.readObj({
+function toDataLakePrincipal(root: jsonP.JSONValue): DataLakePrincipal {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DataLakePrincipalIdentifier": "s",
@@ -457,9 +488,9 @@ export interface Resource {
   TableWithColumns?: TableWithColumnsResource | null;
   DataLocation?: DataLocationResource | null;
 }
-function fromResource(input?: Resource | null): JSONValue {
+function fromResource(input?: Resource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Catalog: fromCatalogResource(input["Catalog"]),
     Database: fromDatabaseResource(input["Database"]),
     Table: fromTableResource(input["Table"]),
@@ -467,8 +498,8 @@ function fromResource(input?: Resource | null): JSONValue {
     DataLocation: fromDataLocationResource(input["DataLocation"]),
   }
 }
-function toResource(root: JSONValue): Resource {
-  return prt.readObj({
+function toResource(root: jsonP.JSONValue): Resource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Catalog": toCatalogResource,
@@ -483,13 +514,13 @@ function toResource(root: JSONValue): Resource {
 // refs: 9 - tags: input, named, interface, output
 export interface CatalogResource {
 }
-function fromCatalogResource(input?: CatalogResource | null): JSONValue {
+function fromCatalogResource(input?: CatalogResource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
   }
 }
-function toCatalogResource(root: JSONValue): CatalogResource {
-  return prt.readObj({
+function toCatalogResource(root: jsonP.JSONValue): CatalogResource {
+  return jsonP.readObj({
     required: {},
     optional: {},
   }, root);
@@ -500,13 +531,15 @@ export interface DatabaseResource {
   CatalogId?: string | null;
   Name: string;
 }
-function fromDatabaseResource(input?: DatabaseResource | null): JSONValue {
+function fromDatabaseResource(input?: DatabaseResource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CatalogId: input["CatalogId"],
+    Name: input["Name"],
   }
 }
-function toDatabaseResource(root: JSONValue): DatabaseResource {
-  return prt.readObj({
+function toDatabaseResource(root: jsonP.JSONValue): DatabaseResource {
+  return jsonP.readObj({
     required: {
       "Name": "s",
     },
@@ -523,14 +556,17 @@ export interface TableResource {
   Name?: string | null;
   TableWildcard?: TableWildcard | null;
 }
-function fromTableResource(input?: TableResource | null): JSONValue {
+function fromTableResource(input?: TableResource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CatalogId: input["CatalogId"],
+    DatabaseName: input["DatabaseName"],
+    Name: input["Name"],
     TableWildcard: fromTableWildcard(input["TableWildcard"]),
   }
 }
-function toTableResource(root: JSONValue): TableResource {
-  return prt.readObj({
+function toTableResource(root: jsonP.JSONValue): TableResource {
+  return jsonP.readObj({
     required: {
       "DatabaseName": "s",
     },
@@ -545,13 +581,13 @@ function toTableResource(root: JSONValue): TableResource {
 // refs: 9 - tags: input, named, interface, output
 export interface TableWildcard {
 }
-function fromTableWildcard(input?: TableWildcard | null): JSONValue {
+function fromTableWildcard(input?: TableWildcard | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
   }
 }
-function toTableWildcard(root: JSONValue): TableWildcard {
-  return prt.readObj({
+function toTableWildcard(root: jsonP.JSONValue): TableWildcard {
+  return jsonP.readObj({
     required: {},
     optional: {},
   }, root);
@@ -565,14 +601,18 @@ export interface TableWithColumnsResource {
   ColumnNames?: string[] | null;
   ColumnWildcard?: ColumnWildcard | null;
 }
-function fromTableWithColumnsResource(input?: TableWithColumnsResource | null): JSONValue {
+function fromTableWithColumnsResource(input?: TableWithColumnsResource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CatalogId: input["CatalogId"],
+    DatabaseName: input["DatabaseName"],
+    Name: input["Name"],
+    ColumnNames: input["ColumnNames"],
     ColumnWildcard: fromColumnWildcard(input["ColumnWildcard"]),
   }
 }
-function toTableWithColumnsResource(root: JSONValue): TableWithColumnsResource {
-  return prt.readObj({
+function toTableWithColumnsResource(root: jsonP.JSONValue): TableWithColumnsResource {
+  return jsonP.readObj({
     required: {
       "DatabaseName": "s",
       "Name": "s",
@@ -589,13 +629,14 @@ function toTableWithColumnsResource(root: JSONValue): TableWithColumnsResource {
 export interface ColumnWildcard {
   ExcludedColumnNames?: string[] | null;
 }
-function fromColumnWildcard(input?: ColumnWildcard | null): JSONValue {
+function fromColumnWildcard(input?: ColumnWildcard | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ExcludedColumnNames: input["ExcludedColumnNames"],
   }
 }
-function toColumnWildcard(root: JSONValue): ColumnWildcard {
-  return prt.readObj({
+function toColumnWildcard(root: jsonP.JSONValue): ColumnWildcard {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ExcludedColumnNames": ["s"],
@@ -608,13 +649,15 @@ export interface DataLocationResource {
   CatalogId?: string | null;
   ResourceArn: string;
 }
-function fromDataLocationResource(input?: DataLocationResource | null): JSONValue {
+function fromDataLocationResource(input?: DataLocationResource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CatalogId: input["CatalogId"],
+    ResourceArn: input["ResourceArn"],
   }
 }
-function toDataLocationResource(root: JSONValue): DataLocationResource {
-  return prt.readObj({
+function toDataLocationResource(root: jsonP.JSONValue): DataLocationResource {
+  return jsonP.readObj({
     required: {
       "ResourceArn": "s",
     },
@@ -636,22 +679,7 @@ export type Permission =
 | "CREATE_DATABASE"
 | "CREATE_TABLE"
 | "DATA_LOCATION_ACCESS"
-;
-
-function toPermission(root: JSONValue): Permission | null {
-  return ( false
-    || root == "ALL"
-    || root == "SELECT"
-    || root == "ALTER"
-    || root == "DROP"
-    || root == "DELETE"
-    || root == "INSERT"
-    || root == "DESCRIBE"
-    || root == "CREATE_DATABASE"
-    || root == "CREATE_TABLE"
-    || root == "DATA_LOCATION_ACCESS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type DataLakeResourceType =
@@ -659,8 +687,7 @@ export type DataLakeResourceType =
 | "DATABASE"
 | "TABLE"
 | "DATA_LOCATION"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface FilterCondition {
@@ -668,9 +695,12 @@ export interface FilterCondition {
   ComparisonOperator?: ComparisonOperator | null;
   StringValueList?: string[] | null;
 }
-function fromFilterCondition(input?: FilterCondition | null): JSONValue {
+function fromFilterCondition(input?: FilterCondition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Field: input["Field"],
+    ComparisonOperator: input["ComparisonOperator"],
+    StringValueList: input["StringValueList"],
   }
 }
 
@@ -679,8 +709,7 @@ export type FieldNameString =
 | "RESOURCE_ARN"
 | "ROLE_ARN"
 | "LAST_MODIFIED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ComparisonOperator =
@@ -695,8 +724,7 @@ export type ComparisonOperator =
 | "BEGINS_WITH"
 | "IN"
 | "BETWEEN"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface DataLakeSettings {
@@ -705,16 +733,17 @@ export interface DataLakeSettings {
   CreateTableDefaultPermissions?: PrincipalPermissions[] | null;
   TrustedResourceOwners?: string[] | null;
 }
-function fromDataLakeSettings(input?: DataLakeSettings | null): JSONValue {
+function fromDataLakeSettings(input?: DataLakeSettings | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     DataLakeAdmins: input["DataLakeAdmins"]?.map(x => fromDataLakePrincipal(x)),
     CreateDatabaseDefaultPermissions: input["CreateDatabaseDefaultPermissions"]?.map(x => fromPrincipalPermissions(x)),
     CreateTableDefaultPermissions: input["CreateTableDefaultPermissions"]?.map(x => fromPrincipalPermissions(x)),
+    TrustedResourceOwners: input["TrustedResourceOwners"],
   }
 }
-function toDataLakeSettings(root: JSONValue): DataLakeSettings {
-  return prt.readObj({
+function toDataLakeSettings(root: jsonP.JSONValue): DataLakeSettings {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DataLakeAdmins": [toDataLakePrincipal],
@@ -730,18 +759,19 @@ export interface PrincipalPermissions {
   Principal?: DataLakePrincipal | null;
   Permissions?: Permission[] | null;
 }
-function fromPrincipalPermissions(input?: PrincipalPermissions | null): JSONValue {
+function fromPrincipalPermissions(input?: PrincipalPermissions | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Principal: fromDataLakePrincipal(input["Principal"]),
+    Permissions: input["Permissions"],
   }
 }
-function toPrincipalPermissions(root: JSONValue): PrincipalPermissions {
-  return prt.readObj({
+function toPrincipalPermissions(root: jsonP.JSONValue): PrincipalPermissions {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Principal": toDataLakePrincipal,
-      "Permissions": [toPermission],
+      "Permissions": [(x: jsonP.JSONValue) => cmnP.readEnum<Permission>(x)],
     },
   }, root);
 }
@@ -751,8 +781,8 @@ export interface BatchPermissionsFailureEntry {
   RequestEntry?: BatchPermissionsRequestEntry | null;
   Error?: ErrorDetail | null;
 }
-function toBatchPermissionsFailureEntry(root: JSONValue): BatchPermissionsFailureEntry {
-  return prt.readObj({
+function toBatchPermissionsFailureEntry(root: jsonP.JSONValue): BatchPermissionsFailureEntry {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RequestEntry": toBatchPermissionsRequestEntry,
@@ -766,8 +796,8 @@ export interface ErrorDetail {
   ErrorCode?: string | null;
   ErrorMessage?: string | null;
 }
-function toErrorDetail(root: JSONValue): ErrorDetail {
-  return prt.readObj({
+function toErrorDetail(root: jsonP.JSONValue): ErrorDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ErrorCode": "s",
@@ -782,8 +812,8 @@ export interface ResourceInfo {
   RoleArn?: string | null;
   LastModified?: Date | number | null;
 }
-function toResourceInfo(root: JSONValue): ResourceInfo {
-  return prt.readObj({
+function toResourceInfo(root: jsonP.JSONValue): ResourceInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ResourceArn": "s",
@@ -801,14 +831,14 @@ export interface PrincipalResourcePermissions {
   PermissionsWithGrantOption?: Permission[] | null;
   AdditionalDetails?: DetailsMap | null;
 }
-function toPrincipalResourcePermissions(root: JSONValue): PrincipalResourcePermissions {
-  return prt.readObj({
+function toPrincipalResourcePermissions(root: jsonP.JSONValue): PrincipalResourcePermissions {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Principal": toDataLakePrincipal,
       "Resource": toResource,
-      "Permissions": [toPermission],
-      "PermissionsWithGrantOption": [toPermission],
+      "Permissions": [(x: jsonP.JSONValue) => cmnP.readEnum<Permission>(x)],
+      "PermissionsWithGrantOption": [(x: jsonP.JSONValue) => cmnP.readEnum<Permission>(x)],
       "AdditionalDetails": toDetailsMap,
     },
   }, root);
@@ -818,8 +848,8 @@ function toPrincipalResourcePermissions(root: JSONValue): PrincipalResourcePermi
 export interface DetailsMap {
   ResourceShare?: string[] | null;
 }
-function toDetailsMap(root: JSONValue): DetailsMap {
-  return prt.readObj({
+function toDetailsMap(root: jsonP.JSONValue): DetailsMap {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ResourceShare": ["s"],

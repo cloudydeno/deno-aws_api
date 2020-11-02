@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class AutoScalingPlans {
   #client: ServiceClient;
@@ -30,15 +30,16 @@ export default class AutoScalingPlans {
   async createScalingPlan(
     {abortSignal, ...params}: RequestConfig & CreateScalingPlanRequest,
   ): Promise<CreateScalingPlanResponse> {
-    const body: JSONObject = {...params,
-    ApplicationSource: fromApplicationSource(params["ApplicationSource"]),
-    ScalingInstructions: params["ScalingInstructions"]?.map(x => fromScalingInstruction(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ScalingPlanName: params["ScalingPlanName"],
+      ApplicationSource: fromApplicationSource(params["ApplicationSource"]),
+      ScalingInstructions: params["ScalingInstructions"]?.map(x => fromScalingInstruction(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateScalingPlan",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ScalingPlanVersion": "n",
       },
@@ -49,13 +50,15 @@ export default class AutoScalingPlans {
   async deleteScalingPlan(
     {abortSignal, ...params}: RequestConfig & DeleteScalingPlanRequest,
   ): Promise<DeleteScalingPlanResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ScalingPlanName: params["ScalingPlanName"],
+      ScalingPlanVersion: params["ScalingPlanVersion"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteScalingPlan",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -64,13 +67,17 @@ export default class AutoScalingPlans {
   async describeScalingPlanResources(
     {abortSignal, ...params}: RequestConfig & DescribeScalingPlanResourcesRequest,
   ): Promise<DescribeScalingPlanResourcesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ScalingPlanName: params["ScalingPlanName"],
+      ScalingPlanVersion: params["ScalingPlanVersion"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeScalingPlanResources",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ScalingPlanResources": [toScalingPlanResource],
@@ -82,14 +89,18 @@ export default class AutoScalingPlans {
   async describeScalingPlans(
     {abortSignal, ...params}: RequestConfig & DescribeScalingPlansRequest = {},
   ): Promise<DescribeScalingPlansResponse> {
-    const body: JSONObject = {...params,
-    ApplicationSources: params["ApplicationSources"]?.map(x => fromApplicationSource(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ScalingPlanNames: params["ScalingPlanNames"],
+      ScalingPlanVersion: params["ScalingPlanVersion"],
+      ApplicationSources: params["ApplicationSources"]?.map(x => fromApplicationSource(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeScalingPlans",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ScalingPlans": [toScalingPlan],
@@ -101,15 +112,21 @@ export default class AutoScalingPlans {
   async getScalingPlanResourceForecastData(
     {abortSignal, ...params}: RequestConfig & GetScalingPlanResourceForecastDataRequest,
   ): Promise<GetScalingPlanResourceForecastDataResponse> {
-    const body: JSONObject = {...params,
-    StartTime: prt.serializeDate_unixTimestamp(params["StartTime"]),
-    EndTime: prt.serializeDate_unixTimestamp(params["EndTime"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ScalingPlanName: params["ScalingPlanName"],
+      ScalingPlanVersion: params["ScalingPlanVersion"],
+      ServiceNamespace: params["ServiceNamespace"],
+      ResourceId: params["ResourceId"],
+      ScalableDimension: params["ScalableDimension"],
+      ForecastDataType: params["ForecastDataType"],
+      StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
+      EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetScalingPlanResourceForecastData",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Datapoints": [toDatapoint],
       },
@@ -120,15 +137,17 @@ export default class AutoScalingPlans {
   async updateScalingPlan(
     {abortSignal, ...params}: RequestConfig & UpdateScalingPlanRequest,
   ): Promise<UpdateScalingPlanResponse> {
-    const body: JSONObject = {...params,
-    ApplicationSource: fromApplicationSource(params["ApplicationSource"]),
-    ScalingInstructions: params["ScalingInstructions"]?.map(x => fromScalingInstruction(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ScalingPlanName: params["ScalingPlanName"],
+      ScalingPlanVersion: params["ScalingPlanVersion"],
+      ApplicationSource: fromApplicationSource(params["ApplicationSource"]),
+      ScalingInstructions: params["ScalingInstructions"]?.map(x => fromScalingInstruction(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateScalingPlan",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -221,14 +240,15 @@ export interface ApplicationSource {
   CloudFormationStackARN?: string | null;
   TagFilters?: TagFilter[] | null;
 }
-function fromApplicationSource(input?: ApplicationSource | null): JSONValue {
+function fromApplicationSource(input?: ApplicationSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    CloudFormationStackARN: input["CloudFormationStackARN"],
     TagFilters: input["TagFilters"]?.map(x => fromTagFilter(x)),
   }
 }
-function toApplicationSource(root: JSONValue): ApplicationSource {
-  return prt.readObj({
+function toApplicationSource(root: jsonP.JSONValue): ApplicationSource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CloudFormationStackARN": "s",
@@ -242,13 +262,15 @@ export interface TagFilter {
   Key?: string | null;
   Values?: string[] | null;
 }
-function fromTagFilter(input?: TagFilter | null): JSONValue {
+function fromTagFilter(input?: TagFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
   }
 }
-function toTagFilter(root: JSONValue): TagFilter {
-  return prt.readObj({
+function toTagFilter(root: jsonP.JSONValue): TagFilter {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Key": "s",
@@ -274,20 +296,31 @@ export interface ScalingInstruction {
   ScalingPolicyUpdateBehavior?: ScalingPolicyUpdateBehavior | null;
   DisableDynamicScaling?: boolean | null;
 }
-function fromScalingInstruction(input?: ScalingInstruction | null): JSONValue {
+function fromScalingInstruction(input?: ScalingInstruction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ServiceNamespace: input["ServiceNamespace"],
+    ResourceId: input["ResourceId"],
+    ScalableDimension: input["ScalableDimension"],
+    MinCapacity: input["MinCapacity"],
+    MaxCapacity: input["MaxCapacity"],
     TargetTrackingConfigurations: input["TargetTrackingConfigurations"]?.map(x => fromTargetTrackingConfiguration(x)),
     PredefinedLoadMetricSpecification: fromPredefinedLoadMetricSpecification(input["PredefinedLoadMetricSpecification"]),
     CustomizedLoadMetricSpecification: fromCustomizedLoadMetricSpecification(input["CustomizedLoadMetricSpecification"]),
+    ScheduledActionBufferTime: input["ScheduledActionBufferTime"],
+    PredictiveScalingMaxCapacityBehavior: input["PredictiveScalingMaxCapacityBehavior"],
+    PredictiveScalingMaxCapacityBuffer: input["PredictiveScalingMaxCapacityBuffer"],
+    PredictiveScalingMode: input["PredictiveScalingMode"],
+    ScalingPolicyUpdateBehavior: input["ScalingPolicyUpdateBehavior"],
+    DisableDynamicScaling: input["DisableDynamicScaling"],
   }
 }
-function toScalingInstruction(root: JSONValue): ScalingInstruction {
-  return prt.readObj({
+function toScalingInstruction(root: jsonP.JSONValue): ScalingInstruction {
+  return jsonP.readObj({
     required: {
-      "ServiceNamespace": toServiceNamespace,
+      "ServiceNamespace": (x: jsonP.JSONValue) => cmnP.readEnum<ServiceNamespace>(x),
       "ResourceId": "s",
-      "ScalableDimension": toScalableDimension,
+      "ScalableDimension": (x: jsonP.JSONValue) => cmnP.readEnum<ScalableDimension>(x),
       "MinCapacity": "n",
       "MaxCapacity": "n",
       "TargetTrackingConfigurations": [toTargetTrackingConfiguration],
@@ -296,10 +329,10 @@ function toScalingInstruction(root: JSONValue): ScalingInstruction {
       "PredefinedLoadMetricSpecification": toPredefinedLoadMetricSpecification,
       "CustomizedLoadMetricSpecification": toCustomizedLoadMetricSpecification,
       "ScheduledActionBufferTime": "n",
-      "PredictiveScalingMaxCapacityBehavior": toPredictiveScalingMaxCapacityBehavior,
+      "PredictiveScalingMaxCapacityBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<PredictiveScalingMaxCapacityBehavior>(x),
       "PredictiveScalingMaxCapacityBuffer": "n",
-      "PredictiveScalingMode": toPredictiveScalingMode,
-      "ScalingPolicyUpdateBehavior": toScalingPolicyUpdateBehavior,
+      "PredictiveScalingMode": (x: jsonP.JSONValue) => cmnP.readEnum<PredictiveScalingMode>(x),
+      "ScalingPolicyUpdateBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<ScalingPolicyUpdateBehavior>(x),
       "DisableDynamicScaling": "b",
     },
   }, root);
@@ -312,17 +345,7 @@ export type ServiceNamespace =
 | "ec2"
 | "rds"
 | "dynamodb"
-;
-
-function toServiceNamespace(root: JSONValue): ServiceNamespace | null {
-  return ( false
-    || root == "autoscaling"
-    || root == "ecs"
-    || root == "ec2"
-    || root == "rds"
-    || root == "dynamodb"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type ScalableDimension =
@@ -334,20 +357,7 @@ export type ScalableDimension =
 | "dynamodb:table:WriteCapacityUnits"
 | "dynamodb:index:ReadCapacityUnits"
 | "dynamodb:index:WriteCapacityUnits"
-;
-
-function toScalableDimension(root: JSONValue): ScalableDimension | null {
-  return ( false
-    || root == "autoscaling:autoScalingGroup:DesiredCapacity"
-    || root == "ecs:service:DesiredCount"
-    || root == "ec2:spot-fleet-request:TargetCapacity"
-    || root == "rds:cluster:ReadReplicaCount"
-    || root == "dynamodb:table:ReadCapacityUnits"
-    || root == "dynamodb:table:WriteCapacityUnits"
-    || root == "dynamodb:index:ReadCapacityUnits"
-    || root == "dynamodb:index:WriteCapacityUnits"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface TargetTrackingConfiguration {
@@ -359,15 +369,20 @@ export interface TargetTrackingConfiguration {
   ScaleInCooldown?: number | null;
   EstimatedInstanceWarmup?: number | null;
 }
-function fromTargetTrackingConfiguration(input?: TargetTrackingConfiguration | null): JSONValue {
+function fromTargetTrackingConfiguration(input?: TargetTrackingConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     PredefinedScalingMetricSpecification: fromPredefinedScalingMetricSpecification(input["PredefinedScalingMetricSpecification"]),
     CustomizedScalingMetricSpecification: fromCustomizedScalingMetricSpecification(input["CustomizedScalingMetricSpecification"]),
+    TargetValue: input["TargetValue"],
+    DisableScaleIn: input["DisableScaleIn"],
+    ScaleOutCooldown: input["ScaleOutCooldown"],
+    ScaleInCooldown: input["ScaleInCooldown"],
+    EstimatedInstanceWarmup: input["EstimatedInstanceWarmup"],
   }
 }
-function toTargetTrackingConfiguration(root: JSONValue): TargetTrackingConfiguration {
-  return prt.readObj({
+function toTargetTrackingConfiguration(root: jsonP.JSONValue): TargetTrackingConfiguration {
+  return jsonP.readObj({
     required: {
       "TargetValue": "n",
     },
@@ -387,15 +402,17 @@ export interface PredefinedScalingMetricSpecification {
   PredefinedScalingMetricType: ScalingMetricType;
   ResourceLabel?: string | null;
 }
-function fromPredefinedScalingMetricSpecification(input?: PredefinedScalingMetricSpecification | null): JSONValue {
+function fromPredefinedScalingMetricSpecification(input?: PredefinedScalingMetricSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    PredefinedScalingMetricType: input["PredefinedScalingMetricType"],
+    ResourceLabel: input["ResourceLabel"],
   }
 }
-function toPredefinedScalingMetricSpecification(root: JSONValue): PredefinedScalingMetricSpecification {
-  return prt.readObj({
+function toPredefinedScalingMetricSpecification(root: jsonP.JSONValue): PredefinedScalingMetricSpecification {
+  return jsonP.readObj({
     required: {
-      "PredefinedScalingMetricType": toScalingMetricType,
+      "PredefinedScalingMetricType": (x: jsonP.JSONValue) => cmnP.readEnum<ScalingMetricType>(x),
     },
     optional: {
       "ResourceLabel": "s",
@@ -418,25 +435,7 @@ export type ScalingMetricType =
 | "EC2SpotFleetRequestAverageCPUUtilization"
 | "EC2SpotFleetRequestAverageNetworkIn"
 | "EC2SpotFleetRequestAverageNetworkOut"
-;
-
-function toScalingMetricType(root: JSONValue): ScalingMetricType | null {
-  return ( false
-    || root == "ASGAverageCPUUtilization"
-    || root == "ASGAverageNetworkIn"
-    || root == "ASGAverageNetworkOut"
-    || root == "DynamoDBReadCapacityUtilization"
-    || root == "DynamoDBWriteCapacityUtilization"
-    || root == "ECSServiceAverageCPUUtilization"
-    || root == "ECSServiceAverageMemoryUtilization"
-    || root == "ALBRequestCountPerTarget"
-    || root == "RDSReaderAverageCPUUtilization"
-    || root == "RDSReaderAverageDatabaseConnections"
-    || root == "EC2SpotFleetRequestAverageCPUUtilization"
-    || root == "EC2SpotFleetRequestAverageNetworkIn"
-    || root == "EC2SpotFleetRequestAverageNetworkOut"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface CustomizedScalingMetricSpecification {
@@ -446,18 +445,22 @@ export interface CustomizedScalingMetricSpecification {
   Statistic: MetricStatistic;
   Unit?: string | null;
 }
-function fromCustomizedScalingMetricSpecification(input?: CustomizedScalingMetricSpecification | null): JSONValue {
+function fromCustomizedScalingMetricSpecification(input?: CustomizedScalingMetricSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MetricName: input["MetricName"],
+    Namespace: input["Namespace"],
     Dimensions: input["Dimensions"]?.map(x => fromMetricDimension(x)),
+    Statistic: input["Statistic"],
+    Unit: input["Unit"],
   }
 }
-function toCustomizedScalingMetricSpecification(root: JSONValue): CustomizedScalingMetricSpecification {
-  return prt.readObj({
+function toCustomizedScalingMetricSpecification(root: jsonP.JSONValue): CustomizedScalingMetricSpecification {
+  return jsonP.readObj({
     required: {
       "MetricName": "s",
       "Namespace": "s",
-      "Statistic": toMetricStatistic,
+      "Statistic": (x: jsonP.JSONValue) => cmnP.readEnum<MetricStatistic>(x),
     },
     optional: {
       "Dimensions": [toMetricDimension],
@@ -471,13 +474,15 @@ export interface MetricDimension {
   Name: string;
   Value: string;
 }
-function fromMetricDimension(input?: MetricDimension | null): JSONValue {
+function fromMetricDimension(input?: MetricDimension | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Value: input["Value"],
   }
 }
-function toMetricDimension(root: JSONValue): MetricDimension {
-  return prt.readObj({
+function toMetricDimension(root: jsonP.JSONValue): MetricDimension {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "Value": "s",
@@ -493,32 +498,24 @@ export type MetricStatistic =
 | "Maximum"
 | "SampleCount"
 | "Sum"
-;
-
-function toMetricStatistic(root: JSONValue): MetricStatistic | null {
-  return ( false
-    || root == "Average"
-    || root == "Minimum"
-    || root == "Maximum"
-    || root == "SampleCount"
-    || root == "Sum"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface PredefinedLoadMetricSpecification {
   PredefinedLoadMetricType: LoadMetricType;
   ResourceLabel?: string | null;
 }
-function fromPredefinedLoadMetricSpecification(input?: PredefinedLoadMetricSpecification | null): JSONValue {
+function fromPredefinedLoadMetricSpecification(input?: PredefinedLoadMetricSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    PredefinedLoadMetricType: input["PredefinedLoadMetricType"],
+    ResourceLabel: input["ResourceLabel"],
   }
 }
-function toPredefinedLoadMetricSpecification(root: JSONValue): PredefinedLoadMetricSpecification {
-  return prt.readObj({
+function toPredefinedLoadMetricSpecification(root: jsonP.JSONValue): PredefinedLoadMetricSpecification {
+  return jsonP.readObj({
     required: {
-      "PredefinedLoadMetricType": toLoadMetricType,
+      "PredefinedLoadMetricType": (x: jsonP.JSONValue) => cmnP.readEnum<LoadMetricType>(x),
     },
     optional: {
       "ResourceLabel": "s",
@@ -532,16 +529,7 @@ export type LoadMetricType =
 | "ASGTotalNetworkIn"
 | "ASGTotalNetworkOut"
 | "ALBTargetGroupRequestCount"
-;
-
-function toLoadMetricType(root: JSONValue): LoadMetricType | null {
-  return ( false
-    || root == "ASGTotalCPUUtilization"
-    || root == "ASGTotalNetworkIn"
-    || root == "ASGTotalNetworkOut"
-    || root == "ALBTargetGroupRequestCount"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface CustomizedLoadMetricSpecification {
@@ -551,18 +539,22 @@ export interface CustomizedLoadMetricSpecification {
   Statistic: MetricStatistic;
   Unit?: string | null;
 }
-function fromCustomizedLoadMetricSpecification(input?: CustomizedLoadMetricSpecification | null): JSONValue {
+function fromCustomizedLoadMetricSpecification(input?: CustomizedLoadMetricSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MetricName: input["MetricName"],
+    Namespace: input["Namespace"],
     Dimensions: input["Dimensions"]?.map(x => fromMetricDimension(x)),
+    Statistic: input["Statistic"],
+    Unit: input["Unit"],
   }
 }
-function toCustomizedLoadMetricSpecification(root: JSONValue): CustomizedLoadMetricSpecification {
-  return prt.readObj({
+function toCustomizedLoadMetricSpecification(root: jsonP.JSONValue): CustomizedLoadMetricSpecification {
+  return jsonP.readObj({
     required: {
       "MetricName": "s",
       "Namespace": "s",
-      "Statistic": toMetricStatistic,
+      "Statistic": (x: jsonP.JSONValue) => cmnP.readEnum<MetricStatistic>(x),
     },
     optional: {
       "Dimensions": [toMetricDimension],
@@ -576,41 +568,19 @@ export type PredictiveScalingMaxCapacityBehavior =
 | "SetForecastCapacityToMaxCapacity"
 | "SetMaxCapacityToForecastCapacity"
 | "SetMaxCapacityAboveForecastCapacity"
-;
-
-function toPredictiveScalingMaxCapacityBehavior(root: JSONValue): PredictiveScalingMaxCapacityBehavior | null {
-  return ( false
-    || root == "SetForecastCapacityToMaxCapacity"
-    || root == "SetMaxCapacityToForecastCapacity"
-    || root == "SetMaxCapacityAboveForecastCapacity"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type PredictiveScalingMode =
 | "ForecastAndScale"
 | "ForecastOnly"
-;
-
-function toPredictiveScalingMode(root: JSONValue): PredictiveScalingMode | null {
-  return ( false
-    || root == "ForecastAndScale"
-    || root == "ForecastOnly"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type ScalingPolicyUpdateBehavior =
 | "KeepExternalPolicies"
 | "ReplaceExternalPolicies"
-;
-
-function toScalingPolicyUpdateBehavior(root: JSONValue): ScalingPolicyUpdateBehavior | null {
-  return ( false
-    || root == "KeepExternalPolicies"
-    || root == "ReplaceExternalPolicies"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ForecastDataType =
@@ -618,8 +588,7 @@ export type ForecastDataType =
 | "LoadForecast"
 | "ScheduledActionMinCapacity"
 | "ScheduledActionMaxCapacity"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ScalingPlanResource {
@@ -632,15 +601,15 @@ export interface ScalingPlanResource {
   ScalingStatusCode: ScalingStatusCode;
   ScalingStatusMessage?: string | null;
 }
-function toScalingPlanResource(root: JSONValue): ScalingPlanResource {
-  return prt.readObj({
+function toScalingPlanResource(root: jsonP.JSONValue): ScalingPlanResource {
+  return jsonP.readObj({
     required: {
       "ScalingPlanName": "s",
       "ScalingPlanVersion": "n",
-      "ServiceNamespace": toServiceNamespace,
+      "ServiceNamespace": (x: jsonP.JSONValue) => cmnP.readEnum<ServiceNamespace>(x),
       "ResourceId": "s",
-      "ScalableDimension": toScalableDimension,
-      "ScalingStatusCode": toScalingStatusCode,
+      "ScalableDimension": (x: jsonP.JSONValue) => cmnP.readEnum<ScalableDimension>(x),
+      "ScalingStatusCode": (x: jsonP.JSONValue) => cmnP.readEnum<ScalingStatusCode>(x),
     },
     optional: {
       "ScalingPolicies": [toScalingPolicy],
@@ -655,11 +624,11 @@ export interface ScalingPolicy {
   PolicyType: PolicyType;
   TargetTrackingConfiguration?: TargetTrackingConfiguration | null;
 }
-function toScalingPolicy(root: JSONValue): ScalingPolicy {
-  return prt.readObj({
+function toScalingPolicy(root: jsonP.JSONValue): ScalingPolicy {
+  return jsonP.readObj({
     required: {
       "PolicyName": "s",
-      "PolicyType": toPolicyType,
+      "PolicyType": (x: jsonP.JSONValue) => cmnP.readEnum<PolicyType>(x),
     },
     optional: {
       "TargetTrackingConfiguration": toTargetTrackingConfiguration,
@@ -670,26 +639,14 @@ function toScalingPolicy(root: JSONValue): ScalingPolicy {
 // refs: 1 - tags: output, named, enum
 export type PolicyType =
 | "TargetTrackingScaling"
-;
-function toPolicyType(root: JSONValue): PolicyType | null {
-  return ( false
-    || root == "TargetTrackingScaling"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type ScalingStatusCode =
 | "Inactive"
 | "PartiallyActive"
 | "Active"
-;
-function toScalingStatusCode(root: JSONValue): ScalingStatusCode | null {
-  return ( false
-    || root == "Inactive"
-    || root == "PartiallyActive"
-    || root == "Active"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ScalingPlan {
@@ -702,14 +659,14 @@ export interface ScalingPlan {
   StatusStartTime?: Date | number | null;
   CreationTime?: Date | number | null;
 }
-function toScalingPlan(root: JSONValue): ScalingPlan {
-  return prt.readObj({
+function toScalingPlan(root: jsonP.JSONValue): ScalingPlan {
+  return jsonP.readObj({
     required: {
       "ScalingPlanName": "s",
       "ScalingPlanVersion": "n",
       "ApplicationSource": toApplicationSource,
       "ScalingInstructions": [toScalingInstruction],
-      "StatusCode": toScalingPlanStatusCode,
+      "StatusCode": (x: jsonP.JSONValue) => cmnP.readEnum<ScalingPlanStatusCode>(x),
     },
     optional: {
       "StatusMessage": "s",
@@ -729,27 +686,15 @@ export type ScalingPlanStatusCode =
 | "DeletionFailed"
 | "UpdateInProgress"
 | "UpdateFailed"
-;
-function toScalingPlanStatusCode(root: JSONValue): ScalingPlanStatusCode | null {
-  return ( false
-    || root == "Active"
-    || root == "ActiveWithProblems"
-    || root == "CreationInProgress"
-    || root == "CreationFailed"
-    || root == "DeletionInProgress"
-    || root == "DeletionFailed"
-    || root == "UpdateInProgress"
-    || root == "UpdateFailed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Datapoint {
   Timestamp?: Date | number | null;
   Value?: number | null;
 }
-function toDatapoint(root: JSONValue): Datapoint {
-  return prt.readObj({
+function toDatapoint(root: jsonP.JSONValue): Datapoint {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Timestamp": "d",

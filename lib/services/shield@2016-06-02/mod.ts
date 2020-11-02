@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class Shield {
   #client: ServiceClient;
@@ -30,13 +30,14 @@ export default class Shield {
   async associateDRTLogBucket(
     {abortSignal, ...params}: RequestConfig & AssociateDRTLogBucketRequest,
   ): Promise<AssociateDRTLogBucketResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      LogBucket: params["LogBucket"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateDRTLogBucket",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -45,13 +46,14 @@ export default class Shield {
   async associateDRTRole(
     {abortSignal, ...params}: RequestConfig & AssociateDRTRoleRequest,
   ): Promise<AssociateDRTRoleResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RoleArn: params["RoleArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateDRTRole",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -60,13 +62,15 @@ export default class Shield {
   async associateHealthCheck(
     {abortSignal, ...params}: RequestConfig & AssociateHealthCheckRequest,
   ): Promise<AssociateHealthCheckResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProtectionId: params["ProtectionId"],
+      HealthCheckArn: params["HealthCheckArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateHealthCheck",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -75,14 +79,14 @@ export default class Shield {
   async associateProactiveEngagementDetails(
     {abortSignal, ...params}: RequestConfig & AssociateProactiveEngagementDetailsRequest,
   ): Promise<AssociateProactiveEngagementDetailsResponse> {
-    const body: JSONObject = {...params,
-    EmergencyContactList: params["EmergencyContactList"]?.map(x => fromEmergencyContact(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      EmergencyContactList: params["EmergencyContactList"]?.map(x => fromEmergencyContact(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateProactiveEngagementDetails",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -91,13 +95,15 @@ export default class Shield {
   async createProtection(
     {abortSignal, ...params}: RequestConfig & CreateProtectionRequest,
   ): Promise<CreateProtectionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProtection",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ProtectionId": "s",
@@ -108,13 +114,13 @@ export default class Shield {
   async createSubscription(
     {abortSignal, ...params}: RequestConfig & CreateSubscriptionRequest = {},
   ): Promise<CreateSubscriptionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSubscription",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -123,13 +129,14 @@ export default class Shield {
   async deleteProtection(
     {abortSignal, ...params}: RequestConfig & DeleteProtectionRequest,
   ): Promise<DeleteProtectionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProtectionId: params["ProtectionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteProtection",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -138,13 +145,13 @@ export default class Shield {
   async deleteSubscription(
     {abortSignal, ...params}: RequestConfig & DeleteSubscriptionRequest = {},
   ): Promise<DeleteSubscriptionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSubscription",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -153,13 +160,14 @@ export default class Shield {
   async describeAttack(
     {abortSignal, ...params}: RequestConfig & DescribeAttackRequest,
   ): Promise<DescribeAttackResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AttackId: params["AttackId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAttack",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Attack": toAttackDetail,
@@ -170,13 +178,13 @@ export default class Shield {
   async describeDRTAccess(
     {abortSignal, ...params}: RequestConfig & DescribeDRTAccessRequest = {},
   ): Promise<DescribeDRTAccessResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDRTAccess",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RoleArn": "s",
@@ -188,13 +196,13 @@ export default class Shield {
   async describeEmergencyContactSettings(
     {abortSignal, ...params}: RequestConfig & DescribeEmergencyContactSettingsRequest = {},
   ): Promise<DescribeEmergencyContactSettingsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEmergencyContactSettings",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EmergencyContactList": [toEmergencyContact],
@@ -205,13 +213,15 @@ export default class Shield {
   async describeProtection(
     {abortSignal, ...params}: RequestConfig & DescribeProtectionRequest = {},
   ): Promise<DescribeProtectionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProtectionId: params["ProtectionId"],
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeProtection",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Protection": toProtection,
@@ -222,13 +232,13 @@ export default class Shield {
   async describeSubscription(
     {abortSignal, ...params}: RequestConfig & DescribeSubscriptionRequest = {},
   ): Promise<DescribeSubscriptionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSubscription",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Subscription": toSubscription,
@@ -239,13 +249,13 @@ export default class Shield {
   async disableProactiveEngagement(
     {abortSignal, ...params}: RequestConfig & DisableProactiveEngagementRequest = {},
   ): Promise<DisableProactiveEngagementResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableProactiveEngagement",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -254,13 +264,14 @@ export default class Shield {
   async disassociateDRTLogBucket(
     {abortSignal, ...params}: RequestConfig & DisassociateDRTLogBucketRequest,
   ): Promise<DisassociateDRTLogBucketResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      LogBucket: params["LogBucket"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateDRTLogBucket",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -269,13 +280,13 @@ export default class Shield {
   async disassociateDRTRole(
     {abortSignal, ...params}: RequestConfig & DisassociateDRTRoleRequest = {},
   ): Promise<DisassociateDRTRoleResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateDRTRole",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -284,13 +295,15 @@ export default class Shield {
   async disassociateHealthCheck(
     {abortSignal, ...params}: RequestConfig & DisassociateHealthCheckRequest,
   ): Promise<DisassociateHealthCheckResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProtectionId: params["ProtectionId"],
+      HealthCheckArn: params["HealthCheckArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateHealthCheck",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -299,13 +312,13 @@ export default class Shield {
   async enableProactiveEngagement(
     {abortSignal, ...params}: RequestConfig & EnableProactiveEngagementRequest = {},
   ): Promise<EnableProactiveEngagementResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableProactiveEngagement",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -314,15 +327,15 @@ export default class Shield {
   async getSubscriptionState(
     {abortSignal, ...params}: RequestConfig & GetSubscriptionStateRequest = {},
   ): Promise<GetSubscriptionStateResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSubscriptionState",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
-        "SubscriptionState": toSubscriptionState,
+        "SubscriptionState": (x: jsonP.JSONValue) => cmnP.readEnum<SubscriptionState>(x),
       },
       optional: {},
     }, await resp.json());
@@ -331,15 +344,18 @@ export default class Shield {
   async listAttacks(
     {abortSignal, ...params}: RequestConfig & ListAttacksRequest = {},
   ): Promise<ListAttacksResponse> {
-    const body: JSONObject = {...params,
-    StartTime: fromTimeRange(params["StartTime"]),
-    EndTime: fromTimeRange(params["EndTime"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArns: params["ResourceArns"],
+      StartTime: fromTimeRange(params["StartTime"]),
+      EndTime: fromTimeRange(params["EndTime"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAttacks",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AttackSummaries": [toAttackSummary],
@@ -351,13 +367,15 @@ export default class Shield {
   async listProtections(
     {abortSignal, ...params}: RequestConfig & ListProtectionsRequest = {},
   ): Promise<ListProtectionsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListProtections",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Protections": [toProtection],
@@ -369,14 +387,14 @@ export default class Shield {
   async updateEmergencyContactSettings(
     {abortSignal, ...params}: RequestConfig & UpdateEmergencyContactSettingsRequest = {},
   ): Promise<UpdateEmergencyContactSettingsResponse> {
-    const body: JSONObject = {...params,
-    EmergencyContactList: params["EmergencyContactList"]?.map(x => fromEmergencyContact(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      EmergencyContactList: params["EmergencyContactList"]?.map(x => fromEmergencyContact(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEmergencyContactSettings",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -385,13 +403,14 @@ export default class Shield {
   async updateSubscription(
     {abortSignal, ...params}: RequestConfig & UpdateSubscriptionRequest = {},
   ): Promise<UpdateSubscriptionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AutoRenew: params["AutoRenew"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSubscription",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -624,13 +643,16 @@ export interface EmergencyContact {
   PhoneNumber?: string | null;
   ContactNotes?: string | null;
 }
-function fromEmergencyContact(input?: EmergencyContact | null): JSONValue {
+function fromEmergencyContact(input?: EmergencyContact | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    EmailAddress: input["EmailAddress"],
+    PhoneNumber: input["PhoneNumber"],
+    ContactNotes: input["ContactNotes"],
   }
 }
-function toEmergencyContact(root: JSONValue): EmergencyContact {
-  return prt.readObj({
+function toEmergencyContact(root: jsonP.JSONValue): EmergencyContact {
+  return jsonP.readObj({
     required: {
       "EmailAddress": "s",
     },
@@ -646,11 +668,11 @@ export interface TimeRange {
   FromInclusive?: Date | number | null;
   ToExclusive?: Date | number | null;
 }
-function fromTimeRange(input?: TimeRange | null): JSONValue {
+function fromTimeRange(input?: TimeRange | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    FromInclusive: prt.serializeDate_unixTimestamp(input["FromInclusive"]),
-    ToExclusive: prt.serializeDate_unixTimestamp(input["ToExclusive"]),
+  return {
+    FromInclusive: jsonP.serializeDate_unixTimestamp(input["FromInclusive"]),
+    ToExclusive: jsonP.serializeDate_unixTimestamp(input["ToExclusive"]),
   }
 }
 
@@ -658,14 +680,7 @@ function fromTimeRange(input?: TimeRange | null): JSONValue {
 export type AutoRenew =
 | "ENABLED"
 | "DISABLED"
-;
-
-function toAutoRenew(root: JSONValue): AutoRenew | null {
-  return ( false
-    || root == "ENABLED"
-    || root == "DISABLED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AttackDetail {
@@ -678,8 +693,8 @@ export interface AttackDetail {
   AttackProperties?: AttackProperty[] | null;
   Mitigations?: Mitigation[] | null;
 }
-function toAttackDetail(root: JSONValue): AttackDetail {
-  return prt.readObj({
+function toAttackDetail(root: jsonP.JSONValue): AttackDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AttackId": "s",
@@ -701,11 +716,11 @@ export interface SubResourceSummary {
   AttackVectors?: SummarizedAttackVector[] | null;
   Counters?: SummarizedCounter[] | null;
 }
-function toSubResourceSummary(root: JSONValue): SubResourceSummary {
-  return prt.readObj({
+function toSubResourceSummary(root: jsonP.JSONValue): SubResourceSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Type": toSubResourceType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<SubResourceType>(x),
       "Id": "s",
       "AttackVectors": [toSummarizedAttackVector],
       "Counters": [toSummarizedCounter],
@@ -717,21 +732,15 @@ function toSubResourceSummary(root: JSONValue): SubResourceSummary {
 export type SubResourceType =
 | "IP"
 | "URL"
-;
-function toSubResourceType(root: JSONValue): SubResourceType | null {
-  return ( false
-    || root == "IP"
-    || root == "URL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface SummarizedAttackVector {
   VectorType: string;
   VectorCounters?: SummarizedCounter[] | null;
 }
-function toSummarizedAttackVector(root: JSONValue): SummarizedAttackVector {
-  return prt.readObj({
+function toSummarizedAttackVector(root: jsonP.JSONValue): SummarizedAttackVector {
+  return jsonP.readObj({
     required: {
       "VectorType": "s",
     },
@@ -750,8 +759,8 @@ export interface SummarizedCounter {
   N?: number | null;
   Unit?: string | null;
 }
-function toSummarizedCounter(root: JSONValue): SummarizedCounter {
-  return prt.readObj({
+function toSummarizedCounter(root: jsonP.JSONValue): SummarizedCounter {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -772,14 +781,14 @@ export interface AttackProperty {
   Unit?: Unit | null;
   Total?: number | null;
 }
-function toAttackProperty(root: JSONValue): AttackProperty {
-  return prt.readObj({
+function toAttackProperty(root: jsonP.JSONValue): AttackProperty {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "AttackLayer": toAttackLayer,
-      "AttackPropertyIdentifier": toAttackPropertyIdentifier,
+      "AttackLayer": (x: jsonP.JSONValue) => cmnP.readEnum<AttackLayer>(x),
+      "AttackPropertyIdentifier": (x: jsonP.JSONValue) => cmnP.readEnum<AttackPropertyIdentifier>(x),
       "TopContributors": [toContributor],
-      "Unit": toUnit,
+      "Unit": (x: jsonP.JSONValue) => cmnP.readEnum<Unit>(x),
       "Total": "n",
     },
   }, root);
@@ -789,13 +798,7 @@ function toAttackProperty(root: JSONValue): AttackProperty {
 export type AttackLayer =
 | "NETWORK"
 | "APPLICATION"
-;
-function toAttackLayer(root: JSONValue): AttackLayer | null {
-  return ( false
-    || root == "NETWORK"
-    || root == "APPLICATION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type AttackPropertyIdentifier =
@@ -807,27 +810,15 @@ export type AttackPropertyIdentifier =
 | "SOURCE_USER_AGENT"
 | "WORDPRESS_PINGBACK_REFLECTOR"
 | "WORDPRESS_PINGBACK_SOURCE"
-;
-function toAttackPropertyIdentifier(root: JSONValue): AttackPropertyIdentifier | null {
-  return ( false
-    || root == "DESTINATION_URL"
-    || root == "REFERRER"
-    || root == "SOURCE_ASN"
-    || root == "SOURCE_COUNTRY"
-    || root == "SOURCE_IP_ADDRESS"
-    || root == "SOURCE_USER_AGENT"
-    || root == "WORDPRESS_PINGBACK_REFLECTOR"
-    || root == "WORDPRESS_PINGBACK_SOURCE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Contributor {
   Name?: string | null;
   Value?: number | null;
 }
-function toContributor(root: JSONValue): Contributor {
-  return prt.readObj({
+function toContributor(root: jsonP.JSONValue): Contributor {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -842,22 +833,14 @@ export type Unit =
 | "BYTES"
 | "PACKETS"
 | "REQUESTS"
-;
-function toUnit(root: JSONValue): Unit | null {
-  return ( false
-    || root == "BITS"
-    || root == "BYTES"
-    || root == "PACKETS"
-    || root == "REQUESTS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Mitigation {
   MitigationName?: string | null;
 }
-function toMitigation(root: JSONValue): Mitigation {
-  return prt.readObj({
+function toMitigation(root: jsonP.JSONValue): Mitigation {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MitigationName": "s",
@@ -872,8 +855,8 @@ export interface Protection {
   ResourceArn?: string | null;
   HealthCheckIds?: string[] | null;
 }
-function toProtection(root: JSONValue): Protection {
-  return prt.readObj({
+function toProtection(root: jsonP.JSONValue): Protection {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
@@ -893,16 +876,16 @@ export interface Subscription {
   Limits?: Limit[] | null;
   ProactiveEngagementStatus?: ProactiveEngagementStatus | null;
 }
-function toSubscription(root: JSONValue): Subscription {
-  return prt.readObj({
+function toSubscription(root: jsonP.JSONValue): Subscription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "StartTime": "d",
       "EndTime": "d",
       "TimeCommitmentInSeconds": "n",
-      "AutoRenew": toAutoRenew,
+      "AutoRenew": (x: jsonP.JSONValue) => cmnP.readEnum<AutoRenew>(x),
       "Limits": [toLimit],
-      "ProactiveEngagementStatus": toProactiveEngagementStatus,
+      "ProactiveEngagementStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ProactiveEngagementStatus>(x),
     },
   }, root);
 }
@@ -912,8 +895,8 @@ export interface Limit {
   Type?: string | null;
   Max?: number | null;
 }
-function toLimit(root: JSONValue): Limit {
-  return prt.readObj({
+function toLimit(root: jsonP.JSONValue): Limit {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Type": "s",
@@ -927,26 +910,13 @@ export type ProactiveEngagementStatus =
 | "ENABLED"
 | "DISABLED"
 | "PENDING"
-;
-function toProactiveEngagementStatus(root: JSONValue): ProactiveEngagementStatus | null {
-  return ( false
-    || root == "ENABLED"
-    || root == "DISABLED"
-    || root == "PENDING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type SubscriptionState =
 | "ACTIVE"
 | "INACTIVE"
-;
-function toSubscriptionState(root: JSONValue): SubscriptionState | null {
-  return ( false
-    || root == "ACTIVE"
-    || root == "INACTIVE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AttackSummary {
@@ -956,8 +926,8 @@ export interface AttackSummary {
   EndTime?: Date | number | null;
   AttackVectors?: AttackVectorDescription[] | null;
 }
-function toAttackSummary(root: JSONValue): AttackSummary {
-  return prt.readObj({
+function toAttackSummary(root: jsonP.JSONValue): AttackSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AttackId": "s",
@@ -973,8 +943,8 @@ function toAttackSummary(root: JSONValue): AttackSummary {
 export interface AttackVectorDescription {
   VectorType: string;
 }
-function toAttackVectorDescription(root: JSONValue): AttackVectorDescription {
-  return prt.readObj({
+function toAttackVectorDescription(root: jsonP.JSONValue): AttackVectorDescription {
+  return jsonP.readObj({
     required: {
       "VectorType": "s",
     },

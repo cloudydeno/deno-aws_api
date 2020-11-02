@@ -5,8 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 
 export default class Neptune {
   #client: ServiceClient;
@@ -52,7 +53,7 @@ export default class Neptune {
       abortSignal, body,
       action: "AddSourceIdentifierToSubscription",
     });
-    const xml = readXmlResult(await resp.text(), "AddSourceIdentifierToSubscriptionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "AddSourceIdentifierToSubscriptionResult");
     return {
       EventSubscription: xml.first("EventSubscription", false, EventSubscription_Parse),
     };
@@ -64,7 +65,7 @@ export default class Neptune {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceName", (params["ResourceName"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTagsToResource",
@@ -83,7 +84,7 @@ export default class Neptune {
       abortSignal, body,
       action: "ApplyPendingMaintenanceAction",
     });
-    const xml = readXmlResult(await resp.text(), "ApplyPendingMaintenanceActionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ApplyPendingMaintenanceActionResult");
     return {
       ResourcePendingMaintenanceActions: xml.first("ResourcePendingMaintenanceActions", false, ResourcePendingMaintenanceActions_Parse),
     };
@@ -97,12 +98,12 @@ export default class Neptune {
     body.append(prefix+"SourceDBClusterParameterGroupIdentifier", (params["SourceDBClusterParameterGroupIdentifier"] ?? '').toString());
     body.append(prefix+"TargetDBClusterParameterGroupIdentifier", (params["TargetDBClusterParameterGroupIdentifier"] ?? '').toString());
     body.append(prefix+"TargetDBClusterParameterGroupDescription", (params["TargetDBClusterParameterGroupDescription"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CopyDBClusterParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CopyDBClusterParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CopyDBClusterParameterGroupResult");
     return {
       DBClusterParameterGroup: xml.first("DBClusterParameterGroup", false, DBClusterParameterGroup_Parse),
     };
@@ -118,12 +119,12 @@ export default class Neptune {
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
     if ("PreSignedUrl" in params) body.append(prefix+"PreSignedUrl", (params["PreSignedUrl"] ?? '').toString());
     if ("CopyTags" in params) body.append(prefix+"CopyTags", (params["CopyTags"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CopyDBClusterSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "CopyDBClusterSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CopyDBClusterSnapshotResult");
     return {
       DBClusterSnapshot: xml.first("DBClusterSnapshot", false, DBClusterSnapshot_Parse),
     };
@@ -137,12 +138,12 @@ export default class Neptune {
     body.append(prefix+"SourceDBParameterGroupIdentifier", (params["SourceDBParameterGroupIdentifier"] ?? '').toString());
     body.append(prefix+"TargetDBParameterGroupIdentifier", (params["TargetDBParameterGroupIdentifier"] ?? '').toString());
     body.append(prefix+"TargetDBParameterGroupDescription", (params["TargetDBParameterGroupDescription"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CopyDBParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CopyDBParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CopyDBParameterGroupResult");
     return {
       DBParameterGroup: xml.first("DBParameterGroup", false, DBParameterGroup_Parse),
     };
@@ -153,13 +154,13 @@ export default class Neptune {
   ): Promise<CreateDBClusterResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["AvailabilityZones"]) prt.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".AvailabilityZone."})
+    if (params["AvailabilityZones"]) qsP.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".AvailabilityZone."})
     if ("BackupRetentionPeriod" in params) body.append(prefix+"BackupRetentionPeriod", (params["BackupRetentionPeriod"] ?? '').toString());
     if ("CharacterSetName" in params) body.append(prefix+"CharacterSetName", (params["CharacterSetName"] ?? '').toString());
     if ("DatabaseName" in params) body.append(prefix+"DatabaseName", (params["DatabaseName"] ?? '').toString());
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     if ("DBClusterParameterGroupName" in params) body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
     if ("EngineVersion" in params) body.append(prefix+"EngineVersion", (params["EngineVersion"] ?? '').toString());
@@ -170,18 +171,18 @@ export default class Neptune {
     if ("PreferredBackupWindow" in params) body.append(prefix+"PreferredBackupWindow", (params["PreferredBackupWindow"] ?? '').toString());
     if ("PreferredMaintenanceWindow" in params) body.append(prefix+"PreferredMaintenanceWindow", (params["PreferredMaintenanceWindow"] ?? '').toString());
     if ("ReplicationSourceIdentifier" in params) body.append(prefix+"ReplicationSourceIdentifier", (params["ReplicationSourceIdentifier"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("StorageEncrypted" in params) body.append(prefix+"StorageEncrypted", (params["StorageEncrypted"] ?? '').toString());
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
     if ("PreSignedUrl" in params) body.append(prefix+"PreSignedUrl", (params["PreSignedUrl"] ?? '').toString());
     if ("EnableIAMDatabaseAuthentication" in params) body.append(prefix+"EnableIAMDatabaseAuthentication", (params["EnableIAMDatabaseAuthentication"] ?? '').toString());
-    if (params["EnableCloudwatchLogsExports"]) prt.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
+    if (params["EnableCloudwatchLogsExports"]) qsP.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -195,14 +196,14 @@ export default class Neptune {
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     body.append(prefix+"DBClusterEndpointIdentifier", (params["DBClusterEndpointIdentifier"] ?? '').toString());
     body.append(prefix+"EndpointType", (params["EndpointType"] ?? '').toString());
-    if (params["StaticMembers"]) prt.appendList(body, prefix+"StaticMembers", params["StaticMembers"], {"entryPrefix":".member."})
-    if (params["ExcludedMembers"]) prt.appendList(body, prefix+"ExcludedMembers", params["ExcludedMembers"], {"entryPrefix":".member."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["StaticMembers"]) qsP.appendList(body, prefix+"StaticMembers", params["StaticMembers"], {"entryPrefix":".member."})
+    if (params["ExcludedMembers"]) qsP.appendList(body, prefix+"ExcludedMembers", params["ExcludedMembers"], {"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBClusterEndpoint",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBClusterEndpointResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBClusterEndpointResult");
     return {
       ...xml.strings({
         optional: {"DBClusterEndpointIdentifier":true,"DBClusterIdentifier":true,"DBClusterEndpointResourceIdentifier":true,"Endpoint":true,"Status":true,"EndpointType":true,"CustomEndpointType":true,"DBClusterEndpointArn":true},
@@ -220,12 +221,12 @@ export default class Neptune {
     body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
     body.append(prefix+"DBParameterGroupFamily", (params["DBParameterGroupFamily"] ?? '').toString());
     body.append(prefix+"Description", (params["Description"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBClusterParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBClusterParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBClusterParameterGroupResult");
     return {
       DBClusterParameterGroup: xml.first("DBClusterParameterGroup", false, DBClusterParameterGroup_Parse),
     };
@@ -238,12 +239,12 @@ export default class Neptune {
     const prefix = '';
     body.append(prefix+"DBClusterSnapshotIdentifier", (params["DBClusterSnapshotIdentifier"] ?? '').toString());
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBClusterSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBClusterSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBClusterSnapshotResult");
     return {
       DBClusterSnapshot: xml.first("DBClusterSnapshot", false, DBClusterSnapshot_Parse),
     };
@@ -261,8 +262,8 @@ export default class Neptune {
     body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
     if ("MasterUsername" in params) body.append(prefix+"MasterUsername", (params["MasterUsername"] ?? '').toString());
     if ("MasterUserPassword" in params) body.append(prefix+"MasterUserPassword", (params["MasterUserPassword"] ?? '').toString());
-    if (params["DBSecurityGroups"]) prt.appendList(body, prefix+"DBSecurityGroups", params["DBSecurityGroups"], {"entryPrefix":".DBSecurityGroupName."})
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["DBSecurityGroups"]) qsP.appendList(body, prefix+"DBSecurityGroups", params["DBSecurityGroups"], {"entryPrefix":".DBSecurityGroupName."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("AvailabilityZone" in params) body.append(prefix+"AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     if ("PreferredMaintenanceWindow" in params) body.append(prefix+"PreferredMaintenanceWindow", (params["PreferredMaintenanceWindow"] ?? '').toString());
@@ -278,7 +279,7 @@ export default class Neptune {
     if ("OptionGroupName" in params) body.append(prefix+"OptionGroupName", (params["OptionGroupName"] ?? '').toString());
     if ("CharacterSetName" in params) body.append(prefix+"CharacterSetName", (params["CharacterSetName"] ?? '').toString());
     if ("PubliclyAccessible" in params) body.append(prefix+"PubliclyAccessible", (params["PubliclyAccessible"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("DBClusterIdentifier" in params) body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     if ("StorageType" in params) body.append(prefix+"StorageType", (params["StorageType"] ?? '').toString());
     if ("TdeCredentialArn" in params) body.append(prefix+"TdeCredentialArn", (params["TdeCredentialArn"] ?? '').toString());
@@ -295,13 +296,13 @@ export default class Neptune {
     if ("EnableIAMDatabaseAuthentication" in params) body.append(prefix+"EnableIAMDatabaseAuthentication", (params["EnableIAMDatabaseAuthentication"] ?? '').toString());
     if ("EnablePerformanceInsights" in params) body.append(prefix+"EnablePerformanceInsights", (params["EnablePerformanceInsights"] ?? '').toString());
     if ("PerformanceInsightsKMSKeyId" in params) body.append(prefix+"PerformanceInsightsKMSKeyId", (params["PerformanceInsightsKMSKeyId"] ?? '').toString());
-    if (params["EnableCloudwatchLogsExports"]) prt.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
+    if (params["EnableCloudwatchLogsExports"]) qsP.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBInstance",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBInstanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBInstanceResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -315,12 +316,12 @@ export default class Neptune {
     body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
     body.append(prefix+"DBParameterGroupFamily", (params["DBParameterGroupFamily"] ?? '').toString());
     body.append(prefix+"Description", (params["Description"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBParameterGroupResult");
     return {
       DBParameterGroup: xml.first("DBParameterGroup", false, DBParameterGroup_Parse),
     };
@@ -333,13 +334,13 @@ export default class Neptune {
     const prefix = '';
     body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     body.append(prefix+"DBSubnetGroupDescription", (params["DBSubnetGroupDescription"] ?? '').toString());
-    if (params["SubnetIds"]) prt.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["SubnetIds"]) qsP.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBSubnetGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBSubnetGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBSubnetGroupResult");
     return {
       DBSubnetGroup: xml.first("DBSubnetGroup", false, DBSubnetGroup_Parse),
     };
@@ -353,15 +354,15 @@ export default class Neptune {
     body.append(prefix+"SubscriptionName", (params["SubscriptionName"] ?? '').toString());
     body.append(prefix+"SnsTopicArn", (params["SnsTopicArn"] ?? '').toString());
     if ("SourceType" in params) body.append(prefix+"SourceType", (params["SourceType"] ?? '').toString());
-    if (params["EventCategories"]) prt.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
-    if (params["SourceIds"]) prt.appendList(body, prefix+"SourceIds", params["SourceIds"], {"entryPrefix":".SourceId."})
+    if (params["EventCategories"]) qsP.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
+    if (params["SourceIds"]) qsP.appendList(body, prefix+"SourceIds", params["SourceIds"], {"entryPrefix":".SourceId."})
     if ("Enabled" in params) body.append(prefix+"Enabled", (params["Enabled"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEventSubscription",
     });
-    const xml = readXmlResult(await resp.text(), "CreateEventSubscriptionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateEventSubscriptionResult");
     return {
       EventSubscription: xml.first("EventSubscription", false, EventSubscription_Parse),
     };
@@ -379,7 +380,7 @@ export default class Neptune {
       abortSignal, body,
       action: "DeleteDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -395,7 +396,7 @@ export default class Neptune {
       abortSignal, body,
       action: "DeleteDBClusterEndpoint",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteDBClusterEndpointResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDBClusterEndpointResult");
     return {
       ...xml.strings({
         optional: {"DBClusterEndpointIdentifier":true,"DBClusterIdentifier":true,"DBClusterEndpointResourceIdentifier":true,"Endpoint":true,"Status":true,"EndpointType":true,"CustomEndpointType":true,"DBClusterEndpointArn":true},
@@ -427,7 +428,7 @@ export default class Neptune {
       abortSignal, body,
       action: "DeleteDBClusterSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteDBClusterSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDBClusterSnapshotResult");
     return {
       DBClusterSnapshot: xml.first("DBClusterSnapshot", false, DBClusterSnapshot_Parse),
     };
@@ -445,7 +446,7 @@ export default class Neptune {
       abortSignal, body,
       action: "DeleteDBInstance",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteDBInstanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDBInstanceResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -485,7 +486,7 @@ export default class Neptune {
       abortSignal, body,
       action: "DeleteEventSubscription",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteEventSubscriptionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteEventSubscriptionResult");
     return {
       EventSubscription: xml.first("EventSubscription", false, EventSubscription_Parse),
     };
@@ -498,14 +499,14 @@ export default class Neptune {
     const prefix = '';
     if ("DBClusterIdentifier" in params) body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     if ("DBClusterEndpointIdentifier" in params) body.append(prefix+"DBClusterEndpointIdentifier", (params["DBClusterEndpointIdentifier"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBClusterEndpoints",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBClusterEndpointsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBClusterEndpointsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -520,14 +521,14 @@ export default class Neptune {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DBClusterParameterGroupName" in params) body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBClusterParameterGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBClusterParameterGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBClusterParameterGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -543,14 +544,14 @@ export default class Neptune {
     const prefix = '';
     body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
     if ("Source" in params) body.append(prefix+"Source", (params["Source"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBClusterParameters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBClusterParametersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBClusterParametersResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -569,7 +570,7 @@ export default class Neptune {
       abortSignal, body,
       action: "DescribeDBClusterSnapshotAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBClusterSnapshotAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBClusterSnapshotAttributesResult");
     return {
       DBClusterSnapshotAttributesResult: xml.first("DBClusterSnapshotAttributesResult", false, DBClusterSnapshotAttributesResult_Parse),
     };
@@ -583,7 +584,7 @@ export default class Neptune {
     if ("DBClusterIdentifier" in params) body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     if ("DBClusterSnapshotIdentifier" in params) body.append(prefix+"DBClusterSnapshotIdentifier", (params["DBClusterSnapshotIdentifier"] ?? '').toString());
     if ("SnapshotType" in params) body.append(prefix+"SnapshotType", (params["SnapshotType"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("IncludeShared" in params) body.append(prefix+"IncludeShared", (params["IncludeShared"] ?? '').toString());
@@ -592,7 +593,7 @@ export default class Neptune {
       abortSignal, body,
       action: "DescribeDBClusterSnapshots",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBClusterSnapshotsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBClusterSnapshotsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -607,14 +608,14 @@ export default class Neptune {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DBClusterIdentifier" in params) body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBClusters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBClustersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBClustersResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -631,7 +632,7 @@ export default class Neptune {
     if ("Engine" in params) body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
     if ("EngineVersion" in params) body.append(prefix+"EngineVersion", (params["EngineVersion"] ?? '').toString());
     if ("DBParameterGroupFamily" in params) body.append(prefix+"DBParameterGroupFamily", (params["DBParameterGroupFamily"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("DefaultOnly" in params) body.append(prefix+"DefaultOnly", (params["DefaultOnly"] ?? '').toString());
@@ -641,7 +642,7 @@ export default class Neptune {
       abortSignal, body,
       action: "DescribeDBEngineVersions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBEngineVersionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBEngineVersionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -656,14 +657,14 @@ export default class Neptune {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DBInstanceIdentifier" in params) body.append(prefix+"DBInstanceIdentifier", (params["DBInstanceIdentifier"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBInstances",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBInstancesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBInstancesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -678,14 +679,14 @@ export default class Neptune {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DBParameterGroupName" in params) body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBParameterGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBParameterGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBParameterGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -701,14 +702,14 @@ export default class Neptune {
     const prefix = '';
     body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
     if ("Source" in params) body.append(prefix+"Source", (params["Source"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBParameters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBParametersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBParametersResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -723,14 +724,14 @@ export default class Neptune {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBSubnetGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBSubnetGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBSubnetGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -745,14 +746,14 @@ export default class Neptune {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DBParameterGroupFamily", (params["DBParameterGroupFamily"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEngineDefaultClusterParameters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEngineDefaultClusterParametersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEngineDefaultClusterParametersResult");
     return {
       EngineDefaults: xml.first("EngineDefaults", false, EngineDefaults_Parse),
     };
@@ -764,14 +765,14 @@ export default class Neptune {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DBParameterGroupFamily", (params["DBParameterGroupFamily"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEngineDefaultParameters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEngineDefaultParametersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEngineDefaultParametersResult");
     return {
       EngineDefaults: xml.first("EngineDefaults", false, EngineDefaults_Parse),
     };
@@ -783,12 +784,12 @@ export default class Neptune {
     const body = new URLSearchParams;
     const prefix = '';
     if ("SourceType" in params) body.append(prefix+"SourceType", (params["SourceType"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventCategories",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEventCategoriesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEventCategoriesResult");
     return {
       EventCategoriesMapList: xml.getList("EventCategoriesMapList", "EventCategoriesMap").map(EventCategoriesMap_Parse),
     };
@@ -800,14 +801,14 @@ export default class Neptune {
     const body = new URLSearchParams;
     const prefix = '';
     if ("SubscriptionName" in params) body.append(prefix+"SubscriptionName", (params["SubscriptionName"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventSubscriptions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEventSubscriptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEventSubscriptionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -823,18 +824,18 @@ export default class Neptune {
     const prefix = '';
     if ("SourceIdentifier" in params) body.append(prefix+"SourceIdentifier", (params["SourceIdentifier"] ?? '').toString());
     if ("SourceType" in params) body.append(prefix+"SourceType", (params["SourceType"] ?? '').toString());
-    if ("StartTime" in params) body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
-    if ("EndTime" in params) body.append(prefix+"EndTime", prt.encodeDate_iso8601(params["EndTime"]));
+    if ("StartTime" in params) body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+    if ("EndTime" in params) body.append(prefix+"EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
     if ("Duration" in params) body.append(prefix+"Duration", (params["Duration"] ?? '').toString());
-    if (params["EventCategories"]) prt.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["EventCategories"]) qsP.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEvents",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEventsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEventsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -853,14 +854,14 @@ export default class Neptune {
     if ("DBInstanceClass" in params) body.append(prefix+"DBInstanceClass", (params["DBInstanceClass"] ?? '').toString());
     if ("LicenseModel" in params) body.append(prefix+"LicenseModel", (params["LicenseModel"] ?? '').toString());
     if ("Vpc" in params) body.append(prefix+"Vpc", (params["Vpc"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOrderableDBInstanceOptions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeOrderableDBInstanceOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeOrderableDBInstanceOptionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -875,14 +876,14 @@ export default class Neptune {
     const body = new URLSearchParams;
     const prefix = '';
     if ("ResourceIdentifier" in params) body.append(prefix+"ResourceIdentifier", (params["ResourceIdentifier"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePendingMaintenanceActions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribePendingMaintenanceActionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribePendingMaintenanceActionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -901,7 +902,7 @@ export default class Neptune {
       abortSignal, body,
       action: "DescribeValidDBInstanceModifications",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeValidDBInstanceModificationsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeValidDBInstanceModificationsResult");
     return {
       ValidDBInstanceModificationsMessage: xml.first("ValidDBInstanceModificationsMessage", false, ValidDBInstanceModificationsMessage_Parse),
     };
@@ -918,7 +919,7 @@ export default class Neptune {
       abortSignal, body,
       action: "FailoverDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "FailoverDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "FailoverDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -930,12 +931,12 @@ export default class Neptune {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceName", (params["ResourceName"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    const xml = readXmlResult(await resp.text(), "ListTagsForResourceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListTagsForResourceResult");
     return {
       TagList: xml.getList("TagList", "Tag").map(Tag_Parse),
     };
@@ -951,7 +952,7 @@ export default class Neptune {
     if ("ApplyImmediately" in params) body.append(prefix+"ApplyImmediately", (params["ApplyImmediately"] ?? '').toString());
     if ("BackupRetentionPeriod" in params) body.append(prefix+"BackupRetentionPeriod", (params["BackupRetentionPeriod"] ?? '').toString());
     if ("DBClusterParameterGroupName" in params) body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("Port" in params) body.append(prefix+"Port", (params["Port"] ?? '').toString());
     if ("MasterUserPassword" in params) body.append(prefix+"MasterUserPassword", (params["MasterUserPassword"] ?? '').toString());
     if ("OptionGroupName" in params) body.append(prefix+"OptionGroupName", (params["OptionGroupName"] ?? '').toString());
@@ -965,7 +966,7 @@ export default class Neptune {
       abortSignal, body,
       action: "ModifyDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -978,13 +979,13 @@ export default class Neptune {
     const prefix = '';
     body.append(prefix+"DBClusterEndpointIdentifier", (params["DBClusterEndpointIdentifier"] ?? '').toString());
     if ("EndpointType" in params) body.append(prefix+"EndpointType", (params["EndpointType"] ?? '').toString());
-    if (params["StaticMembers"]) prt.appendList(body, prefix+"StaticMembers", params["StaticMembers"], {"entryPrefix":".member."})
-    if (params["ExcludedMembers"]) prt.appendList(body, prefix+"ExcludedMembers", params["ExcludedMembers"], {"entryPrefix":".member."})
+    if (params["StaticMembers"]) qsP.appendList(body, prefix+"StaticMembers", params["StaticMembers"], {"entryPrefix":".member."})
+    if (params["ExcludedMembers"]) qsP.appendList(body, prefix+"ExcludedMembers", params["ExcludedMembers"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDBClusterEndpoint",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBClusterEndpointResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBClusterEndpointResult");
     return {
       ...xml.strings({
         optional: {"DBClusterEndpointIdentifier":true,"DBClusterIdentifier":true,"DBClusterEndpointResourceIdentifier":true,"Endpoint":true,"Status":true,"EndpointType":true,"CustomEndpointType":true,"DBClusterEndpointArn":true},
@@ -1000,12 +1001,12 @@ export default class Neptune {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDBClusterParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBClusterParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBClusterParameterGroupResult");
     return xml.strings({
       optional: {"DBClusterParameterGroupName":true},
     });
@@ -1018,13 +1019,13 @@ export default class Neptune {
     const prefix = '';
     body.append(prefix+"DBClusterSnapshotIdentifier", (params["DBClusterSnapshotIdentifier"] ?? '').toString());
     body.append(prefix+"AttributeName", (params["AttributeName"] ?? '').toString());
-    if (params["ValuesToAdd"]) prt.appendList(body, prefix+"ValuesToAdd", params["ValuesToAdd"], {"entryPrefix":".AttributeValue."})
-    if (params["ValuesToRemove"]) prt.appendList(body, prefix+"ValuesToRemove", params["ValuesToRemove"], {"entryPrefix":".AttributeValue."})
+    if (params["ValuesToAdd"]) qsP.appendList(body, prefix+"ValuesToAdd", params["ValuesToAdd"], {"entryPrefix":".AttributeValue."})
+    if (params["ValuesToRemove"]) qsP.appendList(body, prefix+"ValuesToRemove", params["ValuesToRemove"], {"entryPrefix":".AttributeValue."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDBClusterSnapshotAttribute",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBClusterSnapshotAttributeResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBClusterSnapshotAttributeResult");
     return {
       DBClusterSnapshotAttributesResult: xml.first("DBClusterSnapshotAttributesResult", false, DBClusterSnapshotAttributesResult_Parse),
     };
@@ -1039,8 +1040,8 @@ export default class Neptune {
     if ("AllocatedStorage" in params) body.append(prefix+"AllocatedStorage", (params["AllocatedStorage"] ?? '').toString());
     if ("DBInstanceClass" in params) body.append(prefix+"DBInstanceClass", (params["DBInstanceClass"] ?? '').toString());
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
-    if (params["DBSecurityGroups"]) prt.appendList(body, prefix+"DBSecurityGroups", params["DBSecurityGroups"], {"entryPrefix":".DBSecurityGroupName."})
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["DBSecurityGroups"]) qsP.appendList(body, prefix+"DBSecurityGroups", params["DBSecurityGroups"], {"entryPrefix":".DBSecurityGroupName."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("ApplyImmediately" in params) body.append(prefix+"ApplyImmediately", (params["ApplyImmediately"] ?? '').toString());
     if ("MasterUserPassword" in params) body.append(prefix+"MasterUserPassword", (params["MasterUserPassword"] ?? '').toString());
     if ("DBParameterGroupName" in params) body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
@@ -1076,7 +1077,7 @@ export default class Neptune {
       abortSignal, body,
       action: "ModifyDBInstance",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBInstanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBInstanceResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -1088,12 +1089,12 @@ export default class Neptune {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDBParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBParameterGroupResult");
     return xml.strings({
       optional: {"DBParameterGroupName":true},
     });
@@ -1106,12 +1107,12 @@ export default class Neptune {
     const prefix = '';
     body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     if ("DBSubnetGroupDescription" in params) body.append(prefix+"DBSubnetGroupDescription", (params["DBSubnetGroupDescription"] ?? '').toString());
-    if (params["SubnetIds"]) prt.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
+    if (params["SubnetIds"]) qsP.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDBSubnetGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBSubnetGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBSubnetGroupResult");
     return {
       DBSubnetGroup: xml.first("DBSubnetGroup", false, DBSubnetGroup_Parse),
     };
@@ -1125,13 +1126,13 @@ export default class Neptune {
     body.append(prefix+"SubscriptionName", (params["SubscriptionName"] ?? '').toString());
     if ("SnsTopicArn" in params) body.append(prefix+"SnsTopicArn", (params["SnsTopicArn"] ?? '').toString());
     if ("SourceType" in params) body.append(prefix+"SourceType", (params["SourceType"] ?? '').toString());
-    if (params["EventCategories"]) prt.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
+    if (params["EventCategories"]) qsP.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
     if ("Enabled" in params) body.append(prefix+"Enabled", (params["Enabled"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyEventSubscription",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyEventSubscriptionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyEventSubscriptionResult");
     return {
       EventSubscription: xml.first("EventSubscription", false, EventSubscription_Parse),
     };
@@ -1147,7 +1148,7 @@ export default class Neptune {
       abortSignal, body,
       action: "PromoteReadReplicaDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "PromoteReadReplicaDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "PromoteReadReplicaDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -1164,7 +1165,7 @@ export default class Neptune {
       abortSignal, body,
       action: "RebootDBInstance",
     });
-    const xml = readXmlResult(await resp.text(), "RebootDBInstanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RebootDBInstanceResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -1195,7 +1196,7 @@ export default class Neptune {
       abortSignal, body,
       action: "RemoveSourceIdentifierFromSubscription",
     });
-    const xml = readXmlResult(await resp.text(), "RemoveSourceIdentifierFromSubscriptionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RemoveSourceIdentifierFromSubscriptionResult");
     return {
       EventSubscription: xml.first("EventSubscription", false, EventSubscription_Parse),
     };
@@ -1207,7 +1208,7 @@ export default class Neptune {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceName", (params["ResourceName"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTagsFromResource",
@@ -1221,12 +1222,12 @@ export default class Neptune {
     const prefix = '';
     body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
     if ("ResetAllParameters" in params) body.append(prefix+"ResetAllParameters", (params["ResetAllParameters"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResetDBClusterParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ResetDBClusterParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ResetDBClusterParameterGroupResult");
     return xml.strings({
       optional: {"DBClusterParameterGroupName":true},
     });
@@ -1239,12 +1240,12 @@ export default class Neptune {
     const prefix = '';
     body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
     if ("ResetAllParameters" in params) body.append(prefix+"ResetAllParameters", (params["ResetAllParameters"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResetDBParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ResetDBParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ResetDBParameterGroupResult");
     return xml.strings({
       optional: {"DBParameterGroupName":true},
     });
@@ -1255,7 +1256,7 @@ export default class Neptune {
   ): Promise<RestoreDBClusterFromSnapshotResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["AvailabilityZones"]) prt.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".AvailabilityZone."})
+    if (params["AvailabilityZones"]) qsP.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".AvailabilityZone."})
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     body.append(prefix+"SnapshotIdentifier", (params["SnapshotIdentifier"] ?? '').toString());
     body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
@@ -1264,18 +1265,18 @@ export default class Neptune {
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     if ("DatabaseName" in params) body.append(prefix+"DatabaseName", (params["DatabaseName"] ?? '').toString());
     if ("OptionGroupName" in params) body.append(prefix+"OptionGroupName", (params["OptionGroupName"] ?? '').toString());
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
     if ("EnableIAMDatabaseAuthentication" in params) body.append(prefix+"EnableIAMDatabaseAuthentication", (params["EnableIAMDatabaseAuthentication"] ?? '').toString());
-    if (params["EnableCloudwatchLogsExports"]) prt.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
+    if (params["EnableCloudwatchLogsExports"]) qsP.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
     if ("DBClusterParameterGroupName" in params) body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreDBClusterFromSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "RestoreDBClusterFromSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RestoreDBClusterFromSnapshotResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -1289,23 +1290,23 @@ export default class Neptune {
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     if ("RestoreType" in params) body.append(prefix+"RestoreType", (params["RestoreType"] ?? '').toString());
     body.append(prefix+"SourceDBClusterIdentifier", (params["SourceDBClusterIdentifier"] ?? '').toString());
-    if ("RestoreToTime" in params) body.append(prefix+"RestoreToTime", prt.encodeDate_iso8601(params["RestoreToTime"]));
+    if ("RestoreToTime" in params) body.append(prefix+"RestoreToTime", qsP.encodeDate_iso8601(params["RestoreToTime"]));
     if ("UseLatestRestorableTime" in params) body.append(prefix+"UseLatestRestorableTime", (params["UseLatestRestorableTime"] ?? '').toString());
     if ("Port" in params) body.append(prefix+"Port", (params["Port"] ?? '').toString());
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     if ("OptionGroupName" in params) body.append(prefix+"OptionGroupName", (params["OptionGroupName"] ?? '').toString());
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
     if ("EnableIAMDatabaseAuthentication" in params) body.append(prefix+"EnableIAMDatabaseAuthentication", (params["EnableIAMDatabaseAuthentication"] ?? '').toString());
-    if (params["EnableCloudwatchLogsExports"]) prt.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
+    if (params["EnableCloudwatchLogsExports"]) qsP.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
     if ("DBClusterParameterGroupName" in params) body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreDBClusterToPointInTime",
     });
-    const xml = readXmlResult(await resp.text(), "RestoreDBClusterToPointInTimeResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RestoreDBClusterToPointInTimeResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -1321,7 +1322,7 @@ export default class Neptune {
       abortSignal, body,
       action: "StartDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "StartDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "StartDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -1337,7 +1338,7 @@ export default class Neptune {
       abortSignal, body,
       action: "StopDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "StopDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "StopDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -1352,7 +1353,7 @@ export default class Neptune {
     const errMessage = 'ResourceNotReady: Resource is not in the state DBInstanceAvailable';
     for (let i = 0; i < 60; i++) {
       const resp = await this.describeDBInstances(params);
-      const field = resp["DBInstances"].flatMap(x => x["DBInstanceStatus"]);
+      const field = resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus);
       if (field.every(x => x === "available")) return resp;
       if (field.some(x => x === "deleted")) throw new Error(errMessage);
       if (field.some(x => x === "deleting")) throw new Error(errMessage);
@@ -1372,7 +1373,7 @@ export default class Neptune {
     for (let i = 0; i < 60; i++) {
       try {
         const resp = await this.describeDBInstances(params);
-        const field = resp["DBInstances"].flatMap(x => x["DBInstanceStatus"]);
+        const field = resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus);
         if (field.every(x => x === "deleted")) return resp;
         if (field.some(x => x === "creating")) throw new Error(errMessage);
         if (field.some(x => x === "modifying")) throw new Error(errMessage);
@@ -2306,7 +2307,7 @@ function Tag_Serialize(body: URLSearchParams, prefix: string, params: Tag) {
     if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
     if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function Tag_Parse(node: XmlNode): Tag {
+function Tag_Parse(node: xmlP.XmlNode): Tag {
   return node.strings({
     optional: {"Key":true,"Value":true},
   });
@@ -2319,7 +2320,7 @@ export interface Filter {
 }
 function Filter_Serialize(body: URLSearchParams, prefix: string, params: Filter) {
     body.append(prefix+".Name", (params["Name"] ?? '').toString());
-    if (params["Values"]) prt.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".Value."})
+    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".Value."})
 }
 
 // refs: 2 - tags: input, named, enum, output
@@ -2330,9 +2331,7 @@ export type SourceType =
 | "db-snapshot"
 | "db-cluster"
 | "db-cluster-snapshot"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface CloudwatchLogsExportConfiguration {
@@ -2340,8 +2339,8 @@ export interface CloudwatchLogsExportConfiguration {
   DisableLogTypes?: string[] | null;
 }
 function CloudwatchLogsExportConfiguration_Serialize(body: URLSearchParams, prefix: string, params: CloudwatchLogsExportConfiguration) {
-    if (params["EnableLogTypes"]) prt.appendList(body, prefix+".EnableLogTypes", params["EnableLogTypes"], {"entryPrefix":".member."})
-    if (params["DisableLogTypes"]) prt.appendList(body, prefix+".DisableLogTypes", params["DisableLogTypes"], {"entryPrefix":".member."})
+    if (params["EnableLogTypes"]) qsP.appendList(body, prefix+".EnableLogTypes", params["EnableLogTypes"], {"entryPrefix":".member."})
+    if (params["DisableLogTypes"]) qsP.appendList(body, prefix+".DisableLogTypes", params["DisableLogTypes"], {"entryPrefix":".member."})
 }
 
 // refs: 8 - tags: input, named, interface, output
@@ -2369,7 +2368,7 @@ function Parameter_Serialize(body: URLSearchParams, prefix: string, params: Para
     if ("MinimumEngineVersion" in params) body.append(prefix+".MinimumEngineVersion", (params["MinimumEngineVersion"] ?? '').toString());
     if ("ApplyMethod" in params) body.append(prefix+".ApplyMethod", (params["ApplyMethod"] ?? '').toString());
 }
-function Parameter_Parse(node: XmlNode): Parameter {
+function Parameter_Parse(node: xmlP.XmlNode): Parameter {
   return {
     ...node.strings({
       optional: {"ParameterName":true,"ParameterValue":true,"Description":true,"Source":true,"ApplyType":true,"DataType":true,"AllowedValues":true,"MinimumEngineVersion":true},
@@ -2383,9 +2382,7 @@ function Parameter_Parse(node: XmlNode): Parameter {
 export type ApplyMethod =
 | "immediate"
 | "pending-reboot"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: output, named, interface
 export interface EventSubscription {
@@ -2400,7 +2397,7 @@ export interface EventSubscription {
   Enabled?: boolean | null;
   EventSubscriptionArn?: string | null;
 }
-function EventSubscription_Parse(node: XmlNode): EventSubscription {
+function EventSubscription_Parse(node: xmlP.XmlNode): EventSubscription {
   return {
     ...node.strings({
       optional: {"CustomerAwsId":true,"CustSubscriptionId":true,"SnsTopicArn":true,"Status":true,"SubscriptionCreationTime":true,"SourceType":true,"EventSubscriptionArn":true},
@@ -2416,7 +2413,7 @@ export interface ResourcePendingMaintenanceActions {
   ResourceIdentifier?: string | null;
   PendingMaintenanceActionDetails: PendingMaintenanceAction[];
 }
-function ResourcePendingMaintenanceActions_Parse(node: XmlNode): ResourcePendingMaintenanceActions {
+function ResourcePendingMaintenanceActions_Parse(node: xmlP.XmlNode): ResourcePendingMaintenanceActions {
   return {
     ...node.strings({
       optional: {"ResourceIdentifier":true},
@@ -2434,14 +2431,14 @@ export interface PendingMaintenanceAction {
   CurrentApplyDate?: Date | number | null;
   Description?: string | null;
 }
-function PendingMaintenanceAction_Parse(node: XmlNode): PendingMaintenanceAction {
+function PendingMaintenanceAction_Parse(node: xmlP.XmlNode): PendingMaintenanceAction {
   return {
     ...node.strings({
       optional: {"Action":true,"OptInStatus":true,"Description":true},
     }),
-    AutoAppliedAfterDate: node.first("AutoAppliedAfterDate", false, x => parseTimestamp(x.content)),
-    ForcedApplyDate: node.first("ForcedApplyDate", false, x => parseTimestamp(x.content)),
-    CurrentApplyDate: node.first("CurrentApplyDate", false, x => parseTimestamp(x.content)),
+    AutoAppliedAfterDate: node.first("AutoAppliedAfterDate", false, x => xmlP.parseTimestamp(x.content)),
+    ForcedApplyDate: node.first("ForcedApplyDate", false, x => xmlP.parseTimestamp(x.content)),
+    CurrentApplyDate: node.first("CurrentApplyDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -2452,7 +2449,7 @@ export interface DBClusterParameterGroup {
   Description?: string | null;
   DBClusterParameterGroupArn?: string | null;
 }
-function DBClusterParameterGroup_Parse(node: XmlNode): DBClusterParameterGroup {
+function DBClusterParameterGroup_Parse(node: xmlP.XmlNode): DBClusterParameterGroup {
   return node.strings({
     optional: {"DBClusterParameterGroupName":true,"DBParameterGroupFamily":true,"Description":true,"DBClusterParameterGroupArn":true},
   });
@@ -2481,16 +2478,16 @@ export interface DBClusterSnapshot {
   SourceDBClusterSnapshotArn?: string | null;
   IAMDatabaseAuthenticationEnabled?: boolean | null;
 }
-function DBClusterSnapshot_Parse(node: XmlNode): DBClusterSnapshot {
+function DBClusterSnapshot_Parse(node: xmlP.XmlNode): DBClusterSnapshot {
   return {
     ...node.strings({
       optional: {"DBClusterSnapshotIdentifier":true,"DBClusterIdentifier":true,"Engine":true,"Status":true,"VpcId":true,"MasterUsername":true,"EngineVersion":true,"LicenseModel":true,"SnapshotType":true,"KmsKeyId":true,"DBClusterSnapshotArn":true,"SourceDBClusterSnapshotArn":true},
     }),
     AvailabilityZones: node.getList("AvailabilityZones", "AvailabilityZone").map(x => x.content ?? ''),
-    SnapshotCreateTime: node.first("SnapshotCreateTime", false, x => parseTimestamp(x.content)),
+    SnapshotCreateTime: node.first("SnapshotCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     AllocatedStorage: node.first("AllocatedStorage", false, x => parseInt(x.content ?? '0')),
     Port: node.first("Port", false, x => parseInt(x.content ?? '0')),
-    ClusterCreateTime: node.first("ClusterCreateTime", false, x => parseTimestamp(x.content)),
+    ClusterCreateTime: node.first("ClusterCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     PercentProgress: node.first("PercentProgress", false, x => parseInt(x.content ?? '0')),
     StorageEncrypted: node.first("StorageEncrypted", false, x => x.content === 'true'),
     IAMDatabaseAuthenticationEnabled: node.first("IAMDatabaseAuthenticationEnabled", false, x => x.content === 'true'),
@@ -2504,7 +2501,7 @@ export interface DBParameterGroup {
   Description?: string | null;
   DBParameterGroupArn?: string | null;
 }
-function DBParameterGroup_Parse(node: XmlNode): DBParameterGroup {
+function DBParameterGroup_Parse(node: xmlP.XmlNode): DBParameterGroup {
   return node.strings({
     optional: {"DBParameterGroupName":true,"DBParameterGroupFamily":true,"Description":true,"DBParameterGroupArn":true},
   });
@@ -2550,7 +2547,7 @@ export interface DBCluster {
   EnabledCloudwatchLogsExports: string[];
   DeletionProtection?: boolean | null;
 }
-function DBCluster_Parse(node: XmlNode): DBCluster {
+function DBCluster_Parse(node: xmlP.XmlNode): DBCluster {
   return {
     ...node.strings({
       optional: {"CharacterSetName":true,"DatabaseName":true,"DBClusterIdentifier":true,"DBClusterParameterGroup":true,"DBSubnetGroup":true,"Status":true,"PercentProgress":true,"Endpoint":true,"ReaderEndpoint":true,"Engine":true,"EngineVersion":true,"MasterUsername":true,"PreferredBackupWindow":true,"PreferredMaintenanceWindow":true,"ReplicationSourceIdentifier":true,"HostedZoneId":true,"KmsKeyId":true,"DbClusterResourceId":true,"DBClusterArn":true,"CloneGroupId":true},
@@ -2558,9 +2555,9 @@ function DBCluster_Parse(node: XmlNode): DBCluster {
     AllocatedStorage: node.first("AllocatedStorage", false, x => parseInt(x.content ?? '0')),
     AvailabilityZones: node.getList("AvailabilityZones", "AvailabilityZone").map(x => x.content ?? ''),
     BackupRetentionPeriod: node.first("BackupRetentionPeriod", false, x => parseInt(x.content ?? '0')),
-    EarliestRestorableTime: node.first("EarliestRestorableTime", false, x => parseTimestamp(x.content)),
+    EarliestRestorableTime: node.first("EarliestRestorableTime", false, x => xmlP.parseTimestamp(x.content)),
     MultiAZ: node.first("MultiAZ", false, x => x.content === 'true'),
-    LatestRestorableTime: node.first("LatestRestorableTime", false, x => parseTimestamp(x.content)),
+    LatestRestorableTime: node.first("LatestRestorableTime", false, x => xmlP.parseTimestamp(x.content)),
     Port: node.first("Port", false, x => parseInt(x.content ?? '0')),
     DBClusterOptionGroupMemberships: node.getList("DBClusterOptionGroupMemberships", "DBClusterOptionGroup").map(DBClusterOptionGroupStatus_Parse),
     ReadReplicaIdentifiers: node.getList("ReadReplicaIdentifiers", "ReadReplicaIdentifier").map(x => x.content ?? ''),
@@ -2569,7 +2566,7 @@ function DBCluster_Parse(node: XmlNode): DBCluster {
     StorageEncrypted: node.first("StorageEncrypted", false, x => x.content === 'true'),
     AssociatedRoles: node.getList("AssociatedRoles", "DBClusterRole").map(DBClusterRole_Parse),
     IAMDatabaseAuthenticationEnabled: node.first("IAMDatabaseAuthenticationEnabled", false, x => x.content === 'true'),
-    ClusterCreateTime: node.first("ClusterCreateTime", false, x => parseTimestamp(x.content)),
+    ClusterCreateTime: node.first("ClusterCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     EnabledCloudwatchLogsExports: node.getList("EnabledCloudwatchLogsExports", "member").map(x => x.content ?? ''),
     DeletionProtection: node.first("DeletionProtection", false, x => x.content === 'true'),
   };
@@ -2580,7 +2577,7 @@ export interface DBClusterOptionGroupStatus {
   DBClusterOptionGroupName?: string | null;
   Status?: string | null;
 }
-function DBClusterOptionGroupStatus_Parse(node: XmlNode): DBClusterOptionGroupStatus {
+function DBClusterOptionGroupStatus_Parse(node: xmlP.XmlNode): DBClusterOptionGroupStatus {
   return node.strings({
     optional: {"DBClusterOptionGroupName":true,"Status":true},
   });
@@ -2593,7 +2590,7 @@ export interface DBClusterMember {
   DBClusterParameterGroupStatus?: string | null;
   PromotionTier?: number | null;
 }
-function DBClusterMember_Parse(node: XmlNode): DBClusterMember {
+function DBClusterMember_Parse(node: xmlP.XmlNode): DBClusterMember {
   return {
     ...node.strings({
       optional: {"DBInstanceIdentifier":true,"DBClusterParameterGroupStatus":true},
@@ -2608,7 +2605,7 @@ export interface VpcSecurityGroupMembership {
   VpcSecurityGroupId?: string | null;
   Status?: string | null;
 }
-function VpcSecurityGroupMembership_Parse(node: XmlNode): VpcSecurityGroupMembership {
+function VpcSecurityGroupMembership_Parse(node: xmlP.XmlNode): VpcSecurityGroupMembership {
   return node.strings({
     optional: {"VpcSecurityGroupId":true,"Status":true},
   });
@@ -2620,7 +2617,7 @@ export interface DBClusterRole {
   Status?: string | null;
   FeatureName?: string | null;
 }
-function DBClusterRole_Parse(node: XmlNode): DBClusterRole {
+function DBClusterRole_Parse(node: xmlP.XmlNode): DBClusterRole {
   return node.strings({
     optional: {"RoleArn":true,"Status":true,"FeatureName":true},
   });
@@ -2682,21 +2679,21 @@ export interface DBInstance {
   EnabledCloudwatchLogsExports: string[];
   DeletionProtection?: boolean | null;
 }
-function DBInstance_Parse(node: XmlNode): DBInstance {
+function DBInstance_Parse(node: xmlP.XmlNode): DBInstance {
   return {
     ...node.strings({
       optional: {"DBInstanceIdentifier":true,"DBInstanceClass":true,"Engine":true,"DBInstanceStatus":true,"MasterUsername":true,"DBName":true,"PreferredBackupWindow":true,"AvailabilityZone":true,"PreferredMaintenanceWindow":true,"EngineVersion":true,"ReadReplicaSourceDBInstanceIdentifier":true,"LicenseModel":true,"CharacterSetName":true,"SecondaryAvailabilityZone":true,"StorageType":true,"TdeCredentialArn":true,"DBClusterIdentifier":true,"KmsKeyId":true,"DbiResourceId":true,"CACertificateIdentifier":true,"EnhancedMonitoringResourceArn":true,"MonitoringRoleArn":true,"DBInstanceArn":true,"Timezone":true,"PerformanceInsightsKMSKeyId":true},
     }),
     Endpoint: node.first("Endpoint", false, Endpoint_Parse),
     AllocatedStorage: node.first("AllocatedStorage", false, x => parseInt(x.content ?? '0')),
-    InstanceCreateTime: node.first("InstanceCreateTime", false, x => parseTimestamp(x.content)),
+    InstanceCreateTime: node.first("InstanceCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     BackupRetentionPeriod: node.first("BackupRetentionPeriod", false, x => parseInt(x.content ?? '0')),
     DBSecurityGroups: node.getList("DBSecurityGroups", "DBSecurityGroup").map(DBSecurityGroupMembership_Parse),
     VpcSecurityGroups: node.getList("VpcSecurityGroups", "VpcSecurityGroupMembership").map(VpcSecurityGroupMembership_Parse),
     DBParameterGroups: node.getList("DBParameterGroups", "DBParameterGroup").map(DBParameterGroupStatus_Parse),
     DBSubnetGroup: node.first("DBSubnetGroup", false, DBSubnetGroup_Parse),
     PendingModifiedValues: node.first("PendingModifiedValues", false, PendingModifiedValues_Parse),
-    LatestRestorableTime: node.first("LatestRestorableTime", false, x => parseTimestamp(x.content)),
+    LatestRestorableTime: node.first("LatestRestorableTime", false, x => xmlP.parseTimestamp(x.content)),
     MultiAZ: node.first("MultiAZ", false, x => x.content === 'true'),
     AutoMinorVersionUpgrade: node.first("AutoMinorVersionUpgrade", false, x => x.content === 'true'),
     ReadReplicaDBInstanceIdentifiers: node.getList("ReadReplicaDBInstanceIdentifiers", "ReadReplicaDBInstanceIdentifier").map(x => x.content ?? ''),
@@ -2724,7 +2721,7 @@ export interface Endpoint {
   Port?: number | null;
   HostedZoneId?: string | null;
 }
-function Endpoint_Parse(node: XmlNode): Endpoint {
+function Endpoint_Parse(node: xmlP.XmlNode): Endpoint {
   return {
     ...node.strings({
       optional: {"Address":true,"HostedZoneId":true},
@@ -2738,7 +2735,7 @@ export interface DBSecurityGroupMembership {
   DBSecurityGroupName?: string | null;
   Status?: string | null;
 }
-function DBSecurityGroupMembership_Parse(node: XmlNode): DBSecurityGroupMembership {
+function DBSecurityGroupMembership_Parse(node: xmlP.XmlNode): DBSecurityGroupMembership {
   return node.strings({
     optional: {"DBSecurityGroupName":true,"Status":true},
   });
@@ -2749,7 +2746,7 @@ export interface DBParameterGroupStatus {
   DBParameterGroupName?: string | null;
   ParameterApplyStatus?: string | null;
 }
-function DBParameterGroupStatus_Parse(node: XmlNode): DBParameterGroupStatus {
+function DBParameterGroupStatus_Parse(node: xmlP.XmlNode): DBParameterGroupStatus {
   return node.strings({
     optional: {"DBParameterGroupName":true,"ParameterApplyStatus":true},
   });
@@ -2764,7 +2761,7 @@ export interface DBSubnetGroup {
   Subnets: Subnet[];
   DBSubnetGroupArn?: string | null;
 }
-function DBSubnetGroup_Parse(node: XmlNode): DBSubnetGroup {
+function DBSubnetGroup_Parse(node: xmlP.XmlNode): DBSubnetGroup {
   return {
     ...node.strings({
       optional: {"DBSubnetGroupName":true,"DBSubnetGroupDescription":true,"VpcId":true,"SubnetGroupStatus":true,"DBSubnetGroupArn":true},
@@ -2779,7 +2776,7 @@ export interface Subnet {
   SubnetAvailabilityZone?: AvailabilityZone | null;
   SubnetStatus?: string | null;
 }
-function Subnet_Parse(node: XmlNode): Subnet {
+function Subnet_Parse(node: xmlP.XmlNode): Subnet {
   return {
     ...node.strings({
       optional: {"SubnetIdentifier":true,"SubnetStatus":true},
@@ -2792,7 +2789,7 @@ function Subnet_Parse(node: XmlNode): Subnet {
 export interface AvailabilityZone {
   Name?: string | null;
 }
-function AvailabilityZone_Parse(node: XmlNode): AvailabilityZone {
+function AvailabilityZone_Parse(node: xmlP.XmlNode): AvailabilityZone {
   return node.strings({
     optional: {"Name":true},
   });
@@ -2815,7 +2812,7 @@ export interface PendingModifiedValues {
   DBSubnetGroupName?: string | null;
   PendingCloudwatchLogsExports?: PendingCloudwatchLogsExports | null;
 }
-function PendingModifiedValues_Parse(node: XmlNode): PendingModifiedValues {
+function PendingModifiedValues_Parse(node: xmlP.XmlNode): PendingModifiedValues {
   return {
     ...node.strings({
       optional: {"DBInstanceClass":true,"MasterUserPassword":true,"EngineVersion":true,"LicenseModel":true,"DBInstanceIdentifier":true,"StorageType":true,"CACertificateIdentifier":true,"DBSubnetGroupName":true},
@@ -2834,7 +2831,7 @@ export interface PendingCloudwatchLogsExports {
   LogTypesToEnable: string[];
   LogTypesToDisable: string[];
 }
-function PendingCloudwatchLogsExports_Parse(node: XmlNode): PendingCloudwatchLogsExports {
+function PendingCloudwatchLogsExports_Parse(node: xmlP.XmlNode): PendingCloudwatchLogsExports {
   return {
     LogTypesToEnable: node.getList("LogTypesToEnable", "member").map(x => x.content ?? ''),
     LogTypesToDisable: node.getList("LogTypesToDisable", "member").map(x => x.content ?? ''),
@@ -2846,7 +2843,7 @@ export interface OptionGroupMembership {
   OptionGroupName?: string | null;
   Status?: string | null;
 }
-function OptionGroupMembership_Parse(node: XmlNode): OptionGroupMembership {
+function OptionGroupMembership_Parse(node: xmlP.XmlNode): OptionGroupMembership {
   return node.strings({
     optional: {"OptionGroupName":true,"Status":true},
   });
@@ -2859,7 +2856,7 @@ export interface DBInstanceStatusInfo {
   Status?: string | null;
   Message?: string | null;
 }
-function DBInstanceStatusInfo_Parse(node: XmlNode): DBInstanceStatusInfo {
+function DBInstanceStatusInfo_Parse(node: xmlP.XmlNode): DBInstanceStatusInfo {
   return {
     ...node.strings({
       optional: {"StatusType":true,"Status":true,"Message":true},
@@ -2875,7 +2872,7 @@ export interface DomainMembership {
   FQDN?: string | null;
   IAMRoleName?: string | null;
 }
-function DomainMembership_Parse(node: XmlNode): DomainMembership {
+function DomainMembership_Parse(node: xmlP.XmlNode): DomainMembership {
   return node.strings({
     optional: {"Domain":true,"Status":true,"FQDN":true,"IAMRoleName":true},
   });
@@ -2894,7 +2891,7 @@ export interface DBClusterEndpoint {
   ExcludedMembers: string[];
   DBClusterEndpointArn?: string | null;
 }
-function DBClusterEndpoint_Parse(node: XmlNode): DBClusterEndpoint {
+function DBClusterEndpoint_Parse(node: xmlP.XmlNode): DBClusterEndpoint {
   return {
     ...node.strings({
       optional: {"DBClusterEndpointIdentifier":true,"DBClusterIdentifier":true,"DBClusterEndpointResourceIdentifier":true,"Endpoint":true,"Status":true,"EndpointType":true,"CustomEndpointType":true,"DBClusterEndpointArn":true},
@@ -2909,7 +2906,7 @@ export interface DBClusterSnapshotAttributesResult {
   DBClusterSnapshotIdentifier?: string | null;
   DBClusterSnapshotAttributes: DBClusterSnapshotAttribute[];
 }
-function DBClusterSnapshotAttributesResult_Parse(node: XmlNode): DBClusterSnapshotAttributesResult {
+function DBClusterSnapshotAttributesResult_Parse(node: xmlP.XmlNode): DBClusterSnapshotAttributesResult {
   return {
     ...node.strings({
       optional: {"DBClusterSnapshotIdentifier":true},
@@ -2923,7 +2920,7 @@ export interface DBClusterSnapshotAttribute {
   AttributeName?: string | null;
   AttributeValues: string[];
 }
-function DBClusterSnapshotAttribute_Parse(node: XmlNode): DBClusterSnapshotAttribute {
+function DBClusterSnapshotAttribute_Parse(node: xmlP.XmlNode): DBClusterSnapshotAttribute {
   return {
     ...node.strings({
       optional: {"AttributeName":true},
@@ -2947,7 +2944,7 @@ export interface DBEngineVersion {
   SupportsLogExportsToCloudwatchLogs?: boolean | null;
   SupportsReadReplica?: boolean | null;
 }
-function DBEngineVersion_Parse(node: XmlNode): DBEngineVersion {
+function DBEngineVersion_Parse(node: xmlP.XmlNode): DBEngineVersion {
   return {
     ...node.strings({
       optional: {"Engine":true,"EngineVersion":true,"DBParameterGroupFamily":true,"DBEngineDescription":true,"DBEngineVersionDescription":true},
@@ -2967,7 +2964,7 @@ export interface CharacterSet {
   CharacterSetName?: string | null;
   CharacterSetDescription?: string | null;
 }
-function CharacterSet_Parse(node: XmlNode): CharacterSet {
+function CharacterSet_Parse(node: xmlP.XmlNode): CharacterSet {
   return node.strings({
     optional: {"CharacterSetName":true,"CharacterSetDescription":true},
   });
@@ -2981,7 +2978,7 @@ export interface UpgradeTarget {
   AutoUpgrade?: boolean | null;
   IsMajorVersionUpgrade?: boolean | null;
 }
-function UpgradeTarget_Parse(node: XmlNode): UpgradeTarget {
+function UpgradeTarget_Parse(node: xmlP.XmlNode): UpgradeTarget {
   return {
     ...node.strings({
       optional: {"Engine":true,"EngineVersion":true,"Description":true},
@@ -2995,7 +2992,7 @@ function UpgradeTarget_Parse(node: XmlNode): UpgradeTarget {
 export interface Timezone {
   TimezoneName?: string | null;
 }
-function Timezone_Parse(node: XmlNode): Timezone {
+function Timezone_Parse(node: xmlP.XmlNode): Timezone {
   return node.strings({
     optional: {"TimezoneName":true},
   });
@@ -3007,7 +3004,7 @@ export interface EngineDefaults {
   Marker?: string | null;
   Parameters: Parameter[];
 }
-function EngineDefaults_Parse(node: XmlNode): EngineDefaults {
+function EngineDefaults_Parse(node: xmlP.XmlNode): EngineDefaults {
   return {
     ...node.strings({
       optional: {"DBParameterGroupFamily":true,"Marker":true},
@@ -3021,7 +3018,7 @@ export interface EventCategoriesMap {
   SourceType?: string | null;
   EventCategories: string[];
 }
-function EventCategoriesMap_Parse(node: XmlNode): EventCategoriesMap {
+function EventCategoriesMap_Parse(node: xmlP.XmlNode): EventCategoriesMap {
   return {
     ...node.strings({
       optional: {"SourceType":true},
@@ -3039,14 +3036,14 @@ export interface Event {
   Date?: Date | number | null;
   SourceArn?: string | null;
 }
-function Event_Parse(node: XmlNode): Event {
+function Event_Parse(node: xmlP.XmlNode): Event {
   return {
     ...node.strings({
       optional: {"SourceIdentifier":true,"Message":true,"SourceArn":true},
     }),
     SourceType: node.first("SourceType", false, x => (x.content ?? '') as SourceType),
     EventCategories: node.getList("EventCategories", "EventCategory").map(x => x.content ?? ''),
-    Date: node.first("Date", false, x => parseTimestamp(x.content)),
+    Date: node.first("Date", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -3073,7 +3070,7 @@ export interface OrderableDBInstanceOption {
   MinIopsPerGib?: number | null;
   MaxIopsPerGib?: number | null;
 }
-function OrderableDBInstanceOption_Parse(node: XmlNode): OrderableDBInstanceOption {
+function OrderableDBInstanceOption_Parse(node: xmlP.XmlNode): OrderableDBInstanceOption {
   return {
     ...node.strings({
       optional: {"Engine":true,"EngineVersion":true,"DBInstanceClass":true,"LicenseModel":true,"StorageType":true},
@@ -3100,7 +3097,7 @@ function OrderableDBInstanceOption_Parse(node: XmlNode): OrderableDBInstanceOpti
 export interface ValidDBInstanceModificationsMessage {
   Storage: ValidStorageOptions[];
 }
-function ValidDBInstanceModificationsMessage_Parse(node: XmlNode): ValidDBInstanceModificationsMessage {
+function ValidDBInstanceModificationsMessage_Parse(node: xmlP.XmlNode): ValidDBInstanceModificationsMessage {
   return {
     Storage: node.getList("Storage", "ValidStorageOptions").map(ValidStorageOptions_Parse),
   };
@@ -3113,7 +3110,7 @@ export interface ValidStorageOptions {
   ProvisionedIops: Range[];
   IopsToStorageRatio: DoubleRange[];
 }
-function ValidStorageOptions_Parse(node: XmlNode): ValidStorageOptions {
+function ValidStorageOptions_Parse(node: xmlP.XmlNode): ValidStorageOptions {
   return {
     ...node.strings({
       optional: {"StorageType":true},
@@ -3130,7 +3127,7 @@ export interface Range {
   To?: number | null;
   Step?: number | null;
 }
-function Range_Parse(node: XmlNode): Range {
+function Range_Parse(node: xmlP.XmlNode): Range {
   return {
     From: node.first("From", false, x => parseInt(x.content ?? '0')),
     To: node.first("To", false, x => parseInt(x.content ?? '0')),
@@ -3143,7 +3140,7 @@ export interface DoubleRange {
   From?: number | null;
   To?: number | null;
 }
-function DoubleRange_Parse(node: XmlNode): DoubleRange {
+function DoubleRange_Parse(node: xmlP.XmlNode): DoubleRange {
   return {
     From: node.first("From", false, x => parseFloat(x.content ?? '0')),
     To: node.first("To", false, x => parseFloat(x.content ?? '0')),

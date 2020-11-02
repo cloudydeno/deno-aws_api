@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class TranscribeService {
   #client: ServiceClient;
@@ -30,21 +30,24 @@ export default class TranscribeService {
   async createLanguageModel(
     {abortSignal, ...params}: RequestConfig & CreateLanguageModelRequest,
   ): Promise<CreateLanguageModelResponse> {
-    const body: JSONObject = {...params,
-    InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      LanguageCode: params["LanguageCode"],
+      BaseModelName: params["BaseModelName"],
+      ModelName: params["ModelName"],
+      InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLanguageModel",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "LanguageCode": toCLMLanguageCode,
-        "BaseModelName": toBaseModelName,
+        "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<CLMLanguageCode>(x),
+        "BaseModelName": (x: jsonP.JSONValue) => cmnP.readEnum<BaseModelName>(x),
         "ModelName": "s",
         "InputDataConfig": toInputDataConfig,
-        "ModelStatus": toModelStatus,
+        "ModelStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ModelStatus>(x),
       },
     }, await resp.json());
   }
@@ -52,18 +55,21 @@ export default class TranscribeService {
   async createMedicalVocabulary(
     {abortSignal, ...params}: RequestConfig & CreateMedicalVocabularyRequest,
   ): Promise<CreateMedicalVocabularyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VocabularyName: params["VocabularyName"],
+      LanguageCode: params["LanguageCode"],
+      VocabularyFileUri: params["VocabularyFileUri"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMedicalVocabulary",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VocabularyName": "s",
-        "LanguageCode": toLanguageCode,
-        "VocabularyState": toVocabularyState,
+        "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
+        "VocabularyState": (x: jsonP.JSONValue) => cmnP.readEnum<VocabularyState>(x),
         "LastModifiedTime": "d",
         "FailureReason": "s",
       },
@@ -73,18 +79,22 @@ export default class TranscribeService {
   async createVocabulary(
     {abortSignal, ...params}: RequestConfig & CreateVocabularyRequest,
   ): Promise<CreateVocabularyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VocabularyName: params["VocabularyName"],
+      LanguageCode: params["LanguageCode"],
+      Phrases: params["Phrases"],
+      VocabularyFileUri: params["VocabularyFileUri"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVocabulary",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VocabularyName": "s",
-        "LanguageCode": toLanguageCode,
-        "VocabularyState": toVocabularyState,
+        "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
+        "VocabularyState": (x: jsonP.JSONValue) => cmnP.readEnum<VocabularyState>(x),
         "LastModifiedTime": "d",
         "FailureReason": "s",
       },
@@ -94,17 +104,21 @@ export default class TranscribeService {
   async createVocabularyFilter(
     {abortSignal, ...params}: RequestConfig & CreateVocabularyFilterRequest,
   ): Promise<CreateVocabularyFilterResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VocabularyFilterName: params["VocabularyFilterName"],
+      LanguageCode: params["LanguageCode"],
+      Words: params["Words"],
+      VocabularyFilterFileUri: params["VocabularyFilterFileUri"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVocabularyFilter",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VocabularyFilterName": "s",
-        "LanguageCode": toLanguageCode,
+        "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
         "LastModifiedTime": "d",
       },
     }, await resp.json());
@@ -113,8 +127,9 @@ export default class TranscribeService {
   async deleteLanguageModel(
     {abortSignal, ...params}: RequestConfig & DeleteLanguageModelRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ModelName: params["ModelName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLanguageModel",
@@ -124,8 +139,9 @@ export default class TranscribeService {
   async deleteMedicalTranscriptionJob(
     {abortSignal, ...params}: RequestConfig & DeleteMedicalTranscriptionJobRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MedicalTranscriptionJobName: params["MedicalTranscriptionJobName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMedicalTranscriptionJob",
@@ -135,8 +151,9 @@ export default class TranscribeService {
   async deleteMedicalVocabulary(
     {abortSignal, ...params}: RequestConfig & DeleteMedicalVocabularyRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VocabularyName: params["VocabularyName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMedicalVocabulary",
@@ -146,8 +163,9 @@ export default class TranscribeService {
   async deleteTranscriptionJob(
     {abortSignal, ...params}: RequestConfig & DeleteTranscriptionJobRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TranscriptionJobName: params["TranscriptionJobName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTranscriptionJob",
@@ -157,8 +175,9 @@ export default class TranscribeService {
   async deleteVocabulary(
     {abortSignal, ...params}: RequestConfig & DeleteVocabularyRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VocabularyName: params["VocabularyName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteVocabulary",
@@ -168,8 +187,9 @@ export default class TranscribeService {
   async deleteVocabularyFilter(
     {abortSignal, ...params}: RequestConfig & DeleteVocabularyFilterRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VocabularyFilterName: params["VocabularyFilterName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteVocabularyFilter",
@@ -179,13 +199,14 @@ export default class TranscribeService {
   async describeLanguageModel(
     {abortSignal, ...params}: RequestConfig & DescribeLanguageModelRequest,
   ): Promise<DescribeLanguageModelResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ModelName: params["ModelName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLanguageModel",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LanguageModel": toLanguageModel,
@@ -196,13 +217,14 @@ export default class TranscribeService {
   async getMedicalTranscriptionJob(
     {abortSignal, ...params}: RequestConfig & GetMedicalTranscriptionJobRequest,
   ): Promise<GetMedicalTranscriptionJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MedicalTranscriptionJobName: params["MedicalTranscriptionJobName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMedicalTranscriptionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "MedicalTranscriptionJob": toMedicalTranscriptionJob,
@@ -213,18 +235,19 @@ export default class TranscribeService {
   async getMedicalVocabulary(
     {abortSignal, ...params}: RequestConfig & GetMedicalVocabularyRequest,
   ): Promise<GetMedicalVocabularyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VocabularyName: params["VocabularyName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMedicalVocabulary",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VocabularyName": "s",
-        "LanguageCode": toLanguageCode,
-        "VocabularyState": toVocabularyState,
+        "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
+        "VocabularyState": (x: jsonP.JSONValue) => cmnP.readEnum<VocabularyState>(x),
         "LastModifiedTime": "d",
         "FailureReason": "s",
         "DownloadUri": "s",
@@ -235,13 +258,14 @@ export default class TranscribeService {
   async getTranscriptionJob(
     {abortSignal, ...params}: RequestConfig & GetTranscriptionJobRequest,
   ): Promise<GetTranscriptionJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TranscriptionJobName: params["TranscriptionJobName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTranscriptionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TranscriptionJob": toTranscriptionJob,
@@ -252,18 +276,19 @@ export default class TranscribeService {
   async getVocabulary(
     {abortSignal, ...params}: RequestConfig & GetVocabularyRequest,
   ): Promise<GetVocabularyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VocabularyName: params["VocabularyName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetVocabulary",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VocabularyName": "s",
-        "LanguageCode": toLanguageCode,
-        "VocabularyState": toVocabularyState,
+        "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
+        "VocabularyState": (x: jsonP.JSONValue) => cmnP.readEnum<VocabularyState>(x),
         "LastModifiedTime": "d",
         "FailureReason": "s",
         "DownloadUri": "s",
@@ -274,17 +299,18 @@ export default class TranscribeService {
   async getVocabularyFilter(
     {abortSignal, ...params}: RequestConfig & GetVocabularyFilterRequest,
   ): Promise<GetVocabularyFilterResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VocabularyFilterName: params["VocabularyFilterName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetVocabularyFilter",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VocabularyFilterName": "s",
-        "LanguageCode": toLanguageCode,
+        "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
         "LastModifiedTime": "d",
         "DownloadUri": "s",
       },
@@ -294,13 +320,17 @@ export default class TranscribeService {
   async listLanguageModels(
     {abortSignal, ...params}: RequestConfig & ListLanguageModelsRequest = {},
   ): Promise<ListLanguageModelsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StatusEquals: params["StatusEquals"],
+      NameContains: params["NameContains"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLanguageModels",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -312,16 +342,20 @@ export default class TranscribeService {
   async listMedicalTranscriptionJobs(
     {abortSignal, ...params}: RequestConfig & ListMedicalTranscriptionJobsRequest = {},
   ): Promise<ListMedicalTranscriptionJobsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Status: params["Status"],
+      JobNameContains: params["JobNameContains"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListMedicalTranscriptionJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Status": toTranscriptionJobStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<TranscriptionJobStatus>(x),
         "NextToken": "s",
         "MedicalTranscriptionJobSummaries": [toMedicalTranscriptionJobSummary],
       },
@@ -331,16 +365,20 @@ export default class TranscribeService {
   async listMedicalVocabularies(
     {abortSignal, ...params}: RequestConfig & ListMedicalVocabulariesRequest = {},
   ): Promise<ListMedicalVocabulariesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      StateEquals: params["StateEquals"],
+      NameContains: params["NameContains"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListMedicalVocabularies",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Status": toVocabularyState,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<VocabularyState>(x),
         "NextToken": "s",
         "Vocabularies": [toVocabularyInfo],
       },
@@ -350,16 +388,20 @@ export default class TranscribeService {
   async listTranscriptionJobs(
     {abortSignal, ...params}: RequestConfig & ListTranscriptionJobsRequest = {},
   ): Promise<ListTranscriptionJobsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Status: params["Status"],
+      JobNameContains: params["JobNameContains"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTranscriptionJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Status": toTranscriptionJobStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<TranscriptionJobStatus>(x),
         "NextToken": "s",
         "TranscriptionJobSummaries": [toTranscriptionJobSummary],
       },
@@ -369,16 +411,20 @@ export default class TranscribeService {
   async listVocabularies(
     {abortSignal, ...params}: RequestConfig & ListVocabulariesRequest = {},
   ): Promise<ListVocabulariesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      StateEquals: params["StateEquals"],
+      NameContains: params["NameContains"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListVocabularies",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Status": toVocabularyState,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<VocabularyState>(x),
         "NextToken": "s",
         "Vocabularies": [toVocabularyInfo],
       },
@@ -388,13 +434,16 @@ export default class TranscribeService {
   async listVocabularyFilters(
     {abortSignal, ...params}: RequestConfig & ListVocabularyFiltersRequest = {},
   ): Promise<ListVocabularyFiltersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      NameContains: params["NameContains"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListVocabularyFilters",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -406,15 +455,24 @@ export default class TranscribeService {
   async startMedicalTranscriptionJob(
     {abortSignal, ...params}: RequestConfig & StartMedicalTranscriptionJobRequest,
   ): Promise<StartMedicalTranscriptionJobResponse> {
-    const body: JSONObject = {...params,
-    Media: fromMedia(params["Media"]),
-    Settings: fromMedicalTranscriptionSetting(params["Settings"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      MedicalTranscriptionJobName: params["MedicalTranscriptionJobName"],
+      LanguageCode: params["LanguageCode"],
+      MediaSampleRateHertz: params["MediaSampleRateHertz"],
+      MediaFormat: params["MediaFormat"],
+      Media: fromMedia(params["Media"]),
+      OutputBucketName: params["OutputBucketName"],
+      OutputKey: params["OutputKey"],
+      OutputEncryptionKMSKeyId: params["OutputEncryptionKMSKeyId"],
+      Settings: fromMedicalTranscriptionSetting(params["Settings"]),
+      Specialty: params["Specialty"],
+      Type: params["Type"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartMedicalTranscriptionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "MedicalTranscriptionJob": toMedicalTranscriptionJob,
@@ -425,18 +483,27 @@ export default class TranscribeService {
   async startTranscriptionJob(
     {abortSignal, ...params}: RequestConfig & StartTranscriptionJobRequest,
   ): Promise<StartTranscriptionJobResponse> {
-    const body: JSONObject = {...params,
-    Media: fromMedia(params["Media"]),
-    Settings: fromSettings(params["Settings"]),
-    ModelSettings: fromModelSettings(params["ModelSettings"]),
-    JobExecutionSettings: fromJobExecutionSettings(params["JobExecutionSettings"]),
-    ContentRedaction: fromContentRedaction(params["ContentRedaction"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TranscriptionJobName: params["TranscriptionJobName"],
+      LanguageCode: params["LanguageCode"],
+      MediaSampleRateHertz: params["MediaSampleRateHertz"],
+      MediaFormat: params["MediaFormat"],
+      Media: fromMedia(params["Media"]),
+      OutputBucketName: params["OutputBucketName"],
+      OutputKey: params["OutputKey"],
+      OutputEncryptionKMSKeyId: params["OutputEncryptionKMSKeyId"],
+      Settings: fromSettings(params["Settings"]),
+      ModelSettings: fromModelSettings(params["ModelSettings"]),
+      JobExecutionSettings: fromJobExecutionSettings(params["JobExecutionSettings"]),
+      ContentRedaction: fromContentRedaction(params["ContentRedaction"]),
+      IdentifyLanguage: params["IdentifyLanguage"],
+      LanguageOptions: params["LanguageOptions"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartTranscriptionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TranscriptionJob": toTranscriptionJob,
@@ -447,19 +514,22 @@ export default class TranscribeService {
   async updateMedicalVocabulary(
     {abortSignal, ...params}: RequestConfig & UpdateMedicalVocabularyRequest,
   ): Promise<UpdateMedicalVocabularyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VocabularyName: params["VocabularyName"],
+      LanguageCode: params["LanguageCode"],
+      VocabularyFileUri: params["VocabularyFileUri"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMedicalVocabulary",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VocabularyName": "s",
-        "LanguageCode": toLanguageCode,
+        "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
         "LastModifiedTime": "d",
-        "VocabularyState": toVocabularyState,
+        "VocabularyState": (x: jsonP.JSONValue) => cmnP.readEnum<VocabularyState>(x),
       },
     }, await resp.json());
   }
@@ -467,19 +537,23 @@ export default class TranscribeService {
   async updateVocabulary(
     {abortSignal, ...params}: RequestConfig & UpdateVocabularyRequest,
   ): Promise<UpdateVocabularyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VocabularyName: params["VocabularyName"],
+      LanguageCode: params["LanguageCode"],
+      Phrases: params["Phrases"],
+      VocabularyFileUri: params["VocabularyFileUri"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateVocabulary",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VocabularyName": "s",
-        "LanguageCode": toLanguageCode,
+        "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
         "LastModifiedTime": "d",
-        "VocabularyState": toVocabularyState,
+        "VocabularyState": (x: jsonP.JSONValue) => cmnP.readEnum<VocabularyState>(x),
       },
     }, await resp.json());
   }
@@ -487,17 +561,20 @@ export default class TranscribeService {
   async updateVocabularyFilter(
     {abortSignal, ...params}: RequestConfig & UpdateVocabularyFilterRequest,
   ): Promise<UpdateVocabularyFilterResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      VocabularyFilterName: params["VocabularyFilterName"],
+      Words: params["Words"],
+      VocabularyFilterFileUri: params["VocabularyFilterFileUri"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateVocabularyFilter",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "VocabularyFilterName": "s",
-        "LanguageCode": toLanguageCode,
+        "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
         "LastModifiedTime": "d",
       },
     }, await resp.json());
@@ -851,26 +928,13 @@ export interface UpdateVocabularyFilterResponse {
 // refs: 4 - tags: input, named, enum, output
 export type CLMLanguageCode =
 | "en-US"
-;
-
-function toCLMLanguageCode(root: JSONValue): CLMLanguageCode | null {
-  return ( false
-    || root == "en-US"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type BaseModelName =
 | "NarrowBand"
 | "WideBand"
-;
-
-function toBaseModelName(root: JSONValue): BaseModelName | null {
-  return ( false
-    || root == "NarrowBand"
-    || root == "WideBand"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface InputDataConfig {
@@ -878,13 +942,16 @@ export interface InputDataConfig {
   TuningDataS3Uri?: string | null;
   DataAccessRoleArn: string;
 }
-function fromInputDataConfig(input?: InputDataConfig | null): JSONValue {
+function fromInputDataConfig(input?: InputDataConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Uri: input["S3Uri"],
+    TuningDataS3Uri: input["TuningDataS3Uri"],
+    DataAccessRoleArn: input["DataAccessRoleArn"],
   }
 }
-function toInputDataConfig(root: JSONValue): InputDataConfig {
-  return prt.readObj({
+function toInputDataConfig(root: jsonP.JSONValue): InputDataConfig {
+  return jsonP.readObj({
     required: {
       "S3Uri": "s",
       "DataAccessRoleArn": "s",
@@ -933,63 +1000,14 @@ export type LanguageCode =
 | "te-IN"
 | "tr-TR"
 | "zh-CN"
-;
-
-function toLanguageCode(root: JSONValue): LanguageCode | null {
-  return ( false
-    || root == "af-ZA"
-    || root == "ar-AE"
-    || root == "ar-SA"
-    || root == "cy-GB"
-    || root == "da-DK"
-    || root == "de-CH"
-    || root == "de-DE"
-    || root == "en-AB"
-    || root == "en-AU"
-    || root == "en-GB"
-    || root == "en-IE"
-    || root == "en-IN"
-    || root == "en-US"
-    || root == "en-WL"
-    || root == "es-ES"
-    || root == "es-US"
-    || root == "fa-IR"
-    || root == "fr-CA"
-    || root == "fr-FR"
-    || root == "ga-IE"
-    || root == "gd-GB"
-    || root == "he-IL"
-    || root == "hi-IN"
-    || root == "id-ID"
-    || root == "it-IT"
-    || root == "ja-JP"
-    || root == "ko-KR"
-    || root == "ms-MY"
-    || root == "nl-NL"
-    || root == "pt-BR"
-    || root == "pt-PT"
-    || root == "ru-RU"
-    || root == "ta-IN"
-    || root == "te-IN"
-    || root == "tr-TR"
-    || root == "zh-CN"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type ModelStatus =
 | "IN_PROGRESS"
 | "FAILED"
 | "COMPLETED"
-;
-
-function toModelStatus(root: JSONValue): ModelStatus | null {
-  return ( false
-    || root == "IN_PROGRESS"
-    || root == "FAILED"
-    || root == "COMPLETED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, enum, output
 export type TranscriptionJobStatus =
@@ -997,31 +1015,14 @@ export type TranscriptionJobStatus =
 | "IN_PROGRESS"
 | "FAILED"
 | "COMPLETED"
-;
-
-function toTranscriptionJobStatus(root: JSONValue): TranscriptionJobStatus | null {
-  return ( false
-    || root == "QUEUED"
-    || root == "IN_PROGRESS"
-    || root == "FAILED"
-    || root == "COMPLETED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 12 - tags: input, named, enum, output
 export type VocabularyState =
 | "PENDING"
 | "READY"
 | "FAILED"
-;
-
-function toVocabularyState(root: JSONValue): VocabularyState | null {
-  return ( false
-    || root == "PENDING"
-    || root == "READY"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, enum, output
 export type MediaFormat =
@@ -1032,31 +1033,20 @@ export type MediaFormat =
 | "ogg"
 | "amr"
 | "webm"
-;
-
-function toMediaFormat(root: JSONValue): MediaFormat | null {
-  return ( false
-    || root == "mp3"
-    || root == "mp4"
-    || root == "wav"
-    || root == "flac"
-    || root == "ogg"
-    || root == "amr"
-    || root == "webm"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface Media {
   MediaFileUri?: string | null;
 }
-function fromMedia(input?: Media | null): JSONValue {
+function fromMedia(input?: Media | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MediaFileUri: input["MediaFileUri"],
   }
 }
-function toMedia(root: JSONValue): Media {
-  return prt.readObj({
+function toMedia(root: jsonP.JSONValue): Media {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MediaFileUri": "s",
@@ -1073,13 +1063,19 @@ export interface MedicalTranscriptionSetting {
   MaxAlternatives?: number | null;
   VocabularyName?: string | null;
 }
-function fromMedicalTranscriptionSetting(input?: MedicalTranscriptionSetting | null): JSONValue {
+function fromMedicalTranscriptionSetting(input?: MedicalTranscriptionSetting | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ShowSpeakerLabels: input["ShowSpeakerLabels"],
+    MaxSpeakerLabels: input["MaxSpeakerLabels"],
+    ChannelIdentification: input["ChannelIdentification"],
+    ShowAlternatives: input["ShowAlternatives"],
+    MaxAlternatives: input["MaxAlternatives"],
+    VocabularyName: input["VocabularyName"],
   }
 }
-function toMedicalTranscriptionSetting(root: JSONValue): MedicalTranscriptionSetting {
-  return prt.readObj({
+function toMedicalTranscriptionSetting(root: jsonP.JSONValue): MedicalTranscriptionSetting {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ShowSpeakerLabels": "b",
@@ -1095,26 +1091,13 @@ function toMedicalTranscriptionSetting(root: JSONValue): MedicalTranscriptionSet
 // refs: 4 - tags: input, named, enum, output
 export type Specialty =
 | "PRIMARYCARE"
-;
-
-function toSpecialty(root: JSONValue): Specialty | null {
-  return ( false
-    || root == "PRIMARYCARE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type Type =
 | "CONVERSATION"
 | "DICTATION"
-;
-
-function toType(root: JSONValue): Type | null {
-  return ( false
-    || root == "CONVERSATION"
-    || root == "DICTATION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface Settings {
@@ -1127,13 +1110,21 @@ export interface Settings {
   VocabularyFilterName?: string | null;
   VocabularyFilterMethod?: VocabularyFilterMethod | null;
 }
-function fromSettings(input?: Settings | null): JSONValue {
+function fromSettings(input?: Settings | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    VocabularyName: input["VocabularyName"],
+    ShowSpeakerLabels: input["ShowSpeakerLabels"],
+    MaxSpeakerLabels: input["MaxSpeakerLabels"],
+    ChannelIdentification: input["ChannelIdentification"],
+    ShowAlternatives: input["ShowAlternatives"],
+    MaxAlternatives: input["MaxAlternatives"],
+    VocabularyFilterName: input["VocabularyFilterName"],
+    VocabularyFilterMethod: input["VocabularyFilterMethod"],
   }
 }
-function toSettings(root: JSONValue): Settings {
-  return prt.readObj({
+function toSettings(root: jsonP.JSONValue): Settings {
+  return jsonP.readObj({
     required: {},
     optional: {
       "VocabularyName": "s",
@@ -1143,7 +1134,7 @@ function toSettings(root: JSONValue): Settings {
       "ShowAlternatives": "b",
       "MaxAlternatives": "n",
       "VocabularyFilterName": "s",
-      "VocabularyFilterMethod": toVocabularyFilterMethod,
+      "VocabularyFilterMethod": (x: jsonP.JSONValue) => cmnP.readEnum<VocabularyFilterMethod>(x),
     },
   }, root);
 }
@@ -1152,26 +1143,20 @@ function toSettings(root: JSONValue): Settings {
 export type VocabularyFilterMethod =
 | "remove"
 | "mask"
-;
-
-function toVocabularyFilterMethod(root: JSONValue): VocabularyFilterMethod | null {
-  return ( false
-    || root == "remove"
-    || root == "mask"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface ModelSettings {
   LanguageModelName?: string | null;
 }
-function fromModelSettings(input?: ModelSettings | null): JSONValue {
+function fromModelSettings(input?: ModelSettings | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    LanguageModelName: input["LanguageModelName"],
   }
 }
-function toModelSettings(root: JSONValue): ModelSettings {
-  return prt.readObj({
+function toModelSettings(root: jsonP.JSONValue): ModelSettings {
+  return jsonP.readObj({
     required: {},
     optional: {
       "LanguageModelName": "s",
@@ -1184,13 +1169,15 @@ export interface JobExecutionSettings {
   AllowDeferredExecution?: boolean | null;
   DataAccessRoleArn?: string | null;
 }
-function fromJobExecutionSettings(input?: JobExecutionSettings | null): JSONValue {
+function fromJobExecutionSettings(input?: JobExecutionSettings | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AllowDeferredExecution: input["AllowDeferredExecution"],
+    DataAccessRoleArn: input["DataAccessRoleArn"],
   }
 }
-function toJobExecutionSettings(root: JSONValue): JobExecutionSettings {
-  return prt.readObj({
+function toJobExecutionSettings(root: jsonP.JSONValue): JobExecutionSettings {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AllowDeferredExecution": "b",
@@ -1204,16 +1191,18 @@ export interface ContentRedaction {
   RedactionType: RedactionType;
   RedactionOutput: RedactionOutput;
 }
-function fromContentRedaction(input?: ContentRedaction | null): JSONValue {
+function fromContentRedaction(input?: ContentRedaction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RedactionType: input["RedactionType"],
+    RedactionOutput: input["RedactionOutput"],
   }
 }
-function toContentRedaction(root: JSONValue): ContentRedaction {
-  return prt.readObj({
+function toContentRedaction(root: jsonP.JSONValue): ContentRedaction {
+  return jsonP.readObj({
     required: {
-      "RedactionType": toRedactionType,
-      "RedactionOutput": toRedactionOutput,
+      "RedactionType": (x: jsonP.JSONValue) => cmnP.readEnum<RedactionType>(x),
+      "RedactionOutput": (x: jsonP.JSONValue) => cmnP.readEnum<RedactionOutput>(x),
     },
     optional: {},
   }, root);
@@ -1222,26 +1211,13 @@ function toContentRedaction(root: JSONValue): ContentRedaction {
 // refs: 4 - tags: input, named, enum, output
 export type RedactionType =
 | "PII"
-;
-
-function toRedactionType(root: JSONValue): RedactionType | null {
-  return ( false
-    || root == "PII"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type RedactionOutput =
 | "redacted"
 | "redacted_and_unredacted"
-;
-
-function toRedactionOutput(root: JSONValue): RedactionOutput | null {
-  return ( false
-    || root == "redacted"
-    || root == "redacted_and_unredacted"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface LanguageModel {
@@ -1255,16 +1231,16 @@ export interface LanguageModel {
   FailureReason?: string | null;
   InputDataConfig?: InputDataConfig | null;
 }
-function toLanguageModel(root: JSONValue): LanguageModel {
-  return prt.readObj({
+function toLanguageModel(root: jsonP.JSONValue): LanguageModel {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ModelName": "s",
       "CreateTime": "d",
       "LastModifiedTime": "d",
-      "LanguageCode": toCLMLanguageCode,
-      "BaseModelName": toBaseModelName,
-      "ModelStatus": toModelStatus,
+      "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<CLMLanguageCode>(x),
+      "BaseModelName": (x: jsonP.JSONValue) => cmnP.readEnum<BaseModelName>(x),
+      "ModelStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ModelStatus>(x),
       "UpgradeAvailability": "b",
       "FailureReason": "s",
       "InputDataConfig": toInputDataConfig,
@@ -1289,15 +1265,15 @@ export interface MedicalTranscriptionJob {
   Specialty?: Specialty | null;
   Type?: Type | null;
 }
-function toMedicalTranscriptionJob(root: JSONValue): MedicalTranscriptionJob {
-  return prt.readObj({
+function toMedicalTranscriptionJob(root: jsonP.JSONValue): MedicalTranscriptionJob {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MedicalTranscriptionJobName": "s",
-      "TranscriptionJobStatus": toTranscriptionJobStatus,
-      "LanguageCode": toLanguageCode,
+      "TranscriptionJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<TranscriptionJobStatus>(x),
+      "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
       "MediaSampleRateHertz": "n",
-      "MediaFormat": toMediaFormat,
+      "MediaFormat": (x: jsonP.JSONValue) => cmnP.readEnum<MediaFormat>(x),
       "Media": toMedia,
       "Transcript": toMedicalTranscript,
       "StartTime": "d",
@@ -1305,8 +1281,8 @@ function toMedicalTranscriptionJob(root: JSONValue): MedicalTranscriptionJob {
       "CompletionTime": "d",
       "FailureReason": "s",
       "Settings": toMedicalTranscriptionSetting,
-      "Specialty": toSpecialty,
-      "Type": toType,
+      "Specialty": (x: jsonP.JSONValue) => cmnP.readEnum<Specialty>(x),
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<Type>(x),
     },
   }, root);
 }
@@ -1315,8 +1291,8 @@ function toMedicalTranscriptionJob(root: JSONValue): MedicalTranscriptionJob {
 export interface MedicalTranscript {
   TranscriptFileUri?: string | null;
 }
-function toMedicalTranscript(root: JSONValue): MedicalTranscript {
-  return prt.readObj({
+function toMedicalTranscript(root: jsonP.JSONValue): MedicalTranscript {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TranscriptFileUri": "s",
@@ -1345,15 +1321,15 @@ export interface TranscriptionJob {
   LanguageOptions?: LanguageCode[] | null;
   IdentifiedLanguageScore?: number | null;
 }
-function toTranscriptionJob(root: JSONValue): TranscriptionJob {
-  return prt.readObj({
+function toTranscriptionJob(root: jsonP.JSONValue): TranscriptionJob {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TranscriptionJobName": "s",
-      "TranscriptionJobStatus": toTranscriptionJobStatus,
-      "LanguageCode": toLanguageCode,
+      "TranscriptionJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<TranscriptionJobStatus>(x),
+      "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
       "MediaSampleRateHertz": "n",
-      "MediaFormat": toMediaFormat,
+      "MediaFormat": (x: jsonP.JSONValue) => cmnP.readEnum<MediaFormat>(x),
       "Media": toMedia,
       "Transcript": toTranscript,
       "StartTime": "d",
@@ -1365,7 +1341,7 @@ function toTranscriptionJob(root: JSONValue): TranscriptionJob {
       "JobExecutionSettings": toJobExecutionSettings,
       "ContentRedaction": toContentRedaction,
       "IdentifyLanguage": "b",
-      "LanguageOptions": [toLanguageCode],
+      "LanguageOptions": [(x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x)],
       "IdentifiedLanguageScore": "n",
     },
   }, root);
@@ -1376,8 +1352,8 @@ export interface Transcript {
   TranscriptFileUri?: string | null;
   RedactedTranscriptFileUri?: string | null;
 }
-function toTranscript(root: JSONValue): Transcript {
-  return prt.readObj({
+function toTranscript(root: jsonP.JSONValue): Transcript {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TranscriptFileUri": "s",
@@ -1399,20 +1375,20 @@ export interface MedicalTranscriptionJobSummary {
   Specialty?: Specialty | null;
   Type?: Type | null;
 }
-function toMedicalTranscriptionJobSummary(root: JSONValue): MedicalTranscriptionJobSummary {
-  return prt.readObj({
+function toMedicalTranscriptionJobSummary(root: jsonP.JSONValue): MedicalTranscriptionJobSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MedicalTranscriptionJobName": "s",
       "CreationTime": "d",
       "StartTime": "d",
       "CompletionTime": "d",
-      "LanguageCode": toLanguageCode,
-      "TranscriptionJobStatus": toTranscriptionJobStatus,
+      "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
+      "TranscriptionJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<TranscriptionJobStatus>(x),
       "FailureReason": "s",
-      "OutputLocationType": toOutputLocationType,
-      "Specialty": toSpecialty,
-      "Type": toType,
+      "OutputLocationType": (x: jsonP.JSONValue) => cmnP.readEnum<OutputLocationType>(x),
+      "Specialty": (x: jsonP.JSONValue) => cmnP.readEnum<Specialty>(x),
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<Type>(x),
     },
   }, root);
 }
@@ -1421,13 +1397,7 @@ function toMedicalTranscriptionJobSummary(root: JSONValue): MedicalTranscription
 export type OutputLocationType =
 | "CUSTOMER_BUCKET"
 | "SERVICE_BUCKET"
-;
-function toOutputLocationType(root: JSONValue): OutputLocationType | null {
-  return ( false
-    || root == "CUSTOMER_BUCKET"
-    || root == "SERVICE_BUCKET"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface VocabularyInfo {
@@ -1436,14 +1406,14 @@ export interface VocabularyInfo {
   LastModifiedTime?: Date | number | null;
   VocabularyState?: VocabularyState | null;
 }
-function toVocabularyInfo(root: JSONValue): VocabularyInfo {
-  return prt.readObj({
+function toVocabularyInfo(root: jsonP.JSONValue): VocabularyInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "VocabularyName": "s",
-      "LanguageCode": toLanguageCode,
+      "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
       "LastModifiedTime": "d",
-      "VocabularyState": toVocabularyState,
+      "VocabularyState": (x: jsonP.JSONValue) => cmnP.readEnum<VocabularyState>(x),
     },
   }, root);
 }
@@ -1463,18 +1433,18 @@ export interface TranscriptionJobSummary {
   IdentifyLanguage?: boolean | null;
   IdentifiedLanguageScore?: number | null;
 }
-function toTranscriptionJobSummary(root: JSONValue): TranscriptionJobSummary {
-  return prt.readObj({
+function toTranscriptionJobSummary(root: jsonP.JSONValue): TranscriptionJobSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TranscriptionJobName": "s",
       "CreationTime": "d",
       "StartTime": "d",
       "CompletionTime": "d",
-      "LanguageCode": toLanguageCode,
-      "TranscriptionJobStatus": toTranscriptionJobStatus,
+      "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
+      "TranscriptionJobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<TranscriptionJobStatus>(x),
       "FailureReason": "s",
-      "OutputLocationType": toOutputLocationType,
+      "OutputLocationType": (x: jsonP.JSONValue) => cmnP.readEnum<OutputLocationType>(x),
       "ContentRedaction": toContentRedaction,
       "ModelSettings": toModelSettings,
       "IdentifyLanguage": "b",
@@ -1489,12 +1459,12 @@ export interface VocabularyFilterInfo {
   LanguageCode?: LanguageCode | null;
   LastModifiedTime?: Date | number | null;
 }
-function toVocabularyFilterInfo(root: JSONValue): VocabularyFilterInfo {
-  return prt.readObj({
+function toVocabularyFilterInfo(root: jsonP.JSONValue): VocabularyFilterInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "VocabularyFilterName": "s",
-      "LanguageCode": toLanguageCode,
+      "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
       "LastModifiedTime": "d",
     },
   }, root);

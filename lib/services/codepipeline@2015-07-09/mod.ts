@@ -5,10 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }
@@ -35,16 +34,18 @@ export default class CodePipeline {
   async acknowledgeJob(
     {abortSignal, ...params}: RequestConfig & AcknowledgeJobInput,
   ): Promise<AcknowledgeJobOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      jobId: params["jobId"],
+      nonce: params["nonce"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcknowledgeJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "status": toJobStatus,
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       },
     }, await resp.json());
   }
@@ -52,16 +53,19 @@ export default class CodePipeline {
   async acknowledgeThirdPartyJob(
     {abortSignal, ...params}: RequestConfig & AcknowledgeThirdPartyJobInput,
   ): Promise<AcknowledgeThirdPartyJobOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      jobId: params["jobId"],
+      nonce: params["nonce"],
+      clientToken: params["clientToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcknowledgeThirdPartyJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "status": toJobStatus,
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       },
     }, await resp.json());
   }
@@ -69,18 +73,21 @@ export default class CodePipeline {
   async createCustomActionType(
     {abortSignal, ...params}: RequestConfig & CreateCustomActionTypeInput,
   ): Promise<CreateCustomActionTypeOutput> {
-    const body: JSONObject = {...params,
-    settings: fromActionTypeSettings(params["settings"]),
-    configurationProperties: params["configurationProperties"]?.map(x => fromActionConfigurationProperty(x)),
-    inputArtifactDetails: fromArtifactDetails(params["inputArtifactDetails"]),
-    outputArtifactDetails: fromArtifactDetails(params["outputArtifactDetails"]),
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      category: params["category"],
+      provider: params["provider"],
+      version: params["version"],
+      settings: fromActionTypeSettings(params["settings"]),
+      configurationProperties: params["configurationProperties"]?.map(x => fromActionConfigurationProperty(x)),
+      inputArtifactDetails: fromArtifactDetails(params["inputArtifactDetails"]),
+      outputArtifactDetails: fromArtifactDetails(params["outputArtifactDetails"]),
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCustomActionType",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "actionType": toActionType,
       },
@@ -93,15 +100,15 @@ export default class CodePipeline {
   async createPipeline(
     {abortSignal, ...params}: RequestConfig & CreatePipelineInput,
   ): Promise<CreatePipelineOutput> {
-    const body: JSONObject = {...params,
-    pipeline: fromPipelineDeclaration(params["pipeline"]),
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipeline: fromPipelineDeclaration(params["pipeline"]),
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePipeline",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "pipeline": toPipelineDeclaration,
@@ -113,8 +120,11 @@ export default class CodePipeline {
   async deleteCustomActionType(
     {abortSignal, ...params}: RequestConfig & DeleteCustomActionTypeInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      category: params["category"],
+      provider: params["provider"],
+      version: params["version"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCustomActionType",
@@ -124,8 +134,9 @@ export default class CodePipeline {
   async deletePipeline(
     {abortSignal, ...params}: RequestConfig & DeletePipelineInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePipeline",
@@ -135,13 +146,14 @@ export default class CodePipeline {
   async deleteWebhook(
     {abortSignal, ...params}: RequestConfig & DeleteWebhookInput,
   ): Promise<DeleteWebhookOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteWebhook",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -150,13 +162,14 @@ export default class CodePipeline {
   async deregisterWebhookWithThirdParty(
     {abortSignal, ...params}: RequestConfig & DeregisterWebhookWithThirdPartyInput = {},
   ): Promise<DeregisterWebhookWithThirdPartyOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      webhookName: params["webhookName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterWebhookWithThirdParty",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -165,8 +178,12 @@ export default class CodePipeline {
   async disableStageTransition(
     {abortSignal, ...params}: RequestConfig & DisableStageTransitionInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineName: params["pipelineName"],
+      stageName: params["stageName"],
+      transitionType: params["transitionType"],
+      reason: params["reason"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableStageTransition",
@@ -176,8 +193,11 @@ export default class CodePipeline {
   async enableStageTransition(
     {abortSignal, ...params}: RequestConfig & EnableStageTransitionInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineName: params["pipelineName"],
+      stageName: params["stageName"],
+      transitionType: params["transitionType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableStageTransition",
@@ -187,13 +207,14 @@ export default class CodePipeline {
   async getJobDetails(
     {abortSignal, ...params}: RequestConfig & GetJobDetailsInput,
   ): Promise<GetJobDetailsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      jobId: params["jobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetJobDetails",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "jobDetails": toJobDetails,
@@ -204,13 +225,15 @@ export default class CodePipeline {
   async getPipeline(
     {abortSignal, ...params}: RequestConfig & GetPipelineInput,
   ): Promise<GetPipelineOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      version: params["version"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPipeline",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "pipeline": toPipelineDeclaration,
@@ -222,13 +245,15 @@ export default class CodePipeline {
   async getPipelineExecution(
     {abortSignal, ...params}: RequestConfig & GetPipelineExecutionInput,
   ): Promise<GetPipelineExecutionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineName: params["pipelineName"],
+      pipelineExecutionId: params["pipelineExecutionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPipelineExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "pipelineExecution": toPipelineExecution,
@@ -239,13 +264,14 @@ export default class CodePipeline {
   async getPipelineState(
     {abortSignal, ...params}: RequestConfig & GetPipelineStateInput,
   ): Promise<GetPipelineStateOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPipelineState",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "pipelineName": "s",
@@ -260,13 +286,15 @@ export default class CodePipeline {
   async getThirdPartyJobDetails(
     {abortSignal, ...params}: RequestConfig & GetThirdPartyJobDetailsInput,
   ): Promise<GetThirdPartyJobDetailsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      jobId: params["jobId"],
+      clientToken: params["clientToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetThirdPartyJobDetails",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "jobDetails": toThirdPartyJobDetails,
@@ -277,14 +305,17 @@ export default class CodePipeline {
   async listActionExecutions(
     {abortSignal, ...params}: RequestConfig & ListActionExecutionsInput,
   ): Promise<ListActionExecutionsOutput> {
-    const body: JSONObject = {...params,
-    filter: fromActionExecutionFilter(params["filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineName: params["pipelineName"],
+      filter: fromActionExecutionFilter(params["filter"]),
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListActionExecutions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "actionExecutionDetails": [toActionExecutionDetail],
@@ -296,13 +327,15 @@ export default class CodePipeline {
   async listActionTypes(
     {abortSignal, ...params}: RequestConfig & ListActionTypesInput = {},
   ): Promise<ListActionTypesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      actionOwnerFilter: params["actionOwnerFilter"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListActionTypes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "actionTypes": [toActionType],
       },
@@ -315,13 +348,16 @@ export default class CodePipeline {
   async listPipelineExecutions(
     {abortSignal, ...params}: RequestConfig & ListPipelineExecutionsInput,
   ): Promise<ListPipelineExecutionsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineName: params["pipelineName"],
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPipelineExecutions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "pipelineExecutionSummaries": [toPipelineExecutionSummary],
@@ -333,13 +369,14 @@ export default class CodePipeline {
   async listPipelines(
     {abortSignal, ...params}: RequestConfig & ListPipelinesInput = {},
   ): Promise<ListPipelinesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPipelines",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "pipelines": [toPipelineSummary],
@@ -351,13 +388,16 @@ export default class CodePipeline {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceInput,
   ): Promise<ListTagsForResourceOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceArn: params["resourceArn"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "tags": [toTag],
@@ -369,13 +409,15 @@ export default class CodePipeline {
   async listWebhooks(
     {abortSignal, ...params}: RequestConfig & ListWebhooksInput = {},
   ): Promise<ListWebhooksOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWebhooks",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "webhooks": [toListWebhookItem],
@@ -387,14 +429,16 @@ export default class CodePipeline {
   async pollForJobs(
     {abortSignal, ...params}: RequestConfig & PollForJobsInput,
   ): Promise<PollForJobsOutput> {
-    const body: JSONObject = {...params,
-    actionTypeId: fromActionTypeId(params["actionTypeId"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      actionTypeId: fromActionTypeId(params["actionTypeId"]),
+      maxBatchSize: params["maxBatchSize"],
+      queryParam: params["queryParam"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PollForJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "jobs": [toJob],
@@ -405,14 +449,15 @@ export default class CodePipeline {
   async pollForThirdPartyJobs(
     {abortSignal, ...params}: RequestConfig & PollForThirdPartyJobsInput,
   ): Promise<PollForThirdPartyJobsOutput> {
-    const body: JSONObject = {...params,
-    actionTypeId: fromActionTypeId(params["actionTypeId"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      actionTypeId: fromActionTypeId(params["actionTypeId"]),
+      maxBatchSize: params["maxBatchSize"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PollForThirdPartyJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "jobs": [toThirdPartyJob],
@@ -423,14 +468,17 @@ export default class CodePipeline {
   async putActionRevision(
     {abortSignal, ...params}: RequestConfig & PutActionRevisionInput,
   ): Promise<PutActionRevisionOutput> {
-    const body: JSONObject = {...params,
-    actionRevision: fromActionRevision(params["actionRevision"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineName: params["pipelineName"],
+      stageName: params["stageName"],
+      actionName: params["actionName"],
+      actionRevision: fromActionRevision(params["actionRevision"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutActionRevision",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "newRevision": "b",
@@ -442,14 +490,18 @@ export default class CodePipeline {
   async putApprovalResult(
     {abortSignal, ...params}: RequestConfig & PutApprovalResultInput,
   ): Promise<PutApprovalResultOutput> {
-    const body: JSONObject = {...params,
-    result: fromApprovalResult(params["result"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineName: params["pipelineName"],
+      stageName: params["stageName"],
+      actionName: params["actionName"],
+      result: fromApprovalResult(params["result"]),
+      token: params["token"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutApprovalResult",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "approvedAt": "d",
@@ -460,9 +512,10 @@ export default class CodePipeline {
   async putJobFailureResult(
     {abortSignal, ...params}: RequestConfig & PutJobFailureResultInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    failureDetails: fromFailureDetails(params["failureDetails"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      jobId: params["jobId"],
+      failureDetails: fromFailureDetails(params["failureDetails"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutJobFailureResult",
@@ -472,10 +525,13 @@ export default class CodePipeline {
   async putJobSuccessResult(
     {abortSignal, ...params}: RequestConfig & PutJobSuccessResultInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    currentRevision: fromCurrentRevision(params["currentRevision"]),
-    executionDetails: fromExecutionDetails(params["executionDetails"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      jobId: params["jobId"],
+      currentRevision: fromCurrentRevision(params["currentRevision"]),
+      continuationToken: params["continuationToken"],
+      executionDetails: fromExecutionDetails(params["executionDetails"]),
+      outputVariables: params["outputVariables"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutJobSuccessResult",
@@ -485,9 +541,11 @@ export default class CodePipeline {
   async putThirdPartyJobFailureResult(
     {abortSignal, ...params}: RequestConfig & PutThirdPartyJobFailureResultInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    failureDetails: fromFailureDetails(params["failureDetails"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      jobId: params["jobId"],
+      clientToken: params["clientToken"],
+      failureDetails: fromFailureDetails(params["failureDetails"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutThirdPartyJobFailureResult",
@@ -497,10 +555,13 @@ export default class CodePipeline {
   async putThirdPartyJobSuccessResult(
     {abortSignal, ...params}: RequestConfig & PutThirdPartyJobSuccessResultInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    currentRevision: fromCurrentRevision(params["currentRevision"]),
-    executionDetails: fromExecutionDetails(params["executionDetails"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      jobId: params["jobId"],
+      clientToken: params["clientToken"],
+      currentRevision: fromCurrentRevision(params["currentRevision"]),
+      continuationToken: params["continuationToken"],
+      executionDetails: fromExecutionDetails(params["executionDetails"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutThirdPartyJobSuccessResult",
@@ -510,15 +571,15 @@ export default class CodePipeline {
   async putWebhook(
     {abortSignal, ...params}: RequestConfig & PutWebhookInput,
   ): Promise<PutWebhookOutput> {
-    const body: JSONObject = {...params,
-    webhook: fromWebhookDefinition(params["webhook"]),
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      webhook: fromWebhookDefinition(params["webhook"]),
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutWebhook",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "webhook": toListWebhookItem,
@@ -529,13 +590,14 @@ export default class CodePipeline {
   async registerWebhookWithThirdParty(
     {abortSignal, ...params}: RequestConfig & RegisterWebhookWithThirdPartyInput = {},
   ): Promise<RegisterWebhookWithThirdPartyOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      webhookName: params["webhookName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterWebhookWithThirdParty",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -544,13 +606,17 @@ export default class CodePipeline {
   async retryStageExecution(
     {abortSignal, ...params}: RequestConfig & RetryStageExecutionInput,
   ): Promise<RetryStageExecutionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineName: params["pipelineName"],
+      stageName: params["stageName"],
+      pipelineExecutionId: params["pipelineExecutionId"],
+      retryMode: params["retryMode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RetryStageExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "pipelineExecutionId": "s",
@@ -561,14 +627,15 @@ export default class CodePipeline {
   async startPipelineExecution(
     {abortSignal, ...params}: RequestConfig & StartPipelineExecutionInput,
   ): Promise<StartPipelineExecutionOutput> {
-    const body: JSONObject = {...params,
-    clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartPipelineExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "pipelineExecutionId": "s",
@@ -579,13 +646,17 @@ export default class CodePipeline {
   async stopPipelineExecution(
     {abortSignal, ...params}: RequestConfig & StopPipelineExecutionInput,
   ): Promise<StopPipelineExecutionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipelineName: params["pipelineName"],
+      pipelineExecutionId: params["pipelineExecutionId"],
+      abandon: params["abandon"],
+      reason: params["reason"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopPipelineExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "pipelineExecutionId": "s",
@@ -596,14 +667,15 @@ export default class CodePipeline {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceInput,
   ): Promise<TagResourceOutput> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceArn: params["resourceArn"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -612,13 +684,15 @@ export default class CodePipeline {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceInput,
   ): Promise<UntagResourceOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceArn: params["resourceArn"],
+      tagKeys: params["tagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -627,14 +701,14 @@ export default class CodePipeline {
   async updatePipeline(
     {abortSignal, ...params}: RequestConfig & UpdatePipelineInput,
   ): Promise<UpdatePipelineOutput> {
-    const body: JSONObject = {...params,
-    pipeline: fromPipelineDeclaration(params["pipeline"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      pipeline: fromPipelineDeclaration(params["pipeline"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePipeline",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "pipeline": toPipelineDeclaration,
@@ -783,7 +857,7 @@ export interface ListWebhooksInput {
 export interface PollForJobsInput {
   actionTypeId: ActionTypeId;
   maxBatchSize?: number | null;
-  queryParam?: { [key: string]: string } | null;
+  queryParam?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -821,7 +895,7 @@ export interface PutJobSuccessResultInput {
   currentRevision?: CurrentRevision | null;
   continuationToken?: string | null;
   executionDetails?: ExecutionDetails | null;
-  outputVariables?: { [key: string]: string } | null;
+  outputVariables?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1052,18 +1126,7 @@ export type ActionCategory =
 | "Test"
 | "Invoke"
 | "Approval"
-;
-
-function toActionCategory(root: JSONValue): ActionCategory | null {
-  return ( false
-    || root == "Source"
-    || root == "Build"
-    || root == "Deploy"
-    || root == "Test"
-    || root == "Invoke"
-    || root == "Approval"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface ActionTypeSettings {
@@ -1072,13 +1135,17 @@ export interface ActionTypeSettings {
   executionUrlTemplate?: string | null;
   revisionUrlTemplate?: string | null;
 }
-function fromActionTypeSettings(input?: ActionTypeSettings | null): JSONValue {
+function fromActionTypeSettings(input?: ActionTypeSettings | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    thirdPartyConfigurationUrl: input["thirdPartyConfigurationUrl"],
+    entityUrlTemplate: input["entityUrlTemplate"],
+    executionUrlTemplate: input["executionUrlTemplate"],
+    revisionUrlTemplate: input["revisionUrlTemplate"],
   }
 }
-function toActionTypeSettings(root: JSONValue): ActionTypeSettings {
-  return prt.readObj({
+function toActionTypeSettings(root: jsonP.JSONValue): ActionTypeSettings {
+  return jsonP.readObj({
     required: {},
     optional: {
       "thirdPartyConfigurationUrl": "s",
@@ -1099,13 +1166,20 @@ export interface ActionConfigurationProperty {
   description?: string | null;
   type?: ActionConfigurationPropertyType | null;
 }
-function fromActionConfigurationProperty(input?: ActionConfigurationProperty | null): JSONValue {
+function fromActionConfigurationProperty(input?: ActionConfigurationProperty | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    required: input["required"],
+    key: input["key"],
+    secret: input["secret"],
+    queryable: input["queryable"],
+    description: input["description"],
+    type: input["type"],
   }
 }
-function toActionConfigurationProperty(root: JSONValue): ActionConfigurationProperty {
-  return prt.readObj({
+function toActionConfigurationProperty(root: jsonP.JSONValue): ActionConfigurationProperty {
+  return jsonP.readObj({
     required: {
       "name": "s",
       "required": "b",
@@ -1115,7 +1189,7 @@ function toActionConfigurationProperty(root: JSONValue): ActionConfigurationProp
     optional: {
       "queryable": "b",
       "description": "s",
-      "type": toActionConfigurationPropertyType,
+      "type": (x: jsonP.JSONValue) => cmnP.readEnum<ActionConfigurationPropertyType>(x),
     },
   }, root);
 }
@@ -1125,28 +1199,22 @@ export type ActionConfigurationPropertyType =
 | "String"
 | "Number"
 | "Boolean"
-;
-
-function toActionConfigurationPropertyType(root: JSONValue): ActionConfigurationPropertyType | null {
-  return ( false
-    || root == "String"
-    || root == "Number"
-    || root == "Boolean"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface ArtifactDetails {
   minimumCount: number;
   maximumCount: number;
 }
-function fromArtifactDetails(input?: ArtifactDetails | null): JSONValue {
+function fromArtifactDetails(input?: ArtifactDetails | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    minimumCount: input["minimumCount"],
+    maximumCount: input["maximumCount"],
   }
 }
-function toArtifactDetails(root: JSONValue): ArtifactDetails {
-  return prt.readObj({
+function toArtifactDetails(root: jsonP.JSONValue): ArtifactDetails {
+  return jsonP.readObj({
     required: {
       "minimumCount": "n",
       "maximumCount": "n",
@@ -1160,13 +1228,15 @@ export interface Tag {
   key: string;
   value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    key: input["key"],
+    value: input["value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "key": "s",
       "value": "s",
@@ -1180,20 +1250,23 @@ export interface PipelineDeclaration {
   name: string;
   roleArn: string;
   artifactStore?: ArtifactStore | null;
-  artifactStores?: { [key: string]: ArtifactStore } | null;
+  artifactStores?: { [key: string]: ArtifactStore | null | undefined } | null;
   stages: StageDeclaration[];
   version?: number | null;
 }
-function fromPipelineDeclaration(input?: PipelineDeclaration | null): JSONValue {
+function fromPipelineDeclaration(input?: PipelineDeclaration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    roleArn: input["roleArn"],
     artifactStore: fromArtifactStore(input["artifactStore"]),
-    artifactStores: prt.serializeMap(input["artifactStores"], x => fromArtifactStore(x)),
+    artifactStores: jsonP.serializeMap(input["artifactStores"], x => fromArtifactStore(x)),
     stages: input["stages"]?.map(x => fromStageDeclaration(x)),
+    version: input["version"],
   }
 }
-function toPipelineDeclaration(root: JSONValue): PipelineDeclaration {
-  return prt.readObj({
+function toPipelineDeclaration(root: jsonP.JSONValue): PipelineDeclaration {
+  return jsonP.readObj({
     required: {
       "name": "s",
       "roleArn": "s",
@@ -1201,7 +1274,7 @@ function toPipelineDeclaration(root: JSONValue): PipelineDeclaration {
     },
     optional: {
       "artifactStore": toArtifactStore,
-      "artifactStores": x => prt.readMap(String, toArtifactStore, x),
+      "artifactStores": x => jsonP.readMap(String, toArtifactStore, x),
       "version": "n",
     },
   }, root);
@@ -1213,16 +1286,18 @@ export interface ArtifactStore {
   location: string;
   encryptionKey?: EncryptionKey | null;
 }
-function fromArtifactStore(input?: ArtifactStore | null): JSONValue {
+function fromArtifactStore(input?: ArtifactStore | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    type: input["type"],
+    location: input["location"],
     encryptionKey: fromEncryptionKey(input["encryptionKey"]),
   }
 }
-function toArtifactStore(root: JSONValue): ArtifactStore {
-  return prt.readObj({
+function toArtifactStore(root: jsonP.JSONValue): ArtifactStore {
+  return jsonP.readObj({
     required: {
-      "type": toArtifactStoreType,
+      "type": (x: jsonP.JSONValue) => cmnP.readEnum<ArtifactStoreType>(x),
       "location": "s",
     },
     optional: {
@@ -1234,29 +1309,25 @@ function toArtifactStore(root: JSONValue): ArtifactStore {
 // refs: 10 - tags: input, named, enum, output
 export type ArtifactStoreType =
 | "S3"
-;
-
-function toArtifactStoreType(root: JSONValue): ArtifactStoreType | null {
-  return ( false
-    || root == "S3"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 13 - tags: input, named, interface, output
 export interface EncryptionKey {
   id: string;
   type: EncryptionKeyType;
 }
-function fromEncryptionKey(input?: EncryptionKey | null): JSONValue {
+function fromEncryptionKey(input?: EncryptionKey | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    id: input["id"],
+    type: input["type"],
   }
 }
-function toEncryptionKey(root: JSONValue): EncryptionKey {
-  return prt.readObj({
+function toEncryptionKey(root: jsonP.JSONValue): EncryptionKey {
+  return jsonP.readObj({
     required: {
       "id": "s",
-      "type": toEncryptionKeyType,
+      "type": (x: jsonP.JSONValue) => cmnP.readEnum<EncryptionKeyType>(x),
     },
     optional: {},
   }, root);
@@ -1265,13 +1336,7 @@ function toEncryptionKey(root: JSONValue): EncryptionKey {
 // refs: 13 - tags: input, named, enum, output
 export type EncryptionKeyType =
 | "KMS"
-;
-
-function toEncryptionKeyType(root: JSONValue): EncryptionKeyType | null {
-  return ( false
-    || root == "KMS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface StageDeclaration {
@@ -1279,15 +1344,16 @@ export interface StageDeclaration {
   blockers?: BlockerDeclaration[] | null;
   actions: ActionDeclaration[];
 }
-function fromStageDeclaration(input?: StageDeclaration | null): JSONValue {
+function fromStageDeclaration(input?: StageDeclaration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
     blockers: input["blockers"]?.map(x => fromBlockerDeclaration(x)),
     actions: input["actions"]?.map(x => fromActionDeclaration(x)),
   }
 }
-function toStageDeclaration(root: JSONValue): StageDeclaration {
-  return prt.readObj({
+function toStageDeclaration(root: jsonP.JSONValue): StageDeclaration {
+  return jsonP.readObj({
     required: {
       "name": "s",
       "actions": [toActionDeclaration],
@@ -1303,16 +1369,18 @@ export interface BlockerDeclaration {
   name: string;
   type: BlockerType;
 }
-function fromBlockerDeclaration(input?: BlockerDeclaration | null): JSONValue {
+function fromBlockerDeclaration(input?: BlockerDeclaration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    type: input["type"],
   }
 }
-function toBlockerDeclaration(root: JSONValue): BlockerDeclaration {
-  return prt.readObj({
+function toBlockerDeclaration(root: jsonP.JSONValue): BlockerDeclaration {
+  return jsonP.readObj({
     required: {
       "name": "s",
-      "type": toBlockerType,
+      "type": (x: jsonP.JSONValue) => cmnP.readEnum<BlockerType>(x),
     },
     optional: {},
   }, root);
@@ -1321,43 +1389,43 @@ function toBlockerDeclaration(root: JSONValue): BlockerDeclaration {
 // refs: 5 - tags: input, named, enum, output
 export type BlockerType =
 | "Schedule"
-;
-
-function toBlockerType(root: JSONValue): BlockerType | null {
-  return ( false
-    || root == "Schedule"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface ActionDeclaration {
   name: string;
   actionTypeId: ActionTypeId;
   runOrder?: number | null;
-  configuration?: { [key: string]: string } | null;
+  configuration?: { [key: string]: string | null | undefined } | null;
   outputArtifacts?: OutputArtifact[] | null;
   inputArtifacts?: InputArtifact[] | null;
   roleArn?: string | null;
   region?: string | null;
   namespace?: string | null;
 }
-function fromActionDeclaration(input?: ActionDeclaration | null): JSONValue {
+function fromActionDeclaration(input?: ActionDeclaration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
     actionTypeId: fromActionTypeId(input["actionTypeId"]),
+    runOrder: input["runOrder"],
+    configuration: input["configuration"],
     outputArtifacts: input["outputArtifacts"]?.map(x => fromOutputArtifact(x)),
     inputArtifacts: input["inputArtifacts"]?.map(x => fromInputArtifact(x)),
+    roleArn: input["roleArn"],
+    region: input["region"],
+    namespace: input["namespace"],
   }
 }
-function toActionDeclaration(root: JSONValue): ActionDeclaration {
-  return prt.readObj({
+function toActionDeclaration(root: jsonP.JSONValue): ActionDeclaration {
+  return jsonP.readObj({
     required: {
       "name": "s",
       "actionTypeId": toActionTypeId,
     },
     optional: {
       "runOrder": "n",
-      "configuration": x => prt.readMap(String, String, x),
+      "configuration": x => jsonP.readMap(String, String, x),
       "outputArtifacts": [toOutputArtifact],
       "inputArtifacts": [toInputArtifact],
       "roleArn": "s",
@@ -1374,16 +1442,20 @@ export interface ActionTypeId {
   provider: string;
   version: string;
 }
-function fromActionTypeId(input?: ActionTypeId | null): JSONValue {
+function fromActionTypeId(input?: ActionTypeId | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    category: input["category"],
+    owner: input["owner"],
+    provider: input["provider"],
+    version: input["version"],
   }
 }
-function toActionTypeId(root: JSONValue): ActionTypeId {
-  return prt.readObj({
+function toActionTypeId(root: jsonP.JSONValue): ActionTypeId {
+  return jsonP.readObj({
     required: {
-      "category": toActionCategory,
-      "owner": toActionOwner,
+      "category": (x: jsonP.JSONValue) => cmnP.readEnum<ActionCategory>(x),
+      "owner": (x: jsonP.JSONValue) => cmnP.readEnum<ActionOwner>(x),
       "provider": "s",
       "version": "s",
     },
@@ -1396,27 +1468,20 @@ export type ActionOwner =
 | "AWS"
 | "ThirdParty"
 | "Custom"
-;
-
-function toActionOwner(root: JSONValue): ActionOwner | null {
-  return ( false
-    || root == "AWS"
-    || root == "ThirdParty"
-    || root == "Custom"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface OutputArtifact {
   name: string;
 }
-function fromOutputArtifact(input?: OutputArtifact | null): JSONValue {
+function fromOutputArtifact(input?: OutputArtifact | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
   }
 }
-function toOutputArtifact(root: JSONValue): OutputArtifact {
-  return prt.readObj({
+function toOutputArtifact(root: jsonP.JSONValue): OutputArtifact {
+  return jsonP.readObj({
     required: {
       "name": "s",
     },
@@ -1428,13 +1493,14 @@ function toOutputArtifact(root: JSONValue): OutputArtifact {
 export interface InputArtifact {
   name: string;
 }
-function fromInputArtifact(input?: InputArtifact | null): JSONValue {
+function fromInputArtifact(input?: InputArtifact | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
   }
 }
-function toInputArtifact(root: JSONValue): InputArtifact {
-  return prt.readObj({
+function toInputArtifact(root: jsonP.JSONValue): InputArtifact {
+  return jsonP.readObj({
     required: {
       "name": "s",
     },
@@ -1446,16 +1512,16 @@ function toInputArtifact(root: JSONValue): InputArtifact {
 export type StageTransitionType =
 | "Inbound"
 | "Outbound"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ActionExecutionFilter {
   pipelineExecutionId?: string | null;
 }
-function fromActionExecutionFilter(input?: ActionExecutionFilter | null): JSONValue {
+function fromActionExecutionFilter(input?: ActionExecutionFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    pipelineExecutionId: input["pipelineExecutionId"],
   }
 }
 
@@ -1465,14 +1531,16 @@ export interface ActionRevision {
   revisionChangeId: string;
   created: Date | number;
 }
-function fromActionRevision(input?: ActionRevision | null): JSONValue {
+function fromActionRevision(input?: ActionRevision | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    created: prt.serializeDate_unixTimestamp(input["created"]),
+  return {
+    revisionId: input["revisionId"],
+    revisionChangeId: input["revisionChangeId"],
+    created: jsonP.serializeDate_unixTimestamp(input["created"]),
   }
 }
-function toActionRevision(root: JSONValue): ActionRevision {
-  return prt.readObj({
+function toActionRevision(root: jsonP.JSONValue): ActionRevision {
+  return jsonP.readObj({
     required: {
       "revisionId": "s",
       "revisionChangeId": "s",
@@ -1487,9 +1555,11 @@ export interface ApprovalResult {
   summary: string;
   status: ApprovalStatus;
 }
-function fromApprovalResult(input?: ApprovalResult | null): JSONValue {
+function fromApprovalResult(input?: ApprovalResult | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    summary: input["summary"],
+    status: input["status"],
   }
 }
 
@@ -1497,8 +1567,7 @@ function fromApprovalResult(input?: ApprovalResult | null): JSONValue {
 export type ApprovalStatus =
 | "Approved"
 | "Rejected"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface FailureDetails {
@@ -1506,9 +1575,12 @@ export interface FailureDetails {
   message: string;
   externalExecutionId?: string | null;
 }
-function fromFailureDetails(input?: FailureDetails | null): JSONValue {
+function fromFailureDetails(input?: FailureDetails | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    type: input["type"],
+    message: input["message"],
+    externalExecutionId: input["externalExecutionId"],
   }
 }
 
@@ -1520,8 +1592,7 @@ export type FailureType =
 | "RevisionOutOfSync"
 | "RevisionUnavailable"
 | "SystemUnavailable"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface CurrentRevision {
@@ -1530,10 +1601,13 @@ export interface CurrentRevision {
   created?: Date | number | null;
   revisionSummary?: string | null;
 }
-function fromCurrentRevision(input?: CurrentRevision | null): JSONValue {
+function fromCurrentRevision(input?: CurrentRevision | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    created: prt.serializeDate_unixTimestamp(input["created"]),
+  return {
+    revision: input["revision"],
+    changeIdentifier: input["changeIdentifier"],
+    created: jsonP.serializeDate_unixTimestamp(input["created"]),
+    revisionSummary: input["revisionSummary"],
   }
 }
 
@@ -1543,9 +1617,12 @@ export interface ExecutionDetails {
   externalExecutionId?: string | null;
   percentComplete?: number | null;
 }
-function fromExecutionDetails(input?: ExecutionDetails | null): JSONValue {
+function fromExecutionDetails(input?: ExecutionDetails | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    summary: input["summary"],
+    externalExecutionId: input["externalExecutionId"],
+    percentComplete: input["percentComplete"],
   }
 }
 
@@ -1558,21 +1635,25 @@ export interface WebhookDefinition {
   authentication: WebhookAuthenticationType;
   authenticationConfiguration: WebhookAuthConfiguration;
 }
-function fromWebhookDefinition(input?: WebhookDefinition | null): JSONValue {
+function fromWebhookDefinition(input?: WebhookDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    targetPipeline: input["targetPipeline"],
+    targetAction: input["targetAction"],
     filters: input["filters"]?.map(x => fromWebhookFilterRule(x)),
+    authentication: input["authentication"],
     authenticationConfiguration: fromWebhookAuthConfiguration(input["authenticationConfiguration"]),
   }
 }
-function toWebhookDefinition(root: JSONValue): WebhookDefinition {
-  return prt.readObj({
+function toWebhookDefinition(root: jsonP.JSONValue): WebhookDefinition {
+  return jsonP.readObj({
     required: {
       "name": "s",
       "targetPipeline": "s",
       "targetAction": "s",
       "filters": [toWebhookFilterRule],
-      "authentication": toWebhookAuthenticationType,
+      "authentication": (x: jsonP.JSONValue) => cmnP.readEnum<WebhookAuthenticationType>(x),
       "authenticationConfiguration": toWebhookAuthConfiguration,
     },
     optional: {},
@@ -1584,13 +1665,15 @@ export interface WebhookFilterRule {
   jsonPath: string;
   matchEquals?: string | null;
 }
-function fromWebhookFilterRule(input?: WebhookFilterRule | null): JSONValue {
+function fromWebhookFilterRule(input?: WebhookFilterRule | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    jsonPath: input["jsonPath"],
+    matchEquals: input["matchEquals"],
   }
 }
-function toWebhookFilterRule(root: JSONValue): WebhookFilterRule {
-  return prt.readObj({
+function toWebhookFilterRule(root: jsonP.JSONValue): WebhookFilterRule {
+  return jsonP.readObj({
     required: {
       "jsonPath": "s",
     },
@@ -1605,28 +1688,22 @@ export type WebhookAuthenticationType =
 | "GITHUB_HMAC"
 | "IP"
 | "UNAUTHENTICATED"
-;
-
-function toWebhookAuthenticationType(root: JSONValue): WebhookAuthenticationType | null {
-  return ( false
-    || root == "GITHUB_HMAC"
-    || root == "IP"
-    || root == "UNAUTHENTICATED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface WebhookAuthConfiguration {
   AllowedIPRange?: string | null;
   SecretToken?: string | null;
 }
-function fromWebhookAuthConfiguration(input?: WebhookAuthConfiguration | null): JSONValue {
+function fromWebhookAuthConfiguration(input?: WebhookAuthConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AllowedIPRange: input["AllowedIPRange"],
+    SecretToken: input["SecretToken"],
   }
 }
-function toWebhookAuthConfiguration(root: JSONValue): WebhookAuthConfiguration {
-  return prt.readObj({
+function toWebhookAuthConfiguration(root: jsonP.JSONValue): WebhookAuthConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AllowedIPRange": "s",
@@ -1638,8 +1715,7 @@ function toWebhookAuthConfiguration(root: JSONValue): WebhookAuthConfiguration {
 // refs: 1 - tags: input, named, enum
 export type StageRetryMode =
 | "FAILED_ACTIONS"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type JobStatus =
@@ -1650,18 +1726,7 @@ export type JobStatus =
 | "TimedOut"
 | "Succeeded"
 | "Failed"
-;
-function toJobStatus(root: JSONValue): JobStatus | null {
-  return ( false
-    || root == "Created"
-    || root == "Queued"
-    || root == "Dispatched"
-    || root == "InProgress"
-    || root == "TimedOut"
-    || root == "Succeeded"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ActionType {
@@ -1671,8 +1736,8 @@ export interface ActionType {
   inputArtifactDetails: ArtifactDetails;
   outputArtifactDetails: ArtifactDetails;
 }
-function toActionType(root: JSONValue): ActionType {
-  return prt.readObj({
+function toActionType(root: jsonP.JSONValue): ActionType {
+  return jsonP.readObj({
     required: {
       "id": toActionTypeId,
       "inputArtifactDetails": toArtifactDetails,
@@ -1691,8 +1756,8 @@ export interface JobDetails {
   data?: JobData | null;
   accountId?: string | null;
 }
-function toJobDetails(root: JSONValue): JobDetails {
-  return prt.readObj({
+function toJobDetails(root: jsonP.JSONValue): JobDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "id": "s",
@@ -1713,8 +1778,8 @@ export interface JobData {
   continuationToken?: string | null;
   encryptionKey?: EncryptionKey | null;
 }
-function toJobData(root: JSONValue): JobData {
-  return prt.readObj({
+function toJobData(root: jsonP.JSONValue): JobData {
+  return jsonP.readObj({
     required: {},
     optional: {
       "actionTypeId": toActionTypeId,
@@ -1731,13 +1796,13 @@ function toJobData(root: JSONValue): JobData {
 
 // refs: 3 - tags: output, named, interface
 export interface ActionConfiguration {
-  configuration?: { [key: string]: string } | null;
+  configuration?: { [key: string]: string | null | undefined } | null;
 }
-function toActionConfiguration(root: JSONValue): ActionConfiguration {
-  return prt.readObj({
+function toActionConfiguration(root: jsonP.JSONValue): ActionConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "configuration": x => prt.readMap(String, String, x),
+      "configuration": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -1750,8 +1815,8 @@ export interface PipelineContext {
   pipelineArn?: string | null;
   pipelineExecutionId?: string | null;
 }
-function toPipelineContext(root: JSONValue): PipelineContext {
-  return prt.readObj({
+function toPipelineContext(root: jsonP.JSONValue): PipelineContext {
+  return jsonP.readObj({
     required: {},
     optional: {
       "pipelineName": "s",
@@ -1767,8 +1832,8 @@ function toPipelineContext(root: JSONValue): PipelineContext {
 export interface StageContext {
   name?: string | null;
 }
-function toStageContext(root: JSONValue): StageContext {
-  return prt.readObj({
+function toStageContext(root: jsonP.JSONValue): StageContext {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1781,8 +1846,8 @@ export interface ActionContext {
   name?: string | null;
   actionExecutionId?: string | null;
 }
-function toActionContext(root: JSONValue): ActionContext {
-  return prt.readObj({
+function toActionContext(root: jsonP.JSONValue): ActionContext {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1797,8 +1862,8 @@ export interface Artifact {
   revision?: string | null;
   location?: ArtifactLocation | null;
 }
-function toArtifact(root: JSONValue): Artifact {
-  return prt.readObj({
+function toArtifact(root: jsonP.JSONValue): Artifact {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1813,11 +1878,11 @@ export interface ArtifactLocation {
   type?: ArtifactLocationType | null;
   s3Location?: S3ArtifactLocation | null;
 }
-function toArtifactLocation(root: JSONValue): ArtifactLocation {
-  return prt.readObj({
+function toArtifactLocation(root: jsonP.JSONValue): ArtifactLocation {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "type": toArtifactLocationType,
+      "type": (x: jsonP.JSONValue) => cmnP.readEnum<ArtifactLocationType>(x),
       "s3Location": toS3ArtifactLocation,
     },
   }, root);
@@ -1826,20 +1891,15 @@ function toArtifactLocation(root: JSONValue): ArtifactLocation {
 // refs: 6 - tags: output, named, enum
 export type ArtifactLocationType =
 | "S3"
-;
-function toArtifactLocationType(root: JSONValue): ArtifactLocationType | null {
-  return ( false
-    || root == "S3"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: output, named, interface
 export interface S3ArtifactLocation {
   bucketName: string;
   objectKey: string;
 }
-function toS3ArtifactLocation(root: JSONValue): S3ArtifactLocation {
-  return prt.readObj({
+function toS3ArtifactLocation(root: jsonP.JSONValue): S3ArtifactLocation {
+  return jsonP.readObj({
     required: {
       "bucketName": "s",
       "objectKey": "s",
@@ -1854,8 +1914,8 @@ export interface AWSSessionCredentials {
   secretAccessKey: string;
   sessionToken: string;
 }
-function toAWSSessionCredentials(root: JSONValue): AWSSessionCredentials {
-  return prt.readObj({
+function toAWSSessionCredentials(root: jsonP.JSONValue): AWSSessionCredentials {
+  return jsonP.readObj({
     required: {
       "accessKeyId": "s",
       "secretAccessKey": "s",
@@ -1871,8 +1931,8 @@ export interface PipelineMetadata {
   created?: Date | number | null;
   updated?: Date | number | null;
 }
-function toPipelineMetadata(root: JSONValue): PipelineMetadata {
-  return prt.readObj({
+function toPipelineMetadata(root: jsonP.JSONValue): PipelineMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "pipelineArn": "s",
@@ -1890,14 +1950,14 @@ export interface PipelineExecution {
   status?: PipelineExecutionStatus | null;
   artifactRevisions?: ArtifactRevision[] | null;
 }
-function toPipelineExecution(root: JSONValue): PipelineExecution {
-  return prt.readObj({
+function toPipelineExecution(root: jsonP.JSONValue): PipelineExecution {
+  return jsonP.readObj({
     required: {},
     optional: {
       "pipelineName": "s",
       "pipelineVersion": "n",
       "pipelineExecutionId": "s",
-      "status": toPipelineExecutionStatus,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<PipelineExecutionStatus>(x),
       "artifactRevisions": [toArtifactRevision],
     },
   }, root);
@@ -1911,17 +1971,7 @@ export type PipelineExecutionStatus =
 | "Succeeded"
 | "Superseded"
 | "Failed"
-;
-function toPipelineExecutionStatus(root: JSONValue): PipelineExecutionStatus | null {
-  return ( false
-    || root == "InProgress"
-    || root == "Stopped"
-    || root == "Stopping"
-    || root == "Succeeded"
-    || root == "Superseded"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ArtifactRevision {
@@ -1932,8 +1982,8 @@ export interface ArtifactRevision {
   created?: Date | number | null;
   revisionUrl?: string | null;
 }
-function toArtifactRevision(root: JSONValue): ArtifactRevision {
-  return prt.readObj({
+function toArtifactRevision(root: jsonP.JSONValue): ArtifactRevision {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1953,8 +2003,8 @@ export interface StageState {
   actionStates?: ActionState[] | null;
   latestExecution?: StageExecution | null;
 }
-function toStageState(root: JSONValue): StageState {
-  return prt.readObj({
+function toStageState(root: jsonP.JSONValue): StageState {
+  return jsonP.readObj({
     required: {},
     optional: {
       "stageName": "s",
@@ -1972,8 +2022,8 @@ export interface TransitionState {
   lastChangedAt?: Date | number | null;
   disabledReason?: string | null;
 }
-function toTransitionState(root: JSONValue): TransitionState {
-  return prt.readObj({
+function toTransitionState(root: jsonP.JSONValue): TransitionState {
+  return jsonP.readObj({
     required: {},
     optional: {
       "enabled": "b",
@@ -1992,8 +2042,8 @@ export interface ActionState {
   entityUrl?: string | null;
   revisionUrl?: string | null;
 }
-function toActionState(root: JSONValue): ActionState {
-  return prt.readObj({
+function toActionState(root: jsonP.JSONValue): ActionState {
+  return jsonP.readObj({
     required: {},
     optional: {
       "actionName": "s",
@@ -2017,11 +2067,11 @@ export interface ActionExecution {
   percentComplete?: number | null;
   errorDetails?: ErrorDetails | null;
 }
-function toActionExecution(root: JSONValue): ActionExecution {
-  return prt.readObj({
+function toActionExecution(root: jsonP.JSONValue): ActionExecution {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "status": toActionExecutionStatus,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<ActionExecutionStatus>(x),
       "summary": "s",
       "lastStatusChange": "d",
       "token": "s",
@@ -2040,23 +2090,15 @@ export type ActionExecutionStatus =
 | "Abandoned"
 | "Succeeded"
 | "Failed"
-;
-function toActionExecutionStatus(root: JSONValue): ActionExecutionStatus | null {
-  return ( false
-    || root == "InProgress"
-    || root == "Abandoned"
-    || root == "Succeeded"
-    || root == "Failed"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ErrorDetails {
   code?: string | null;
   message?: string | null;
 }
-function toErrorDetails(root: JSONValue): ErrorDetails {
-  return prt.readObj({
+function toErrorDetails(root: jsonP.JSONValue): ErrorDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "code": "s",
@@ -2070,11 +2112,11 @@ export interface StageExecution {
   pipelineExecutionId: string;
   status: StageExecutionStatus;
 }
-function toStageExecution(root: JSONValue): StageExecution {
-  return prt.readObj({
+function toStageExecution(root: jsonP.JSONValue): StageExecution {
+  return jsonP.readObj({
     required: {
       "pipelineExecutionId": "s",
-      "status": toStageExecutionStatus,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<StageExecutionStatus>(x),
     },
     optional: {},
   }, root);
@@ -2087,16 +2129,7 @@ export type StageExecutionStatus =
 | "Stopped"
 | "Stopping"
 | "Succeeded"
-;
-function toStageExecutionStatus(root: JSONValue): StageExecutionStatus | null {
-  return ( false
-    || root == "InProgress"
-    || root == "Failed"
-    || root == "Stopped"
-    || root == "Stopping"
-    || root == "Succeeded"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ThirdPartyJobDetails {
@@ -2104,8 +2137,8 @@ export interface ThirdPartyJobDetails {
   data?: ThirdPartyJobData | null;
   nonce?: string | null;
 }
-function toThirdPartyJobDetails(root: JSONValue): ThirdPartyJobDetails {
-  return prt.readObj({
+function toThirdPartyJobDetails(root: jsonP.JSONValue): ThirdPartyJobDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "id": "s",
@@ -2126,8 +2159,8 @@ export interface ThirdPartyJobData {
   continuationToken?: string | null;
   encryptionKey?: EncryptionKey | null;
 }
-function toThirdPartyJobData(root: JSONValue): ThirdPartyJobData {
-  return prt.readObj({
+function toThirdPartyJobData(root: jsonP.JSONValue): ThirdPartyJobData {
+  return jsonP.readObj({
     required: {},
     optional: {
       "actionTypeId": toActionTypeId,
@@ -2155,8 +2188,8 @@ export interface ActionExecutionDetail {
   input?: ActionExecutionInput | null;
   output?: ActionExecutionOutput | null;
 }
-function toActionExecutionDetail(root: JSONValue): ActionExecutionDetail {
-  return prt.readObj({
+function toActionExecutionDetail(root: jsonP.JSONValue): ActionExecutionDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "pipelineExecutionId": "s",
@@ -2166,7 +2199,7 @@ function toActionExecutionDetail(root: JSONValue): ActionExecutionDetail {
       "actionName": "s",
       "startTime": "d",
       "lastUpdateTime": "d",
-      "status": toActionExecutionStatus,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<ActionExecutionStatus>(x),
       "input": toActionExecutionInput,
       "output": toActionExecutionOutput,
     },
@@ -2176,20 +2209,20 @@ function toActionExecutionDetail(root: JSONValue): ActionExecutionDetail {
 // refs: 1 - tags: output, named, interface
 export interface ActionExecutionInput {
   actionTypeId?: ActionTypeId | null;
-  configuration?: { [key: string]: string } | null;
-  resolvedConfiguration?: { [key: string]: string } | null;
+  configuration?: { [key: string]: string | null | undefined } | null;
+  resolvedConfiguration?: { [key: string]: string | null | undefined } | null;
   roleArn?: string | null;
   region?: string | null;
   inputArtifacts?: ArtifactDetail[] | null;
   namespace?: string | null;
 }
-function toActionExecutionInput(root: JSONValue): ActionExecutionInput {
-  return prt.readObj({
+function toActionExecutionInput(root: jsonP.JSONValue): ActionExecutionInput {
+  return jsonP.readObj({
     required: {},
     optional: {
       "actionTypeId": toActionTypeId,
-      "configuration": x => prt.readMap(String, String, x),
-      "resolvedConfiguration": x => prt.readMap(String, String, x),
+      "configuration": x => jsonP.readMap(String, String, x),
+      "resolvedConfiguration": x => jsonP.readMap(String, String, x),
       "roleArn": "s",
       "region": "s",
       "inputArtifacts": [toArtifactDetail],
@@ -2203,8 +2236,8 @@ export interface ArtifactDetail {
   name?: string | null;
   s3location?: S3Location | null;
 }
-function toArtifactDetail(root: JSONValue): ArtifactDetail {
-  return prt.readObj({
+function toArtifactDetail(root: jsonP.JSONValue): ArtifactDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -2218,8 +2251,8 @@ export interface S3Location {
   bucket?: string | null;
   key?: string | null;
 }
-function toS3Location(root: JSONValue): S3Location {
-  return prt.readObj({
+function toS3Location(root: jsonP.JSONValue): S3Location {
+  return jsonP.readObj({
     required: {},
     optional: {
       "bucket": "s",
@@ -2232,15 +2265,15 @@ function toS3Location(root: JSONValue): S3Location {
 export interface ActionExecutionOutput {
   outputArtifacts?: ArtifactDetail[] | null;
   executionResult?: ActionExecutionResult | null;
-  outputVariables?: { [key: string]: string } | null;
+  outputVariables?: { [key: string]: string | null | undefined } | null;
 }
-function toActionExecutionOutput(root: JSONValue): ActionExecutionOutput {
-  return prt.readObj({
+function toActionExecutionOutput(root: jsonP.JSONValue): ActionExecutionOutput {
+  return jsonP.readObj({
     required: {},
     optional: {
       "outputArtifacts": [toArtifactDetail],
       "executionResult": toActionExecutionResult,
-      "outputVariables": x => prt.readMap(String, String, x),
+      "outputVariables": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -2251,8 +2284,8 @@ export interface ActionExecutionResult {
   externalExecutionSummary?: string | null;
   externalExecutionUrl?: string | null;
 }
-function toActionExecutionResult(root: JSONValue): ActionExecutionResult {
-  return prt.readObj({
+function toActionExecutionResult(root: jsonP.JSONValue): ActionExecutionResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "externalExecutionId": "s",
@@ -2272,12 +2305,12 @@ export interface PipelineExecutionSummary {
   trigger?: ExecutionTrigger | null;
   stopTrigger?: StopExecutionTrigger | null;
 }
-function toPipelineExecutionSummary(root: JSONValue): PipelineExecutionSummary {
-  return prt.readObj({
+function toPipelineExecutionSummary(root: jsonP.JSONValue): PipelineExecutionSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "pipelineExecutionId": "s",
-      "status": toPipelineExecutionStatus,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<PipelineExecutionStatus>(x),
       "startTime": "d",
       "lastUpdateTime": "d",
       "sourceRevisions": [toSourceRevision],
@@ -2294,8 +2327,8 @@ export interface SourceRevision {
   revisionSummary?: string | null;
   revisionUrl?: string | null;
 }
-function toSourceRevision(root: JSONValue): SourceRevision {
-  return prt.readObj({
+function toSourceRevision(root: jsonP.JSONValue): SourceRevision {
+  return jsonP.readObj({
     required: {
       "actionName": "s",
     },
@@ -2312,11 +2345,11 @@ export interface ExecutionTrigger {
   triggerType?: TriggerType | null;
   triggerDetail?: string | null;
 }
-function toExecutionTrigger(root: JSONValue): ExecutionTrigger {
-  return prt.readObj({
+function toExecutionTrigger(root: jsonP.JSONValue): ExecutionTrigger {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "triggerType": toTriggerType,
+      "triggerType": (x: jsonP.JSONValue) => cmnP.readEnum<TriggerType>(x),
       "triggerDetail": "s",
     },
   }, root);
@@ -2330,24 +2363,14 @@ export type TriggerType =
 | "Webhook"
 | "CloudWatchEvent"
 | "PutActionRevision"
-;
-function toTriggerType(root: JSONValue): TriggerType | null {
-  return ( false
-    || root == "CreatePipeline"
-    || root == "StartPipelineExecution"
-    || root == "PollForSourceChanges"
-    || root == "Webhook"
-    || root == "CloudWatchEvent"
-    || root == "PutActionRevision"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface StopExecutionTrigger {
   reason?: string | null;
 }
-function toStopExecutionTrigger(root: JSONValue): StopExecutionTrigger {
-  return prt.readObj({
+function toStopExecutionTrigger(root: jsonP.JSONValue): StopExecutionTrigger {
+  return jsonP.readObj({
     required: {},
     optional: {
       "reason": "s",
@@ -2362,8 +2385,8 @@ export interface PipelineSummary {
   created?: Date | number | null;
   updated?: Date | number | null;
 }
-function toPipelineSummary(root: JSONValue): PipelineSummary {
-  return prt.readObj({
+function toPipelineSummary(root: jsonP.JSONValue): PipelineSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -2384,8 +2407,8 @@ export interface ListWebhookItem {
   arn?: string | null;
   tags?: Tag[] | null;
 }
-function toListWebhookItem(root: JSONValue): ListWebhookItem {
-  return prt.readObj({
+function toListWebhookItem(root: jsonP.JSONValue): ListWebhookItem {
+  return jsonP.readObj({
     required: {
       "definition": toWebhookDefinition,
       "url": "s",
@@ -2407,8 +2430,8 @@ export interface Job {
   nonce?: string | null;
   accountId?: string | null;
 }
-function toJob(root: JSONValue): Job {
-  return prt.readObj({
+function toJob(root: jsonP.JSONValue): Job {
+  return jsonP.readObj({
     required: {},
     optional: {
       "id": "s",
@@ -2424,8 +2447,8 @@ export interface ThirdPartyJob {
   clientId?: string | null;
   jobId?: string | null;
 }
-function toThirdPartyJob(root: JSONValue): ThirdPartyJob {
-  return prt.readObj({
+function toThirdPartyJob(root: jsonP.JSONValue): ThirdPartyJob {
+  return jsonP.readObj({
     required: {},
     optional: {
       "clientId": "s",

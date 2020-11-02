@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class ForecastService {
   #client: ServiceClient;
@@ -30,16 +30,20 @@ export default class ForecastService {
   async createDataset(
     {abortSignal, ...params}: RequestConfig & CreateDatasetRequest,
   ): Promise<CreateDatasetResponse> {
-    const body: JSONObject = {...params,
-    Schema: fromSchema(params["Schema"]),
-    EncryptionConfig: fromEncryptionConfig(params["EncryptionConfig"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatasetName: params["DatasetName"],
+      Domain: params["Domain"],
+      DatasetType: params["DatasetType"],
+      DataFrequency: params["DataFrequency"],
+      Schema: fromSchema(params["Schema"]),
+      EncryptionConfig: fromEncryptionConfig(params["EncryptionConfig"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDataset",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DatasetArn": "s",
@@ -50,14 +54,17 @@ export default class ForecastService {
   async createDatasetGroup(
     {abortSignal, ...params}: RequestConfig & CreateDatasetGroupRequest,
   ): Promise<CreateDatasetGroupResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatasetGroupName: params["DatasetGroupName"],
+      Domain: params["Domain"],
+      DatasetArns: params["DatasetArns"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDatasetGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DatasetGroupArn": "s",
@@ -68,15 +75,18 @@ export default class ForecastService {
   async createDatasetImportJob(
     {abortSignal, ...params}: RequestConfig & CreateDatasetImportJobRequest,
   ): Promise<CreateDatasetImportJobResponse> {
-    const body: JSONObject = {...params,
-    DataSource: fromDataSource(params["DataSource"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatasetImportJobName: params["DatasetImportJobName"],
+      DatasetArn: params["DatasetArn"],
+      DataSource: fromDataSource(params["DataSource"]),
+      TimestampFormat: params["TimestampFormat"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDatasetImportJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DatasetImportJobArn": "s",
@@ -87,14 +97,17 @@ export default class ForecastService {
   async createForecast(
     {abortSignal, ...params}: RequestConfig & CreateForecastRequest,
   ): Promise<CreateForecastResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ForecastName: params["ForecastName"],
+      PredictorArn: params["PredictorArn"],
+      ForecastTypes: params["ForecastTypes"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateForecast",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ForecastArn": "s",
@@ -105,15 +118,17 @@ export default class ForecastService {
   async createForecastExportJob(
     {abortSignal, ...params}: RequestConfig & CreateForecastExportJobRequest,
   ): Promise<CreateForecastExportJobResponse> {
-    const body: JSONObject = {...params,
-    Destination: fromDataDestination(params["Destination"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ForecastExportJobName: params["ForecastExportJobName"],
+      ForecastArn: params["ForecastArn"],
+      Destination: fromDataDestination(params["Destination"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateForecastExportJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ForecastExportJobArn": "s",
@@ -124,19 +139,25 @@ export default class ForecastService {
   async createPredictor(
     {abortSignal, ...params}: RequestConfig & CreatePredictorRequest,
   ): Promise<CreatePredictorResponse> {
-    const body: JSONObject = {...params,
-    EvaluationParameters: fromEvaluationParameters(params["EvaluationParameters"]),
-    HPOConfig: fromHyperParameterTuningJobConfig(params["HPOConfig"]),
-    InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
-    FeaturizationConfig: fromFeaturizationConfig(params["FeaturizationConfig"]),
-    EncryptionConfig: fromEncryptionConfig(params["EncryptionConfig"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      PredictorName: params["PredictorName"],
+      AlgorithmArn: params["AlgorithmArn"],
+      ForecastHorizon: params["ForecastHorizon"],
+      PerformAutoML: params["PerformAutoML"],
+      PerformHPO: params["PerformHPO"],
+      TrainingParameters: params["TrainingParameters"],
+      EvaluationParameters: fromEvaluationParameters(params["EvaluationParameters"]),
+      HPOConfig: fromHyperParameterTuningJobConfig(params["HPOConfig"]),
+      InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
+      FeaturizationConfig: fromFeaturizationConfig(params["FeaturizationConfig"]),
+      EncryptionConfig: fromEncryptionConfig(params["EncryptionConfig"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePredictor",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PredictorArn": "s",
@@ -147,8 +168,9 @@ export default class ForecastService {
   async deleteDataset(
     {abortSignal, ...params}: RequestConfig & DeleteDatasetRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatasetArn: params["DatasetArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDataset",
@@ -158,8 +180,9 @@ export default class ForecastService {
   async deleteDatasetGroup(
     {abortSignal, ...params}: RequestConfig & DeleteDatasetGroupRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatasetGroupArn: params["DatasetGroupArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDatasetGroup",
@@ -169,8 +192,9 @@ export default class ForecastService {
   async deleteDatasetImportJob(
     {abortSignal, ...params}: RequestConfig & DeleteDatasetImportJobRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatasetImportJobArn: params["DatasetImportJobArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDatasetImportJob",
@@ -180,8 +204,9 @@ export default class ForecastService {
   async deleteForecast(
     {abortSignal, ...params}: RequestConfig & DeleteForecastRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ForecastArn: params["ForecastArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteForecast",
@@ -191,8 +216,9 @@ export default class ForecastService {
   async deleteForecastExportJob(
     {abortSignal, ...params}: RequestConfig & DeleteForecastExportJobRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ForecastExportJobArn: params["ForecastExportJobArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteForecastExportJob",
@@ -202,8 +228,9 @@ export default class ForecastService {
   async deletePredictor(
     {abortSignal, ...params}: RequestConfig & DeletePredictorRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PredictorArn: params["PredictorArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePredictor",
@@ -213,19 +240,20 @@ export default class ForecastService {
   async describeDataset(
     {abortSignal, ...params}: RequestConfig & DescribeDatasetRequest,
   ): Promise<DescribeDatasetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatasetArn: params["DatasetArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDataset",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DatasetArn": "s",
         "DatasetName": "s",
-        "Domain": toDomain,
-        "DatasetType": toDatasetType,
+        "Domain": (x: jsonP.JSONValue) => cmnP.readEnum<Domain>(x),
+        "DatasetType": (x: jsonP.JSONValue) => cmnP.readEnum<DatasetType>(x),
         "DataFrequency": "s",
         "Schema": toSchema,
         "EncryptionConfig": toEncryptionConfig,
@@ -239,19 +267,20 @@ export default class ForecastService {
   async describeDatasetGroup(
     {abortSignal, ...params}: RequestConfig & DescribeDatasetGroupRequest,
   ): Promise<DescribeDatasetGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatasetGroupArn: params["DatasetGroupArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDatasetGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DatasetGroupName": "s",
         "DatasetGroupArn": "s",
         "DatasetArns": ["s"],
-        "Domain": toDomain,
+        "Domain": (x: jsonP.JSONValue) => cmnP.readEnum<Domain>(x),
         "Status": "s",
         "CreationTime": "d",
         "LastModificationTime": "d",
@@ -262,13 +291,14 @@ export default class ForecastService {
   async describeDatasetImportJob(
     {abortSignal, ...params}: RequestConfig & DescribeDatasetImportJobRequest,
   ): Promise<DescribeDatasetImportJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatasetImportJobArn: params["DatasetImportJobArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDatasetImportJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DatasetImportJobName": "s",
@@ -276,7 +306,7 @@ export default class ForecastService {
         "DatasetArn": "s",
         "TimestampFormat": "s",
         "DataSource": toDataSource,
-        "FieldStatistics": x => prt.readMap(String, toStatistics, x),
+        "FieldStatistics": x => jsonP.readMap(String, toStatistics, x),
         "DataSize": "n",
         "Status": "s",
         "Message": "s",
@@ -289,13 +319,14 @@ export default class ForecastService {
   async describeForecast(
     {abortSignal, ...params}: RequestConfig & DescribeForecastRequest,
   ): Promise<DescribeForecastResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ForecastArn: params["ForecastArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeForecast",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ForecastArn": "s",
@@ -314,13 +345,14 @@ export default class ForecastService {
   async describeForecastExportJob(
     {abortSignal, ...params}: RequestConfig & DescribeForecastExportJobRequest,
   ): Promise<DescribeForecastExportJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ForecastExportJobArn: params["ForecastExportJobArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeForecastExportJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ForecastExportJobArn": "s",
@@ -338,13 +370,14 @@ export default class ForecastService {
   async describePredictor(
     {abortSignal, ...params}: RequestConfig & DescribePredictorRequest,
   ): Promise<DescribePredictorResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PredictorArn: params["PredictorArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePredictor",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PredictorArn": "s",
@@ -353,7 +386,7 @@ export default class ForecastService {
         "ForecastHorizon": "n",
         "PerformAutoML": "b",
         "PerformHPO": "b",
-        "TrainingParameters": x => prt.readMap(String, String, x),
+        "TrainingParameters": x => jsonP.readMap(String, String, x),
         "EvaluationParameters": toEvaluationParameters,
         "HPOConfig": toHyperParameterTuningJobConfig,
         "InputDataConfig": toInputDataConfig,
@@ -373,13 +406,14 @@ export default class ForecastService {
   async getAccuracyMetrics(
     {abortSignal, ...params}: RequestConfig & GetAccuracyMetricsRequest,
   ): Promise<GetAccuracyMetricsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PredictorArn: params["PredictorArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAccuracyMetrics",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PredictorEvaluationResults": [toEvaluationResult],
@@ -390,13 +424,15 @@ export default class ForecastService {
   async listDatasetGroups(
     {abortSignal, ...params}: RequestConfig & ListDatasetGroupsRequest = {},
   ): Promise<ListDatasetGroupsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDatasetGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DatasetGroups": [toDatasetGroupSummary],
@@ -408,14 +444,16 @@ export default class ForecastService {
   async listDatasetImportJobs(
     {abortSignal, ...params}: RequestConfig & ListDatasetImportJobsRequest = {},
   ): Promise<ListDatasetImportJobsResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDatasetImportJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DatasetImportJobs": [toDatasetImportJobSummary],
@@ -427,13 +465,15 @@ export default class ForecastService {
   async listDatasets(
     {abortSignal, ...params}: RequestConfig & ListDatasetsRequest = {},
   ): Promise<ListDatasetsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDatasets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Datasets": [toDatasetSummary],
@@ -445,14 +485,16 @@ export default class ForecastService {
   async listForecastExportJobs(
     {abortSignal, ...params}: RequestConfig & ListForecastExportJobsRequest = {},
   ): Promise<ListForecastExportJobsResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListForecastExportJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ForecastExportJobs": [toForecastExportJobSummary],
@@ -464,14 +506,16 @@ export default class ForecastService {
   async listForecasts(
     {abortSignal, ...params}: RequestConfig & ListForecastsRequest = {},
   ): Promise<ListForecastsResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListForecasts",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Forecasts": [toForecastSummary],
@@ -483,14 +527,16 @@ export default class ForecastService {
   async listPredictors(
     {abortSignal, ...params}: RequestConfig & ListPredictorsRequest = {},
   ): Promise<ListPredictorsResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPredictors",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Predictors": [toPredictorSummary],
@@ -502,13 +548,14 @@ export default class ForecastService {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -519,14 +566,15 @@ export default class ForecastService {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -535,13 +583,15 @@ export default class ForecastService {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -550,13 +600,15 @@ export default class ForecastService {
   async updateDatasetGroup(
     {abortSignal, ...params}: RequestConfig & UpdateDatasetGroupRequest,
   ): Promise<UpdateDatasetGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DatasetGroupArn: params["DatasetGroupArn"],
+      DatasetArns: params["DatasetArns"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDatasetGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -615,7 +667,7 @@ export interface CreatePredictorRequest {
   ForecastHorizon: number;
   PerformAutoML?: boolean | null;
   PerformHPO?: boolean | null;
-  TrainingParameters?: { [key: string]: string } | null;
+  TrainingParameters?: { [key: string]: string | null | undefined } | null;
   EvaluationParameters?: EvaluationParameters | null;
   HPOConfig?: HyperParameterTuningJobConfig | null;
   InputDataConfig: InputDataConfig;
@@ -814,7 +866,7 @@ export interface DescribeDatasetImportJobResponse {
   DatasetArn?: string | null;
   TimestampFormat?: string | null;
   DataSource?: DataSource | null;
-  FieldStatistics?: { [key: string]: Statistics } | null;
+  FieldStatistics?: { [key: string]: Statistics | null | undefined } | null;
   DataSize?: number | null;
   Status?: string | null;
   Message?: string | null;
@@ -855,7 +907,7 @@ export interface DescribePredictorResponse {
   ForecastHorizon?: number | null;
   PerformAutoML?: boolean | null;
   PerformHPO?: boolean | null;
-  TrainingParameters?: { [key: string]: string } | null;
+  TrainingParameters?: { [key: string]: string | null | undefined } | null;
   EvaluationParameters?: EvaluationParameters | null;
   HPOConfig?: HyperParameterTuningJobConfig | null;
   InputDataConfig?: InputDataConfig | null;
@@ -937,47 +989,27 @@ export type Domain =
 | "WORK_FORCE"
 | "WEB_TRAFFIC"
 | "METRICS"
-;
-
-function toDomain(root: JSONValue): Domain | null {
-  return ( false
-    || root == "RETAIL"
-    || root == "CUSTOM"
-    || root == "INVENTORY_PLANNING"
-    || root == "EC2_CAPACITY"
-    || root == "WORK_FORCE"
-    || root == "WEB_TRAFFIC"
-    || root == "METRICS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type DatasetType =
 | "TARGET_TIME_SERIES"
 | "RELATED_TIME_SERIES"
 | "ITEM_METADATA"
-;
-
-function toDatasetType(root: JSONValue): DatasetType | null {
-  return ( false
-    || root == "TARGET_TIME_SERIES"
-    || root == "RELATED_TIME_SERIES"
-    || root == "ITEM_METADATA"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface Schema {
   Attributes?: SchemaAttribute[] | null;
 }
-function fromSchema(input?: Schema | null): JSONValue {
+function fromSchema(input?: Schema | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Attributes: input["Attributes"]?.map(x => fromSchemaAttribute(x)),
   }
 }
-function toSchema(root: JSONValue): Schema {
-  return prt.readObj({
+function toSchema(root: jsonP.JSONValue): Schema {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Attributes": [toSchemaAttribute],
@@ -990,17 +1022,19 @@ export interface SchemaAttribute {
   AttributeName?: string | null;
   AttributeType?: AttributeType | null;
 }
-function fromSchemaAttribute(input?: SchemaAttribute | null): JSONValue {
+function fromSchemaAttribute(input?: SchemaAttribute | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AttributeName: input["AttributeName"],
+    AttributeType: input["AttributeType"],
   }
 }
-function toSchemaAttribute(root: JSONValue): SchemaAttribute {
-  return prt.readObj({
+function toSchemaAttribute(root: jsonP.JSONValue): SchemaAttribute {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AttributeName": "s",
-      "AttributeType": toAttributeType,
+      "AttributeType": (x: jsonP.JSONValue) => cmnP.readEnum<AttributeType>(x),
     },
   }, root);
 }
@@ -1011,29 +1045,22 @@ export type AttributeType =
 | "integer"
 | "float"
 | "timestamp"
-;
-
-function toAttributeType(root: JSONValue): AttributeType | null {
-  return ( false
-    || root == "string"
-    || root == "integer"
-    || root == "float"
-    || root == "timestamp"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface EncryptionConfig {
   RoleArn: string;
   KMSKeyArn: string;
 }
-function fromEncryptionConfig(input?: EncryptionConfig | null): JSONValue {
+function fromEncryptionConfig(input?: EncryptionConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RoleArn: input["RoleArn"],
+    KMSKeyArn: input["KMSKeyArn"],
   }
 }
-function toEncryptionConfig(root: JSONValue): EncryptionConfig {
-  return prt.readObj({
+function toEncryptionConfig(root: jsonP.JSONValue): EncryptionConfig {
+  return jsonP.readObj({
     required: {
       "RoleArn": "s",
       "KMSKeyArn": "s",
@@ -1047,13 +1074,15 @@ export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -1066,14 +1095,14 @@ function toTag(root: JSONValue): Tag {
 export interface DataSource {
   S3Config: S3Config;
 }
-function fromDataSource(input?: DataSource | null): JSONValue {
+function fromDataSource(input?: DataSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     S3Config: fromS3Config(input["S3Config"]),
   }
 }
-function toDataSource(root: JSONValue): DataSource {
-  return prt.readObj({
+function toDataSource(root: jsonP.JSONValue): DataSource {
+  return jsonP.readObj({
     required: {
       "S3Config": toS3Config,
     },
@@ -1087,13 +1116,16 @@ export interface S3Config {
   RoleArn: string;
   KMSKeyArn?: string | null;
 }
-function fromS3Config(input?: S3Config | null): JSONValue {
+function fromS3Config(input?: S3Config | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Path: input["Path"],
+    RoleArn: input["RoleArn"],
+    KMSKeyArn: input["KMSKeyArn"],
   }
 }
-function toS3Config(root: JSONValue): S3Config {
-  return prt.readObj({
+function toS3Config(root: jsonP.JSONValue): S3Config {
+  return jsonP.readObj({
     required: {
       "Path": "s",
       "RoleArn": "s",
@@ -1108,14 +1140,14 @@ function toS3Config(root: JSONValue): S3Config {
 export interface DataDestination {
   S3Config: S3Config;
 }
-function fromDataDestination(input?: DataDestination | null): JSONValue {
+function fromDataDestination(input?: DataDestination | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     S3Config: fromS3Config(input["S3Config"]),
   }
 }
-function toDataDestination(root: JSONValue): DataDestination {
-  return prt.readObj({
+function toDataDestination(root: jsonP.JSONValue): DataDestination {
+  return jsonP.readObj({
     required: {
       "S3Config": toS3Config,
     },
@@ -1128,13 +1160,15 @@ export interface EvaluationParameters {
   NumberOfBacktestWindows?: number | null;
   BackTestWindowOffset?: number | null;
 }
-function fromEvaluationParameters(input?: EvaluationParameters | null): JSONValue {
+function fromEvaluationParameters(input?: EvaluationParameters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    NumberOfBacktestWindows: input["NumberOfBacktestWindows"],
+    BackTestWindowOffset: input["BackTestWindowOffset"],
   }
 }
-function toEvaluationParameters(root: JSONValue): EvaluationParameters {
-  return prt.readObj({
+function toEvaluationParameters(root: jsonP.JSONValue): EvaluationParameters {
+  return jsonP.readObj({
     required: {},
     optional: {
       "NumberOfBacktestWindows": "n",
@@ -1147,14 +1181,14 @@ function toEvaluationParameters(root: JSONValue): EvaluationParameters {
 export interface HyperParameterTuningJobConfig {
   ParameterRanges?: ParameterRanges | null;
 }
-function fromHyperParameterTuningJobConfig(input?: HyperParameterTuningJobConfig | null): JSONValue {
+function fromHyperParameterTuningJobConfig(input?: HyperParameterTuningJobConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     ParameterRanges: fromParameterRanges(input["ParameterRanges"]),
   }
 }
-function toHyperParameterTuningJobConfig(root: JSONValue): HyperParameterTuningJobConfig {
-  return prt.readObj({
+function toHyperParameterTuningJobConfig(root: jsonP.JSONValue): HyperParameterTuningJobConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ParameterRanges": toParameterRanges,
@@ -1168,16 +1202,16 @@ export interface ParameterRanges {
   ContinuousParameterRanges?: ContinuousParameterRange[] | null;
   IntegerParameterRanges?: IntegerParameterRange[] | null;
 }
-function fromParameterRanges(input?: ParameterRanges | null): JSONValue {
+function fromParameterRanges(input?: ParameterRanges | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     CategoricalParameterRanges: input["CategoricalParameterRanges"]?.map(x => fromCategoricalParameterRange(x)),
     ContinuousParameterRanges: input["ContinuousParameterRanges"]?.map(x => fromContinuousParameterRange(x)),
     IntegerParameterRanges: input["IntegerParameterRanges"]?.map(x => fromIntegerParameterRange(x)),
   }
 }
-function toParameterRanges(root: JSONValue): ParameterRanges {
-  return prt.readObj({
+function toParameterRanges(root: jsonP.JSONValue): ParameterRanges {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CategoricalParameterRanges": [toCategoricalParameterRange],
@@ -1192,13 +1226,15 @@ export interface CategoricalParameterRange {
   Name: string;
   Values: string[];
 }
-function fromCategoricalParameterRange(input?: CategoricalParameterRange | null): JSONValue {
+function fromCategoricalParameterRange(input?: CategoricalParameterRange | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Values: input["Values"],
   }
 }
-function toCategoricalParameterRange(root: JSONValue): CategoricalParameterRange {
-  return prt.readObj({
+function toCategoricalParameterRange(root: jsonP.JSONValue): CategoricalParameterRange {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "Values": ["s"],
@@ -1214,20 +1250,24 @@ export interface ContinuousParameterRange {
   MinValue: number;
   ScalingType?: ScalingType | null;
 }
-function fromContinuousParameterRange(input?: ContinuousParameterRange | null): JSONValue {
+function fromContinuousParameterRange(input?: ContinuousParameterRange | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    MaxValue: input["MaxValue"],
+    MinValue: input["MinValue"],
+    ScalingType: input["ScalingType"],
   }
 }
-function toContinuousParameterRange(root: JSONValue): ContinuousParameterRange {
-  return prt.readObj({
+function toContinuousParameterRange(root: jsonP.JSONValue): ContinuousParameterRange {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "MaxValue": "n",
       "MinValue": "n",
     },
     optional: {
-      "ScalingType": toScalingType,
+      "ScalingType": (x: jsonP.JSONValue) => cmnP.readEnum<ScalingType>(x),
     },
   }, root);
 }
@@ -1238,16 +1278,7 @@ export type ScalingType =
 | "Linear"
 | "Logarithmic"
 | "ReverseLogarithmic"
-;
-
-function toScalingType(root: JSONValue): ScalingType | null {
-  return ( false
-    || root == "Auto"
-    || root == "Linear"
-    || root == "Logarithmic"
-    || root == "ReverseLogarithmic"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface IntegerParameterRange {
@@ -1256,20 +1287,24 @@ export interface IntegerParameterRange {
   MinValue: number;
   ScalingType?: ScalingType | null;
 }
-function fromIntegerParameterRange(input?: IntegerParameterRange | null): JSONValue {
+function fromIntegerParameterRange(input?: IntegerParameterRange | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    MaxValue: input["MaxValue"],
+    MinValue: input["MinValue"],
+    ScalingType: input["ScalingType"],
   }
 }
-function toIntegerParameterRange(root: JSONValue): IntegerParameterRange {
-  return prt.readObj({
+function toIntegerParameterRange(root: jsonP.JSONValue): IntegerParameterRange {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "MaxValue": "n",
       "MinValue": "n",
     },
     optional: {
-      "ScalingType": toScalingType,
+      "ScalingType": (x: jsonP.JSONValue) => cmnP.readEnum<ScalingType>(x),
     },
   }, root);
 }
@@ -1279,14 +1314,15 @@ export interface InputDataConfig {
   DatasetGroupArn: string;
   SupplementaryFeatures?: SupplementaryFeature[] | null;
 }
-function fromInputDataConfig(input?: InputDataConfig | null): JSONValue {
+function fromInputDataConfig(input?: InputDataConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DatasetGroupArn: input["DatasetGroupArn"],
     SupplementaryFeatures: input["SupplementaryFeatures"]?.map(x => fromSupplementaryFeature(x)),
   }
 }
-function toInputDataConfig(root: JSONValue): InputDataConfig {
-  return prt.readObj({
+function toInputDataConfig(root: jsonP.JSONValue): InputDataConfig {
+  return jsonP.readObj({
     required: {
       "DatasetGroupArn": "s",
     },
@@ -1301,13 +1337,15 @@ export interface SupplementaryFeature {
   Name: string;
   Value: string;
 }
-function fromSupplementaryFeature(input?: SupplementaryFeature | null): JSONValue {
+function fromSupplementaryFeature(input?: SupplementaryFeature | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Value: input["Value"],
   }
 }
-function toSupplementaryFeature(root: JSONValue): SupplementaryFeature {
-  return prt.readObj({
+function toSupplementaryFeature(root: jsonP.JSONValue): SupplementaryFeature {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "Value": "s",
@@ -1322,14 +1360,16 @@ export interface FeaturizationConfig {
   ForecastDimensions?: string[] | null;
   Featurizations?: Featurization[] | null;
 }
-function fromFeaturizationConfig(input?: FeaturizationConfig | null): JSONValue {
+function fromFeaturizationConfig(input?: FeaturizationConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ForecastFrequency: input["ForecastFrequency"],
+    ForecastDimensions: input["ForecastDimensions"],
     Featurizations: input["Featurizations"]?.map(x => fromFeaturization(x)),
   }
 }
-function toFeaturizationConfig(root: JSONValue): FeaturizationConfig {
-  return prt.readObj({
+function toFeaturizationConfig(root: jsonP.JSONValue): FeaturizationConfig {
+  return jsonP.readObj({
     required: {
       "ForecastFrequency": "s",
     },
@@ -1345,14 +1385,15 @@ export interface Featurization {
   AttributeName: string;
   FeaturizationPipeline?: FeaturizationMethod[] | null;
 }
-function fromFeaturization(input?: Featurization | null): JSONValue {
+function fromFeaturization(input?: Featurization | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AttributeName: input["AttributeName"],
     FeaturizationPipeline: input["FeaturizationPipeline"]?.map(x => fromFeaturizationMethod(x)),
   }
 }
-function toFeaturization(root: JSONValue): Featurization {
-  return prt.readObj({
+function toFeaturization(root: jsonP.JSONValue): Featurization {
+  return jsonP.readObj({
     required: {
       "AttributeName": "s",
     },
@@ -1365,20 +1406,22 @@ function toFeaturization(root: JSONValue): Featurization {
 // refs: 2 - tags: input, named, interface, output
 export interface FeaturizationMethod {
   FeaturizationMethodName: FeaturizationMethodName;
-  FeaturizationMethodParameters?: { [key: string]: string } | null;
+  FeaturizationMethodParameters?: { [key: string]: string | null | undefined } | null;
 }
-function fromFeaturizationMethod(input?: FeaturizationMethod | null): JSONValue {
+function fromFeaturizationMethod(input?: FeaturizationMethod | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    FeaturizationMethodName: input["FeaturizationMethodName"],
+    FeaturizationMethodParameters: input["FeaturizationMethodParameters"],
   }
 }
-function toFeaturizationMethod(root: JSONValue): FeaturizationMethod {
-  return prt.readObj({
+function toFeaturizationMethod(root: jsonP.JSONValue): FeaturizationMethod {
+  return jsonP.readObj({
     required: {
-      "FeaturizationMethodName": toFeaturizationMethodName,
+      "FeaturizationMethodName": (x: jsonP.JSONValue) => cmnP.readEnum<FeaturizationMethodName>(x),
     },
     optional: {
-      "FeaturizationMethodParameters": x => prt.readMap(String, String, x),
+      "FeaturizationMethodParameters": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -1386,13 +1429,7 @@ function toFeaturizationMethod(root: JSONValue): FeaturizationMethod {
 // refs: 2 - tags: input, named, enum, output
 export type FeaturizationMethodName =
 | "filling"
-;
-
-function toFeaturizationMethodName(root: JSONValue): FeaturizationMethodName | null {
-  return ( false
-    || root == "filling"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface
 export interface Filter {
@@ -1400,9 +1437,12 @@ export interface Filter {
   Value: string;
   Condition: FilterConditionString;
 }
-function fromFilter(input?: Filter | null): JSONValue {
+function fromFilter(input?: Filter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
+    Condition: input["Condition"],
   }
 }
 
@@ -1410,8 +1450,7 @@ function fromFilter(input?: Filter | null): JSONValue {
 export type FilterConditionString =
 | "IS"
 | "IS_NOT"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Statistics {
@@ -1424,8 +1463,8 @@ export interface Statistics {
   Avg?: number | null;
   Stddev?: number | null;
 }
-function toStatistics(root: JSONValue): Statistics {
-  return prt.readObj({
+function toStatistics(root: jsonP.JSONValue): Statistics {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Count": "n",
@@ -1444,8 +1483,8 @@ function toStatistics(root: JSONValue): Statistics {
 export interface PredictorExecutionDetails {
   PredictorExecutions?: PredictorExecution[] | null;
 }
-function toPredictorExecutionDetails(root: JSONValue): PredictorExecutionDetails {
-  return prt.readObj({
+function toPredictorExecutionDetails(root: jsonP.JSONValue): PredictorExecutionDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PredictorExecutions": [toPredictorExecution],
@@ -1458,8 +1497,8 @@ export interface PredictorExecution {
   AlgorithmArn?: string | null;
   TestWindows?: TestWindowSummary[] | null;
 }
-function toPredictorExecution(root: JSONValue): PredictorExecution {
-  return prt.readObj({
+function toPredictorExecution(root: jsonP.JSONValue): PredictorExecution {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AlgorithmArn": "s",
@@ -1475,8 +1514,8 @@ export interface TestWindowSummary {
   Status?: string | null;
   Message?: string | null;
 }
-function toTestWindowSummary(root: JSONValue): TestWindowSummary {
-  return prt.readObj({
+function toTestWindowSummary(root: jsonP.JSONValue): TestWindowSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TestWindowStart": "d",
@@ -1492,8 +1531,8 @@ export interface EvaluationResult {
   AlgorithmArn?: string | null;
   TestWindows?: WindowSummary[] | null;
 }
-function toEvaluationResult(root: JSONValue): EvaluationResult {
-  return prt.readObj({
+function toEvaluationResult(root: jsonP.JSONValue): EvaluationResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AlgorithmArn": "s",
@@ -1510,14 +1549,14 @@ export interface WindowSummary {
   EvaluationType?: EvaluationType | null;
   Metrics?: Metrics | null;
 }
-function toWindowSummary(root: JSONValue): WindowSummary {
-  return prt.readObj({
+function toWindowSummary(root: jsonP.JSONValue): WindowSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TestWindowStart": "d",
       "TestWindowEnd": "d",
       "ItemCount": "n",
-      "EvaluationType": toEvaluationType,
+      "EvaluationType": (x: jsonP.JSONValue) => cmnP.readEnum<EvaluationType>(x),
       "Metrics": toMetrics,
     },
   }, root);
@@ -1527,21 +1566,15 @@ function toWindowSummary(root: JSONValue): WindowSummary {
 export type EvaluationType =
 | "SUMMARY"
 | "COMPUTED"
-;
-function toEvaluationType(root: JSONValue): EvaluationType | null {
-  return ( false
-    || root == "SUMMARY"
-    || root == "COMPUTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Metrics {
   RMSE?: number | null;
   WeightedQuantileLosses?: WeightedQuantileLoss[] | null;
 }
-function toMetrics(root: JSONValue): Metrics {
-  return prt.readObj({
+function toMetrics(root: jsonP.JSONValue): Metrics {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RMSE": "n",
@@ -1555,8 +1588,8 @@ export interface WeightedQuantileLoss {
   Quantile?: number | null;
   LossValue?: number | null;
 }
-function toWeightedQuantileLoss(root: JSONValue): WeightedQuantileLoss {
-  return prt.readObj({
+function toWeightedQuantileLoss(root: jsonP.JSONValue): WeightedQuantileLoss {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Quantile": "n",
@@ -1572,8 +1605,8 @@ export interface DatasetGroupSummary {
   CreationTime?: Date | number | null;
   LastModificationTime?: Date | number | null;
 }
-function toDatasetGroupSummary(root: JSONValue): DatasetGroupSummary {
-  return prt.readObj({
+function toDatasetGroupSummary(root: jsonP.JSONValue): DatasetGroupSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DatasetGroupArn": "s",
@@ -1594,8 +1627,8 @@ export interface DatasetImportJobSummary {
   CreationTime?: Date | number | null;
   LastModificationTime?: Date | number | null;
 }
-function toDatasetImportJobSummary(root: JSONValue): DatasetImportJobSummary {
-  return prt.readObj({
+function toDatasetImportJobSummary(root: jsonP.JSONValue): DatasetImportJobSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DatasetImportJobArn": "s",
@@ -1618,14 +1651,14 @@ export interface DatasetSummary {
   CreationTime?: Date | number | null;
   LastModificationTime?: Date | number | null;
 }
-function toDatasetSummary(root: JSONValue): DatasetSummary {
-  return prt.readObj({
+function toDatasetSummary(root: jsonP.JSONValue): DatasetSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DatasetArn": "s",
       "DatasetName": "s",
-      "DatasetType": toDatasetType,
-      "Domain": toDomain,
+      "DatasetType": (x: jsonP.JSONValue) => cmnP.readEnum<DatasetType>(x),
+      "Domain": (x: jsonP.JSONValue) => cmnP.readEnum<Domain>(x),
       "CreationTime": "d",
       "LastModificationTime": "d",
     },
@@ -1642,8 +1675,8 @@ export interface ForecastExportJobSummary {
   CreationTime?: Date | number | null;
   LastModificationTime?: Date | number | null;
 }
-function toForecastExportJobSummary(root: JSONValue): ForecastExportJobSummary {
-  return prt.readObj({
+function toForecastExportJobSummary(root: jsonP.JSONValue): ForecastExportJobSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ForecastExportJobArn": "s",
@@ -1668,8 +1701,8 @@ export interface ForecastSummary {
   CreationTime?: Date | number | null;
   LastModificationTime?: Date | number | null;
 }
-function toForecastSummary(root: JSONValue): ForecastSummary {
-  return prt.readObj({
+function toForecastSummary(root: jsonP.JSONValue): ForecastSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ForecastArn": "s",
@@ -1694,8 +1727,8 @@ export interface PredictorSummary {
   CreationTime?: Date | number | null;
   LastModificationTime?: Date | number | null;
 }
-function toPredictorSummary(root: JSONValue): PredictorSummary {
-  return prt.readObj({
+function toPredictorSummary(root: jsonP.JSONValue): PredictorSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PredictorArn": "s",

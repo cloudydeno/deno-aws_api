@@ -5,10 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }
@@ -35,13 +34,14 @@ export default class SecretsManager {
   async cancelRotateSecret(
     {abortSignal, ...params}: RequestConfig & CancelRotateSecretRequest,
   ): Promise<CancelRotateSecretResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SecretId: params["SecretId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelRotateSecret",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ARN": "s",
@@ -54,16 +54,20 @@ export default class SecretsManager {
   async createSecret(
     {abortSignal, ...params}: RequestConfig & CreateSecretRequest,
   ): Promise<CreateSecretResponse> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    SecretBinary: prt.serializeBlob(params["SecretBinary"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Description: params["Description"],
+      KmsKeyId: params["KmsKeyId"],
+      SecretBinary: jsonP.serializeBlob(params["SecretBinary"]),
+      SecretString: params["SecretString"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSecret",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ARN": "s",
@@ -76,13 +80,14 @@ export default class SecretsManager {
   async deleteResourcePolicy(
     {abortSignal, ...params}: RequestConfig & DeleteResourcePolicyRequest,
   ): Promise<DeleteResourcePolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SecretId: params["SecretId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteResourcePolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ARN": "s",
@@ -94,13 +99,16 @@ export default class SecretsManager {
   async deleteSecret(
     {abortSignal, ...params}: RequestConfig & DeleteSecretRequest,
   ): Promise<DeleteSecretResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SecretId: params["SecretId"],
+      RecoveryWindowInDays: params["RecoveryWindowInDays"],
+      ForceDeleteWithoutRecovery: params["ForceDeleteWithoutRecovery"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSecret",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ARN": "s",
@@ -113,13 +121,14 @@ export default class SecretsManager {
   async describeSecret(
     {abortSignal, ...params}: RequestConfig & DescribeSecretRequest,
   ): Promise<DescribeSecretResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SecretId: params["SecretId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSecret",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ARN": "s",
@@ -134,7 +143,7 @@ export default class SecretsManager {
         "LastAccessedDate": "d",
         "DeletedDate": "d",
         "Tags": [toTag],
-        "VersionIdsToStages": x => prt.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+        "VersionIdsToStages": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
         "OwningService": "s",
         "CreatedDate": "d",
       },
@@ -144,13 +153,21 @@ export default class SecretsManager {
   async getRandomPassword(
     {abortSignal, ...params}: RequestConfig & GetRandomPasswordRequest = {},
   ): Promise<GetRandomPasswordResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      PasswordLength: params["PasswordLength"],
+      ExcludeCharacters: params["ExcludeCharacters"],
+      ExcludeNumbers: params["ExcludeNumbers"],
+      ExcludePunctuation: params["ExcludePunctuation"],
+      ExcludeUppercase: params["ExcludeUppercase"],
+      ExcludeLowercase: params["ExcludeLowercase"],
+      IncludeSpace: params["IncludeSpace"],
+      RequireEachIncludedType: params["RequireEachIncludedType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRandomPassword",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RandomPassword": "s",
@@ -161,13 +178,14 @@ export default class SecretsManager {
   async getResourcePolicy(
     {abortSignal, ...params}: RequestConfig & GetResourcePolicyRequest,
   ): Promise<GetResourcePolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SecretId: params["SecretId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResourcePolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ARN": "s",
@@ -180,13 +198,16 @@ export default class SecretsManager {
   async getSecretValue(
     {abortSignal, ...params}: RequestConfig & GetSecretValueRequest,
   ): Promise<GetSecretValueResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SecretId: params["SecretId"],
+      VersionId: params["VersionId"],
+      VersionStage: params["VersionStage"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSecretValue",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ARN": "s",
@@ -203,13 +224,17 @@ export default class SecretsManager {
   async listSecretVersionIds(
     {abortSignal, ...params}: RequestConfig & ListSecretVersionIdsRequest,
   ): Promise<ListSecretVersionIdsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SecretId: params["SecretId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      IncludeDeprecated: params["IncludeDeprecated"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSecretVersionIds",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Versions": [toSecretVersionsListEntry],
@@ -223,14 +248,17 @@ export default class SecretsManager {
   async listSecrets(
     {abortSignal, ...params}: RequestConfig & ListSecretsRequest = {},
   ): Promise<ListSecretsResponse> {
-    const body: JSONObject = {...params,
-    Filters: params["Filters"]?.map(x => fromFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+      SortOrder: params["SortOrder"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSecrets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SecretList": [toSecretListEntry],
@@ -242,13 +270,16 @@ export default class SecretsManager {
   async putResourcePolicy(
     {abortSignal, ...params}: RequestConfig & PutResourcePolicyRequest,
   ): Promise<PutResourcePolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SecretId: params["SecretId"],
+      ResourcePolicy: params["ResourcePolicy"],
+      BlockPublicPolicy: params["BlockPublicPolicy"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutResourcePolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ARN": "s",
@@ -260,15 +291,18 @@ export default class SecretsManager {
   async putSecretValue(
     {abortSignal, ...params}: RequestConfig & PutSecretValueRequest,
   ): Promise<PutSecretValueResponse> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    SecretBinary: prt.serializeBlob(params["SecretBinary"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SecretId: params["SecretId"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      SecretBinary: jsonP.serializeBlob(params["SecretBinary"]),
+      SecretString: params["SecretString"],
+      VersionStages: params["VersionStages"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutSecretValue",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ARN": "s",
@@ -282,13 +316,14 @@ export default class SecretsManager {
   async restoreSecret(
     {abortSignal, ...params}: RequestConfig & RestoreSecretRequest,
   ): Promise<RestoreSecretResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SecretId: params["SecretId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreSecret",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ARN": "s",
@@ -300,15 +335,17 @@ export default class SecretsManager {
   async rotateSecret(
     {abortSignal, ...params}: RequestConfig & RotateSecretRequest,
   ): Promise<RotateSecretResponse> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    RotationRules: fromRotationRulesType(params["RotationRules"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SecretId: params["SecretId"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      RotationLambdaARN: params["RotationLambdaARN"],
+      RotationRules: fromRotationRulesType(params["RotationRules"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RotateSecret",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ARN": "s",
@@ -321,9 +358,10 @@ export default class SecretsManager {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SecretId: params["SecretId"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -333,8 +371,10 @@ export default class SecretsManager {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SecretId: params["SecretId"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -344,15 +384,19 @@ export default class SecretsManager {
   async updateSecret(
     {abortSignal, ...params}: RequestConfig & UpdateSecretRequest,
   ): Promise<UpdateSecretResponse> {
-    const body: JSONObject = {...params,
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    SecretBinary: prt.serializeBlob(params["SecretBinary"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SecretId: params["SecretId"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Description: params["Description"],
+      KmsKeyId: params["KmsKeyId"],
+      SecretBinary: jsonP.serializeBlob(params["SecretBinary"]),
+      SecretString: params["SecretString"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSecret",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ARN": "s",
@@ -365,13 +409,17 @@ export default class SecretsManager {
   async updateSecretVersionStage(
     {abortSignal, ...params}: RequestConfig & UpdateSecretVersionStageRequest,
   ): Promise<UpdateSecretVersionStageResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SecretId: params["SecretId"],
+      VersionStage: params["VersionStage"],
+      RemoveFromVersionId: params["RemoveFromVersionId"],
+      MoveToVersionId: params["MoveToVersionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSecretVersionStage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ARN": "s",
@@ -383,13 +431,15 @@ export default class SecretsManager {
   async validateResourcePolicy(
     {abortSignal, ...params}: RequestConfig & ValidateResourcePolicyRequest,
   ): Promise<ValidateResourcePolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SecretId: params["SecretId"],
+      ResourcePolicy: params["ResourcePolicy"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ValidateResourcePolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PolicyValidationPassed": "b",
@@ -579,7 +629,7 @@ export interface DescribeSecretResponse {
   LastAccessedDate?: Date | number | null;
   DeletedDate?: Date | number | null;
   Tags?: Tag[] | null;
-  VersionIdsToStages?: { [key: string]: string[] } | null;
+  VersionIdsToStages?: { [key: string]: string[] | null | undefined } | null;
   OwningService?: string | null;
   CreatedDate?: Date | number | null;
 }
@@ -672,13 +722,15 @@ export interface Tag {
   Key?: string | null;
   Value?: string | null;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Key": "s",
@@ -692,9 +744,11 @@ export interface Filter {
   Key?: FilterNameStringType | null;
   Values?: string[] | null;
 }
-function fromFilter(input?: Filter | null): JSONValue {
+function fromFilter(input?: Filter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
   }
 }
 
@@ -705,27 +759,26 @@ export type FilterNameStringType =
 | "tag-key"
 | "tag-value"
 | "all"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type SortOrderType =
 | "asc"
 | "desc"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface RotationRulesType {
   AutomaticallyAfterDays?: number | null;
 }
-function fromRotationRulesType(input?: RotationRulesType | null): JSONValue {
+function fromRotationRulesType(input?: RotationRulesType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AutomaticallyAfterDays: input["AutomaticallyAfterDays"],
   }
 }
-function toRotationRulesType(root: JSONValue): RotationRulesType {
-  return prt.readObj({
+function toRotationRulesType(root: jsonP.JSONValue): RotationRulesType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AutomaticallyAfterDays": "n",
@@ -740,8 +793,8 @@ export interface SecretVersionsListEntry {
   LastAccessedDate?: Date | number | null;
   CreatedDate?: Date | number | null;
 }
-function toSecretVersionsListEntry(root: JSONValue): SecretVersionsListEntry {
-  return prt.readObj({
+function toSecretVersionsListEntry(root: jsonP.JSONValue): SecretVersionsListEntry {
+  return jsonP.readObj({
     required: {},
     optional: {
       "VersionId": "s",
@@ -766,12 +819,12 @@ export interface SecretListEntry {
   LastAccessedDate?: Date | number | null;
   DeletedDate?: Date | number | null;
   Tags?: Tag[] | null;
-  SecretVersionsToStages?: { [key: string]: string[] } | null;
+  SecretVersionsToStages?: { [key: string]: string[] | null | undefined } | null;
   OwningService?: string | null;
   CreatedDate?: Date | number | null;
 }
-function toSecretListEntry(root: JSONValue): SecretListEntry {
-  return prt.readObj({
+function toSecretListEntry(root: jsonP.JSONValue): SecretListEntry {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ARN": "s",
@@ -786,7 +839,7 @@ function toSecretListEntry(root: JSONValue): SecretListEntry {
       "LastAccessedDate": "d",
       "DeletedDate": "d",
       "Tags": [toTag],
-      "SecretVersionsToStages": x => prt.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+      "SecretVersionsToStages": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
       "OwningService": "s",
       "CreatedDate": "d",
     },
@@ -798,8 +851,8 @@ export interface ValidationErrorsEntry {
   CheckName?: string | null;
   ErrorMessage?: string | null;
 }
-function toValidationErrorsEntry(root: JSONValue): ValidationErrorsEntry {
-  return prt.readObj({
+function toValidationErrorsEntry(root: jsonP.JSONValue): ValidationErrorsEntry {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CheckName": "s",

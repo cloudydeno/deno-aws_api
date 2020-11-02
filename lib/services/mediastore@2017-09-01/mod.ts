@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class MediaStore {
   #client: ServiceClient;
@@ -31,14 +31,15 @@ export default class MediaStore {
   async createContainer(
     {abortSignal, ...params}: RequestConfig & CreateContainerInput,
   ): Promise<CreateContainerOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContainerName: params["ContainerName"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateContainer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Container": toContainer,
       },
@@ -49,13 +50,14 @@ export default class MediaStore {
   async deleteContainer(
     {abortSignal, ...params}: RequestConfig & DeleteContainerInput,
   ): Promise<DeleteContainerOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContainerName: params["ContainerName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteContainer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -64,13 +66,14 @@ export default class MediaStore {
   async deleteContainerPolicy(
     {abortSignal, ...params}: RequestConfig & DeleteContainerPolicyInput,
   ): Promise<DeleteContainerPolicyOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContainerName: params["ContainerName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteContainerPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -79,13 +82,14 @@ export default class MediaStore {
   async deleteCorsPolicy(
     {abortSignal, ...params}: RequestConfig & DeleteCorsPolicyInput,
   ): Promise<DeleteCorsPolicyOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContainerName: params["ContainerName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCorsPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -94,13 +98,14 @@ export default class MediaStore {
   async deleteLifecyclePolicy(
     {abortSignal, ...params}: RequestConfig & DeleteLifecyclePolicyInput,
   ): Promise<DeleteLifecyclePolicyOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContainerName: params["ContainerName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLifecyclePolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -109,13 +114,14 @@ export default class MediaStore {
   async deleteMetricPolicy(
     {abortSignal, ...params}: RequestConfig & DeleteMetricPolicyInput,
   ): Promise<DeleteMetricPolicyOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContainerName: params["ContainerName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMetricPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -124,13 +130,14 @@ export default class MediaStore {
   async describeContainer(
     {abortSignal, ...params}: RequestConfig & DescribeContainerInput = {},
   ): Promise<DescribeContainerOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContainerName: params["ContainerName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeContainer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Container": toContainer,
@@ -141,13 +148,14 @@ export default class MediaStore {
   async getContainerPolicy(
     {abortSignal, ...params}: RequestConfig & GetContainerPolicyInput,
   ): Promise<GetContainerPolicyOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContainerName: params["ContainerName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetContainerPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Policy": "s",
       },
@@ -158,13 +166,14 @@ export default class MediaStore {
   async getCorsPolicy(
     {abortSignal, ...params}: RequestConfig & GetCorsPolicyInput,
   ): Promise<GetCorsPolicyOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContainerName: params["ContainerName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCorsPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "CorsPolicy": [toCorsRule],
       },
@@ -175,13 +184,14 @@ export default class MediaStore {
   async getLifecyclePolicy(
     {abortSignal, ...params}: RequestConfig & GetLifecyclePolicyInput,
   ): Promise<GetLifecyclePolicyOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContainerName: params["ContainerName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetLifecyclePolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "LifecyclePolicy": "s",
       },
@@ -192,13 +202,14 @@ export default class MediaStore {
   async getMetricPolicy(
     {abortSignal, ...params}: RequestConfig & GetMetricPolicyInput,
   ): Promise<GetMetricPolicyOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContainerName: params["ContainerName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMetricPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "MetricPolicy": toMetricPolicy,
       },
@@ -209,13 +220,15 @@ export default class MediaStore {
   async listContainers(
     {abortSignal, ...params}: RequestConfig & ListContainersInput = {},
   ): Promise<ListContainersOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListContainers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Containers": [toContainer],
       },
@@ -228,13 +241,14 @@ export default class MediaStore {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceInput,
   ): Promise<ListTagsForResourceOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Resource: params["Resource"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -245,13 +259,15 @@ export default class MediaStore {
   async putContainerPolicy(
     {abortSignal, ...params}: RequestConfig & PutContainerPolicyInput,
   ): Promise<PutContainerPolicyOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContainerName: params["ContainerName"],
+      Policy: params["Policy"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutContainerPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -260,14 +276,15 @@ export default class MediaStore {
   async putCorsPolicy(
     {abortSignal, ...params}: RequestConfig & PutCorsPolicyInput,
   ): Promise<PutCorsPolicyOutput> {
-    const body: JSONObject = {...params,
-    CorsPolicy: params["CorsPolicy"]?.map(x => fromCorsRule(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContainerName: params["ContainerName"],
+      CorsPolicy: params["CorsPolicy"]?.map(x => fromCorsRule(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutCorsPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -276,13 +293,15 @@ export default class MediaStore {
   async putLifecyclePolicy(
     {abortSignal, ...params}: RequestConfig & PutLifecyclePolicyInput,
   ): Promise<PutLifecyclePolicyOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContainerName: params["ContainerName"],
+      LifecyclePolicy: params["LifecyclePolicy"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutLifecyclePolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -291,14 +310,15 @@ export default class MediaStore {
   async putMetricPolicy(
     {abortSignal, ...params}: RequestConfig & PutMetricPolicyInput,
   ): Promise<PutMetricPolicyOutput> {
-    const body: JSONObject = {...params,
-    MetricPolicy: fromMetricPolicy(params["MetricPolicy"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContainerName: params["ContainerName"],
+      MetricPolicy: fromMetricPolicy(params["MetricPolicy"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutMetricPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -307,13 +327,14 @@ export default class MediaStore {
   async startAccessLogging(
     {abortSignal, ...params}: RequestConfig & StartAccessLoggingInput,
   ): Promise<StartAccessLoggingOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContainerName: params["ContainerName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartAccessLogging",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -322,13 +343,14 @@ export default class MediaStore {
   async stopAccessLogging(
     {abortSignal, ...params}: RequestConfig & StopAccessLoggingInput,
   ): Promise<StopAccessLoggingOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ContainerName: params["ContainerName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopAccessLogging",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -337,14 +359,15 @@ export default class MediaStore {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceInput,
   ): Promise<TagResourceOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Resource: params["Resource"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -353,13 +376,15 @@ export default class MediaStore {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceInput,
   ): Promise<UntagResourceOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Resource: params["Resource"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -578,13 +603,15 @@ export interface Tag {
   Key: string;
   Value?: string | null;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
     },
@@ -602,19 +629,24 @@ export interface CorsRule {
   MaxAgeSeconds?: number | null;
   ExposeHeaders?: string[] | null;
 }
-function fromCorsRule(input?: CorsRule | null): JSONValue {
+function fromCorsRule(input?: CorsRule | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AllowedOrigins: input["AllowedOrigins"],
+    AllowedMethods: input["AllowedMethods"],
+    AllowedHeaders: input["AllowedHeaders"],
+    MaxAgeSeconds: input["MaxAgeSeconds"],
+    ExposeHeaders: input["ExposeHeaders"],
   }
 }
-function toCorsRule(root: JSONValue): CorsRule {
-  return prt.readObj({
+function toCorsRule(root: jsonP.JSONValue): CorsRule {
+  return jsonP.readObj({
     required: {
       "AllowedOrigins": ["s"],
       "AllowedHeaders": ["s"],
     },
     optional: {
-      "AllowedMethods": [toMethodName],
+      "AllowedMethods": [(x: jsonP.JSONValue) => cmnP.readEnum<MethodName>(x)],
       "MaxAgeSeconds": "n",
       "ExposeHeaders": ["s"],
     },
@@ -627,32 +659,24 @@ export type MethodName =
 | "GET"
 | "DELETE"
 | "HEAD"
-;
-
-function toMethodName(root: JSONValue): MethodName | null {
-  return ( false
-    || root == "PUT"
-    || root == "GET"
-    || root == "DELETE"
-    || root == "HEAD"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface MetricPolicy {
   ContainerLevelMetrics: ContainerLevelMetrics;
   MetricPolicyRules?: MetricPolicyRule[] | null;
 }
-function fromMetricPolicy(input?: MetricPolicy | null): JSONValue {
+function fromMetricPolicy(input?: MetricPolicy | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ContainerLevelMetrics: input["ContainerLevelMetrics"],
     MetricPolicyRules: input["MetricPolicyRules"]?.map(x => fromMetricPolicyRule(x)),
   }
 }
-function toMetricPolicy(root: JSONValue): MetricPolicy {
-  return prt.readObj({
+function toMetricPolicy(root: jsonP.JSONValue): MetricPolicy {
+  return jsonP.readObj({
     required: {
-      "ContainerLevelMetrics": toContainerLevelMetrics,
+      "ContainerLevelMetrics": (x: jsonP.JSONValue) => cmnP.readEnum<ContainerLevelMetrics>(x),
     },
     optional: {
       "MetricPolicyRules": [toMetricPolicyRule],
@@ -664,27 +688,22 @@ function toMetricPolicy(root: JSONValue): MetricPolicy {
 export type ContainerLevelMetrics =
 | "ENABLED"
 | "DISABLED"
-;
-
-function toContainerLevelMetrics(root: JSONValue): ContainerLevelMetrics | null {
-  return ( false
-    || root == "ENABLED"
-    || root == "DISABLED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface MetricPolicyRule {
   ObjectGroup: string;
   ObjectGroupName: string;
 }
-function fromMetricPolicyRule(input?: MetricPolicyRule | null): JSONValue {
+function fromMetricPolicyRule(input?: MetricPolicyRule | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ObjectGroup: input["ObjectGroup"],
+    ObjectGroupName: input["ObjectGroupName"],
   }
 }
-function toMetricPolicyRule(root: JSONValue): MetricPolicyRule {
-  return prt.readObj({
+function toMetricPolicyRule(root: jsonP.JSONValue): MetricPolicyRule {
+  return jsonP.readObj({
     required: {
       "ObjectGroup": "s",
       "ObjectGroupName": "s",
@@ -702,15 +721,15 @@ export interface Container {
   Status?: ContainerStatus | null;
   AccessLoggingEnabled?: boolean | null;
 }
-function toContainer(root: JSONValue): Container {
-  return prt.readObj({
+function toContainer(root: jsonP.JSONValue): Container {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Endpoint": "s",
       "CreationTime": "d",
       "ARN": "s",
       "Name": "s",
-      "Status": toContainerStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ContainerStatus>(x),
       "AccessLoggingEnabled": "b",
     },
   }, root);
@@ -721,11 +740,4 @@ export type ContainerStatus =
 | "ACTIVE"
 | "CREATING"
 | "DELETING"
-;
-function toContainerStatus(root: JSONValue): ContainerStatus | null {
-  return ( false
-    || root == "ACTIVE"
-    || root == "CREATING"
-    || root == "DELETING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;

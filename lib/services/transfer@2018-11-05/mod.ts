@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class Transfer {
   #client: ServiceClient;
@@ -31,16 +31,23 @@ export default class Transfer {
   async createServer(
     {abortSignal, ...params}: RequestConfig & CreateServerRequest = {},
   ): Promise<CreateServerResponse> {
-    const body: JSONObject = {...params,
-    EndpointDetails: fromEndpointDetails(params["EndpointDetails"]),
-    IdentityProviderDetails: fromIdentityProviderDetails(params["IdentityProviderDetails"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Certificate: params["Certificate"],
+      EndpointDetails: fromEndpointDetails(params["EndpointDetails"]),
+      EndpointType: params["EndpointType"],
+      HostKey: params["HostKey"],
+      IdentityProviderDetails: fromIdentityProviderDetails(params["IdentityProviderDetails"]),
+      IdentityProviderType: params["IdentityProviderType"],
+      LoggingRole: params["LoggingRole"],
+      Protocols: params["Protocols"],
+      SecurityPolicyName: params["SecurityPolicyName"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateServer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ServerId": "s",
       },
@@ -51,15 +58,22 @@ export default class Transfer {
   async createUser(
     {abortSignal, ...params}: RequestConfig & CreateUserRequest,
   ): Promise<CreateUserResponse> {
-    const body: JSONObject = {...params,
-    HomeDirectoryMappings: params["HomeDirectoryMappings"]?.map(x => fromHomeDirectoryMapEntry(x)),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      HomeDirectory: params["HomeDirectory"],
+      HomeDirectoryType: params["HomeDirectoryType"],
+      HomeDirectoryMappings: params["HomeDirectoryMappings"]?.map(x => fromHomeDirectoryMapEntry(x)),
+      Policy: params["Policy"],
+      Role: params["Role"],
+      ServerId: params["ServerId"],
+      SshPublicKeyBody: params["SshPublicKeyBody"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      UserName: params["UserName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUser",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ServerId": "s",
         "UserName": "s",
@@ -71,8 +85,9 @@ export default class Transfer {
   async deleteServer(
     {abortSignal, ...params}: RequestConfig & DeleteServerRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServerId: params["ServerId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteServer",
@@ -82,8 +97,11 @@ export default class Transfer {
   async deleteSshPublicKey(
     {abortSignal, ...params}: RequestConfig & DeleteSshPublicKeyRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServerId: params["ServerId"],
+      SshPublicKeyId: params["SshPublicKeyId"],
+      UserName: params["UserName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSshPublicKey",
@@ -93,8 +111,10 @@ export default class Transfer {
   async deleteUser(
     {abortSignal, ...params}: RequestConfig & DeleteUserRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServerId: params["ServerId"],
+      UserName: params["UserName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUser",
@@ -104,13 +124,14 @@ export default class Transfer {
   async describeSecurityPolicy(
     {abortSignal, ...params}: RequestConfig & DescribeSecurityPolicyRequest,
   ): Promise<DescribeSecurityPolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SecurityPolicyName: params["SecurityPolicyName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSecurityPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "SecurityPolicy": toDescribedSecurityPolicy,
       },
@@ -121,13 +142,14 @@ export default class Transfer {
   async describeServer(
     {abortSignal, ...params}: RequestConfig & DescribeServerRequest,
   ): Promise<DescribeServerResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServerId: params["ServerId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeServer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Server": toDescribedServer,
       },
@@ -138,13 +160,15 @@ export default class Transfer {
   async describeUser(
     {abortSignal, ...params}: RequestConfig & DescribeUserRequest,
   ): Promise<DescribeUserResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServerId: params["ServerId"],
+      UserName: params["UserName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUser",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ServerId": "s",
         "User": toDescribedUser,
@@ -156,13 +180,16 @@ export default class Transfer {
   async importSshPublicKey(
     {abortSignal, ...params}: RequestConfig & ImportSshPublicKeyRequest,
   ): Promise<ImportSshPublicKeyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServerId: params["ServerId"],
+      SshPublicKeyBody: params["SshPublicKeyBody"],
+      UserName: params["UserName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportSshPublicKey",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ServerId": "s",
         "SshPublicKeyId": "s",
@@ -175,13 +202,15 @@ export default class Transfer {
   async listSecurityPolicies(
     {abortSignal, ...params}: RequestConfig & ListSecurityPoliciesRequest = {},
   ): Promise<ListSecurityPoliciesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSecurityPolicies",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "SecurityPolicyNames": ["s"],
       },
@@ -194,13 +223,15 @@ export default class Transfer {
   async listServers(
     {abortSignal, ...params}: RequestConfig & ListServersRequest = {},
   ): Promise<ListServersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListServers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Servers": [toListedServer],
       },
@@ -213,13 +244,16 @@ export default class Transfer {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Arn: params["Arn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Arn": "s",
@@ -232,13 +266,16 @@ export default class Transfer {
   async listUsers(
     {abortSignal, ...params}: RequestConfig & ListUsersRequest,
   ): Promise<ListUsersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      ServerId: params["ServerId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUsers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ServerId": "s",
         "Users": [toListedUser],
@@ -252,8 +289,9 @@ export default class Transfer {
   async startServer(
     {abortSignal, ...params}: RequestConfig & StartServerRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServerId: params["ServerId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartServer",
@@ -263,8 +301,9 @@ export default class Transfer {
   async stopServer(
     {abortSignal, ...params}: RequestConfig & StopServerRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServerId: params["ServerId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopServer",
@@ -274,9 +313,10 @@ export default class Transfer {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Arn: params["Arn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -286,13 +326,18 @@ export default class Transfer {
   async testIdentityProvider(
     {abortSignal, ...params}: RequestConfig & TestIdentityProviderRequest,
   ): Promise<TestIdentityProviderResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServerId: params["ServerId"],
+      ServerProtocol: params["ServerProtocol"],
+      SourceIp: params["SourceIp"],
+      UserName: params["UserName"],
+      UserPassword: params["UserPassword"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TestIdentityProvider",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "StatusCode": "n",
         "Url": "s",
@@ -307,8 +352,10 @@ export default class Transfer {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Arn: params["Arn"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -318,15 +365,22 @@ export default class Transfer {
   async updateServer(
     {abortSignal, ...params}: RequestConfig & UpdateServerRequest,
   ): Promise<UpdateServerResponse> {
-    const body: JSONObject = {...params,
-    EndpointDetails: fromEndpointDetails(params["EndpointDetails"]),
-    IdentityProviderDetails: fromIdentityProviderDetails(params["IdentityProviderDetails"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Certificate: params["Certificate"],
+      EndpointDetails: fromEndpointDetails(params["EndpointDetails"]),
+      EndpointType: params["EndpointType"],
+      HostKey: params["HostKey"],
+      IdentityProviderDetails: fromIdentityProviderDetails(params["IdentityProviderDetails"]),
+      LoggingRole: params["LoggingRole"],
+      Protocols: params["Protocols"],
+      SecurityPolicyName: params["SecurityPolicyName"],
+      ServerId: params["ServerId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateServer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ServerId": "s",
       },
@@ -337,14 +391,20 @@ export default class Transfer {
   async updateUser(
     {abortSignal, ...params}: RequestConfig & UpdateUserRequest,
   ): Promise<UpdateUserResponse> {
-    const body: JSONObject = {...params,
-    HomeDirectoryMappings: params["HomeDirectoryMappings"]?.map(x => fromHomeDirectoryMapEntry(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      HomeDirectory: params["HomeDirectory"],
+      HomeDirectoryType: params["HomeDirectoryType"],
+      HomeDirectoryMappings: params["HomeDirectoryMappings"]?.map(x => fromHomeDirectoryMapEntry(x)),
+      Policy: params["Policy"],
+      Role: params["Role"],
+      ServerId: params["ServerId"],
+      UserName: params["UserName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUser",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ServerId": "s",
         "UserName": "s",
@@ -591,13 +651,18 @@ export interface EndpointDetails {
   VpcId?: string | null;
   SecurityGroupIds?: string[] | null;
 }
-function fromEndpointDetails(input?: EndpointDetails | null): JSONValue {
+function fromEndpointDetails(input?: EndpointDetails | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AddressAllocationIds: input["AddressAllocationIds"],
+    SubnetIds: input["SubnetIds"],
+    VpcEndpointId: input["VpcEndpointId"],
+    VpcId: input["VpcId"],
+    SecurityGroupIds: input["SecurityGroupIds"],
   }
 }
-function toEndpointDetails(root: JSONValue): EndpointDetails {
-  return prt.readObj({
+function toEndpointDetails(root: jsonP.JSONValue): EndpointDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AddressAllocationIds": ["s"],
@@ -614,28 +679,22 @@ export type EndpointType =
 | "PUBLIC"
 | "VPC"
 | "VPC_ENDPOINT"
-;
-
-function toEndpointType(root: JSONValue): EndpointType | null {
-  return ( false
-    || root == "PUBLIC"
-    || root == "VPC"
-    || root == "VPC_ENDPOINT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface IdentityProviderDetails {
   Url?: string | null;
   InvocationRole?: string | null;
 }
-function fromIdentityProviderDetails(input?: IdentityProviderDetails | null): JSONValue {
+function fromIdentityProviderDetails(input?: IdentityProviderDetails | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Url: input["Url"],
+    InvocationRole: input["InvocationRole"],
   }
 }
-function toIdentityProviderDetails(root: JSONValue): IdentityProviderDetails {
-  return prt.readObj({
+function toIdentityProviderDetails(root: jsonP.JSONValue): IdentityProviderDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Url": "s",
@@ -648,42 +707,29 @@ function toIdentityProviderDetails(root: JSONValue): IdentityProviderDetails {
 export type IdentityProviderType =
 | "SERVICE_MANAGED"
 | "API_GATEWAY"
-;
-
-function toIdentityProviderType(root: JSONValue): IdentityProviderType | null {
-  return ( false
-    || root == "SERVICE_MANAGED"
-    || root == "API_GATEWAY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type Protocol =
 | "SFTP"
 | "FTP"
 | "FTPS"
-;
-
-function toProtocol(root: JSONValue): Protocol | null {
-  return ( false
-    || root == "SFTP"
-    || root == "FTP"
-    || root == "FTPS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -696,27 +742,22 @@ function toTag(root: JSONValue): Tag {
 export type HomeDirectoryType =
 | "PATH"
 | "LOGICAL"
-;
-
-function toHomeDirectoryType(root: JSONValue): HomeDirectoryType | null {
-  return ( false
-    || root == "PATH"
-    || root == "LOGICAL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface HomeDirectoryMapEntry {
   Entry: string;
   Target: string;
 }
-function fromHomeDirectoryMapEntry(input?: HomeDirectoryMapEntry | null): JSONValue {
+function fromHomeDirectoryMapEntry(input?: HomeDirectoryMapEntry | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Entry: input["Entry"],
+    Target: input["Target"],
   }
 }
-function toHomeDirectoryMapEntry(root: JSONValue): HomeDirectoryMapEntry {
-  return prt.readObj({
+function toHomeDirectoryMapEntry(root: jsonP.JSONValue): HomeDirectoryMapEntry {
+  return jsonP.readObj({
     required: {
       "Entry": "s",
       "Target": "s",
@@ -734,8 +775,8 @@ export interface DescribedSecurityPolicy {
   SshMacs?: string[] | null;
   TlsCiphers?: string[] | null;
 }
-function toDescribedSecurityPolicy(root: JSONValue): DescribedSecurityPolicy {
-  return prt.readObj({
+function toDescribedSecurityPolicy(root: jsonP.JSONValue): DescribedSecurityPolicy {
+  return jsonP.readObj({
     required: {
       "SecurityPolicyName": "s",
     },
@@ -766,23 +807,23 @@ export interface DescribedServer {
   Tags?: Tag[] | null;
   UserCount?: number | null;
 }
-function toDescribedServer(root: JSONValue): DescribedServer {
-  return prt.readObj({
+function toDescribedServer(root: jsonP.JSONValue): DescribedServer {
+  return jsonP.readObj({
     required: {
       "Arn": "s",
     },
     optional: {
       "Certificate": "s",
       "EndpointDetails": toEndpointDetails,
-      "EndpointType": toEndpointType,
+      "EndpointType": (x: jsonP.JSONValue) => cmnP.readEnum<EndpointType>(x),
       "HostKeyFingerprint": "s",
       "IdentityProviderDetails": toIdentityProviderDetails,
-      "IdentityProviderType": toIdentityProviderType,
+      "IdentityProviderType": (x: jsonP.JSONValue) => cmnP.readEnum<IdentityProviderType>(x),
       "LoggingRole": "s",
-      "Protocols": [toProtocol],
+      "Protocols": [(x: jsonP.JSONValue) => cmnP.readEnum<Protocol>(x)],
       "SecurityPolicyName": "s",
       "ServerId": "s",
-      "State": toState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<State>(x),
       "Tags": [toTag],
       "UserCount": "n",
     },
@@ -797,17 +838,7 @@ export type State =
 | "STOPPING"
 | "START_FAILED"
 | "STOP_FAILED"
-;
-function toState(root: JSONValue): State | null {
-  return ( false
-    || root == "OFFLINE"
-    || root == "ONLINE"
-    || root == "STARTING"
-    || root == "STOPPING"
-    || root == "START_FAILED"
-    || root == "STOP_FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface DescribedUser {
@@ -821,15 +852,15 @@ export interface DescribedUser {
   Tags?: Tag[] | null;
   UserName?: string | null;
 }
-function toDescribedUser(root: JSONValue): DescribedUser {
-  return prt.readObj({
+function toDescribedUser(root: jsonP.JSONValue): DescribedUser {
+  return jsonP.readObj({
     required: {
       "Arn": "s",
     },
     optional: {
       "HomeDirectory": "s",
       "HomeDirectoryMappings": [toHomeDirectoryMapEntry],
-      "HomeDirectoryType": toHomeDirectoryType,
+      "HomeDirectoryType": (x: jsonP.JSONValue) => cmnP.readEnum<HomeDirectoryType>(x),
       "Policy": "s",
       "Role": "s",
       "SshPublicKeys": [toSshPublicKey],
@@ -845,8 +876,8 @@ export interface SshPublicKey {
   SshPublicKeyBody: string;
   SshPublicKeyId: string;
 }
-function toSshPublicKey(root: JSONValue): SshPublicKey {
-  return prt.readObj({
+function toSshPublicKey(root: jsonP.JSONValue): SshPublicKey {
+  return jsonP.readObj({
     required: {
       "DateImported": "d",
       "SshPublicKeyBody": "s",
@@ -866,17 +897,17 @@ export interface ListedServer {
   State?: State | null;
   UserCount?: number | null;
 }
-function toListedServer(root: JSONValue): ListedServer {
-  return prt.readObj({
+function toListedServer(root: jsonP.JSONValue): ListedServer {
+  return jsonP.readObj({
     required: {
       "Arn": "s",
     },
     optional: {
-      "IdentityProviderType": toIdentityProviderType,
-      "EndpointType": toEndpointType,
+      "IdentityProviderType": (x: jsonP.JSONValue) => cmnP.readEnum<IdentityProviderType>(x),
+      "EndpointType": (x: jsonP.JSONValue) => cmnP.readEnum<EndpointType>(x),
       "LoggingRole": "s",
       "ServerId": "s",
-      "State": toState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<State>(x),
       "UserCount": "n",
     },
   }, root);
@@ -891,14 +922,14 @@ export interface ListedUser {
   SshPublicKeyCount?: number | null;
   UserName?: string | null;
 }
-function toListedUser(root: JSONValue): ListedUser {
-  return prt.readObj({
+function toListedUser(root: jsonP.JSONValue): ListedUser {
+  return jsonP.readObj({
     required: {
       "Arn": "s",
     },
     optional: {
       "HomeDirectory": "s",
-      "HomeDirectoryType": toHomeDirectoryType,
+      "HomeDirectoryType": (x: jsonP.JSONValue) => cmnP.readEnum<HomeDirectoryType>(x),
       "Role": "s",
       "SshPublicKeyCount": "n",
       "UserName": "s",

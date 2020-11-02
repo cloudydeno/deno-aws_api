@@ -5,8 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 
 export default class CloudSearch {
   #client: ServiceClient;
@@ -35,7 +36,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "CreateDomain",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDomainResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDomainResult");
     return {
       DomainStatus: xml.first("DomainStatus", false, DomainStatus_Parse),
     };
@@ -52,7 +53,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DefineIndexField",
     });
-    const xml = readXmlResult(await resp.text(), "DefineIndexFieldResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DefineIndexFieldResult");
     return {
       IndexField: xml.first("IndexField", true, IndexFieldStatus_Parse),
     };
@@ -69,7 +70,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DefineRankExpression",
     });
-    const xml = readXmlResult(await resp.text(), "DefineRankExpressionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DefineRankExpressionResult");
     return {
       RankExpression: xml.first("RankExpression", true, RankExpressionStatus_Parse),
     };
@@ -85,7 +86,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DeleteDomain",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteDomainResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDomainResult");
     return {
       DomainStatus: xml.first("DomainStatus", false, DomainStatus_Parse),
     };
@@ -102,7 +103,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DeleteIndexField",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteIndexFieldResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteIndexFieldResult");
     return {
       IndexField: xml.first("IndexField", true, IndexFieldStatus_Parse),
     };
@@ -119,7 +120,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DeleteRankExpression",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteRankExpressionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteRankExpressionResult");
     return {
       RankExpression: xml.first("RankExpression", true, RankExpressionStatus_Parse),
     };
@@ -135,7 +136,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DescribeAvailabilityOptions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeAvailabilityOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeAvailabilityOptionsResult");
     return {
       AvailabilityOptions: xml.first("AvailabilityOptions", false, AvailabilityOptionsStatus_Parse),
     };
@@ -151,7 +152,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DescribeDefaultSearchField",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDefaultSearchFieldResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDefaultSearchFieldResult");
     return {
       DefaultSearchField: xml.first("DefaultSearchField", true, DefaultSearchFieldStatus_Parse),
     };
@@ -162,12 +163,12 @@ export default class CloudSearch {
   ): Promise<DescribeDomainsResponse> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["DomainNames"]) prt.appendList(body, prefix+"DomainNames", params["DomainNames"], {"entryPrefix":".member."})
+    if (params["DomainNames"]) qsP.appendList(body, prefix+"DomainNames", params["DomainNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDomains",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDomainsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDomainsResult");
     return {
       DomainStatusList: xml.getList("DomainStatusList", "member").map(DomainStatus_Parse),
     };
@@ -179,12 +180,12 @@ export default class CloudSearch {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DomainName", (params["DomainName"] ?? '').toString());
-    if (params["FieldNames"]) prt.appendList(body, prefix+"FieldNames", params["FieldNames"], {"entryPrefix":".member."})
+    if (params["FieldNames"]) qsP.appendList(body, prefix+"FieldNames", params["FieldNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeIndexFields",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeIndexFieldsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeIndexFieldsResult");
     return {
       IndexFields: xml.getList("IndexFields", "member").map(IndexFieldStatus_Parse),
     };
@@ -196,12 +197,12 @@ export default class CloudSearch {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DomainName", (params["DomainName"] ?? '').toString());
-    if (params["RankNames"]) prt.appendList(body, prefix+"RankNames", params["RankNames"], {"entryPrefix":".member."})
+    if (params["RankNames"]) qsP.appendList(body, prefix+"RankNames", params["RankNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRankExpressions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeRankExpressionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeRankExpressionsResult");
     return {
       RankExpressions: xml.getList("RankExpressions", "member").map(RankExpressionStatus_Parse),
     };
@@ -217,7 +218,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DescribeServiceAccessPolicies",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeServiceAccessPoliciesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeServiceAccessPoliciesResult");
     return {
       AccessPolicies: xml.first("AccessPolicies", true, AccessPoliciesStatus_Parse),
     };
@@ -233,7 +234,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DescribeStemmingOptions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeStemmingOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeStemmingOptionsResult");
     return {
       Stems: xml.first("Stems", true, StemmingOptionsStatus_Parse),
     };
@@ -249,7 +250,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DescribeStopwordOptions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeStopwordOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeStopwordOptionsResult");
     return {
       Stopwords: xml.first("Stopwords", true, StopwordOptionsStatus_Parse),
     };
@@ -265,7 +266,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "DescribeSynonymOptions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeSynonymOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeSynonymOptionsResult");
     return {
       Synonyms: xml.first("Synonyms", true, SynonymOptionsStatus_Parse),
     };
@@ -281,7 +282,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "IndexDocuments",
     });
-    const xml = readXmlResult(await resp.text(), "IndexDocumentsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "IndexDocumentsResult");
     return {
       FieldNames: xml.getList("FieldNames", "member").map(x => x.content ?? ''),
     };
@@ -298,7 +299,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "UpdateAvailabilityOptions",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateAvailabilityOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateAvailabilityOptionsResult");
     return {
       AvailabilityOptions: xml.first("AvailabilityOptions", false, AvailabilityOptionsStatus_Parse),
     };
@@ -315,7 +316,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "UpdateDefaultSearchField",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateDefaultSearchFieldResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateDefaultSearchFieldResult");
     return {
       DefaultSearchField: xml.first("DefaultSearchField", true, DefaultSearchFieldStatus_Parse),
     };
@@ -332,7 +333,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "UpdateServiceAccessPolicies",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateServiceAccessPoliciesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateServiceAccessPoliciesResult");
     return {
       AccessPolicies: xml.first("AccessPolicies", true, AccessPoliciesStatus_Parse),
     };
@@ -349,7 +350,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "UpdateStemmingOptions",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateStemmingOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateStemmingOptionsResult");
     return {
       Stems: xml.first("Stems", true, StemmingOptionsStatus_Parse),
     };
@@ -366,7 +367,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "UpdateStopwordOptions",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateStopwordOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateStopwordOptionsResult");
     return {
       Stopwords: xml.first("Stopwords", true, StopwordOptionsStatus_Parse),
     };
@@ -383,7 +384,7 @@ export default class CloudSearch {
       abortSignal, body,
       action: "UpdateSynonymOptions",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateSynonymOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateSynonymOptionsResult");
     return {
       Synonyms: xml.first("Synonyms", true, SynonymOptionsStatus_Parse),
     };
@@ -638,9 +639,9 @@ function IndexField_Serialize(body: URLSearchParams, prefix: string, params: Ind
     if (params["UIntOptions"] != null) UIntOptions_Serialize(body, prefix+".UIntOptions", params["UIntOptions"]);
     if (params["LiteralOptions"] != null) LiteralOptions_Serialize(body, prefix+".LiteralOptions", params["LiteralOptions"]);
     if (params["TextOptions"] != null) TextOptions_Serialize(body, prefix+".TextOptions", params["TextOptions"]);
-    if (params["SourceAttributes"]) prt.appendList(body, prefix+".SourceAttributes", params["SourceAttributes"], {"appender":SourceAttribute_Serialize,"entryPrefix":".member."})
+    if (params["SourceAttributes"]) qsP.appendList(body, prefix+".SourceAttributes", params["SourceAttributes"], {"appender":SourceAttribute_Serialize,"entryPrefix":".member."})
 }
-function IndexField_Parse(node: XmlNode): IndexField {
+function IndexField_Parse(node: xmlP.XmlNode): IndexField {
   return {
     ...node.strings({
       required: {"IndexFieldName":true},
@@ -658,9 +659,7 @@ export type IndexFieldType =
 | "uint"
 | "literal"
 | "text"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface UIntOptions {
@@ -669,7 +668,7 @@ export interface UIntOptions {
 function UIntOptions_Serialize(body: URLSearchParams, prefix: string, params: UIntOptions) {
     if ("DefaultValue" in params) body.append(prefix+".DefaultValue", (params["DefaultValue"] ?? '').toString());
 }
-function UIntOptions_Parse(node: XmlNode): UIntOptions {
+function UIntOptions_Parse(node: xmlP.XmlNode): UIntOptions {
   return {
     DefaultValue: node.first("DefaultValue", false, x => parseInt(x.content ?? '0')),
   };
@@ -688,7 +687,7 @@ function LiteralOptions_Serialize(body: URLSearchParams, prefix: string, params:
     if ("FacetEnabled" in params) body.append(prefix+".FacetEnabled", (params["FacetEnabled"] ?? '').toString());
     if ("ResultEnabled" in params) body.append(prefix+".ResultEnabled", (params["ResultEnabled"] ?? '').toString());
 }
-function LiteralOptions_Parse(node: XmlNode): LiteralOptions {
+function LiteralOptions_Parse(node: xmlP.XmlNode): LiteralOptions {
   return {
     ...node.strings({
       optional: {"DefaultValue":true},
@@ -712,7 +711,7 @@ function TextOptions_Serialize(body: URLSearchParams, prefix: string, params: Te
     if ("ResultEnabled" in params) body.append(prefix+".ResultEnabled", (params["ResultEnabled"] ?? '').toString());
     if ("TextProcessor" in params) body.append(prefix+".TextProcessor", (params["TextProcessor"] ?? '').toString());
 }
-function TextOptions_Parse(node: XmlNode): TextOptions {
+function TextOptions_Parse(node: xmlP.XmlNode): TextOptions {
   return {
     ...node.strings({
       optional: {"DefaultValue":true,"TextProcessor":true},
@@ -735,7 +734,7 @@ function SourceAttribute_Serialize(body: URLSearchParams, prefix: string, params
     if (params["SourceDataTrimTitle"] != null) SourceDataTrimTitle_Serialize(body, prefix+".SourceDataTrimTitle", params["SourceDataTrimTitle"]);
     if (params["SourceDataMap"] != null) SourceDataMap_Serialize(body, prefix+".SourceDataMap", params["SourceDataMap"]);
 }
-function SourceAttribute_Parse(node: XmlNode): SourceAttribute {
+function SourceAttribute_Parse(node: xmlP.XmlNode): SourceAttribute {
   return {
     SourceDataFunction: node.first("SourceDataFunction", true, x => (x.content ?? '') as SourceDataFunction),
     SourceDataCopy: node.first("SourceDataCopy", false, SourceData_Parse),
@@ -749,9 +748,7 @@ export type SourceDataFunction =
 | "Copy"
 | "TrimTitle"
 | "Map"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface SourceData {
@@ -762,7 +759,7 @@ function SourceData_Serialize(body: URLSearchParams, prefix: string, params: Sou
     body.append(prefix+".SourceName", (params["SourceName"] ?? '').toString());
     if ("DefaultValue" in params) body.append(prefix+".DefaultValue", (params["DefaultValue"] ?? '').toString());
 }
-function SourceData_Parse(node: XmlNode): SourceData {
+function SourceData_Parse(node: xmlP.XmlNode): SourceData {
   return node.strings({
     required: {"SourceName":true},
     optional: {"DefaultValue":true},
@@ -782,7 +779,7 @@ function SourceDataTrimTitle_Serialize(body: URLSearchParams, prefix: string, pa
     if ("Separator" in params) body.append(prefix+".Separator", (params["Separator"] ?? '').toString());
     if ("Language" in params) body.append(prefix+".Language", (params["Language"] ?? '').toString());
 }
-function SourceDataTrimTitle_Parse(node: XmlNode): SourceDataTrimTitle {
+function SourceDataTrimTitle_Parse(node: xmlP.XmlNode): SourceDataTrimTitle {
   return node.strings({
     required: {"SourceName":true},
     optional: {"DefaultValue":true,"Separator":true,"Language":true},
@@ -793,20 +790,20 @@ function SourceDataTrimTitle_Parse(node: XmlNode): SourceDataTrimTitle {
 export interface SourceDataMap {
   SourceName: string;
   DefaultValue?: string | null;
-  Cases: { [key: string]: string };
+  Cases: { [key: string]: string | null | undefined };
 }
 function SourceDataMap_Serialize(body: URLSearchParams, prefix: string, params: SourceDataMap) {
     body.append(prefix+".SourceName", (params["SourceName"] ?? '').toString());
     if ("DefaultValue" in params) body.append(prefix+".DefaultValue", (params["DefaultValue"] ?? '').toString());
-    if (params["Cases"]) prt.appendMap(body, prefix+".Cases", params["Cases"], {"entryPrefix":".entry."})
+    if (params["Cases"]) qsP.appendMap(body, prefix+".Cases", params["Cases"], {"entryPrefix":".entry."})
 }
-function SourceDataMap_Parse(node: XmlNode): SourceDataMap {
+function SourceDataMap_Parse(node: xmlP.XmlNode): SourceDataMap {
   return {
     ...node.strings({
       required: {"SourceName":true},
       optional: {"DefaultValue":true},
     }),
-    Cases: readXmlMap(node.getList("Cases", "entry"), x => x.content ?? '', {}),
+    Cases: xmlP.readXmlMap(node.getList("Cases", "entry"), x => x.content ?? '', {}),
   };
 }
 
@@ -819,7 +816,7 @@ function NamedRankExpression_Serialize(body: URLSearchParams, prefix: string, pa
     body.append(prefix+".RankName", (params["RankName"] ?? '').toString());
     body.append(prefix+".RankExpression", (params["RankExpression"] ?? '').toString());
 }
-function NamedRankExpression_Parse(node: XmlNode): NamedRankExpression {
+function NamedRankExpression_Parse(node: xmlP.XmlNode): NamedRankExpression {
   return node.strings({
     required: {"RankName":true,"RankExpression":true},
   });
@@ -840,7 +837,7 @@ export interface DomainStatus {
   SearchPartitionCount?: number | null;
   SearchInstanceCount?: number | null;
 }
-function DomainStatus_Parse(node: XmlNode): DomainStatus {
+function DomainStatus_Parse(node: xmlP.XmlNode): DomainStatus {
   return {
     ...node.strings({
       required: {"DomainId":true,"DomainName":true},
@@ -863,7 +860,7 @@ export interface ServiceEndpoint {
   Arn?: string | null;
   Endpoint?: string | null;
 }
-function ServiceEndpoint_Parse(node: XmlNode): ServiceEndpoint {
+function ServiceEndpoint_Parse(node: xmlP.XmlNode): ServiceEndpoint {
   return node.strings({
     optional: {"Arn":true,"Endpoint":true},
   });
@@ -874,7 +871,7 @@ export interface IndexFieldStatus {
   Options: IndexField;
   Status: OptionStatus;
 }
-function IndexFieldStatus_Parse(node: XmlNode): IndexFieldStatus {
+function IndexFieldStatus_Parse(node: xmlP.XmlNode): IndexFieldStatus {
   return {
     Options: node.first("Options", true, IndexField_Parse),
     Status: node.first("Status", true, OptionStatus_Parse),
@@ -889,10 +886,10 @@ export interface OptionStatus {
   State: OptionState;
   PendingDeletion?: boolean | null;
 }
-function OptionStatus_Parse(node: XmlNode): OptionStatus {
+function OptionStatus_Parse(node: xmlP.XmlNode): OptionStatus {
   return {
-    CreationDate: node.first("CreationDate", true, x => parseTimestamp(x.content)),
-    UpdateDate: node.first("UpdateDate", true, x => parseTimestamp(x.content)),
+    CreationDate: node.first("CreationDate", true, x => xmlP.parseTimestamp(x.content)),
+    UpdateDate: node.first("UpdateDate", true, x => xmlP.parseTimestamp(x.content)),
     UpdateVersion: node.first("UpdateVersion", false, x => parseInt(x.content ?? '0')),
     State: node.first("State", true, x => (x.content ?? '') as OptionState),
     PendingDeletion: node.first("PendingDeletion", false, x => x.content === 'true'),
@@ -904,15 +901,14 @@ export type OptionState =
 | "RequiresIndexDocuments"
 | "Processing"
 | "Active"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface RankExpressionStatus {
   Options: NamedRankExpression;
   Status: OptionStatus;
 }
-function RankExpressionStatus_Parse(node: XmlNode): RankExpressionStatus {
+function RankExpressionStatus_Parse(node: xmlP.XmlNode): RankExpressionStatus {
   return {
     Options: node.first("Options", true, NamedRankExpression_Parse),
     Status: node.first("Status", true, OptionStatus_Parse),
@@ -924,7 +920,7 @@ export interface AvailabilityOptionsStatus {
   Options: boolean;
   Status: OptionStatus;
 }
-function AvailabilityOptionsStatus_Parse(node: XmlNode): AvailabilityOptionsStatus {
+function AvailabilityOptionsStatus_Parse(node: xmlP.XmlNode): AvailabilityOptionsStatus {
   return {
     Options: node.first("Options", true, x => x.content === 'true'),
     Status: node.first("Status", true, OptionStatus_Parse),
@@ -936,7 +932,7 @@ export interface DefaultSearchFieldStatus {
   Options: string;
   Status: OptionStatus;
 }
-function DefaultSearchFieldStatus_Parse(node: XmlNode): DefaultSearchFieldStatus {
+function DefaultSearchFieldStatus_Parse(node: xmlP.XmlNode): DefaultSearchFieldStatus {
   return {
     ...node.strings({
       required: {"Options":true},
@@ -950,7 +946,7 @@ export interface AccessPoliciesStatus {
   Options: string;
   Status: OptionStatus;
 }
-function AccessPoliciesStatus_Parse(node: XmlNode): AccessPoliciesStatus {
+function AccessPoliciesStatus_Parse(node: xmlP.XmlNode): AccessPoliciesStatus {
   return {
     ...node.strings({
       required: {"Options":true},
@@ -964,7 +960,7 @@ export interface StemmingOptionsStatus {
   Options: string;
   Status: OptionStatus;
 }
-function StemmingOptionsStatus_Parse(node: XmlNode): StemmingOptionsStatus {
+function StemmingOptionsStatus_Parse(node: xmlP.XmlNode): StemmingOptionsStatus {
   return {
     ...node.strings({
       required: {"Options":true},
@@ -978,7 +974,7 @@ export interface StopwordOptionsStatus {
   Options: string;
   Status: OptionStatus;
 }
-function StopwordOptionsStatus_Parse(node: XmlNode): StopwordOptionsStatus {
+function StopwordOptionsStatus_Parse(node: xmlP.XmlNode): StopwordOptionsStatus {
   return {
     ...node.strings({
       required: {"Options":true},
@@ -992,7 +988,7 @@ export interface SynonymOptionsStatus {
   Options: string;
   Status: OptionStatus;
 }
-function SynonymOptionsStatus_Parse(node: XmlNode): SynonymOptionsStatus {
+function SynonymOptionsStatus_Parse(node: xmlP.XmlNode): SynonymOptionsStatus {
   return {
     ...node.strings({
       required: {"Options":true},

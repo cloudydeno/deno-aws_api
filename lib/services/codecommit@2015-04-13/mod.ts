@@ -5,10 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }
@@ -35,8 +34,10 @@ export default class CodeCommit {
   async associateApprovalRuleTemplateWithRepository(
     {abortSignal, ...params}: RequestConfig & AssociateApprovalRuleTemplateWithRepositoryInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      approvalRuleTemplateName: params["approvalRuleTemplateName"],
+      repositoryName: params["repositoryName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateApprovalRuleTemplateWithRepository",
@@ -46,13 +47,15 @@ export default class CodeCommit {
   async batchAssociateApprovalRuleTemplateWithRepositories(
     {abortSignal, ...params}: RequestConfig & BatchAssociateApprovalRuleTemplateWithRepositoriesInput,
   ): Promise<BatchAssociateApprovalRuleTemplateWithRepositoriesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      approvalRuleTemplateName: params["approvalRuleTemplateName"],
+      repositoryNames: params["repositoryNames"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchAssociateApprovalRuleTemplateWithRepositories",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "associatedRepositoryNames": ["s"],
         "errors": [toBatchAssociateApprovalRuleTemplateWithRepositoriesError],
@@ -64,13 +67,23 @@ export default class CodeCommit {
   async batchDescribeMergeConflicts(
     {abortSignal, ...params}: RequestConfig & BatchDescribeMergeConflictsInput,
   ): Promise<BatchDescribeMergeConflictsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      destinationCommitSpecifier: params["destinationCommitSpecifier"],
+      sourceCommitSpecifier: params["sourceCommitSpecifier"],
+      mergeOption: params["mergeOption"],
+      maxMergeHunks: params["maxMergeHunks"],
+      maxConflictFiles: params["maxConflictFiles"],
+      filePaths: params["filePaths"],
+      conflictDetailLevel: params["conflictDetailLevel"],
+      conflictResolutionStrategy: params["conflictResolutionStrategy"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDescribeMergeConflicts",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "conflicts": [toConflict],
         "destinationCommitId": "s",
@@ -87,13 +100,15 @@ export default class CodeCommit {
   async batchDisassociateApprovalRuleTemplateFromRepositories(
     {abortSignal, ...params}: RequestConfig & BatchDisassociateApprovalRuleTemplateFromRepositoriesInput,
   ): Promise<BatchDisassociateApprovalRuleTemplateFromRepositoriesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      approvalRuleTemplateName: params["approvalRuleTemplateName"],
+      repositoryNames: params["repositoryNames"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDisassociateApprovalRuleTemplateFromRepositories",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "disassociatedRepositoryNames": ["s"],
         "errors": [toBatchDisassociateApprovalRuleTemplateFromRepositoriesError],
@@ -105,13 +120,15 @@ export default class CodeCommit {
   async batchGetCommits(
     {abortSignal, ...params}: RequestConfig & BatchGetCommitsInput,
   ): Promise<BatchGetCommitsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      commitIds: params["commitIds"],
+      repositoryName: params["repositoryName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetCommits",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "commits": [toCommit],
@@ -123,13 +140,14 @@ export default class CodeCommit {
   async batchGetRepositories(
     {abortSignal, ...params}: RequestConfig & BatchGetRepositoriesInput,
   ): Promise<BatchGetRepositoriesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryNames: params["repositoryNames"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetRepositories",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "repositories": [toRepositoryMetadata],
@@ -141,13 +159,16 @@ export default class CodeCommit {
   async createApprovalRuleTemplate(
     {abortSignal, ...params}: RequestConfig & CreateApprovalRuleTemplateInput,
   ): Promise<CreateApprovalRuleTemplateOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      approvalRuleTemplateName: params["approvalRuleTemplateName"],
+      approvalRuleTemplateContent: params["approvalRuleTemplateContent"],
+      approvalRuleTemplateDescription: params["approvalRuleTemplateDescription"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApprovalRuleTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "approvalRuleTemplate": toApprovalRuleTemplate,
       },
@@ -158,8 +179,11 @@ export default class CodeCommit {
   async createBranch(
     {abortSignal, ...params}: RequestConfig & CreateBranchInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      branchName: params["branchName"],
+      commitId: params["commitId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBranch",
@@ -169,16 +193,23 @@ export default class CodeCommit {
   async createCommit(
     {abortSignal, ...params}: RequestConfig & CreateCommitInput,
   ): Promise<CreateCommitOutput> {
-    const body: JSONObject = {...params,
-    putFiles: params["putFiles"]?.map(x => fromPutFileEntry(x)),
-    deleteFiles: params["deleteFiles"]?.map(x => fromDeleteFileEntry(x)),
-    setFileModes: params["setFileModes"]?.map(x => fromSetFileModeEntry(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      branchName: params["branchName"],
+      parentCommitId: params["parentCommitId"],
+      authorName: params["authorName"],
+      email: params["email"],
+      commitMessage: params["commitMessage"],
+      keepEmptyFolders: params["keepEmptyFolders"],
+      putFiles: params["putFiles"]?.map(x => fromPutFileEntry(x)),
+      deleteFiles: params["deleteFiles"]?.map(x => fromDeleteFileEntry(x)),
+      setFileModes: params["setFileModes"]?.map(x => fromSetFileModeEntry(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCommit",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "commitId": "s",
@@ -193,15 +224,17 @@ export default class CodeCommit {
   async createPullRequest(
     {abortSignal, ...params}: RequestConfig & CreatePullRequestInput,
   ): Promise<CreatePullRequestOutput> {
-    const body: JSONObject = {...params,
-    targets: params["targets"]?.map(x => fromTarget(x)),
-    clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      title: params["title"],
+      description: params["description"],
+      targets: params["targets"]?.map(x => fromTarget(x)),
+      clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePullRequest",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "pullRequest": toPullRequest,
       },
@@ -212,13 +245,16 @@ export default class CodeCommit {
   async createPullRequestApprovalRule(
     {abortSignal, ...params}: RequestConfig & CreatePullRequestApprovalRuleInput,
   ): Promise<CreatePullRequestApprovalRuleOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pullRequestId: params["pullRequestId"],
+      approvalRuleName: params["approvalRuleName"],
+      approvalRuleContent: params["approvalRuleContent"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePullRequestApprovalRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "approvalRule": toApprovalRule,
       },
@@ -229,13 +265,16 @@ export default class CodeCommit {
   async createRepository(
     {abortSignal, ...params}: RequestConfig & CreateRepositoryInput,
   ): Promise<CreateRepositoryOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      repositoryDescription: params["repositoryDescription"],
+      tags: params["tags"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRepository",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "repositoryMetadata": toRepositoryMetadata,
@@ -246,14 +285,24 @@ export default class CodeCommit {
   async createUnreferencedMergeCommit(
     {abortSignal, ...params}: RequestConfig & CreateUnreferencedMergeCommitInput,
   ): Promise<CreateUnreferencedMergeCommitOutput> {
-    const body: JSONObject = {...params,
-    conflictResolution: fromConflictResolution(params["conflictResolution"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      sourceCommitSpecifier: params["sourceCommitSpecifier"],
+      destinationCommitSpecifier: params["destinationCommitSpecifier"],
+      mergeOption: params["mergeOption"],
+      conflictDetailLevel: params["conflictDetailLevel"],
+      conflictResolutionStrategy: params["conflictResolutionStrategy"],
+      authorName: params["authorName"],
+      email: params["email"],
+      commitMessage: params["commitMessage"],
+      keepEmptyFolders: params["keepEmptyFolders"],
+      conflictResolution: fromConflictResolution(params["conflictResolution"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUnreferencedMergeCommit",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "commitId": "s",
@@ -265,13 +314,14 @@ export default class CodeCommit {
   async deleteApprovalRuleTemplate(
     {abortSignal, ...params}: RequestConfig & DeleteApprovalRuleTemplateInput,
   ): Promise<DeleteApprovalRuleTemplateOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      approvalRuleTemplateName: params["approvalRuleTemplateName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteApprovalRuleTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "approvalRuleTemplateId": "s",
       },
@@ -282,13 +332,15 @@ export default class CodeCommit {
   async deleteBranch(
     {abortSignal, ...params}: RequestConfig & DeleteBranchInput,
   ): Promise<DeleteBranchOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      branchName: params["branchName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBranch",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "deletedBranch": toBranchInfo,
@@ -299,13 +351,14 @@ export default class CodeCommit {
   async deleteCommentContent(
     {abortSignal, ...params}: RequestConfig & DeleteCommentContentInput,
   ): Promise<DeleteCommentContentOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      commentId: params["commentId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCommentContent",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "comment": toComment,
@@ -316,13 +369,21 @@ export default class CodeCommit {
   async deleteFile(
     {abortSignal, ...params}: RequestConfig & DeleteFileInput,
   ): Promise<DeleteFileOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      branchName: params["branchName"],
+      filePath: params["filePath"],
+      parentCommitId: params["parentCommitId"],
+      keepEmptyFolders: params["keepEmptyFolders"],
+      commitMessage: params["commitMessage"],
+      name: params["name"],
+      email: params["email"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFile",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "commitId": "s",
         "blobId": "s",
@@ -336,13 +397,15 @@ export default class CodeCommit {
   async deletePullRequestApprovalRule(
     {abortSignal, ...params}: RequestConfig & DeletePullRequestApprovalRuleInput,
   ): Promise<DeletePullRequestApprovalRuleOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pullRequestId: params["pullRequestId"],
+      approvalRuleName: params["approvalRuleName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePullRequestApprovalRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "approvalRuleId": "s",
       },
@@ -353,13 +416,14 @@ export default class CodeCommit {
   async deleteRepository(
     {abortSignal, ...params}: RequestConfig & DeleteRepositoryInput,
   ): Promise<DeleteRepositoryOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRepository",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "repositoryId": "s",
@@ -370,13 +434,22 @@ export default class CodeCommit {
   async describeMergeConflicts(
     {abortSignal, ...params}: RequestConfig & DescribeMergeConflictsInput,
   ): Promise<DescribeMergeConflictsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      destinationCommitSpecifier: params["destinationCommitSpecifier"],
+      sourceCommitSpecifier: params["sourceCommitSpecifier"],
+      mergeOption: params["mergeOption"],
+      maxMergeHunks: params["maxMergeHunks"],
+      filePath: params["filePath"],
+      conflictDetailLevel: params["conflictDetailLevel"],
+      conflictResolutionStrategy: params["conflictResolutionStrategy"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMergeConflicts",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "conflictMetadata": toConflictMetadata,
         "mergeHunks": [toMergeHunk],
@@ -393,13 +466,18 @@ export default class CodeCommit {
   async describePullRequestEvents(
     {abortSignal, ...params}: RequestConfig & DescribePullRequestEventsInput,
   ): Promise<DescribePullRequestEventsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pullRequestId: params["pullRequestId"],
+      pullRequestEventType: params["pullRequestEventType"],
+      actorArn: params["actorArn"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePullRequestEvents",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "pullRequestEvents": [toPullRequestEvent],
       },
@@ -412,8 +490,10 @@ export default class CodeCommit {
   async disassociateApprovalRuleTemplateFromRepository(
     {abortSignal, ...params}: RequestConfig & DisassociateApprovalRuleTemplateFromRepositoryInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      approvalRuleTemplateName: params["approvalRuleTemplateName"],
+      repositoryName: params["repositoryName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateApprovalRuleTemplateFromRepository",
@@ -423,13 +503,15 @@ export default class CodeCommit {
   async evaluatePullRequestApprovalRules(
     {abortSignal, ...params}: RequestConfig & EvaluatePullRequestApprovalRulesInput,
   ): Promise<EvaluatePullRequestApprovalRulesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pullRequestId: params["pullRequestId"],
+      revisionId: params["revisionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EvaluatePullRequestApprovalRules",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "evaluation": toEvaluation,
       },
@@ -440,13 +522,14 @@ export default class CodeCommit {
   async getApprovalRuleTemplate(
     {abortSignal, ...params}: RequestConfig & GetApprovalRuleTemplateInput,
   ): Promise<GetApprovalRuleTemplateOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      approvalRuleTemplateName: params["approvalRuleTemplateName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetApprovalRuleTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "approvalRuleTemplate": toApprovalRuleTemplate,
       },
@@ -457,13 +540,15 @@ export default class CodeCommit {
   async getBlob(
     {abortSignal, ...params}: RequestConfig & GetBlobInput,
   ): Promise<GetBlobOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      blobId: params["blobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetBlob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "content": "a",
       },
@@ -474,13 +559,15 @@ export default class CodeCommit {
   async getBranch(
     {abortSignal, ...params}: RequestConfig & GetBranchInput = {},
   ): Promise<GetBranchOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      branchName: params["branchName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetBranch",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "branch": toBranchInfo,
@@ -491,13 +578,14 @@ export default class CodeCommit {
   async getComment(
     {abortSignal, ...params}: RequestConfig & GetCommentInput,
   ): Promise<GetCommentOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      commentId: params["commentId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetComment",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "comment": toComment,
@@ -508,13 +596,17 @@ export default class CodeCommit {
   async getCommentReactions(
     {abortSignal, ...params}: RequestConfig & GetCommentReactionsInput,
   ): Promise<GetCommentReactionsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      commentId: params["commentId"],
+      reactionUserArn: params["reactionUserArn"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCommentReactions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "reactionsForComment": [toReactionForComment],
       },
@@ -527,13 +619,18 @@ export default class CodeCommit {
   async getCommentsForComparedCommit(
     {abortSignal, ...params}: RequestConfig & GetCommentsForComparedCommitInput,
   ): Promise<GetCommentsForComparedCommitOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      beforeCommitId: params["beforeCommitId"],
+      afterCommitId: params["afterCommitId"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCommentsForComparedCommit",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "commentsForComparedCommitData": [toCommentsForComparedCommit],
@@ -545,13 +642,19 @@ export default class CodeCommit {
   async getCommentsForPullRequest(
     {abortSignal, ...params}: RequestConfig & GetCommentsForPullRequestInput,
   ): Promise<GetCommentsForPullRequestOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pullRequestId: params["pullRequestId"],
+      repositoryName: params["repositoryName"],
+      beforeCommitId: params["beforeCommitId"],
+      afterCommitId: params["afterCommitId"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCommentsForPullRequest",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "commentsForPullRequestData": [toCommentsForPullRequest],
@@ -563,13 +666,15 @@ export default class CodeCommit {
   async getCommit(
     {abortSignal, ...params}: RequestConfig & GetCommitInput,
   ): Promise<GetCommitOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      commitId: params["commitId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCommit",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "commit": toCommit,
       },
@@ -580,13 +685,20 @@ export default class CodeCommit {
   async getDifferences(
     {abortSignal, ...params}: RequestConfig & GetDifferencesInput,
   ): Promise<GetDifferencesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      beforeCommitSpecifier: params["beforeCommitSpecifier"],
+      afterCommitSpecifier: params["afterCommitSpecifier"],
+      beforePath: params["beforePath"],
+      afterPath: params["afterPath"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDifferences",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "differences": [toDifference],
@@ -598,18 +710,21 @@ export default class CodeCommit {
   async getFile(
     {abortSignal, ...params}: RequestConfig & GetFileInput,
   ): Promise<GetFileOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      commitSpecifier: params["commitSpecifier"],
+      filePath: params["filePath"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetFile",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "commitId": "s",
         "blobId": "s",
         "filePath": "s",
-        "fileMode": toFileModeTypeEnum,
+        "fileMode": (x: jsonP.JSONValue) => cmnP.readEnum<FileModeTypeEnum>(x),
         "fileSize": "n",
         "fileContent": "a",
       },
@@ -620,13 +735,16 @@ export default class CodeCommit {
   async getFolder(
     {abortSignal, ...params}: RequestConfig & GetFolderInput,
   ): Promise<GetFolderOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      commitSpecifier: params["commitSpecifier"],
+      folderPath: params["folderPath"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetFolder",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "commitId": "s",
         "folderPath": "s",
@@ -644,13 +762,18 @@ export default class CodeCommit {
   async getMergeCommit(
     {abortSignal, ...params}: RequestConfig & GetMergeCommitInput,
   ): Promise<GetMergeCommitOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      sourceCommitSpecifier: params["sourceCommitSpecifier"],
+      destinationCommitSpecifier: params["destinationCommitSpecifier"],
+      conflictDetailLevel: params["conflictDetailLevel"],
+      conflictResolutionStrategy: params["conflictResolutionStrategy"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMergeCommit",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "sourceCommitId": "s",
@@ -664,13 +787,21 @@ export default class CodeCommit {
   async getMergeConflicts(
     {abortSignal, ...params}: RequestConfig & GetMergeConflictsInput,
   ): Promise<GetMergeConflictsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      destinationCommitSpecifier: params["destinationCommitSpecifier"],
+      sourceCommitSpecifier: params["sourceCommitSpecifier"],
+      mergeOption: params["mergeOption"],
+      conflictDetailLevel: params["conflictDetailLevel"],
+      maxConflictFiles: params["maxConflictFiles"],
+      conflictResolutionStrategy: params["conflictResolutionStrategy"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMergeConflicts",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "mergeable": "b",
         "destinationCommitId": "s",
@@ -687,15 +818,20 @@ export default class CodeCommit {
   async getMergeOptions(
     {abortSignal, ...params}: RequestConfig & GetMergeOptionsInput,
   ): Promise<GetMergeOptionsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      sourceCommitSpecifier: params["sourceCommitSpecifier"],
+      destinationCommitSpecifier: params["destinationCommitSpecifier"],
+      conflictDetailLevel: params["conflictDetailLevel"],
+      conflictResolutionStrategy: params["conflictResolutionStrategy"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMergeOptions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
-        "mergeOptions": [toMergeOptionTypeEnum],
+        "mergeOptions": [(x: jsonP.JSONValue) => cmnP.readEnum<MergeOptionTypeEnum>(x)],
         "sourceCommitId": "s",
         "destinationCommitId": "s",
         "baseCommitId": "s",
@@ -707,13 +843,14 @@ export default class CodeCommit {
   async getPullRequest(
     {abortSignal, ...params}: RequestConfig & GetPullRequestInput,
   ): Promise<GetPullRequestOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pullRequestId: params["pullRequestId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPullRequest",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "pullRequest": toPullRequest,
       },
@@ -724,13 +861,15 @@ export default class CodeCommit {
   async getPullRequestApprovalStates(
     {abortSignal, ...params}: RequestConfig & GetPullRequestApprovalStatesInput,
   ): Promise<GetPullRequestApprovalStatesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pullRequestId: params["pullRequestId"],
+      revisionId: params["revisionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPullRequestApprovalStates",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "approvals": [toApproval],
@@ -741,13 +880,15 @@ export default class CodeCommit {
   async getPullRequestOverrideState(
     {abortSignal, ...params}: RequestConfig & GetPullRequestOverrideStateInput,
   ): Promise<GetPullRequestOverrideStateOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pullRequestId: params["pullRequestId"],
+      revisionId: params["revisionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPullRequestOverrideState",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "overridden": "b",
@@ -759,13 +900,14 @@ export default class CodeCommit {
   async getRepository(
     {abortSignal, ...params}: RequestConfig & GetRepositoryInput,
   ): Promise<GetRepositoryOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRepository",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "repositoryMetadata": toRepositoryMetadata,
@@ -776,13 +918,14 @@ export default class CodeCommit {
   async getRepositoryTriggers(
     {abortSignal, ...params}: RequestConfig & GetRepositoryTriggersInput,
   ): Promise<GetRepositoryTriggersOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRepositoryTriggers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "configurationId": "s",
@@ -794,13 +937,15 @@ export default class CodeCommit {
   async listApprovalRuleTemplates(
     {abortSignal, ...params}: RequestConfig & ListApprovalRuleTemplatesInput = {},
   ): Promise<ListApprovalRuleTemplatesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListApprovalRuleTemplates",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "approvalRuleTemplateNames": ["s"],
@@ -812,13 +957,16 @@ export default class CodeCommit {
   async listAssociatedApprovalRuleTemplatesForRepository(
     {abortSignal, ...params}: RequestConfig & ListAssociatedApprovalRuleTemplatesForRepositoryInput,
   ): Promise<ListAssociatedApprovalRuleTemplatesForRepositoryOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAssociatedApprovalRuleTemplatesForRepository",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "approvalRuleTemplateNames": ["s"],
@@ -830,13 +978,15 @@ export default class CodeCommit {
   async listBranches(
     {abortSignal, ...params}: RequestConfig & ListBranchesInput,
   ): Promise<ListBranchesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListBranches",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "branches": ["s"],
@@ -848,13 +998,18 @@ export default class CodeCommit {
   async listPullRequests(
     {abortSignal, ...params}: RequestConfig & ListPullRequestsInput,
   ): Promise<ListPullRequestsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      authorArn: params["authorArn"],
+      pullRequestStatus: params["pullRequestStatus"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPullRequests",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "pullRequestIds": ["s"],
       },
@@ -867,13 +1022,16 @@ export default class CodeCommit {
   async listRepositories(
     {abortSignal, ...params}: RequestConfig & ListRepositoriesInput = {},
   ): Promise<ListRepositoriesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      nextToken: params["nextToken"],
+      sortBy: params["sortBy"],
+      order: params["order"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRepositories",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "repositories": [toRepositoryNameIdPair],
@@ -885,13 +1043,16 @@ export default class CodeCommit {
   async listRepositoriesForApprovalRuleTemplate(
     {abortSignal, ...params}: RequestConfig & ListRepositoriesForApprovalRuleTemplateInput,
   ): Promise<ListRepositoriesForApprovalRuleTemplateOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      approvalRuleTemplateName: params["approvalRuleTemplateName"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRepositoriesForApprovalRuleTemplate",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "repositoryNames": ["s"],
@@ -903,16 +1064,18 @@ export default class CodeCommit {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceInput,
   ): Promise<ListTagsForResourceOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceArn: params["resourceArn"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "tags": x => prt.readMap(String, String, x),
+        "tags": x => jsonP.readMap(String, String, x),
         "nextToken": "s",
       },
     }, await resp.json());
@@ -921,13 +1084,17 @@ export default class CodeCommit {
   async mergeBranchesByFastForward(
     {abortSignal, ...params}: RequestConfig & MergeBranchesByFastForwardInput,
   ): Promise<MergeBranchesByFastForwardOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      sourceCommitSpecifier: params["sourceCommitSpecifier"],
+      destinationCommitSpecifier: params["destinationCommitSpecifier"],
+      targetBranch: params["targetBranch"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MergeBranchesByFastForward",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "commitId": "s",
@@ -939,14 +1106,24 @@ export default class CodeCommit {
   async mergeBranchesBySquash(
     {abortSignal, ...params}: RequestConfig & MergeBranchesBySquashInput,
   ): Promise<MergeBranchesBySquashOutput> {
-    const body: JSONObject = {...params,
-    conflictResolution: fromConflictResolution(params["conflictResolution"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      sourceCommitSpecifier: params["sourceCommitSpecifier"],
+      destinationCommitSpecifier: params["destinationCommitSpecifier"],
+      targetBranch: params["targetBranch"],
+      conflictDetailLevel: params["conflictDetailLevel"],
+      conflictResolutionStrategy: params["conflictResolutionStrategy"],
+      authorName: params["authorName"],
+      email: params["email"],
+      commitMessage: params["commitMessage"],
+      keepEmptyFolders: params["keepEmptyFolders"],
+      conflictResolution: fromConflictResolution(params["conflictResolution"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MergeBranchesBySquash",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "commitId": "s",
@@ -958,14 +1135,24 @@ export default class CodeCommit {
   async mergeBranchesByThreeWay(
     {abortSignal, ...params}: RequestConfig & MergeBranchesByThreeWayInput,
   ): Promise<MergeBranchesByThreeWayOutput> {
-    const body: JSONObject = {...params,
-    conflictResolution: fromConflictResolution(params["conflictResolution"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      sourceCommitSpecifier: params["sourceCommitSpecifier"],
+      destinationCommitSpecifier: params["destinationCommitSpecifier"],
+      targetBranch: params["targetBranch"],
+      conflictDetailLevel: params["conflictDetailLevel"],
+      conflictResolutionStrategy: params["conflictResolutionStrategy"],
+      authorName: params["authorName"],
+      email: params["email"],
+      commitMessage: params["commitMessage"],
+      keepEmptyFolders: params["keepEmptyFolders"],
+      conflictResolution: fromConflictResolution(params["conflictResolution"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MergeBranchesByThreeWay",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "commitId": "s",
@@ -977,13 +1164,16 @@ export default class CodeCommit {
   async mergePullRequestByFastForward(
     {abortSignal, ...params}: RequestConfig & MergePullRequestByFastForwardInput,
   ): Promise<MergePullRequestByFastForwardOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pullRequestId: params["pullRequestId"],
+      repositoryName: params["repositoryName"],
+      sourceCommitId: params["sourceCommitId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MergePullRequestByFastForward",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "pullRequest": toPullRequest,
@@ -994,14 +1184,23 @@ export default class CodeCommit {
   async mergePullRequestBySquash(
     {abortSignal, ...params}: RequestConfig & MergePullRequestBySquashInput,
   ): Promise<MergePullRequestBySquashOutput> {
-    const body: JSONObject = {...params,
-    conflictResolution: fromConflictResolution(params["conflictResolution"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      pullRequestId: params["pullRequestId"],
+      repositoryName: params["repositoryName"],
+      sourceCommitId: params["sourceCommitId"],
+      conflictDetailLevel: params["conflictDetailLevel"],
+      conflictResolutionStrategy: params["conflictResolutionStrategy"],
+      commitMessage: params["commitMessage"],
+      authorName: params["authorName"],
+      email: params["email"],
+      keepEmptyFolders: params["keepEmptyFolders"],
+      conflictResolution: fromConflictResolution(params["conflictResolution"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MergePullRequestBySquash",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "pullRequest": toPullRequest,
@@ -1012,14 +1211,23 @@ export default class CodeCommit {
   async mergePullRequestByThreeWay(
     {abortSignal, ...params}: RequestConfig & MergePullRequestByThreeWayInput,
   ): Promise<MergePullRequestByThreeWayOutput> {
-    const body: JSONObject = {...params,
-    conflictResolution: fromConflictResolution(params["conflictResolution"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      pullRequestId: params["pullRequestId"],
+      repositoryName: params["repositoryName"],
+      sourceCommitId: params["sourceCommitId"],
+      conflictDetailLevel: params["conflictDetailLevel"],
+      conflictResolutionStrategy: params["conflictResolutionStrategy"],
+      commitMessage: params["commitMessage"],
+      authorName: params["authorName"],
+      email: params["email"],
+      keepEmptyFolders: params["keepEmptyFolders"],
+      conflictResolution: fromConflictResolution(params["conflictResolution"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MergePullRequestByThreeWay",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "pullRequest": toPullRequest,
@@ -1030,8 +1238,11 @@ export default class CodeCommit {
   async overridePullRequestApprovalRules(
     {abortSignal, ...params}: RequestConfig & OverridePullRequestApprovalRulesInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pullRequestId: params["pullRequestId"],
+      revisionId: params["revisionId"],
+      overrideStatus: params["overrideStatus"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "OverridePullRequestApprovalRules",
@@ -1041,15 +1252,19 @@ export default class CodeCommit {
   async postCommentForComparedCommit(
     {abortSignal, ...params}: RequestConfig & PostCommentForComparedCommitInput,
   ): Promise<PostCommentForComparedCommitOutput> {
-    const body: JSONObject = {...params,
-    location: fromLocation(params["location"]),
-    clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      beforeCommitId: params["beforeCommitId"],
+      afterCommitId: params["afterCommitId"],
+      location: fromLocation(params["location"]),
+      content: params["content"],
+      clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PostCommentForComparedCommit",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "repositoryName": "s",
@@ -1066,15 +1281,20 @@ export default class CodeCommit {
   async postCommentForPullRequest(
     {abortSignal, ...params}: RequestConfig & PostCommentForPullRequestInput,
   ): Promise<PostCommentForPullRequestOutput> {
-    const body: JSONObject = {...params,
-    location: fromLocation(params["location"]),
-    clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      pullRequestId: params["pullRequestId"],
+      repositoryName: params["repositoryName"],
+      beforeCommitId: params["beforeCommitId"],
+      afterCommitId: params["afterCommitId"],
+      location: fromLocation(params["location"]),
+      content: params["content"],
+      clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PostCommentForPullRequest",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "repositoryName": "s",
@@ -1092,14 +1312,16 @@ export default class CodeCommit {
   async postCommentReply(
     {abortSignal, ...params}: RequestConfig & PostCommentReplyInput,
   ): Promise<PostCommentReplyOutput> {
-    const body: JSONObject = {...params,
-    clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      inReplyTo: params["inReplyTo"],
+      clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
+      content: params["content"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PostCommentReply",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "comment": toComment,
@@ -1110,8 +1332,10 @@ export default class CodeCommit {
   async putCommentReaction(
     {abortSignal, ...params}: RequestConfig & PutCommentReactionInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      commentId: params["commentId"],
+      reactionValue: params["reactionValue"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutCommentReaction",
@@ -1121,14 +1345,22 @@ export default class CodeCommit {
   async putFile(
     {abortSignal, ...params}: RequestConfig & PutFileInput,
   ): Promise<PutFileOutput> {
-    const body: JSONObject = {...params,
-    fileContent: prt.serializeBlob(params["fileContent"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      branchName: params["branchName"],
+      fileContent: jsonP.serializeBlob(params["fileContent"]),
+      filePath: params["filePath"],
+      fileMode: params["fileMode"],
+      parentCommitId: params["parentCommitId"],
+      commitMessage: params["commitMessage"],
+      name: params["name"],
+      email: params["email"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutFile",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "commitId": "s",
         "blobId": "s",
@@ -1141,14 +1373,15 @@ export default class CodeCommit {
   async putRepositoryTriggers(
     {abortSignal, ...params}: RequestConfig & PutRepositoryTriggersInput,
   ): Promise<PutRepositoryTriggersOutput> {
-    const body: JSONObject = {...params,
-    triggers: params["triggers"]?.map(x => fromRepositoryTrigger(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      triggers: params["triggers"]?.map(x => fromRepositoryTrigger(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRepositoryTriggers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "configurationId": "s",
@@ -1159,8 +1392,10 @@ export default class CodeCommit {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceArn: params["resourceArn"],
+      tags: params["tags"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -1170,14 +1405,15 @@ export default class CodeCommit {
   async testRepositoryTriggers(
     {abortSignal, ...params}: RequestConfig & TestRepositoryTriggersInput,
   ): Promise<TestRepositoryTriggersOutput> {
-    const body: JSONObject = {...params,
-    triggers: params["triggers"]?.map(x => fromRepositoryTrigger(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      triggers: params["triggers"]?.map(x => fromRepositoryTrigger(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TestRepositoryTriggers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "successfulExecutions": ["s"],
@@ -1189,8 +1425,10 @@ export default class CodeCommit {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      resourceArn: params["resourceArn"],
+      tagKeys: params["tagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -1200,13 +1438,16 @@ export default class CodeCommit {
   async updateApprovalRuleTemplateContent(
     {abortSignal, ...params}: RequestConfig & UpdateApprovalRuleTemplateContentInput,
   ): Promise<UpdateApprovalRuleTemplateContentOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      approvalRuleTemplateName: params["approvalRuleTemplateName"],
+      newRuleContent: params["newRuleContent"],
+      existingRuleContentSha256: params["existingRuleContentSha256"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApprovalRuleTemplateContent",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "approvalRuleTemplate": toApprovalRuleTemplate,
       },
@@ -1217,13 +1458,15 @@ export default class CodeCommit {
   async updateApprovalRuleTemplateDescription(
     {abortSignal, ...params}: RequestConfig & UpdateApprovalRuleTemplateDescriptionInput,
   ): Promise<UpdateApprovalRuleTemplateDescriptionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      approvalRuleTemplateName: params["approvalRuleTemplateName"],
+      approvalRuleTemplateDescription: params["approvalRuleTemplateDescription"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApprovalRuleTemplateDescription",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "approvalRuleTemplate": toApprovalRuleTemplate,
       },
@@ -1234,13 +1477,15 @@ export default class CodeCommit {
   async updateApprovalRuleTemplateName(
     {abortSignal, ...params}: RequestConfig & UpdateApprovalRuleTemplateNameInput,
   ): Promise<UpdateApprovalRuleTemplateNameOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      oldApprovalRuleTemplateName: params["oldApprovalRuleTemplateName"],
+      newApprovalRuleTemplateName: params["newApprovalRuleTemplateName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApprovalRuleTemplateName",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "approvalRuleTemplate": toApprovalRuleTemplate,
       },
@@ -1251,13 +1496,15 @@ export default class CodeCommit {
   async updateComment(
     {abortSignal, ...params}: RequestConfig & UpdateCommentInput,
   ): Promise<UpdateCommentOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      commentId: params["commentId"],
+      content: params["content"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateComment",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "comment": toComment,
@@ -1268,8 +1515,10 @@ export default class CodeCommit {
   async updateDefaultBranch(
     {abortSignal, ...params}: RequestConfig & UpdateDefaultBranchInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      defaultBranchName: params["defaultBranchName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDefaultBranch",
@@ -1279,13 +1528,17 @@ export default class CodeCommit {
   async updatePullRequestApprovalRuleContent(
     {abortSignal, ...params}: RequestConfig & UpdatePullRequestApprovalRuleContentInput,
   ): Promise<UpdatePullRequestApprovalRuleContentOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pullRequestId: params["pullRequestId"],
+      approvalRuleName: params["approvalRuleName"],
+      existingRuleContentSha256: params["existingRuleContentSha256"],
+      newRuleContent: params["newRuleContent"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePullRequestApprovalRuleContent",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "approvalRule": toApprovalRule,
       },
@@ -1296,8 +1549,11 @@ export default class CodeCommit {
   async updatePullRequestApprovalState(
     {abortSignal, ...params}: RequestConfig & UpdatePullRequestApprovalStateInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pullRequestId: params["pullRequestId"],
+      revisionId: params["revisionId"],
+      approvalState: params["approvalState"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePullRequestApprovalState",
@@ -1307,13 +1563,15 @@ export default class CodeCommit {
   async updatePullRequestDescription(
     {abortSignal, ...params}: RequestConfig & UpdatePullRequestDescriptionInput,
   ): Promise<UpdatePullRequestDescriptionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pullRequestId: params["pullRequestId"],
+      description: params["description"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePullRequestDescription",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "pullRequest": toPullRequest,
       },
@@ -1324,13 +1582,15 @@ export default class CodeCommit {
   async updatePullRequestStatus(
     {abortSignal, ...params}: RequestConfig & UpdatePullRequestStatusInput,
   ): Promise<UpdatePullRequestStatusOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pullRequestId: params["pullRequestId"],
+      pullRequestStatus: params["pullRequestStatus"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePullRequestStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "pullRequest": toPullRequest,
       },
@@ -1341,13 +1601,15 @@ export default class CodeCommit {
   async updatePullRequestTitle(
     {abortSignal, ...params}: RequestConfig & UpdatePullRequestTitleInput,
   ): Promise<UpdatePullRequestTitleOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      pullRequestId: params["pullRequestId"],
+      title: params["title"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePullRequestTitle",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "pullRequest": toPullRequest,
       },
@@ -1358,8 +1620,10 @@ export default class CodeCommit {
   async updateRepositoryDescription(
     {abortSignal, ...params}: RequestConfig & UpdateRepositoryDescriptionInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      repositoryName: params["repositoryName"],
+      repositoryDescription: params["repositoryDescription"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRepositoryDescription",
@@ -1369,8 +1633,10 @@ export default class CodeCommit {
   async updateRepositoryName(
     {abortSignal, ...params}: RequestConfig & UpdateRepositoryNameInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      oldName: params["oldName"],
+      newName: params["newName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRepositoryName",
@@ -1469,7 +1735,7 @@ export interface CreatePullRequestApprovalRuleInput {
 export interface CreateRepositoryInput {
   repositoryName: string;
   repositoryDescription?: string | null;
-  tags?: { [key: string]: string } | null;
+  tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1881,7 +2147,7 @@ export interface PutRepositoryTriggersInput {
 // refs: 1 - tags: named, input
 export interface TagResourceInput {
   resourceArn: string;
-  tags: { [key: string]: string };
+  tags: { [key: string]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, input
@@ -2256,7 +2522,7 @@ export interface ListRepositoriesForApprovalRuleTemplateOutput {
 
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceOutput {
-  tags?: { [key: string]: string } | null;
+  tags?: { [key: string]: string | null | undefined } | null;
   nextToken?: string | null;
 }
 
@@ -2384,22 +2650,13 @@ export type MergeOptionTypeEnum =
 | "FAST_FORWARD_MERGE"
 | "SQUASH_MERGE"
 | "THREE_WAY_MERGE"
-;
-
-function toMergeOptionTypeEnum(root: JSONValue): MergeOptionTypeEnum | null {
-  return ( false
-    || root == "FAST_FORWARD_MERGE"
-    || root == "SQUASH_MERGE"
-    || root == "THREE_WAY_MERGE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, enum
 export type ConflictDetailLevelTypeEnum =
 | "FILE_LEVEL"
 | "LINE_LEVEL"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, enum
 export type ConflictResolutionStrategyTypeEnum =
@@ -2407,8 +2664,7 @@ export type ConflictResolutionStrategyTypeEnum =
 | "ACCEPT_SOURCE"
 | "ACCEPT_DESTINATION"
 | "AUTOMERGE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface PutFileEntry {
@@ -2417,10 +2673,12 @@ export interface PutFileEntry {
   fileContent?: Uint8Array | string | null;
   sourceFile?: SourceFileSpecifier | null;
 }
-function fromPutFileEntry(input?: PutFileEntry | null): JSONValue {
+function fromPutFileEntry(input?: PutFileEntry | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    fileContent: prt.serializeBlob(input["fileContent"]),
+  return {
+    filePath: input["filePath"],
+    fileMode: input["fileMode"],
+    fileContent: jsonP.serializeBlob(input["fileContent"]),
     sourceFile: fromSourceFileSpecifier(input["sourceFile"]),
   }
 }
@@ -2430,24 +2688,18 @@ export type FileModeTypeEnum =
 | "EXECUTABLE"
 | "NORMAL"
 | "SYMLINK"
-;
-
-function toFileModeTypeEnum(root: JSONValue): FileModeTypeEnum | null {
-  return ( false
-    || root == "EXECUTABLE"
-    || root == "NORMAL"
-    || root == "SYMLINK"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface SourceFileSpecifier {
   filePath: string;
   isMove?: boolean | null;
 }
-function fromSourceFileSpecifier(input?: SourceFileSpecifier | null): JSONValue {
+function fromSourceFileSpecifier(input?: SourceFileSpecifier | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    filePath: input["filePath"],
+    isMove: input["isMove"],
   }
 }
 
@@ -2455,9 +2707,10 @@ function fromSourceFileSpecifier(input?: SourceFileSpecifier | null): JSONValue 
 export interface DeleteFileEntry {
   filePath: string;
 }
-function fromDeleteFileEntry(input?: DeleteFileEntry | null): JSONValue {
+function fromDeleteFileEntry(input?: DeleteFileEntry | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    filePath: input["filePath"],
   }
 }
 
@@ -2466,9 +2719,11 @@ export interface SetFileModeEntry {
   filePath: string;
   fileMode: FileModeTypeEnum;
 }
-function fromSetFileModeEntry(input?: SetFileModeEntry | null): JSONValue {
+function fromSetFileModeEntry(input?: SetFileModeEntry | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    filePath: input["filePath"],
+    fileMode: input["fileMode"],
   }
 }
 
@@ -2478,9 +2733,12 @@ export interface Target {
   sourceReference: string;
   destinationReference?: string | null;
 }
-function fromTarget(input?: Target | null): JSONValue {
+function fromTarget(input?: Target | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    repositoryName: input["repositoryName"],
+    sourceReference: input["sourceReference"],
+    destinationReference: input["destinationReference"],
   }
 }
 
@@ -2490,9 +2748,9 @@ export interface ConflictResolution {
   deleteFiles?: DeleteFileEntry[] | null;
   setFileModes?: SetFileModeEntry[] | null;
 }
-function fromConflictResolution(input?: ConflictResolution | null): JSONValue {
+function fromConflictResolution(input?: ConflictResolution | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     replaceContents: input["replaceContents"]?.map(x => fromReplaceContentEntry(x)),
     deleteFiles: input["deleteFiles"]?.map(x => fromDeleteFileEntry(x)),
     setFileModes: input["setFileModes"]?.map(x => fromSetFileModeEntry(x)),
@@ -2506,10 +2764,13 @@ export interface ReplaceContentEntry {
   content?: Uint8Array | string | null;
   fileMode?: FileModeTypeEnum | null;
 }
-function fromReplaceContentEntry(input?: ReplaceContentEntry | null): JSONValue {
+function fromReplaceContentEntry(input?: ReplaceContentEntry | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    content: prt.serializeBlob(input["content"]),
+  return {
+    filePath: input["filePath"],
+    replacementType: input["replacementType"],
+    content: jsonP.serializeBlob(input["content"]),
+    fileMode: input["fileMode"],
   }
 }
 
@@ -2519,8 +2780,7 @@ export type ReplacementTypeEnum =
 | "KEEP_SOURCE"
 | "KEEP_DESTINATION"
 | "USE_NEW_CONTENT"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type PullRequestEventType =
@@ -2533,61 +2793,31 @@ export type PullRequestEventType =
 | "PULL_REQUEST_APPROVAL_RULE_DELETED"
 | "PULL_REQUEST_APPROVAL_RULE_OVERRIDDEN"
 | "PULL_REQUEST_APPROVAL_STATE_CHANGED"
-;
-
-function toPullRequestEventType(root: JSONValue): PullRequestEventType | null {
-  return ( false
-    || root == "PULL_REQUEST_CREATED"
-    || root == "PULL_REQUEST_STATUS_CHANGED"
-    || root == "PULL_REQUEST_SOURCE_REFERENCE_UPDATED"
-    || root == "PULL_REQUEST_MERGE_STATE_CHANGED"
-    || root == "PULL_REQUEST_APPROVAL_RULE_CREATED"
-    || root == "PULL_REQUEST_APPROVAL_RULE_UPDATED"
-    || root == "PULL_REQUEST_APPROVAL_RULE_DELETED"
-    || root == "PULL_REQUEST_APPROVAL_RULE_OVERRIDDEN"
-    || root == "PULL_REQUEST_APPROVAL_STATE_CHANGED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 11 - tags: input, named, enum, output
 export type PullRequestStatusEnum =
 | "OPEN"
 | "CLOSED"
-;
-
-function toPullRequestStatusEnum(root: JSONValue): PullRequestStatusEnum | null {
-  return ( false
-    || root == "OPEN"
-    || root == "CLOSED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type SortByEnum =
 | "repositoryName"
 | "lastModifiedDate"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type OrderEnum =
 | "ascending"
 | "descending"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type OverrideStatus =
 | "OVERRIDE"
 | "REVOKE"
-;
-
-function toOverrideStatus(root: JSONValue): OverrideStatus | null {
-  return ( false
-    || root == "OVERRIDE"
-    || root == "REVOKE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface Location {
@@ -2595,18 +2825,21 @@ export interface Location {
   filePosition?: number | null;
   relativeFileVersion?: RelativeFileVersionEnum | null;
 }
-function fromLocation(input?: Location | null): JSONValue {
+function fromLocation(input?: Location | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    filePath: input["filePath"],
+    filePosition: input["filePosition"],
+    relativeFileVersion: input["relativeFileVersion"],
   }
 }
-function toLocation(root: JSONValue): Location {
-  return prt.readObj({
+function toLocation(root: jsonP.JSONValue): Location {
+  return jsonP.readObj({
     required: {},
     optional: {
       "filePath": "s",
       "filePosition": "n",
-      "relativeFileVersion": toRelativeFileVersionEnum,
+      "relativeFileVersion": (x: jsonP.JSONValue) => cmnP.readEnum<RelativeFileVersionEnum>(x),
     },
   }, root);
 }
@@ -2615,14 +2848,7 @@ function toLocation(root: JSONValue): Location {
 export type RelativeFileVersionEnum =
 | "BEFORE"
 | "AFTER"
-;
-
-function toRelativeFileVersionEnum(root: JSONValue): RelativeFileVersionEnum | null {
-  return ( false
-    || root == "BEFORE"
-    || root == "AFTER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface RepositoryTrigger {
@@ -2632,17 +2858,22 @@ export interface RepositoryTrigger {
   branches?: string[] | null;
   events: RepositoryTriggerEventEnum[];
 }
-function fromRepositoryTrigger(input?: RepositoryTrigger | null): JSONValue {
+function fromRepositoryTrigger(input?: RepositoryTrigger | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    destinationArn: input["destinationArn"],
+    customData: input["customData"],
+    branches: input["branches"],
+    events: input["events"],
   }
 }
-function toRepositoryTrigger(root: JSONValue): RepositoryTrigger {
-  return prt.readObj({
+function toRepositoryTrigger(root: jsonP.JSONValue): RepositoryTrigger {
+  return jsonP.readObj({
     required: {
       "name": "s",
       "destinationArn": "s",
-      "events": [toRepositoryTriggerEventEnum],
+      "events": [(x: jsonP.JSONValue) => cmnP.readEnum<RepositoryTriggerEventEnum>(x)],
     },
     optional: {
       "customData": "s",
@@ -2657,29 +2888,13 @@ export type RepositoryTriggerEventEnum =
 | "updateReference"
 | "createReference"
 | "deleteReference"
-;
-
-function toRepositoryTriggerEventEnum(root: JSONValue): RepositoryTriggerEventEnum | null {
-  return ( false
-    || root == "all"
-    || root == "updateReference"
-    || root == "createReference"
-    || root == "deleteReference"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type ApprovalState =
 | "APPROVE"
 | "REVOKE"
-;
-
-function toApprovalState(root: JSONValue): ApprovalState | null {
-  return ( false
-    || root == "APPROVE"
-    || root == "REVOKE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface BatchAssociateApprovalRuleTemplateWithRepositoriesError {
@@ -2687,8 +2902,8 @@ export interface BatchAssociateApprovalRuleTemplateWithRepositoriesError {
   errorCode?: string | null;
   errorMessage?: string | null;
 }
-function toBatchAssociateApprovalRuleTemplateWithRepositoriesError(root: JSONValue): BatchAssociateApprovalRuleTemplateWithRepositoriesError {
-  return prt.readObj({
+function toBatchAssociateApprovalRuleTemplateWithRepositoriesError(root: jsonP.JSONValue): BatchAssociateApprovalRuleTemplateWithRepositoriesError {
+  return jsonP.readObj({
     required: {},
     optional: {
       "repositoryName": "s",
@@ -2703,8 +2918,8 @@ export interface Conflict {
   conflictMetadata?: ConflictMetadata | null;
   mergeHunks?: MergeHunk[] | null;
 }
-function toConflict(root: JSONValue): Conflict {
-  return prt.readObj({
+function toConflict(root: jsonP.JSONValue): Conflict {
+  return jsonP.readObj({
     required: {},
     optional: {
       "conflictMetadata": toConflictMetadata,
@@ -2726,8 +2941,8 @@ export interface ConflictMetadata {
   objectTypeConflict?: boolean | null;
   mergeOperations?: MergeOperations | null;
 }
-function toConflictMetadata(root: JSONValue): ConflictMetadata {
-  return prt.readObj({
+function toConflictMetadata(root: jsonP.JSONValue): ConflictMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "filePath": "s",
@@ -2750,8 +2965,8 @@ export interface FileSizes {
   destination?: number | null;
   base?: number | null;
 }
-function toFileSizes(root: JSONValue): FileSizes {
-  return prt.readObj({
+function toFileSizes(root: jsonP.JSONValue): FileSizes {
+  return jsonP.readObj({
     required: {},
     optional: {
       "source": "n",
@@ -2767,13 +2982,13 @@ export interface FileModes {
   destination?: FileModeTypeEnum | null;
   base?: FileModeTypeEnum | null;
 }
-function toFileModes(root: JSONValue): FileModes {
-  return prt.readObj({
+function toFileModes(root: jsonP.JSONValue): FileModes {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "source": toFileModeTypeEnum,
-      "destination": toFileModeTypeEnum,
-      "base": toFileModeTypeEnum,
+      "source": (x: jsonP.JSONValue) => cmnP.readEnum<FileModeTypeEnum>(x),
+      "destination": (x: jsonP.JSONValue) => cmnP.readEnum<FileModeTypeEnum>(x),
+      "base": (x: jsonP.JSONValue) => cmnP.readEnum<FileModeTypeEnum>(x),
     },
   }, root);
 }
@@ -2784,13 +2999,13 @@ export interface ObjectTypes {
   destination?: ObjectTypeEnum | null;
   base?: ObjectTypeEnum | null;
 }
-function toObjectTypes(root: JSONValue): ObjectTypes {
-  return prt.readObj({
+function toObjectTypes(root: jsonP.JSONValue): ObjectTypes {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "source": toObjectTypeEnum,
-      "destination": toObjectTypeEnum,
-      "base": toObjectTypeEnum,
+      "source": (x: jsonP.JSONValue) => cmnP.readEnum<ObjectTypeEnum>(x),
+      "destination": (x: jsonP.JSONValue) => cmnP.readEnum<ObjectTypeEnum>(x),
+      "base": (x: jsonP.JSONValue) => cmnP.readEnum<ObjectTypeEnum>(x),
     },
   }, root);
 }
@@ -2801,15 +3016,7 @@ export type ObjectTypeEnum =
 | "DIRECTORY"
 | "GIT_LINK"
 | "SYMBOLIC_LINK"
-;
-function toObjectTypeEnum(root: JSONValue): ObjectTypeEnum | null {
-  return ( false
-    || root == "FILE"
-    || root == "DIRECTORY"
-    || root == "GIT_LINK"
-    || root == "SYMBOLIC_LINK"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface IsBinaryFile {
@@ -2817,8 +3024,8 @@ export interface IsBinaryFile {
   destination?: boolean | null;
   base?: boolean | null;
 }
-function toIsBinaryFile(root: JSONValue): IsBinaryFile {
-  return prt.readObj({
+function toIsBinaryFile(root: jsonP.JSONValue): IsBinaryFile {
+  return jsonP.readObj({
     required: {},
     optional: {
       "source": "b",
@@ -2833,12 +3040,12 @@ export interface MergeOperations {
   source?: ChangeTypeEnum | null;
   destination?: ChangeTypeEnum | null;
 }
-function toMergeOperations(root: JSONValue): MergeOperations {
-  return prt.readObj({
+function toMergeOperations(root: jsonP.JSONValue): MergeOperations {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "source": toChangeTypeEnum,
-      "destination": toChangeTypeEnum,
+      "source": (x: jsonP.JSONValue) => cmnP.readEnum<ChangeTypeEnum>(x),
+      "destination": (x: jsonP.JSONValue) => cmnP.readEnum<ChangeTypeEnum>(x),
     },
   }, root);
 }
@@ -2848,14 +3055,7 @@ export type ChangeTypeEnum =
 | "A"
 | "M"
 | "D"
-;
-function toChangeTypeEnum(root: JSONValue): ChangeTypeEnum | null {
-  return ( false
-    || root == "A"
-    || root == "M"
-    || root == "D"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface MergeHunk {
@@ -2864,8 +3064,8 @@ export interface MergeHunk {
   destination?: MergeHunkDetail | null;
   base?: MergeHunkDetail | null;
 }
-function toMergeHunk(root: JSONValue): MergeHunk {
-  return prt.readObj({
+function toMergeHunk(root: jsonP.JSONValue): MergeHunk {
+  return jsonP.readObj({
     required: {},
     optional: {
       "isConflict": "b",
@@ -2882,8 +3082,8 @@ export interface MergeHunkDetail {
   endLine?: number | null;
   hunkContent?: string | null;
 }
-function toMergeHunkDetail(root: JSONValue): MergeHunkDetail {
-  return prt.readObj({
+function toMergeHunkDetail(root: jsonP.JSONValue): MergeHunkDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "startLine": "n",
@@ -2899,8 +3099,8 @@ export interface BatchDescribeMergeConflictsError {
   exceptionName: string;
   message: string;
 }
-function toBatchDescribeMergeConflictsError(root: JSONValue): BatchDescribeMergeConflictsError {
-  return prt.readObj({
+function toBatchDescribeMergeConflictsError(root: jsonP.JSONValue): BatchDescribeMergeConflictsError {
+  return jsonP.readObj({
     required: {
       "filePath": "s",
       "exceptionName": "s",
@@ -2916,8 +3116,8 @@ export interface BatchDisassociateApprovalRuleTemplateFromRepositoriesError {
   errorCode?: string | null;
   errorMessage?: string | null;
 }
-function toBatchDisassociateApprovalRuleTemplateFromRepositoriesError(root: JSONValue): BatchDisassociateApprovalRuleTemplateFromRepositoriesError {
-  return prt.readObj({
+function toBatchDisassociateApprovalRuleTemplateFromRepositoriesError(root: jsonP.JSONValue): BatchDisassociateApprovalRuleTemplateFromRepositoriesError {
+  return jsonP.readObj({
     required: {},
     optional: {
       "repositoryName": "s",
@@ -2937,8 +3137,8 @@ export interface Commit {
   committer?: UserInfo | null;
   additionalData?: string | null;
 }
-function toCommit(root: JSONValue): Commit {
-  return prt.readObj({
+function toCommit(root: jsonP.JSONValue): Commit {
+  return jsonP.readObj({
     required: {},
     optional: {
       "commitId": "s",
@@ -2958,8 +3158,8 @@ export interface UserInfo {
   email?: string | null;
   date?: string | null;
 }
-function toUserInfo(root: JSONValue): UserInfo {
-  return prt.readObj({
+function toUserInfo(root: jsonP.JSONValue): UserInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -2975,8 +3175,8 @@ export interface BatchGetCommitsError {
   errorCode?: string | null;
   errorMessage?: string | null;
 }
-function toBatchGetCommitsError(root: JSONValue): BatchGetCommitsError {
-  return prt.readObj({
+function toBatchGetCommitsError(root: jsonP.JSONValue): BatchGetCommitsError {
+  return jsonP.readObj({
     required: {},
     optional: {
       "commitId": "s",
@@ -2999,8 +3199,8 @@ export interface RepositoryMetadata {
   cloneUrlSsh?: string | null;
   Arn?: string | null;
 }
-function toRepositoryMetadata(root: JSONValue): RepositoryMetadata {
-  return prt.readObj({
+function toRepositoryMetadata(root: jsonP.JSONValue): RepositoryMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "accountId": "s",
@@ -3028,8 +3228,8 @@ export interface ApprovalRuleTemplate {
   creationDate?: Date | number | null;
   lastModifiedUser?: string | null;
 }
-function toApprovalRuleTemplate(root: JSONValue): ApprovalRuleTemplate {
-  return prt.readObj({
+function toApprovalRuleTemplate(root: jsonP.JSONValue): ApprovalRuleTemplate {
+  return jsonP.readObj({
     required: {},
     optional: {
       "approvalRuleTemplateId": "s",
@@ -3050,13 +3250,13 @@ export interface FileMetadata {
   blobId?: string | null;
   fileMode?: FileModeTypeEnum | null;
 }
-function toFileMetadata(root: JSONValue): FileMetadata {
-  return prt.readObj({
+function toFileMetadata(root: jsonP.JSONValue): FileMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "absolutePath": "s",
       "blobId": "s",
-      "fileMode": toFileModeTypeEnum,
+      "fileMode": (x: jsonP.JSONValue) => cmnP.readEnum<FileModeTypeEnum>(x),
     },
   }, root);
 }
@@ -3075,8 +3275,8 @@ export interface PullRequest {
   revisionId?: string | null;
   approvalRules?: ApprovalRule[] | null;
 }
-function toPullRequest(root: JSONValue): PullRequest {
-  return prt.readObj({
+function toPullRequest(root: jsonP.JSONValue): PullRequest {
+  return jsonP.readObj({
     required: {},
     optional: {
       "pullRequestId": "s",
@@ -3084,7 +3284,7 @@ function toPullRequest(root: JSONValue): PullRequest {
       "description": "s",
       "lastActivityDate": "d",
       "creationDate": "d",
-      "pullRequestStatus": toPullRequestStatusEnum,
+      "pullRequestStatus": (x: jsonP.JSONValue) => cmnP.readEnum<PullRequestStatusEnum>(x),
       "authorArn": "s",
       "pullRequestTargets": [toPullRequestTarget],
       "clientRequestToken": "s",
@@ -3104,8 +3304,8 @@ export interface PullRequestTarget {
   mergeBase?: string | null;
   mergeMetadata?: MergeMetadata | null;
 }
-function toPullRequestTarget(root: JSONValue): PullRequestTarget {
-  return prt.readObj({
+function toPullRequestTarget(root: jsonP.JSONValue): PullRequestTarget {
+  return jsonP.readObj({
     required: {},
     optional: {
       "repositoryName": "s",
@@ -3126,14 +3326,14 @@ export interface MergeMetadata {
   mergeCommitId?: string | null;
   mergeOption?: MergeOptionTypeEnum | null;
 }
-function toMergeMetadata(root: JSONValue): MergeMetadata {
-  return prt.readObj({
+function toMergeMetadata(root: jsonP.JSONValue): MergeMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "isMerged": "b",
       "mergedBy": "s",
       "mergeCommitId": "s",
-      "mergeOption": toMergeOptionTypeEnum,
+      "mergeOption": (x: jsonP.JSONValue) => cmnP.readEnum<MergeOptionTypeEnum>(x),
     },
   }, root);
 }
@@ -3149,8 +3349,8 @@ export interface ApprovalRule {
   lastModifiedUser?: string | null;
   originApprovalRuleTemplate?: OriginApprovalRuleTemplate | null;
 }
-function toApprovalRule(root: JSONValue): ApprovalRule {
-  return prt.readObj({
+function toApprovalRule(root: jsonP.JSONValue): ApprovalRule {
+  return jsonP.readObj({
     required: {},
     optional: {
       "approvalRuleId": "s",
@@ -3170,8 +3370,8 @@ export interface OriginApprovalRuleTemplate {
   approvalRuleTemplateId?: string | null;
   approvalRuleTemplateName?: string | null;
 }
-function toOriginApprovalRuleTemplate(root: JSONValue): OriginApprovalRuleTemplate {
-  return prt.readObj({
+function toOriginApprovalRuleTemplate(root: jsonP.JSONValue): OriginApprovalRuleTemplate {
+  return jsonP.readObj({
     required: {},
     optional: {
       "approvalRuleTemplateId": "s",
@@ -3185,8 +3385,8 @@ export interface BranchInfo {
   branchName?: string | null;
   commitId?: string | null;
 }
-function toBranchInfo(root: JSONValue): BranchInfo {
-  return prt.readObj({
+function toBranchInfo(root: jsonP.JSONValue): BranchInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "branchName": "s",
@@ -3206,10 +3406,10 @@ export interface Comment {
   deleted?: boolean | null;
   clientRequestToken?: string | null;
   callerReactions?: string[] | null;
-  reactionCounts?: { [key: string]: number } | null;
+  reactionCounts?: { [key: string]: number | null | undefined } | null;
 }
-function toComment(root: JSONValue): Comment {
-  return prt.readObj({
+function toComment(root: jsonP.JSONValue): Comment {
+  return jsonP.readObj({
     required: {},
     optional: {
       "commentId": "s",
@@ -3221,7 +3421,7 @@ function toComment(root: JSONValue): Comment {
       "deleted": "b",
       "clientRequestToken": "s",
       "callerReactions": ["s"],
-      "reactionCounts": x => prt.readMap(String, Number, x),
+      "reactionCounts": x => jsonP.readMap(String, Number, x),
     },
   }, root);
 }
@@ -3240,13 +3440,13 @@ export interface PullRequestEvent {
   approvalStateChangedEventMetadata?: ApprovalStateChangedEventMetadata | null;
   approvalRuleOverriddenEventMetadata?: ApprovalRuleOverriddenEventMetadata | null;
 }
-function toPullRequestEvent(root: JSONValue): PullRequestEvent {
-  return prt.readObj({
+function toPullRequestEvent(root: jsonP.JSONValue): PullRequestEvent {
+  return jsonP.readObj({
     required: {},
     optional: {
       "pullRequestId": "s",
       "eventDate": "d",
-      "pullRequestEventType": toPullRequestEventType,
+      "pullRequestEventType": (x: jsonP.JSONValue) => cmnP.readEnum<PullRequestEventType>(x),
       "actorArn": "s",
       "pullRequestCreatedEventMetadata": toPullRequestCreatedEventMetadata,
       "pullRequestStatusChangedEventMetadata": toPullRequestStatusChangedEventMetadata,
@@ -3266,8 +3466,8 @@ export interface PullRequestCreatedEventMetadata {
   destinationCommitId?: string | null;
   mergeBase?: string | null;
 }
-function toPullRequestCreatedEventMetadata(root: JSONValue): PullRequestCreatedEventMetadata {
-  return prt.readObj({
+function toPullRequestCreatedEventMetadata(root: jsonP.JSONValue): PullRequestCreatedEventMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "repositoryName": "s",
@@ -3282,11 +3482,11 @@ function toPullRequestCreatedEventMetadata(root: JSONValue): PullRequestCreatedE
 export interface PullRequestStatusChangedEventMetadata {
   pullRequestStatus?: PullRequestStatusEnum | null;
 }
-function toPullRequestStatusChangedEventMetadata(root: JSONValue): PullRequestStatusChangedEventMetadata {
-  return prt.readObj({
+function toPullRequestStatusChangedEventMetadata(root: jsonP.JSONValue): PullRequestStatusChangedEventMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "pullRequestStatus": toPullRequestStatusEnum,
+      "pullRequestStatus": (x: jsonP.JSONValue) => cmnP.readEnum<PullRequestStatusEnum>(x),
     },
   }, root);
 }
@@ -3298,8 +3498,8 @@ export interface PullRequestSourceReferenceUpdatedEventMetadata {
   afterCommitId?: string | null;
   mergeBase?: string | null;
 }
-function toPullRequestSourceReferenceUpdatedEventMetadata(root: JSONValue): PullRequestSourceReferenceUpdatedEventMetadata {
-  return prt.readObj({
+function toPullRequestSourceReferenceUpdatedEventMetadata(root: jsonP.JSONValue): PullRequestSourceReferenceUpdatedEventMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "repositoryName": "s",
@@ -3316,8 +3516,8 @@ export interface PullRequestMergedStateChangedEventMetadata {
   destinationReference?: string | null;
   mergeMetadata?: MergeMetadata | null;
 }
-function toPullRequestMergedStateChangedEventMetadata(root: JSONValue): PullRequestMergedStateChangedEventMetadata {
-  return prt.readObj({
+function toPullRequestMergedStateChangedEventMetadata(root: jsonP.JSONValue): PullRequestMergedStateChangedEventMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "repositoryName": "s",
@@ -3333,8 +3533,8 @@ export interface ApprovalRuleEventMetadata {
   approvalRuleId?: string | null;
   approvalRuleContent?: string | null;
 }
-function toApprovalRuleEventMetadata(root: JSONValue): ApprovalRuleEventMetadata {
-  return prt.readObj({
+function toApprovalRuleEventMetadata(root: jsonP.JSONValue): ApprovalRuleEventMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "approvalRuleName": "s",
@@ -3349,12 +3549,12 @@ export interface ApprovalStateChangedEventMetadata {
   revisionId?: string | null;
   approvalStatus?: ApprovalState | null;
 }
-function toApprovalStateChangedEventMetadata(root: JSONValue): ApprovalStateChangedEventMetadata {
-  return prt.readObj({
+function toApprovalStateChangedEventMetadata(root: jsonP.JSONValue): ApprovalStateChangedEventMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "revisionId": "s",
-      "approvalStatus": toApprovalState,
+      "approvalStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ApprovalState>(x),
     },
   }, root);
 }
@@ -3364,12 +3564,12 @@ export interface ApprovalRuleOverriddenEventMetadata {
   revisionId?: string | null;
   overrideStatus?: OverrideStatus | null;
 }
-function toApprovalRuleOverriddenEventMetadata(root: JSONValue): ApprovalRuleOverriddenEventMetadata {
-  return prt.readObj({
+function toApprovalRuleOverriddenEventMetadata(root: jsonP.JSONValue): ApprovalRuleOverriddenEventMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "revisionId": "s",
-      "overrideStatus": toOverrideStatus,
+      "overrideStatus": (x: jsonP.JSONValue) => cmnP.readEnum<OverrideStatus>(x),
     },
   }, root);
 }
@@ -3381,8 +3581,8 @@ export interface Evaluation {
   approvalRulesSatisfied?: string[] | null;
   approvalRulesNotSatisfied?: string[] | null;
 }
-function toEvaluation(root: JSONValue): Evaluation {
-  return prt.readObj({
+function toEvaluation(root: jsonP.JSONValue): Evaluation {
+  return jsonP.readObj({
     required: {},
     optional: {
       "approved": "b",
@@ -3399,8 +3599,8 @@ export interface ReactionForComment {
   reactionUsers?: string[] | null;
   reactionsFromDeletedUsersCount?: number | null;
 }
-function toReactionForComment(root: JSONValue): ReactionForComment {
-  return prt.readObj({
+function toReactionForComment(root: jsonP.JSONValue): ReactionForComment {
+  return jsonP.readObj({
     required: {},
     optional: {
       "reaction": toReactionValueFormats,
@@ -3416,8 +3616,8 @@ export interface ReactionValueFormats {
   shortCode?: string | null;
   unicode?: string | null;
 }
-function toReactionValueFormats(root: JSONValue): ReactionValueFormats {
-  return prt.readObj({
+function toReactionValueFormats(root: jsonP.JSONValue): ReactionValueFormats {
+  return jsonP.readObj({
     required: {},
     optional: {
       "emoji": "s",
@@ -3437,8 +3637,8 @@ export interface CommentsForComparedCommit {
   location?: Location | null;
   comments?: Comment[] | null;
 }
-function toCommentsForComparedCommit(root: JSONValue): CommentsForComparedCommit {
-  return prt.readObj({
+function toCommentsForComparedCommit(root: jsonP.JSONValue): CommentsForComparedCommit {
+  return jsonP.readObj({
     required: {},
     optional: {
       "repositoryName": "s",
@@ -3463,8 +3663,8 @@ export interface CommentsForPullRequest {
   location?: Location | null;
   comments?: Comment[] | null;
 }
-function toCommentsForPullRequest(root: JSONValue): CommentsForPullRequest {
-  return prt.readObj({
+function toCommentsForPullRequest(root: jsonP.JSONValue): CommentsForPullRequest {
+  return jsonP.readObj({
     required: {},
     optional: {
       "pullRequestId": "s",
@@ -3485,13 +3685,13 @@ export interface Difference {
   afterBlob?: BlobMetadata | null;
   changeType?: ChangeTypeEnum | null;
 }
-function toDifference(root: JSONValue): Difference {
-  return prt.readObj({
+function toDifference(root: jsonP.JSONValue): Difference {
+  return jsonP.readObj({
     required: {},
     optional: {
       "beforeBlob": toBlobMetadata,
       "afterBlob": toBlobMetadata,
-      "changeType": toChangeTypeEnum,
+      "changeType": (x: jsonP.JSONValue) => cmnP.readEnum<ChangeTypeEnum>(x),
     },
   }, root);
 }
@@ -3502,8 +3702,8 @@ export interface BlobMetadata {
   path?: string | null;
   mode?: string | null;
 }
-function toBlobMetadata(root: JSONValue): BlobMetadata {
-  return prt.readObj({
+function toBlobMetadata(root: jsonP.JSONValue): BlobMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "blobId": "s",
@@ -3519,8 +3719,8 @@ export interface Folder {
   absolutePath?: string | null;
   relativePath?: string | null;
 }
-function toFolder(root: JSONValue): Folder {
-  return prt.readObj({
+function toFolder(root: jsonP.JSONValue): Folder {
+  return jsonP.readObj({
     required: {},
     optional: {
       "treeId": "s",
@@ -3537,14 +3737,14 @@ export interface File {
   relativePath?: string | null;
   fileMode?: FileModeTypeEnum | null;
 }
-function toFile(root: JSONValue): File {
-  return prt.readObj({
+function toFile(root: jsonP.JSONValue): File {
+  return jsonP.readObj({
     required: {},
     optional: {
       "blobId": "s",
       "absolutePath": "s",
       "relativePath": "s",
-      "fileMode": toFileModeTypeEnum,
+      "fileMode": (x: jsonP.JSONValue) => cmnP.readEnum<FileModeTypeEnum>(x),
     },
   }, root);
 }
@@ -3556,14 +3756,14 @@ export interface SymbolicLink {
   relativePath?: string | null;
   fileMode?: FileModeTypeEnum | null;
 }
-function toSymbolicLink(root: JSONValue): SymbolicLink {
-  return prt.readObj({
+function toSymbolicLink(root: jsonP.JSONValue): SymbolicLink {
+  return jsonP.readObj({
     required: {},
     optional: {
       "blobId": "s",
       "absolutePath": "s",
       "relativePath": "s",
-      "fileMode": toFileModeTypeEnum,
+      "fileMode": (x: jsonP.JSONValue) => cmnP.readEnum<FileModeTypeEnum>(x),
     },
   }, root);
 }
@@ -3574,8 +3774,8 @@ export interface SubModule {
   absolutePath?: string | null;
   relativePath?: string | null;
 }
-function toSubModule(root: JSONValue): SubModule {
-  return prt.readObj({
+function toSubModule(root: jsonP.JSONValue): SubModule {
+  return jsonP.readObj({
     required: {},
     optional: {
       "commitId": "s",
@@ -3590,12 +3790,12 @@ export interface Approval {
   userArn?: string | null;
   approvalState?: ApprovalState | null;
 }
-function toApproval(root: JSONValue): Approval {
-  return prt.readObj({
+function toApproval(root: jsonP.JSONValue): Approval {
+  return jsonP.readObj({
     required: {},
     optional: {
       "userArn": "s",
-      "approvalState": toApprovalState,
+      "approvalState": (x: jsonP.JSONValue) => cmnP.readEnum<ApprovalState>(x),
     },
   }, root);
 }
@@ -3605,8 +3805,8 @@ export interface RepositoryNameIdPair {
   repositoryName?: string | null;
   repositoryId?: string | null;
 }
-function toRepositoryNameIdPair(root: JSONValue): RepositoryNameIdPair {
-  return prt.readObj({
+function toRepositoryNameIdPair(root: jsonP.JSONValue): RepositoryNameIdPair {
+  return jsonP.readObj({
     required: {},
     optional: {
       "repositoryName": "s",
@@ -3620,8 +3820,8 @@ export interface RepositoryTriggerExecutionFailure {
   trigger?: string | null;
   failureMessage?: string | null;
 }
-function toRepositoryTriggerExecutionFailure(root: JSONValue): RepositoryTriggerExecutionFailure {
-  return prt.readObj({
+function toRepositoryTriggerExecutionFailure(root: jsonP.JSONValue): RepositoryTriggerExecutionFailure {
+  return jsonP.readObj({
     required: {},
     optional: {
       "trigger": "s",

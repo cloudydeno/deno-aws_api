@@ -5,10 +5,10 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 import * as Base64 from "https://deno.land/x/base64@v0.2.1/mod.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
@@ -38,13 +38,13 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["ReservedInstanceIds"]) prt.appendList(body, prefix+"ReservedInstanceId", params["ReservedInstanceIds"], {"entryPrefix":"."})
-    if (params["TargetConfigurations"]) prt.appendList(body, prefix+"TargetConfiguration", params["TargetConfigurations"], {"appender":TargetConfigurationRequest_Serialize,"entryPrefix":"."})
+    if (params["ReservedInstanceIds"]) qsP.appendList(body, prefix+"ReservedInstanceId", params["ReservedInstanceIds"], {"entryPrefix":"."})
+    if (params["TargetConfigurations"]) qsP.appendList(body, prefix+"TargetConfiguration", params["TargetConfigurations"], {"appender":TargetConfigurationRequest_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcceptReservedInstancesExchangeQuote",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ExchangeId: xml.first("exchangeId", false, x => x.content ?? ''),
     };
@@ -61,7 +61,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AcceptTransitGatewayPeeringAttachment",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayPeeringAttachment: xml.first("transitGatewayPeeringAttachment", false, TransitGatewayPeeringAttachment_Parse),
     };
@@ -78,7 +78,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AcceptTransitGatewayVpcAttachment",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayVpcAttachment: xml.first("transitGatewayVpcAttachment", false, TransitGatewayVpcAttachment_Parse),
     };
@@ -91,12 +91,12 @@ export default class EC2 {
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"ServiceId", (params["ServiceId"] ?? '').toString());
-    if (params["VpcEndpointIds"]) prt.appendList(body, prefix+"VpcEndpointId", params["VpcEndpointIds"], {"entryPrefix":"."})
+    if (params["VpcEndpointIds"]) qsP.appendList(body, prefix+"VpcEndpointId", params["VpcEndpointIds"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcceptVpcEndpointConnections",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Unsuccessful: xml.getList("unsuccessful", "item").map(UnsuccessfulItem_Parse),
     };
@@ -113,7 +113,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AcceptVpcPeeringConnection",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       VpcPeeringConnection: xml.first("vpcPeeringConnection", false, VpcPeeringConnection_Parse),
     };
@@ -130,7 +130,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AdvertiseByoipCidr",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ByoipCidr: xml.first("byoipCidr", false, ByoipCidr_Parse),
     };
@@ -151,7 +151,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AllocateAddress",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       PublicIp: xml.first("publicIp", false, x => x.content ?? ''),
       AllocationId: xml.first("allocationId", false, x => x.content ?? ''),
@@ -175,13 +175,13 @@ export default class EC2 {
     if ("InstanceType" in params) body.append(prefix+"InstanceType", (params["InstanceType"] ?? '').toString());
     if ("InstanceFamily" in params) body.append(prefix+"InstanceFamily", (params["InstanceFamily"] ?? '').toString());
     body.append(prefix+"Quantity", (params["Quantity"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("HostRecovery" in params) body.append(prefix+"HostRecovery", (params["HostRecovery"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AllocateHosts",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       HostIds: xml.getList("hostIdSet", "item").map(x => x.content ?? ''),
     };
@@ -194,13 +194,13 @@ export default class EC2 {
     const prefix = '';
     body.append(prefix+"ClientVpnEndpointId", (params["ClientVpnEndpointId"] ?? '').toString());
     body.append(prefix+"VpcId", (params["VpcId"] ?? '').toString());
-    if (params["SecurityGroupIds"]) prt.appendList(body, prefix+"SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
+    if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+"SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ApplySecurityGroupsToClientVpnTargetNetwork",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       SecurityGroupIds: xml.getList("securityGroupIds", "item").map(x => x.content ?? ''),
     };
@@ -212,13 +212,13 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("Ipv6AddressCount" in params) body.append(prefix+"Ipv6AddressCount", (params["Ipv6AddressCount"] ?? '').toString());
-    if (params["Ipv6Addresses"]) prt.appendList(body, prefix+"ipv6Addresses", params["Ipv6Addresses"], {"entryPrefix":"."})
+    if (params["Ipv6Addresses"]) qsP.appendList(body, prefix+"ipv6Addresses", params["Ipv6Addresses"], {"entryPrefix":"."})
     body.append(prefix+"NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssignIpv6Addresses",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       AssignedIpv6Addresses: xml.getList("assignedIpv6Addresses", "item").map(x => x.content ?? ''),
       NetworkInterfaceId: xml.first("networkInterfaceId", false, x => x.content ?? ''),
@@ -232,13 +232,13 @@ export default class EC2 {
     const prefix = '';
     if ("AllowReassignment" in params) body.append(prefix+"AllowReassignment", (params["AllowReassignment"] ?? '').toString());
     body.append(prefix+"NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
-    if (params["PrivateIpAddresses"]) prt.appendList(body, prefix+"privateIpAddress", params["PrivateIpAddresses"], {"entryPrefix":"."})
+    if (params["PrivateIpAddresses"]) qsP.appendList(body, prefix+"privateIpAddress", params["PrivateIpAddresses"], {"entryPrefix":"."})
     if ("SecondaryPrivateIpAddressCount" in params) body.append(prefix+"SecondaryPrivateIpAddressCount", (params["SecondaryPrivateIpAddressCount"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssignPrivateIpAddresses",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NetworkInterfaceId: xml.first("networkInterfaceId", false, x => x.content ?? ''),
       AssignedPrivateIpAddresses: xml.getList("assignedPrivateIpAddressesSet", "item").map(AssignedPrivateIpAddress_Parse),
@@ -261,7 +261,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AssociateAddress",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       AssociationId: xml.first("associationId", false, x => x.content ?? ''),
     };
@@ -280,7 +280,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AssociateClientVpnTargetNetwork",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       AssociationId: xml.first("associationId", false, x => x.content ?? ''),
       Status: xml.first("status", false, AssociationStatus_Parse),
@@ -312,7 +312,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AssociateIamInstanceProfile",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       IamInstanceProfileAssociation: xml.first("iamInstanceProfileAssociation", false, IamInstanceProfileAssociation_Parse),
     };
@@ -331,7 +331,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AssociateRouteTable",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       AssociationId: xml.first("associationId", false, x => x.content ?? ''),
       AssociationState: xml.first("associationState", false, RouteTableAssociationState_Parse),
@@ -349,7 +349,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AssociateSubnetCidrBlock",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Ipv6CidrBlockAssociation: xml.first("ipv6CidrBlockAssociation", false, SubnetIpv6CidrBlockAssociation_Parse),
       SubnetId: xml.first("subnetId", false, x => x.content ?? ''),
@@ -363,13 +363,13 @@ export default class EC2 {
     const prefix = '';
     if ("TransitGatewayMulticastDomainId" in params) body.append(prefix+"TransitGatewayMulticastDomainId", (params["TransitGatewayMulticastDomainId"] ?? '').toString());
     if ("TransitGatewayAttachmentId" in params) body.append(prefix+"TransitGatewayAttachmentId", (params["TransitGatewayAttachmentId"] ?? '').toString());
-    if (params["SubnetIds"]) prt.appendList(body, prefix+"item", params["SubnetIds"], {"entryPrefix":"."})
+    if (params["SubnetIds"]) qsP.appendList(body, prefix+"item", params["SubnetIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateTransitGatewayMulticastDomain",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Associations: xml.first("associations", false, TransitGatewayMulticastDomainAssociations_Parse),
     };
@@ -387,7 +387,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AssociateTransitGatewayRouteTable",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Association: xml.first("association", false, TransitGatewayAssociation_Parse),
     };
@@ -408,7 +408,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AssociateVpcCidrBlock",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Ipv6CidrBlockAssociation: xml.first("ipv6CidrBlockAssociation", false, VpcIpv6CidrBlockAssociation_Parse),
       CidrBlockAssociation: xml.first("cidrBlockAssociation", false, VpcCidrBlockAssociation_Parse),
@@ -422,14 +422,14 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Groups"]) prt.appendList(body, prefix+"SecurityGroupId", params["Groups"], {"entryPrefix":"."})
+    if (params["Groups"]) qsP.appendList(body, prefix+"SecurityGroupId", params["Groups"], {"entryPrefix":"."})
     body.append(prefix+"InstanceId", (params["InstanceId"] ?? '').toString());
     body.append(prefix+"VpcId", (params["VpcId"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AttachClassicLinkVpc",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -462,7 +462,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AttachNetworkInterface",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       AttachmentId: xml.first("attachmentId", false, x => x.content ?? ''),
     };
@@ -481,7 +481,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AttachVolume",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return VolumeAttachment_Parse(xml);
   }
 
@@ -497,7 +497,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AttachVpnGateway",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       VpcAttachment: xml.first("attachment", false, VpcAttachment_Parse),
     };
@@ -519,7 +519,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AuthorizeClientVpnIngress",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Status: xml.first("status", false, ClientVpnAuthorizationRuleStatus_Parse),
     };
@@ -532,7 +532,7 @@ export default class EC2 {
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"GroupId", (params["GroupId"] ?? '').toString());
-    if (params["IpPermissions"]) prt.appendList(body, prefix+"ipPermissions", params["IpPermissions"], {"appender":IpPermission_Serialize,"entryPrefix":"."})
+    if (params["IpPermissions"]) qsP.appendList(body, prefix+"ipPermissions", params["IpPermissions"], {"appender":IpPermission_Serialize,"entryPrefix":"."})
     if ("CidrIp" in params) body.append(prefix+"CidrIp", (params["CidrIp"] ?? '').toString());
     if ("FromPort" in params) body.append(prefix+"FromPort", (params["FromPort"] ?? '').toString());
     if ("IpProtocol" in params) body.append(prefix+"IpProtocol", (params["IpProtocol"] ?? '').toString());
@@ -554,7 +554,7 @@ export default class EC2 {
     if ("FromPort" in params) body.append(prefix+"FromPort", (params["FromPort"] ?? '').toString());
     if ("GroupId" in params) body.append(prefix+"GroupId", (params["GroupId"] ?? '').toString());
     if ("GroupName" in params) body.append(prefix+"GroupName", (params["GroupName"] ?? '').toString());
-    if (params["IpPermissions"]) prt.appendList(body, prefix+"item", params["IpPermissions"], {"appender":IpPermission_Serialize,"entryPrefix":"."})
+    if (params["IpPermissions"]) qsP.appendList(body, prefix+"item", params["IpPermissions"], {"appender":IpPermission_Serialize,"entryPrefix":"."})
     if ("IpProtocol" in params) body.append(prefix+"IpProtocol", (params["IpProtocol"] ?? '').toString());
     if ("SourceSecurityGroupName" in params) body.append(prefix+"SourceSecurityGroupName", (params["SourceSecurityGroupName"] ?? '').toString());
     if ("SourceSecurityGroupOwnerId" in params) body.append(prefix+"SourceSecurityGroupOwnerId", (params["SourceSecurityGroupOwnerId"] ?? '').toString());
@@ -578,7 +578,7 @@ export default class EC2 {
       abortSignal, body,
       action: "BundleInstance",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       BundleTask: xml.first("bundleInstanceTask", false, BundleTask_Parse),
     };
@@ -595,7 +595,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CancelBundleTask",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       BundleTask: xml.first("bundleInstanceTask", false, BundleTask_Parse),
     };
@@ -612,7 +612,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CancelCapacityReservation",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -656,7 +656,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CancelImportTask",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ImportTaskId: xml.first("importTaskId", false, x => x.content ?? ''),
       PreviousState: xml.first("previousState", false, x => x.content ?? ''),
@@ -674,7 +674,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CancelReservedInstancesListing",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ReservedInstancesListings: xml.getList("reservedInstancesListingsSet", "item").map(ReservedInstancesListing_Parse),
     };
@@ -686,13 +686,13 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["SpotFleetRequestIds"]) prt.appendList(body, prefix+"spotFleetRequestId", params["SpotFleetRequestIds"], {"entryPrefix":"."})
+    if (params["SpotFleetRequestIds"]) qsP.appendList(body, prefix+"spotFleetRequestId", params["SpotFleetRequestIds"], {"entryPrefix":"."})
     body.append(prefix+"TerminateInstances", (params["TerminateInstances"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelSpotFleetRequests",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       SuccessfulFleetRequests: xml.getList("successfulFleetRequestSet", "item").map(CancelSpotFleetRequestsSuccessItem_Parse),
       UnsuccessfulFleetRequests: xml.getList("unsuccessfulFleetRequestSet", "item").map(CancelSpotFleetRequestsErrorItem_Parse),
@@ -705,12 +705,12 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["SpotInstanceRequestIds"]) prt.appendList(body, prefix+"SpotInstanceRequestId", params["SpotInstanceRequestIds"], {"entryPrefix":"."})
+    if (params["SpotInstanceRequestIds"]) qsP.appendList(body, prefix+"SpotInstanceRequestId", params["SpotInstanceRequestIds"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelSpotInstanceRequests",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       CancelledSpotInstanceRequests: xml.getList("spotInstanceRequestSet", "item").map(CancelledSpotInstanceRequest_Parse),
     };
@@ -728,7 +728,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ConfirmProductInstance",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       OwnerId: xml.first("ownerId", false, x => x.content ?? ''),
       Return: xml.first("return", false, x => x.content === 'true'),
@@ -750,7 +750,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CopyFpgaImage",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       FpgaImageId: xml.first("fpgaImageId", false, x => x.content ?? ''),
     };
@@ -773,7 +773,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CopyImage",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ImageId: xml.first("imageId", false, x => x.content ?? ''),
     };
@@ -791,13 +791,13 @@ export default class EC2 {
     if ("PresignedUrl" in params) body.append(prefix+"PresignedUrl", (params["PresignedUrl"] ?? '').toString());
     body.append(prefix+"SourceRegion", (params["SourceRegion"] ?? '').toString());
     body.append(prefix+"SourceSnapshotId", (params["SourceSnapshotId"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CopySnapshot",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       SnapshotId: xml.first("snapshotId", false, x => x.content ?? ''),
       Tags: xml.getList("tagSet", "item").map(Tag_Parse),
@@ -818,16 +818,16 @@ export default class EC2 {
     body.append(prefix+"InstanceCount", (params["InstanceCount"] ?? '').toString());
     if ("EbsOptimized" in params) body.append(prefix+"EbsOptimized", (params["EbsOptimized"] ?? '').toString());
     if ("EphemeralStorage" in params) body.append(prefix+"EphemeralStorage", (params["EphemeralStorage"] ?? '').toString());
-    if ("EndDate" in params) body.append(prefix+"EndDate", prt.encodeDate_iso8601(params["EndDate"]));
+    if ("EndDate" in params) body.append(prefix+"EndDate", qsP.encodeDate_iso8601(params["EndDate"]));
     if ("EndDateType" in params) body.append(prefix+"EndDateType", (params["EndDateType"] ?? '').toString());
     if ("InstanceMatchCriteria" in params) body.append(prefix+"InstanceMatchCriteria", (params["InstanceMatchCriteria"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"item", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"item", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCapacityReservation",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       CapacityReservation: xml.first("capacityReservation", false, CapacityReservation_Parse),
     };
@@ -839,14 +839,14 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"VpcId", (params["VpcId"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"ClientToken", (params["ClientToken"] ?? generateIdemptToken()).toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCarrierGateway",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       CarrierGateway: xml.first("carrierGateway", false, CarrierGateway_Parse),
     };
@@ -859,23 +859,23 @@ export default class EC2 {
     const prefix = '';
     body.append(prefix+"ClientCidrBlock", (params["ClientCidrBlock"] ?? '').toString());
     body.append(prefix+"ServerCertificateArn", (params["ServerCertificateArn"] ?? '').toString());
-    if (params["AuthenticationOptions"]) prt.appendList(body, prefix+"Authentication", params["AuthenticationOptions"], {"appender":ClientVpnAuthenticationRequest_Serialize,"entryPrefix":"."})
+    if (params["AuthenticationOptions"]) qsP.appendList(body, prefix+"Authentication", params["AuthenticationOptions"], {"appender":ClientVpnAuthenticationRequest_Serialize,"entryPrefix":"."})
     ConnectionLogOptions_Serialize(body, prefix+"ConnectionLogOptions", params["ConnectionLogOptions"]);
-    if (params["DnsServers"]) prt.appendList(body, prefix+"item", params["DnsServers"], {"entryPrefix":"."})
+    if (params["DnsServers"]) qsP.appendList(body, prefix+"item", params["DnsServers"], {"entryPrefix":"."})
     if ("TransportProtocol" in params) body.append(prefix+"TransportProtocol", (params["TransportProtocol"] ?? '').toString());
     if ("VpnPort" in params) body.append(prefix+"VpnPort", (params["VpnPort"] ?? '').toString());
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     if ("SplitTunnel" in params) body.append(prefix+"SplitTunnel", (params["SplitTunnel"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"ClientToken", (params["ClientToken"] ?? generateIdemptToken()).toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
-    if (params["SecurityGroupIds"]) prt.appendList(body, prefix+"SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+"SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
     if ("VpcId" in params) body.append(prefix+"VpcId", (params["VpcId"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateClientVpnEndpoint",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ClientVpnEndpointId: xml.first("clientVpnEndpointId", false, x => x.content ?? ''),
       Status: xml.first("status", false, ClientVpnEndpointStatus_Parse),
@@ -898,7 +898,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CreateClientVpnRoute",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Status: xml.first("status", false, ClientVpnRouteStatus_Parse),
     };
@@ -913,14 +913,14 @@ export default class EC2 {
     if ("PublicIp" in params) body.append(prefix+"IpAddress", (params["PublicIp"] ?? '').toString());
     if ("CertificateArn" in params) body.append(prefix+"CertificateArn", (params["CertificateArn"] ?? '').toString());
     body.append(prefix+"Type", (params["Type"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DeviceName" in params) body.append(prefix+"DeviceName", (params["DeviceName"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCustomerGateway",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       CustomerGateway: xml.first("customerGateway", false, CustomerGateway_Parse),
     };
@@ -937,7 +937,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CreateDefaultSubnet",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Subnet: xml.first("subnet", false, Subnet_Parse),
     };
@@ -953,7 +953,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CreateDefaultVpc",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Vpc: xml.first("vpc", false, Vpc_Parse),
     };
@@ -964,14 +964,14 @@ export default class EC2 {
   ): Promise<CreateDhcpOptionsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["DhcpConfigurations"]) prt.appendList(body, prefix+"dhcpConfiguration", params["DhcpConfigurations"], {"appender":NewDhcpConfiguration_Serialize,"entryPrefix":"."})
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["DhcpConfigurations"]) qsP.appendList(body, prefix+"dhcpConfiguration", params["DhcpConfigurations"], {"appender":NewDhcpConfiguration_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDhcpOptions",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       DhcpOptions: xml.first("dhcpOptions", false, DhcpOptions_Parse),
     };
@@ -985,12 +985,12 @@ export default class EC2 {
     if ("ClientToken" in params) body.append(prefix+"ClientToken", (params["ClientToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"VpcId", (params["VpcId"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEgressOnlyInternetGateway",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ClientToken: xml.first("clientToken", false, x => x.content ?? ''),
       EgressOnlyInternetGateway: xml.first("egressOnlyInternetGateway", false, EgressOnlyInternetGateway_Parse),
@@ -1007,19 +1007,19 @@ export default class EC2 {
     if (params["SpotOptions"] != null) SpotOptionsRequest_Serialize(body, prefix+"SpotOptions", params["SpotOptions"]);
     if (params["OnDemandOptions"] != null) OnDemandOptionsRequest_Serialize(body, prefix+"OnDemandOptions", params["OnDemandOptions"]);
     if ("ExcessCapacityTerminationPolicy" in params) body.append(prefix+"ExcessCapacityTerminationPolicy", (params["ExcessCapacityTerminationPolicy"] ?? '').toString());
-    if (params["LaunchTemplateConfigs"]) prt.appendList(body, prefix+"item", params["LaunchTemplateConfigs"], {"appender":FleetLaunchTemplateConfigRequest_Serialize,"entryPrefix":"."})
+    if (params["LaunchTemplateConfigs"]) qsP.appendList(body, prefix+"item", params["LaunchTemplateConfigs"], {"appender":FleetLaunchTemplateConfigRequest_Serialize,"entryPrefix":"."})
     TargetCapacitySpecificationRequest_Serialize(body, prefix+"TargetCapacitySpecification", params["TargetCapacitySpecification"]);
     if ("TerminateInstancesWithExpiration" in params) body.append(prefix+"TerminateInstancesWithExpiration", (params["TerminateInstancesWithExpiration"] ?? '').toString());
     if ("Type" in params) body.append(prefix+"Type", (params["Type"] ?? '').toString());
-    if ("ValidFrom" in params) body.append(prefix+"ValidFrom", prt.encodeDate_iso8601(params["ValidFrom"]));
-    if ("ValidUntil" in params) body.append(prefix+"ValidUntil", prt.encodeDate_iso8601(params["ValidUntil"]));
+    if ("ValidFrom" in params) body.append(prefix+"ValidFrom", qsP.encodeDate_iso8601(params["ValidFrom"]));
+    if ("ValidUntil" in params) body.append(prefix+"ValidUntil", qsP.encodeDate_iso8601(params["ValidUntil"]));
     if ("ReplaceUnhealthyInstances" in params) body.append(prefix+"ReplaceUnhealthyInstances", (params["ReplaceUnhealthyInstances"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFleet",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       FleetId: xml.first("fleetId", false, x => x.content ?? ''),
       Errors: xml.getList("errorSet", "item").map(CreateFleetError_Parse),
@@ -1036,19 +1036,19 @@ export default class EC2 {
     if ("ClientToken" in params) body.append(prefix+"ClientToken", (params["ClientToken"] ?? '').toString());
     if ("DeliverLogsPermissionArn" in params) body.append(prefix+"DeliverLogsPermissionArn", (params["DeliverLogsPermissionArn"] ?? '').toString());
     if ("LogGroupName" in params) body.append(prefix+"LogGroupName", (params["LogGroupName"] ?? '').toString());
-    if (params["ResourceIds"]) prt.appendList(body, prefix+"ResourceId", params["ResourceIds"], {"entryPrefix":"."})
+    if (params["ResourceIds"]) qsP.appendList(body, prefix+"ResourceId", params["ResourceIds"], {"entryPrefix":"."})
     body.append(prefix+"ResourceType", (params["ResourceType"] ?? '').toString());
     body.append(prefix+"TrafficType", (params["TrafficType"] ?? '').toString());
     if ("LogDestinationType" in params) body.append(prefix+"LogDestinationType", (params["LogDestinationType"] ?? '').toString());
     if ("LogDestination" in params) body.append(prefix+"LogDestination", (params["LogDestination"] ?? '').toString());
     if ("LogFormat" in params) body.append(prefix+"LogFormat", (params["LogFormat"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("MaxAggregationInterval" in params) body.append(prefix+"MaxAggregationInterval", (params["MaxAggregationInterval"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFlowLogs",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ClientToken: xml.first("clientToken", false, x => x.content ?? ''),
       FlowLogIds: xml.getList("flowLogIdSet", "item").map(x => x.content ?? ''),
@@ -1067,12 +1067,12 @@ export default class EC2 {
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     if ("Name" in params) body.append(prefix+"Name", (params["Name"] ?? '').toString());
     if ("ClientToken" in params) body.append(prefix+"ClientToken", (params["ClientToken"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFpgaImage",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       FpgaImageId: xml.first("fpgaImageId", false, x => x.content ?? ''),
       FpgaImageGlobalId: xml.first("fpgaImageGlobalId", false, x => x.content ?? ''),
@@ -1084,7 +1084,7 @@ export default class EC2 {
   ): Promise<CreateImageResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["BlockDeviceMappings"]) prt.appendList(body, prefix+"blockDeviceMapping", params["BlockDeviceMappings"], {"appender":BlockDeviceMapping_Serialize,"entryPrefix":"."})
+    if (params["BlockDeviceMappings"]) qsP.appendList(body, prefix+"blockDeviceMapping", params["BlockDeviceMappings"], {"appender":BlockDeviceMapping_Serialize,"entryPrefix":"."})
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"InstanceId", (params["InstanceId"] ?? '').toString());
@@ -1094,7 +1094,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CreateImage",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ImageId: xml.first("imageId", false, x => x.content ?? ''),
     };
@@ -1109,12 +1109,12 @@ export default class EC2 {
     if (params["ExportToS3Task"] != null) ExportToS3TaskSpecification_Serialize(body, prefix+"ExportToS3", params["ExportToS3Task"]);
     body.append(prefix+"InstanceId", (params["InstanceId"] ?? '').toString());
     if ("TargetEnvironment" in params) body.append(prefix+"TargetEnvironment", (params["TargetEnvironment"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateInstanceExportTask",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ExportTask: xml.first("exportTask", false, ExportTask_Parse),
     };
@@ -1125,13 +1125,13 @@ export default class EC2 {
   ): Promise<CreateInternetGatewayResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateInternetGateway",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       InternetGateway: xml.first("internetGateway", false, InternetGateway_Parse),
     };
@@ -1144,12 +1144,12 @@ export default class EC2 {
     const prefix = '';
     body.append(prefix+"KeyName", (params["KeyName"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateKeyPair",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       KeyFingerprint: xml.first("keyFingerprint", false, x => x.content ?? ''),
       KeyMaterial: xml.first("keyMaterial", false, x => x.content ?? ''),
@@ -1169,12 +1169,12 @@ export default class EC2 {
     body.append(prefix+"LaunchTemplateName", (params["LaunchTemplateName"] ?? '').toString());
     if ("VersionDescription" in params) body.append(prefix+"VersionDescription", (params["VersionDescription"] ?? '').toString());
     RequestLaunchTemplateData_Serialize(body, prefix+"LaunchTemplateData", params["LaunchTemplateData"]);
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLaunchTemplate",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       LaunchTemplate: xml.first("launchTemplate", false, LaunchTemplate_Parse),
       Warning: xml.first("warning", false, ValidationWarning_Parse),
@@ -1197,7 +1197,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CreateLaunchTemplateVersion",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       LaunchTemplateVersion: xml.first("launchTemplateVersion", false, LaunchTemplateVersion_Parse),
       Warning: xml.first("warning", false, ValidationWarning_Parse),
@@ -1217,7 +1217,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CreateLocalGatewayRoute",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Route: xml.first("route", false, LocalGatewayRoute_Parse),
     };
@@ -1230,13 +1230,13 @@ export default class EC2 {
     const prefix = '';
     body.append(prefix+"LocalGatewayRouteTableId", (params["LocalGatewayRouteTableId"] ?? '').toString());
     body.append(prefix+"VpcId", (params["VpcId"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLocalGatewayRouteTableVpcAssociation",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       LocalGatewayRouteTableVpcAssociation: xml.first("localGatewayRouteTableVpcAssociation", false, LocalGatewayRouteTableVpcAssociation_Parse),
     };
@@ -1249,16 +1249,16 @@ export default class EC2 {
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"PrefixListName", (params["PrefixListName"] ?? '').toString());
-    if (params["Entries"]) prt.appendList(body, prefix+"Entry", params["Entries"], {"appender":AddPrefixListEntry_Serialize,"entryPrefix":"."})
+    if (params["Entries"]) qsP.appendList(body, prefix+"Entry", params["Entries"], {"appender":AddPrefixListEntry_Serialize,"entryPrefix":"."})
     body.append(prefix+"MaxEntries", (params["MaxEntries"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     body.append(prefix+"AddressFamily", (params["AddressFamily"] ?? '').toString());
     body.append(prefix+"ClientToken", (params["ClientToken"] ?? generateIdemptToken()).toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateManagedPrefixList",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       PrefixList: xml.first("prefixList", false, ManagedPrefixList_Parse),
     };
@@ -1273,12 +1273,12 @@ export default class EC2 {
     body.append(prefix+"ClientToken", (params["ClientToken"] ?? generateIdemptToken()).toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"SubnetId", (params["SubnetId"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNatGateway",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ClientToken: xml.first("clientToken", false, x => x.content ?? ''),
       NatGateway: xml.first("natGateway", false, NatGateway_Parse),
@@ -1292,12 +1292,12 @@ export default class EC2 {
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"VpcId", (params["VpcId"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNetworkAcl",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NetworkAcl: xml.first("networkAcl", false, NetworkAcl_Parse),
     };
@@ -1331,20 +1331,20 @@ export default class EC2 {
     const prefix = '';
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Groups"]) prt.appendList(body, prefix+"SecurityGroupId", params["Groups"], {"entryPrefix":"."})
+    if (params["Groups"]) qsP.appendList(body, prefix+"SecurityGroupId", params["Groups"], {"entryPrefix":"."})
     if ("Ipv6AddressCount" in params) body.append(prefix+"Ipv6AddressCount", (params["Ipv6AddressCount"] ?? '').toString());
-    if (params["Ipv6Addresses"]) prt.appendList(body, prefix+"ipv6Addresses", params["Ipv6Addresses"], {"appender":InstanceIpv6Address_Serialize,"entryPrefix":"."})
+    if (params["Ipv6Addresses"]) qsP.appendList(body, prefix+"ipv6Addresses", params["Ipv6Addresses"], {"appender":InstanceIpv6Address_Serialize,"entryPrefix":"."})
     if ("PrivateIpAddress" in params) body.append(prefix+"PrivateIpAddress", (params["PrivateIpAddress"] ?? '').toString());
-    if (params["PrivateIpAddresses"]) prt.appendList(body, prefix+"privateIpAddresses", params["PrivateIpAddresses"], {"appender":PrivateIpAddressSpecification_Serialize,"entryPrefix":"."})
+    if (params["PrivateIpAddresses"]) qsP.appendList(body, prefix+"privateIpAddresses", params["PrivateIpAddresses"], {"appender":PrivateIpAddressSpecification_Serialize,"entryPrefix":"."})
     if ("SecondaryPrivateIpAddressCount" in params) body.append(prefix+"SecondaryPrivateIpAddressCount", (params["SecondaryPrivateIpAddressCount"] ?? '').toString());
     if ("InterfaceType" in params) body.append(prefix+"InterfaceType", (params["InterfaceType"] ?? '').toString());
     body.append(prefix+"SubnetId", (params["SubnetId"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNetworkInterface",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NetworkInterface: xml.first("networkInterface", false, NetworkInterface_Parse),
     };
@@ -1364,7 +1364,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CreateNetworkInterfacePermission",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       InterfacePermission: xml.first("interfacePermission", false, NetworkInterfacePermission_Parse),
     };
@@ -1379,12 +1379,12 @@ export default class EC2 {
     if ("GroupName" in params) body.append(prefix+"GroupName", (params["GroupName"] ?? '').toString());
     if ("Strategy" in params) body.append(prefix+"Strategy", (params["Strategy"] ?? '').toString());
     if ("PartitionCount" in params) body.append(prefix+"PartitionCount", (params["PartitionCount"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePlacementGroup",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       PlacementGroup: xml.first("placementGroup", false, PlacementGroup_Parse),
     };
@@ -1397,13 +1397,13 @@ export default class EC2 {
     const prefix = '';
     body.append(prefix+"ClientToken", (params["ClientToken"] ?? '').toString());
     body.append(prefix+"InstanceCount", (params["InstanceCount"] ?? '').toString());
-    if (params["PriceSchedules"]) prt.appendList(body, prefix+"priceSchedules", params["PriceSchedules"], {"appender":PriceScheduleSpecification_Serialize,"entryPrefix":"."})
+    if (params["PriceSchedules"]) qsP.appendList(body, prefix+"priceSchedules", params["PriceSchedules"], {"appender":PriceScheduleSpecification_Serialize,"entryPrefix":"."})
     body.append(prefix+"ReservedInstancesId", (params["ReservedInstancesId"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateReservedInstancesListing",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ReservedInstancesListings: xml.getList("reservedInstancesListingsSet", "item").map(ReservedInstancesListing_Parse),
     };
@@ -1432,7 +1432,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CreateRoute",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -1445,12 +1445,12 @@ export default class EC2 {
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"VpcId", (params["VpcId"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRouteTable",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       RouteTable: xml.first("routeTable", false, RouteTable_Parse),
     };
@@ -1464,13 +1464,13 @@ export default class EC2 {
     body.append(prefix+"GroupDescription", (params["Description"] ?? '').toString());
     body.append(prefix+"GroupName", (params["GroupName"] ?? '').toString());
     if ("VpcId" in params) body.append(prefix+"VpcId", (params["VpcId"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSecurityGroup",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       GroupId: xml.first("groupId", false, x => x.content ?? ''),
       Tags: xml.getList("tagSet", "item").map(Tag_Parse),
@@ -1484,13 +1484,13 @@ export default class EC2 {
     const prefix = '';
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     body.append(prefix+"VolumeId", (params["VolumeId"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSnapshot",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return Snapshot_Parse(xml);
   }
 
@@ -1501,14 +1501,14 @@ export default class EC2 {
     const prefix = '';
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     InstanceSpecification_Serialize(body, prefix+"InstanceSpecification", params["InstanceSpecification"]);
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("CopyTagsFromSource" in params) body.append(prefix+"CopyTagsFromSource", (params["CopyTagsFromSource"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSnapshots",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Snapshots: xml.getList("snapshotSet", "item").map(SnapshotInfo_Parse),
     };
@@ -1526,7 +1526,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CreateSpotDatafeedSubscription",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       SpotDatafeedSubscription: xml.first("spotDatafeedSubscription", false, SpotDatafeedSubscription_Parse),
     };
@@ -1537,7 +1537,7 @@ export default class EC2 {
   ): Promise<CreateSubnetResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("AvailabilityZone" in params) body.append(prefix+"AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
     if ("AvailabilityZoneId" in params) body.append(prefix+"AvailabilityZoneId", (params["AvailabilityZoneId"] ?? '').toString());
     body.append(prefix+"CidrBlock", (params["CidrBlock"] ?? '').toString());
@@ -1549,7 +1549,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CreateSubnet",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Subnet: xml.first("subnet", false, Subnet_Parse),
     };
@@ -1561,8 +1561,8 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Resources"]) prt.appendList(body, prefix+"ResourceId", params["Resources"], {"entryPrefix":"."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tag", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":"."})
+    if (params["Resources"]) qsP.appendList(body, prefix+"ResourceId", params["Resources"], {"entryPrefix":"."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tag", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTags",
@@ -1575,14 +1575,14 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"ClientToken", (params["ClientToken"] ?? generateIdemptToken()).toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTrafficMirrorFilter",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TrafficMirrorFilter: xml.first("trafficMirrorFilter", false, TrafficMirrorFilter_Parse),
       ClientToken: xml.first("clientToken", false, x => x.content ?? ''),
@@ -1610,7 +1610,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CreateTrafficMirrorFilterRule",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TrafficMirrorFilterRule: xml.first("trafficMirrorFilterRule", false, TrafficMirrorFilterRule_Parse),
       ClientToken: xml.first("clientToken", false, x => x.content ?? ''),
@@ -1629,14 +1629,14 @@ export default class EC2 {
     body.append(prefix+"SessionNumber", (params["SessionNumber"] ?? '').toString());
     if ("VirtualNetworkId" in params) body.append(prefix+"VirtualNetworkId", (params["VirtualNetworkId"] ?? '').toString());
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"ClientToken", (params["ClientToken"] ?? generateIdemptToken()).toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTrafficMirrorSession",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TrafficMirrorSession: xml.first("trafficMirrorSession", false, TrafficMirrorSession_Parse),
       ClientToken: xml.first("clientToken", false, x => x.content ?? ''),
@@ -1651,14 +1651,14 @@ export default class EC2 {
     if ("NetworkInterfaceId" in params) body.append(prefix+"NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
     if ("NetworkLoadBalancerArn" in params) body.append(prefix+"NetworkLoadBalancerArn", (params["NetworkLoadBalancerArn"] ?? '').toString());
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"ClientToken", (params["ClientToken"] ?? generateIdemptToken()).toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTrafficMirrorTarget",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TrafficMirrorTarget: xml.first("trafficMirrorTarget", false, TrafficMirrorTarget_Parse),
       ClientToken: xml.first("clientToken", false, x => x.content ?? ''),
@@ -1672,13 +1672,13 @@ export default class EC2 {
     const prefix = '';
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     if (params["Options"] != null) TransitGatewayRequestOptions_Serialize(body, prefix+"Options", params["Options"]);
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTransitGateway",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGateway: xml.first("transitGateway", false, TransitGateway_Parse),
     };
@@ -1690,13 +1690,13 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TransitGatewayId", (params["TransitGatewayId"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTransitGatewayMulticastDomain",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayMulticastDomain: xml.first("transitGatewayMulticastDomain", false, TransitGatewayMulticastDomain_Parse),
     };
@@ -1711,13 +1711,13 @@ export default class EC2 {
     body.append(prefix+"PeerTransitGatewayId", (params["PeerTransitGatewayId"] ?? '').toString());
     body.append(prefix+"PeerAccountId", (params["PeerAccountId"] ?? '').toString());
     body.append(prefix+"PeerRegion", (params["PeerRegion"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTransitGatewayPeeringAttachment",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayPeeringAttachment: xml.first("transitGatewayPeeringAttachment", false, TransitGatewayPeeringAttachment_Parse),
     };
@@ -1737,7 +1737,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CreateTransitGatewayPrefixListReference",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayPrefixListReference: xml.first("transitGatewayPrefixListReference", false, TransitGatewayPrefixListReference_Parse),
     };
@@ -1757,7 +1757,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CreateTransitGatewayRoute",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Route: xml.first("route", false, TransitGatewayRoute_Parse),
     };
@@ -1769,13 +1769,13 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TransitGatewayId", (params["TransitGatewayId"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"item", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"item", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTransitGatewayRouteTable",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayRouteTable: xml.first("transitGatewayRouteTable", false, TransitGatewayRouteTable_Parse),
     };
@@ -1788,15 +1788,15 @@ export default class EC2 {
     const prefix = '';
     body.append(prefix+"TransitGatewayId", (params["TransitGatewayId"] ?? '').toString());
     body.append(prefix+"VpcId", (params["VpcId"] ?? '').toString());
-    if (params["SubnetIds"]) prt.appendList(body, prefix+"item", params["SubnetIds"], {"entryPrefix":"."})
+    if (params["SubnetIds"]) qsP.appendList(body, prefix+"item", params["SubnetIds"], {"entryPrefix":"."})
     if (params["Options"] != null) CreateTransitGatewayVpcAttachmentRequestOptions_Serialize(body, prefix+"Options", params["Options"]);
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"item", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"item", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTransitGatewayVpcAttachment",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayVpcAttachment: xml.first("transitGatewayVpcAttachment", false, TransitGatewayVpcAttachment_Parse),
     };
@@ -1816,13 +1816,13 @@ export default class EC2 {
     if ("SnapshotId" in params) body.append(prefix+"SnapshotId", (params["SnapshotId"] ?? '').toString());
     if ("VolumeType" in params) body.append(prefix+"VolumeType", (params["VolumeType"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("MultiAttachEnabled" in params) body.append(prefix+"MultiAttachEnabled", (params["MultiAttachEnabled"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVolume",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return Volume_Parse(xml);
   }
 
@@ -1838,12 +1838,12 @@ export default class EC2 {
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("InstanceTenancy" in params) body.append(prefix+"InstanceTenancy", (params["InstanceTenancy"] ?? '').toString());
     if ("Ipv6CidrBlockNetworkBorderGroup" in params) body.append(prefix+"Ipv6CidrBlockNetworkBorderGroup", (params["Ipv6CidrBlockNetworkBorderGroup"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVpc",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Vpc: xml.first("vpc", false, Vpc_Parse),
     };
@@ -1859,17 +1859,17 @@ export default class EC2 {
     body.append(prefix+"VpcId", (params["VpcId"] ?? '').toString());
     body.append(prefix+"ServiceName", (params["ServiceName"] ?? '').toString());
     if ("PolicyDocument" in params) body.append(prefix+"PolicyDocument", (params["PolicyDocument"] ?? '').toString());
-    if (params["RouteTableIds"]) prt.appendList(body, prefix+"RouteTableId", params["RouteTableIds"], {"entryPrefix":"."})
-    if (params["SubnetIds"]) prt.appendList(body, prefix+"SubnetId", params["SubnetIds"], {"entryPrefix":"."})
-    if (params["SecurityGroupIds"]) prt.appendList(body, prefix+"SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
+    if (params["RouteTableIds"]) qsP.appendList(body, prefix+"RouteTableId", params["RouteTableIds"], {"entryPrefix":"."})
+    if (params["SubnetIds"]) qsP.appendList(body, prefix+"SubnetId", params["SubnetIds"], {"entryPrefix":"."})
+    if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+"SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
     if ("ClientToken" in params) body.append(prefix+"ClientToken", (params["ClientToken"] ?? '').toString());
     if ("PrivateDnsEnabled" in params) body.append(prefix+"PrivateDnsEnabled", (params["PrivateDnsEnabled"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVpcEndpoint",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       VpcEndpoint: xml.first("vpcEndpoint", false, VpcEndpoint_Parse),
       ClientToken: xml.first("clientToken", false, x => x.content ?? ''),
@@ -1885,13 +1885,13 @@ export default class EC2 {
     if ("ServiceId" in params) body.append(prefix+"ServiceId", (params["ServiceId"] ?? '').toString());
     if ("VpcEndpointId" in params) body.append(prefix+"VpcEndpointId", (params["VpcEndpointId"] ?? '').toString());
     body.append(prefix+"ConnectionNotificationArn", (params["ConnectionNotificationArn"] ?? '').toString());
-    if (params["ConnectionEvents"]) prt.appendList(body, prefix+"item", params["ConnectionEvents"], {"entryPrefix":"."})
+    if (params["ConnectionEvents"]) qsP.appendList(body, prefix+"item", params["ConnectionEvents"], {"entryPrefix":"."})
     if ("ClientToken" in params) body.append(prefix+"ClientToken", (params["ClientToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVpcEndpointConnectionNotification",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ConnectionNotification: xml.first("connectionNotification", false, ConnectionNotification_Parse),
       ClientToken: xml.first("clientToken", false, x => x.content ?? ''),
@@ -1906,14 +1906,14 @@ export default class EC2 {
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("AcceptanceRequired" in params) body.append(prefix+"AcceptanceRequired", (params["AcceptanceRequired"] ?? '').toString());
     if ("PrivateDnsName" in params) body.append(prefix+"PrivateDnsName", (params["PrivateDnsName"] ?? '').toString());
-    if (params["NetworkLoadBalancerArns"]) prt.appendList(body, prefix+"NetworkLoadBalancerArn", params["NetworkLoadBalancerArns"], {"entryPrefix":"."})
+    if (params["NetworkLoadBalancerArns"]) qsP.appendList(body, prefix+"NetworkLoadBalancerArn", params["NetworkLoadBalancerArns"], {"entryPrefix":"."})
     if ("ClientToken" in params) body.append(prefix+"ClientToken", (params["ClientToken"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVpcEndpointServiceConfiguration",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ServiceConfiguration: xml.first("serviceConfiguration", false, ServiceConfiguration_Parse),
       ClientToken: xml.first("clientToken", false, x => x.content ?? ''),
@@ -1930,12 +1930,12 @@ export default class EC2 {
     if ("PeerVpcId" in params) body.append(prefix+"PeerVpcId", (params["PeerVpcId"] ?? '').toString());
     if ("VpcId" in params) body.append(prefix+"VpcId", (params["VpcId"] ?? '').toString());
     if ("PeerRegion" in params) body.append(prefix+"PeerRegion", (params["PeerRegion"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVpcPeeringConnection",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       VpcPeeringConnection: xml.first("vpcPeeringConnection", false, VpcPeeringConnection_Parse),
     };
@@ -1952,12 +1952,12 @@ export default class EC2 {
     if ("TransitGatewayId" in params) body.append(prefix+"TransitGatewayId", (params["TransitGatewayId"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if (params["Options"] != null) VpnConnectionOptionsSpecification_Serialize(body, prefix+"Options", params["Options"]);
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVpnConnection",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       VpnConnection: xml.first("vpnConnection", false, VpnConnection_Parse),
     };
@@ -1983,14 +1983,14 @@ export default class EC2 {
     const prefix = '';
     if ("AvailabilityZone" in params) body.append(prefix+"AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
     body.append(prefix+"Type", (params["Type"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("AmazonSideAsn" in params) body.append(prefix+"AmazonSideAsn", (params["AmazonSideAsn"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVpnGateway",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       VpnGateway: xml.first("vpnGateway", false, VpnGateway_Parse),
     };
@@ -2007,7 +2007,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteCarrierGateway",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       CarrierGateway: xml.first("carrierGateway", false, CarrierGateway_Parse),
     };
@@ -2024,7 +2024,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteClientVpnEndpoint",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Status: xml.first("status", false, ClientVpnEndpointStatus_Parse),
     };
@@ -2043,7 +2043,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteClientVpnRoute",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Status: xml.first("status", false, ClientVpnRouteStatus_Parse),
     };
@@ -2086,7 +2086,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteEgressOnlyInternetGateway",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ReturnCode: xml.first("returnCode", false, x => x.content === 'true'),
     };
@@ -2098,13 +2098,13 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["FleetIds"]) prt.appendList(body, prefix+"FleetId", params["FleetIds"], {"entryPrefix":"."})
+    if (params["FleetIds"]) qsP.appendList(body, prefix+"FleetId", params["FleetIds"], {"entryPrefix":"."})
     body.append(prefix+"TerminateInstances", (params["TerminateInstances"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFleets",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       SuccessfulFleetDeletions: xml.getList("successfulFleetDeletionSet", "item").map(DeleteFleetSuccessItem_Parse),
       UnsuccessfulFleetDeletions: xml.getList("unsuccessfulFleetDeletionSet", "item").map(DeleteFleetErrorItem_Parse),
@@ -2117,12 +2117,12 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["FlowLogIds"]) prt.appendList(body, prefix+"FlowLogId", params["FlowLogIds"], {"entryPrefix":"."})
+    if (params["FlowLogIds"]) qsP.appendList(body, prefix+"FlowLogId", params["FlowLogIds"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFlowLogs",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Unsuccessful: xml.getList("unsuccessful", "item").map(UnsuccessfulItem_Parse),
     };
@@ -2139,7 +2139,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteFpgaImage",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -2184,7 +2184,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteLaunchTemplate",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       LaunchTemplate: xml.first("launchTemplate", false, LaunchTemplate_Parse),
     };
@@ -2198,12 +2198,12 @@ export default class EC2 {
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("LaunchTemplateId" in params) body.append(prefix+"LaunchTemplateId", (params["LaunchTemplateId"] ?? '').toString());
     if ("LaunchTemplateName" in params) body.append(prefix+"LaunchTemplateName", (params["LaunchTemplateName"] ?? '').toString());
-    if (params["Versions"]) prt.appendList(body, prefix+"LaunchTemplateVersion", params["Versions"], {"entryPrefix":"."})
+    if (params["Versions"]) qsP.appendList(body, prefix+"LaunchTemplateVersion", params["Versions"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLaunchTemplateVersions",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       SuccessfullyDeletedLaunchTemplateVersions: xml.getList("successfullyDeletedLaunchTemplateVersionSet", "item").map(DeleteLaunchTemplateVersionsResponseSuccessItem_Parse),
       UnsuccessfullyDeletedLaunchTemplateVersions: xml.getList("unsuccessfullyDeletedLaunchTemplateVersionSet", "item").map(DeleteLaunchTemplateVersionsResponseErrorItem_Parse),
@@ -2222,7 +2222,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteLocalGatewayRoute",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Route: xml.first("route", false, LocalGatewayRoute_Parse),
     };
@@ -2239,7 +2239,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteLocalGatewayRouteTableVpcAssociation",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       LocalGatewayRouteTableVpcAssociation: xml.first("localGatewayRouteTableVpcAssociation", false, LocalGatewayRouteTableVpcAssociation_Parse),
     };
@@ -2256,7 +2256,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteManagedPrefixList",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       PrefixList: xml.first("prefixList", false, ManagedPrefixList_Parse),
     };
@@ -2273,7 +2273,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteNatGateway",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NatGatewayId: xml.first("natGatewayId", false, x => x.content ?? ''),
     };
@@ -2332,7 +2332,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteNetworkInterfacePermission",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -2357,12 +2357,12 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["ReservedInstancesIds"]) prt.appendList(body, prefix+"ReservedInstancesId", params["ReservedInstancesIds"], {"entryPrefix":"."})
+    if (params["ReservedInstancesIds"]) qsP.appendList(body, prefix+"ReservedInstancesId", params["ReservedInstancesIds"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteQueuedReservedInstances",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       SuccessfulQueuedPurchaseDeletions: xml.getList("successfulQueuedPurchaseDeletionSet", "item").map(SuccessfulQueuedPurchaseDeletion_Parse),
       FailedQueuedPurchaseDeletions: xml.getList("failedQueuedPurchaseDeletionSet", "item").map(FailedQueuedPurchaseDeletion_Parse),
@@ -2456,8 +2456,8 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Resources"]) prt.appendList(body, prefix+"resourceId", params["Resources"], {"entryPrefix":"."})
-    if (params["Tags"]) prt.appendList(body, prefix+"tag", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":"."})
+    if (params["Resources"]) qsP.appendList(body, prefix+"resourceId", params["Resources"], {"entryPrefix":"."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"tag", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTags",
@@ -2475,7 +2475,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteTrafficMirrorFilter",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TrafficMirrorFilterId: xml.first("trafficMirrorFilterId", false, x => x.content ?? ''),
     };
@@ -2492,7 +2492,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteTrafficMirrorFilterRule",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TrafficMirrorFilterRuleId: xml.first("trafficMirrorFilterRuleId", false, x => x.content ?? ''),
     };
@@ -2509,7 +2509,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteTrafficMirrorSession",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TrafficMirrorSessionId: xml.first("trafficMirrorSessionId", false, x => x.content ?? ''),
     };
@@ -2526,7 +2526,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteTrafficMirrorTarget",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TrafficMirrorTargetId: xml.first("trafficMirrorTargetId", false, x => x.content ?? ''),
     };
@@ -2543,7 +2543,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteTransitGateway",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGateway: xml.first("transitGateway", false, TransitGateway_Parse),
     };
@@ -2560,7 +2560,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteTransitGatewayMulticastDomain",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayMulticastDomain: xml.first("transitGatewayMulticastDomain", false, TransitGatewayMulticastDomain_Parse),
     };
@@ -2577,7 +2577,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteTransitGatewayPeeringAttachment",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayPeeringAttachment: xml.first("transitGatewayPeeringAttachment", false, TransitGatewayPeeringAttachment_Parse),
     };
@@ -2595,7 +2595,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteTransitGatewayPrefixListReference",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayPrefixListReference: xml.first("transitGatewayPrefixListReference", false, TransitGatewayPrefixListReference_Parse),
     };
@@ -2613,7 +2613,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteTransitGatewayRoute",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Route: xml.first("route", false, TransitGatewayRoute_Parse),
     };
@@ -2630,7 +2630,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteTransitGatewayRouteTable",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayRouteTable: xml.first("transitGatewayRouteTable", false, TransitGatewayRouteTable_Parse),
     };
@@ -2647,7 +2647,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteTransitGatewayVpcAttachment",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayVpcAttachment: xml.first("transitGatewayVpcAttachment", false, TransitGatewayVpcAttachment_Parse),
     };
@@ -2685,12 +2685,12 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["ConnectionNotificationIds"]) prt.appendList(body, prefix+"ConnectionNotificationId", params["ConnectionNotificationIds"], {"entryPrefix":"."})
+    if (params["ConnectionNotificationIds"]) qsP.appendList(body, prefix+"ConnectionNotificationId", params["ConnectionNotificationIds"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteVpcEndpointConnectionNotifications",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Unsuccessful: xml.getList("unsuccessful", "item").map(UnsuccessfulItem_Parse),
     };
@@ -2702,12 +2702,12 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["ServiceIds"]) prt.appendList(body, prefix+"ServiceId", params["ServiceIds"], {"entryPrefix":"."})
+    if (params["ServiceIds"]) qsP.appendList(body, prefix+"ServiceId", params["ServiceIds"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteVpcEndpointServiceConfigurations",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Unsuccessful: xml.getList("unsuccessful", "item").map(UnsuccessfulItem_Parse),
     };
@@ -2719,12 +2719,12 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["VpcEndpointIds"]) prt.appendList(body, prefix+"VpcEndpointId", params["VpcEndpointIds"], {"entryPrefix":"."})
+    if (params["VpcEndpointIds"]) qsP.appendList(body, prefix+"VpcEndpointId", params["VpcEndpointIds"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteVpcEndpoints",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Unsuccessful: xml.getList("unsuccessful", "item").map(UnsuccessfulItem_Parse),
     };
@@ -2741,7 +2741,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteVpcPeeringConnection",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -2797,7 +2797,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeprovisionByoipCidr",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ByoipCidr: xml.first("byoipCidr", false, ByoipCidr_Parse),
     };
@@ -2827,7 +2827,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeregisterInstanceEventNotificationAttributes",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       InstanceTagAttribute: xml.first("instanceTagAttribute", false, InstanceTagNotificationAttribute_Parse),
     };
@@ -2840,13 +2840,13 @@ export default class EC2 {
     const prefix = '';
     if ("TransitGatewayMulticastDomainId" in params) body.append(prefix+"TransitGatewayMulticastDomainId", (params["TransitGatewayMulticastDomainId"] ?? '').toString());
     if ("GroupIpAddress" in params) body.append(prefix+"GroupIpAddress", (params["GroupIpAddress"] ?? '').toString());
-    if (params["NetworkInterfaceIds"]) prt.appendList(body, prefix+"item", params["NetworkInterfaceIds"], {"entryPrefix":"."})
+    if (params["NetworkInterfaceIds"]) qsP.appendList(body, prefix+"item", params["NetworkInterfaceIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterTransitGatewayMulticastGroupMembers",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       DeregisteredMulticastGroupMembers: xml.first("deregisteredMulticastGroupMembers", false, TransitGatewayMulticastDeregisteredGroupMembers_Parse),
     };
@@ -2859,13 +2859,13 @@ export default class EC2 {
     const prefix = '';
     if ("TransitGatewayMulticastDomainId" in params) body.append(prefix+"TransitGatewayMulticastDomainId", (params["TransitGatewayMulticastDomainId"] ?? '').toString());
     if ("GroupIpAddress" in params) body.append(prefix+"GroupIpAddress", (params["GroupIpAddress"] ?? '').toString());
-    if (params["NetworkInterfaceIds"]) prt.appendList(body, prefix+"item", params["NetworkInterfaceIds"], {"entryPrefix":"."})
+    if (params["NetworkInterfaceIds"]) qsP.appendList(body, prefix+"item", params["NetworkInterfaceIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterTransitGatewayMulticastGroupSources",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       DeregisteredMulticastGroupSources: xml.first("deregisteredMulticastGroupSources", false, TransitGatewayMulticastDeregisteredGroupSources_Parse),
     };
@@ -2876,13 +2876,13 @@ export default class EC2 {
   ): Promise<DescribeAccountAttributesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["AttributeNames"]) prt.appendList(body, prefix+"attributeName", params["AttributeNames"], {"entryPrefix":"."})
+    if (params["AttributeNames"]) qsP.appendList(body, prefix+"attributeName", params["AttributeNames"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccountAttributes",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       AccountAttributes: xml.getList("accountAttributeSet", "item").map(AccountAttribute_Parse),
     };
@@ -2893,15 +2893,15 @@ export default class EC2 {
   ): Promise<DescribeAddressesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["PublicIps"]) prt.appendList(body, prefix+"PublicIp", params["PublicIps"], {"entryPrefix":"."})
-    if (params["AllocationIds"]) prt.appendList(body, prefix+"AllocationId", params["AllocationIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["PublicIps"]) qsP.appendList(body, prefix+"PublicIp", params["PublicIps"], {"entryPrefix":"."})
+    if (params["AllocationIds"]) qsP.appendList(body, prefix+"AllocationId", params["AllocationIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAddresses",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Addresses: xml.getList("addressesSet", "item").map(Address_Parse),
     };
@@ -2917,7 +2917,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeAggregateIdFormat",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       UseLongIdsAggregated: xml.first("useLongIdsAggregated", false, x => x.content === 'true'),
       Statuses: xml.getList("statusSet", "item").map(IdFormat_Parse),
@@ -2929,16 +2929,16 @@ export default class EC2 {
   ): Promise<DescribeAvailabilityZonesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["ZoneNames"]) prt.appendList(body, prefix+"ZoneName", params["ZoneNames"], {"entryPrefix":"."})
-    if (params["ZoneIds"]) prt.appendList(body, prefix+"ZoneId", params["ZoneIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["ZoneNames"]) qsP.appendList(body, prefix+"ZoneName", params["ZoneNames"], {"entryPrefix":"."})
+    if (params["ZoneIds"]) qsP.appendList(body, prefix+"ZoneId", params["ZoneIds"], {"entryPrefix":"."})
     if ("AllAvailabilityZones" in params) body.append(prefix+"AllAvailabilityZones", (params["AllAvailabilityZones"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAvailabilityZones",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       AvailabilityZones: xml.getList("availabilityZoneInfo", "item").map(AvailabilityZone_Parse),
     };
@@ -2949,14 +2949,14 @@ export default class EC2 {
   ): Promise<DescribeBundleTasksResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["BundleIds"]) prt.appendList(body, prefix+"BundleId", params["BundleIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["BundleIds"]) qsP.appendList(body, prefix+"BundleId", params["BundleIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBundleTasks",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       BundleTasks: xml.getList("bundleInstanceTasksSet", "item").map(BundleTask_Parse),
     };
@@ -2974,7 +2974,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeByoipCidrs",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ByoipCidrs: xml.getList("byoipCidrSet", "item").map(ByoipCidr_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -2986,16 +2986,16 @@ export default class EC2 {
   ): Promise<DescribeCapacityReservationsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["CapacityReservationIds"]) prt.appendList(body, prefix+"CapacityReservationId", params["CapacityReservationIds"], {"entryPrefix":"."})
+    if (params["CapacityReservationIds"]) qsP.appendList(body, prefix+"CapacityReservationId", params["CapacityReservationIds"], {"entryPrefix":"."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCapacityReservations",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
       CapacityReservations: xml.getList("capacityReservationSet", "item").map(CapacityReservation_Parse),
@@ -3007,8 +3007,8 @@ export default class EC2 {
   ): Promise<DescribeCarrierGatewaysResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["CarrierGatewayIds"]) prt.appendList(body, prefix+"CarrierGatewayId", params["CarrierGatewayIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["CarrierGatewayIds"]) qsP.appendList(body, prefix+"CarrierGatewayId", params["CarrierGatewayIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -3016,7 +3016,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeCarrierGateways",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       CarrierGateways: xml.getList("carrierGatewaySet", "item").map(CarrierGateway_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3028,16 +3028,16 @@ export default class EC2 {
   ): Promise<DescribeClassicLinkInstancesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["InstanceIds"]) prt.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
+    if (params["InstanceIds"]) qsP.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeClassicLinkInstances",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Instances: xml.getList("instancesSet", "item").map(ClassicLinkInstance_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3052,13 +3052,13 @@ export default class EC2 {
     body.append(prefix+"ClientVpnEndpointId", (params["ClientVpnEndpointId"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeClientVpnAuthorizationRules",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       AuthorizationRules: xml.getList("authorizationRule", "item").map(AuthorizationRule_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3071,7 +3071,7 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ClientVpnEndpointId", (params["ClientVpnEndpointId"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -3079,7 +3079,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeClientVpnConnections",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Connections: xml.getList("connections", "item").map(ClientVpnConnection_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3091,16 +3091,16 @@ export default class EC2 {
   ): Promise<DescribeClientVpnEndpointsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["ClientVpnEndpointIds"]) prt.appendList(body, prefix+"ClientVpnEndpointId", params["ClientVpnEndpointIds"], {"entryPrefix":"."})
+    if (params["ClientVpnEndpointIds"]) qsP.appendList(body, prefix+"ClientVpnEndpointId", params["ClientVpnEndpointIds"], {"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeClientVpnEndpoints",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ClientVpnEndpoints: xml.getList("clientVpnEndpoint", "item").map(ClientVpnEndpoint_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3113,7 +3113,7 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ClientVpnEndpointId", (params["ClientVpnEndpointId"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -3121,7 +3121,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeClientVpnRoutes",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Routes: xml.getList("routes", "item").map(ClientVpnRoute_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3134,16 +3134,16 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ClientVpnEndpointId", (params["ClientVpnEndpointId"] ?? '').toString());
-    if (params["AssociationIds"]) prt.appendList(body, prefix+"item", params["AssociationIds"], {"entryPrefix":"."})
+    if (params["AssociationIds"]) qsP.appendList(body, prefix+"item", params["AssociationIds"], {"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeClientVpnTargetNetworks",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ClientVpnTargetNetworks: xml.getList("clientVpnTargetNetworks", "item").map(TargetNetwork_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3155,8 +3155,8 @@ export default class EC2 {
   ): Promise<DescribeCoipPoolsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["PoolIds"]) prt.appendList(body, prefix+"PoolId", params["PoolIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["PoolIds"]) qsP.appendList(body, prefix+"PoolId", params["PoolIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -3164,7 +3164,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeCoipPools",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       CoipPools: xml.getList("coipPoolSet", "item").map(CoipPool_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3176,13 +3176,13 @@ export default class EC2 {
   ): Promise<DescribeConversionTasksResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["ConversionTaskIds"]) prt.appendList(body, prefix+"conversionTaskId", params["ConversionTaskIds"], {"entryPrefix":"."})
+    if (params["ConversionTaskIds"]) qsP.appendList(body, prefix+"conversionTaskId", params["ConversionTaskIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConversionTasks",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ConversionTasks: xml.getList("conversionTasks", "item").map(ConversionTask_Parse),
     };
@@ -3193,14 +3193,14 @@ export default class EC2 {
   ): Promise<DescribeCustomerGatewaysResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["CustomerGatewayIds"]) prt.appendList(body, prefix+"CustomerGatewayId", params["CustomerGatewayIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["CustomerGatewayIds"]) qsP.appendList(body, prefix+"CustomerGatewayId", params["CustomerGatewayIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCustomerGateways",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       CustomerGateways: xml.getList("customerGatewaySet", "item").map(CustomerGateway_Parse),
     };
@@ -3211,8 +3211,8 @@ export default class EC2 {
   ): Promise<DescribeDhcpOptionsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["DhcpOptionsIds"]) prt.appendList(body, prefix+"DhcpOptionsId", params["DhcpOptionsIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["DhcpOptionsIds"]) qsP.appendList(body, prefix+"DhcpOptionsId", params["DhcpOptionsIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
@@ -3220,7 +3220,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeDhcpOptions",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       DhcpOptions: xml.getList("dhcpOptionsSet", "item").map(DhcpOptions_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3233,15 +3233,15 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["EgressOnlyInternetGatewayIds"]) prt.appendList(body, prefix+"EgressOnlyInternetGatewayId", params["EgressOnlyInternetGatewayIds"], {"entryPrefix":"."})
+    if (params["EgressOnlyInternetGatewayIds"]) qsP.appendList(body, prefix+"EgressOnlyInternetGatewayId", params["EgressOnlyInternetGatewayIds"], {"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEgressOnlyInternetGateways",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       EgressOnlyInternetGateways: xml.getList("egressOnlyInternetGatewaySet", "item").map(EgressOnlyInternetGateway_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3253,16 +3253,16 @@ export default class EC2 {
   ): Promise<DescribeElasticGpusResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["ElasticGpuIds"]) prt.appendList(body, prefix+"ElasticGpuId", params["ElasticGpuIds"], {"entryPrefix":"."})
+    if (params["ElasticGpuIds"]) qsP.appendList(body, prefix+"ElasticGpuId", params["ElasticGpuIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeElasticGpus",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ElasticGpuSet: xml.getList("elasticGpuSet", "item").map(ElasticGpus_Parse),
       MaxResults: xml.first("maxResults", false, x => parseInt(x.content ?? '0')),
@@ -3276,15 +3276,15 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["ExportImageTaskIds"]) prt.appendList(body, prefix+"ExportImageTaskId", params["ExportImageTaskIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["ExportImageTaskIds"]) qsP.appendList(body, prefix+"ExportImageTaskId", params["ExportImageTaskIds"], {"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeExportImageTasks",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ExportImageTasks: xml.getList("exportImageTaskSet", "item").map(ExportImageTask_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3296,13 +3296,13 @@ export default class EC2 {
   ): Promise<DescribeExportTasksResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["ExportTaskIds"]) prt.appendList(body, prefix+"exportTaskId", params["ExportTaskIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["ExportTaskIds"]) qsP.appendList(body, prefix+"exportTaskId", params["ExportTaskIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeExportTasks",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ExportTasks: xml.getList("exportTaskSet", "item").map(ExportTask_Parse),
     };
@@ -3313,7 +3313,7 @@ export default class EC2 {
   ): Promise<DescribeFastSnapshotRestoresResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -3321,7 +3321,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeFastSnapshotRestores",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       FastSnapshotRestores: xml.getList("fastSnapshotRestoreSet", "item").map(DescribeFastSnapshotRestoreSuccessItem_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3338,18 +3338,18 @@ export default class EC2 {
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     body.append(prefix+"FleetId", (params["FleetId"] ?? '').toString());
-    body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
+    body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFleetHistory",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       HistoryRecords: xml.getList("historyRecordSet", "item").map(HistoryRecordEntry_Parse),
-      LastEvaluatedTime: xml.first("lastEvaluatedTime", false, x => parseTimestamp(x.content)),
+      LastEvaluatedTime: xml.first("lastEvaluatedTime", false, x => xmlP.parseTimestamp(x.content)),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
       FleetId: xml.first("fleetId", false, x => x.content ?? ''),
-      StartTime: xml.first("startTime", false, x => parseTimestamp(x.content)),
+      StartTime: xml.first("startTime", false, x => xmlP.parseTimestamp(x.content)),
     };
   }
 
@@ -3362,12 +3362,12 @@ export default class EC2 {
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     body.append(prefix+"FleetId", (params["FleetId"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFleetInstances",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ActiveInstances: xml.getList("activeInstanceSet", "item").map(ActiveInstance_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3383,13 +3383,13 @@ export default class EC2 {
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
-    if (params["FleetIds"]) prt.appendList(body, prefix+"FleetId", params["FleetIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["FleetIds"]) qsP.appendList(body, prefix+"FleetId", params["FleetIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFleets",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
       Fleets: xml.getList("fleetSet", "item").map(FleetData_Parse),
@@ -3402,15 +3402,15 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Filter"]) prt.appendList(body, prefix+"Filter", params["Filter"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["FlowLogIds"]) prt.appendList(body, prefix+"FlowLogId", params["FlowLogIds"], {"entryPrefix":"."})
+    if (params["Filter"]) qsP.appendList(body, prefix+"Filter", params["Filter"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["FlowLogIds"]) qsP.appendList(body, prefix+"FlowLogId", params["FlowLogIds"], {"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFlowLogs",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       FlowLogs: xml.getList("flowLogSet", "item").map(FlowLog_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3429,7 +3429,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeFpgaImageAttribute",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       FpgaImageAttribute: xml.first("fpgaImageAttribute", false, FpgaImageAttribute_Parse),
     };
@@ -3441,16 +3441,16 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["FpgaImageIds"]) prt.appendList(body, prefix+"FpgaImageId", params["FpgaImageIds"], {"entryPrefix":"."})
-    if (params["Owners"]) prt.appendList(body, prefix+"Owner", params["Owners"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["FpgaImageIds"]) qsP.appendList(body, prefix+"FpgaImageId", params["FpgaImageIds"], {"entryPrefix":"."})
+    if (params["Owners"]) qsP.appendList(body, prefix+"Owner", params["Owners"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFpgaImages",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       FpgaImages: xml.getList("fpgaImageSet", "item").map(FpgaImage_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3462,7 +3462,7 @@ export default class EC2 {
   ): Promise<DescribeHostReservationOfferingsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filter"]) prt.appendList(body, prefix+"Filter", params["Filter"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filter"]) qsP.appendList(body, prefix+"Filter", params["Filter"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxDuration" in params) body.append(prefix+"MaxDuration", (params["MaxDuration"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("MinDuration" in params) body.append(prefix+"MinDuration", (params["MinDuration"] ?? '').toString());
@@ -3472,7 +3472,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeHostReservationOfferings",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
       OfferingSet: xml.getList("offeringSet", "item").map(HostOffering_Parse),
@@ -3484,15 +3484,15 @@ export default class EC2 {
   ): Promise<DescribeHostReservationsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filter"]) prt.appendList(body, prefix+"Filter", params["Filter"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["HostReservationIdSet"]) prt.appendList(body, prefix+"item", params["HostReservationIdSet"], {"entryPrefix":"."})
+    if (params["Filter"]) qsP.appendList(body, prefix+"Filter", params["Filter"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["HostReservationIdSet"]) qsP.appendList(body, prefix+"item", params["HostReservationIdSet"], {"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeHostReservations",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       HostReservationSet: xml.getList("hostReservationSet", "item").map(HostReservation_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3504,15 +3504,15 @@ export default class EC2 {
   ): Promise<DescribeHostsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filter"]) prt.appendList(body, prefix+"filter", params["Filter"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["HostIds"]) prt.appendList(body, prefix+"hostId", params["HostIds"], {"entryPrefix":"."})
+    if (params["Filter"]) qsP.appendList(body, prefix+"filter", params["Filter"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["HostIds"]) qsP.appendList(body, prefix+"hostId", params["HostIds"], {"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeHosts",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Hosts: xml.getList("hostSet", "item").map(Host_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3524,15 +3524,15 @@ export default class EC2 {
   ): Promise<DescribeIamInstanceProfileAssociationsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["AssociationIds"]) prt.appendList(body, prefix+"AssociationId", params["AssociationIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["AssociationIds"]) qsP.appendList(body, prefix+"AssociationId", params["AssociationIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeIamInstanceProfileAssociations",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       IamInstanceProfileAssociations: xml.getList("iamInstanceProfileAssociationSet", "item").map(IamInstanceProfileAssociation_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3549,7 +3549,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeIdFormat",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Statuses: xml.getList("statusSet", "item").map(IdFormat_Parse),
     };
@@ -3566,7 +3566,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeIdentityIdFormat",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Statuses: xml.getList("statusSet", "item").map(IdFormat_Parse),
     };
@@ -3584,7 +3584,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeImageAttribute",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       BlockDeviceMappings: xml.getList("blockDeviceMapping", "item").map(BlockDeviceMapping_Parse),
       ImageId: xml.first("imageId", false, x => x.content ?? ''),
@@ -3602,16 +3602,16 @@ export default class EC2 {
   ): Promise<DescribeImagesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["ExecutableUsers"]) prt.appendList(body, prefix+"ExecutableBy", params["ExecutableUsers"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["ImageIds"]) prt.appendList(body, prefix+"ImageId", params["ImageIds"], {"entryPrefix":"."})
-    if (params["Owners"]) prt.appendList(body, prefix+"Owner", params["Owners"], {"entryPrefix":"."})
+    if (params["ExecutableUsers"]) qsP.appendList(body, prefix+"ExecutableBy", params["ExecutableUsers"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["ImageIds"]) qsP.appendList(body, prefix+"ImageId", params["ImageIds"], {"entryPrefix":"."})
+    if (params["Owners"]) qsP.appendList(body, prefix+"Owner", params["Owners"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeImages",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Images: xml.getList("imagesSet", "item").map(Image_Parse),
     };
@@ -3623,15 +3623,15 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["ImportTaskIds"]) prt.appendList(body, prefix+"ImportTaskId", params["ImportTaskIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["ImportTaskIds"]) qsP.appendList(body, prefix+"ImportTaskId", params["ImportTaskIds"], {"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeImportImageTasks",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ImportImageTasks: xml.getList("importImageTaskSet", "item").map(ImportImageTask_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3644,15 +3644,15 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["ImportTaskIds"]) prt.appendList(body, prefix+"ImportTaskId", params["ImportTaskIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["ImportTaskIds"]) qsP.appendList(body, prefix+"ImportTaskId", params["ImportTaskIds"], {"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeImportSnapshotTasks",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ImportSnapshotTasks: xml.getList("importSnapshotTaskSet", "item").map(ImportSnapshotTask_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3671,7 +3671,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeInstanceAttribute",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Groups: xml.getList("groupSet", "item").map(GroupIdentifier_Parse),
       BlockDeviceMappings: xml.getList("blockDeviceMapping", "item").map(InstanceBlockDeviceMapping_Parse),
@@ -3697,15 +3697,15 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["InstanceIds"]) prt.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["InstanceIds"]) qsP.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstanceCreditSpecifications",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       InstanceCreditSpecifications: xml.getList("instanceCreditSpecificationSet", "item").map(InstanceCreditSpecification_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3722,7 +3722,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeInstanceEventNotificationAttributes",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       InstanceTagAttribute: xml.first("instanceTagAttribute", false, InstanceTagNotificationAttribute_Parse),
     };
@@ -3733,8 +3733,8 @@ export default class EC2 {
   ): Promise<DescribeInstanceStatusResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["InstanceIds"]) prt.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["InstanceIds"]) qsP.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -3743,7 +3743,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeInstanceStatus",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       InstanceStatuses: xml.getList("instanceStatusSet", "item").map(InstanceStatus_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3757,14 +3757,14 @@ export default class EC2 {
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("LocationType" in params) body.append(prefix+"LocationType", (params["LocationType"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstanceTypeOfferings",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       InstanceTypeOfferings: xml.getList("instanceTypeOfferingSet", "item").map(InstanceTypeOffering_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3777,15 +3777,15 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["InstanceTypes"]) prt.appendList(body, prefix+"InstanceType", params["InstanceTypes"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["InstanceTypes"]) qsP.appendList(body, prefix+"InstanceType", params["InstanceTypes"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstanceTypes",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       InstanceTypes: xml.getList("instanceTypeSet", "item").map(InstanceTypeInfo_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3797,8 +3797,8 @@ export default class EC2 {
   ): Promise<DescribeInstancesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["InstanceIds"]) prt.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["InstanceIds"]) qsP.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
@@ -3806,7 +3806,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeInstances",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Reservations: xml.getList("reservationSet", "item").map(Reservation_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3818,16 +3818,16 @@ export default class EC2 {
   ): Promise<DescribeInternetGatewaysResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["InternetGatewayIds"]) prt.appendList(body, prefix+"internetGatewayId", params["InternetGatewayIds"], {"entryPrefix":"."})
+    if (params["InternetGatewayIds"]) qsP.appendList(body, prefix+"internetGatewayId", params["InternetGatewayIds"], {"entryPrefix":"."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInternetGateways",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       InternetGateways: xml.getList("internetGatewaySet", "item").map(InternetGateway_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3839,16 +3839,16 @@ export default class EC2 {
   ): Promise<DescribeIpv6PoolsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["PoolIds"]) prt.appendList(body, prefix+"PoolId", params["PoolIds"], {"entryPrefix":"."})
+    if (params["PoolIds"]) qsP.appendList(body, prefix+"PoolId", params["PoolIds"], {"entryPrefix":"."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeIpv6Pools",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Ipv6Pools: xml.getList("ipv6PoolSet", "item").map(Ipv6Pool_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3860,15 +3860,15 @@ export default class EC2 {
   ): Promise<DescribeKeyPairsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["KeyNames"]) prt.appendList(body, prefix+"KeyName", params["KeyNames"], {"entryPrefix":"."})
-    if (params["KeyPairIds"]) prt.appendList(body, prefix+"KeyPairId", params["KeyPairIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["KeyNames"]) qsP.appendList(body, prefix+"KeyName", params["KeyNames"], {"entryPrefix":"."})
+    if (params["KeyPairIds"]) qsP.appendList(body, prefix+"KeyPairId", params["KeyPairIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeKeyPairs",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       KeyPairs: xml.getList("keySet", "item").map(KeyPairInfo_Parse),
     };
@@ -3882,17 +3882,17 @@ export default class EC2 {
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("LaunchTemplateId" in params) body.append(prefix+"LaunchTemplateId", (params["LaunchTemplateId"] ?? '').toString());
     if ("LaunchTemplateName" in params) body.append(prefix+"LaunchTemplateName", (params["LaunchTemplateName"] ?? '').toString());
-    if (params["Versions"]) prt.appendList(body, prefix+"LaunchTemplateVersion", params["Versions"], {"entryPrefix":"."})
+    if (params["Versions"]) qsP.appendList(body, prefix+"LaunchTemplateVersion", params["Versions"], {"entryPrefix":"."})
     if ("MinVersion" in params) body.append(prefix+"MinVersion", (params["MinVersion"] ?? '').toString());
     if ("MaxVersion" in params) body.append(prefix+"MaxVersion", (params["MaxVersion"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLaunchTemplateVersions",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       LaunchTemplateVersions: xml.getList("launchTemplateVersionSet", "item").map(LaunchTemplateVersion_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3905,16 +3905,16 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["LaunchTemplateIds"]) prt.appendList(body, prefix+"LaunchTemplateId", params["LaunchTemplateIds"], {"entryPrefix":"."})
-    if (params["LaunchTemplateNames"]) prt.appendList(body, prefix+"LaunchTemplateName", params["LaunchTemplateNames"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["LaunchTemplateIds"]) qsP.appendList(body, prefix+"LaunchTemplateId", params["LaunchTemplateIds"], {"entryPrefix":"."})
+    if (params["LaunchTemplateNames"]) qsP.appendList(body, prefix+"LaunchTemplateName", params["LaunchTemplateNames"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLaunchTemplates",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       LaunchTemplates: xml.getList("launchTemplates", "item").map(LaunchTemplate_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3926,8 +3926,8 @@ export default class EC2 {
   ): Promise<DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociationsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["LocalGatewayRouteTableVirtualInterfaceGroupAssociationIds"]) prt.appendList(body, prefix+"LocalGatewayRouteTableVirtualInterfaceGroupAssociationId", params["LocalGatewayRouteTableVirtualInterfaceGroupAssociationIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["LocalGatewayRouteTableVirtualInterfaceGroupAssociationIds"]) qsP.appendList(body, prefix+"LocalGatewayRouteTableVirtualInterfaceGroupAssociationId", params["LocalGatewayRouteTableVirtualInterfaceGroupAssociationIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -3935,7 +3935,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeLocalGatewayRouteTableVirtualInterfaceGroupAssociations",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       LocalGatewayRouteTableVirtualInterfaceGroupAssociations: xml.getList("localGatewayRouteTableVirtualInterfaceGroupAssociationSet", "item").map(LocalGatewayRouteTableVirtualInterfaceGroupAssociation_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3947,8 +3947,8 @@ export default class EC2 {
   ): Promise<DescribeLocalGatewayRouteTableVpcAssociationsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["LocalGatewayRouteTableVpcAssociationIds"]) prt.appendList(body, prefix+"LocalGatewayRouteTableVpcAssociationId", params["LocalGatewayRouteTableVpcAssociationIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["LocalGatewayRouteTableVpcAssociationIds"]) qsP.appendList(body, prefix+"LocalGatewayRouteTableVpcAssociationId", params["LocalGatewayRouteTableVpcAssociationIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -3956,7 +3956,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeLocalGatewayRouteTableVpcAssociations",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       LocalGatewayRouteTableVpcAssociations: xml.getList("localGatewayRouteTableVpcAssociationSet", "item").map(LocalGatewayRouteTableVpcAssociation_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3968,8 +3968,8 @@ export default class EC2 {
   ): Promise<DescribeLocalGatewayRouteTablesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["LocalGatewayRouteTableIds"]) prt.appendList(body, prefix+"LocalGatewayRouteTableId", params["LocalGatewayRouteTableIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["LocalGatewayRouteTableIds"]) qsP.appendList(body, prefix+"LocalGatewayRouteTableId", params["LocalGatewayRouteTableIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -3977,7 +3977,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeLocalGatewayRouteTables",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       LocalGatewayRouteTables: xml.getList("localGatewayRouteTableSet", "item").map(LocalGatewayRouteTable_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -3989,8 +3989,8 @@ export default class EC2 {
   ): Promise<DescribeLocalGatewayVirtualInterfaceGroupsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["LocalGatewayVirtualInterfaceGroupIds"]) prt.appendList(body, prefix+"LocalGatewayVirtualInterfaceGroupId", params["LocalGatewayVirtualInterfaceGroupIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["LocalGatewayVirtualInterfaceGroupIds"]) qsP.appendList(body, prefix+"LocalGatewayVirtualInterfaceGroupId", params["LocalGatewayVirtualInterfaceGroupIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -3998,7 +3998,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeLocalGatewayVirtualInterfaceGroups",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       LocalGatewayVirtualInterfaceGroups: xml.getList("localGatewayVirtualInterfaceGroupSet", "item").map(LocalGatewayVirtualInterfaceGroup_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4010,8 +4010,8 @@ export default class EC2 {
   ): Promise<DescribeLocalGatewayVirtualInterfacesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["LocalGatewayVirtualInterfaceIds"]) prt.appendList(body, prefix+"LocalGatewayVirtualInterfaceId", params["LocalGatewayVirtualInterfaceIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["LocalGatewayVirtualInterfaceIds"]) qsP.appendList(body, prefix+"LocalGatewayVirtualInterfaceId", params["LocalGatewayVirtualInterfaceIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -4019,7 +4019,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeLocalGatewayVirtualInterfaces",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       LocalGatewayVirtualInterfaces: xml.getList("localGatewayVirtualInterfaceSet", "item").map(LocalGatewayVirtualInterface_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4031,8 +4031,8 @@ export default class EC2 {
   ): Promise<DescribeLocalGatewaysResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["LocalGatewayIds"]) prt.appendList(body, prefix+"LocalGatewayId", params["LocalGatewayIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["LocalGatewayIds"]) qsP.appendList(body, prefix+"LocalGatewayId", params["LocalGatewayIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -4040,7 +4040,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeLocalGateways",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       LocalGateways: xml.getList("localGatewaySet", "item").map(LocalGateway_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4053,15 +4053,15 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
-    if (params["PrefixListIds"]) prt.appendList(body, prefix+"PrefixListId", params["PrefixListIds"], {"entryPrefix":"."})
+    if (params["PrefixListIds"]) qsP.appendList(body, prefix+"PrefixListId", params["PrefixListIds"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeManagedPrefixLists",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
       PrefixLists: xml.getList("prefixListSet", "item").map(ManagedPrefixList_Parse),
@@ -4073,16 +4073,16 @@ export default class EC2 {
   ): Promise<DescribeMovingAddressesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
-    if (params["PublicIps"]) prt.appendList(body, prefix+"publicIp", params["PublicIps"], {"entryPrefix":"."})
+    if (params["PublicIps"]) qsP.appendList(body, prefix+"publicIp", params["PublicIps"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMovingAddresses",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       MovingAddressStatuses: xml.getList("movingAddressStatusSet", "item").map(MovingAddressStatus_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4095,15 +4095,15 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Filter"]) prt.appendList(body, prefix+"Filter", params["Filter"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filter"]) qsP.appendList(body, prefix+"Filter", params["Filter"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
-    if (params["NatGatewayIds"]) prt.appendList(body, prefix+"NatGatewayId", params["NatGatewayIds"], {"entryPrefix":"."})
+    if (params["NatGatewayIds"]) qsP.appendList(body, prefix+"NatGatewayId", params["NatGatewayIds"], {"entryPrefix":"."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNatGateways",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NatGateways: xml.getList("natGatewaySet", "item").map(NatGateway_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4115,16 +4115,16 @@ export default class EC2 {
   ): Promise<DescribeNetworkAclsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["NetworkAclIds"]) prt.appendList(body, prefix+"NetworkAclId", params["NetworkAclIds"], {"entryPrefix":"."})
+    if (params["NetworkAclIds"]) qsP.appendList(body, prefix+"NetworkAclId", params["NetworkAclIds"], {"entryPrefix":"."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNetworkAcls",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NetworkAcls: xml.getList("networkAclSet", "item").map(NetworkAcl_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4143,7 +4143,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeNetworkInterfaceAttribute",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Attachment: xml.first("attachment", false, NetworkInterfaceAttachment_Parse),
       Description: xml.first("description", false, AttributeValue_Parse),
@@ -4158,15 +4158,15 @@ export default class EC2 {
   ): Promise<DescribeNetworkInterfacePermissionsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["NetworkInterfacePermissionIds"]) prt.appendList(body, prefix+"NetworkInterfacePermissionId", params["NetworkInterfacePermissionIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["NetworkInterfacePermissionIds"]) qsP.appendList(body, prefix+"NetworkInterfacePermissionId", params["NetworkInterfacePermissionIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNetworkInterfacePermissions",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NetworkInterfacePermissions: xml.getList("networkInterfacePermissions", "item").map(NetworkInterfacePermission_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4178,16 +4178,16 @@ export default class EC2 {
   ): Promise<DescribeNetworkInterfacesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["NetworkInterfaceIds"]) prt.appendList(body, prefix+"NetworkInterfaceId", params["NetworkInterfaceIds"], {"entryPrefix":"."})
+    if (params["NetworkInterfaceIds"]) qsP.appendList(body, prefix+"NetworkInterfaceId", params["NetworkInterfaceIds"], {"entryPrefix":"."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNetworkInterfaces",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NetworkInterfaces: xml.getList("networkInterfaceSet", "item").map(NetworkInterface_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4199,15 +4199,15 @@ export default class EC2 {
   ): Promise<DescribePlacementGroupsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["GroupNames"]) prt.appendList(body, prefix+"groupName", params["GroupNames"], {"entryPrefix":"."})
-    if (params["GroupIds"]) prt.appendList(body, prefix+"GroupId", params["GroupIds"], {"entryPrefix":"."})
+    if (params["GroupNames"]) qsP.appendList(body, prefix+"groupName", params["GroupNames"], {"entryPrefix":"."})
+    if (params["GroupIds"]) qsP.appendList(body, prefix+"GroupId", params["GroupIds"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePlacementGroups",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       PlacementGroups: xml.getList("placementGroupSet", "item").map(PlacementGroup_Parse),
     };
@@ -4219,15 +4219,15 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
-    if (params["PrefixListIds"]) prt.appendList(body, prefix+"PrefixListId", params["PrefixListIds"], {"entryPrefix":"."})
+    if (params["PrefixListIds"]) qsP.appendList(body, prefix+"PrefixListId", params["PrefixListIds"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePrefixLists",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
       PrefixLists: xml.getList("prefixListSet", "item").map(PrefixList_Parse),
@@ -4240,14 +4240,14 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Resources"]) prt.appendList(body, prefix+"Resource", params["Resources"], {"entryPrefix":"."})
+    if (params["Resources"]) qsP.appendList(body, prefix+"Resource", params["Resources"], {"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePrincipalIdFormat",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Principals: xml.getList("principalSet", "item").map(PrincipalIdFormat_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4259,15 +4259,15 @@ export default class EC2 {
   ): Promise<DescribePublicIpv4PoolsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["PoolIds"]) prt.appendList(body, prefix+"PoolId", params["PoolIds"], {"entryPrefix":"."})
+    if (params["PoolIds"]) qsP.appendList(body, prefix+"PoolId", params["PoolIds"], {"entryPrefix":"."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePublicIpv4Pools",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       PublicIpv4Pools: xml.getList("publicIpv4PoolSet", "item").map(PublicIpv4Pool_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4279,15 +4279,15 @@ export default class EC2 {
   ): Promise<DescribeRegionsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["RegionNames"]) prt.appendList(body, prefix+"RegionName", params["RegionNames"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["RegionNames"]) qsP.appendList(body, prefix+"RegionName", params["RegionNames"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("AllRegions" in params) body.append(prefix+"AllRegions", (params["AllRegions"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRegions",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Regions: xml.getList("regionInfo", "item").map(Region_Parse),
     };
@@ -4298,16 +4298,16 @@ export default class EC2 {
   ): Promise<DescribeReservedInstancesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("OfferingClass" in params) body.append(prefix+"OfferingClass", (params["OfferingClass"] ?? '').toString());
-    if (params["ReservedInstancesIds"]) prt.appendList(body, prefix+"ReservedInstancesId", params["ReservedInstancesIds"], {"entryPrefix":"."})
+    if (params["ReservedInstancesIds"]) qsP.appendList(body, prefix+"ReservedInstancesId", params["ReservedInstancesIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("OfferingType" in params) body.append(prefix+"OfferingType", (params["OfferingType"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeReservedInstances",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ReservedInstances: xml.getList("reservedInstancesSet", "item").map(ReservedInstances_Parse),
     };
@@ -4318,14 +4318,14 @@ export default class EC2 {
   ): Promise<DescribeReservedInstancesListingsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("ReservedInstancesId" in params) body.append(prefix+"ReservedInstancesId", (params["ReservedInstancesId"] ?? '').toString());
     if ("ReservedInstancesListingId" in params) body.append(prefix+"ReservedInstancesListingId", (params["ReservedInstancesListingId"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeReservedInstancesListings",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ReservedInstancesListings: xml.getList("reservedInstancesListingsSet", "item").map(ReservedInstancesListing_Parse),
     };
@@ -4336,14 +4336,14 @@ export default class EC2 {
   ): Promise<DescribeReservedInstancesModificationsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["ReservedInstancesModificationIds"]) prt.appendList(body, prefix+"ReservedInstancesModificationId", params["ReservedInstancesModificationIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["ReservedInstancesModificationIds"]) qsP.appendList(body, prefix+"ReservedInstancesModificationId", params["ReservedInstancesModificationIds"], {"entryPrefix":"."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeReservedInstancesModifications",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
       ReservedInstancesModifications: xml.getList("reservedInstancesModificationsSet", "item").map(ReservedInstancesModification_Parse),
@@ -4356,7 +4356,7 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("AvailabilityZone" in params) body.append(prefix+"AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("IncludeMarketplace" in params) body.append(prefix+"IncludeMarketplace", (params["IncludeMarketplace"] ?? '').toString());
     if ("InstanceType" in params) body.append(prefix+"InstanceType", (params["InstanceType"] ?? '').toString());
     if ("MaxDuration" in params) body.append(prefix+"MaxDuration", (params["MaxDuration"] ?? '').toString());
@@ -4364,7 +4364,7 @@ export default class EC2 {
     if ("MinDuration" in params) body.append(prefix+"MinDuration", (params["MinDuration"] ?? '').toString());
     if ("OfferingClass" in params) body.append(prefix+"OfferingClass", (params["OfferingClass"] ?? '').toString());
     if ("ProductDescription" in params) body.append(prefix+"ProductDescription", (params["ProductDescription"] ?? '').toString());
-    if (params["ReservedInstancesOfferingIds"]) prt.appendList(body, prefix+"ReservedInstancesOfferingId", params["ReservedInstancesOfferingIds"], {"entryPrefix":"."})
+    if (params["ReservedInstancesOfferingIds"]) qsP.appendList(body, prefix+"ReservedInstancesOfferingId", params["ReservedInstancesOfferingIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("InstanceTenancy" in params) body.append(prefix+"InstanceTenancy", (params["InstanceTenancy"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
@@ -4374,7 +4374,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeReservedInstancesOfferings",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ReservedInstancesOfferings: xml.getList("reservedInstancesOfferingsSet", "item").map(ReservedInstancesOffering_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4386,16 +4386,16 @@ export default class EC2 {
   ): Promise<DescribeRouteTablesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["RouteTableIds"]) prt.appendList(body, prefix+"RouteTableId", params["RouteTableIds"], {"entryPrefix":"."})
+    if (params["RouteTableIds"]) qsP.appendList(body, prefix+"RouteTableId", params["RouteTableIds"], {"entryPrefix":"."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRouteTables",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       RouteTables: xml.getList("routeTableSet", "item").map(RouteTable_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4408,7 +4408,7 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     SlotDateTimeRangeRequest_Serialize(body, prefix+"FirstSlotStartTimeRange", params["FirstSlotStartTimeRange"]);
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("MaxSlotDurationInHours" in params) body.append(prefix+"MaxSlotDurationInHours", (params["MaxSlotDurationInHours"] ?? '').toString());
@@ -4419,7 +4419,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeScheduledInstanceAvailability",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
       ScheduledInstanceAvailabilitySet: xml.getList("scheduledInstanceAvailabilitySet", "item").map(ScheduledInstanceAvailability_Parse),
@@ -4432,16 +4432,16 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
-    if (params["ScheduledInstanceIds"]) prt.appendList(body, prefix+"ScheduledInstanceId", params["ScheduledInstanceIds"], {"entryPrefix":"."})
+    if (params["ScheduledInstanceIds"]) qsP.appendList(body, prefix+"ScheduledInstanceId", params["ScheduledInstanceIds"], {"entryPrefix":"."})
     if (params["SlotStartTimeRange"] != null) SlotStartTimeRangeRequest_Serialize(body, prefix+"SlotStartTimeRange", params["SlotStartTimeRange"]);
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeScheduledInstances",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
       ScheduledInstanceSet: xml.getList("scheduledInstanceSet", "item").map(ScheduledInstance_Parse),
@@ -4454,12 +4454,12 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["GroupId"]) prt.appendList(body, prefix+"item", params["GroupId"], {"entryPrefix":"."})
+    if (params["GroupId"]) qsP.appendList(body, prefix+"item", params["GroupId"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSecurityGroupReferences",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       SecurityGroupReferenceSet: xml.getList("securityGroupReferenceSet", "item").map(SecurityGroupReference_Parse),
     };
@@ -4470,9 +4470,9 @@ export default class EC2 {
   ): Promise<DescribeSecurityGroupsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["GroupIds"]) prt.appendList(body, prefix+"GroupId", params["GroupIds"], {"entryPrefix":"."})
-    if (params["GroupNames"]) prt.appendList(body, prefix+"GroupName", params["GroupNames"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["GroupIds"]) qsP.appendList(body, prefix+"GroupId", params["GroupIds"], {"entryPrefix":"."})
+    if (params["GroupNames"]) qsP.appendList(body, prefix+"GroupName", params["GroupNames"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
@@ -4480,7 +4480,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeSecurityGroups",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       SecurityGroups: xml.getList("securityGroupInfo", "item").map(SecurityGroup_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4499,7 +4499,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeSnapshotAttribute",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       CreateVolumePermissions: xml.getList("createVolumePermission", "item").map(CreateVolumePermission_Parse),
       ProductCodes: xml.getList("productCodes", "item").map(ProductCode_Parse),
@@ -4512,18 +4512,18 @@ export default class EC2 {
   ): Promise<DescribeSnapshotsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
-    if (params["OwnerIds"]) prt.appendList(body, prefix+"Owner", params["OwnerIds"], {"entryPrefix":"."})
-    if (params["RestorableByUserIds"]) prt.appendList(body, prefix+"RestorableBy", params["RestorableByUserIds"], {"entryPrefix":"."})
-    if (params["SnapshotIds"]) prt.appendList(body, prefix+"SnapshotId", params["SnapshotIds"], {"entryPrefix":"."})
+    if (params["OwnerIds"]) qsP.appendList(body, prefix+"Owner", params["OwnerIds"], {"entryPrefix":"."})
+    if (params["RestorableByUserIds"]) qsP.appendList(body, prefix+"RestorableBy", params["RestorableByUserIds"], {"entryPrefix":"."})
+    if (params["SnapshotIds"]) qsP.appendList(body, prefix+"SnapshotId", params["SnapshotIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSnapshots",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Snapshots: xml.getList("snapshotSet", "item").map(Snapshot_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4540,7 +4540,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeSpotDatafeedSubscription",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       SpotDatafeedSubscription: xml.first("spotDatafeedSubscription", false, SpotDatafeedSubscription_Parse),
     };
@@ -4559,7 +4559,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeSpotFleetInstances",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ActiveInstances: xml.getList("activeInstanceSet", "item").map(ActiveInstance_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4577,18 +4577,18 @@ export default class EC2 {
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     body.append(prefix+"SpotFleetRequestId", (params["SpotFleetRequestId"] ?? '').toString());
-    body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
+    body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSpotFleetRequestHistory",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       HistoryRecords: xml.getList("historyRecordSet", "item").map(HistoryRecord_Parse),
-      LastEvaluatedTime: xml.first("lastEvaluatedTime", false, x => parseTimestamp(x.content)),
+      LastEvaluatedTime: xml.first("lastEvaluatedTime", false, x => xmlP.parseTimestamp(x.content)),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
       SpotFleetRequestId: xml.first("spotFleetRequestId", false, x => x.content ?? ''),
-      StartTime: xml.first("startTime", false, x => parseTimestamp(x.content)),
+      StartTime: xml.first("startTime", false, x => xmlP.parseTimestamp(x.content)),
     };
   }
 
@@ -4600,12 +4600,12 @@ export default class EC2 {
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
-    if (params["SpotFleetRequestIds"]) prt.appendList(body, prefix+"spotFleetRequestId", params["SpotFleetRequestIds"], {"entryPrefix":"."})
+    if (params["SpotFleetRequestIds"]) qsP.appendList(body, prefix+"spotFleetRequestId", params["SpotFleetRequestIds"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSpotFleetRequests",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
       SpotFleetRequestConfigs: xml.getList("spotFleetRequestConfigSet", "item").map(SpotFleetRequestConfig_Parse),
@@ -4617,16 +4617,16 @@ export default class EC2 {
   ): Promise<DescribeSpotInstanceRequestsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["SpotInstanceRequestIds"]) prt.appendList(body, prefix+"SpotInstanceRequestId", params["SpotInstanceRequestIds"], {"entryPrefix":"."})
+    if (params["SpotInstanceRequestIds"]) qsP.appendList(body, prefix+"SpotInstanceRequestId", params["SpotInstanceRequestIds"], {"entryPrefix":"."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSpotInstanceRequests",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       SpotInstanceRequests: xml.getList("spotInstanceRequestSet", "item").map(SpotInstanceRequest_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4638,20 +4638,20 @@ export default class EC2 {
   ): Promise<DescribeSpotPriceHistoryResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("AvailabilityZone" in params) body.append(prefix+"AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if ("EndTime" in params) body.append(prefix+"EndTime", prt.encodeDate_iso8601(params["EndTime"]));
-    if (params["InstanceTypes"]) prt.appendList(body, prefix+"InstanceType", params["InstanceTypes"], {"entryPrefix":"."})
+    if ("EndTime" in params) body.append(prefix+"EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
+    if (params["InstanceTypes"]) qsP.appendList(body, prefix+"InstanceType", params["InstanceTypes"], {"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
-    if (params["ProductDescriptions"]) prt.appendList(body, prefix+"ProductDescription", params["ProductDescriptions"], {"entryPrefix":"."})
-    if ("StartTime" in params) body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
+    if (params["ProductDescriptions"]) qsP.appendList(body, prefix+"ProductDescription", params["ProductDescriptions"], {"entryPrefix":"."})
+    if ("StartTime" in params) body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSpotPriceHistory",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
       SpotPriceHistory: xml.getList("spotPriceHistorySet", "item").map(SpotPrice_Parse),
@@ -4671,7 +4671,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeStaleSecurityGroups",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
       StaleSecurityGroupSet: xml.getList("staleSecurityGroupSet", "item").map(StaleSecurityGroup_Parse),
@@ -4683,8 +4683,8 @@ export default class EC2 {
   ): Promise<DescribeSubnetsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["SubnetIds"]) prt.appendList(body, prefix+"SubnetId", params["SubnetIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["SubnetIds"]) qsP.appendList(body, prefix+"SubnetId", params["SubnetIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
@@ -4692,7 +4692,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeSubnets",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Subnets: xml.getList("subnetSet", "item").map(Subnet_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4705,14 +4705,14 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTags",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
       Tags: xml.getList("tagSet", "item").map(TagDescription_Parse),
@@ -4724,16 +4724,16 @@ export default class EC2 {
   ): Promise<DescribeTrafficMirrorFiltersResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["TrafficMirrorFilterIds"]) prt.appendList(body, prefix+"TrafficMirrorFilterId", params["TrafficMirrorFilterIds"], {"entryPrefix":"."})
+    if (params["TrafficMirrorFilterIds"]) qsP.appendList(body, prefix+"TrafficMirrorFilterId", params["TrafficMirrorFilterIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrafficMirrorFilters",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TrafficMirrorFilters: xml.getList("trafficMirrorFilterSet", "item").map(TrafficMirrorFilter_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4745,16 +4745,16 @@ export default class EC2 {
   ): Promise<DescribeTrafficMirrorSessionsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["TrafficMirrorSessionIds"]) prt.appendList(body, prefix+"TrafficMirrorSessionId", params["TrafficMirrorSessionIds"], {"entryPrefix":"."})
+    if (params["TrafficMirrorSessionIds"]) qsP.appendList(body, prefix+"TrafficMirrorSessionId", params["TrafficMirrorSessionIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrafficMirrorSessions",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TrafficMirrorSessions: xml.getList("trafficMirrorSessionSet", "item").map(TrafficMirrorSession_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4766,16 +4766,16 @@ export default class EC2 {
   ): Promise<DescribeTrafficMirrorTargetsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["TrafficMirrorTargetIds"]) prt.appendList(body, prefix+"TrafficMirrorTargetId", params["TrafficMirrorTargetIds"], {"entryPrefix":"."})
+    if (params["TrafficMirrorTargetIds"]) qsP.appendList(body, prefix+"TrafficMirrorTargetId", params["TrafficMirrorTargetIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrafficMirrorTargets",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TrafficMirrorTargets: xml.getList("trafficMirrorTargetSet", "item").map(TrafficMirrorTarget_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4787,8 +4787,8 @@ export default class EC2 {
   ): Promise<DescribeTransitGatewayAttachmentsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["TransitGatewayAttachmentIds"]) prt.appendList(body, prefix+"TransitGatewayAttachmentIds", params["TransitGatewayAttachmentIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["TransitGatewayAttachmentIds"]) qsP.appendList(body, prefix+"TransitGatewayAttachmentIds", params["TransitGatewayAttachmentIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -4796,7 +4796,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeTransitGatewayAttachments",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayAttachments: xml.getList("transitGatewayAttachments", "item").map(TransitGatewayAttachment_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4808,8 +4808,8 @@ export default class EC2 {
   ): Promise<DescribeTransitGatewayMulticastDomainsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["TransitGatewayMulticastDomainIds"]) prt.appendList(body, prefix+"item", params["TransitGatewayMulticastDomainIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["TransitGatewayMulticastDomainIds"]) qsP.appendList(body, prefix+"item", params["TransitGatewayMulticastDomainIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -4817,7 +4817,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeTransitGatewayMulticastDomains",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayMulticastDomains: xml.getList("transitGatewayMulticastDomains", "item").map(TransitGatewayMulticastDomain_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4829,8 +4829,8 @@ export default class EC2 {
   ): Promise<DescribeTransitGatewayPeeringAttachmentsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["TransitGatewayAttachmentIds"]) prt.appendList(body, prefix+"TransitGatewayAttachmentIds", params["TransitGatewayAttachmentIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["TransitGatewayAttachmentIds"]) qsP.appendList(body, prefix+"TransitGatewayAttachmentIds", params["TransitGatewayAttachmentIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -4838,7 +4838,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeTransitGatewayPeeringAttachments",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayPeeringAttachments: xml.getList("transitGatewayPeeringAttachments", "item").map(TransitGatewayPeeringAttachment_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4850,8 +4850,8 @@ export default class EC2 {
   ): Promise<DescribeTransitGatewayRouteTablesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["TransitGatewayRouteTableIds"]) prt.appendList(body, prefix+"item", params["TransitGatewayRouteTableIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["TransitGatewayRouteTableIds"]) qsP.appendList(body, prefix+"item", params["TransitGatewayRouteTableIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -4859,7 +4859,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeTransitGatewayRouteTables",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayRouteTables: xml.getList("transitGatewayRouteTables", "item").map(TransitGatewayRouteTable_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4871,8 +4871,8 @@ export default class EC2 {
   ): Promise<DescribeTransitGatewayVpcAttachmentsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["TransitGatewayAttachmentIds"]) prt.appendList(body, prefix+"TransitGatewayAttachmentIds", params["TransitGatewayAttachmentIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["TransitGatewayAttachmentIds"]) qsP.appendList(body, prefix+"TransitGatewayAttachmentIds", params["TransitGatewayAttachmentIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -4880,7 +4880,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeTransitGatewayVpcAttachments",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayVpcAttachments: xml.getList("transitGatewayVpcAttachments", "item").map(TransitGatewayVpcAttachment_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4892,8 +4892,8 @@ export default class EC2 {
   ): Promise<DescribeTransitGatewaysResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["TransitGatewayIds"]) prt.appendList(body, prefix+"item", params["TransitGatewayIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["TransitGatewayIds"]) qsP.appendList(body, prefix+"item", params["TransitGatewayIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -4901,7 +4901,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeTransitGateways",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGateways: xml.getList("transitGatewaySet", "item").map(TransitGateway_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4920,7 +4920,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeVolumeAttribute",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       AutoEnableIO: xml.first("autoEnableIO", false, AttributeBooleanValue_Parse),
       ProductCodes: xml.getList("productCodes", "item").map(ProductCode_Parse),
@@ -4933,16 +4933,16 @@ export default class EC2 {
   ): Promise<DescribeVolumeStatusResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
-    if (params["VolumeIds"]) prt.appendList(body, prefix+"VolumeId", params["VolumeIds"], {"entryPrefix":"."})
+    if (params["VolumeIds"]) qsP.appendList(body, prefix+"VolumeId", params["VolumeIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVolumeStatus",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
       VolumeStatuses: xml.getList("volumeStatusSet", "item").map(VolumeStatusItem_Parse),
@@ -4954,8 +4954,8 @@ export default class EC2 {
   ): Promise<DescribeVolumesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["VolumeIds"]) prt.appendList(body, prefix+"VolumeId", params["VolumeIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["VolumeIds"]) qsP.appendList(body, prefix+"VolumeId", params["VolumeIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
@@ -4963,7 +4963,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeVolumes",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Volumes: xml.getList("volumeSet", "item").map(Volume_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -4976,15 +4976,15 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["VolumeIds"]) prt.appendList(body, prefix+"VolumeId", params["VolumeIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["VolumeIds"]) qsP.appendList(body, prefix+"VolumeId", params["VolumeIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVolumesModifications",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       VolumesModifications: xml.getList("volumeModificationSet", "item").map(VolumeModification_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -5003,7 +5003,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeVpcAttribute",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       VpcId: xml.first("vpcId", false, x => x.content ?? ''),
       EnableDnsHostnames: xml.first("enableDnsHostnames", false, AttributeBooleanValue_Parse),
@@ -5016,14 +5016,14 @@ export default class EC2 {
   ): Promise<DescribeVpcClassicLinkResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["VpcIds"]) prt.appendList(body, prefix+"VpcId", params["VpcIds"], {"entryPrefix":"."})
+    if (params["VpcIds"]) qsP.appendList(body, prefix+"VpcId", params["VpcIds"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVpcClassicLink",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Vpcs: xml.getList("vpcSet", "item").map(VpcClassicLink_Parse),
     };
@@ -5036,12 +5036,12 @@ export default class EC2 {
     const prefix = '';
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
-    if (params["VpcIds"]) prt.appendList(body, prefix+"VpcId", params["VpcIds"], {"entryPrefix":"."})
+    if (params["VpcIds"]) qsP.appendList(body, prefix+"VpcId", params["VpcIds"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVpcClassicLinkDnsSupport",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
       Vpcs: xml.getList("vpcs", "item").map(ClassicLinkDnsSupport_Parse),
@@ -5055,14 +5055,14 @@ export default class EC2 {
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("ConnectionNotificationId" in params) body.append(prefix+"ConnectionNotificationId", (params["ConnectionNotificationId"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVpcEndpointConnectionNotifications",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ConnectionNotificationSet: xml.getList("connectionNotificationSet", "item").map(ConnectionNotification_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -5075,14 +5075,14 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVpcEndpointConnections",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       VpcEndpointConnections: xml.getList("vpcEndpointConnectionSet", "item").map(VpcEndpointConnection_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -5095,15 +5095,15 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["ServiceIds"]) prt.appendList(body, prefix+"ServiceId", params["ServiceIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["ServiceIds"]) qsP.appendList(body, prefix+"ServiceId", params["ServiceIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVpcEndpointServiceConfigurations",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ServiceConfigurations: xml.getList("serviceConfigurationSet", "item").map(ServiceConfiguration_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -5117,14 +5117,14 @@ export default class EC2 {
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"ServiceId", (params["ServiceId"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVpcEndpointServicePermissions",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       AllowedPrincipals: xml.getList("allowedPrincipals", "item").map(AllowedPrincipal_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -5137,15 +5137,15 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["ServiceNames"]) prt.appendList(body, prefix+"ServiceName", params["ServiceNames"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["ServiceNames"]) qsP.appendList(body, prefix+"ServiceName", params["ServiceNames"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVpcEndpointServices",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ServiceNames: xml.getList("serviceNameSet", "item").map(x => x.content ?? ''),
       ServiceDetails: xml.getList("serviceDetailSet", "item").map(ServiceDetail_Parse),
@@ -5159,15 +5159,15 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["VpcEndpointIds"]) prt.appendList(body, prefix+"VpcEndpointId", params["VpcEndpointIds"], {"entryPrefix":"."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["VpcEndpointIds"]) qsP.appendList(body, prefix+"VpcEndpointId", params["VpcEndpointIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVpcEndpoints",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       VpcEndpoints: xml.getList("vpcEndpointSet", "item").map(VpcEndpoint_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -5179,16 +5179,16 @@ export default class EC2 {
   ): Promise<DescribeVpcPeeringConnectionsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["VpcPeeringConnectionIds"]) prt.appendList(body, prefix+"VpcPeeringConnectionId", params["VpcPeeringConnectionIds"], {"entryPrefix":"."})
+    if (params["VpcPeeringConnectionIds"]) qsP.appendList(body, prefix+"VpcPeeringConnectionId", params["VpcPeeringConnectionIds"], {"entryPrefix":"."})
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVpcPeeringConnections",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       VpcPeeringConnections: xml.getList("vpcPeeringConnectionSet", "item").map(VpcPeeringConnection_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -5200,8 +5200,8 @@ export default class EC2 {
   ): Promise<DescribeVpcsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["VpcIds"]) prt.appendList(body, prefix+"VpcId", params["VpcIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["VpcIds"]) qsP.appendList(body, prefix+"VpcId", params["VpcIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
@@ -5209,7 +5209,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DescribeVpcs",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Vpcs: xml.getList("vpcSet", "item").map(Vpc_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -5221,14 +5221,14 @@ export default class EC2 {
   ): Promise<DescribeVpnConnectionsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["VpnConnectionIds"]) prt.appendList(body, prefix+"VpnConnectionId", params["VpnConnectionIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["VpnConnectionIds"]) qsP.appendList(body, prefix+"VpnConnectionId", params["VpnConnectionIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVpnConnections",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       VpnConnections: xml.getList("vpnConnectionSet", "item").map(VpnConnection_Parse),
     };
@@ -5239,14 +5239,14 @@ export default class EC2 {
   ): Promise<DescribeVpnGatewaysResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
-    if (params["VpnGatewayIds"]) prt.appendList(body, prefix+"VpnGatewayId", params["VpnGatewayIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["VpnGatewayIds"]) qsP.appendList(body, prefix+"VpnGatewayId", params["VpnGatewayIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVpnGateways",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       VpnGateways: xml.getList("vpnGatewaySet", "item").map(VpnGateway_Parse),
     };
@@ -5264,7 +5264,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DetachClassicLinkVpc",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -5312,7 +5312,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DetachVolume",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return VolumeAttachment_Parse(xml);
   }
 
@@ -5340,7 +5340,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DisableEbsEncryptionByDefault",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       EbsEncryptionByDefault: xml.first("ebsEncryptionByDefault", false, x => x.content === 'true'),
     };
@@ -5351,14 +5351,14 @@ export default class EC2 {
   ): Promise<DisableFastSnapshotRestoresResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["AvailabilityZones"]) prt.appendList(body, prefix+"AvailabilityZone", params["AvailabilityZones"], {"entryPrefix":"."})
-    if (params["SourceSnapshotIds"]) prt.appendList(body, prefix+"SourceSnapshotId", params["SourceSnapshotIds"], {"entryPrefix":"."})
+    if (params["AvailabilityZones"]) qsP.appendList(body, prefix+"AvailabilityZone", params["AvailabilityZones"], {"entryPrefix":"."})
+    if (params["SourceSnapshotIds"]) qsP.appendList(body, prefix+"SourceSnapshotId", params["SourceSnapshotIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableFastSnapshotRestores",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Successful: xml.getList("successful", "item").map(DisableFastSnapshotRestoreSuccessItem_Parse),
       Unsuccessful: xml.getList("unsuccessful", "item").map(DisableFastSnapshotRestoreErrorItem_Parse),
@@ -5377,7 +5377,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DisableTransitGatewayRouteTablePropagation",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Propagation: xml.first("propagation", false, TransitGatewayPropagation_Parse),
     };
@@ -5408,7 +5408,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DisableVpcClassicLink",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -5424,7 +5424,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DisableVpcClassicLinkDnsSupport",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -5456,7 +5456,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DisassociateClientVpnTargetNetwork",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       AssociationId: xml.first("associationId", false, x => x.content ?? ''),
       Status: xml.first("status", false, AssociationStatus_Parse),
@@ -5473,7 +5473,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DisassociateIamInstanceProfile",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       IamInstanceProfileAssociation: xml.first("iamInstanceProfileAssociation", false, IamInstanceProfileAssociation_Parse),
     };
@@ -5502,7 +5502,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DisassociateSubnetCidrBlock",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Ipv6CidrBlockAssociation: xml.first("ipv6CidrBlockAssociation", false, SubnetIpv6CidrBlockAssociation_Parse),
       SubnetId: xml.first("subnetId", false, x => x.content ?? ''),
@@ -5516,13 +5516,13 @@ export default class EC2 {
     const prefix = '';
     if ("TransitGatewayMulticastDomainId" in params) body.append(prefix+"TransitGatewayMulticastDomainId", (params["TransitGatewayMulticastDomainId"] ?? '').toString());
     if ("TransitGatewayAttachmentId" in params) body.append(prefix+"TransitGatewayAttachmentId", (params["TransitGatewayAttachmentId"] ?? '').toString());
-    if (params["SubnetIds"]) prt.appendList(body, prefix+"item", params["SubnetIds"], {"entryPrefix":"."})
+    if (params["SubnetIds"]) qsP.appendList(body, prefix+"item", params["SubnetIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateTransitGatewayMulticastDomain",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Associations: xml.first("associations", false, TransitGatewayMulticastDomainAssociations_Parse),
     };
@@ -5540,7 +5540,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DisassociateTransitGatewayRouteTable",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Association: xml.first("association", false, TransitGatewayAssociation_Parse),
     };
@@ -5556,7 +5556,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DisassociateVpcCidrBlock",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Ipv6CidrBlockAssociation: xml.first("ipv6CidrBlockAssociation", false, VpcIpv6CidrBlockAssociation_Parse),
       CidrBlockAssociation: xml.first("cidrBlockAssociation", false, VpcCidrBlockAssociation_Parse),
@@ -5574,7 +5574,7 @@ export default class EC2 {
       abortSignal, body,
       action: "EnableEbsEncryptionByDefault",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       EbsEncryptionByDefault: xml.first("ebsEncryptionByDefault", false, x => x.content === 'true'),
     };
@@ -5585,14 +5585,14 @@ export default class EC2 {
   ): Promise<EnableFastSnapshotRestoresResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["AvailabilityZones"]) prt.appendList(body, prefix+"AvailabilityZone", params["AvailabilityZones"], {"entryPrefix":"."})
-    if (params["SourceSnapshotIds"]) prt.appendList(body, prefix+"SourceSnapshotId", params["SourceSnapshotIds"], {"entryPrefix":"."})
+    if (params["AvailabilityZones"]) qsP.appendList(body, prefix+"AvailabilityZone", params["AvailabilityZones"], {"entryPrefix":"."})
+    if (params["SourceSnapshotIds"]) qsP.appendList(body, prefix+"SourceSnapshotId", params["SourceSnapshotIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableFastSnapshotRestores",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Successful: xml.getList("successful", "item").map(EnableFastSnapshotRestoreSuccessItem_Parse),
       Unsuccessful: xml.getList("unsuccessful", "item").map(EnableFastSnapshotRestoreErrorItem_Parse),
@@ -5611,7 +5611,7 @@ export default class EC2 {
       abortSignal, body,
       action: "EnableTransitGatewayRouteTablePropagation",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Propagation: xml.first("propagation", false, TransitGatewayPropagation_Parse),
     };
@@ -5655,7 +5655,7 @@ export default class EC2 {
       abortSignal, body,
       action: "EnableVpcClassicLink",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -5671,7 +5671,7 @@ export default class EC2 {
       abortSignal, body,
       action: "EnableVpcClassicLinkDnsSupport",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -5688,7 +5688,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ExportClientVpnClientCertificateRevocationList",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       CertificateRevocationList: xml.first("certificateRevocationList", false, x => x.content ?? ''),
       Status: xml.first("status", false, ClientCertificateRevocationListStatus_Parse),
@@ -5706,7 +5706,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ExportClientVpnClientConfiguration",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ClientConfiguration: xml.first("clientConfiguration", false, x => x.content ?? ''),
     };
@@ -5724,12 +5724,12 @@ export default class EC2 {
     body.append(prefix+"ImageId", (params["ImageId"] ?? '').toString());
     ExportTaskS3LocationRequest_Serialize(body, prefix+"S3ExportLocation", params["S3ExportLocation"]);
     if ("RoleName" in params) body.append(prefix+"RoleName", (params["RoleName"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExportImage",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Description: xml.first("description", false, x => x.content ?? ''),
       DiskImageFormat: xml.first("diskImageFormat", false, x => (x.content ?? '') as DiskImageFormat),
@@ -5750,14 +5750,14 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TransitGatewayRouteTableId", (params["TransitGatewayRouteTableId"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     body.append(prefix+"S3Bucket", (params["S3Bucket"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExportTransitGatewayRoutes",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       S3Location: xml.first("s3Location", false, x => x.content ?? ''),
     };
@@ -5776,7 +5776,7 @@ export default class EC2 {
       abortSignal, body,
       action: "GetAssociatedIpv6PoolCidrs",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Ipv6CidrAssociations: xml.getList("ipv6CidrAssociationSet", "item").map(Ipv6CidrAssociation_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -5796,7 +5796,7 @@ export default class EC2 {
       abortSignal, body,
       action: "GetCapacityReservationUsage",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
       CapacityReservationId: xml.first("capacityReservationId", false, x => x.content ?? ''),
@@ -5814,7 +5814,7 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"PoolId", (params["PoolId"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -5822,7 +5822,7 @@ export default class EC2 {
       abortSignal, body,
       action: "GetCoipPoolUsage",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       CoipPoolId: xml.first("coipPoolId", false, x => x.content ?? ''),
       CoipAddressUsages: xml.getList("coipAddressUsageSet", "item").map(CoipAddressUsage_Parse),
@@ -5842,11 +5842,11 @@ export default class EC2 {
       abortSignal, body,
       action: "GetConsoleOutput",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       InstanceId: xml.first("instanceId", false, x => x.content ?? ''),
       Output: xml.first("output", false, x => x.content ?? ''),
-      Timestamp: xml.first("timestamp", false, x => parseTimestamp(x.content)),
+      Timestamp: xml.first("timestamp", false, x => xmlP.parseTimestamp(x.content)),
     };
   }
 
@@ -5862,7 +5862,7 @@ export default class EC2 {
       abortSignal, body,
       action: "GetConsoleScreenshot",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ImageData: xml.first("imageData", false, x => x.content ?? ''),
       InstanceId: xml.first("instanceId", false, x => x.content ?? ''),
@@ -5880,7 +5880,7 @@ export default class EC2 {
       abortSignal, body,
       action: "GetDefaultCreditSpecification",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       InstanceFamilyCreditSpecification: xml.first("instanceFamilyCreditSpecification", false, InstanceFamilyCreditSpecification_Parse),
     };
@@ -5896,7 +5896,7 @@ export default class EC2 {
       abortSignal, body,
       action: "GetEbsDefaultKmsKeyId",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       KmsKeyId: xml.first("kmsKeyId", false, x => x.content ?? ''),
     };
@@ -5912,7 +5912,7 @@ export default class EC2 {
       abortSignal, body,
       action: "GetEbsEncryptionByDefault",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       EbsEncryptionByDefault: xml.first("ebsEncryptionByDefault", false, x => x.content === 'true'),
     };
@@ -5931,7 +5931,7 @@ export default class EC2 {
       abortSignal, body,
       action: "GetGroupsForCapacityReservation",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
       CapacityReservationGroups: xml.getList("capacityReservationGroupSet", "item").map(CapacityReservationGroup_Parse),
@@ -5943,13 +5943,13 @@ export default class EC2 {
   ): Promise<GetHostReservationPurchasePreviewResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["HostIdSet"]) prt.appendList(body, prefix+"item", params["HostIdSet"], {"entryPrefix":"."})
+    if (params["HostIdSet"]) qsP.appendList(body, prefix+"item", params["HostIdSet"], {"entryPrefix":"."})
     body.append(prefix+"OfferingId", (params["OfferingId"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetHostReservationPurchasePreview",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       CurrencyCode: xml.first("currencyCode", false, x => (x.content ?? '') as CurrencyCodeValues),
       Purchase: xml.getList("purchase", "item").map(Purchase_Parse),
@@ -5969,7 +5969,7 @@ export default class EC2 {
       abortSignal, body,
       action: "GetLaunchTemplateData",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       LaunchTemplateData: xml.first("launchTemplateData", false, ResponseLaunchTemplateData_Parse),
     };
@@ -5988,7 +5988,7 @@ export default class EC2 {
       abortSignal, body,
       action: "GetManagedPrefixListAssociations",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       PrefixListAssociations: xml.getList("prefixListAssociationSet", "item").map(PrefixListAssociation_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -6009,7 +6009,7 @@ export default class EC2 {
       abortSignal, body,
       action: "GetManagedPrefixListEntries",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Entries: xml.getList("entrySet", "item").map(PrefixListEntry_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -6027,11 +6027,11 @@ export default class EC2 {
       abortSignal, body,
       action: "GetPasswordData",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       InstanceId: xml.first("instanceId", false, x => x.content ?? ''),
       PasswordData: xml.first("passwordData", false, x => x.content ?? ''),
-      Timestamp: xml.first("timestamp", false, x => parseTimestamp(x.content)),
+      Timestamp: xml.first("timestamp", false, x => xmlP.parseTimestamp(x.content)),
     };
   }
 
@@ -6041,17 +6041,17 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["ReservedInstanceIds"]) prt.appendList(body, prefix+"ReservedInstanceId", params["ReservedInstanceIds"], {"entryPrefix":"."})
-    if (params["TargetConfigurations"]) prt.appendList(body, prefix+"TargetConfiguration", params["TargetConfigurations"], {"appender":TargetConfigurationRequest_Serialize,"entryPrefix":"."})
+    if (params["ReservedInstanceIds"]) qsP.appendList(body, prefix+"ReservedInstanceId", params["ReservedInstanceIds"], {"entryPrefix":"."})
+    if (params["TargetConfigurations"]) qsP.appendList(body, prefix+"TargetConfiguration", params["TargetConfigurations"], {"appender":TargetConfigurationRequest_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetReservedInstancesExchangeQuote",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       CurrencyCode: xml.first("currencyCode", false, x => x.content ?? ''),
       IsValidExchange: xml.first("isValidExchange", false, x => x.content === 'true'),
-      OutputReservedInstancesWillExpireAt: xml.first("outputReservedInstancesWillExpireAt", false, x => parseTimestamp(x.content)),
+      OutputReservedInstancesWillExpireAt: xml.first("outputReservedInstancesWillExpireAt", false, x => xmlP.parseTimestamp(x.content)),
       PaymentDue: xml.first("paymentDue", false, x => x.content ?? ''),
       ReservedInstanceValueRollup: xml.first("reservedInstanceValueRollup", false, ReservationValue_Parse),
       ReservedInstanceValueSet: xml.getList("reservedInstanceValueSet", "item").map(ReservedInstanceReservationValue_Parse),
@@ -6067,7 +6067,7 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TransitGatewayAttachmentId", (params["TransitGatewayAttachmentId"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -6075,7 +6075,7 @@ export default class EC2 {
       abortSignal, body,
       action: "GetTransitGatewayAttachmentPropagations",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayAttachmentPropagations: xml.getList("transitGatewayAttachmentPropagations", "item").map(TransitGatewayAttachmentPropagation_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -6088,7 +6088,7 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("TransitGatewayMulticastDomainId" in params) body.append(prefix+"TransitGatewayMulticastDomainId", (params["TransitGatewayMulticastDomainId"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -6096,7 +6096,7 @@ export default class EC2 {
       abortSignal, body,
       action: "GetTransitGatewayMulticastDomainAssociations",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       MulticastDomainAssociations: xml.getList("multicastDomainAssociations", "item").map(TransitGatewayMulticastDomainAssociation_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -6109,7 +6109,7 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TransitGatewayRouteTableId", (params["TransitGatewayRouteTableId"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -6117,7 +6117,7 @@ export default class EC2 {
       abortSignal, body,
       action: "GetTransitGatewayPrefixListReferences",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayPrefixListReferences: xml.getList("transitGatewayPrefixListReferenceSet", "item").map(TransitGatewayPrefixListReference_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -6130,7 +6130,7 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TransitGatewayRouteTableId", (params["TransitGatewayRouteTableId"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -6138,7 +6138,7 @@ export default class EC2 {
       abortSignal, body,
       action: "GetTransitGatewayRouteTableAssociations",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Associations: xml.getList("associations", "item").map(TransitGatewayRouteTableAssociation_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -6151,7 +6151,7 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TransitGatewayRouteTableId", (params["TransitGatewayRouteTableId"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -6159,7 +6159,7 @@ export default class EC2 {
       abortSignal, body,
       action: "GetTransitGatewayRouteTablePropagations",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayRouteTablePropagations: xml.getList("transitGatewayRouteTablePropagations", "item").map(TransitGatewayRouteTablePropagation_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -6178,7 +6178,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ImportClientVpnClientCertificateRevocationList",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -6193,7 +6193,7 @@ export default class EC2 {
     if (params["ClientData"] != null) ClientData_Serialize(body, prefix+"ClientData", params["ClientData"]);
     if ("ClientToken" in params) body.append(prefix+"ClientToken", (params["ClientToken"] ?? '').toString());
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
-    if (params["DiskContainers"]) prt.appendList(body, prefix+"DiskContainer", params["DiskContainers"], {"appender":ImageDiskContainer_Serialize,"entryPrefix":"."})
+    if (params["DiskContainers"]) qsP.appendList(body, prefix+"DiskContainer", params["DiskContainers"], {"appender":ImageDiskContainer_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("Encrypted" in params) body.append(prefix+"Encrypted", (params["Encrypted"] ?? '').toString());
     if ("Hypervisor" in params) body.append(prefix+"Hypervisor", (params["Hypervisor"] ?? '').toString());
@@ -6201,13 +6201,13 @@ export default class EC2 {
     if ("LicenseType" in params) body.append(prefix+"LicenseType", (params["LicenseType"] ?? '').toString());
     if ("Platform" in params) body.append(prefix+"Platform", (params["Platform"] ?? '').toString());
     if ("RoleName" in params) body.append(prefix+"RoleName", (params["RoleName"] ?? '').toString());
-    if (params["LicenseSpecifications"]) prt.appendList(body, prefix+"item", params["LicenseSpecifications"], {"appender":ImportImageLicenseConfigurationRequest_Serialize,"entryPrefix":"."})
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["LicenseSpecifications"]) qsP.appendList(body, prefix+"item", params["LicenseSpecifications"], {"appender":ImportImageLicenseConfigurationRequest_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportImage",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Architecture: xml.first("architecture", false, x => x.content ?? ''),
       Description: xml.first("description", false, x => x.content ?? ''),
@@ -6233,7 +6233,7 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
-    if (params["DiskImages"]) prt.appendList(body, prefix+"diskImage", params["DiskImages"], {"appender":DiskImage_Serialize,"entryPrefix":"."})
+    if (params["DiskImages"]) qsP.appendList(body, prefix+"diskImage", params["DiskImages"], {"appender":DiskImage_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if (params["LaunchSpecification"] != null) ImportInstanceLaunchSpecification_Serialize(body, prefix+"LaunchSpecification", params["LaunchSpecification"]);
     body.append(prefix+"Platform", (params["Platform"] ?? '').toString());
@@ -6241,7 +6241,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ImportInstance",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ConversionTask: xml.first("conversionTask", false, ConversionTask_Parse),
     };
@@ -6254,13 +6254,13 @@ export default class EC2 {
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"KeyName", (params["KeyName"] ?? '').toString());
-    body.append(prefix+"PublicKeyMaterial", prt.encodeBlob(params["PublicKeyMaterial"]));
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    body.append(prefix+"PublicKeyMaterial", qsP.encodeBlob(params["PublicKeyMaterial"]));
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportKeyPair",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       KeyFingerprint: xml.first("keyFingerprint", false, x => x.content ?? ''),
       KeyName: xml.first("keyName", false, x => x.content ?? ''),
@@ -6282,12 +6282,12 @@ export default class EC2 {
     if ("Encrypted" in params) body.append(prefix+"Encrypted", (params["Encrypted"] ?? '').toString());
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
     if ("RoleName" in params) body.append(prefix+"RoleName", (params["RoleName"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportSnapshot",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Description: xml.first("description", false, x => x.content ?? ''),
       ImportTaskId: xml.first("importTaskId", false, x => x.content ?? ''),
@@ -6310,7 +6310,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ImportVolume",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ConversionTask: xml.first("conversionTask", false, ConversionTask_Parse),
     };
@@ -6328,7 +6328,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyAvailabilityZoneGroup",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -6341,14 +6341,14 @@ export default class EC2 {
     const prefix = '';
     body.append(prefix+"CapacityReservationId", (params["CapacityReservationId"] ?? '').toString());
     if ("InstanceCount" in params) body.append(prefix+"InstanceCount", (params["InstanceCount"] ?? '').toString());
-    if ("EndDate" in params) body.append(prefix+"EndDate", prt.encodeDate_iso8601(params["EndDate"]));
+    if ("EndDate" in params) body.append(prefix+"EndDate", qsP.encodeDate_iso8601(params["EndDate"]));
     if ("EndDateType" in params) body.append(prefix+"EndDateType", (params["EndDateType"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyCapacityReservation",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -6367,13 +6367,13 @@ export default class EC2 {
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     if ("SplitTunnel" in params) body.append(prefix+"SplitTunnel", (params["SplitTunnel"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["SecurityGroupIds"]) prt.appendList(body, prefix+"SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
+    if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+"SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
     if ("VpcId" in params) body.append(prefix+"VpcId", (params["VpcId"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyClientVpnEndpoint",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -6391,7 +6391,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyDefaultCreditSpecification",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       InstanceFamilyCreditSpecification: xml.first("instanceFamilyCreditSpecification", false, InstanceFamilyCreditSpecification_Parse),
     };
@@ -6408,7 +6408,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyEbsDefaultKmsKeyId",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       KmsKeyId: xml.first("kmsKeyId", false, x => x.content ?? ''),
     };
@@ -6421,14 +6421,14 @@ export default class EC2 {
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("ExcessCapacityTerminationPolicy" in params) body.append(prefix+"ExcessCapacityTerminationPolicy", (params["ExcessCapacityTerminationPolicy"] ?? '').toString());
-    if (params["LaunchTemplateConfigs"]) prt.appendList(body, prefix+"LaunchTemplateConfig", params["LaunchTemplateConfigs"], {"appender":FleetLaunchTemplateConfigRequest_Serialize,"entryPrefix":"."})
+    if (params["LaunchTemplateConfigs"]) qsP.appendList(body, prefix+"LaunchTemplateConfig", params["LaunchTemplateConfigs"], {"appender":FleetLaunchTemplateConfigRequest_Serialize,"entryPrefix":"."})
     body.append(prefix+"FleetId", (params["FleetId"] ?? '').toString());
     TargetCapacitySpecificationRequest_Serialize(body, prefix+"TargetCapacitySpecification", params["TargetCapacitySpecification"]);
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyFleet",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -6443,9 +6443,9 @@ export default class EC2 {
     body.append(prefix+"FpgaImageId", (params["FpgaImageId"] ?? '').toString());
     if ("Attribute" in params) body.append(prefix+"Attribute", (params["Attribute"] ?? '').toString());
     if ("OperationType" in params) body.append(prefix+"OperationType", (params["OperationType"] ?? '').toString());
-    if (params["UserIds"]) prt.appendList(body, prefix+"UserId", params["UserIds"], {"entryPrefix":"."})
-    if (params["UserGroups"]) prt.appendList(body, prefix+"UserGroup", params["UserGroups"], {"entryPrefix":"."})
-    if (params["ProductCodes"]) prt.appendList(body, prefix+"ProductCode", params["ProductCodes"], {"entryPrefix":"."})
+    if (params["UserIds"]) qsP.appendList(body, prefix+"UserId", params["UserIds"], {"entryPrefix":"."})
+    if (params["UserGroups"]) qsP.appendList(body, prefix+"UserGroup", params["UserGroups"], {"entryPrefix":"."})
+    if (params["ProductCodes"]) qsP.appendList(body, prefix+"ProductCode", params["ProductCodes"], {"entryPrefix":"."})
     if (params["LoadPermission"] != null) LoadPermissionModifications_Serialize(body, prefix+"LoadPermission", params["LoadPermission"]);
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     if ("Name" in params) body.append(prefix+"Name", (params["Name"] ?? '').toString());
@@ -6453,7 +6453,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyFpgaImageAttribute",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       FpgaImageAttribute: xml.first("fpgaImageAttribute", false, FpgaImageAttribute_Parse),
     };
@@ -6465,7 +6465,7 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("AutoPlacement" in params) body.append(prefix+"AutoPlacement", (params["AutoPlacement"] ?? '').toString());
-    if (params["HostIds"]) prt.appendList(body, prefix+"hostId", params["HostIds"], {"entryPrefix":"."})
+    if (params["HostIds"]) qsP.appendList(body, prefix+"hostId", params["HostIds"], {"entryPrefix":"."})
     if ("HostRecovery" in params) body.append(prefix+"HostRecovery", (params["HostRecovery"] ?? '').toString());
     if ("InstanceType" in params) body.append(prefix+"InstanceType", (params["InstanceType"] ?? '').toString());
     if ("InstanceFamily" in params) body.append(prefix+"InstanceFamily", (params["InstanceFamily"] ?? '').toString());
@@ -6473,7 +6473,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyHosts",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Successful: xml.getList("successful", "item").map(x => x.content ?? ''),
       Unsuccessful: xml.getList("unsuccessful", "item").map(UnsuccessfulItem_Parse),
@@ -6517,9 +6517,9 @@ export default class EC2 {
     body.append(prefix+"ImageId", (params["ImageId"] ?? '').toString());
     if (params["LaunchPermission"] != null) LaunchPermissionModifications_Serialize(body, prefix+"LaunchPermission", params["LaunchPermission"]);
     if ("OperationType" in params) body.append(prefix+"OperationType", (params["OperationType"] ?? '').toString());
-    if (params["ProductCodes"]) prt.appendList(body, prefix+"ProductCode", params["ProductCodes"], {"entryPrefix":"."})
-    if (params["UserGroups"]) prt.appendList(body, prefix+"UserGroup", params["UserGroups"], {"entryPrefix":"."})
-    if (params["UserIds"]) prt.appendList(body, prefix+"UserId", params["UserIds"], {"entryPrefix":"."})
+    if (params["ProductCodes"]) qsP.appendList(body, prefix+"ProductCode", params["ProductCodes"], {"entryPrefix":"."})
+    if (params["UserGroups"]) qsP.appendList(body, prefix+"UserGroup", params["UserGroups"], {"entryPrefix":"."})
+    if (params["UserIds"]) qsP.appendList(body, prefix+"UserId", params["UserIds"], {"entryPrefix":"."})
     if ("Value" in params) body.append(prefix+"Value", (params["Value"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
@@ -6535,12 +6535,12 @@ export default class EC2 {
     const prefix = '';
     if (params["SourceDestCheck"] != null) AttributeBooleanValue_Serialize(body, prefix+"SourceDestCheck", params["SourceDestCheck"]);
     if ("Attribute" in params) body.append(prefix+"Attribute", (params["Attribute"] ?? '').toString());
-    if (params["BlockDeviceMappings"]) prt.appendList(body, prefix+"blockDeviceMapping", params["BlockDeviceMappings"], {"appender":InstanceBlockDeviceMappingSpecification_Serialize,"entryPrefix":"."})
+    if (params["BlockDeviceMappings"]) qsP.appendList(body, prefix+"blockDeviceMapping", params["BlockDeviceMappings"], {"appender":InstanceBlockDeviceMappingSpecification_Serialize,"entryPrefix":"."})
     if (params["DisableApiTermination"] != null) AttributeBooleanValue_Serialize(body, prefix+"DisableApiTermination", params["DisableApiTermination"]);
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if (params["EbsOptimized"] != null) AttributeBooleanValue_Serialize(body, prefix+"EbsOptimized", params["EbsOptimized"]);
     if (params["EnaSupport"] != null) AttributeBooleanValue_Serialize(body, prefix+"EnaSupport", params["EnaSupport"]);
-    if (params["Groups"]) prt.appendList(body, prefix+"GroupId", params["Groups"], {"entryPrefix":"."})
+    if (params["Groups"]) qsP.appendList(body, prefix+"GroupId", params["Groups"], {"entryPrefix":"."})
     body.append(prefix+"InstanceId", (params["InstanceId"] ?? '').toString());
     if (params["InstanceInitiatedShutdownBehavior"] != null) AttributeValue_Serialize(body, prefix+"InstanceInitiatedShutdownBehavior", params["InstanceInitiatedShutdownBehavior"]);
     if (params["InstanceType"] != null) AttributeValue_Serialize(body, prefix+"InstanceType", params["InstanceType"]);
@@ -6567,7 +6567,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyInstanceCapacityReservationAttributes",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -6580,12 +6580,12 @@ export default class EC2 {
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("ClientToken" in params) body.append(prefix+"ClientToken", (params["ClientToken"] ?? '').toString());
-    if (params["InstanceCreditSpecifications"]) prt.appendList(body, prefix+"InstanceCreditSpecification", params["InstanceCreditSpecifications"], {"appender":InstanceCreditSpecificationRequest_Serialize,"entryPrefix":"."})
+    if (params["InstanceCreditSpecifications"]) qsP.appendList(body, prefix+"InstanceCreditSpecification", params["InstanceCreditSpecifications"], {"appender":InstanceCreditSpecificationRequest_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyInstanceCreditSpecification",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       SuccessfulInstanceCreditSpecifications: xml.getList("successfulInstanceCreditSpecificationSet", "item").map(SuccessfulInstanceCreditSpecificationItem_Parse),
       UnsuccessfulInstanceCreditSpecifications: xml.getList("unsuccessfulInstanceCreditSpecificationSet", "item").map(UnsuccessfulInstanceCreditSpecificationItem_Parse),
@@ -6600,12 +6600,12 @@ export default class EC2 {
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"InstanceId", (params["InstanceId"] ?? '').toString());
     body.append(prefix+"InstanceEventId", (params["InstanceEventId"] ?? '').toString());
-    body.append(prefix+"NotBefore", prt.encodeDate_iso8601(params["NotBefore"]));
+    body.append(prefix+"NotBefore", qsP.encodeDate_iso8601(params["NotBefore"]));
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyInstanceEventStartTime",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Event: xml.first("event", false, InstanceStatusEvent_Parse),
     };
@@ -6625,7 +6625,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyInstanceMetadataOptions",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       InstanceId: xml.first("instanceId", false, x => x.content ?? ''),
       InstanceMetadataOptions: xml.first("instanceMetadataOptions", false, InstanceMetadataOptionsResponse_Parse),
@@ -6648,7 +6648,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyInstancePlacement",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -6668,7 +6668,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyLaunchTemplate",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       LaunchTemplate: xml.first("launchTemplate", false, LaunchTemplate_Parse),
     };
@@ -6683,13 +6683,13 @@ export default class EC2 {
     body.append(prefix+"PrefixListId", (params["PrefixListId"] ?? '').toString());
     if ("CurrentVersion" in params) body.append(prefix+"CurrentVersion", (params["CurrentVersion"] ?? '').toString());
     if ("PrefixListName" in params) body.append(prefix+"PrefixListName", (params["PrefixListName"] ?? '').toString());
-    if (params["AddEntries"]) prt.appendList(body, prefix+"AddEntry", params["AddEntries"], {"appender":AddPrefixListEntry_Serialize,"entryPrefix":"."})
-    if (params["RemoveEntries"]) prt.appendList(body, prefix+"RemoveEntry", params["RemoveEntries"], {"appender":RemovePrefixListEntry_Serialize,"entryPrefix":"."})
+    if (params["AddEntries"]) qsP.appendList(body, prefix+"AddEntry", params["AddEntries"], {"appender":AddPrefixListEntry_Serialize,"entryPrefix":"."})
+    if (params["RemoveEntries"]) qsP.appendList(body, prefix+"RemoveEntry", params["RemoveEntries"], {"appender":RemovePrefixListEntry_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyManagedPrefixList",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       PrefixList: xml.first("prefixList", false, ManagedPrefixList_Parse),
     };
@@ -6703,7 +6703,7 @@ export default class EC2 {
     if (params["Attachment"] != null) NetworkInterfaceAttachmentChanges_Serialize(body, prefix+"Attachment", params["Attachment"]);
     if (params["Description"] != null) AttributeValue_Serialize(body, prefix+"Description", params["Description"]);
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["Groups"]) prt.appendList(body, prefix+"SecurityGroupId", params["Groups"], {"entryPrefix":"."})
+    if (params["Groups"]) qsP.appendList(body, prefix+"SecurityGroupId", params["Groups"], {"entryPrefix":"."})
     body.append(prefix+"NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
     if (params["SourceDestCheck"] != null) AttributeBooleanValue_Serialize(body, prefix+"SourceDestCheck", params["SourceDestCheck"]);
     const resp = await this.#client.performRequest({
@@ -6717,14 +6717,14 @@ export default class EC2 {
   ): Promise<ModifyReservedInstancesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["ReservedInstancesIds"]) prt.appendList(body, prefix+"ReservedInstancesId", params["ReservedInstancesIds"], {"entryPrefix":"."})
+    if (params["ReservedInstancesIds"]) qsP.appendList(body, prefix+"ReservedInstancesId", params["ReservedInstancesIds"], {"entryPrefix":"."})
     if ("ClientToken" in params) body.append(prefix+"ClientToken", (params["ClientToken"] ?? '').toString());
-    if (params["TargetConfigurations"]) prt.appendList(body, prefix+"ReservedInstancesConfigurationSetItemType", params["TargetConfigurations"], {"appender":ReservedInstancesConfiguration_Serialize,"entryPrefix":"."})
+    if (params["TargetConfigurations"]) qsP.appendList(body, prefix+"ReservedInstancesConfigurationSetItemType", params["TargetConfigurations"], {"appender":ReservedInstancesConfiguration_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyReservedInstances",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ReservedInstancesModificationId: xml.first("reservedInstancesModificationId", false, x => x.content ?? ''),
     };
@@ -6737,10 +6737,10 @@ export default class EC2 {
     const prefix = '';
     if ("Attribute" in params) body.append(prefix+"Attribute", (params["Attribute"] ?? '').toString());
     if (params["CreateVolumePermission"] != null) CreateVolumePermissionModifications_Serialize(body, prefix+"CreateVolumePermission", params["CreateVolumePermission"]);
-    if (params["GroupNames"]) prt.appendList(body, prefix+"UserGroup", params["GroupNames"], {"entryPrefix":"."})
+    if (params["GroupNames"]) qsP.appendList(body, prefix+"UserGroup", params["GroupNames"], {"entryPrefix":"."})
     if ("OperationType" in params) body.append(prefix+"OperationType", (params["OperationType"] ?? '').toString());
     body.append(prefix+"SnapshotId", (params["SnapshotId"] ?? '').toString());
-    if (params["UserIds"]) prt.appendList(body, prefix+"UserId", params["UserIds"], {"entryPrefix":"."})
+    if (params["UserIds"]) qsP.appendList(body, prefix+"UserId", params["UserIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -6754,7 +6754,7 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("ExcessCapacityTerminationPolicy" in params) body.append(prefix+"ExcessCapacityTerminationPolicy", (params["ExcessCapacityTerminationPolicy"] ?? '').toString());
-    if (params["LaunchTemplateConfigs"]) prt.appendList(body, prefix+"LaunchTemplateConfig", params["LaunchTemplateConfigs"], {"appender":LaunchTemplateConfig_Serialize,"entryPrefix":"."})
+    if (params["LaunchTemplateConfigs"]) qsP.appendList(body, prefix+"LaunchTemplateConfig", params["LaunchTemplateConfigs"], {"appender":LaunchTemplateConfig_Serialize,"entryPrefix":"."})
     body.append(prefix+"SpotFleetRequestId", (params["SpotFleetRequestId"] ?? '').toString());
     if ("TargetCapacity" in params) body.append(prefix+"TargetCapacity", (params["TargetCapacity"] ?? '').toString());
     if ("OnDemandTargetCapacity" in params) body.append(prefix+"OnDemandTargetCapacity", (params["OnDemandTargetCapacity"] ?? '').toString());
@@ -6762,7 +6762,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifySpotFleetRequest",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -6790,14 +6790,14 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TrafficMirrorFilterId", (params["TrafficMirrorFilterId"] ?? '').toString());
-    if (params["AddNetworkServices"]) prt.appendList(body, prefix+"AddNetworkService", params["AddNetworkServices"], {"entryPrefix":"."})
-    if (params["RemoveNetworkServices"]) prt.appendList(body, prefix+"RemoveNetworkService", params["RemoveNetworkServices"], {"entryPrefix":"."})
+    if (params["AddNetworkServices"]) qsP.appendList(body, prefix+"AddNetworkService", params["AddNetworkServices"], {"entryPrefix":"."})
+    if (params["RemoveNetworkServices"]) qsP.appendList(body, prefix+"RemoveNetworkService", params["RemoveNetworkServices"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyTrafficMirrorFilterNetworkServices",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TrafficMirrorFilter: xml.first("trafficMirrorFilter", false, TrafficMirrorFilter_Parse),
     };
@@ -6818,13 +6818,13 @@ export default class EC2 {
     if ("DestinationCidrBlock" in params) body.append(prefix+"DestinationCidrBlock", (params["DestinationCidrBlock"] ?? '').toString());
     if ("SourceCidrBlock" in params) body.append(prefix+"SourceCidrBlock", (params["SourceCidrBlock"] ?? '').toString());
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
-    if (params["RemoveFields"]) prt.appendList(body, prefix+"RemoveField", params["RemoveFields"], {"entryPrefix":"."})
+    if (params["RemoveFields"]) qsP.appendList(body, prefix+"RemoveField", params["RemoveFields"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyTrafficMirrorFilterRule",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TrafficMirrorFilterRule: xml.first("trafficMirrorFilterRule", false, TrafficMirrorFilterRule_Parse),
     };
@@ -6842,13 +6842,13 @@ export default class EC2 {
     if ("SessionNumber" in params) body.append(prefix+"SessionNumber", (params["SessionNumber"] ?? '').toString());
     if ("VirtualNetworkId" in params) body.append(prefix+"VirtualNetworkId", (params["VirtualNetworkId"] ?? '').toString());
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
-    if (params["RemoveFields"]) prt.appendList(body, prefix+"RemoveField", params["RemoveFields"], {"entryPrefix":"."})
+    if (params["RemoveFields"]) qsP.appendList(body, prefix+"RemoveField", params["RemoveFields"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyTrafficMirrorSession",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TrafficMirrorSession: xml.first("trafficMirrorSession", false, TrafficMirrorSession_Parse),
     };
@@ -6867,7 +6867,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyTransitGateway",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGateway: xml.first("transitGateway", false, TransitGateway_Parse),
     };
@@ -6887,7 +6887,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyTransitGatewayPrefixListReference",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayPrefixListReference: xml.first("transitGatewayPrefixListReference", false, TransitGatewayPrefixListReference_Parse),
     };
@@ -6899,15 +6899,15 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TransitGatewayAttachmentId", (params["TransitGatewayAttachmentId"] ?? '').toString());
-    if (params["AddSubnetIds"]) prt.appendList(body, prefix+"item", params["AddSubnetIds"], {"entryPrefix":"."})
-    if (params["RemoveSubnetIds"]) prt.appendList(body, prefix+"item", params["RemoveSubnetIds"], {"entryPrefix":"."})
+    if (params["AddSubnetIds"]) qsP.appendList(body, prefix+"item", params["AddSubnetIds"], {"entryPrefix":"."})
+    if (params["RemoveSubnetIds"]) qsP.appendList(body, prefix+"item", params["RemoveSubnetIds"], {"entryPrefix":"."})
     if (params["Options"] != null) ModifyTransitGatewayVpcAttachmentRequestOptions_Serialize(body, prefix+"Options", params["Options"]);
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyTransitGatewayVpcAttachment",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayVpcAttachment: xml.first("transitGatewayVpcAttachment", false, TransitGatewayVpcAttachment_Parse),
     };
@@ -6927,7 +6927,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyVolume",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       VolumeModification: xml.first("volumeModification", false, VolumeModification_Parse),
     };
@@ -6970,18 +6970,18 @@ export default class EC2 {
     body.append(prefix+"VpcEndpointId", (params["VpcEndpointId"] ?? '').toString());
     if ("ResetPolicy" in params) body.append(prefix+"ResetPolicy", (params["ResetPolicy"] ?? '').toString());
     if ("PolicyDocument" in params) body.append(prefix+"PolicyDocument", (params["PolicyDocument"] ?? '').toString());
-    if (params["AddRouteTableIds"]) prt.appendList(body, prefix+"AddRouteTableId", params["AddRouteTableIds"], {"entryPrefix":"."})
-    if (params["RemoveRouteTableIds"]) prt.appendList(body, prefix+"RemoveRouteTableId", params["RemoveRouteTableIds"], {"entryPrefix":"."})
-    if (params["AddSubnetIds"]) prt.appendList(body, prefix+"AddSubnetId", params["AddSubnetIds"], {"entryPrefix":"."})
-    if (params["RemoveSubnetIds"]) prt.appendList(body, prefix+"RemoveSubnetId", params["RemoveSubnetIds"], {"entryPrefix":"."})
-    if (params["AddSecurityGroupIds"]) prt.appendList(body, prefix+"AddSecurityGroupId", params["AddSecurityGroupIds"], {"entryPrefix":"."})
-    if (params["RemoveSecurityGroupIds"]) prt.appendList(body, prefix+"RemoveSecurityGroupId", params["RemoveSecurityGroupIds"], {"entryPrefix":"."})
+    if (params["AddRouteTableIds"]) qsP.appendList(body, prefix+"AddRouteTableId", params["AddRouteTableIds"], {"entryPrefix":"."})
+    if (params["RemoveRouteTableIds"]) qsP.appendList(body, prefix+"RemoveRouteTableId", params["RemoveRouteTableIds"], {"entryPrefix":"."})
+    if (params["AddSubnetIds"]) qsP.appendList(body, prefix+"AddSubnetId", params["AddSubnetIds"], {"entryPrefix":"."})
+    if (params["RemoveSubnetIds"]) qsP.appendList(body, prefix+"RemoveSubnetId", params["RemoveSubnetIds"], {"entryPrefix":"."})
+    if (params["AddSecurityGroupIds"]) qsP.appendList(body, prefix+"AddSecurityGroupId", params["AddSecurityGroupIds"], {"entryPrefix":"."})
+    if (params["RemoveSecurityGroupIds"]) qsP.appendList(body, prefix+"RemoveSecurityGroupId", params["RemoveSecurityGroupIds"], {"entryPrefix":"."})
     if ("PrivateDnsEnabled" in params) body.append(prefix+"PrivateDnsEnabled", (params["PrivateDnsEnabled"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyVpcEndpoint",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -6995,12 +6995,12 @@ export default class EC2 {
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"ConnectionNotificationId", (params["ConnectionNotificationId"] ?? '').toString());
     if ("ConnectionNotificationArn" in params) body.append(prefix+"ConnectionNotificationArn", (params["ConnectionNotificationArn"] ?? '').toString());
-    if (params["ConnectionEvents"]) prt.appendList(body, prefix+"item", params["ConnectionEvents"], {"entryPrefix":"."})
+    if (params["ConnectionEvents"]) qsP.appendList(body, prefix+"item", params["ConnectionEvents"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyVpcEndpointConnectionNotification",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ReturnValue: xml.first("return", false, x => x.content === 'true'),
     };
@@ -7016,13 +7016,13 @@ export default class EC2 {
     if ("PrivateDnsName" in params) body.append(prefix+"PrivateDnsName", (params["PrivateDnsName"] ?? '').toString());
     if ("RemovePrivateDnsName" in params) body.append(prefix+"RemovePrivateDnsName", (params["RemovePrivateDnsName"] ?? '').toString());
     if ("AcceptanceRequired" in params) body.append(prefix+"AcceptanceRequired", (params["AcceptanceRequired"] ?? '').toString());
-    if (params["AddNetworkLoadBalancerArns"]) prt.appendList(body, prefix+"AddNetworkLoadBalancerArn", params["AddNetworkLoadBalancerArns"], {"entryPrefix":"."})
-    if (params["RemoveNetworkLoadBalancerArns"]) prt.appendList(body, prefix+"RemoveNetworkLoadBalancerArn", params["RemoveNetworkLoadBalancerArns"], {"entryPrefix":"."})
+    if (params["AddNetworkLoadBalancerArns"]) qsP.appendList(body, prefix+"AddNetworkLoadBalancerArn", params["AddNetworkLoadBalancerArns"], {"entryPrefix":"."})
+    if (params["RemoveNetworkLoadBalancerArns"]) qsP.appendList(body, prefix+"RemoveNetworkLoadBalancerArn", params["RemoveNetworkLoadBalancerArns"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyVpcEndpointServiceConfiguration",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -7035,13 +7035,13 @@ export default class EC2 {
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"ServiceId", (params["ServiceId"] ?? '').toString());
-    if (params["AddAllowedPrincipals"]) prt.appendList(body, prefix+"item", params["AddAllowedPrincipals"], {"entryPrefix":"."})
-    if (params["RemoveAllowedPrincipals"]) prt.appendList(body, prefix+"item", params["RemoveAllowedPrincipals"], {"entryPrefix":"."})
+    if (params["AddAllowedPrincipals"]) qsP.appendList(body, prefix+"item", params["AddAllowedPrincipals"], {"entryPrefix":"."})
+    if (params["RemoveAllowedPrincipals"]) qsP.appendList(body, prefix+"item", params["RemoveAllowedPrincipals"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyVpcEndpointServicePermissions",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ReturnValue: xml.first("return", false, x => x.content === 'true'),
     };
@@ -7060,7 +7060,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyVpcPeeringConnectionOptions",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       AccepterPeeringConnectionOptions: xml.first("accepterPeeringConnectionOptions", false, PeeringConnectionOptions_Parse),
       RequesterPeeringConnectionOptions: xml.first("requesterPeeringConnectionOptions", false, PeeringConnectionOptions_Parse),
@@ -7079,7 +7079,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyVpcTenancy",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ReturnValue: xml.first("return", false, x => x.content === 'true'),
     };
@@ -7099,7 +7099,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyVpnConnection",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       VpnConnection: xml.first("vpnConnection", false, VpnConnection_Parse),
     };
@@ -7120,7 +7120,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyVpnConnectionOptions",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       VpnConnection: xml.first("vpnConnection", false, VpnConnection_Parse),
     };
@@ -7138,7 +7138,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyVpnTunnelCertificate",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       VpnConnection: xml.first("vpnConnection", false, VpnConnection_Parse),
     };
@@ -7157,7 +7157,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyVpnTunnelOptions",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       VpnConnection: xml.first("vpnConnection", false, VpnConnection_Parse),
     };
@@ -7168,13 +7168,13 @@ export default class EC2 {
   ): Promise<MonitorInstancesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["InstanceIds"]) prt.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
+    if (params["InstanceIds"]) qsP.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MonitorInstances",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       InstanceMonitorings: xml.getList("instancesSet", "item").map(InstanceMonitoring_Parse),
     };
@@ -7191,7 +7191,7 @@ export default class EC2 {
       abortSignal, body,
       action: "MoveAddressToVpc",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       AllocationId: xml.first("allocationId", false, x => x.content ?? ''),
       Status: xml.first("status", false, x => (x.content ?? '') as Status),
@@ -7208,12 +7208,12 @@ export default class EC2 {
     if ("PubliclyAdvertisable" in params) body.append(prefix+"PubliclyAdvertisable", (params["PubliclyAdvertisable"] ?? '').toString());
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["PoolTagSpecifications"]) prt.appendList(body, prefix+"PoolTagSpecification", params["PoolTagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["PoolTagSpecifications"]) qsP.appendList(body, prefix+"PoolTagSpecification", params["PoolTagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ProvisionByoipCidr",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ByoipCidr: xml.first("byoipCidr", false, ByoipCidr_Parse),
     };
@@ -7226,15 +7226,15 @@ export default class EC2 {
     const prefix = '';
     if ("ClientToken" in params) body.append(prefix+"ClientToken", (params["ClientToken"] ?? '').toString());
     if ("CurrencyCode" in params) body.append(prefix+"CurrencyCode", (params["CurrencyCode"] ?? '').toString());
-    if (params["HostIdSet"]) prt.appendList(body, prefix+"item", params["HostIdSet"], {"entryPrefix":"."})
+    if (params["HostIdSet"]) qsP.appendList(body, prefix+"item", params["HostIdSet"], {"entryPrefix":"."})
     if ("LimitPrice" in params) body.append(prefix+"LimitPrice", (params["LimitPrice"] ?? '').toString());
     body.append(prefix+"OfferingId", (params["OfferingId"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PurchaseHostReservation",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ClientToken: xml.first("clientToken", false, x => x.content ?? ''),
       CurrencyCode: xml.first("currencyCode", false, x => (x.content ?? '') as CurrencyCodeValues),
@@ -7253,12 +7253,12 @@ export default class EC2 {
     body.append(prefix+"ReservedInstancesOfferingId", (params["ReservedInstancesOfferingId"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if (params["LimitPrice"] != null) ReservedInstanceLimitPrice_Serialize(body, prefix+"LimitPrice", params["LimitPrice"]);
-    if ("PurchaseTime" in params) body.append(prefix+"PurchaseTime", prt.encodeDate_iso8601(params["PurchaseTime"]));
+    if ("PurchaseTime" in params) body.append(prefix+"PurchaseTime", qsP.encodeDate_iso8601(params["PurchaseTime"]));
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PurchaseReservedInstancesOffering",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ReservedInstancesId: xml.first("reservedInstancesId", false, x => x.content ?? ''),
     };
@@ -7271,12 +7271,12 @@ export default class EC2 {
     const prefix = '';
     body.append(prefix+"ClientToken", (params["ClientToken"] ?? generateIdemptToken()).toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if (params["PurchaseRequests"]) prt.appendList(body, prefix+"PurchaseRequest", params["PurchaseRequests"], {"appender":PurchaseRequest_Serialize,"entryPrefix":"."})
+    if (params["PurchaseRequests"]) qsP.appendList(body, prefix+"PurchaseRequest", params["PurchaseRequests"], {"appender":PurchaseRequest_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PurchaseScheduledInstances",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ScheduledInstanceSet: xml.getList("scheduledInstanceSet", "item").map(ScheduledInstance_Parse),
     };
@@ -7287,7 +7287,7 @@ export default class EC2 {
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["InstanceIds"]) prt.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
+    if (params["InstanceIds"]) qsP.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -7302,13 +7302,13 @@ export default class EC2 {
     const prefix = '';
     if ("ImageLocation" in params) body.append(prefix+"ImageLocation", (params["ImageLocation"] ?? '').toString());
     if ("Architecture" in params) body.append(prefix+"Architecture", (params["Architecture"] ?? '').toString());
-    if (params["BlockDeviceMappings"]) prt.appendList(body, prefix+"BlockDeviceMapping", params["BlockDeviceMappings"], {"appender":BlockDeviceMapping_Serialize,"entryPrefix":"."})
+    if (params["BlockDeviceMappings"]) qsP.appendList(body, prefix+"BlockDeviceMapping", params["BlockDeviceMappings"], {"appender":BlockDeviceMapping_Serialize,"entryPrefix":"."})
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("EnaSupport" in params) body.append(prefix+"EnaSupport", (params["EnaSupport"] ?? '').toString());
     if ("KernelId" in params) body.append(prefix+"KernelId", (params["KernelId"] ?? '').toString());
     body.append(prefix+"Name", (params["Name"] ?? '').toString());
-    if (params["BillingProducts"]) prt.appendList(body, prefix+"BillingProduct", params["BillingProducts"], {"entryPrefix":"."})
+    if (params["BillingProducts"]) qsP.appendList(body, prefix+"BillingProduct", params["BillingProducts"], {"entryPrefix":"."})
     if ("RamdiskId" in params) body.append(prefix+"RamdiskId", (params["RamdiskId"] ?? '').toString());
     if ("RootDeviceName" in params) body.append(prefix+"RootDeviceName", (params["RootDeviceName"] ?? '').toString());
     if ("SriovNetSupport" in params) body.append(prefix+"SriovNetSupport", (params["SriovNetSupport"] ?? '').toString());
@@ -7317,7 +7317,7 @@ export default class EC2 {
       abortSignal, body,
       action: "RegisterImage",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ImageId: xml.first("imageId", false, x => x.content ?? ''),
     };
@@ -7334,7 +7334,7 @@ export default class EC2 {
       abortSignal, body,
       action: "RegisterInstanceEventNotificationAttributes",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       InstanceTagAttribute: xml.first("instanceTagAttribute", false, InstanceTagNotificationAttribute_Parse),
     };
@@ -7347,13 +7347,13 @@ export default class EC2 {
     const prefix = '';
     if ("TransitGatewayMulticastDomainId" in params) body.append(prefix+"TransitGatewayMulticastDomainId", (params["TransitGatewayMulticastDomainId"] ?? '').toString());
     if ("GroupIpAddress" in params) body.append(prefix+"GroupIpAddress", (params["GroupIpAddress"] ?? '').toString());
-    if (params["NetworkInterfaceIds"]) prt.appendList(body, prefix+"item", params["NetworkInterfaceIds"], {"entryPrefix":"."})
+    if (params["NetworkInterfaceIds"]) qsP.appendList(body, prefix+"item", params["NetworkInterfaceIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterTransitGatewayMulticastGroupMembers",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       RegisteredMulticastGroupMembers: xml.first("registeredMulticastGroupMembers", false, TransitGatewayMulticastRegisteredGroupMembers_Parse),
     };
@@ -7366,13 +7366,13 @@ export default class EC2 {
     const prefix = '';
     if ("TransitGatewayMulticastDomainId" in params) body.append(prefix+"TransitGatewayMulticastDomainId", (params["TransitGatewayMulticastDomainId"] ?? '').toString());
     if ("GroupIpAddress" in params) body.append(prefix+"GroupIpAddress", (params["GroupIpAddress"] ?? '').toString());
-    if (params["NetworkInterfaceIds"]) prt.appendList(body, prefix+"item", params["NetworkInterfaceIds"], {"entryPrefix":"."})
+    if (params["NetworkInterfaceIds"]) qsP.appendList(body, prefix+"item", params["NetworkInterfaceIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterTransitGatewayMulticastGroupSources",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       RegisteredMulticastGroupSources: xml.first("registeredMulticastGroupSources", false, TransitGatewayMulticastRegisteredGroupSources_Parse),
     };
@@ -7389,7 +7389,7 @@ export default class EC2 {
       abortSignal, body,
       action: "RejectTransitGatewayPeeringAttachment",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayPeeringAttachment: xml.first("transitGatewayPeeringAttachment", false, TransitGatewayPeeringAttachment_Parse),
     };
@@ -7406,7 +7406,7 @@ export default class EC2 {
       abortSignal, body,
       action: "RejectTransitGatewayVpcAttachment",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayVpcAttachment: xml.first("transitGatewayVpcAttachment", false, TransitGatewayVpcAttachment_Parse),
     };
@@ -7419,12 +7419,12 @@ export default class EC2 {
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"ServiceId", (params["ServiceId"] ?? '').toString());
-    if (params["VpcEndpointIds"]) prt.appendList(body, prefix+"VpcEndpointId", params["VpcEndpointIds"], {"entryPrefix":"."})
+    if (params["VpcEndpointIds"]) qsP.appendList(body, prefix+"VpcEndpointId", params["VpcEndpointIds"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RejectVpcEndpointConnections",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Unsuccessful: xml.getList("unsuccessful", "item").map(UnsuccessfulItem_Parse),
     };
@@ -7441,7 +7441,7 @@ export default class EC2 {
       abortSignal, body,
       action: "RejectVpcPeeringConnection",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -7467,12 +7467,12 @@ export default class EC2 {
   ): Promise<ReleaseHostsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["HostIds"]) prt.appendList(body, prefix+"hostId", params["HostIds"], {"entryPrefix":"."})
+    if (params["HostIds"]) qsP.appendList(body, prefix+"hostId", params["HostIds"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ReleaseHosts",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Successful: xml.getList("successful", "item").map(x => x.content ?? ''),
       Unsuccessful: xml.getList("unsuccessful", "item").map(UnsuccessfulItem_Parse),
@@ -7490,7 +7490,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ReplaceIamInstanceProfileAssociation",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       IamInstanceProfileAssociation: xml.first("iamInstanceProfileAssociation", false, IamInstanceProfileAssociation_Parse),
     };
@@ -7508,7 +7508,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ReplaceNetworkAclAssociation",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NewAssociationId: xml.first("newAssociationId", false, x => x.content ?? ''),
     };
@@ -7573,7 +7573,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ReplaceRouteTableAssociation",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NewAssociationId: xml.first("newAssociationId", false, x => x.content ?? ''),
       AssociationState: xml.first("associationState", false, RouteTableAssociationState_Parse),
@@ -7594,7 +7594,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ReplaceTransitGatewayRoute",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Route: xml.first("route", false, TransitGatewayRoute_Parse),
     };
@@ -7607,10 +7607,10 @@ export default class EC2 {
     const prefix = '';
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
-    if ("EndTime" in params) body.append(prefix+"EndTime", prt.encodeDate_iso8601(params["EndTime"]));
-    if (params["Instances"]) prt.appendList(body, prefix+"instanceId", params["Instances"], {"entryPrefix":"."})
-    if (params["ReasonCodes"]) prt.appendList(body, prefix+"reasonCode", params["ReasonCodes"], {"entryPrefix":"."})
-    if ("StartTime" in params) body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
+    if ("EndTime" in params) body.append(prefix+"EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
+    if (params["Instances"]) qsP.appendList(body, prefix+"instanceId", params["Instances"], {"entryPrefix":"."})
+    if (params["ReasonCodes"]) qsP.appendList(body, prefix+"reasonCode", params["ReasonCodes"], {"entryPrefix":"."})
+    if ("StartTime" in params) body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
     body.append(prefix+"Status", (params["Status"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -7629,7 +7629,7 @@ export default class EC2 {
       abortSignal, body,
       action: "RequestSpotFleet",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       SpotFleetRequestId: xml.first("spotFleetRequestId", false, x => x.content ?? ''),
     };
@@ -7649,15 +7649,15 @@ export default class EC2 {
     if (params["LaunchSpecification"] != null) RequestSpotLaunchSpecification_Serialize(body, prefix+"LaunchSpecification", params["LaunchSpecification"]);
     if ("SpotPrice" in params) body.append(prefix+"SpotPrice", (params["SpotPrice"] ?? '').toString());
     if ("Type" in params) body.append(prefix+"Type", (params["Type"] ?? '').toString());
-    if ("ValidFrom" in params) body.append(prefix+"ValidFrom", prt.encodeDate_iso8601(params["ValidFrom"]));
-    if ("ValidUntil" in params) body.append(prefix+"ValidUntil", prt.encodeDate_iso8601(params["ValidUntil"]));
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if ("ValidFrom" in params) body.append(prefix+"ValidFrom", qsP.encodeDate_iso8601(params["ValidFrom"]));
+    if ("ValidUntil" in params) body.append(prefix+"ValidUntil", qsP.encodeDate_iso8601(params["ValidUntil"]));
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("InstanceInterruptionBehavior" in params) body.append(prefix+"InstanceInterruptionBehavior", (params["InstanceInterruptionBehavior"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RequestSpotInstances",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       SpotInstanceRequests: xml.getList("spotInstanceRequestSet", "item").map(SpotInstanceRequest_Parse),
     };
@@ -7673,7 +7673,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ResetEbsDefaultKmsKeyId",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       KmsKeyId: xml.first("kmsKeyId", false, x => x.content ?? ''),
     };
@@ -7691,7 +7691,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ResetFpgaImageAttribute",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -7764,7 +7764,7 @@ export default class EC2 {
       abortSignal, body,
       action: "RestoreAddressToClassic",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       PublicIp: xml.first("publicIp", false, x => x.content ?? ''),
       Status: xml.first("status", false, x => (x.content ?? '') as Status),
@@ -7784,7 +7784,7 @@ export default class EC2 {
       abortSignal, body,
       action: "RestoreManagedPrefixListVersion",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       PrefixList: xml.first("prefixList", false, ManagedPrefixList_Parse),
     };
@@ -7804,7 +7804,7 @@ export default class EC2 {
       abortSignal, body,
       action: "RevokeClientVpnIngress",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Status: xml.first("status", false, ClientVpnAuthorizationRuleStatus_Parse),
     };
@@ -7817,7 +7817,7 @@ export default class EC2 {
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"GroupId", (params["GroupId"] ?? '').toString());
-    if (params["IpPermissions"]) prt.appendList(body, prefix+"ipPermissions", params["IpPermissions"], {"appender":IpPermission_Serialize,"entryPrefix":"."})
+    if (params["IpPermissions"]) qsP.appendList(body, prefix+"ipPermissions", params["IpPermissions"], {"appender":IpPermission_Serialize,"entryPrefix":"."})
     if ("CidrIp" in params) body.append(prefix+"CidrIp", (params["CidrIp"] ?? '').toString());
     if ("FromPort" in params) body.append(prefix+"FromPort", (params["FromPort"] ?? '').toString());
     if ("IpProtocol" in params) body.append(prefix+"IpProtocol", (params["IpProtocol"] ?? '').toString());
@@ -7828,7 +7828,7 @@ export default class EC2 {
       abortSignal, body,
       action: "RevokeSecurityGroupEgress",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
       UnknownIpPermissions: xml.getList("unknownIpPermissionSet", "item").map(IpPermission_Parse),
@@ -7844,7 +7844,7 @@ export default class EC2 {
     if ("FromPort" in params) body.append(prefix+"FromPort", (params["FromPort"] ?? '').toString());
     if ("GroupId" in params) body.append(prefix+"GroupId", (params["GroupId"] ?? '').toString());
     if ("GroupName" in params) body.append(prefix+"GroupName", (params["GroupName"] ?? '').toString());
-    if (params["IpPermissions"]) prt.appendList(body, prefix+"item", params["IpPermissions"], {"appender":IpPermission_Serialize,"entryPrefix":"."})
+    if (params["IpPermissions"]) qsP.appendList(body, prefix+"item", params["IpPermissions"], {"appender":IpPermission_Serialize,"entryPrefix":"."})
     if ("IpProtocol" in params) body.append(prefix+"IpProtocol", (params["IpProtocol"] ?? '').toString());
     if ("SourceSecurityGroupName" in params) body.append(prefix+"SourceSecurityGroupName", (params["SourceSecurityGroupName"] ?? '').toString());
     if ("SourceSecurityGroupOwnerId" in params) body.append(prefix+"SourceSecurityGroupOwnerId", (params["SourceSecurityGroupOwnerId"] ?? '').toString());
@@ -7854,7 +7854,7 @@ export default class EC2 {
       abortSignal, body,
       action: "RevokeSecurityGroupIngress",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
       UnknownIpPermissions: xml.getList("unknownIpPermissionSet", "item").map(IpPermission_Parse),
@@ -7866,11 +7866,11 @@ export default class EC2 {
   ): Promise<Reservation> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["BlockDeviceMappings"]) prt.appendList(body, prefix+"BlockDeviceMapping", params["BlockDeviceMappings"], {"appender":BlockDeviceMapping_Serialize,"entryPrefix":"."})
+    if (params["BlockDeviceMappings"]) qsP.appendList(body, prefix+"BlockDeviceMapping", params["BlockDeviceMappings"], {"appender":BlockDeviceMapping_Serialize,"entryPrefix":"."})
     if ("ImageId" in params) body.append(prefix+"ImageId", (params["ImageId"] ?? '').toString());
     if ("InstanceType" in params) body.append(prefix+"InstanceType", (params["InstanceType"] ?? '').toString());
     if ("Ipv6AddressCount" in params) body.append(prefix+"Ipv6AddressCount", (params["Ipv6AddressCount"] ?? '').toString());
-    if (params["Ipv6Addresses"]) prt.appendList(body, prefix+"Ipv6Address", params["Ipv6Addresses"], {"appender":InstanceIpv6Address_Serialize,"entryPrefix":"."})
+    if (params["Ipv6Addresses"]) qsP.appendList(body, prefix+"Ipv6Address", params["Ipv6Addresses"], {"appender":InstanceIpv6Address_Serialize,"entryPrefix":"."})
     if ("KernelId" in params) body.append(prefix+"KernelId", (params["KernelId"] ?? '').toString());
     if ("KeyName" in params) body.append(prefix+"KeyName", (params["KeyName"] ?? '').toString());
     body.append(prefix+"MaxCount", (params["MaxCount"] ?? '').toString());
@@ -7878,8 +7878,8 @@ export default class EC2 {
     if (params["Monitoring"] != null) RunInstancesMonitoringEnabled_Serialize(body, prefix+"Monitoring", params["Monitoring"]);
     if (params["Placement"] != null) Placement_Serialize(body, prefix+"Placement", params["Placement"]);
     if ("RamdiskId" in params) body.append(prefix+"RamdiskId", (params["RamdiskId"] ?? '').toString());
-    if (params["SecurityGroupIds"]) prt.appendList(body, prefix+"SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
-    if (params["SecurityGroups"]) prt.appendList(body, prefix+"SecurityGroup", params["SecurityGroups"], {"entryPrefix":"."})
+    if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+"SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
+    if (params["SecurityGroups"]) qsP.appendList(body, prefix+"SecurityGroup", params["SecurityGroups"], {"entryPrefix":"."})
     if ("SubnetId" in params) body.append(prefix+"SubnetId", (params["SubnetId"] ?? '').toString());
     if ("UserData" in params) body.append(prefix+"UserData", (params["UserData"] ?? '').toString());
     if ("AdditionalInfo" in params) body.append(prefix+"AdditionalInfo", (params["AdditionalInfo"] ?? '').toString());
@@ -7889,24 +7889,24 @@ export default class EC2 {
     if ("EbsOptimized" in params) body.append(prefix+"EbsOptimized", (params["EbsOptimized"] ?? '').toString());
     if (params["IamInstanceProfile"] != null) IamInstanceProfileSpecification_Serialize(body, prefix+"IamInstanceProfile", params["IamInstanceProfile"]);
     if ("InstanceInitiatedShutdownBehavior" in params) body.append(prefix+"InstanceInitiatedShutdownBehavior", (params["InstanceInitiatedShutdownBehavior"] ?? '').toString());
-    if (params["NetworkInterfaces"]) prt.appendList(body, prefix+"networkInterface", params["NetworkInterfaces"], {"appender":InstanceNetworkInterfaceSpecification_Serialize,"entryPrefix":"."})
+    if (params["NetworkInterfaces"]) qsP.appendList(body, prefix+"networkInterface", params["NetworkInterfaces"], {"appender":InstanceNetworkInterfaceSpecification_Serialize,"entryPrefix":"."})
     if ("PrivateIpAddress" in params) body.append(prefix+"PrivateIpAddress", (params["PrivateIpAddress"] ?? '').toString());
-    if (params["ElasticGpuSpecification"]) prt.appendList(body, prefix+"item", params["ElasticGpuSpecification"], {"appender":ElasticGpuSpecification_Serialize,"entryPrefix":"."})
-    if (params["ElasticInferenceAccelerators"]) prt.appendList(body, prefix+"ElasticInferenceAccelerator", params["ElasticInferenceAccelerators"], {"appender":ElasticInferenceAccelerator_Serialize,"entryPrefix":"."})
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["ElasticGpuSpecification"]) qsP.appendList(body, prefix+"item", params["ElasticGpuSpecification"], {"appender":ElasticGpuSpecification_Serialize,"entryPrefix":"."})
+    if (params["ElasticInferenceAccelerators"]) qsP.appendList(body, prefix+"ElasticInferenceAccelerator", params["ElasticInferenceAccelerators"], {"appender":ElasticInferenceAccelerator_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if (params["LaunchTemplate"] != null) LaunchTemplateSpecification_Serialize(body, prefix+"LaunchTemplate", params["LaunchTemplate"]);
     if (params["InstanceMarketOptions"] != null) InstanceMarketOptionsRequest_Serialize(body, prefix+"InstanceMarketOptions", params["InstanceMarketOptions"]);
     if (params["CreditSpecification"] != null) CreditSpecificationRequest_Serialize(body, prefix+"CreditSpecification", params["CreditSpecification"]);
     if (params["CpuOptions"] != null) CpuOptionsRequest_Serialize(body, prefix+"CpuOptions", params["CpuOptions"]);
     if (params["CapacityReservationSpecification"] != null) CapacityReservationSpecification_Serialize(body, prefix+"CapacityReservationSpecification", params["CapacityReservationSpecification"]);
     if (params["HibernationOptions"] != null) HibernationOptionsRequest_Serialize(body, prefix+"HibernationOptions", params["HibernationOptions"]);
-    if (params["LicenseSpecifications"]) prt.appendList(body, prefix+"LicenseSpecification", params["LicenseSpecifications"], {"appender":LicenseConfigurationRequest_Serialize,"entryPrefix":"."})
+    if (params["LicenseSpecifications"]) qsP.appendList(body, prefix+"LicenseSpecification", params["LicenseSpecifications"], {"appender":LicenseConfigurationRequest_Serialize,"entryPrefix":"."})
     if (params["MetadataOptions"] != null) InstanceMetadataOptionsRequest_Serialize(body, prefix+"MetadataOptions", params["MetadataOptions"]);
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RunInstances",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return Reservation_Parse(xml);
   }
 
@@ -7924,7 +7924,7 @@ export default class EC2 {
       abortSignal, body,
       action: "RunScheduledInstances",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       InstanceIdSet: xml.getList("instanceIdSet", "item").map(x => x.content ?? ''),
     };
@@ -7936,7 +7936,7 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LocalGatewayRouteTableId", (params["LocalGatewayRouteTableId"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -7944,7 +7944,7 @@ export default class EC2 {
       abortSignal, body,
       action: "SearchLocalGatewayRoutes",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Routes: xml.getList("routeSet", "item").map(LocalGatewayRoute_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -7957,7 +7957,7 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("TransitGatewayMulticastDomainId" in params) body.append(prefix+"TransitGatewayMulticastDomainId", (params["TransitGatewayMulticastDomainId"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -7965,7 +7965,7 @@ export default class EC2 {
       abortSignal, body,
       action: "SearchTransitGatewayMulticastGroups",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       MulticastGroups: xml.getList("multicastGroups", "item").map(TransitGatewayMulticastGroup_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
@@ -7978,14 +7978,14 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TransitGatewayRouteTableId", (params["TransitGatewayRouteTableId"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchTransitGatewayRoutes",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Routes: xml.getList("routeSet", "item").map(TransitGatewayRoute_Parse),
       AdditionalRoutesAvailable: xml.first("additionalRoutesAvailable", false, x => x.content === 'true'),
@@ -8010,14 +8010,14 @@ export default class EC2 {
   ): Promise<StartInstancesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["InstanceIds"]) prt.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
+    if (params["InstanceIds"]) qsP.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
     if ("AdditionalInfo" in params) body.append(prefix+"AdditionalInfo", (params["AdditionalInfo"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartInstances",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       StartingInstances: xml.getList("instancesSet", "item").map(InstanceStateChange_Parse),
     };
@@ -8034,7 +8034,7 @@ export default class EC2 {
       abortSignal, body,
       action: "StartVpcEndpointServicePrivateDnsVerification",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ReturnValue: xml.first("return", false, x => x.content === 'true'),
     };
@@ -8045,7 +8045,7 @@ export default class EC2 {
   ): Promise<StopInstancesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["InstanceIds"]) prt.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
+    if (params["InstanceIds"]) qsP.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
     if ("Hibernate" in params) body.append(prefix+"Hibernate", (params["Hibernate"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("Force" in params) body.append(prefix+"Force", (params["Force"] ?? '').toString());
@@ -8053,7 +8053,7 @@ export default class EC2 {
       abortSignal, body,
       action: "StopInstances",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       StoppingInstances: xml.getList("instancesSet", "item").map(InstanceStateChange_Parse),
     };
@@ -8072,7 +8072,7 @@ export default class EC2 {
       abortSignal, body,
       action: "TerminateClientVpnConnections",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ClientVpnEndpointId: xml.first("clientVpnEndpointId", false, x => x.content ?? ''),
       Username: xml.first("username", false, x => x.content ?? ''),
@@ -8085,13 +8085,13 @@ export default class EC2 {
   ): Promise<TerminateInstancesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["InstanceIds"]) prt.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
+    if (params["InstanceIds"]) qsP.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TerminateInstances",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       TerminatingInstances: xml.getList("instancesSet", "item").map(InstanceStateChange_Parse),
     };
@@ -8102,13 +8102,13 @@ export default class EC2 {
   ): Promise<UnassignIpv6AddressesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Ipv6Addresses"]) prt.appendList(body, prefix+"ipv6Addresses", params["Ipv6Addresses"], {"entryPrefix":"."})
+    if (params["Ipv6Addresses"]) qsP.appendList(body, prefix+"ipv6Addresses", params["Ipv6Addresses"], {"entryPrefix":"."})
     body.append(prefix+"NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UnassignIpv6Addresses",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       NetworkInterfaceId: xml.first("networkInterfaceId", false, x => x.content ?? ''),
       UnassignedIpv6Addresses: xml.getList("unassignedIpv6Addresses", "item").map(x => x.content ?? ''),
@@ -8121,7 +8121,7 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
-    if (params["PrivateIpAddresses"]) prt.appendList(body, prefix+"privateIpAddress", params["PrivateIpAddresses"], {"entryPrefix":"."})
+    if (params["PrivateIpAddresses"]) qsP.appendList(body, prefix+"privateIpAddress", params["PrivateIpAddresses"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UnassignPrivateIpAddresses",
@@ -8133,13 +8133,13 @@ export default class EC2 {
   ): Promise<UnmonitorInstancesResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["InstanceIds"]) prt.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
+    if (params["InstanceIds"]) qsP.appendList(body, prefix+"InstanceId", params["InstanceIds"], {"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UnmonitorInstances",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       InstanceMonitorings: xml.getList("instancesSet", "item").map(InstanceMonitoring_Parse),
     };
@@ -8153,12 +8153,12 @@ export default class EC2 {
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("GroupId" in params) body.append(prefix+"GroupId", (params["GroupId"] ?? '').toString());
     if ("GroupName" in params) body.append(prefix+"GroupName", (params["GroupName"] ?? '').toString());
-    if (params["IpPermissions"]) prt.appendList(body, prefix+"item", params["IpPermissions"], {"appender":IpPermission_Serialize,"entryPrefix":"."})
+    if (params["IpPermissions"]) qsP.appendList(body, prefix+"item", params["IpPermissions"], {"appender":IpPermission_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSecurityGroupRuleDescriptionsEgress",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -8172,12 +8172,12 @@ export default class EC2 {
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("GroupId" in params) body.append(prefix+"GroupId", (params["GroupId"] ?? '').toString());
     if ("GroupName" in params) body.append(prefix+"GroupName", (params["GroupName"] ?? '').toString());
-    if (params["IpPermissions"]) prt.appendList(body, prefix+"item", params["IpPermissions"], {"appender":IpPermission_Serialize,"entryPrefix":"."})
+    if (params["IpPermissions"]) qsP.appendList(body, prefix+"item", params["IpPermissions"], {"appender":IpPermission_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSecurityGroupRuleDescriptionsIngress",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
     };
@@ -8194,7 +8194,7 @@ export default class EC2 {
       abortSignal, body,
       action: "WithdrawByoipCidr",
     });
-    const xml = readXmlResult(await resp.text());
+    const xml = xmlP.readXmlResult(await resp.text());
     return {
       ByoipCidr: xml.first("byoipCidr", false, ByoipCidr_Parse),
     };
@@ -8210,7 +8210,7 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeInstances(params);
-        if (resp["Reservations"].length > 0) return resp;
+        if ((resp?.Reservations || '').length > 0) return resp;
       } catch (err) {
         if (!["InvalidInstanceID.NotFound"].includes(err.code)) throw err;
       }
@@ -8226,7 +8226,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state BundleTaskComplete';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeBundleTasks(params);
-      const field = resp["BundleTasks"].flatMap(x => x["State"]);
+      const field = resp?.BundleTasks?.flatMap(x => x?.State);
       if (field.every(x => x === "complete")) return resp;
       if (field.some(x => x === "failed")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
@@ -8241,7 +8241,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state ConversionTaskCancelled';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeConversionTasks(params);
-      if (resp["ConversionTasks"].flatMap(x => x["State"]).every(x => x === "cancelled")) return resp;
+      if (resp?.ConversionTasks?.flatMap(x => x?.State).every(x => x === "cancelled")) return resp;
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8254,7 +8254,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state ConversionTaskCompleted';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeConversionTasks(params);
-      const field = resp["ConversionTasks"].flatMap(x => x["State"]);
+      const field = resp?.ConversionTasks?.flatMap(x => x?.State);
       if (field.every(x => x === "completed")) return resp;
       if (field.some(x => x === "cancelled")) throw new Error(errMessage);
       if (field.some(x => x === "cancelling")) throw new Error(errMessage);
@@ -8270,7 +8270,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state CustomerGatewayAvailable';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeCustomerGateways(params);
-      const field = resp["CustomerGateways"].flatMap(x => x["State"]);
+      const field = resp?.CustomerGateways?.flatMap(x => x?.State);
       if (field.every(x => x === "available")) return resp;
       if (field.some(x => x === "deleted")) throw new Error(errMessage);
       if (field.some(x => x === "deleting")) throw new Error(errMessage);
@@ -8286,7 +8286,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state ExportTaskCancelled';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeExportTasks(params);
-      if (resp["ExportTasks"].flatMap(x => x["State"]).every(x => x === "cancelled")) return resp;
+      if (resp?.ExportTasks?.flatMap(x => x?.State).every(x => x === "cancelled")) return resp;
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8299,7 +8299,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state ExportTaskCompleted';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeExportTasks(params);
-      if (resp["ExportTasks"].flatMap(x => x["State"]).every(x => x === "completed")) return resp;
+      if (resp?.ExportTasks?.flatMap(x => x?.State).every(x => x === "completed")) return resp;
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8313,7 +8313,7 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeImages(params);
-        if (resp["Images"].length > 0) return resp;
+        if ((resp?.Images || '').length > 0) return resp;
       } catch (err) {
         if (!["InvalidAMIID.NotFound"].includes(err.code)) throw err;
       }
@@ -8329,7 +8329,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state ImageAvailable';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeImages(params);
-      const field = resp["Images"].flatMap(x => x["State"]);
+      const field = resp?.Images?.flatMap(x => x?.State);
       if (field.every(x => x === "available")) return resp;
       if (field.some(x => x === "failed")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
@@ -8345,7 +8345,7 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeInstances(params);
-        const field = resp["Reservations"].flatMap(x => x["Instances"]).flatMap(x => x["State"]?.["Name"]);
+        const field = resp?.Reservations?.flatMap(x => x?.Instances)?.flatMap(x => x?.State?.Name);
         if (field.every(x => x === "running")) return resp;
         if (field.some(x => x === "shutting-down")) throw new Error(errMessage);
         if (field.some(x => x === "terminated")) throw new Error(errMessage);
@@ -8366,7 +8366,7 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeInstanceStatus(params);
-        if (resp["InstanceStatuses"].flatMap(x => x["InstanceStatus"]?.["Status"]).every(x => x === "ok")) return resp;
+        if (resp?.InstanceStatuses?.flatMap(x => x?.InstanceStatus?.Status).every(x => x === "ok")) return resp;
       } catch (err) {
         if (!["InvalidInstanceID.NotFound"].includes(err.code)) throw err;
       }
@@ -8382,7 +8382,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state InstanceStopped';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeInstances(params);
-      const field = resp["Reservations"].flatMap(x => x["Instances"]).flatMap(x => x["State"]?.["Name"]);
+      const field = resp?.Reservations?.flatMap(x => x?.Instances)?.flatMap(x => x?.State?.Name);
       if (field.every(x => x === "stopped")) return resp;
       if (field.some(x => x === "pending")) throw new Error(errMessage);
       if (field.some(x => x === "terminated")) throw new Error(errMessage);
@@ -8398,7 +8398,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state InstanceTerminated';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeInstances(params);
-      const field = resp["Reservations"].flatMap(x => x["Instances"]).flatMap(x => x["State"]?.["Name"]);
+      const field = resp?.Reservations?.flatMap(x => x?.Instances)?.flatMap(x => x?.State?.Name);
       if (field.every(x => x === "terminated")) return resp;
       if (field.some(x => x === "pending")) throw new Error(errMessage);
       if (field.some(x => x === "stopping")) throw new Error(errMessage);
@@ -8415,7 +8415,7 @@ export default class EC2 {
     for (let i = 0; i < 6; i++) {
       try {
         const resp = await this.describeKeyPairs(params);
-        if (resp["KeyPairs"].flatMap(x => x["KeyName"]).length > 0) return resp;
+        if ((resp?.KeyPairs?.flatMap(x => x?.KeyName) || '').length > 0) return resp;
       } catch (err) {
         if (!["InvalidKeyPair.NotFound"].includes(err.code)) throw err;
       }
@@ -8432,7 +8432,7 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeNatGateways(params);
-        const field = resp["NatGateways"].flatMap(x => x["State"]);
+        const field = resp?.NatGateways?.flatMap(x => x?.State);
         if (field.every(x => x === "available")) return resp;
         if (field.some(x => x === "failed")) throw new Error(errMessage);
         if (field.some(x => x === "deleting")) throw new Error(errMessage);
@@ -8453,7 +8453,7 @@ export default class EC2 {
     for (let i = 0; i < 10; i++) {
       try {
         const resp = await this.describeNetworkInterfaces(params);
-        if (resp["NetworkInterfaces"].flatMap(x => x["Status"]).every(x => x === "available")) return resp;
+        if (resp?.NetworkInterfaces?.flatMap(x => x?.Status).every(x => x === "available")) return resp;
       } catch (err) {
         if (["InvalidNetworkInterfaceID.NotFound"].includes(err.code)) throw err;
         throw err;
@@ -8470,7 +8470,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state PasswordDataAvailable';
     for (let i = 0; i < 40; i++) {
       const resp = await this.getPasswordData(params);
-      if ((resp["PasswordData"] ?? '').length > 0) return resp;
+      if ((resp?.PasswordData || '').length > 0) return resp;
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8483,7 +8483,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state SnapshotCompleted';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeSnapshots(params);
-      if (resp["Snapshots"].flatMap(x => x["State"]).every(x => x === "completed")) return resp;
+      if (resp?.Snapshots?.flatMap(x => x?.State).every(x => x === "completed")) return resp;
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8497,7 +8497,7 @@ export default class EC2 {
     for (let i = 0; i < 6; i++) {
       try {
         const resp = await this.describeSecurityGroups(params);
-        if (resp["SecurityGroups"].flatMap(x => x["GroupId"]).length > 0) return resp;
+        if ((resp?.SecurityGroups?.flatMap(x => x?.GroupId) || '').length > 0) return resp;
       } catch (err) {
         if (!["InvalidGroupNotFound"].includes(err.code)) throw err;
       }
@@ -8514,7 +8514,7 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeSpotInstanceRequests(params);
-        const field = resp["SpotInstanceRequests"].flatMap(x => x["Status"]?.["Code"]);
+        const field = resp?.SpotInstanceRequests?.flatMap(x => x?.Status?.Code);
         if (field.every(x => x === "fulfilled")) return resp;
         if (field.every(x => x === "request-canceled-and-instance-running")) return resp;
         if (field.some(x => x === "schedule-expired")) throw new Error(errMessage);
@@ -8536,7 +8536,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state SubnetAvailable';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeSubnets(params);
-      if (resp["Subnets"].flatMap(x => x["State"]).every(x => x === "available")) return resp;
+      if (resp?.Subnets?.flatMap(x => x?.State).every(x => x === "available")) return resp;
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8549,7 +8549,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state SystemStatusOk';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeInstanceStatus(params);
-      if (resp["InstanceStatuses"].flatMap(x => x["SystemStatus"]?.["Status"]).every(x => x === "ok")) return resp;
+      if (resp?.InstanceStatuses?.flatMap(x => x?.SystemStatus?.Status).every(x => x === "ok")) return resp;
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8562,7 +8562,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state VolumeAvailable';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeVolumes(params);
-      const field = resp["Volumes"].flatMap(x => x["State"]);
+      const field = resp?.Volumes?.flatMap(x => x?.State);
       if (field.every(x => x === "available")) return resp;
       if (field.some(x => x === "deleted")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
@@ -8578,7 +8578,7 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeVolumes(params);
-        if (resp["Volumes"].flatMap(x => x["State"]).every(x => x === "deleted")) return resp;
+        if (resp?.Volumes?.flatMap(x => x?.State).every(x => x === "deleted")) return resp;
       } catch (err) {
         if (["InvalidVolume.NotFound"].includes(err.code)) return err;
         throw err;
@@ -8595,7 +8595,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state VolumeInUse';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeVolumes(params);
-      const field = resp["Volumes"].flatMap(x => x["State"]);
+      const field = resp?.Volumes?.flatMap(x => x?.State);
       if (field.every(x => x === "in-use")) return resp;
       if (field.some(x => x === "deleted")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
@@ -8610,7 +8610,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state VpcAvailable';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeVpcs(params);
-      if (resp["Vpcs"].flatMap(x => x["State"]).every(x => x === "available")) return resp;
+      if (resp?.Vpcs?.flatMap(x => x?.State).every(x => x === "available")) return resp;
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8640,7 +8640,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state VpnConnectionAvailable';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeVpnConnections(params);
-      const field = resp["VpnConnections"].flatMap(x => x["State"]);
+      const field = resp?.VpnConnections?.flatMap(x => x?.State);
       if (field.every(x => x === "available")) return resp;
       if (field.some(x => x === "deleting")) throw new Error(errMessage);
       if (field.some(x => x === "deleted")) throw new Error(errMessage);
@@ -8656,7 +8656,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state VpnConnectionDeleted';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeVpnConnections(params);
-      const field = resp["VpnConnections"].flatMap(x => x["State"]);
+      const field = resp?.VpnConnections?.flatMap(x => x?.State);
       if (field.every(x => x === "deleted")) return resp;
       if (field.some(x => x === "pending")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
@@ -8689,7 +8689,7 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeVpcPeeringConnections(params);
-        if (resp["VpcPeeringConnections"].flatMap(x => x["Status"]?.["Code"]).every(x => x === "deleted")) return resp;
+        if (resp?.VpcPeeringConnections?.flatMap(x => x?.Status?.Code).every(x => x === "deleted")) return resp;
       } catch (err) {
         if (["InvalidVpcPeeringConnectionID.NotFound"].includes(err.code)) return err;
         throw err;
@@ -8706,7 +8706,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state ConsoleOutputAvailable';
     for (let i = 0; i < 15; i++) {
       const resp = await this.getConsoleOutput(params);
-      if ((resp["Output"] ?? '').length > 0) return resp;
+      if ((resp?.Output || '').length > 0) return resp;
       await new Promise(r => setTimeout(r, 60000));
     }
     throw new Error(errMessage);
@@ -12370,9 +12370,9 @@ export interface VolumeAttachment {
   VolumeId?: string | null;
   DeleteOnTermination?: boolean | null;
 }
-function VolumeAttachment_Parse(node: XmlNode): VolumeAttachment {
+function VolumeAttachment_Parse(node: xmlP.XmlNode): VolumeAttachment {
   return {
-    AttachTime: node.first("attachTime", false, x => parseTimestamp(x.content)),
+    AttachTime: node.first("attachTime", false, x => xmlP.parseTimestamp(x.content)),
     Device: node.first("device", false, x => x.content ?? ''),
     InstanceId: node.first("instanceId", false, x => x.content ?? ''),
     State: node.first("status", false, x => (x.content ?? '') as VolumeAttachmentState),
@@ -12634,7 +12634,7 @@ export interface Snapshot {
   OwnerAlias?: string | null;
   Tags: Tag[];
 }
-function Snapshot_Parse(node: XmlNode): Snapshot {
+function Snapshot_Parse(node: xmlP.XmlNode): Snapshot {
   return {
     DataEncryptionKeyId: node.first("dataEncryptionKeyId", false, x => x.content ?? ''),
     Description: node.first("description", false, x => x.content ?? ''),
@@ -12643,7 +12643,7 @@ function Snapshot_Parse(node: XmlNode): Snapshot {
     OwnerId: node.first("ownerId", false, x => x.content ?? ''),
     Progress: node.first("progress", false, x => x.content ?? ''),
     SnapshotId: node.first("snapshotId", false, x => x.content ?? ''),
-    StartTime: node.first("startTime", false, x => parseTimestamp(x.content)),
+    StartTime: node.first("startTime", false, x => xmlP.parseTimestamp(x.content)),
     State: node.first("status", false, x => (x.content ?? '') as SnapshotState),
     StateMessage: node.first("statusMessage", false, x => x.content ?? ''),
     VolumeId: node.first("volumeId", false, x => x.content ?? ''),
@@ -12745,11 +12745,11 @@ export interface Volume {
   FastRestored?: boolean | null;
   MultiAttachEnabled?: boolean | null;
 }
-function Volume_Parse(node: XmlNode): Volume {
+function Volume_Parse(node: xmlP.XmlNode): Volume {
   return {
     Attachments: node.getList("attachmentSet", "item").map(VolumeAttachment_Parse),
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
-    CreateTime: node.first("createTime", false, x => parseTimestamp(x.content)),
+    CreateTime: node.first("createTime", false, x => xmlP.parseTimestamp(x.content)),
     Encrypted: node.first("encrypted", false, x => x.content === 'true'),
     KmsKeyId: node.first("kmsKeyId", false, x => x.content ?? ''),
     OutpostArn: node.first("outpostArn", false, x => x.content ?? ''),
@@ -14315,7 +14315,7 @@ export interface Reservation {
   RequesterId?: string | null;
   ReservationId?: string | null;
 }
-function Reservation_Parse(node: XmlNode): Reservation {
+function Reservation_Parse(node: xmlP.XmlNode): Reservation {
   return {
     Groups: node.getList("groupSet", "item").map(GroupIdentifier_Parse),
     Instances: node.getList("instancesSet", "item").map(Instance_Parse),
@@ -14415,17 +14415,13 @@ function TargetConfigurationRequest_Serialize(body: URLSearchParams, prefix: str
 export type DomainType =
 | "vpc"
 | "standard"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type AutoPlacement =
 | "on"
 | "off"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 51 - tags: input, named, interface, output
 export interface TagSpecification {
@@ -14434,9 +14430,9 @@ export interface TagSpecification {
 }
 function TagSpecification_Serialize(body: URLSearchParams, prefix: string, params: TagSpecification) {
     if ("ResourceType" in params) body.append(prefix+".ResourceType", (params["ResourceType"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+".Tag", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":"."})
+    if (params["Tags"]) qsP.appendList(body, prefix+".Tag", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":"."})
 }
-function TagSpecification_Parse(node: XmlNode): TagSpecification {
+function TagSpecification_Parse(node: xmlP.XmlNode): TagSpecification {
   return {
     ResourceType: node.first("resourceType", false, x => (x.content ?? '') as ResourceType),
     Tags: node.getList("Tag", "item").map(Tag_Parse),
@@ -14489,9 +14485,7 @@ export type ResourceType =
 | "vpn-connection"
 | "vpn-gateway"
 | "vpc-flow-log"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 197 - tags: input, named, interface, output
 export interface Tag {
@@ -14502,7 +14496,7 @@ function Tag_Serialize(body: URLSearchParams, prefix: string, params: Tag) {
     if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
     if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function Tag_Parse(node: XmlNode): Tag {
+function Tag_Parse(node: xmlP.XmlNode): Tag {
   return {
     Key: node.first("key", false, x => x.content ?? ''),
     Value: node.first("value", false, x => x.content ?? ''),
@@ -14513,9 +14507,7 @@ function Tag_Parse(node: XmlNode): Tag {
 export type HostRecovery =
 | "on"
 | "off"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: input, named, interface, output
 export interface IamInstanceProfileSpecification {
@@ -14526,7 +14518,7 @@ function IamInstanceProfileSpecification_Serialize(body: URLSearchParams, prefix
     if ("Arn" in params) body.append(prefix+".Arn", (params["Arn"] ?? '').toString());
     if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
 }
-function IamInstanceProfileSpecification_Parse(node: XmlNode): IamInstanceProfileSpecification {
+function IamInstanceProfileSpecification_Parse(node: xmlP.XmlNode): IamInstanceProfileSpecification {
   return {
     Arn: node.first("arn", false, x => x.content ?? ''),
     Name: node.first("name", false, x => x.content ?? ''),
@@ -14546,13 +14538,13 @@ export interface IpPermission {
 function IpPermission_Serialize(body: URLSearchParams, prefix: string, params: IpPermission) {
     if ("FromPort" in params) body.append(prefix+".FromPort", (params["FromPort"] ?? '').toString());
     if ("IpProtocol" in params) body.append(prefix+".IpProtocol", (params["IpProtocol"] ?? '').toString());
-    if (params["IpRanges"]) prt.appendList(body, prefix+".ipRanges", params["IpRanges"], {"appender":IpRange_Serialize,"entryPrefix":"."})
-    if (params["Ipv6Ranges"]) prt.appendList(body, prefix+".ipv6Ranges", params["Ipv6Ranges"], {"appender":Ipv6Range_Serialize,"entryPrefix":"."})
-    if (params["PrefixListIds"]) prt.appendList(body, prefix+".prefixListIds", params["PrefixListIds"], {"appender":PrefixListId_Serialize,"entryPrefix":"."})
+    if (params["IpRanges"]) qsP.appendList(body, prefix+".ipRanges", params["IpRanges"], {"appender":IpRange_Serialize,"entryPrefix":"."})
+    if (params["Ipv6Ranges"]) qsP.appendList(body, prefix+".ipv6Ranges", params["Ipv6Ranges"], {"appender":Ipv6Range_Serialize,"entryPrefix":"."})
+    if (params["PrefixListIds"]) qsP.appendList(body, prefix+".prefixListIds", params["PrefixListIds"], {"appender":PrefixListId_Serialize,"entryPrefix":"."})
     if ("ToPort" in params) body.append(prefix+".ToPort", (params["ToPort"] ?? '').toString());
-    if (params["UserIdGroupPairs"]) prt.appendList(body, prefix+".groups", params["UserIdGroupPairs"], {"appender":UserIdGroupPair_Serialize,"entryPrefix":"."})
+    if (params["UserIdGroupPairs"]) qsP.appendList(body, prefix+".groups", params["UserIdGroupPairs"], {"appender":UserIdGroupPair_Serialize,"entryPrefix":"."})
 }
-function IpPermission_Parse(node: XmlNode): IpPermission {
+function IpPermission_Parse(node: xmlP.XmlNode): IpPermission {
   return {
     FromPort: node.first("fromPort", false, x => parseInt(x.content ?? '0')),
     IpProtocol: node.first("ipProtocol", false, x => x.content ?? ''),
@@ -14573,7 +14565,7 @@ function IpRange_Serialize(body: URLSearchParams, prefix: string, params: IpRang
     if ("CidrIp" in params) body.append(prefix+".CidrIp", (params["CidrIp"] ?? '').toString());
     if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
 }
-function IpRange_Parse(node: XmlNode): IpRange {
+function IpRange_Parse(node: xmlP.XmlNode): IpRange {
   return {
     CidrIp: node.first("cidrIp", false, x => x.content ?? ''),
     Description: node.first("description", false, x => x.content ?? ''),
@@ -14589,7 +14581,7 @@ function Ipv6Range_Serialize(body: URLSearchParams, prefix: string, params: Ipv6
     if ("CidrIpv6" in params) body.append(prefix+".CidrIpv6", (params["CidrIpv6"] ?? '').toString());
     if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
 }
-function Ipv6Range_Parse(node: XmlNode): Ipv6Range {
+function Ipv6Range_Parse(node: xmlP.XmlNode): Ipv6Range {
   return {
     CidrIpv6: node.first("cidrIpv6", false, x => x.content ?? ''),
     Description: node.first("description", false, x => x.content ?? ''),
@@ -14605,7 +14597,7 @@ function PrefixListId_Serialize(body: URLSearchParams, prefix: string, params: P
     if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
     if ("PrefixListId" in params) body.append(prefix+".PrefixListId", (params["PrefixListId"] ?? '').toString());
 }
-function PrefixListId_Parse(node: XmlNode): PrefixListId {
+function PrefixListId_Parse(node: xmlP.XmlNode): PrefixListId {
   return {
     Description: node.first("description", false, x => x.content ?? ''),
     PrefixListId: node.first("prefixListId", false, x => x.content ?? ''),
@@ -14631,7 +14623,7 @@ function UserIdGroupPair_Serialize(body: URLSearchParams, prefix: string, params
     if ("VpcId" in params) body.append(prefix+".VpcId", (params["VpcId"] ?? '').toString());
     if ("VpcPeeringConnectionId" in params) body.append(prefix+".VpcPeeringConnectionId", (params["VpcPeeringConnectionId"] ?? '').toString());
 }
-function UserIdGroupPair_Parse(node: XmlNode): UserIdGroupPair {
+function UserIdGroupPair_Parse(node: xmlP.XmlNode): UserIdGroupPair {
   return {
     Description: node.first("description", false, x => x.content ?? ''),
     GroupId: node.first("groupId", false, x => x.content ?? ''),
@@ -14650,7 +14642,7 @@ export interface Storage {
 function Storage_Serialize(body: URLSearchParams, prefix: string, params: Storage) {
     if (params["S3"] != null) S3Storage_Serialize(body, prefix+".S3", params["S3"]);
 }
-function Storage_Parse(node: XmlNode): Storage {
+function Storage_Parse(node: xmlP.XmlNode): Storage {
   return {
     S3: node.first("S3", false, S3Storage_Parse),
   };
@@ -14668,10 +14660,10 @@ function S3Storage_Serialize(body: URLSearchParams, prefix: string, params: S3St
     if ("AWSAccessKeyId" in params) body.append(prefix+".AWSAccessKeyId", (params["AWSAccessKeyId"] ?? '').toString());
     if ("Bucket" in params) body.append(prefix+".Bucket", (params["Bucket"] ?? '').toString());
     if ("Prefix" in params) body.append(prefix+".Prefix", (params["Prefix"] ?? '').toString());
-    if ("UploadPolicy" in params) body.append(prefix+".UploadPolicy", prt.encodeBlob(params["UploadPolicy"]));
+    if ("UploadPolicy" in params) body.append(prefix+".UploadPolicy", qsP.encodeBlob(params["UploadPolicy"]));
     if ("UploadPolicySignature" in params) body.append(prefix+".UploadPolicySignature", (params["UploadPolicySignature"] ?? '').toString());
 }
-function S3Storage_Parse(node: XmlNode): S3Storage {
+function S3Storage_Parse(node: xmlP.XmlNode): S3Storage {
   return {
     ...node.strings({
       optional: {"AWSAccessKeyId":true},
@@ -14696,33 +14688,25 @@ export type CapacityReservationInstancePlatform =
 | "Linux with SQL Server Standard"
 | "Linux with SQL Server Web"
 | "Linux with SQL Server Enterprise"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type CapacityReservationTenancy =
 | "default"
 | "dedicated"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type EndDateType =
 | "unlimited"
 | "limited"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type InstanceMatchCriteria =
 | "open"
 | "targeted"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ClientVpnAuthenticationRequest {
@@ -14743,9 +14727,7 @@ export type ClientVpnAuthenticationType =
 | "certificate-authentication"
 | "directory-service-authentication"
 | "federated-authentication"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface DirectoryServiceAuthenticationRequest {
@@ -14787,16 +14769,12 @@ function ConnectionLogOptions_Serialize(body: URLSearchParams, prefix: string, p
 export type TransportProtocol =
 | "tcp"
 | "udp"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, enum, output
 export type GatewayType =
 | "ipsec.1"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface NewDhcpConfiguration {
@@ -14805,7 +14783,7 @@ export interface NewDhcpConfiguration {
 }
 function NewDhcpConfiguration_Serialize(body: URLSearchParams, prefix: string, params: NewDhcpConfiguration) {
     if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
-    if (params["Values"]) prt.appendList(body, prefix+".Value", params["Values"], {"entryPrefix":"."})
+    if (params["Values"]) qsP.appendList(body, prefix+".Value", params["Values"], {"entryPrefix":"."})
 }
 
 // refs: 1 - tags: input, named, interface
@@ -14833,18 +14811,14 @@ export type SpotAllocationStrategy =
 | "lowest-price"
 | "diversified"
 | "capacity-optimized"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type SpotInstanceInterruptionBehavior =
 | "hibernate"
 | "stop"
 | "terminate"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface OnDemandOptionsRequest {
@@ -14868,9 +14842,7 @@ function OnDemandOptionsRequest_Serialize(body: URLSearchParams, prefix: string,
 export type FleetOnDemandAllocationStrategy =
 | "lowest-price"
 | "prioritized"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface CapacityReservationOptionsRequest {
@@ -14883,17 +14855,13 @@ function CapacityReservationOptionsRequest_Serialize(body: URLSearchParams, pref
 // refs: 2 - tags: input, named, enum, output
 export type FleetCapacityReservationUsageStrategy =
 | "use-capacity-reservations-first"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type FleetExcessCapacityTerminationPolicy =
 | "no-termination"
 | "termination"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface FleetLaunchTemplateConfigRequest {
@@ -14902,7 +14870,7 @@ export interface FleetLaunchTemplateConfigRequest {
 }
 function FleetLaunchTemplateConfigRequest_Serialize(body: URLSearchParams, prefix: string, params: FleetLaunchTemplateConfigRequest) {
     if (params["LaunchTemplateSpecification"] != null) FleetLaunchTemplateSpecificationRequest_Serialize(body, prefix+".LaunchTemplateSpecification", params["LaunchTemplateSpecification"]);
-    if (params["Overrides"]) prt.appendList(body, prefix+".item", params["Overrides"], {"appender":FleetLaunchTemplateOverridesRequest_Serialize,"entryPrefix":"."})
+    if (params["Overrides"]) qsP.appendList(body, prefix+".item", params["Overrides"], {"appender":FleetLaunchTemplateOverridesRequest_Serialize,"entryPrefix":"."})
 }
 
 // refs: 2 - tags: input, named, interface
@@ -15288,9 +15256,7 @@ export type InstanceType =
 | "m6gd.8xlarge"
 | "m6gd.12xlarge"
 | "m6gd.16xlarge"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface Placement {
@@ -15313,7 +15279,7 @@ function Placement_Serialize(body: URLSearchParams, prefix: string, params: Plac
     if ("SpreadDomain" in params) body.append(prefix+".SpreadDomain", (params["SpreadDomain"] ?? '').toString());
     if ("HostResourceGroupArn" in params) body.append(prefix+".HostResourceGroupArn", (params["HostResourceGroupArn"] ?? '').toString());
 }
-function Placement_Parse(node: XmlNode): Placement {
+function Placement_Parse(node: xmlP.XmlNode): Placement {
   return {
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
     Affinity: node.first("affinity", false, x => x.content ?? ''),
@@ -15331,9 +15297,7 @@ export type Tenancy =
 | "default"
 | "dedicated"
 | "host"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface TargetCapacitySpecificationRequest {
@@ -15353,43 +15317,34 @@ function TargetCapacitySpecificationRequest_Serialize(body: URLSearchParams, pre
 export type DefaultTargetCapacityType =
 | "spot"
 | "on-demand"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type FleetType =
 | "request"
 | "maintain"
 | "instant"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type FlowLogsResourceType =
 | "VPC"
 | "Subnet"
 | "NetworkInterface"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type TrafficType =
 | "ACCEPT"
 | "REJECT"
 | "ALL"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type LogDestinationType =
 | "cloud-watch-logs"
 | "s3"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface StorageLocation {
@@ -15414,7 +15369,7 @@ function BlockDeviceMapping_Serialize(body: URLSearchParams, prefix: string, par
     if (params["Ebs"] != null) EbsBlockDevice_Serialize(body, prefix+".Ebs", params["Ebs"]);
     if ("NoDevice" in params) body.append(prefix+".NoDevice", (params["NoDevice"] ?? '').toString());
 }
-function BlockDeviceMapping_Parse(node: XmlNode): BlockDeviceMapping {
+function BlockDeviceMapping_Parse(node: xmlP.XmlNode): BlockDeviceMapping {
   return {
     DeviceName: node.first("deviceName", false, x => x.content ?? ''),
     VirtualName: node.first("virtualName", false, x => x.content ?? ''),
@@ -15442,7 +15397,7 @@ function EbsBlockDevice_Serialize(body: URLSearchParams, prefix: string, params:
     if ("KmsKeyId" in params) body.append(prefix+".KmsKeyId", (params["KmsKeyId"] ?? '').toString());
     if ("Encrypted" in params) body.append(prefix+".Encrypted", (params["Encrypted"] ?? '').toString());
 }
-function EbsBlockDevice_Parse(node: XmlNode): EbsBlockDevice {
+function EbsBlockDevice_Parse(node: xmlP.XmlNode): EbsBlockDevice {
   return {
     ...node.strings({
       optional: {"KmsKeyId":true},
@@ -15464,9 +15419,7 @@ export type VolumeType =
 | "gp2"
 | "sc1"
 | "st1"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ExportToS3TaskSpecification {
@@ -15485,27 +15438,21 @@ function ExportToS3TaskSpecification_Serialize(body: URLSearchParams, prefix: st
 // refs: 3 - tags: input, named, enum, output
 export type ContainerFormat =
 | "ova"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 13 - tags: input, named, enum, output
 export type DiskImageFormat =
 | "VMDK"
 | "RAW"
 | "VHD"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type ExportEnvironment =
 | "citrix"
 | "vmware"
 | "microsoft"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface RequestLaunchTemplateData {
@@ -15540,8 +15487,8 @@ function RequestLaunchTemplateData_Serialize(body: URLSearchParams, prefix: stri
     if ("KernelId" in params) body.append(prefix+".KernelId", (params["KernelId"] ?? '').toString());
     if ("EbsOptimized" in params) body.append(prefix+".EbsOptimized", (params["EbsOptimized"] ?? '').toString());
     if (params["IamInstanceProfile"] != null) LaunchTemplateIamInstanceProfileSpecificationRequest_Serialize(body, prefix+".IamInstanceProfile", params["IamInstanceProfile"]);
-    if (params["BlockDeviceMappings"]) prt.appendList(body, prefix+".BlockDeviceMapping", params["BlockDeviceMappings"], {"appender":LaunchTemplateBlockDeviceMappingRequest_Serialize,"entryPrefix":"."})
-    if (params["NetworkInterfaces"]) prt.appendList(body, prefix+".NetworkInterface", params["NetworkInterfaces"], {"appender":LaunchTemplateInstanceNetworkInterfaceSpecificationRequest_Serialize,"entryPrefix":"."})
+    if (params["BlockDeviceMappings"]) qsP.appendList(body, prefix+".BlockDeviceMapping", params["BlockDeviceMappings"], {"appender":LaunchTemplateBlockDeviceMappingRequest_Serialize,"entryPrefix":"."})
+    if (params["NetworkInterfaces"]) qsP.appendList(body, prefix+".NetworkInterface", params["NetworkInterfaces"], {"appender":LaunchTemplateInstanceNetworkInterfaceSpecificationRequest_Serialize,"entryPrefix":"."})
     if ("ImageId" in params) body.append(prefix+".ImageId", (params["ImageId"] ?? '').toString());
     if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
     if ("KeyName" in params) body.append(prefix+".KeyName", (params["KeyName"] ?? '').toString());
@@ -15551,16 +15498,16 @@ function RequestLaunchTemplateData_Serialize(body: URLSearchParams, prefix: stri
     if ("DisableApiTermination" in params) body.append(prefix+".DisableApiTermination", (params["DisableApiTermination"] ?? '').toString());
     if ("InstanceInitiatedShutdownBehavior" in params) body.append(prefix+".InstanceInitiatedShutdownBehavior", (params["InstanceInitiatedShutdownBehavior"] ?? '').toString());
     if ("UserData" in params) body.append(prefix+".UserData", (params["UserData"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+".TagSpecification", params["TagSpecifications"], {"appender":LaunchTemplateTagSpecificationRequest_Serialize,"entryPrefix":"."})
-    if (params["ElasticGpuSpecifications"]) prt.appendList(body, prefix+".ElasticGpuSpecification", params["ElasticGpuSpecifications"], {"appender":ElasticGpuSpecification_Serialize,"entryPrefix":"."})
-    if (params["ElasticInferenceAccelerators"]) prt.appendList(body, prefix+".ElasticInferenceAccelerator", params["ElasticInferenceAccelerators"], {"appender":LaunchTemplateElasticInferenceAccelerator_Serialize,"entryPrefix":"."})
-    if (params["SecurityGroupIds"]) prt.appendList(body, prefix+".SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
-    if (params["SecurityGroups"]) prt.appendList(body, prefix+".SecurityGroup", params["SecurityGroups"], {"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+".TagSpecification", params["TagSpecifications"], {"appender":LaunchTemplateTagSpecificationRequest_Serialize,"entryPrefix":"."})
+    if (params["ElasticGpuSpecifications"]) qsP.appendList(body, prefix+".ElasticGpuSpecification", params["ElasticGpuSpecifications"], {"appender":ElasticGpuSpecification_Serialize,"entryPrefix":"."})
+    if (params["ElasticInferenceAccelerators"]) qsP.appendList(body, prefix+".ElasticInferenceAccelerator", params["ElasticInferenceAccelerators"], {"appender":LaunchTemplateElasticInferenceAccelerator_Serialize,"entryPrefix":"."})
+    if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+".SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
+    if (params["SecurityGroups"]) qsP.appendList(body, prefix+".SecurityGroup", params["SecurityGroups"], {"entryPrefix":"."})
     if (params["InstanceMarketOptions"] != null) LaunchTemplateInstanceMarketOptionsRequest_Serialize(body, prefix+".InstanceMarketOptions", params["InstanceMarketOptions"]);
     if (params["CreditSpecification"] != null) CreditSpecificationRequest_Serialize(body, prefix+".CreditSpecification", params["CreditSpecification"]);
     if (params["CpuOptions"] != null) LaunchTemplateCpuOptionsRequest_Serialize(body, prefix+".CpuOptions", params["CpuOptions"]);
     if (params["CapacityReservationSpecification"] != null) LaunchTemplateCapacityReservationSpecificationRequest_Serialize(body, prefix+".CapacityReservationSpecification", params["CapacityReservationSpecification"]);
-    if (params["LicenseSpecifications"]) prt.appendList(body, prefix+".LicenseSpecification", params["LicenseSpecifications"], {"appender":LaunchTemplateLicenseConfigurationRequest_Serialize,"entryPrefix":"."})
+    if (params["LicenseSpecifications"]) qsP.appendList(body, prefix+".LicenseSpecification", params["LicenseSpecifications"], {"appender":LaunchTemplateLicenseConfigurationRequest_Serialize,"entryPrefix":"."})
     if (params["HibernationOptions"] != null) LaunchTemplateHibernationOptionsRequest_Serialize(body, prefix+".HibernationOptions", params["HibernationOptions"]);
     if (params["MetadataOptions"] != null) LaunchTemplateInstanceMetadataOptionsRequest_Serialize(body, prefix+".MetadataOptions", params["MetadataOptions"]);
 }
@@ -15632,13 +15579,13 @@ function LaunchTemplateInstanceNetworkInterfaceSpecificationRequest_Serialize(bo
     if ("DeleteOnTermination" in params) body.append(prefix+".DeleteOnTermination", (params["DeleteOnTermination"] ?? '').toString());
     if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
     if ("DeviceIndex" in params) body.append(prefix+".DeviceIndex", (params["DeviceIndex"] ?? '').toString());
-    if (params["Groups"]) prt.appendList(body, prefix+".SecurityGroupId", params["Groups"], {"entryPrefix":"."})
+    if (params["Groups"]) qsP.appendList(body, prefix+".SecurityGroupId", params["Groups"], {"entryPrefix":"."})
     if ("InterfaceType" in params) body.append(prefix+".InterfaceType", (params["InterfaceType"] ?? '').toString());
     if ("Ipv6AddressCount" in params) body.append(prefix+".Ipv6AddressCount", (params["Ipv6AddressCount"] ?? '').toString());
-    if (params["Ipv6Addresses"]) prt.appendList(body, prefix+".InstanceIpv6Address", params["Ipv6Addresses"], {"appender":InstanceIpv6AddressRequest_Serialize,"entryPrefix":"."})
+    if (params["Ipv6Addresses"]) qsP.appendList(body, prefix+".InstanceIpv6Address", params["Ipv6Addresses"], {"appender":InstanceIpv6AddressRequest_Serialize,"entryPrefix":"."})
     if ("NetworkInterfaceId" in params) body.append(prefix+".NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
     if ("PrivateIpAddress" in params) body.append(prefix+".PrivateIpAddress", (params["PrivateIpAddress"] ?? '').toString());
-    if (params["PrivateIpAddresses"]) prt.appendList(body, prefix+".item", params["PrivateIpAddresses"], {"appender":PrivateIpAddressSpecification_Serialize,"entryPrefix":"."})
+    if (params["PrivateIpAddresses"]) qsP.appendList(body, prefix+".item", params["PrivateIpAddresses"], {"appender":PrivateIpAddressSpecification_Serialize,"entryPrefix":"."})
     if ("SecondaryPrivateIpAddressCount" in params) body.append(prefix+".SecondaryPrivateIpAddressCount", (params["SecondaryPrivateIpAddressCount"] ?? '').toString());
     if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
 }
@@ -15660,7 +15607,7 @@ function PrivateIpAddressSpecification_Serialize(body: URLSearchParams, prefix: 
     if ("Primary" in params) body.append(prefix+".Primary", (params["Primary"] ?? '').toString());
     if ("PrivateIpAddress" in params) body.append(prefix+".PrivateIpAddress", (params["PrivateIpAddress"] ?? '').toString());
 }
-function PrivateIpAddressSpecification_Parse(node: XmlNode): PrivateIpAddressSpecification {
+function PrivateIpAddressSpecification_Parse(node: xmlP.XmlNode): PrivateIpAddressSpecification {
   return {
     Primary: node.first("primary", false, x => x.content === 'true'),
     PrivateIpAddress: node.first("privateIpAddress", false, x => x.content ?? ''),
@@ -15701,9 +15648,7 @@ function LaunchTemplatePlacementRequest_Serialize(body: URLSearchParams, prefix:
 export type ShutdownBehavior =
 | "stop"
 | "terminate"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface LaunchTemplateTagSpecificationRequest {
@@ -15712,7 +15657,7 @@ export interface LaunchTemplateTagSpecificationRequest {
 }
 function LaunchTemplateTagSpecificationRequest_Serialize(body: URLSearchParams, prefix: string, params: LaunchTemplateTagSpecificationRequest) {
     if ("ResourceType" in params) body.append(prefix+".ResourceType", (params["ResourceType"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+".Tag", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":"."})
+    if (params["Tags"]) qsP.appendList(body, prefix+".Tag", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":"."})
 }
 
 // refs: 3 - tags: input, named, interface
@@ -15746,9 +15691,7 @@ function LaunchTemplateInstanceMarketOptionsRequest_Serialize(body: URLSearchPar
 // refs: 6 - tags: input, named, enum, output
 export type MarketType =
 | "spot"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface LaunchTemplateSpotMarketOptionsRequest {
@@ -15762,7 +15705,7 @@ function LaunchTemplateSpotMarketOptionsRequest_Serialize(body: URLSearchParams,
     if ("MaxPrice" in params) body.append(prefix+".MaxPrice", (params["MaxPrice"] ?? '').toString());
     if ("SpotInstanceType" in params) body.append(prefix+".SpotInstanceType", (params["SpotInstanceType"] ?? '').toString());
     if ("BlockDurationMinutes" in params) body.append(prefix+".BlockDurationMinutes", (params["BlockDurationMinutes"] ?? '').toString());
-    if ("ValidUntil" in params) body.append(prefix+".ValidUntil", prt.encodeDate_iso8601(params["ValidUntil"]));
+    if ("ValidUntil" in params) body.append(prefix+".ValidUntil", qsP.encodeDate_iso8601(params["ValidUntil"]));
     if ("InstanceInterruptionBehavior" in params) body.append(prefix+".InstanceInterruptionBehavior", (params["InstanceInterruptionBehavior"] ?? '').toString());
 }
 
@@ -15770,18 +15713,14 @@ function LaunchTemplateSpotMarketOptionsRequest_Serialize(body: URLSearchParams,
 export type SpotInstanceType =
 | "one-time"
 | "persistent"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 11 - tags: input, named, enum, output
 export type InstanceInterruptionBehavior =
 | "hibernate"
 | "stop"
 | "terminate"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface
 export interface CreditSpecificationRequest {
@@ -15815,9 +15754,7 @@ function LaunchTemplateCapacityReservationSpecificationRequest_Serialize(body: U
 export type CapacityReservationPreference =
 | "open"
 | "none"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface
 export interface CapacityReservationTarget {
@@ -15861,17 +15798,13 @@ function LaunchTemplateInstanceMetadataOptionsRequest_Serialize(body: URLSearchP
 export type LaunchTemplateHttpTokensState =
 | "optional"
 | "required"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type LaunchTemplateInstanceMetadataEndpointState =
 | "disabled"
 | "enabled"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface AddPrefixListEntry {
@@ -15892,7 +15825,7 @@ function IcmpTypeCode_Serialize(body: URLSearchParams, prefix: string, params: I
     if ("Code" in params) body.append(prefix+".Code", (params["Code"] ?? '').toString());
     if ("Type" in params) body.append(prefix+".Type", (params["Type"] ?? '').toString());
 }
-function IcmpTypeCode_Parse(node: XmlNode): IcmpTypeCode {
+function IcmpTypeCode_Parse(node: xmlP.XmlNode): IcmpTypeCode {
   return {
     Code: node.first("code", false, x => parseInt(x.content ?? '0')),
     Type: node.first("type", false, x => parseInt(x.content ?? '0')),
@@ -15908,7 +15841,7 @@ function PortRange_Serialize(body: URLSearchParams, prefix: string, params: Port
     if ("From" in params) body.append(prefix+".From", (params["From"] ?? '').toString());
     if ("To" in params) body.append(prefix+".To", (params["To"] ?? '').toString());
 }
-function PortRange_Parse(node: XmlNode): PortRange {
+function PortRange_Parse(node: xmlP.XmlNode): PortRange {
   return {
     From: node.first("from", false, x => parseInt(x.content ?? '0')),
     To: node.first("to", false, x => parseInt(x.content ?? '0')),
@@ -15919,9 +15852,7 @@ function PortRange_Parse(node: XmlNode): PortRange {
 export type RuleAction =
 | "allow"
 | "deny"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 13 - tags: input, named, interface, output
 export interface InstanceIpv6Address {
@@ -15930,7 +15861,7 @@ export interface InstanceIpv6Address {
 function InstanceIpv6Address_Serialize(body: URLSearchParams, prefix: string, params: InstanceIpv6Address) {
     if ("Ipv6Address" in params) body.append(prefix+".Ipv6Address", (params["Ipv6Address"] ?? '').toString());
 }
-function InstanceIpv6Address_Parse(node: XmlNode): InstanceIpv6Address {
+function InstanceIpv6Address_Parse(node: xmlP.XmlNode): InstanceIpv6Address {
   return {
     Ipv6Address: node.first("ipv6Address", false, x => x.content ?? ''),
   };
@@ -15939,25 +15870,20 @@ function InstanceIpv6Address_Parse(node: XmlNode): InstanceIpv6Address {
 // refs: 1 - tags: input, named, enum
 export type NetworkInterfaceCreationType =
 | "efa"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type InterfacePermissionType =
 | "INSTANCE-ATTACH"
 | "EIP-ASSOCIATE"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type PlacementStrategy =
 | "cluster"
 | "spread"
 | "partition"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface PriceScheduleSpecification {
@@ -15974,9 +15900,7 @@ function PriceScheduleSpecification_Serialize(body: URLSearchParams, prefix: str
 // refs: 14 - tags: input, named, enum, output
 export type CurrencyCodeValues =
 | "USD"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface InstanceSpecification {
@@ -15991,24 +15915,19 @@ function InstanceSpecification_Serialize(body: URLSearchParams, prefix: string, 
 // refs: 1 - tags: input, named, enum
 export type CopyTagsFromSource =
 | "volume"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, enum, output
 export type TrafficDirection =
 | "ingress"
 | "egress"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, enum, output
 export type TrafficMirrorRuleAction =
 | "accept"
 | "reject"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface
 export interface TrafficMirrorPortRangeRequest {
@@ -16044,49 +15963,37 @@ function TransitGatewayRequestOptions_Serialize(body: URLSearchParams, prefix: s
 export type AutoAcceptSharedAttachmentsValue =
 | "enable"
 | "disable"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, enum, output
 export type DefaultRouteTableAssociationValue =
 | "enable"
 | "disable"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, enum, output
 export type DefaultRouteTablePropagationValue =
 | "enable"
 | "disable"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, enum, output
 export type VpnEcmpSupportValue =
 | "enable"
 | "disable"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 14 - tags: input, named, enum, output
 export type DnsSupportValue =
 | "enable"
 | "disable"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type MulticastSupportValue =
 | "enable"
 | "disable"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface CreateTransitGatewayVpcAttachmentRequestOptions {
@@ -16102,17 +16009,13 @@ function CreateTransitGatewayVpcAttachmentRequestOptions_Serialize(body: URLSear
 export type Ipv6SupportValue =
 | "enable"
 | "disable"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type VpcEndpointType =
 | "Interface"
 | "Gateway"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface VpnConnectionOptionsSpecification {
@@ -16129,7 +16032,7 @@ function VpnConnectionOptionsSpecification_Serialize(body: URLSearchParams, pref
     if ("EnableAcceleration" in params) body.append(prefix+".EnableAcceleration", (params["EnableAcceleration"] ?? '').toString());
     if ("StaticRoutesOnly" in params) body.append(prefix+".StaticRoutesOnly", (params["StaticRoutesOnly"] ?? '').toString());
     if ("TunnelInsideIpVersion" in params) body.append(prefix+".TunnelInsideIpVersion", (params["TunnelInsideIpVersion"] ?? '').toString());
-    if (params["TunnelOptions"]) prt.appendList(body, prefix+".TunnelOptions", params["TunnelOptions"], {"appender":VpnTunnelOptionsSpecification_Serialize,"entryPrefix":"."})
+    if (params["TunnelOptions"]) qsP.appendList(body, prefix+".TunnelOptions", params["TunnelOptions"], {"appender":VpnTunnelOptionsSpecification_Serialize,"entryPrefix":"."})
     if ("LocalIpv4NetworkCidr" in params) body.append(prefix+".LocalIpv4NetworkCidr", (params["LocalIpv4NetworkCidr"] ?? '').toString());
     if ("RemoteIpv4NetworkCidr" in params) body.append(prefix+".RemoteIpv4NetworkCidr", (params["RemoteIpv4NetworkCidr"] ?? '').toString());
     if ("LocalIpv6NetworkCidr" in params) body.append(prefix+".LocalIpv6NetworkCidr", (params["LocalIpv6NetworkCidr"] ?? '').toString());
@@ -16140,9 +16043,7 @@ function VpnConnectionOptionsSpecification_Serialize(body: URLSearchParams, pref
 export type TunnelInsideIpVersion =
 | "ipv4"
 | "ipv6"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface VpnTunnelOptionsSpecification {
@@ -16176,13 +16077,13 @@ function VpnTunnelOptionsSpecification_Serialize(body: URLSearchParams, prefix: 
     if ("ReplayWindowSize" in params) body.append(prefix+".ReplayWindowSize", (params["ReplayWindowSize"] ?? '').toString());
     if ("DPDTimeoutSeconds" in params) body.append(prefix+".DPDTimeoutSeconds", (params["DPDTimeoutSeconds"] ?? '').toString());
     if ("DPDTimeoutAction" in params) body.append(prefix+".DPDTimeoutAction", (params["DPDTimeoutAction"] ?? '').toString());
-    if (params["Phase1EncryptionAlgorithms"]) prt.appendList(body, prefix+".Phase1EncryptionAlgorithm", params["Phase1EncryptionAlgorithms"], {"appender":Phase1EncryptionAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase2EncryptionAlgorithms"]) prt.appendList(body, prefix+".Phase2EncryptionAlgorithm", params["Phase2EncryptionAlgorithms"], {"appender":Phase2EncryptionAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase1IntegrityAlgorithms"]) prt.appendList(body, prefix+".Phase1IntegrityAlgorithm", params["Phase1IntegrityAlgorithms"], {"appender":Phase1IntegrityAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase2IntegrityAlgorithms"]) prt.appendList(body, prefix+".Phase2IntegrityAlgorithm", params["Phase2IntegrityAlgorithms"], {"appender":Phase2IntegrityAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase1DHGroupNumbers"]) prt.appendList(body, prefix+".Phase1DHGroupNumber", params["Phase1DHGroupNumbers"], {"appender":Phase1DHGroupNumbersRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase2DHGroupNumbers"]) prt.appendList(body, prefix+".Phase2DHGroupNumber", params["Phase2DHGroupNumbers"], {"appender":Phase2DHGroupNumbersRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["IKEVersions"]) prt.appendList(body, prefix+".IKEVersion", params["IKEVersions"], {"appender":IKEVersionsRequestListValue_Serialize,"entryPrefix":"."})
+    if (params["Phase1EncryptionAlgorithms"]) qsP.appendList(body, prefix+".Phase1EncryptionAlgorithm", params["Phase1EncryptionAlgorithms"], {"appender":Phase1EncryptionAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
+    if (params["Phase2EncryptionAlgorithms"]) qsP.appendList(body, prefix+".Phase2EncryptionAlgorithm", params["Phase2EncryptionAlgorithms"], {"appender":Phase2EncryptionAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
+    if (params["Phase1IntegrityAlgorithms"]) qsP.appendList(body, prefix+".Phase1IntegrityAlgorithm", params["Phase1IntegrityAlgorithms"], {"appender":Phase1IntegrityAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
+    if (params["Phase2IntegrityAlgorithms"]) qsP.appendList(body, prefix+".Phase2IntegrityAlgorithm", params["Phase2IntegrityAlgorithms"], {"appender":Phase2IntegrityAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
+    if (params["Phase1DHGroupNumbers"]) qsP.appendList(body, prefix+".Phase1DHGroupNumber", params["Phase1DHGroupNumbers"], {"appender":Phase1DHGroupNumbersRequestListValue_Serialize,"entryPrefix":"."})
+    if (params["Phase2DHGroupNumbers"]) qsP.appendList(body, prefix+".Phase2DHGroupNumber", params["Phase2DHGroupNumbers"], {"appender":Phase2DHGroupNumbersRequestListValue_Serialize,"entryPrefix":"."})
+    if (params["IKEVersions"]) qsP.appendList(body, prefix+".IKEVersion", params["IKEVersions"], {"appender":IKEVersionsRequestListValue_Serialize,"entryPrefix":"."})
     if ("StartupAction" in params) body.append(prefix+".StartupAction", (params["StartupAction"] ?? '').toString());
 }
 
@@ -16249,15 +16150,14 @@ export interface DeregisterInstanceTagAttributeRequest {
 }
 function DeregisterInstanceTagAttributeRequest_Serialize(body: URLSearchParams, prefix: string, params: DeregisterInstanceTagAttributeRequest) {
     if ("IncludeAllTagsOfInstance" in params) body.append(prefix+".IncludeAllTagsOfInstance", (params["IncludeAllTagsOfInstance"] ?? '').toString());
-    if (params["InstanceTagKeys"]) prt.appendList(body, prefix+".InstanceTagKey", params["InstanceTagKeys"], {"entryPrefix":"."})
+    if (params["InstanceTagKeys"]) qsP.appendList(body, prefix+".InstanceTagKey", params["InstanceTagKeys"], {"entryPrefix":"."})
 }
 
 // refs: 1 - tags: input, named, enum
 export type AccountAttributeName =
 | "supported-platforms"
 | "default-vpc"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 102 - tags: input, named, interface
 export interface Filter {
@@ -16266,7 +16166,7 @@ export interface Filter {
 }
 function Filter_Serialize(body: URLSearchParams, prefix: string, params: Filter) {
     if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
-    if (params["Values"]) prt.appendList(body, prefix+".Value", params["Values"], {"entryPrefix":"."})
+    if (params["Values"]) qsP.appendList(body, prefix+".Value", params["Values"], {"entryPrefix":"."})
 }
 
 // refs: 2 - tags: input, named, enum, output
@@ -16274,9 +16174,7 @@ export type FleetEventType =
 | "instance-change"
 | "fleet-change"
 | "service-error"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
 export type FpgaImageAttributeName =
@@ -16284,8 +16182,7 @@ export type FpgaImageAttributeName =
 | "name"
 | "loadPermission"
 | "productCodes"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ImageAttributeName =
@@ -16296,8 +16193,7 @@ export type ImageAttributeName =
 | "productCodes"
 | "blockDeviceMapping"
 | "sriovNetSupport"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum
 export type InstanceAttributeName =
@@ -16315,17 +16211,14 @@ export type InstanceAttributeName =
 | "ebsOptimized"
 | "sriovNetSupport"
 | "enaSupport"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type LocationType =
 | "region"
 | "availability-zone"
 | "availability-zone-id"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type NetworkInterfaceAttribute =
@@ -16333,16 +16226,13 @@ export type NetworkInterfaceAttribute =
 | "groupSet"
 | "sourceDestCheck"
 | "attachment"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type OfferingClassType =
 | "standard"
 | "convertible"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type OfferingTypeValues =
@@ -16352,9 +16242,7 @@ export type OfferingTypeValues =
 | "No Upfront"
 | "Partial Upfront"
 | "All Upfront"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, enum, output
 export type RIProductDescription =
@@ -16362,9 +16250,7 @@ export type RIProductDescription =
 | "Linux/UNIX (Amazon VPC)"
 | "Windows"
 | "Windows (Amazon VPC)"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface SlotDateTimeRangeRequest {
@@ -16372,8 +16258,8 @@ export interface SlotDateTimeRangeRequest {
   LatestTime: Date | number;
 }
 function SlotDateTimeRangeRequest_Serialize(body: URLSearchParams, prefix: string, params: SlotDateTimeRangeRequest) {
-    body.append(prefix+".EarliestTime", prt.encodeDate_iso8601(params["EarliestTime"]));
-    body.append(prefix+".LatestTime", prt.encodeDate_iso8601(params["LatestTime"]));
+    body.append(prefix+".EarliestTime", qsP.encodeDate_iso8601(params["EarliestTime"]));
+    body.append(prefix+".LatestTime", qsP.encodeDate_iso8601(params["LatestTime"]));
 }
 
 // refs: 1 - tags: input, named, interface
@@ -16387,7 +16273,7 @@ export interface ScheduledInstanceRecurrenceRequest {
 function ScheduledInstanceRecurrenceRequest_Serialize(body: URLSearchParams, prefix: string, params: ScheduledInstanceRecurrenceRequest) {
     if ("Frequency" in params) body.append(prefix+".Frequency", (params["Frequency"] ?? '').toString());
     if ("Interval" in params) body.append(prefix+".Interval", (params["Interval"] ?? '').toString());
-    if (params["OccurrenceDays"]) prt.appendList(body, prefix+".OccurrenceDay", params["OccurrenceDays"], {"entryPrefix":"."})
+    if (params["OccurrenceDays"]) qsP.appendList(body, prefix+".OccurrenceDay", params["OccurrenceDays"], {"entryPrefix":"."})
     if ("OccurrenceRelativeToEnd" in params) body.append(prefix+".OccurrenceRelativeToEnd", (params["OccurrenceRelativeToEnd"] ?? '').toString());
     if ("OccurrenceUnit" in params) body.append(prefix+".OccurrenceUnit", (params["OccurrenceUnit"] ?? '').toString());
 }
@@ -16398,16 +16284,15 @@ export interface SlotStartTimeRangeRequest {
   LatestTime?: Date | number | null;
 }
 function SlotStartTimeRangeRequest_Serialize(body: URLSearchParams, prefix: string, params: SlotStartTimeRangeRequest) {
-    if ("EarliestTime" in params) body.append(prefix+".EarliestTime", prt.encodeDate_iso8601(params["EarliestTime"]));
-    if ("LatestTime" in params) body.append(prefix+".LatestTime", prt.encodeDate_iso8601(params["LatestTime"]));
+    if ("EarliestTime" in params) body.append(prefix+".EarliestTime", qsP.encodeDate_iso8601(params["EarliestTime"]));
+    if ("LatestTime" in params) body.append(prefix+".LatestTime", qsP.encodeDate_iso8601(params["LatestTime"]));
 }
 
 // refs: 3 - tags: input, named, enum
 export type SnapshotAttributeName =
 | "productCodes"
 | "createVolumePermission"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type EventType =
@@ -16415,23 +16300,19 @@ export type EventType =
 | "fleetRequestChange"
 | "error"
 | "information"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type VolumeAttributeName =
 | "autoEnableIO"
 | "productCodes"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type VpcAttributeName =
 | "enableDnsSupport"
 | "enableDnsHostnames"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ExportTaskS3LocationRequest {
@@ -16449,9 +16330,7 @@ export type UnlimitedSupportedInstanceFamily =
 | "t3"
 | "t3a"
 | "t4g"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface ClientData {
@@ -16462,9 +16341,9 @@ export interface ClientData {
 }
 function ClientData_Serialize(body: URLSearchParams, prefix: string, params: ClientData) {
     if ("Comment" in params) body.append(prefix+".Comment", (params["Comment"] ?? '').toString());
-    if ("UploadEnd" in params) body.append(prefix+".UploadEnd", prt.encodeDate_iso8601(params["UploadEnd"]));
+    if ("UploadEnd" in params) body.append(prefix+".UploadEnd", qsP.encodeDate_iso8601(params["UploadEnd"]));
     if ("UploadSize" in params) body.append(prefix+".UploadSize", (params["UploadSize"] ?? '').toString());
-    if ("UploadStart" in params) body.append(prefix+".UploadStart", prt.encodeDate_iso8601(params["UploadStart"]));
+    if ("UploadStart" in params) body.append(prefix+".UploadStart", qsP.encodeDate_iso8601(params["UploadStart"]));
 }
 
 // refs: 1 - tags: input, named, interface
@@ -16552,8 +16431,8 @@ export interface ImportInstanceLaunchSpecification {
 function ImportInstanceLaunchSpecification_Serialize(body: URLSearchParams, prefix: string, params: ImportInstanceLaunchSpecification) {
     if ("AdditionalInfo" in params) body.append(prefix+".AdditionalInfo", (params["AdditionalInfo"] ?? '').toString());
     if ("Architecture" in params) body.append(prefix+".Architecture", (params["Architecture"] ?? '').toString());
-    if (params["GroupIds"]) prt.appendList(body, prefix+".GroupId", params["GroupIds"], {"entryPrefix":"."})
-    if (params["GroupNames"]) prt.appendList(body, prefix+".GroupName", params["GroupNames"], {"entryPrefix":"."})
+    if (params["GroupIds"]) qsP.appendList(body, prefix+".GroupId", params["GroupIds"], {"entryPrefix":"."})
+    if (params["GroupNames"]) qsP.appendList(body, prefix+".GroupName", params["GroupNames"], {"entryPrefix":"."})
     if ("InstanceInitiatedShutdownBehavior" in params) body.append(prefix+".InstanceInitiatedShutdownBehavior", (params["InstanceInitiatedShutdownBehavior"] ?? '').toString());
     if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
     if ("Monitoring" in params) body.append(prefix+".Monitoring", (params["Monitoring"] ?? '').toString());
@@ -16568,9 +16447,7 @@ export type ArchitectureValues =
 | "i386"
 | "x86_64"
 | "arm64"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface UserData {
@@ -16583,9 +16460,7 @@ function UserData_Serialize(body: URLSearchParams, prefix: string, params: UserD
 // refs: 9 - tags: input, named, enum, output
 export type PlatformValues =
 | "Windows"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface SnapshotDiskContainer {
@@ -16605,8 +16480,7 @@ function SnapshotDiskContainer_Serialize(body: URLSearchParams, prefix: string, 
 export type ModifyAvailabilityZoneOptInStatus =
 | "opted-in"
 | "not-opted-in"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface DnsServersOptionsModifyStructure {
@@ -16614,7 +16488,7 @@ export interface DnsServersOptionsModifyStructure {
   Enabled?: boolean | null;
 }
 function DnsServersOptionsModifyStructure_Serialize(body: URLSearchParams, prefix: string, params: DnsServersOptionsModifyStructure) {
-    if (params["CustomDnsServers"]) prt.appendList(body, prefix+".item", params["CustomDnsServers"], {"entryPrefix":"."})
+    if (params["CustomDnsServers"]) qsP.appendList(body, prefix+".item", params["CustomDnsServers"], {"entryPrefix":"."})
     if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
 }
 
@@ -16622,8 +16496,7 @@ function DnsServersOptionsModifyStructure_Serialize(body: URLSearchParams, prefi
 export type OperationType =
 | "add"
 | "remove"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface LoadPermissionModifications {
@@ -16631,8 +16504,8 @@ export interface LoadPermissionModifications {
   Remove?: LoadPermissionRequest[] | null;
 }
 function LoadPermissionModifications_Serialize(body: URLSearchParams, prefix: string, params: LoadPermissionModifications) {
-    if (params["Add"]) prt.appendList(body, prefix+".item", params["Add"], {"appender":LoadPermissionRequest_Serialize,"entryPrefix":"."})
-    if (params["Remove"]) prt.appendList(body, prefix+".item", params["Remove"], {"appender":LoadPermissionRequest_Serialize,"entryPrefix":"."})
+    if (params["Add"]) qsP.appendList(body, prefix+".item", params["Add"], {"appender":LoadPermissionRequest_Serialize,"entryPrefix":"."})
+    if (params["Remove"]) qsP.appendList(body, prefix+".item", params["Remove"], {"appender":LoadPermissionRequest_Serialize,"entryPrefix":"."})
 }
 
 // refs: 2 - tags: input, named, interface
@@ -16648,9 +16521,7 @@ function LoadPermissionRequest_Serialize(body: URLSearchParams, prefix: string, 
 // refs: 10 - tags: input, named, enum, output
 export type PermissionGroup =
 | "all"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 21 - tags: input, named, interface, output
 export interface AttributeValue {
@@ -16659,7 +16530,7 @@ export interface AttributeValue {
 function AttributeValue_Serialize(body: URLSearchParams, prefix: string, params: AttributeValue) {
     if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function AttributeValue_Parse(node: XmlNode): AttributeValue {
+function AttributeValue_Parse(node: xmlP.XmlNode): AttributeValue {
   return {
     Value: node.first("value", false, x => x.content ?? ''),
   };
@@ -16671,8 +16542,8 @@ export interface LaunchPermissionModifications {
   Remove?: LaunchPermission[] | null;
 }
 function LaunchPermissionModifications_Serialize(body: URLSearchParams, prefix: string, params: LaunchPermissionModifications) {
-    if (params["Add"]) prt.appendList(body, prefix+".item", params["Add"], {"appender":LaunchPermission_Serialize,"entryPrefix":"."})
-    if (params["Remove"]) prt.appendList(body, prefix+".item", params["Remove"], {"appender":LaunchPermission_Serialize,"entryPrefix":"."})
+    if (params["Add"]) qsP.appendList(body, prefix+".item", params["Add"], {"appender":LaunchPermission_Serialize,"entryPrefix":"."})
+    if (params["Remove"]) qsP.appendList(body, prefix+".item", params["Remove"], {"appender":LaunchPermission_Serialize,"entryPrefix":"."})
 }
 
 // refs: 3 - tags: input, named, interface, output
@@ -16684,7 +16555,7 @@ function LaunchPermission_Serialize(body: URLSearchParams, prefix: string, param
     if ("Group" in params) body.append(prefix+".Group", (params["Group"] ?? '').toString());
     if ("UserId" in params) body.append(prefix+".UserId", (params["UserId"] ?? '').toString());
 }
-function LaunchPermission_Parse(node: XmlNode): LaunchPermission {
+function LaunchPermission_Parse(node: xmlP.XmlNode): LaunchPermission {
   return {
     Group: node.first("group", false, x => (x.content ?? '') as PermissionGroup),
     UserId: node.first("userId", false, x => x.content ?? ''),
@@ -16698,7 +16569,7 @@ export interface AttributeBooleanValue {
 function AttributeBooleanValue_Serialize(body: URLSearchParams, prefix: string, params: AttributeBooleanValue) {
     if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function AttributeBooleanValue_Parse(node: XmlNode): AttributeBooleanValue {
+function AttributeBooleanValue_Parse(node: xmlP.XmlNode): AttributeBooleanValue {
   return {
     Value: node.first("value", false, x => x.content === 'true'),
   };
@@ -16733,7 +16604,7 @@ export interface BlobAttributeValue {
   Value?: Uint8Array | string | null;
 }
 function BlobAttributeValue_Serialize(body: URLSearchParams, prefix: string, params: BlobAttributeValue) {
-    if ("Value" in params) body.append(prefix+".Value", prt.encodeBlob(params["Value"]));
+    if ("Value" in params) body.append(prefix+".Value", qsP.encodeBlob(params["Value"]));
 }
 
 // refs: 2 - tags: input, named, interface
@@ -16760,31 +16631,25 @@ function InstanceCreditSpecificationRequest_Serialize(body: URLSearchParams, pre
 export type HttpTokensState =
 | "optional"
 | "required"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type InstanceMetadataEndpointState =
 | "disabled"
 | "enabled"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type Affinity =
 | "default"
 | "host"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type HostTenancy =
 | "dedicated"
 | "host"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface RemovePrefixListEntry {
@@ -16819,7 +16684,7 @@ function ReservedInstancesConfiguration_Serialize(body: URLSearchParams, prefix:
     if ("Platform" in params) body.append(prefix+".Platform", (params["Platform"] ?? '').toString());
     if ("Scope" in params) body.append(prefix+".Scope", (params["Scope"] ?? '').toString());
 }
-function ReservedInstancesConfiguration_Parse(node: XmlNode): ReservedInstancesConfiguration {
+function ReservedInstancesConfiguration_Parse(node: xmlP.XmlNode): ReservedInstancesConfiguration {
   return {
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
     InstanceCount: node.first("instanceCount", false, x => parseInt(x.content ?? '0')),
@@ -16833,9 +16698,7 @@ function ReservedInstancesConfiguration_Parse(node: XmlNode): ReservedInstancesC
 export type scope =
 | "Availability Zone"
 | "Region"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface CreateVolumePermissionModifications {
@@ -16843,8 +16706,8 @@ export interface CreateVolumePermissionModifications {
   Remove?: CreateVolumePermission[] | null;
 }
 function CreateVolumePermissionModifications_Serialize(body: URLSearchParams, prefix: string, params: CreateVolumePermissionModifications) {
-    if (params["Add"]) prt.appendList(body, prefix+".item", params["Add"], {"appender":CreateVolumePermission_Serialize,"entryPrefix":"."})
-    if (params["Remove"]) prt.appendList(body, prefix+".item", params["Remove"], {"appender":CreateVolumePermission_Serialize,"entryPrefix":"."})
+    if (params["Add"]) qsP.appendList(body, prefix+".item", params["Add"], {"appender":CreateVolumePermission_Serialize,"entryPrefix":"."})
+    if (params["Remove"]) qsP.appendList(body, prefix+".item", params["Remove"], {"appender":CreateVolumePermission_Serialize,"entryPrefix":"."})
 }
 
 // refs: 3 - tags: input, named, interface, output
@@ -16856,7 +16719,7 @@ function CreateVolumePermission_Serialize(body: URLSearchParams, prefix: string,
     if ("Group" in params) body.append(prefix+".Group", (params["Group"] ?? '').toString());
     if ("UserId" in params) body.append(prefix+".UserId", (params["UserId"] ?? '').toString());
 }
-function CreateVolumePermission_Parse(node: XmlNode): CreateVolumePermission {
+function CreateVolumePermission_Parse(node: xmlP.XmlNode): CreateVolumePermission {
   return {
     Group: node.first("group", false, x => (x.content ?? '') as PermissionGroup),
     UserId: node.first("userId", false, x => x.content ?? ''),
@@ -16867,9 +16730,7 @@ function CreateVolumePermission_Parse(node: XmlNode): CreateVolumePermission {
 export type ExcessCapacityTerminationPolicy =
 | "noTermination"
 | "default"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface LaunchTemplateConfig {
@@ -16878,9 +16739,9 @@ export interface LaunchTemplateConfig {
 }
 function LaunchTemplateConfig_Serialize(body: URLSearchParams, prefix: string, params: LaunchTemplateConfig) {
     if (params["LaunchTemplateSpecification"] != null) FleetLaunchTemplateSpecification_Serialize(body, prefix+".LaunchTemplateSpecification", params["LaunchTemplateSpecification"]);
-    if (params["Overrides"]) prt.appendList(body, prefix+".overrides", params["Overrides"], {"appender":LaunchTemplateOverrides_Serialize,"entryPrefix":"."})
+    if (params["Overrides"]) qsP.appendList(body, prefix+".overrides", params["Overrides"], {"appender":LaunchTemplateOverrides_Serialize,"entryPrefix":"."})
 }
-function LaunchTemplateConfig_Parse(node: XmlNode): LaunchTemplateConfig {
+function LaunchTemplateConfig_Parse(node: xmlP.XmlNode): LaunchTemplateConfig {
   return {
     LaunchTemplateSpecification: node.first("launchTemplateSpecification", false, FleetLaunchTemplateSpecification_Parse),
     Overrides: node.getList("overrides", "item").map(LaunchTemplateOverrides_Parse),
@@ -16898,7 +16759,7 @@ function FleetLaunchTemplateSpecification_Serialize(body: URLSearchParams, prefi
     if ("LaunchTemplateName" in params) body.append(prefix+".LaunchTemplateName", (params["LaunchTemplateName"] ?? '').toString());
     if ("Version" in params) body.append(prefix+".Version", (params["Version"] ?? '').toString());
 }
-function FleetLaunchTemplateSpecification_Parse(node: XmlNode): FleetLaunchTemplateSpecification {
+function FleetLaunchTemplateSpecification_Parse(node: xmlP.XmlNode): FleetLaunchTemplateSpecification {
   return {
     LaunchTemplateId: node.first("launchTemplateId", false, x => x.content ?? ''),
     LaunchTemplateName: node.first("launchTemplateName", false, x => x.content ?? ''),
@@ -16923,7 +16784,7 @@ function LaunchTemplateOverrides_Serialize(body: URLSearchParams, prefix: string
     if ("WeightedCapacity" in params) body.append(prefix+".WeightedCapacity", (params["WeightedCapacity"] ?? '').toString());
     if ("Priority" in params) body.append(prefix+".Priority", (params["Priority"] ?? '').toString());
 }
-function LaunchTemplateOverrides_Parse(node: XmlNode): LaunchTemplateOverrides {
+function LaunchTemplateOverrides_Parse(node: xmlP.XmlNode): LaunchTemplateOverrides {
   return {
     InstanceType: node.first("instanceType", false, x => (x.content ?? '') as InstanceType),
     SpotPrice: node.first("spotPrice", false, x => x.content ?? ''),
@@ -16937,9 +16798,7 @@ function LaunchTemplateOverrides_Parse(node: XmlNode): LaunchTemplateOverrides {
 // refs: 5 - tags: input, named, enum, output
 export type TrafficMirrorNetworkService =
 | "amazon-dns"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type TrafficMirrorFilterRuleField =
@@ -16947,16 +16806,14 @@ export type TrafficMirrorFilterRuleField =
 | "source-port-range"
 | "protocol"
 | "description"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type TrafficMirrorSessionField =
 | "packet-length"
 | "description"
 | "virtual-network-id"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ModifyTransitGatewayOptions {
@@ -17003,8 +16860,7 @@ function PeeringConnectionOptionsRequest_Serialize(body: URLSearchParams, prefix
 // refs: 1 - tags: input, named, enum
 export type VpcTenancy =
 | "default"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ModifyVpnTunnelOptionsSpecification {
@@ -17038,13 +16894,13 @@ function ModifyVpnTunnelOptionsSpecification_Serialize(body: URLSearchParams, pr
     if ("ReplayWindowSize" in params) body.append(prefix+".ReplayWindowSize", (params["ReplayWindowSize"] ?? '').toString());
     if ("DPDTimeoutSeconds" in params) body.append(prefix+".DPDTimeoutSeconds", (params["DPDTimeoutSeconds"] ?? '').toString());
     if ("DPDTimeoutAction" in params) body.append(prefix+".DPDTimeoutAction", (params["DPDTimeoutAction"] ?? '').toString());
-    if (params["Phase1EncryptionAlgorithms"]) prt.appendList(body, prefix+".Phase1EncryptionAlgorithm", params["Phase1EncryptionAlgorithms"], {"appender":Phase1EncryptionAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase2EncryptionAlgorithms"]) prt.appendList(body, prefix+".Phase2EncryptionAlgorithm", params["Phase2EncryptionAlgorithms"], {"appender":Phase2EncryptionAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase1IntegrityAlgorithms"]) prt.appendList(body, prefix+".Phase1IntegrityAlgorithm", params["Phase1IntegrityAlgorithms"], {"appender":Phase1IntegrityAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase2IntegrityAlgorithms"]) prt.appendList(body, prefix+".Phase2IntegrityAlgorithm", params["Phase2IntegrityAlgorithms"], {"appender":Phase2IntegrityAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase1DHGroupNumbers"]) prt.appendList(body, prefix+".Phase1DHGroupNumber", params["Phase1DHGroupNumbers"], {"appender":Phase1DHGroupNumbersRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase2DHGroupNumbers"]) prt.appendList(body, prefix+".Phase2DHGroupNumber", params["Phase2DHGroupNumbers"], {"appender":Phase2DHGroupNumbersRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["IKEVersions"]) prt.appendList(body, prefix+".IKEVersion", params["IKEVersions"], {"appender":IKEVersionsRequestListValue_Serialize,"entryPrefix":"."})
+    if (params["Phase1EncryptionAlgorithms"]) qsP.appendList(body, prefix+".Phase1EncryptionAlgorithm", params["Phase1EncryptionAlgorithms"], {"appender":Phase1EncryptionAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
+    if (params["Phase2EncryptionAlgorithms"]) qsP.appendList(body, prefix+".Phase2EncryptionAlgorithm", params["Phase2EncryptionAlgorithms"], {"appender":Phase2EncryptionAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
+    if (params["Phase1IntegrityAlgorithms"]) qsP.appendList(body, prefix+".Phase1IntegrityAlgorithm", params["Phase1IntegrityAlgorithms"], {"appender":Phase1IntegrityAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
+    if (params["Phase2IntegrityAlgorithms"]) qsP.appendList(body, prefix+".Phase2IntegrityAlgorithm", params["Phase2IntegrityAlgorithms"], {"appender":Phase2IntegrityAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
+    if (params["Phase1DHGroupNumbers"]) qsP.appendList(body, prefix+".Phase1DHGroupNumber", params["Phase1DHGroupNumbers"], {"appender":Phase1DHGroupNumbersRequestListValue_Serialize,"entryPrefix":"."})
+    if (params["Phase2DHGroupNumbers"]) qsP.appendList(body, prefix+".Phase2DHGroupNumber", params["Phase2DHGroupNumbers"], {"appender":Phase2DHGroupNumbersRequestListValue_Serialize,"entryPrefix":"."})
+    if (params["IKEVersions"]) qsP.appendList(body, prefix+".IKEVersion", params["IKEVersions"], {"appender":IKEVersionsRequestListValue_Serialize,"entryPrefix":"."})
     if ("StartupAction" in params) body.append(prefix+".StartupAction", (params["StartupAction"] ?? '').toString());
 }
 
@@ -17085,7 +16941,7 @@ export interface RegisterInstanceTagAttributeRequest {
 }
 function RegisterInstanceTagAttributeRequest_Serialize(body: URLSearchParams, prefix: string, params: RegisterInstanceTagAttributeRequest) {
     if ("IncludeAllTagsOfInstance" in params) body.append(prefix+".IncludeAllTagsOfInstance", (params["IncludeAllTagsOfInstance"] ?? '').toString());
-    if (params["InstanceTagKeys"]) prt.appendList(body, prefix+".InstanceTagKey", params["InstanceTagKeys"], {"entryPrefix":"."})
+    if (params["InstanceTagKeys"]) qsP.appendList(body, prefix+".InstanceTagKey", params["InstanceTagKeys"], {"entryPrefix":"."})
 }
 
 // refs: 1 - tags: input, named, enum
@@ -17099,15 +16955,13 @@ export type ReportInstanceReasonCodes =
 | "performance-ebs-volume"
 | "performance-other"
 | "other"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ReportStatusType =
 | "ok"
 | "impaired"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface SpotFleetRequestConfigData {
@@ -17143,8 +16997,8 @@ function SpotFleetRequestConfigData_Serialize(body: URLSearchParams, prefix: str
     if ("FulfilledCapacity" in params) body.append(prefix+".FulfilledCapacity", (params["FulfilledCapacity"] ?? '').toString());
     if ("OnDemandFulfilledCapacity" in params) body.append(prefix+".OnDemandFulfilledCapacity", (params["OnDemandFulfilledCapacity"] ?? '').toString());
     body.append(prefix+".IamFleetRole", (params["IamFleetRole"] ?? '').toString());
-    if (params["LaunchSpecifications"]) prt.appendList(body, prefix+".launchSpecifications", params["LaunchSpecifications"], {"appender":SpotFleetLaunchSpecification_Serialize,"entryPrefix":"."})
-    if (params["LaunchTemplateConfigs"]) prt.appendList(body, prefix+".launchTemplateConfigs", params["LaunchTemplateConfigs"], {"appender":LaunchTemplateConfig_Serialize,"entryPrefix":"."})
+    if (params["LaunchSpecifications"]) qsP.appendList(body, prefix+".launchSpecifications", params["LaunchSpecifications"], {"appender":SpotFleetLaunchSpecification_Serialize,"entryPrefix":"."})
+    if (params["LaunchTemplateConfigs"]) qsP.appendList(body, prefix+".launchTemplateConfigs", params["LaunchTemplateConfigs"], {"appender":LaunchTemplateConfig_Serialize,"entryPrefix":"."})
     if ("SpotPrice" in params) body.append(prefix+".SpotPrice", (params["SpotPrice"] ?? '').toString());
     body.append(prefix+".TargetCapacity", (params["TargetCapacity"] ?? '').toString());
     if ("OnDemandTargetCapacity" in params) body.append(prefix+".OnDemandTargetCapacity", (params["OnDemandTargetCapacity"] ?? '').toString());
@@ -17152,15 +17006,15 @@ function SpotFleetRequestConfigData_Serialize(body: URLSearchParams, prefix: str
     if ("SpotMaxTotalPrice" in params) body.append(prefix+".SpotMaxTotalPrice", (params["SpotMaxTotalPrice"] ?? '').toString());
     if ("TerminateInstancesWithExpiration" in params) body.append(prefix+".TerminateInstancesWithExpiration", (params["TerminateInstancesWithExpiration"] ?? '').toString());
     if ("Type" in params) body.append(prefix+".Type", (params["Type"] ?? '').toString());
-    if ("ValidFrom" in params) body.append(prefix+".ValidFrom", prt.encodeDate_iso8601(params["ValidFrom"]));
-    if ("ValidUntil" in params) body.append(prefix+".ValidUntil", prt.encodeDate_iso8601(params["ValidUntil"]));
+    if ("ValidFrom" in params) body.append(prefix+".ValidFrom", qsP.encodeDate_iso8601(params["ValidFrom"]));
+    if ("ValidUntil" in params) body.append(prefix+".ValidUntil", qsP.encodeDate_iso8601(params["ValidUntil"]));
     if ("ReplaceUnhealthyInstances" in params) body.append(prefix+".ReplaceUnhealthyInstances", (params["ReplaceUnhealthyInstances"] ?? '').toString());
     if ("InstanceInterruptionBehavior" in params) body.append(prefix+".InstanceInterruptionBehavior", (params["InstanceInterruptionBehavior"] ?? '').toString());
     if (params["LoadBalancersConfig"] != null) LoadBalancersConfig_Serialize(body, prefix+".LoadBalancersConfig", params["LoadBalancersConfig"]);
     if ("InstancePoolsToUseCount" in params) body.append(prefix+".InstancePoolsToUseCount", (params["InstancePoolsToUseCount"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+".TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+".TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
 }
-function SpotFleetRequestConfigData_Parse(node: XmlNode): SpotFleetRequestConfigData {
+function SpotFleetRequestConfigData_Parse(node: xmlP.XmlNode): SpotFleetRequestConfigData {
   return {
     AllocationStrategy: node.first("allocationStrategy", false, x => (x.content ?? '') as AllocationStrategy),
     OnDemandAllocationStrategy: node.first("onDemandAllocationStrategy", false, x => (x.content ?? '') as OnDemandAllocationStrategy),
@@ -17178,8 +17032,8 @@ function SpotFleetRequestConfigData_Parse(node: XmlNode): SpotFleetRequestConfig
     SpotMaxTotalPrice: node.first("spotMaxTotalPrice", false, x => x.content ?? ''),
     TerminateInstancesWithExpiration: node.first("terminateInstancesWithExpiration", false, x => x.content === 'true'),
     Type: node.first("type", false, x => (x.content ?? '') as FleetType),
-    ValidFrom: node.first("validFrom", false, x => parseTimestamp(x.content)),
-    ValidUntil: node.first("validUntil", false, x => parseTimestamp(x.content)),
+    ValidFrom: node.first("validFrom", false, x => xmlP.parseTimestamp(x.content)),
+    ValidUntil: node.first("validUntil", false, x => xmlP.parseTimestamp(x.content)),
     ReplaceUnhealthyInstances: node.first("replaceUnhealthyInstances", false, x => x.content === 'true'),
     InstanceInterruptionBehavior: node.first("instanceInterruptionBehavior", false, x => (x.content ?? '') as InstanceInterruptionBehavior),
     LoadBalancersConfig: node.first("loadBalancersConfig", false, LoadBalancersConfig_Parse),
@@ -17193,17 +17047,13 @@ export type AllocationStrategy =
 | "lowestPrice"
 | "diversified"
 | "capacityOptimized"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type OnDemandAllocationStrategy =
 | "lowestPrice"
 | "prioritized"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface SpotFleetLaunchSpecification {
@@ -17227,9 +17077,9 @@ export interface SpotFleetLaunchSpecification {
   TagSpecifications: SpotFleetTagSpecification[];
 }
 function SpotFleetLaunchSpecification_Serialize(body: URLSearchParams, prefix: string, params: SpotFleetLaunchSpecification) {
-    if (params["SecurityGroups"]) prt.appendList(body, prefix+".groupSet", params["SecurityGroups"], {"appender":GroupIdentifier_Serialize,"entryPrefix":"."})
+    if (params["SecurityGroups"]) qsP.appendList(body, prefix+".groupSet", params["SecurityGroups"], {"appender":GroupIdentifier_Serialize,"entryPrefix":"."})
     if ("AddressingType" in params) body.append(prefix+".AddressingType", (params["AddressingType"] ?? '').toString());
-    if (params["BlockDeviceMappings"]) prt.appendList(body, prefix+".blockDeviceMapping", params["BlockDeviceMappings"], {"appender":BlockDeviceMapping_Serialize,"entryPrefix":"."})
+    if (params["BlockDeviceMappings"]) qsP.appendList(body, prefix+".blockDeviceMapping", params["BlockDeviceMappings"], {"appender":BlockDeviceMapping_Serialize,"entryPrefix":"."})
     if ("EbsOptimized" in params) body.append(prefix+".EbsOptimized", (params["EbsOptimized"] ?? '').toString());
     if (params["IamInstanceProfile"] != null) IamInstanceProfileSpecification_Serialize(body, prefix+".IamInstanceProfile", params["IamInstanceProfile"]);
     if ("ImageId" in params) body.append(prefix+".ImageId", (params["ImageId"] ?? '').toString());
@@ -17237,16 +17087,16 @@ function SpotFleetLaunchSpecification_Serialize(body: URLSearchParams, prefix: s
     if ("KernelId" in params) body.append(prefix+".KernelId", (params["KernelId"] ?? '').toString());
     if ("KeyName" in params) body.append(prefix+".KeyName", (params["KeyName"] ?? '').toString());
     if (params["Monitoring"] != null) SpotFleetMonitoring_Serialize(body, prefix+".Monitoring", params["Monitoring"]);
-    if (params["NetworkInterfaces"]) prt.appendList(body, prefix+".networkInterfaceSet", params["NetworkInterfaces"], {"appender":InstanceNetworkInterfaceSpecification_Serialize,"entryPrefix":"."})
+    if (params["NetworkInterfaces"]) qsP.appendList(body, prefix+".networkInterfaceSet", params["NetworkInterfaces"], {"appender":InstanceNetworkInterfaceSpecification_Serialize,"entryPrefix":"."})
     if (params["Placement"] != null) SpotPlacement_Serialize(body, prefix+".Placement", params["Placement"]);
     if ("RamdiskId" in params) body.append(prefix+".RamdiskId", (params["RamdiskId"] ?? '').toString());
     if ("SpotPrice" in params) body.append(prefix+".SpotPrice", (params["SpotPrice"] ?? '').toString());
     if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
     if ("UserData" in params) body.append(prefix+".UserData", (params["UserData"] ?? '').toString());
     if ("WeightedCapacity" in params) body.append(prefix+".WeightedCapacity", (params["WeightedCapacity"] ?? '').toString());
-    if (params["TagSpecifications"]) prt.appendList(body, prefix+".tagSpecificationSet", params["TagSpecifications"], {"appender":SpotFleetTagSpecification_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+".tagSpecificationSet", params["TagSpecifications"], {"appender":SpotFleetTagSpecification_Serialize,"entryPrefix":"."})
 }
-function SpotFleetLaunchSpecification_Parse(node: XmlNode): SpotFleetLaunchSpecification {
+function SpotFleetLaunchSpecification_Parse(node: xmlP.XmlNode): SpotFleetLaunchSpecification {
   return {
     SecurityGroups: node.getList("groupSet", "item").map(GroupIdentifier_Parse),
     AddressingType: node.first("addressingType", false, x => x.content ?? ''),
@@ -17278,7 +17128,7 @@ function GroupIdentifier_Serialize(body: URLSearchParams, prefix: string, params
     if ("GroupName" in params) body.append(prefix+".GroupName", (params["GroupName"] ?? '').toString());
     if ("GroupId" in params) body.append(prefix+".GroupId", (params["GroupId"] ?? '').toString());
 }
-function GroupIdentifier_Parse(node: XmlNode): GroupIdentifier {
+function GroupIdentifier_Parse(node: xmlP.XmlNode): GroupIdentifier {
   return {
     GroupName: node.first("groupName", false, x => x.content ?? ''),
     GroupId: node.first("groupId", false, x => x.content ?? ''),
@@ -17292,7 +17142,7 @@ export interface SpotFleetMonitoring {
 function SpotFleetMonitoring_Serialize(body: URLSearchParams, prefix: string, params: SpotFleetMonitoring) {
     if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
 }
-function SpotFleetMonitoring_Parse(node: XmlNode): SpotFleetMonitoring {
+function SpotFleetMonitoring_Parse(node: xmlP.XmlNode): SpotFleetMonitoring {
   return {
     Enabled: node.first("enabled", false, x => x.content === 'true'),
   };
@@ -17320,18 +17170,18 @@ function InstanceNetworkInterfaceSpecification_Serialize(body: URLSearchParams, 
     if ("DeleteOnTermination" in params) body.append(prefix+".DeleteOnTermination", (params["DeleteOnTermination"] ?? '').toString());
     if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
     if ("DeviceIndex" in params) body.append(prefix+".DeviceIndex", (params["DeviceIndex"] ?? '').toString());
-    if (params["Groups"]) prt.appendList(body, prefix+".SecurityGroupId", params["Groups"], {"entryPrefix":"."})
+    if (params["Groups"]) qsP.appendList(body, prefix+".SecurityGroupId", params["Groups"], {"entryPrefix":"."})
     if ("Ipv6AddressCount" in params) body.append(prefix+".Ipv6AddressCount", (params["Ipv6AddressCount"] ?? '').toString());
-    if (params["Ipv6Addresses"]) prt.appendList(body, prefix+".Ipv6Addresses", params["Ipv6Addresses"], {"appender":InstanceIpv6Address_Serialize,"entryPrefix":"."})
+    if (params["Ipv6Addresses"]) qsP.appendList(body, prefix+".Ipv6Addresses", params["Ipv6Addresses"], {"appender":InstanceIpv6Address_Serialize,"entryPrefix":"."})
     if ("NetworkInterfaceId" in params) body.append(prefix+".NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
     if ("PrivateIpAddress" in params) body.append(prefix+".PrivateIpAddress", (params["PrivateIpAddress"] ?? '').toString());
-    if (params["PrivateIpAddresses"]) prt.appendList(body, prefix+".PrivateIpAddresses", params["PrivateIpAddresses"], {"appender":PrivateIpAddressSpecification_Serialize,"entryPrefix":"."})
+    if (params["PrivateIpAddresses"]) qsP.appendList(body, prefix+".PrivateIpAddresses", params["PrivateIpAddresses"], {"appender":PrivateIpAddressSpecification_Serialize,"entryPrefix":"."})
     if ("SecondaryPrivateIpAddressCount" in params) body.append(prefix+".SecondaryPrivateIpAddressCount", (params["SecondaryPrivateIpAddressCount"] ?? '').toString());
     if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
     if ("AssociateCarrierIpAddress" in params) body.append(prefix+".AssociateCarrierIpAddress", (params["AssociateCarrierIpAddress"] ?? '').toString());
     if ("InterfaceType" in params) body.append(prefix+".InterfaceType", (params["InterfaceType"] ?? '').toString());
 }
-function InstanceNetworkInterfaceSpecification_Parse(node: XmlNode): InstanceNetworkInterfaceSpecification {
+function InstanceNetworkInterfaceSpecification_Parse(node: xmlP.XmlNode): InstanceNetworkInterfaceSpecification {
   return {
     ...node.strings({
       optional: {"InterfaceType":true},
@@ -17363,7 +17213,7 @@ function SpotPlacement_Serialize(body: URLSearchParams, prefix: string, params: 
     if ("GroupName" in params) body.append(prefix+".GroupName", (params["GroupName"] ?? '').toString());
     if ("Tenancy" in params) body.append(prefix+".Tenancy", (params["Tenancy"] ?? '').toString());
 }
-function SpotPlacement_Parse(node: XmlNode): SpotPlacement {
+function SpotPlacement_Parse(node: xmlP.XmlNode): SpotPlacement {
   return {
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
     GroupName: node.first("groupName", false, x => x.content ?? ''),
@@ -17378,9 +17228,9 @@ export interface SpotFleetTagSpecification {
 }
 function SpotFleetTagSpecification_Serialize(body: URLSearchParams, prefix: string, params: SpotFleetTagSpecification) {
     if ("ResourceType" in params) body.append(prefix+".ResourceType", (params["ResourceType"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+".tag", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":"."})
+    if (params["Tags"]) qsP.appendList(body, prefix+".tag", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":"."})
 }
-function SpotFleetTagSpecification_Parse(node: XmlNode): SpotFleetTagSpecification {
+function SpotFleetTagSpecification_Parse(node: xmlP.XmlNode): SpotFleetTagSpecification {
   return {
     ResourceType: node.first("resourceType", false, x => (x.content ?? '') as ResourceType),
     Tags: node.getList("tag", "item").map(Tag_Parse),
@@ -17396,7 +17246,7 @@ function LoadBalancersConfig_Serialize(body: URLSearchParams, prefix: string, pa
     if (params["ClassicLoadBalancersConfig"] != null) ClassicLoadBalancersConfig_Serialize(body, prefix+".ClassicLoadBalancersConfig", params["ClassicLoadBalancersConfig"]);
     if (params["TargetGroupsConfig"] != null) TargetGroupsConfig_Serialize(body, prefix+".TargetGroupsConfig", params["TargetGroupsConfig"]);
 }
-function LoadBalancersConfig_Parse(node: XmlNode): LoadBalancersConfig {
+function LoadBalancersConfig_Parse(node: xmlP.XmlNode): LoadBalancersConfig {
   return {
     ClassicLoadBalancersConfig: node.first("classicLoadBalancersConfig", false, ClassicLoadBalancersConfig_Parse),
     TargetGroupsConfig: node.first("targetGroupsConfig", false, TargetGroupsConfig_Parse),
@@ -17408,9 +17258,9 @@ export interface ClassicLoadBalancersConfig {
   ClassicLoadBalancers: ClassicLoadBalancer[];
 }
 function ClassicLoadBalancersConfig_Serialize(body: URLSearchParams, prefix: string, params: ClassicLoadBalancersConfig) {
-    if (params["ClassicLoadBalancers"]) prt.appendList(body, prefix+".classicLoadBalancers", params["ClassicLoadBalancers"], {"appender":ClassicLoadBalancer_Serialize,"entryPrefix":"."})
+    if (params["ClassicLoadBalancers"]) qsP.appendList(body, prefix+".classicLoadBalancers", params["ClassicLoadBalancers"], {"appender":ClassicLoadBalancer_Serialize,"entryPrefix":"."})
 }
-function ClassicLoadBalancersConfig_Parse(node: XmlNode): ClassicLoadBalancersConfig {
+function ClassicLoadBalancersConfig_Parse(node: xmlP.XmlNode): ClassicLoadBalancersConfig {
   return {
     ClassicLoadBalancers: node.getList("classicLoadBalancers", "item").map(ClassicLoadBalancer_Parse),
   };
@@ -17423,7 +17273,7 @@ export interface ClassicLoadBalancer {
 function ClassicLoadBalancer_Serialize(body: URLSearchParams, prefix: string, params: ClassicLoadBalancer) {
     if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
 }
-function ClassicLoadBalancer_Parse(node: XmlNode): ClassicLoadBalancer {
+function ClassicLoadBalancer_Parse(node: xmlP.XmlNode): ClassicLoadBalancer {
   return {
     Name: node.first("name", false, x => x.content ?? ''),
   };
@@ -17434,9 +17284,9 @@ export interface TargetGroupsConfig {
   TargetGroups: TargetGroup[];
 }
 function TargetGroupsConfig_Serialize(body: URLSearchParams, prefix: string, params: TargetGroupsConfig) {
-    if (params["TargetGroups"]) prt.appendList(body, prefix+".targetGroups", params["TargetGroups"], {"appender":TargetGroup_Serialize,"entryPrefix":"."})
+    if (params["TargetGroups"]) qsP.appendList(body, prefix+".targetGroups", params["TargetGroups"], {"appender":TargetGroup_Serialize,"entryPrefix":"."})
 }
-function TargetGroupsConfig_Parse(node: XmlNode): TargetGroupsConfig {
+function TargetGroupsConfig_Parse(node: xmlP.XmlNode): TargetGroupsConfig {
   return {
     TargetGroups: node.getList("targetGroups", "item").map(TargetGroup_Parse),
   };
@@ -17449,7 +17299,7 @@ export interface TargetGroup {
 function TargetGroup_Serialize(body: URLSearchParams, prefix: string, params: TargetGroup) {
     if ("Arn" in params) body.append(prefix+".Arn", (params["Arn"] ?? '').toString());
 }
-function TargetGroup_Parse(node: XmlNode): TargetGroup {
+function TargetGroup_Parse(node: xmlP.XmlNode): TargetGroup {
   return {
     Arn: node.first("arn", false, x => x.content ?? ''),
   };
@@ -17475,10 +17325,10 @@ export interface RequestSpotLaunchSpecification {
   UserData?: string | null;
 }
 function RequestSpotLaunchSpecification_Serialize(body: URLSearchParams, prefix: string, params: RequestSpotLaunchSpecification) {
-    if (params["SecurityGroupIds"]) prt.appendList(body, prefix+".SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
-    if (params["SecurityGroups"]) prt.appendList(body, prefix+".SecurityGroup", params["SecurityGroups"], {"entryPrefix":"."})
+    if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+".SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
+    if (params["SecurityGroups"]) qsP.appendList(body, prefix+".SecurityGroup", params["SecurityGroups"], {"entryPrefix":"."})
     if ("AddressingType" in params) body.append(prefix+".AddressingType", (params["AddressingType"] ?? '').toString());
-    if (params["BlockDeviceMappings"]) prt.appendList(body, prefix+".blockDeviceMapping", params["BlockDeviceMappings"], {"appender":BlockDeviceMapping_Serialize,"entryPrefix":"."})
+    if (params["BlockDeviceMappings"]) qsP.appendList(body, prefix+".blockDeviceMapping", params["BlockDeviceMappings"], {"appender":BlockDeviceMapping_Serialize,"entryPrefix":"."})
     if ("EbsOptimized" in params) body.append(prefix+".EbsOptimized", (params["EbsOptimized"] ?? '').toString());
     if (params["IamInstanceProfile"] != null) IamInstanceProfileSpecification_Serialize(body, prefix+".IamInstanceProfile", params["IamInstanceProfile"]);
     if ("ImageId" in params) body.append(prefix+".ImageId", (params["ImageId"] ?? '').toString());
@@ -17486,7 +17336,7 @@ function RequestSpotLaunchSpecification_Serialize(body: URLSearchParams, prefix:
     if ("KernelId" in params) body.append(prefix+".KernelId", (params["KernelId"] ?? '').toString());
     if ("KeyName" in params) body.append(prefix+".KeyName", (params["KeyName"] ?? '').toString());
     if (params["Monitoring"] != null) RunInstancesMonitoringEnabled_Serialize(body, prefix+".Monitoring", params["Monitoring"]);
-    if (params["NetworkInterfaces"]) prt.appendList(body, prefix+".NetworkInterface", params["NetworkInterfaces"], {"appender":InstanceNetworkInterfaceSpecification_Serialize,"entryPrefix":"."})
+    if (params["NetworkInterfaces"]) qsP.appendList(body, prefix+".NetworkInterface", params["NetworkInterfaces"], {"appender":InstanceNetworkInterfaceSpecification_Serialize,"entryPrefix":"."})
     if (params["Placement"] != null) SpotPlacement_Serialize(body, prefix+".Placement", params["Placement"]);
     if ("RamdiskId" in params) body.append(prefix+".RamdiskId", (params["RamdiskId"] ?? '').toString());
     if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
@@ -17500,7 +17350,7 @@ export interface RunInstancesMonitoringEnabled {
 function RunInstancesMonitoringEnabled_Serialize(body: URLSearchParams, prefix: string, params: RunInstancesMonitoringEnabled) {
     body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
 }
-function RunInstancesMonitoringEnabled_Parse(node: XmlNode): RunInstancesMonitoringEnabled {
+function RunInstancesMonitoringEnabled_Parse(node: xmlP.XmlNode): RunInstancesMonitoringEnabled {
   return {
     Enabled: node.first("enabled", true, x => x.content === 'true'),
   };
@@ -17509,14 +17359,12 @@ function RunInstancesMonitoringEnabled_Parse(node: XmlNode): RunInstancesMonitor
 // refs: 1 - tags: input, named, enum
 export type ResetFpgaImageAttributeName =
 | "loadPermission"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ResetImageAttributeName =
 | "launchPermission"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ElasticInferenceAccelerator {
@@ -17562,7 +17410,7 @@ function SpotMarketOptions_Serialize(body: URLSearchParams, prefix: string, para
     if ("MaxPrice" in params) body.append(prefix+".MaxPrice", (params["MaxPrice"] ?? '').toString());
     if ("SpotInstanceType" in params) body.append(prefix+".SpotInstanceType", (params["SpotInstanceType"] ?? '').toString());
     if ("BlockDurationMinutes" in params) body.append(prefix+".BlockDurationMinutes", (params["BlockDurationMinutes"] ?? '').toString());
-    if ("ValidUntil" in params) body.append(prefix+".ValidUntil", prt.encodeDate_iso8601(params["ValidUntil"]));
+    if ("ValidUntil" in params) body.append(prefix+".ValidUntil", qsP.encodeDate_iso8601(params["ValidUntil"]));
     if ("InstanceInterruptionBehavior" in params) body.append(prefix+".InstanceInterruptionBehavior", (params["InstanceInterruptionBehavior"] ?? '').toString());
 }
 
@@ -17622,7 +17470,7 @@ export interface ScheduledInstancesLaunchSpecification {
   UserData?: string | null;
 }
 function ScheduledInstancesLaunchSpecification_Serialize(body: URLSearchParams, prefix: string, params: ScheduledInstancesLaunchSpecification) {
-    if (params["BlockDeviceMappings"]) prt.appendList(body, prefix+".BlockDeviceMapping", params["BlockDeviceMappings"], {"appender":ScheduledInstancesBlockDeviceMapping_Serialize,"entryPrefix":"."})
+    if (params["BlockDeviceMappings"]) qsP.appendList(body, prefix+".BlockDeviceMapping", params["BlockDeviceMappings"], {"appender":ScheduledInstancesBlockDeviceMapping_Serialize,"entryPrefix":"."})
     if ("EbsOptimized" in params) body.append(prefix+".EbsOptimized", (params["EbsOptimized"] ?? '').toString());
     if (params["IamInstanceProfile"] != null) ScheduledInstancesIamInstanceProfile_Serialize(body, prefix+".IamInstanceProfile", params["IamInstanceProfile"]);
     body.append(prefix+".ImageId", (params["ImageId"] ?? '').toString());
@@ -17630,10 +17478,10 @@ function ScheduledInstancesLaunchSpecification_Serialize(body: URLSearchParams, 
     if ("KernelId" in params) body.append(prefix+".KernelId", (params["KernelId"] ?? '').toString());
     if ("KeyName" in params) body.append(prefix+".KeyName", (params["KeyName"] ?? '').toString());
     if (params["Monitoring"] != null) ScheduledInstancesMonitoring_Serialize(body, prefix+".Monitoring", params["Monitoring"]);
-    if (params["NetworkInterfaces"]) prt.appendList(body, prefix+".NetworkInterface", params["NetworkInterfaces"], {"appender":ScheduledInstancesNetworkInterface_Serialize,"entryPrefix":"."})
+    if (params["NetworkInterfaces"]) qsP.appendList(body, prefix+".NetworkInterface", params["NetworkInterfaces"], {"appender":ScheduledInstancesNetworkInterface_Serialize,"entryPrefix":"."})
     if (params["Placement"] != null) ScheduledInstancesPlacement_Serialize(body, prefix+".Placement", params["Placement"]);
     if ("RamdiskId" in params) body.append(prefix+".RamdiskId", (params["RamdiskId"] ?? '').toString());
-    if (params["SecurityGroupIds"]) prt.appendList(body, prefix+".SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
+    if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+".SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
     if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
     if ("UserData" in params) body.append(prefix+".UserData", (params["UserData"] ?? '').toString());
 }
@@ -17708,12 +17556,12 @@ function ScheduledInstancesNetworkInterface_Serialize(body: URLSearchParams, pre
     if ("DeleteOnTermination" in params) body.append(prefix+".DeleteOnTermination", (params["DeleteOnTermination"] ?? '').toString());
     if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
     if ("DeviceIndex" in params) body.append(prefix+".DeviceIndex", (params["DeviceIndex"] ?? '').toString());
-    if (params["Groups"]) prt.appendList(body, prefix+".Group", params["Groups"], {"entryPrefix":"."})
+    if (params["Groups"]) qsP.appendList(body, prefix+".Group", params["Groups"], {"entryPrefix":"."})
     if ("Ipv6AddressCount" in params) body.append(prefix+".Ipv6AddressCount", (params["Ipv6AddressCount"] ?? '').toString());
-    if (params["Ipv6Addresses"]) prt.appendList(body, prefix+".Ipv6Address", params["Ipv6Addresses"], {"appender":ScheduledInstancesIpv6Address_Serialize,"entryPrefix":"."})
+    if (params["Ipv6Addresses"]) qsP.appendList(body, prefix+".Ipv6Address", params["Ipv6Addresses"], {"appender":ScheduledInstancesIpv6Address_Serialize,"entryPrefix":"."})
     if ("NetworkInterfaceId" in params) body.append(prefix+".NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
     if ("PrivateIpAddress" in params) body.append(prefix+".PrivateIpAddress", (params["PrivateIpAddress"] ?? '').toString());
-    if (params["PrivateIpAddressConfigs"]) prt.appendList(body, prefix+".PrivateIpAddressConfig", params["PrivateIpAddressConfigs"], {"appender":ScheduledInstancesPrivateIpAddressConfig_Serialize,"entryPrefix":"."})
+    if (params["PrivateIpAddressConfigs"]) qsP.appendList(body, prefix+".PrivateIpAddressConfig", params["PrivateIpAddressConfigs"], {"appender":ScheduledInstancesPrivateIpAddressConfig_Serialize,"entryPrefix":"."})
     if ("SecondaryPrivateIpAddressCount" in params) body.append(prefix+".SecondaryPrivateIpAddressCount", (params["SecondaryPrivateIpAddressCount"] ?? '').toString());
     if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
 }
@@ -17756,14 +17604,14 @@ export interface TransitGatewayPeeringAttachment {
   CreationTime?: Date | number | null;
   Tags: Tag[];
 }
-function TransitGatewayPeeringAttachment_Parse(node: XmlNode): TransitGatewayPeeringAttachment {
+function TransitGatewayPeeringAttachment_Parse(node: xmlP.XmlNode): TransitGatewayPeeringAttachment {
   return {
     TransitGatewayAttachmentId: node.first("transitGatewayAttachmentId", false, x => x.content ?? ''),
     RequesterTgwInfo: node.first("requesterTgwInfo", false, PeeringTgwInfo_Parse),
     AccepterTgwInfo: node.first("accepterTgwInfo", false, PeeringTgwInfo_Parse),
     Status: node.first("status", false, PeeringAttachmentStatus_Parse),
     State: node.first("state", false, x => (x.content ?? '') as TransitGatewayAttachmentState),
-    CreationTime: node.first("creationTime", false, x => parseTimestamp(x.content)),
+    CreationTime: node.first("creationTime", false, x => xmlP.parseTimestamp(x.content)),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
   };
 }
@@ -17774,7 +17622,7 @@ export interface PeeringTgwInfo {
   OwnerId?: string | null;
   Region?: string | null;
 }
-function PeeringTgwInfo_Parse(node: XmlNode): PeeringTgwInfo {
+function PeeringTgwInfo_Parse(node: xmlP.XmlNode): PeeringTgwInfo {
   return {
     TransitGatewayId: node.first("transitGatewayId", false, x => x.content ?? ''),
     OwnerId: node.first("ownerId", false, x => x.content ?? ''),
@@ -17787,7 +17635,7 @@ export interface PeeringAttachmentStatus {
   Code?: string | null;
   Message?: string | null;
 }
-function PeeringAttachmentStatus_Parse(node: XmlNode): PeeringAttachmentStatus {
+function PeeringAttachmentStatus_Parse(node: xmlP.XmlNode): PeeringAttachmentStatus {
   return {
     Code: node.first("code", false, x => x.content ?? ''),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -17809,8 +17657,7 @@ export type TransitGatewayAttachmentState =
 | "rejected"
 | "rejecting"
 | "failing"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: output, named, interface
 export interface TransitGatewayVpcAttachment {
@@ -17824,7 +17671,7 @@ export interface TransitGatewayVpcAttachment {
   Options?: TransitGatewayVpcAttachmentOptions | null;
   Tags: Tag[];
 }
-function TransitGatewayVpcAttachment_Parse(node: XmlNode): TransitGatewayVpcAttachment {
+function TransitGatewayVpcAttachment_Parse(node: xmlP.XmlNode): TransitGatewayVpcAttachment {
   return {
     TransitGatewayAttachmentId: node.first("transitGatewayAttachmentId", false, x => x.content ?? ''),
     TransitGatewayId: node.first("transitGatewayId", false, x => x.content ?? ''),
@@ -17832,7 +17679,7 @@ function TransitGatewayVpcAttachment_Parse(node: XmlNode): TransitGatewayVpcAtta
     VpcOwnerId: node.first("vpcOwnerId", false, x => x.content ?? ''),
     State: node.first("state", false, x => (x.content ?? '') as TransitGatewayAttachmentState),
     SubnetIds: node.getList("subnetIds", "item").map(x => x.content ?? ''),
-    CreationTime: node.first("creationTime", false, x => parseTimestamp(x.content)),
+    CreationTime: node.first("creationTime", false, x => xmlP.parseTimestamp(x.content)),
     Options: node.first("options", false, TransitGatewayVpcAttachmentOptions_Parse),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
   };
@@ -17843,7 +17690,7 @@ export interface TransitGatewayVpcAttachmentOptions {
   DnsSupport?: DnsSupportValue | null;
   Ipv6Support?: Ipv6SupportValue | null;
 }
-function TransitGatewayVpcAttachmentOptions_Parse(node: XmlNode): TransitGatewayVpcAttachmentOptions {
+function TransitGatewayVpcAttachmentOptions_Parse(node: xmlP.XmlNode): TransitGatewayVpcAttachmentOptions {
   return {
     DnsSupport: node.first("dnsSupport", false, x => (x.content ?? '') as DnsSupportValue),
     Ipv6Support: node.first("ipv6Support", false, x => (x.content ?? '') as Ipv6SupportValue),
@@ -17855,7 +17702,7 @@ export interface UnsuccessfulItem {
   Error?: UnsuccessfulItemError | null;
   ResourceId?: string | null;
 }
-function UnsuccessfulItem_Parse(node: XmlNode): UnsuccessfulItem {
+function UnsuccessfulItem_Parse(node: xmlP.XmlNode): UnsuccessfulItem {
   return {
     Error: node.first("error", false, UnsuccessfulItemError_Parse),
     ResourceId: node.first("resourceId", false, x => x.content ?? ''),
@@ -17867,7 +17714,7 @@ export interface UnsuccessfulItemError {
   Code?: string | null;
   Message?: string | null;
 }
-function UnsuccessfulItemError_Parse(node: XmlNode): UnsuccessfulItemError {
+function UnsuccessfulItemError_Parse(node: xmlP.XmlNode): UnsuccessfulItemError {
   return {
     Code: node.first("code", false, x => x.content ?? ''),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -17883,10 +17730,10 @@ export interface VpcPeeringConnection {
   Tags: Tag[];
   VpcPeeringConnectionId?: string | null;
 }
-function VpcPeeringConnection_Parse(node: XmlNode): VpcPeeringConnection {
+function VpcPeeringConnection_Parse(node: xmlP.XmlNode): VpcPeeringConnection {
   return {
     AccepterVpcInfo: node.first("accepterVpcInfo", false, VpcPeeringConnectionVpcInfo_Parse),
-    ExpirationTime: node.first("expirationTime", false, x => parseTimestamp(x.content)),
+    ExpirationTime: node.first("expirationTime", false, x => xmlP.parseTimestamp(x.content)),
     RequesterVpcInfo: node.first("requesterVpcInfo", false, VpcPeeringConnectionVpcInfo_Parse),
     Status: node.first("status", false, VpcPeeringConnectionStateReason_Parse),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
@@ -17904,7 +17751,7 @@ export interface VpcPeeringConnectionVpcInfo {
   VpcId?: string | null;
   Region?: string | null;
 }
-function VpcPeeringConnectionVpcInfo_Parse(node: XmlNode): VpcPeeringConnectionVpcInfo {
+function VpcPeeringConnectionVpcInfo_Parse(node: xmlP.XmlNode): VpcPeeringConnectionVpcInfo {
   return {
     CidrBlock: node.first("cidrBlock", false, x => x.content ?? ''),
     Ipv6CidrBlockSet: node.getList("ipv6CidrBlockSet", "item").map(Ipv6CidrBlock_Parse),
@@ -17920,7 +17767,7 @@ function VpcPeeringConnectionVpcInfo_Parse(node: XmlNode): VpcPeeringConnectionV
 export interface Ipv6CidrBlock {
   Ipv6CidrBlock?: string | null;
 }
-function Ipv6CidrBlock_Parse(node: XmlNode): Ipv6CidrBlock {
+function Ipv6CidrBlock_Parse(node: xmlP.XmlNode): Ipv6CidrBlock {
   return {
     Ipv6CidrBlock: node.first("ipv6CidrBlock", false, x => x.content ?? ''),
   };
@@ -17930,7 +17777,7 @@ function Ipv6CidrBlock_Parse(node: XmlNode): Ipv6CidrBlock {
 export interface CidrBlock {
   CidrBlock?: string | null;
 }
-function CidrBlock_Parse(node: XmlNode): CidrBlock {
+function CidrBlock_Parse(node: xmlP.XmlNode): CidrBlock {
   return {
     CidrBlock: node.first("cidrBlock", false, x => x.content ?? ''),
   };
@@ -17942,7 +17789,7 @@ export interface VpcPeeringConnectionOptionsDescription {
   AllowEgressFromLocalClassicLinkToRemoteVpc?: boolean | null;
   AllowEgressFromLocalVpcToRemoteClassicLink?: boolean | null;
 }
-function VpcPeeringConnectionOptionsDescription_Parse(node: XmlNode): VpcPeeringConnectionOptionsDescription {
+function VpcPeeringConnectionOptionsDescription_Parse(node: xmlP.XmlNode): VpcPeeringConnectionOptionsDescription {
   return {
     AllowDnsResolutionFromRemoteVpc: node.first("allowDnsResolutionFromRemoteVpc", false, x => x.content === 'true'),
     AllowEgressFromLocalClassicLinkToRemoteVpc: node.first("allowEgressFromLocalClassicLinkToRemoteVpc", false, x => x.content === 'true'),
@@ -17955,7 +17802,7 @@ export interface VpcPeeringConnectionStateReason {
   Code?: VpcPeeringConnectionStateReasonCode | null;
   Message?: string | null;
 }
-function VpcPeeringConnectionStateReason_Parse(node: XmlNode): VpcPeeringConnectionStateReason {
+function VpcPeeringConnectionStateReason_Parse(node: xmlP.XmlNode): VpcPeeringConnectionStateReason {
   return {
     Code: node.first("code", false, x => (x.content ?? '') as VpcPeeringConnectionStateReasonCode),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -17973,8 +17820,7 @@ export type VpcPeeringConnectionStateReasonCode =
 | "expired"
 | "provisioning"
 | "deleting"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, interface
 export interface ByoipCidr {
@@ -17983,7 +17829,7 @@ export interface ByoipCidr {
   StatusMessage?: string | null;
   State?: ByoipCidrState | null;
 }
-function ByoipCidr_Parse(node: XmlNode): ByoipCidr {
+function ByoipCidr_Parse(node: xmlP.XmlNode): ByoipCidr {
   return {
     Cidr: node.first("cidr", false, x => x.content ?? ''),
     Description: node.first("description", false, x => x.content ?? ''),
@@ -18002,14 +17848,13 @@ export type ByoipCidrState =
 | "pending-provision"
 | "provisioned"
 | "provisioned-not-publicly-advertisable"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AssignedPrivateIpAddress {
   PrivateIpAddress?: string | null;
 }
-function AssignedPrivateIpAddress_Parse(node: XmlNode): AssignedPrivateIpAddress {
+function AssignedPrivateIpAddress_Parse(node: xmlP.XmlNode): AssignedPrivateIpAddress {
   return {
     PrivateIpAddress: node.first("privateIpAddress", false, x => x.content ?? ''),
   };
@@ -18020,7 +17865,7 @@ export interface AssociationStatus {
   Code?: AssociationStatusCode | null;
   Message?: string | null;
 }
-function AssociationStatus_Parse(node: XmlNode): AssociationStatus {
+function AssociationStatus_Parse(node: xmlP.XmlNode): AssociationStatus {
   return {
     Code: node.first("code", false, x => (x.content ?? '') as AssociationStatusCode),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -18034,8 +17879,7 @@ export type AssociationStatusCode =
 | "association-failed"
 | "disassociating"
 | "disassociated"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface IamInstanceProfileAssociation {
@@ -18045,13 +17889,13 @@ export interface IamInstanceProfileAssociation {
   State?: IamInstanceProfileAssociationState | null;
   Timestamp?: Date | number | null;
 }
-function IamInstanceProfileAssociation_Parse(node: XmlNode): IamInstanceProfileAssociation {
+function IamInstanceProfileAssociation_Parse(node: xmlP.XmlNode): IamInstanceProfileAssociation {
   return {
     AssociationId: node.first("associationId", false, x => x.content ?? ''),
     InstanceId: node.first("instanceId", false, x => x.content ?? ''),
     IamInstanceProfile: node.first("iamInstanceProfile", false, IamInstanceProfile_Parse),
     State: node.first("state", false, x => (x.content ?? '') as IamInstanceProfileAssociationState),
-    Timestamp: node.first("timestamp", false, x => parseTimestamp(x.content)),
+    Timestamp: node.first("timestamp", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -18060,7 +17904,7 @@ export interface IamInstanceProfile {
   Arn?: string | null;
   Id?: string | null;
 }
-function IamInstanceProfile_Parse(node: XmlNode): IamInstanceProfile {
+function IamInstanceProfile_Parse(node: xmlP.XmlNode): IamInstanceProfile {
   return {
     Arn: node.first("arn", false, x => x.content ?? ''),
     Id: node.first("id", false, x => x.content ?? ''),
@@ -18073,15 +17917,14 @@ export type IamInstanceProfileAssociationState =
 | "associated"
 | "disassociating"
 | "disassociated"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface RouteTableAssociationState {
   State?: RouteTableAssociationStateCode | null;
   StatusMessage?: string | null;
 }
-function RouteTableAssociationState_Parse(node: XmlNode): RouteTableAssociationState {
+function RouteTableAssociationState_Parse(node: xmlP.XmlNode): RouteTableAssociationState {
   return {
     State: node.first("state", false, x => (x.content ?? '') as RouteTableAssociationStateCode),
     StatusMessage: node.first("statusMessage", false, x => x.content ?? ''),
@@ -18095,8 +17938,7 @@ export type RouteTableAssociationStateCode =
 | "disassociating"
 | "disassociated"
 | "failed"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, interface
 export interface SubnetIpv6CidrBlockAssociation {
@@ -18104,7 +17946,7 @@ export interface SubnetIpv6CidrBlockAssociation {
   Ipv6CidrBlock?: string | null;
   Ipv6CidrBlockState?: SubnetCidrBlockState | null;
 }
-function SubnetIpv6CidrBlockAssociation_Parse(node: XmlNode): SubnetIpv6CidrBlockAssociation {
+function SubnetIpv6CidrBlockAssociation_Parse(node: xmlP.XmlNode): SubnetIpv6CidrBlockAssociation {
   return {
     AssociationId: node.first("associationId", false, x => x.content ?? ''),
     Ipv6CidrBlock: node.first("ipv6CidrBlock", false, x => x.content ?? ''),
@@ -18117,7 +17959,7 @@ export interface SubnetCidrBlockState {
   State?: SubnetCidrBlockStateCode | null;
   StatusMessage?: string | null;
 }
-function SubnetCidrBlockState_Parse(node: XmlNode): SubnetCidrBlockState {
+function SubnetCidrBlockState_Parse(node: xmlP.XmlNode): SubnetCidrBlockState {
   return {
     State: node.first("state", false, x => (x.content ?? '') as SubnetCidrBlockStateCode),
     StatusMessage: node.first("statusMessage", false, x => x.content ?? ''),
@@ -18132,8 +17974,7 @@ export type SubnetCidrBlockStateCode =
 | "disassociated"
 | "failing"
 | "failed"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface TransitGatewayMulticastDomainAssociations {
@@ -18143,7 +17984,7 @@ export interface TransitGatewayMulticastDomainAssociations {
   ResourceType?: TransitGatewayAttachmentResourceType | null;
   Subnets: SubnetAssociation[];
 }
-function TransitGatewayMulticastDomainAssociations_Parse(node: XmlNode): TransitGatewayMulticastDomainAssociations {
+function TransitGatewayMulticastDomainAssociations_Parse(node: xmlP.XmlNode): TransitGatewayMulticastDomainAssociations {
   return {
     TransitGatewayMulticastDomainId: node.first("transitGatewayMulticastDomainId", false, x => x.content ?? ''),
     TransitGatewayAttachmentId: node.first("transitGatewayAttachmentId", false, x => x.content ?? ''),
@@ -18160,15 +18001,14 @@ export type TransitGatewayAttachmentResourceType =
 | "direct-connect-gateway"
 | "peering"
 | "tgw-peering"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface SubnetAssociation {
   SubnetId?: string | null;
   State?: TransitGatewayMulitcastDomainAssociationState | null;
 }
-function SubnetAssociation_Parse(node: XmlNode): SubnetAssociation {
+function SubnetAssociation_Parse(node: xmlP.XmlNode): SubnetAssociation {
   return {
     SubnetId: node.first("subnetId", false, x => x.content ?? ''),
     State: node.first("state", false, x => (x.content ?? '') as TransitGatewayMulitcastDomainAssociationState),
@@ -18181,8 +18021,7 @@ export type TransitGatewayMulitcastDomainAssociationState =
 | "associated"
 | "disassociating"
 | "disassociated"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface TransitGatewayAssociation {
@@ -18192,7 +18031,7 @@ export interface TransitGatewayAssociation {
   ResourceType?: TransitGatewayAttachmentResourceType | null;
   State?: TransitGatewayAssociationState | null;
 }
-function TransitGatewayAssociation_Parse(node: XmlNode): TransitGatewayAssociation {
+function TransitGatewayAssociation_Parse(node: xmlP.XmlNode): TransitGatewayAssociation {
   return {
     TransitGatewayRouteTableId: node.first("transitGatewayRouteTableId", false, x => x.content ?? ''),
     TransitGatewayAttachmentId: node.first("transitGatewayAttachmentId", false, x => x.content ?? ''),
@@ -18208,8 +18047,7 @@ export type TransitGatewayAssociationState =
 | "associated"
 | "disassociating"
 | "disassociated"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, interface
 export interface VpcIpv6CidrBlockAssociation {
@@ -18219,7 +18057,7 @@ export interface VpcIpv6CidrBlockAssociation {
   NetworkBorderGroup?: string | null;
   Ipv6Pool?: string | null;
 }
-function VpcIpv6CidrBlockAssociation_Parse(node: XmlNode): VpcIpv6CidrBlockAssociation {
+function VpcIpv6CidrBlockAssociation_Parse(node: xmlP.XmlNode): VpcIpv6CidrBlockAssociation {
   return {
     AssociationId: node.first("associationId", false, x => x.content ?? ''),
     Ipv6CidrBlock: node.first("ipv6CidrBlock", false, x => x.content ?? ''),
@@ -18234,7 +18072,7 @@ export interface VpcCidrBlockState {
   State?: VpcCidrBlockStateCode | null;
   StatusMessage?: string | null;
 }
-function VpcCidrBlockState_Parse(node: XmlNode): VpcCidrBlockState {
+function VpcCidrBlockState_Parse(node: xmlP.XmlNode): VpcCidrBlockState {
   return {
     State: node.first("state", false, x => (x.content ?? '') as VpcCidrBlockStateCode),
     StatusMessage: node.first("statusMessage", false, x => x.content ?? ''),
@@ -18249,8 +18087,7 @@ export type VpcCidrBlockStateCode =
 | "disassociated"
 | "failing"
 | "failed"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, interface
 export interface VpcCidrBlockAssociation {
@@ -18258,7 +18095,7 @@ export interface VpcCidrBlockAssociation {
   CidrBlock?: string | null;
   CidrBlockState?: VpcCidrBlockState | null;
 }
-function VpcCidrBlockAssociation_Parse(node: XmlNode): VpcCidrBlockAssociation {
+function VpcCidrBlockAssociation_Parse(node: xmlP.XmlNode): VpcCidrBlockAssociation {
   return {
     AssociationId: node.first("associationId", false, x => x.content ?? ''),
     CidrBlock: node.first("cidrBlock", false, x => x.content ?? ''),
@@ -18273,15 +18110,14 @@ export type VolumeAttachmentState =
 | "detaching"
 | "detached"
 | "busy"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface VpcAttachment {
   State?: AttachmentStatus | null;
   VpcId?: string | null;
 }
-function VpcAttachment_Parse(node: XmlNode): VpcAttachment {
+function VpcAttachment_Parse(node: xmlP.XmlNode): VpcAttachment {
   return {
     State: node.first("state", false, x => (x.content ?? '') as AttachmentStatus),
     VpcId: node.first("vpcId", false, x => x.content ?? ''),
@@ -18294,15 +18130,14 @@ export type AttachmentStatus =
 | "attached"
 | "detaching"
 | "detached"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface ClientVpnAuthorizationRuleStatus {
   Code?: ClientVpnAuthorizationRuleStatusCode | null;
   Message?: string | null;
 }
-function ClientVpnAuthorizationRuleStatus_Parse(node: XmlNode): ClientVpnAuthorizationRuleStatus {
+function ClientVpnAuthorizationRuleStatus_Parse(node: xmlP.XmlNode): ClientVpnAuthorizationRuleStatus {
   return {
     Code: node.first("code", false, x => (x.content ?? '') as ClientVpnAuthorizationRuleStatusCode),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -18315,8 +18150,7 @@ export type ClientVpnAuthorizationRuleStatusCode =
 | "active"
 | "failed"
 | "revoking"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface BundleTask {
@@ -18329,16 +18163,16 @@ export interface BundleTask {
   Storage?: Storage | null;
   UpdateTime?: Date | number | null;
 }
-function BundleTask_Parse(node: XmlNode): BundleTask {
+function BundleTask_Parse(node: xmlP.XmlNode): BundleTask {
   return {
     BundleId: node.first("bundleId", false, x => x.content ?? ''),
     BundleTaskError: node.first("error", false, BundleTaskError_Parse),
     InstanceId: node.first("instanceId", false, x => x.content ?? ''),
     Progress: node.first("progress", false, x => x.content ?? ''),
-    StartTime: node.first("startTime", false, x => parseTimestamp(x.content)),
+    StartTime: node.first("startTime", false, x => xmlP.parseTimestamp(x.content)),
     State: node.first("state", false, x => (x.content ?? '') as BundleTaskState),
     Storage: node.first("storage", false, Storage_Parse),
-    UpdateTime: node.first("updateTime", false, x => parseTimestamp(x.content)),
+    UpdateTime: node.first("updateTime", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -18347,7 +18181,7 @@ export interface BundleTaskError {
   Code?: string | null;
   Message?: string | null;
 }
-function BundleTaskError_Parse(node: XmlNode): BundleTaskError {
+function BundleTaskError_Parse(node: xmlP.XmlNode): BundleTaskError {
   return {
     Code: node.first("code", false, x => x.content ?? ''),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -18363,8 +18197,7 @@ export type BundleTaskState =
 | "cancelling"
 | "complete"
 | "failed"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface ReservedInstancesListing {
@@ -18379,10 +18212,10 @@ export interface ReservedInstancesListing {
   Tags: Tag[];
   UpdateDate?: Date | number | null;
 }
-function ReservedInstancesListing_Parse(node: XmlNode): ReservedInstancesListing {
+function ReservedInstancesListing_Parse(node: xmlP.XmlNode): ReservedInstancesListing {
   return {
     ClientToken: node.first("clientToken", false, x => x.content ?? ''),
-    CreateDate: node.first("createDate", false, x => parseTimestamp(x.content)),
+    CreateDate: node.first("createDate", false, x => xmlP.parseTimestamp(x.content)),
     InstanceCounts: node.getList("instanceCounts", "item").map(InstanceCount_Parse),
     PriceSchedules: node.getList("priceSchedules", "item").map(PriceSchedule_Parse),
     ReservedInstancesId: node.first("reservedInstancesId", false, x => x.content ?? ''),
@@ -18390,7 +18223,7 @@ function ReservedInstancesListing_Parse(node: XmlNode): ReservedInstancesListing
     Status: node.first("status", false, x => (x.content ?? '') as ListingStatus),
     StatusMessage: node.first("statusMessage", false, x => x.content ?? ''),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
-    UpdateDate: node.first("updateDate", false, x => parseTimestamp(x.content)),
+    UpdateDate: node.first("updateDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -18399,7 +18232,7 @@ export interface InstanceCount {
   InstanceCount?: number | null;
   State?: ListingState | null;
 }
-function InstanceCount_Parse(node: XmlNode): InstanceCount {
+function InstanceCount_Parse(node: xmlP.XmlNode): InstanceCount {
   return {
     InstanceCount: node.first("instanceCount", false, x => parseInt(x.content ?? '0')),
     State: node.first("state", false, x => (x.content ?? '') as ListingState),
@@ -18412,8 +18245,7 @@ export type ListingState =
 | "sold"
 | "cancelled"
 | "pending"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface PriceSchedule {
@@ -18422,7 +18254,7 @@ export interface PriceSchedule {
   Price?: number | null;
   Term?: number | null;
 }
-function PriceSchedule_Parse(node: XmlNode): PriceSchedule {
+function PriceSchedule_Parse(node: xmlP.XmlNode): PriceSchedule {
   return {
     Active: node.first("active", false, x => x.content === 'true'),
     CurrencyCode: node.first("currencyCode", false, x => (x.content ?? '') as CurrencyCodeValues),
@@ -18437,8 +18269,7 @@ export type ListingStatus =
 | "pending"
 | "cancelled"
 | "closed"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface CancelSpotFleetRequestsSuccessItem {
@@ -18446,7 +18277,7 @@ export interface CancelSpotFleetRequestsSuccessItem {
   PreviousSpotFleetRequestState?: BatchState | null;
   SpotFleetRequestId?: string | null;
 }
-function CancelSpotFleetRequestsSuccessItem_Parse(node: XmlNode): CancelSpotFleetRequestsSuccessItem {
+function CancelSpotFleetRequestsSuccessItem_Parse(node: xmlP.XmlNode): CancelSpotFleetRequestsSuccessItem {
   return {
     CurrentSpotFleetRequestState: node.first("currentSpotFleetRequestState", false, x => (x.content ?? '') as BatchState),
     PreviousSpotFleetRequestState: node.first("previousSpotFleetRequestState", false, x => (x.content ?? '') as BatchState),
@@ -18463,15 +18294,14 @@ export type BatchState =
 | "cancelled_running"
 | "cancelled_terminating"
 | "modifying"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface CancelSpotFleetRequestsErrorItem {
   Error?: CancelSpotFleetRequestsError | null;
   SpotFleetRequestId?: string | null;
 }
-function CancelSpotFleetRequestsErrorItem_Parse(node: XmlNode): CancelSpotFleetRequestsErrorItem {
+function CancelSpotFleetRequestsErrorItem_Parse(node: xmlP.XmlNode): CancelSpotFleetRequestsErrorItem {
   return {
     Error: node.first("error", false, CancelSpotFleetRequestsError_Parse),
     SpotFleetRequestId: node.first("spotFleetRequestId", false, x => x.content ?? ''),
@@ -18483,7 +18313,7 @@ export interface CancelSpotFleetRequestsError {
   Code?: CancelBatchErrorCode | null;
   Message?: string | null;
 }
-function CancelSpotFleetRequestsError_Parse(node: XmlNode): CancelSpotFleetRequestsError {
+function CancelSpotFleetRequestsError_Parse(node: xmlP.XmlNode): CancelSpotFleetRequestsError {
   return {
     Code: node.first("code", false, x => (x.content ?? '') as CancelBatchErrorCode),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -18496,15 +18326,14 @@ export type CancelBatchErrorCode =
 | "fleetRequestIdMalformed"
 | "fleetRequestNotInCancellableState"
 | "unexpectedError"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface CancelledSpotInstanceRequest {
   SpotInstanceRequestId?: string | null;
   State?: CancelSpotInstanceRequestState | null;
 }
-function CancelledSpotInstanceRequest_Parse(node: XmlNode): CancelledSpotInstanceRequest {
+function CancelledSpotInstanceRequest_Parse(node: xmlP.XmlNode): CancelledSpotInstanceRequest {
   return {
     SpotInstanceRequestId: node.first("spotInstanceRequestId", false, x => x.content ?? ''),
     State: node.first("state", false, x => (x.content ?? '') as CancelSpotInstanceRequestState),
@@ -18518,8 +18347,7 @@ export type CancelSpotInstanceRequestState =
 | "closed"
 | "cancelled"
 | "completed"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface CapacityReservation {
@@ -18542,7 +18370,7 @@ export interface CapacityReservation {
   CreateDate?: Date | number | null;
   Tags: Tag[];
 }
-function CapacityReservation_Parse(node: XmlNode): CapacityReservation {
+function CapacityReservation_Parse(node: xmlP.XmlNode): CapacityReservation {
   return {
     CapacityReservationId: node.first("capacityReservationId", false, x => x.content ?? ''),
     OwnerId: node.first("ownerId", false, x => x.content ?? ''),
@@ -18557,10 +18385,10 @@ function CapacityReservation_Parse(node: XmlNode): CapacityReservation {
     EbsOptimized: node.first("ebsOptimized", false, x => x.content === 'true'),
     EphemeralStorage: node.first("ephemeralStorage", false, x => x.content === 'true'),
     State: node.first("state", false, x => (x.content ?? '') as CapacityReservationState),
-    EndDate: node.first("endDate", false, x => parseTimestamp(x.content)),
+    EndDate: node.first("endDate", false, x => xmlP.parseTimestamp(x.content)),
     EndDateType: node.first("endDateType", false, x => (x.content ?? '') as EndDateType),
     InstanceMatchCriteria: node.first("instanceMatchCriteria", false, x => (x.content ?? '') as InstanceMatchCriteria),
-    CreateDate: node.first("createDate", false, x => parseTimestamp(x.content)),
+    CreateDate: node.first("createDate", false, x => xmlP.parseTimestamp(x.content)),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
   };
 }
@@ -18572,8 +18400,7 @@ export type CapacityReservationState =
 | "cancelled"
 | "pending"
 | "failed"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface CarrierGateway {
@@ -18583,7 +18410,7 @@ export interface CarrierGateway {
   OwnerId?: string | null;
   Tags: Tag[];
 }
-function CarrierGateway_Parse(node: XmlNode): CarrierGateway {
+function CarrierGateway_Parse(node: xmlP.XmlNode): CarrierGateway {
   return {
     CarrierGatewayId: node.first("carrierGatewayId", false, x => x.content ?? ''),
     VpcId: node.first("vpcId", false, x => x.content ?? ''),
@@ -18599,15 +18426,14 @@ export type CarrierGatewayState =
 | "available"
 | "deleting"
 | "deleted"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface ClientVpnEndpointStatus {
   Code?: ClientVpnEndpointStatusCode | null;
   Message?: string | null;
 }
-function ClientVpnEndpointStatus_Parse(node: XmlNode): ClientVpnEndpointStatus {
+function ClientVpnEndpointStatus_Parse(node: xmlP.XmlNode): ClientVpnEndpointStatus {
   return {
     Code: node.first("code", false, x => (x.content ?? '') as ClientVpnEndpointStatusCode),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -18620,15 +18446,14 @@ export type ClientVpnEndpointStatusCode =
 | "available"
 | "deleting"
 | "deleted"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface ClientVpnRouteStatus {
   Code?: ClientVpnRouteStatusCode | null;
   Message?: string | null;
 }
-function ClientVpnRouteStatus_Parse(node: XmlNode): ClientVpnRouteStatus {
+function ClientVpnRouteStatus_Parse(node: xmlP.XmlNode): ClientVpnRouteStatus {
   return {
     Code: node.first("code", false, x => (x.content ?? '') as ClientVpnRouteStatusCode),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -18641,8 +18466,7 @@ export type ClientVpnRouteStatusCode =
 | "active"
 | "failed"
 | "deleting"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface CustomerGateway {
@@ -18655,7 +18479,7 @@ export interface CustomerGateway {
   DeviceName?: string | null;
   Tags: Tag[];
 }
-function CustomerGateway_Parse(node: XmlNode): CustomerGateway {
+function CustomerGateway_Parse(node: xmlP.XmlNode): CustomerGateway {
   return {
     BgpAsn: node.first("bgpAsn", false, x => x.content ?? ''),
     CustomerGatewayId: node.first("customerGatewayId", false, x => x.content ?? ''),
@@ -18688,7 +18512,7 @@ export interface Subnet {
   SubnetArn?: string | null;
   OutpostArn?: string | null;
 }
-function Subnet_Parse(node: XmlNode): Subnet {
+function Subnet_Parse(node: xmlP.XmlNode): Subnet {
   return {
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
     AvailabilityZoneId: node.first("availabilityZoneId", false, x => x.content ?? ''),
@@ -18714,8 +18538,7 @@ function Subnet_Parse(node: XmlNode): Subnet {
 export type SubnetState =
 | "pending"
 | "available"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface Vpc {
@@ -18730,7 +18553,7 @@ export interface Vpc {
   IsDefault?: boolean | null;
   Tags: Tag[];
 }
-function Vpc_Parse(node: XmlNode): Vpc {
+function Vpc_Parse(node: xmlP.XmlNode): Vpc {
   return {
     CidrBlock: node.first("cidrBlock", false, x => x.content ?? ''),
     DhcpOptionsId: node.first("dhcpOptionsId", false, x => x.content ?? ''),
@@ -18749,8 +18572,7 @@ function Vpc_Parse(node: XmlNode): Vpc {
 export type VpcState =
 | "pending"
 | "available"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface DhcpOptions {
@@ -18759,7 +18581,7 @@ export interface DhcpOptions {
   OwnerId?: string | null;
   Tags: Tag[];
 }
-function DhcpOptions_Parse(node: XmlNode): DhcpOptions {
+function DhcpOptions_Parse(node: xmlP.XmlNode): DhcpOptions {
   return {
     DhcpConfigurations: node.getList("dhcpConfigurationSet", "item").map(DhcpConfiguration_Parse),
     DhcpOptionsId: node.first("dhcpOptionsId", false, x => x.content ?? ''),
@@ -18773,7 +18595,7 @@ export interface DhcpConfiguration {
   Key?: string | null;
   Values: AttributeValue[];
 }
-function DhcpConfiguration_Parse(node: XmlNode): DhcpConfiguration {
+function DhcpConfiguration_Parse(node: xmlP.XmlNode): DhcpConfiguration {
   return {
     Key: node.first("key", false, x => x.content ?? ''),
     Values: node.getList("valueSet", "item").map(AttributeValue_Parse),
@@ -18786,7 +18608,7 @@ export interface EgressOnlyInternetGateway {
   EgressOnlyInternetGatewayId?: string | null;
   Tags: Tag[];
 }
-function EgressOnlyInternetGateway_Parse(node: XmlNode): EgressOnlyInternetGateway {
+function EgressOnlyInternetGateway_Parse(node: xmlP.XmlNode): EgressOnlyInternetGateway {
   return {
     Attachments: node.getList("attachmentSet", "item").map(InternetGatewayAttachment_Parse),
     EgressOnlyInternetGatewayId: node.first("egressOnlyInternetGatewayId", false, x => x.content ?? ''),
@@ -18799,7 +18621,7 @@ export interface InternetGatewayAttachment {
   State?: AttachmentStatus | null;
   VpcId?: string | null;
 }
-function InternetGatewayAttachment_Parse(node: XmlNode): InternetGatewayAttachment {
+function InternetGatewayAttachment_Parse(node: xmlP.XmlNode): InternetGatewayAttachment {
   return {
     State: node.first("state", false, x => (x.content ?? '') as AttachmentStatus),
     VpcId: node.first("vpcId", false, x => x.content ?? ''),
@@ -18813,7 +18635,7 @@ export interface CreateFleetError {
   ErrorCode?: string | null;
   ErrorMessage?: string | null;
 }
-function CreateFleetError_Parse(node: XmlNode): CreateFleetError {
+function CreateFleetError_Parse(node: xmlP.XmlNode): CreateFleetError {
   return {
     LaunchTemplateAndOverrides: node.first("launchTemplateAndOverrides", false, LaunchTemplateAndOverridesResponse_Parse),
     Lifecycle: node.first("lifecycle", false, x => (x.content ?? '') as InstanceLifecycle),
@@ -18827,7 +18649,7 @@ export interface LaunchTemplateAndOverridesResponse {
   LaunchTemplateSpecification?: FleetLaunchTemplateSpecification | null;
   Overrides?: FleetLaunchTemplateOverrides | null;
 }
-function LaunchTemplateAndOverridesResponse_Parse(node: XmlNode): LaunchTemplateAndOverridesResponse {
+function LaunchTemplateAndOverridesResponse_Parse(node: xmlP.XmlNode): LaunchTemplateAndOverridesResponse {
   return {
     LaunchTemplateSpecification: node.first("launchTemplateSpecification", false, FleetLaunchTemplateSpecification_Parse),
     Overrides: node.first("overrides", false, FleetLaunchTemplateOverrides_Parse),
@@ -18844,7 +18666,7 @@ export interface FleetLaunchTemplateOverrides {
   Priority?: number | null;
   Placement?: PlacementResponse | null;
 }
-function FleetLaunchTemplateOverrides_Parse(node: XmlNode): FleetLaunchTemplateOverrides {
+function FleetLaunchTemplateOverrides_Parse(node: xmlP.XmlNode): FleetLaunchTemplateOverrides {
   return {
     InstanceType: node.first("instanceType", false, x => (x.content ?? '') as InstanceType),
     MaxPrice: node.first("maxPrice", false, x => x.content ?? ''),
@@ -18860,7 +18682,7 @@ function FleetLaunchTemplateOverrides_Parse(node: XmlNode): FleetLaunchTemplateO
 export interface PlacementResponse {
   GroupName?: string | null;
 }
-function PlacementResponse_Parse(node: XmlNode): PlacementResponse {
+function PlacementResponse_Parse(node: xmlP.XmlNode): PlacementResponse {
   return {
     GroupName: node.first("groupName", false, x => x.content ?? ''),
   };
@@ -18870,8 +18692,7 @@ function PlacementResponse_Parse(node: XmlNode): PlacementResponse {
 export type InstanceLifecycle =
 | "spot"
 | "on-demand"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface CreateFleetInstance {
@@ -18881,7 +18702,7 @@ export interface CreateFleetInstance {
   InstanceType?: InstanceType | null;
   Platform?: PlatformValues | null;
 }
-function CreateFleetInstance_Parse(node: XmlNode): CreateFleetInstance {
+function CreateFleetInstance_Parse(node: xmlP.XmlNode): CreateFleetInstance {
   return {
     LaunchTemplateAndOverrides: node.first("launchTemplateAndOverrides", false, LaunchTemplateAndOverridesResponse_Parse),
     Lifecycle: node.first("lifecycle", false, x => (x.content ?? '') as InstanceLifecycle),
@@ -18901,7 +18722,7 @@ export interface ExportTask {
   StatusMessage?: string | null;
   Tags: Tag[];
 }
-function ExportTask_Parse(node: XmlNode): ExportTask {
+function ExportTask_Parse(node: xmlP.XmlNode): ExportTask {
   return {
     Description: node.first("description", false, x => x.content ?? ''),
     ExportTaskId: node.first("exportTaskId", false, x => x.content ?? ''),
@@ -18920,7 +18741,7 @@ export interface ExportToS3Task {
   S3Bucket?: string | null;
   S3Key?: string | null;
 }
-function ExportToS3Task_Parse(node: XmlNode): ExportToS3Task {
+function ExportToS3Task_Parse(node: xmlP.XmlNode): ExportToS3Task {
   return {
     ContainerFormat: node.first("containerFormat", false, x => (x.content ?? '') as ContainerFormat),
     DiskImageFormat: node.first("diskImageFormat", false, x => (x.content ?? '') as DiskImageFormat),
@@ -18934,7 +18755,7 @@ export interface InstanceExportDetails {
   InstanceId?: string | null;
   TargetEnvironment?: ExportEnvironment | null;
 }
-function InstanceExportDetails_Parse(node: XmlNode): InstanceExportDetails {
+function InstanceExportDetails_Parse(node: xmlP.XmlNode): InstanceExportDetails {
   return {
     InstanceId: node.first("instanceId", false, x => x.content ?? ''),
     TargetEnvironment: node.first("targetEnvironment", false, x => (x.content ?? '') as ExportEnvironment),
@@ -18947,8 +18768,7 @@ export type ExportTaskState =
 | "cancelling"
 | "cancelled"
 | "completed"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface InternetGateway {
@@ -18957,7 +18777,7 @@ export interface InternetGateway {
   OwnerId?: string | null;
   Tags: Tag[];
 }
-function InternetGateway_Parse(node: XmlNode): InternetGateway {
+function InternetGateway_Parse(node: xmlP.XmlNode): InternetGateway {
   return {
     Attachments: node.getList("attachmentSet", "item").map(InternetGatewayAttachment_Parse),
     InternetGatewayId: node.first("internetGatewayId", false, x => x.content ?? ''),
@@ -18976,11 +18796,11 @@ export interface LaunchTemplate {
   LatestVersionNumber?: number | null;
   Tags: Tag[];
 }
-function LaunchTemplate_Parse(node: XmlNode): LaunchTemplate {
+function LaunchTemplate_Parse(node: xmlP.XmlNode): LaunchTemplate {
   return {
     LaunchTemplateId: node.first("launchTemplateId", false, x => x.content ?? ''),
     LaunchTemplateName: node.first("launchTemplateName", false, x => x.content ?? ''),
-    CreateTime: node.first("createTime", false, x => parseTimestamp(x.content)),
+    CreateTime: node.first("createTime", false, x => xmlP.parseTimestamp(x.content)),
     CreatedBy: node.first("createdBy", false, x => x.content ?? ''),
     DefaultVersionNumber: node.first("defaultVersionNumber", false, x => parseInt(x.content ?? '0')),
     LatestVersionNumber: node.first("latestVersionNumber", false, x => parseInt(x.content ?? '0')),
@@ -18992,7 +18812,7 @@ function LaunchTemplate_Parse(node: XmlNode): LaunchTemplate {
 export interface ValidationWarning {
   Errors: ValidationError[];
 }
-function ValidationWarning_Parse(node: XmlNode): ValidationWarning {
+function ValidationWarning_Parse(node: xmlP.XmlNode): ValidationWarning {
   return {
     Errors: node.getList("errorSet", "item").map(ValidationError_Parse),
   };
@@ -19003,7 +18823,7 @@ export interface ValidationError {
   Code?: string | null;
   Message?: string | null;
 }
-function ValidationError_Parse(node: XmlNode): ValidationError {
+function ValidationError_Parse(node: xmlP.XmlNode): ValidationError {
   return {
     Code: node.first("code", false, x => x.content ?? ''),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -19021,13 +18841,13 @@ export interface LaunchTemplateVersion {
   DefaultVersion?: boolean | null;
   LaunchTemplateData?: ResponseLaunchTemplateData | null;
 }
-function LaunchTemplateVersion_Parse(node: XmlNode): LaunchTemplateVersion {
+function LaunchTemplateVersion_Parse(node: xmlP.XmlNode): LaunchTemplateVersion {
   return {
     LaunchTemplateId: node.first("launchTemplateId", false, x => x.content ?? ''),
     LaunchTemplateName: node.first("launchTemplateName", false, x => x.content ?? ''),
     VersionNumber: node.first("versionNumber", false, x => parseInt(x.content ?? '0')),
     VersionDescription: node.first("versionDescription", false, x => x.content ?? ''),
-    CreateTime: node.first("createTime", false, x => parseTimestamp(x.content)),
+    CreateTime: node.first("createTime", false, x => xmlP.parseTimestamp(x.content)),
     CreatedBy: node.first("createdBy", false, x => x.content ?? ''),
     DefaultVersion: node.first("defaultVersion", false, x => x.content === 'true'),
     LaunchTemplateData: node.first("launchTemplateData", false, ResponseLaunchTemplateData_Parse),
@@ -19063,7 +18883,7 @@ export interface ResponseLaunchTemplateData {
   HibernationOptions?: LaunchTemplateHibernationOptions | null;
   MetadataOptions?: LaunchTemplateInstanceMetadataOptions | null;
 }
-function ResponseLaunchTemplateData_Parse(node: XmlNode): ResponseLaunchTemplateData {
+function ResponseLaunchTemplateData_Parse(node: xmlP.XmlNode): ResponseLaunchTemplateData {
   return {
     KernelId: node.first("kernelId", false, x => x.content ?? ''),
     EbsOptimized: node.first("ebsOptimized", false, x => x.content === 'true'),
@@ -19099,7 +18919,7 @@ export interface LaunchTemplateIamInstanceProfileSpecification {
   Arn?: string | null;
   Name?: string | null;
 }
-function LaunchTemplateIamInstanceProfileSpecification_Parse(node: XmlNode): LaunchTemplateIamInstanceProfileSpecification {
+function LaunchTemplateIamInstanceProfileSpecification_Parse(node: xmlP.XmlNode): LaunchTemplateIamInstanceProfileSpecification {
   return {
     Arn: node.first("arn", false, x => x.content ?? ''),
     Name: node.first("name", false, x => x.content ?? ''),
@@ -19113,7 +18933,7 @@ export interface LaunchTemplateBlockDeviceMapping {
   Ebs?: LaunchTemplateEbsBlockDevice | null;
   NoDevice?: string | null;
 }
-function LaunchTemplateBlockDeviceMapping_Parse(node: XmlNode): LaunchTemplateBlockDeviceMapping {
+function LaunchTemplateBlockDeviceMapping_Parse(node: xmlP.XmlNode): LaunchTemplateBlockDeviceMapping {
   return {
     DeviceName: node.first("deviceName", false, x => x.content ?? ''),
     VirtualName: node.first("virtualName", false, x => x.content ?? ''),
@@ -19132,7 +18952,7 @@ export interface LaunchTemplateEbsBlockDevice {
   VolumeSize?: number | null;
   VolumeType?: VolumeType | null;
 }
-function LaunchTemplateEbsBlockDevice_Parse(node: XmlNode): LaunchTemplateEbsBlockDevice {
+function LaunchTemplateEbsBlockDevice_Parse(node: xmlP.XmlNode): LaunchTemplateEbsBlockDevice {
   return {
     Encrypted: node.first("encrypted", false, x => x.content === 'true'),
     DeleteOnTermination: node.first("deleteOnTermination", false, x => x.content === 'true'),
@@ -19161,7 +18981,7 @@ export interface LaunchTemplateInstanceNetworkInterfaceSpecification {
   SecondaryPrivateIpAddressCount?: number | null;
   SubnetId?: string | null;
 }
-function LaunchTemplateInstanceNetworkInterfaceSpecification_Parse(node: XmlNode): LaunchTemplateInstanceNetworkInterfaceSpecification {
+function LaunchTemplateInstanceNetworkInterfaceSpecification_Parse(node: xmlP.XmlNode): LaunchTemplateInstanceNetworkInterfaceSpecification {
   return {
     AssociateCarrierIpAddress: node.first("associateCarrierIpAddress", false, x => x.content === 'true'),
     AssociatePublicIpAddress: node.first("associatePublicIpAddress", false, x => x.content === 'true'),
@@ -19184,7 +19004,7 @@ function LaunchTemplateInstanceNetworkInterfaceSpecification_Parse(node: XmlNode
 export interface LaunchTemplatesMonitoring {
   Enabled?: boolean | null;
 }
-function LaunchTemplatesMonitoring_Parse(node: XmlNode): LaunchTemplatesMonitoring {
+function LaunchTemplatesMonitoring_Parse(node: xmlP.XmlNode): LaunchTemplatesMonitoring {
   return {
     Enabled: node.first("enabled", false, x => x.content === 'true'),
   };
@@ -19201,7 +19021,7 @@ export interface LaunchTemplatePlacement {
   HostResourceGroupArn?: string | null;
   PartitionNumber?: number | null;
 }
-function LaunchTemplatePlacement_Parse(node: XmlNode): LaunchTemplatePlacement {
+function LaunchTemplatePlacement_Parse(node: xmlP.XmlNode): LaunchTemplatePlacement {
   return {
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
     Affinity: node.first("affinity", false, x => x.content ?? ''),
@@ -19219,7 +19039,7 @@ export interface LaunchTemplateTagSpecification {
   ResourceType?: ResourceType | null;
   Tags: Tag[];
 }
-function LaunchTemplateTagSpecification_Parse(node: XmlNode): LaunchTemplateTagSpecification {
+function LaunchTemplateTagSpecification_Parse(node: xmlP.XmlNode): LaunchTemplateTagSpecification {
   return {
     ResourceType: node.first("resourceType", false, x => (x.content ?? '') as ResourceType),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
@@ -19230,7 +19050,7 @@ function LaunchTemplateTagSpecification_Parse(node: XmlNode): LaunchTemplateTagS
 export interface ElasticGpuSpecificationResponse {
   Type?: string | null;
 }
-function ElasticGpuSpecificationResponse_Parse(node: XmlNode): ElasticGpuSpecificationResponse {
+function ElasticGpuSpecificationResponse_Parse(node: xmlP.XmlNode): ElasticGpuSpecificationResponse {
   return {
     Type: node.first("type", false, x => x.content ?? ''),
   };
@@ -19241,7 +19061,7 @@ export interface LaunchTemplateElasticInferenceAcceleratorResponse {
   Type?: string | null;
   Count?: number | null;
 }
-function LaunchTemplateElasticInferenceAcceleratorResponse_Parse(node: XmlNode): LaunchTemplateElasticInferenceAcceleratorResponse {
+function LaunchTemplateElasticInferenceAcceleratorResponse_Parse(node: xmlP.XmlNode): LaunchTemplateElasticInferenceAcceleratorResponse {
   return {
     Type: node.first("type", false, x => x.content ?? ''),
     Count: node.first("count", false, x => parseInt(x.content ?? '0')),
@@ -19253,7 +19073,7 @@ export interface LaunchTemplateInstanceMarketOptions {
   MarketType?: MarketType | null;
   SpotOptions?: LaunchTemplateSpotMarketOptions | null;
 }
-function LaunchTemplateInstanceMarketOptions_Parse(node: XmlNode): LaunchTemplateInstanceMarketOptions {
+function LaunchTemplateInstanceMarketOptions_Parse(node: xmlP.XmlNode): LaunchTemplateInstanceMarketOptions {
   return {
     MarketType: node.first("marketType", false, x => (x.content ?? '') as MarketType),
     SpotOptions: node.first("spotOptions", false, LaunchTemplateSpotMarketOptions_Parse),
@@ -19268,12 +19088,12 @@ export interface LaunchTemplateSpotMarketOptions {
   ValidUntil?: Date | number | null;
   InstanceInterruptionBehavior?: InstanceInterruptionBehavior | null;
 }
-function LaunchTemplateSpotMarketOptions_Parse(node: XmlNode): LaunchTemplateSpotMarketOptions {
+function LaunchTemplateSpotMarketOptions_Parse(node: xmlP.XmlNode): LaunchTemplateSpotMarketOptions {
   return {
     MaxPrice: node.first("maxPrice", false, x => x.content ?? ''),
     SpotInstanceType: node.first("spotInstanceType", false, x => (x.content ?? '') as SpotInstanceType),
     BlockDurationMinutes: node.first("blockDurationMinutes", false, x => parseInt(x.content ?? '0')),
-    ValidUntil: node.first("validUntil", false, x => parseTimestamp(x.content)),
+    ValidUntil: node.first("validUntil", false, x => xmlP.parseTimestamp(x.content)),
     InstanceInterruptionBehavior: node.first("instanceInterruptionBehavior", false, x => (x.content ?? '') as InstanceInterruptionBehavior),
   };
 }
@@ -19282,7 +19102,7 @@ function LaunchTemplateSpotMarketOptions_Parse(node: XmlNode): LaunchTemplateSpo
 export interface CreditSpecification {
   CpuCredits?: string | null;
 }
-function CreditSpecification_Parse(node: XmlNode): CreditSpecification {
+function CreditSpecification_Parse(node: xmlP.XmlNode): CreditSpecification {
   return {
     CpuCredits: node.first("cpuCredits", false, x => x.content ?? ''),
   };
@@ -19293,7 +19113,7 @@ export interface LaunchTemplateCpuOptions {
   CoreCount?: number | null;
   ThreadsPerCore?: number | null;
 }
-function LaunchTemplateCpuOptions_Parse(node: XmlNode): LaunchTemplateCpuOptions {
+function LaunchTemplateCpuOptions_Parse(node: xmlP.XmlNode): LaunchTemplateCpuOptions {
   return {
     CoreCount: node.first("coreCount", false, x => parseInt(x.content ?? '0')),
     ThreadsPerCore: node.first("threadsPerCore", false, x => parseInt(x.content ?? '0')),
@@ -19305,7 +19125,7 @@ export interface LaunchTemplateCapacityReservationSpecificationResponse {
   CapacityReservationPreference?: CapacityReservationPreference | null;
   CapacityReservationTarget?: CapacityReservationTargetResponse | null;
 }
-function LaunchTemplateCapacityReservationSpecificationResponse_Parse(node: XmlNode): LaunchTemplateCapacityReservationSpecificationResponse {
+function LaunchTemplateCapacityReservationSpecificationResponse_Parse(node: xmlP.XmlNode): LaunchTemplateCapacityReservationSpecificationResponse {
   return {
     CapacityReservationPreference: node.first("capacityReservationPreference", false, x => (x.content ?? '') as CapacityReservationPreference),
     CapacityReservationTarget: node.first("capacityReservationTarget", false, CapacityReservationTargetResponse_Parse),
@@ -19317,7 +19137,7 @@ export interface CapacityReservationTargetResponse {
   CapacityReservationId?: string | null;
   CapacityReservationResourceGroupArn?: string | null;
 }
-function CapacityReservationTargetResponse_Parse(node: XmlNode): CapacityReservationTargetResponse {
+function CapacityReservationTargetResponse_Parse(node: xmlP.XmlNode): CapacityReservationTargetResponse {
   return {
     CapacityReservationId: node.first("capacityReservationId", false, x => x.content ?? ''),
     CapacityReservationResourceGroupArn: node.first("capacityReservationResourceGroupArn", false, x => x.content ?? ''),
@@ -19328,7 +19148,7 @@ function CapacityReservationTargetResponse_Parse(node: XmlNode): CapacityReserva
 export interface LaunchTemplateLicenseConfiguration {
   LicenseConfigurationArn?: string | null;
 }
-function LaunchTemplateLicenseConfiguration_Parse(node: XmlNode): LaunchTemplateLicenseConfiguration {
+function LaunchTemplateLicenseConfiguration_Parse(node: xmlP.XmlNode): LaunchTemplateLicenseConfiguration {
   return {
     LicenseConfigurationArn: node.first("licenseConfigurationArn", false, x => x.content ?? ''),
   };
@@ -19338,7 +19158,7 @@ function LaunchTemplateLicenseConfiguration_Parse(node: XmlNode): LaunchTemplate
 export interface LaunchTemplateHibernationOptions {
   Configured?: boolean | null;
 }
-function LaunchTemplateHibernationOptions_Parse(node: XmlNode): LaunchTemplateHibernationOptions {
+function LaunchTemplateHibernationOptions_Parse(node: xmlP.XmlNode): LaunchTemplateHibernationOptions {
   return {
     Configured: node.first("configured", false, x => x.content === 'true'),
   };
@@ -19351,7 +19171,7 @@ export interface LaunchTemplateInstanceMetadataOptions {
   HttpPutResponseHopLimit?: number | null;
   HttpEndpoint?: LaunchTemplateInstanceMetadataEndpointState | null;
 }
-function LaunchTemplateInstanceMetadataOptions_Parse(node: XmlNode): LaunchTemplateInstanceMetadataOptions {
+function LaunchTemplateInstanceMetadataOptions_Parse(node: xmlP.XmlNode): LaunchTemplateInstanceMetadataOptions {
   return {
     State: node.first("state", false, x => (x.content ?? '') as LaunchTemplateInstanceMetadataOptionsState),
     HttpTokens: node.first("httpTokens", false, x => (x.content ?? '') as LaunchTemplateHttpTokensState),
@@ -19364,8 +19184,7 @@ function LaunchTemplateInstanceMetadataOptions_Parse(node: XmlNode): LaunchTempl
 export type LaunchTemplateInstanceMetadataOptionsState =
 | "pending"
 | "applied"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface LocalGatewayRoute {
@@ -19377,7 +19196,7 @@ export interface LocalGatewayRoute {
   LocalGatewayRouteTableArn?: string | null;
   OwnerId?: string | null;
 }
-function LocalGatewayRoute_Parse(node: XmlNode): LocalGatewayRoute {
+function LocalGatewayRoute_Parse(node: xmlP.XmlNode): LocalGatewayRoute {
   return {
     DestinationCidrBlock: node.first("destinationCidrBlock", false, x => x.content ?? ''),
     LocalGatewayVirtualInterfaceGroupId: node.first("localGatewayVirtualInterfaceGroupId", false, x => x.content ?? ''),
@@ -19393,8 +19212,7 @@ function LocalGatewayRoute_Parse(node: XmlNode): LocalGatewayRoute {
 export type LocalGatewayRouteType =
 | "static"
 | "propagated"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, enum
 export type LocalGatewayRouteState =
@@ -19403,8 +19221,7 @@ export type LocalGatewayRouteState =
 | "blackhole"
 | "deleting"
 | "deleted"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface LocalGatewayRouteTableVpcAssociation {
@@ -19417,7 +19234,7 @@ export interface LocalGatewayRouteTableVpcAssociation {
   State?: string | null;
   Tags: Tag[];
 }
-function LocalGatewayRouteTableVpcAssociation_Parse(node: XmlNode): LocalGatewayRouteTableVpcAssociation {
+function LocalGatewayRouteTableVpcAssociation_Parse(node: xmlP.XmlNode): LocalGatewayRouteTableVpcAssociation {
   return {
     LocalGatewayRouteTableVpcAssociationId: node.first("localGatewayRouteTableVpcAssociationId", false, x => x.content ?? ''),
     LocalGatewayRouteTableId: node.first("localGatewayRouteTableId", false, x => x.content ?? ''),
@@ -19443,7 +19260,7 @@ export interface ManagedPrefixList {
   Tags: Tag[];
   OwnerId?: string | null;
 }
-function ManagedPrefixList_Parse(node: XmlNode): ManagedPrefixList {
+function ManagedPrefixList_Parse(node: xmlP.XmlNode): ManagedPrefixList {
   return {
     PrefixListId: node.first("prefixListId", false, x => x.content ?? ''),
     AddressFamily: node.first("addressFamily", false, x => x.content ?? ''),
@@ -19472,8 +19289,7 @@ export type PrefixListState =
 | "delete-in-progress"
 | "delete-complete"
 | "delete-failed"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface NatGateway {
@@ -19489,10 +19305,10 @@ export interface NatGateway {
   VpcId?: string | null;
   Tags: Tag[];
 }
-function NatGateway_Parse(node: XmlNode): NatGateway {
+function NatGateway_Parse(node: xmlP.XmlNode): NatGateway {
   return {
-    CreateTime: node.first("createTime", false, x => parseTimestamp(x.content)),
-    DeleteTime: node.first("deleteTime", false, x => parseTimestamp(x.content)),
+    CreateTime: node.first("createTime", false, x => xmlP.parseTimestamp(x.content)),
+    DeleteTime: node.first("deleteTime", false, x => xmlP.parseTimestamp(x.content)),
     FailureCode: node.first("failureCode", false, x => x.content ?? ''),
     FailureMessage: node.first("failureMessage", false, x => x.content ?? ''),
     NatGatewayAddresses: node.getList("natGatewayAddressSet", "item").map(NatGatewayAddress_Parse),
@@ -19512,7 +19328,7 @@ export interface NatGatewayAddress {
   PrivateIp?: string | null;
   PublicIp?: string | null;
 }
-function NatGatewayAddress_Parse(node: XmlNode): NatGatewayAddress {
+function NatGatewayAddress_Parse(node: xmlP.XmlNode): NatGatewayAddress {
   return {
     AllocationId: node.first("allocationId", false, x => x.content ?? ''),
     NetworkInterfaceId: node.first("networkInterfaceId", false, x => x.content ?? ''),
@@ -19529,11 +19345,11 @@ export interface ProvisionedBandwidth {
   Requested?: string | null;
   Status?: string | null;
 }
-function ProvisionedBandwidth_Parse(node: XmlNode): ProvisionedBandwidth {
+function ProvisionedBandwidth_Parse(node: xmlP.XmlNode): ProvisionedBandwidth {
   return {
-    ProvisionTime: node.first("provisionTime", false, x => parseTimestamp(x.content)),
+    ProvisionTime: node.first("provisionTime", false, x => xmlP.parseTimestamp(x.content)),
     Provisioned: node.first("provisioned", false, x => x.content ?? ''),
-    RequestTime: node.first("requestTime", false, x => parseTimestamp(x.content)),
+    RequestTime: node.first("requestTime", false, x => xmlP.parseTimestamp(x.content)),
     Requested: node.first("requested", false, x => x.content ?? ''),
     Status: node.first("status", false, x => x.content ?? ''),
   };
@@ -19546,8 +19362,7 @@ export type NatGatewayState =
 | "available"
 | "deleting"
 | "deleted"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface NetworkAcl {
@@ -19559,7 +19374,7 @@ export interface NetworkAcl {
   VpcId?: string | null;
   OwnerId?: string | null;
 }
-function NetworkAcl_Parse(node: XmlNode): NetworkAcl {
+function NetworkAcl_Parse(node: xmlP.XmlNode): NetworkAcl {
   return {
     Associations: node.getList("associationSet", "item").map(NetworkAclAssociation_Parse),
     Entries: node.getList("entrySet", "item").map(NetworkAclEntry_Parse),
@@ -19577,7 +19392,7 @@ export interface NetworkAclAssociation {
   NetworkAclId?: string | null;
   SubnetId?: string | null;
 }
-function NetworkAclAssociation_Parse(node: XmlNode): NetworkAclAssociation {
+function NetworkAclAssociation_Parse(node: xmlP.XmlNode): NetworkAclAssociation {
   return {
     NetworkAclAssociationId: node.first("networkAclAssociationId", false, x => x.content ?? ''),
     NetworkAclId: node.first("networkAclId", false, x => x.content ?? ''),
@@ -19596,7 +19411,7 @@ export interface NetworkAclEntry {
   RuleAction?: RuleAction | null;
   RuleNumber?: number | null;
 }
-function NetworkAclEntry_Parse(node: XmlNode): NetworkAclEntry {
+function NetworkAclEntry_Parse(node: xmlP.XmlNode): NetworkAclEntry {
   return {
     CidrBlock: node.first("cidrBlock", false, x => x.content ?? ''),
     Egress: node.first("egress", false, x => x.content === 'true'),
@@ -19633,7 +19448,7 @@ export interface NetworkInterface {
   TagSet: Tag[];
   VpcId?: string | null;
 }
-function NetworkInterface_Parse(node: XmlNode): NetworkInterface {
+function NetworkInterface_Parse(node: xmlP.XmlNode): NetworkInterface {
   return {
     Association: node.first("association", false, NetworkInterfaceAssociation_Parse),
     Attachment: node.first("attachment", false, NetworkInterfaceAttachment_Parse),
@@ -19669,7 +19484,7 @@ export interface NetworkInterfaceAssociation {
   CustomerOwnedIp?: string | null;
   CarrierIp?: string | null;
 }
-function NetworkInterfaceAssociation_Parse(node: XmlNode): NetworkInterfaceAssociation {
+function NetworkInterfaceAssociation_Parse(node: xmlP.XmlNode): NetworkInterfaceAssociation {
   return {
     AllocationId: node.first("allocationId", false, x => x.content ?? ''),
     AssociationId: node.first("associationId", false, x => x.content ?? ''),
@@ -19691,9 +19506,9 @@ export interface NetworkInterfaceAttachment {
   InstanceOwnerId?: string | null;
   Status?: AttachmentStatus | null;
 }
-function NetworkInterfaceAttachment_Parse(node: XmlNode): NetworkInterfaceAttachment {
+function NetworkInterfaceAttachment_Parse(node: xmlP.XmlNode): NetworkInterfaceAttachment {
   return {
-    AttachTime: node.first("attachTime", false, x => parseTimestamp(x.content)),
+    AttachTime: node.first("attachTime", false, x => xmlP.parseTimestamp(x.content)),
     AttachmentId: node.first("attachmentId", false, x => x.content ?? ''),
     DeleteOnTermination: node.first("deleteOnTermination", false, x => x.content === 'true'),
     DeviceIndex: node.first("deviceIndex", false, x => parseInt(x.content ?? '0')),
@@ -19708,14 +19523,13 @@ export type NetworkInterfaceType =
 | "interface"
 | "natGateway"
 | "efa"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface NetworkInterfaceIpv6Address {
   Ipv6Address?: string | null;
 }
-function NetworkInterfaceIpv6Address_Parse(node: XmlNode): NetworkInterfaceIpv6Address {
+function NetworkInterfaceIpv6Address_Parse(node: xmlP.XmlNode): NetworkInterfaceIpv6Address {
   return {
     Ipv6Address: node.first("ipv6Address", false, x => x.content ?? ''),
   };
@@ -19728,7 +19542,7 @@ export interface NetworkInterfacePrivateIpAddress {
   PrivateDnsName?: string | null;
   PrivateIpAddress?: string | null;
 }
-function NetworkInterfacePrivateIpAddress_Parse(node: XmlNode): NetworkInterfacePrivateIpAddress {
+function NetworkInterfacePrivateIpAddress_Parse(node: xmlP.XmlNode): NetworkInterfacePrivateIpAddress {
   return {
     Association: node.first("association", false, NetworkInterfaceAssociation_Parse),
     Primary: node.first("primary", false, x => x.content === 'true'),
@@ -19744,8 +19558,7 @@ export type NetworkInterfaceStatus =
 | "attaching"
 | "in-use"
 | "detaching"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface NetworkInterfacePermission {
@@ -19756,7 +19569,7 @@ export interface NetworkInterfacePermission {
   Permission?: InterfacePermissionType | null;
   PermissionState?: NetworkInterfacePermissionState | null;
 }
-function NetworkInterfacePermission_Parse(node: XmlNode): NetworkInterfacePermission {
+function NetworkInterfacePermission_Parse(node: xmlP.XmlNode): NetworkInterfacePermission {
   return {
     NetworkInterfacePermissionId: node.first("networkInterfacePermissionId", false, x => x.content ?? ''),
     NetworkInterfaceId: node.first("networkInterfaceId", false, x => x.content ?? ''),
@@ -19772,7 +19585,7 @@ export interface NetworkInterfacePermissionState {
   State?: NetworkInterfacePermissionStateCode | null;
   StatusMessage?: string | null;
 }
-function NetworkInterfacePermissionState_Parse(node: XmlNode): NetworkInterfacePermissionState {
+function NetworkInterfacePermissionState_Parse(node: xmlP.XmlNode): NetworkInterfacePermissionState {
   return {
     State: node.first("state", false, x => (x.content ?? '') as NetworkInterfacePermissionStateCode),
     StatusMessage: node.first("statusMessage", false, x => x.content ?? ''),
@@ -19785,8 +19598,7 @@ export type NetworkInterfacePermissionStateCode =
 | "granted"
 | "revoking"
 | "revoked"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface PlacementGroup {
@@ -19797,7 +19609,7 @@ export interface PlacementGroup {
   GroupId?: string | null;
   Tags: Tag[];
 }
-function PlacementGroup_Parse(node: XmlNode): PlacementGroup {
+function PlacementGroup_Parse(node: xmlP.XmlNode): PlacementGroup {
   return {
     GroupName: node.first("groupName", false, x => x.content ?? ''),
     State: node.first("state", false, x => (x.content ?? '') as PlacementGroupState),
@@ -19814,8 +19626,7 @@ export type PlacementGroupState =
 | "available"
 | "deleting"
 | "deleted"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface RouteTable {
@@ -19827,7 +19638,7 @@ export interface RouteTable {
   VpcId?: string | null;
   OwnerId?: string | null;
 }
-function RouteTable_Parse(node: XmlNode): RouteTable {
+function RouteTable_Parse(node: xmlP.XmlNode): RouteTable {
   return {
     Associations: node.getList("associationSet", "item").map(RouteTableAssociation_Parse),
     PropagatingVgws: node.getList("propagatingVgwSet", "item").map(PropagatingVgw_Parse),
@@ -19848,7 +19659,7 @@ export interface RouteTableAssociation {
   GatewayId?: string | null;
   AssociationState?: RouteTableAssociationState | null;
 }
-function RouteTableAssociation_Parse(node: XmlNode): RouteTableAssociation {
+function RouteTableAssociation_Parse(node: xmlP.XmlNode): RouteTableAssociation {
   return {
     Main: node.first("main", false, x => x.content === 'true'),
     RouteTableAssociationId: node.first("routeTableAssociationId", false, x => x.content ?? ''),
@@ -19863,7 +19674,7 @@ function RouteTableAssociation_Parse(node: XmlNode): RouteTableAssociation {
 export interface PropagatingVgw {
   GatewayId?: string | null;
 }
-function PropagatingVgw_Parse(node: XmlNode): PropagatingVgw {
+function PropagatingVgw_Parse(node: xmlP.XmlNode): PropagatingVgw {
   return {
     GatewayId: node.first("gatewayId", false, x => x.content ?? ''),
   };
@@ -19887,7 +19698,7 @@ export interface Route {
   State?: RouteState | null;
   VpcPeeringConnectionId?: string | null;
 }
-function Route_Parse(node: XmlNode): Route {
+function Route_Parse(node: xmlP.XmlNode): Route {
   return {
     DestinationCidrBlock: node.first("destinationCidrBlock", false, x => x.content ?? ''),
     DestinationIpv6CidrBlock: node.first("destinationIpv6CidrBlock", false, x => x.content ?? ''),
@@ -19912,23 +19723,20 @@ export type RouteOrigin =
 | "CreateRouteTable"
 | "CreateRoute"
 | "EnableVgwRoutePropagation"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type RouteState =
 | "active"
 | "blackhole"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, enum
 export type SnapshotState =
 | "pending"
 | "completed"
 | "error"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface SnapshotInfo {
@@ -19943,7 +19751,7 @@ export interface SnapshotInfo {
   OwnerId?: string | null;
   SnapshotId?: string | null;
 }
-function SnapshotInfo_Parse(node: XmlNode): SnapshotInfo {
+function SnapshotInfo_Parse(node: xmlP.XmlNode): SnapshotInfo {
   return {
     Description: node.first("description", false, x => x.content ?? ''),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
@@ -19951,7 +19759,7 @@ function SnapshotInfo_Parse(node: XmlNode): SnapshotInfo {
     VolumeId: node.first("volumeId", false, x => x.content ?? ''),
     State: node.first("state", false, x => (x.content ?? '') as SnapshotState),
     VolumeSize: node.first("volumeSize", false, x => parseInt(x.content ?? '0')),
-    StartTime: node.first("startTime", false, x => parseTimestamp(x.content)),
+    StartTime: node.first("startTime", false, x => xmlP.parseTimestamp(x.content)),
     Progress: node.first("progress", false, x => x.content ?? ''),
     OwnerId: node.first("ownerId", false, x => x.content ?? ''),
     SnapshotId: node.first("snapshotId", false, x => x.content ?? ''),
@@ -19966,7 +19774,7 @@ export interface SpotDatafeedSubscription {
   Prefix?: string | null;
   State?: DatafeedSubscriptionState | null;
 }
-function SpotDatafeedSubscription_Parse(node: XmlNode): SpotDatafeedSubscription {
+function SpotDatafeedSubscription_Parse(node: xmlP.XmlNode): SpotDatafeedSubscription {
   return {
     Bucket: node.first("bucket", false, x => x.content ?? ''),
     Fault: node.first("fault", false, SpotInstanceStateFault_Parse),
@@ -19981,7 +19789,7 @@ export interface SpotInstanceStateFault {
   Code?: string | null;
   Message?: string | null;
 }
-function SpotInstanceStateFault_Parse(node: XmlNode): SpotInstanceStateFault {
+function SpotInstanceStateFault_Parse(node: xmlP.XmlNode): SpotInstanceStateFault {
   return {
     Code: node.first("code", false, x => x.content ?? ''),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -19992,8 +19800,7 @@ function SpotInstanceStateFault_Parse(node: XmlNode): SpotInstanceStateFault {
 export type DatafeedSubscriptionState =
 | "Active"
 | "Inactive"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface TrafficMirrorFilter {
@@ -20004,7 +19811,7 @@ export interface TrafficMirrorFilter {
   Description?: string | null;
   Tags: Tag[];
 }
-function TrafficMirrorFilter_Parse(node: XmlNode): TrafficMirrorFilter {
+function TrafficMirrorFilter_Parse(node: xmlP.XmlNode): TrafficMirrorFilter {
   return {
     TrafficMirrorFilterId: node.first("trafficMirrorFilterId", false, x => x.content ?? ''),
     IngressFilterRules: node.getList("ingressFilterRuleSet", "item").map(TrafficMirrorFilterRule_Parse),
@@ -20029,7 +19836,7 @@ export interface TrafficMirrorFilterRule {
   SourceCidrBlock?: string | null;
   Description?: string | null;
 }
-function TrafficMirrorFilterRule_Parse(node: XmlNode): TrafficMirrorFilterRule {
+function TrafficMirrorFilterRule_Parse(node: xmlP.XmlNode): TrafficMirrorFilterRule {
   return {
     TrafficMirrorFilterRuleId: node.first("trafficMirrorFilterRuleId", false, x => x.content ?? ''),
     TrafficMirrorFilterId: node.first("trafficMirrorFilterId", false, x => x.content ?? ''),
@@ -20050,7 +19857,7 @@ export interface TrafficMirrorPortRange {
   FromPort?: number | null;
   ToPort?: number | null;
 }
-function TrafficMirrorPortRange_Parse(node: XmlNode): TrafficMirrorPortRange {
+function TrafficMirrorPortRange_Parse(node: xmlP.XmlNode): TrafficMirrorPortRange {
   return {
     FromPort: node.first("fromPort", false, x => parseInt(x.content ?? '0')),
     ToPort: node.first("toPort", false, x => parseInt(x.content ?? '0')),
@@ -20070,7 +19877,7 @@ export interface TrafficMirrorSession {
   Description?: string | null;
   Tags: Tag[];
 }
-function TrafficMirrorSession_Parse(node: XmlNode): TrafficMirrorSession {
+function TrafficMirrorSession_Parse(node: xmlP.XmlNode): TrafficMirrorSession {
   return {
     TrafficMirrorSessionId: node.first("trafficMirrorSessionId", false, x => x.content ?? ''),
     TrafficMirrorTargetId: node.first("trafficMirrorTargetId", false, x => x.content ?? ''),
@@ -20095,7 +19902,7 @@ export interface TrafficMirrorTarget {
   OwnerId?: string | null;
   Tags: Tag[];
 }
-function TrafficMirrorTarget_Parse(node: XmlNode): TrafficMirrorTarget {
+function TrafficMirrorTarget_Parse(node: xmlP.XmlNode): TrafficMirrorTarget {
   return {
     TrafficMirrorTargetId: node.first("trafficMirrorTargetId", false, x => x.content ?? ''),
     NetworkInterfaceId: node.first("networkInterfaceId", false, x => x.content ?? ''),
@@ -20111,8 +19918,7 @@ function TrafficMirrorTarget_Parse(node: XmlNode): TrafficMirrorTarget {
 export type TrafficMirrorTargetType =
 | "network-interface"
 | "network-load-balancer"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface TransitGateway {
@@ -20125,14 +19931,14 @@ export interface TransitGateway {
   Options?: TransitGatewayOptions | null;
   Tags: Tag[];
 }
-function TransitGateway_Parse(node: XmlNode): TransitGateway {
+function TransitGateway_Parse(node: xmlP.XmlNode): TransitGateway {
   return {
     TransitGatewayId: node.first("transitGatewayId", false, x => x.content ?? ''),
     TransitGatewayArn: node.first("transitGatewayArn", false, x => x.content ?? ''),
     State: node.first("state", false, x => (x.content ?? '') as TransitGatewayState),
     OwnerId: node.first("ownerId", false, x => x.content ?? ''),
     Description: node.first("description", false, x => x.content ?? ''),
-    CreationTime: node.first("creationTime", false, x => parseTimestamp(x.content)),
+    CreationTime: node.first("creationTime", false, x => xmlP.parseTimestamp(x.content)),
     Options: node.first("options", false, TransitGatewayOptions_Parse),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
   };
@@ -20145,8 +19951,7 @@ export type TransitGatewayState =
 | "modifying"
 | "deleting"
 | "deleted"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface TransitGatewayOptions {
@@ -20160,7 +19965,7 @@ export interface TransitGatewayOptions {
   DnsSupport?: DnsSupportValue | null;
   MulticastSupport?: MulticastSupportValue | null;
 }
-function TransitGatewayOptions_Parse(node: XmlNode): TransitGatewayOptions {
+function TransitGatewayOptions_Parse(node: xmlP.XmlNode): TransitGatewayOptions {
   return {
     AmazonSideAsn: node.first("amazonSideAsn", false, x => parseInt(x.content ?? '0')),
     AutoAcceptSharedAttachments: node.first("autoAcceptSharedAttachments", false, x => (x.content ?? '') as AutoAcceptSharedAttachmentsValue),
@@ -20182,12 +19987,12 @@ export interface TransitGatewayMulticastDomain {
   CreationTime?: Date | number | null;
   Tags: Tag[];
 }
-function TransitGatewayMulticastDomain_Parse(node: XmlNode): TransitGatewayMulticastDomain {
+function TransitGatewayMulticastDomain_Parse(node: xmlP.XmlNode): TransitGatewayMulticastDomain {
   return {
     TransitGatewayMulticastDomainId: node.first("transitGatewayMulticastDomainId", false, x => x.content ?? ''),
     TransitGatewayId: node.first("transitGatewayId", false, x => x.content ?? ''),
     State: node.first("state", false, x => (x.content ?? '') as TransitGatewayMulticastDomainState),
-    CreationTime: node.first("creationTime", false, x => parseTimestamp(x.content)),
+    CreationTime: node.first("creationTime", false, x => xmlP.parseTimestamp(x.content)),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
   };
 }
@@ -20198,8 +20003,7 @@ export type TransitGatewayMulticastDomainState =
 | "available"
 | "deleting"
 | "deleted"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface TransitGatewayPrefixListReference {
@@ -20210,7 +20014,7 @@ export interface TransitGatewayPrefixListReference {
   Blackhole?: boolean | null;
   TransitGatewayAttachment?: TransitGatewayPrefixListAttachment | null;
 }
-function TransitGatewayPrefixListReference_Parse(node: XmlNode): TransitGatewayPrefixListReference {
+function TransitGatewayPrefixListReference_Parse(node: xmlP.XmlNode): TransitGatewayPrefixListReference {
   return {
     TransitGatewayRouteTableId: node.first("transitGatewayRouteTableId", false, x => x.content ?? ''),
     PrefixListId: node.first("prefixListId", false, x => x.content ?? ''),
@@ -20227,8 +20031,7 @@ export type TransitGatewayPrefixListReferenceState =
 | "available"
 | "modifying"
 | "deleting"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface TransitGatewayPrefixListAttachment {
@@ -20236,7 +20039,7 @@ export interface TransitGatewayPrefixListAttachment {
   ResourceType?: TransitGatewayAttachmentResourceType | null;
   ResourceId?: string | null;
 }
-function TransitGatewayPrefixListAttachment_Parse(node: XmlNode): TransitGatewayPrefixListAttachment {
+function TransitGatewayPrefixListAttachment_Parse(node: xmlP.XmlNode): TransitGatewayPrefixListAttachment {
   return {
     TransitGatewayAttachmentId: node.first("transitGatewayAttachmentId", false, x => x.content ?? ''),
     ResourceType: node.first("resourceType", false, x => (x.content ?? '') as TransitGatewayAttachmentResourceType),
@@ -20252,7 +20055,7 @@ export interface TransitGatewayRoute {
   Type?: TransitGatewayRouteType | null;
   State?: TransitGatewayRouteState | null;
 }
-function TransitGatewayRoute_Parse(node: XmlNode): TransitGatewayRoute {
+function TransitGatewayRoute_Parse(node: xmlP.XmlNode): TransitGatewayRoute {
   return {
     DestinationCidrBlock: node.first("destinationCidrBlock", false, x => x.content ?? ''),
     PrefixListId: node.first("prefixListId", false, x => x.content ?? ''),
@@ -20268,7 +20071,7 @@ export interface TransitGatewayRouteAttachment {
   TransitGatewayAttachmentId?: string | null;
   ResourceType?: TransitGatewayAttachmentResourceType | null;
 }
-function TransitGatewayRouteAttachment_Parse(node: XmlNode): TransitGatewayRouteAttachment {
+function TransitGatewayRouteAttachment_Parse(node: xmlP.XmlNode): TransitGatewayRouteAttachment {
   return {
     ResourceId: node.first("resourceId", false, x => x.content ?? ''),
     TransitGatewayAttachmentId: node.first("transitGatewayAttachmentId", false, x => x.content ?? ''),
@@ -20280,8 +20083,7 @@ function TransitGatewayRouteAttachment_Parse(node: XmlNode): TransitGatewayRoute
 export type TransitGatewayRouteType =
 | "static"
 | "propagated"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, enum
 export type TransitGatewayRouteState =
@@ -20290,8 +20092,7 @@ export type TransitGatewayRouteState =
 | "blackhole"
 | "deleting"
 | "deleted"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface TransitGatewayRouteTable {
@@ -20303,14 +20104,14 @@ export interface TransitGatewayRouteTable {
   CreationTime?: Date | number | null;
   Tags: Tag[];
 }
-function TransitGatewayRouteTable_Parse(node: XmlNode): TransitGatewayRouteTable {
+function TransitGatewayRouteTable_Parse(node: xmlP.XmlNode): TransitGatewayRouteTable {
   return {
     TransitGatewayRouteTableId: node.first("transitGatewayRouteTableId", false, x => x.content ?? ''),
     TransitGatewayId: node.first("transitGatewayId", false, x => x.content ?? ''),
     State: node.first("state", false, x => (x.content ?? '') as TransitGatewayRouteTableState),
     DefaultAssociationRouteTable: node.first("defaultAssociationRouteTable", false, x => x.content === 'true'),
     DefaultPropagationRouteTable: node.first("defaultPropagationRouteTable", false, x => x.content === 'true'),
-    CreationTime: node.first("creationTime", false, x => parseTimestamp(x.content)),
+    CreationTime: node.first("creationTime", false, x => xmlP.parseTimestamp(x.content)),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
   };
 }
@@ -20321,8 +20122,7 @@ export type TransitGatewayRouteTableState =
 | "available"
 | "deleting"
 | "deleted"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type VolumeState =
@@ -20332,8 +20132,7 @@ export type VolumeState =
 | "deleting"
 | "deleted"
 | "error"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface VpcEndpoint {
@@ -20355,7 +20154,7 @@ export interface VpcEndpoint {
   OwnerId?: string | null;
   LastError?: LastError | null;
 }
-function VpcEndpoint_Parse(node: XmlNode): VpcEndpoint {
+function VpcEndpoint_Parse(node: xmlP.XmlNode): VpcEndpoint {
   return {
     VpcEndpointId: node.first("vpcEndpointId", false, x => x.content ?? ''),
     VpcEndpointType: node.first("vpcEndpointType", false, x => (x.content ?? '') as VpcEndpointType),
@@ -20370,7 +20169,7 @@ function VpcEndpoint_Parse(node: XmlNode): VpcEndpoint {
     RequesterManaged: node.first("requesterManaged", false, x => x.content === 'true'),
     NetworkInterfaceIds: node.getList("networkInterfaceIdSet", "item").map(x => x.content ?? ''),
     DnsEntries: node.getList("dnsEntrySet", "item").map(DnsEntry_Parse),
-    CreationTimestamp: node.first("creationTimestamp", false, x => parseTimestamp(x.content)),
+    CreationTimestamp: node.first("creationTimestamp", false, x => xmlP.parseTimestamp(x.content)),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
     OwnerId: node.first("ownerId", false, x => x.content ?? ''),
     LastError: node.first("lastError", false, LastError_Parse),
@@ -20387,15 +20186,14 @@ export type State =
 | "Rejected"
 | "Failed"
 | "Expired"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface SecurityGroupIdentifier {
   GroupId?: string | null;
   GroupName?: string | null;
 }
-function SecurityGroupIdentifier_Parse(node: XmlNode): SecurityGroupIdentifier {
+function SecurityGroupIdentifier_Parse(node: xmlP.XmlNode): SecurityGroupIdentifier {
   return {
     GroupId: node.first("groupId", false, x => x.content ?? ''),
     GroupName: node.first("groupName", false, x => x.content ?? ''),
@@ -20407,7 +20205,7 @@ export interface DnsEntry {
   DnsName?: string | null;
   HostedZoneId?: string | null;
 }
-function DnsEntry_Parse(node: XmlNode): DnsEntry {
+function DnsEntry_Parse(node: xmlP.XmlNode): DnsEntry {
   return {
     DnsName: node.first("dnsName", false, x => x.content ?? ''),
     HostedZoneId: node.first("hostedZoneId", false, x => x.content ?? ''),
@@ -20419,7 +20217,7 @@ export interface LastError {
   Message?: string | null;
   Code?: string | null;
 }
-function LastError_Parse(node: XmlNode): LastError {
+function LastError_Parse(node: xmlP.XmlNode): LastError {
   return {
     Message: node.first("message", false, x => x.content ?? ''),
     Code: node.first("code", false, x => x.content ?? ''),
@@ -20436,7 +20234,7 @@ export interface ConnectionNotification {
   ConnectionEvents: string[];
   ConnectionNotificationState?: ConnectionNotificationState | null;
 }
-function ConnectionNotification_Parse(node: XmlNode): ConnectionNotification {
+function ConnectionNotification_Parse(node: xmlP.XmlNode): ConnectionNotification {
   return {
     ConnectionNotificationId: node.first("connectionNotificationId", false, x => x.content ?? ''),
     ServiceId: node.first("serviceId", false, x => x.content ?? ''),
@@ -20451,15 +20249,13 @@ function ConnectionNotification_Parse(node: XmlNode): ConnectionNotification {
 // refs: 2 - tags: output, named, enum
 export type ConnectionNotificationType =
 | "Topic"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type ConnectionNotificationState =
 | "Enabled"
 | "Disabled"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ServiceConfiguration {
@@ -20476,7 +20272,7 @@ export interface ServiceConfiguration {
   PrivateDnsNameConfiguration?: PrivateDnsNameConfiguration | null;
   Tags: Tag[];
 }
-function ServiceConfiguration_Parse(node: XmlNode): ServiceConfiguration {
+function ServiceConfiguration_Parse(node: xmlP.XmlNode): ServiceConfiguration {
   return {
     ServiceType: node.getList("serviceType", "item").map(ServiceTypeDetail_Parse),
     ServiceId: node.first("serviceId", false, x => x.content ?? ''),
@@ -20497,7 +20293,7 @@ function ServiceConfiguration_Parse(node: XmlNode): ServiceConfiguration {
 export interface ServiceTypeDetail {
   ServiceType?: ServiceType | null;
 }
-function ServiceTypeDetail_Parse(node: XmlNode): ServiceTypeDetail {
+function ServiceTypeDetail_Parse(node: xmlP.XmlNode): ServiceTypeDetail {
   return {
     ServiceType: node.first("serviceType", false, x => (x.content ?? '') as ServiceType),
   };
@@ -20507,8 +20303,7 @@ function ServiceTypeDetail_Parse(node: XmlNode): ServiceTypeDetail {
 export type ServiceType =
 | "Interface"
 | "Gateway"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type ServiceState =
@@ -20517,8 +20312,7 @@ export type ServiceState =
 | "Deleting"
 | "Deleted"
 | "Failed"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface PrivateDnsNameConfiguration {
@@ -20527,7 +20321,7 @@ export interface PrivateDnsNameConfiguration {
   Value?: string | null;
   Name?: string | null;
 }
-function PrivateDnsNameConfiguration_Parse(node: XmlNode): PrivateDnsNameConfiguration {
+function PrivateDnsNameConfiguration_Parse(node: xmlP.XmlNode): PrivateDnsNameConfiguration {
   return {
     State: node.first("state", false, x => (x.content ?? '') as DnsNameState),
     Type: node.first("type", false, x => x.content ?? ''),
@@ -20541,8 +20335,7 @@ export type DnsNameState =
 | "pendingVerification"
 | "verified"
 | "failed"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: output, named, interface
 export interface VpnConnection {
@@ -20559,7 +20352,7 @@ export interface VpnConnection {
   Tags: Tag[];
   VgwTelemetry: VgwTelemetry[];
 }
-function VpnConnection_Parse(node: XmlNode): VpnConnection {
+function VpnConnection_Parse(node: xmlP.XmlNode): VpnConnection {
   return {
     CustomerGatewayConfiguration: node.first("customerGatewayConfiguration", false, x => x.content ?? ''),
     CustomerGatewayId: node.first("customerGatewayId", false, x => x.content ?? ''),
@@ -20582,8 +20375,7 @@ export type VpnState =
 | "available"
 | "deleting"
 | "deleted"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: output, named, interface
 export interface VpnConnectionOptions {
@@ -20596,7 +20388,7 @@ export interface VpnConnectionOptions {
   TunnelInsideIpVersion?: TunnelInsideIpVersion | null;
   TunnelOptions: TunnelOption[];
 }
-function VpnConnectionOptions_Parse(node: XmlNode): VpnConnectionOptions {
+function VpnConnectionOptions_Parse(node: xmlP.XmlNode): VpnConnectionOptions {
   return {
     EnableAcceleration: node.first("enableAcceleration", false, x => x.content === 'true'),
     StaticRoutesOnly: node.first("staticRoutesOnly", false, x => x.content === 'true'),
@@ -20631,7 +20423,7 @@ export interface TunnelOption {
   IkeVersions: IKEVersionsListValue[];
   StartupAction?: string | null;
 }
-function TunnelOption_Parse(node: XmlNode): TunnelOption {
+function TunnelOption_Parse(node: xmlP.XmlNode): TunnelOption {
   return {
     OutsideIpAddress: node.first("outsideIpAddress", false, x => x.content ?? ''),
     TunnelInsideCidr: node.first("tunnelInsideCidr", false, x => x.content ?? ''),
@@ -20659,7 +20451,7 @@ function TunnelOption_Parse(node: XmlNode): TunnelOption {
 export interface Phase1EncryptionAlgorithmsListValue {
   Value?: string | null;
 }
-function Phase1EncryptionAlgorithmsListValue_Parse(node: XmlNode): Phase1EncryptionAlgorithmsListValue {
+function Phase1EncryptionAlgorithmsListValue_Parse(node: xmlP.XmlNode): Phase1EncryptionAlgorithmsListValue {
   return {
     Value: node.first("value", false, x => x.content ?? ''),
   };
@@ -20669,7 +20461,7 @@ function Phase1EncryptionAlgorithmsListValue_Parse(node: XmlNode): Phase1Encrypt
 export interface Phase2EncryptionAlgorithmsListValue {
   Value?: string | null;
 }
-function Phase2EncryptionAlgorithmsListValue_Parse(node: XmlNode): Phase2EncryptionAlgorithmsListValue {
+function Phase2EncryptionAlgorithmsListValue_Parse(node: xmlP.XmlNode): Phase2EncryptionAlgorithmsListValue {
   return {
     Value: node.first("value", false, x => x.content ?? ''),
   };
@@ -20679,7 +20471,7 @@ function Phase2EncryptionAlgorithmsListValue_Parse(node: XmlNode): Phase2Encrypt
 export interface Phase1IntegrityAlgorithmsListValue {
   Value?: string | null;
 }
-function Phase1IntegrityAlgorithmsListValue_Parse(node: XmlNode): Phase1IntegrityAlgorithmsListValue {
+function Phase1IntegrityAlgorithmsListValue_Parse(node: xmlP.XmlNode): Phase1IntegrityAlgorithmsListValue {
   return {
     Value: node.first("value", false, x => x.content ?? ''),
   };
@@ -20689,7 +20481,7 @@ function Phase1IntegrityAlgorithmsListValue_Parse(node: XmlNode): Phase1Integrit
 export interface Phase2IntegrityAlgorithmsListValue {
   Value?: string | null;
 }
-function Phase2IntegrityAlgorithmsListValue_Parse(node: XmlNode): Phase2IntegrityAlgorithmsListValue {
+function Phase2IntegrityAlgorithmsListValue_Parse(node: xmlP.XmlNode): Phase2IntegrityAlgorithmsListValue {
   return {
     Value: node.first("value", false, x => x.content ?? ''),
   };
@@ -20699,7 +20491,7 @@ function Phase2IntegrityAlgorithmsListValue_Parse(node: XmlNode): Phase2Integrit
 export interface Phase1DHGroupNumbersListValue {
   Value?: number | null;
 }
-function Phase1DHGroupNumbersListValue_Parse(node: XmlNode): Phase1DHGroupNumbersListValue {
+function Phase1DHGroupNumbersListValue_Parse(node: xmlP.XmlNode): Phase1DHGroupNumbersListValue {
   return {
     Value: node.first("value", false, x => parseInt(x.content ?? '0')),
   };
@@ -20709,7 +20501,7 @@ function Phase1DHGroupNumbersListValue_Parse(node: XmlNode): Phase1DHGroupNumber
 export interface Phase2DHGroupNumbersListValue {
   Value?: number | null;
 }
-function Phase2DHGroupNumbersListValue_Parse(node: XmlNode): Phase2DHGroupNumbersListValue {
+function Phase2DHGroupNumbersListValue_Parse(node: xmlP.XmlNode): Phase2DHGroupNumbersListValue {
   return {
     Value: node.first("value", false, x => parseInt(x.content ?? '0')),
   };
@@ -20719,7 +20511,7 @@ function Phase2DHGroupNumbersListValue_Parse(node: XmlNode): Phase2DHGroupNumber
 export interface IKEVersionsListValue {
   Value?: string | null;
 }
-function IKEVersionsListValue_Parse(node: XmlNode): IKEVersionsListValue {
+function IKEVersionsListValue_Parse(node: xmlP.XmlNode): IKEVersionsListValue {
   return {
     Value: node.first("value", false, x => x.content ?? ''),
   };
@@ -20731,7 +20523,7 @@ export interface VpnStaticRoute {
   Source?: VpnStaticRouteSource | null;
   State?: VpnState | null;
 }
-function VpnStaticRoute_Parse(node: XmlNode): VpnStaticRoute {
+function VpnStaticRoute_Parse(node: xmlP.XmlNode): VpnStaticRoute {
   return {
     DestinationCidrBlock: node.first("destinationCidrBlock", false, x => x.content ?? ''),
     Source: node.first("source", false, x => (x.content ?? '') as VpnStaticRouteSource),
@@ -20742,8 +20534,7 @@ function VpnStaticRoute_Parse(node: XmlNode): VpnStaticRoute {
 // refs: 6 - tags: output, named, enum
 export type VpnStaticRouteSource =
 | "Static"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: output, named, interface
 export interface VgwTelemetry {
@@ -20754,10 +20545,10 @@ export interface VgwTelemetry {
   StatusMessage?: string | null;
   CertificateArn?: string | null;
 }
-function VgwTelemetry_Parse(node: XmlNode): VgwTelemetry {
+function VgwTelemetry_Parse(node: xmlP.XmlNode): VgwTelemetry {
   return {
     AcceptedRouteCount: node.first("acceptedRouteCount", false, x => parseInt(x.content ?? '0')),
-    LastStatusChange: node.first("lastStatusChange", false, x => parseTimestamp(x.content)),
+    LastStatusChange: node.first("lastStatusChange", false, x => xmlP.parseTimestamp(x.content)),
     OutsideIpAddress: node.first("outsideIpAddress", false, x => x.content ?? ''),
     Status: node.first("status", false, x => (x.content ?? '') as TelemetryStatus),
     StatusMessage: node.first("statusMessage", false, x => x.content ?? ''),
@@ -20769,8 +20560,7 @@ function VgwTelemetry_Parse(node: XmlNode): VgwTelemetry {
 export type TelemetryStatus =
 | "UP"
 | "DOWN"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface VpnGateway {
@@ -20782,7 +20572,7 @@ export interface VpnGateway {
   AmazonSideAsn?: number | null;
   Tags: Tag[];
 }
-function VpnGateway_Parse(node: XmlNode): VpnGateway {
+function VpnGateway_Parse(node: xmlP.XmlNode): VpnGateway {
   return {
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
     State: node.first("state", false, x => (x.content ?? '') as VpnState),
@@ -20800,7 +20590,7 @@ export interface DeleteFleetSuccessItem {
   PreviousFleetState?: FleetStateCode | null;
   FleetId?: string | null;
 }
-function DeleteFleetSuccessItem_Parse(node: XmlNode): DeleteFleetSuccessItem {
+function DeleteFleetSuccessItem_Parse(node: xmlP.XmlNode): DeleteFleetSuccessItem {
   return {
     CurrentFleetState: node.first("currentFleetState", false, x => (x.content ?? '') as FleetStateCode),
     PreviousFleetState: node.first("previousFleetState", false, x => (x.content ?? '') as FleetStateCode),
@@ -20817,15 +20607,14 @@ export type FleetStateCode =
 | "deleted_running"
 | "deleted_terminating"
 | "modifying"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface DeleteFleetErrorItem {
   Error?: DeleteFleetError | null;
   FleetId?: string | null;
 }
-function DeleteFleetErrorItem_Parse(node: XmlNode): DeleteFleetErrorItem {
+function DeleteFleetErrorItem_Parse(node: xmlP.XmlNode): DeleteFleetErrorItem {
   return {
     Error: node.first("error", false, DeleteFleetError_Parse),
     FleetId: node.first("fleetId", false, x => x.content ?? ''),
@@ -20837,7 +20626,7 @@ export interface DeleteFleetError {
   Code?: DeleteFleetErrorCode | null;
   Message?: string | null;
 }
-function DeleteFleetError_Parse(node: XmlNode): DeleteFleetError {
+function DeleteFleetError_Parse(node: xmlP.XmlNode): DeleteFleetError {
   return {
     Code: node.first("code", false, x => (x.content ?? '') as DeleteFleetErrorCode),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -20850,8 +20639,7 @@ export type DeleteFleetErrorCode =
 | "fleetIdMalformed"
 | "fleetNotInDeletableState"
 | "unexpectedError"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface DeleteLaunchTemplateVersionsResponseSuccessItem {
@@ -20859,7 +20647,7 @@ export interface DeleteLaunchTemplateVersionsResponseSuccessItem {
   LaunchTemplateName?: string | null;
   VersionNumber?: number | null;
 }
-function DeleteLaunchTemplateVersionsResponseSuccessItem_Parse(node: XmlNode): DeleteLaunchTemplateVersionsResponseSuccessItem {
+function DeleteLaunchTemplateVersionsResponseSuccessItem_Parse(node: xmlP.XmlNode): DeleteLaunchTemplateVersionsResponseSuccessItem {
   return {
     LaunchTemplateId: node.first("launchTemplateId", false, x => x.content ?? ''),
     LaunchTemplateName: node.first("launchTemplateName", false, x => x.content ?? ''),
@@ -20874,7 +20662,7 @@ export interface DeleteLaunchTemplateVersionsResponseErrorItem {
   VersionNumber?: number | null;
   ResponseError?: ResponseError | null;
 }
-function DeleteLaunchTemplateVersionsResponseErrorItem_Parse(node: XmlNode): DeleteLaunchTemplateVersionsResponseErrorItem {
+function DeleteLaunchTemplateVersionsResponseErrorItem_Parse(node: xmlP.XmlNode): DeleteLaunchTemplateVersionsResponseErrorItem {
   return {
     LaunchTemplateId: node.first("launchTemplateId", false, x => x.content ?? ''),
     LaunchTemplateName: node.first("launchTemplateName", false, x => x.content ?? ''),
@@ -20888,7 +20676,7 @@ export interface ResponseError {
   Code?: LaunchTemplateErrorCode | null;
   Message?: string | null;
 }
-function ResponseError_Parse(node: XmlNode): ResponseError {
+function ResponseError_Parse(node: xmlP.XmlNode): ResponseError {
   return {
     Code: node.first("code", false, x => (x.content ?? '') as LaunchTemplateErrorCode),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -20903,14 +20691,13 @@ export type LaunchTemplateErrorCode =
 | "launchTemplateNameMalformed"
 | "launchTemplateVersionDoesNotExist"
 | "unexpectedError"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface SuccessfulQueuedPurchaseDeletion {
   ReservedInstancesId?: string | null;
 }
-function SuccessfulQueuedPurchaseDeletion_Parse(node: XmlNode): SuccessfulQueuedPurchaseDeletion {
+function SuccessfulQueuedPurchaseDeletion_Parse(node: xmlP.XmlNode): SuccessfulQueuedPurchaseDeletion {
   return {
     ReservedInstancesId: node.first("reservedInstancesId", false, x => x.content ?? ''),
   };
@@ -20921,7 +20708,7 @@ export interface FailedQueuedPurchaseDeletion {
   Error?: DeleteQueuedReservedInstancesError | null;
   ReservedInstancesId?: string | null;
 }
-function FailedQueuedPurchaseDeletion_Parse(node: XmlNode): FailedQueuedPurchaseDeletion {
+function FailedQueuedPurchaseDeletion_Parse(node: xmlP.XmlNode): FailedQueuedPurchaseDeletion {
   return {
     Error: node.first("error", false, DeleteQueuedReservedInstancesError_Parse),
     ReservedInstancesId: node.first("reservedInstancesId", false, x => x.content ?? ''),
@@ -20933,7 +20720,7 @@ export interface DeleteQueuedReservedInstancesError {
   Code?: DeleteQueuedReservedInstancesErrorCode | null;
   Message?: string | null;
 }
-function DeleteQueuedReservedInstancesError_Parse(node: XmlNode): DeleteQueuedReservedInstancesError {
+function DeleteQueuedReservedInstancesError_Parse(node: xmlP.XmlNode): DeleteQueuedReservedInstancesError {
   return {
     Code: node.first("code", false, x => (x.content ?? '') as DeleteQueuedReservedInstancesErrorCode),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -20945,15 +20732,14 @@ export type DeleteQueuedReservedInstancesErrorCode =
 | "reserved-instances-id-invalid"
 | "reserved-instances-not-in-queued-state"
 | "unexpected-error"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface InstanceTagNotificationAttribute {
   InstanceTagKeys: string[];
   IncludeAllTagsOfInstance?: boolean | null;
 }
-function InstanceTagNotificationAttribute_Parse(node: XmlNode): InstanceTagNotificationAttribute {
+function InstanceTagNotificationAttribute_Parse(node: xmlP.XmlNode): InstanceTagNotificationAttribute {
   return {
     InstanceTagKeys: node.getList("instanceTagKeySet", "item").map(x => x.content ?? ''),
     IncludeAllTagsOfInstance: node.first("includeAllTagsOfInstance", false, x => x.content === 'true'),
@@ -20966,7 +20752,7 @@ export interface TransitGatewayMulticastDeregisteredGroupMembers {
   DeregisteredNetworkInterfaceIds: string[];
   GroupIpAddress?: string | null;
 }
-function TransitGatewayMulticastDeregisteredGroupMembers_Parse(node: XmlNode): TransitGatewayMulticastDeregisteredGroupMembers {
+function TransitGatewayMulticastDeregisteredGroupMembers_Parse(node: xmlP.XmlNode): TransitGatewayMulticastDeregisteredGroupMembers {
   return {
     TransitGatewayMulticastDomainId: node.first("transitGatewayMulticastDomainId", false, x => x.content ?? ''),
     DeregisteredNetworkInterfaceIds: node.getList("deregisteredNetworkInterfaceIds", "item").map(x => x.content ?? ''),
@@ -20980,7 +20766,7 @@ export interface TransitGatewayMulticastDeregisteredGroupSources {
   DeregisteredNetworkInterfaceIds: string[];
   GroupIpAddress?: string | null;
 }
-function TransitGatewayMulticastDeregisteredGroupSources_Parse(node: XmlNode): TransitGatewayMulticastDeregisteredGroupSources {
+function TransitGatewayMulticastDeregisteredGroupSources_Parse(node: xmlP.XmlNode): TransitGatewayMulticastDeregisteredGroupSources {
   return {
     TransitGatewayMulticastDomainId: node.first("transitGatewayMulticastDomainId", false, x => x.content ?? ''),
     DeregisteredNetworkInterfaceIds: node.getList("deregisteredNetworkInterfaceIds", "item").map(x => x.content ?? ''),
@@ -20993,7 +20779,7 @@ export interface AccountAttribute {
   AttributeName?: string | null;
   AttributeValues: AccountAttributeValue[];
 }
-function AccountAttribute_Parse(node: XmlNode): AccountAttribute {
+function AccountAttribute_Parse(node: xmlP.XmlNode): AccountAttribute {
   return {
     AttributeName: node.first("attributeName", false, x => x.content ?? ''),
     AttributeValues: node.getList("attributeValueSet", "item").map(AccountAttributeValue_Parse),
@@ -21004,7 +20790,7 @@ function AccountAttribute_Parse(node: XmlNode): AccountAttribute {
 export interface AccountAttributeValue {
   AttributeValue?: string | null;
 }
-function AccountAttributeValue_Parse(node: XmlNode): AccountAttributeValue {
+function AccountAttributeValue_Parse(node: xmlP.XmlNode): AccountAttributeValue {
   return {
     AttributeValue: node.first("attributeValue", false, x => x.content ?? ''),
   };
@@ -21027,7 +20813,7 @@ export interface Address {
   CustomerOwnedIpv4Pool?: string | null;
   CarrierIp?: string | null;
 }
-function Address_Parse(node: XmlNode): Address {
+function Address_Parse(node: xmlP.XmlNode): Address {
   return {
     InstanceId: node.first("instanceId", false, x => x.content ?? ''),
     PublicIp: node.first("publicIp", false, x => x.content ?? ''),
@@ -21052,9 +20838,9 @@ export interface IdFormat {
   Resource?: string | null;
   UseLongIds?: boolean | null;
 }
-function IdFormat_Parse(node: XmlNode): IdFormat {
+function IdFormat_Parse(node: xmlP.XmlNode): IdFormat {
   return {
-    Deadline: node.first("deadline", false, x => parseTimestamp(x.content)),
+    Deadline: node.first("deadline", false, x => xmlP.parseTimestamp(x.content)),
     Resource: node.first("resource", false, x => x.content ?? ''),
     UseLongIds: node.first("useLongIds", false, x => x.content === 'true'),
   };
@@ -21074,7 +20860,7 @@ export interface AvailabilityZone {
   ParentZoneName?: string | null;
   ParentZoneId?: string | null;
 }
-function AvailabilityZone_Parse(node: XmlNode): AvailabilityZone {
+function AvailabilityZone_Parse(node: xmlP.XmlNode): AvailabilityZone {
   return {
     State: node.first("zoneState", false, x => (x.content ?? '') as AvailabilityZoneState),
     OptInStatus: node.first("optInStatus", false, x => (x.content ?? '') as AvailabilityZoneOptInStatus),
@@ -21096,22 +20882,20 @@ export type AvailabilityZoneState =
 | "information"
 | "impaired"
 | "unavailable"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type AvailabilityZoneOptInStatus =
 | "opt-in-not-required"
 | "opted-in"
 | "not-opted-in"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AvailabilityZoneMessage {
   Message?: string | null;
 }
-function AvailabilityZoneMessage_Parse(node: XmlNode): AvailabilityZoneMessage {
+function AvailabilityZoneMessage_Parse(node: xmlP.XmlNode): AvailabilityZoneMessage {
   return {
     Message: node.first("message", false, x => x.content ?? ''),
   };
@@ -21124,7 +20908,7 @@ export interface ClassicLinkInstance {
   Tags: Tag[];
   VpcId?: string | null;
 }
-function ClassicLinkInstance_Parse(node: XmlNode): ClassicLinkInstance {
+function ClassicLinkInstance_Parse(node: xmlP.XmlNode): ClassicLinkInstance {
   return {
     Groups: node.getList("groupSet", "item").map(GroupIdentifier_Parse),
     InstanceId: node.first("instanceId", false, x => x.content ?? ''),
@@ -21142,7 +20926,7 @@ export interface AuthorizationRule {
   DestinationCidr?: string | null;
   Status?: ClientVpnAuthorizationRuleStatus | null;
 }
-function AuthorizationRule_Parse(node: XmlNode): AuthorizationRule {
+function AuthorizationRule_Parse(node: xmlP.XmlNode): AuthorizationRule {
   return {
     ClientVpnEndpointId: node.first("clientVpnEndpointId", false, x => x.content ?? ''),
     Description: node.first("description", false, x => x.content ?? ''),
@@ -21169,7 +20953,7 @@ export interface ClientVpnConnection {
   Status?: ClientVpnConnectionStatus | null;
   ConnectionEndTime?: string | null;
 }
-function ClientVpnConnection_Parse(node: XmlNode): ClientVpnConnection {
+function ClientVpnConnection_Parse(node: xmlP.XmlNode): ClientVpnConnection {
   return {
     ClientVpnEndpointId: node.first("clientVpnEndpointId", false, x => x.content ?? ''),
     Timestamp: node.first("timestamp", false, x => x.content ?? ''),
@@ -21192,7 +20976,7 @@ export interface ClientVpnConnectionStatus {
   Code?: ClientVpnConnectionStatusCode | null;
   Message?: string | null;
 }
-function ClientVpnConnectionStatus_Parse(node: XmlNode): ClientVpnConnectionStatus {
+function ClientVpnConnectionStatus_Parse(node: xmlP.XmlNode): ClientVpnConnectionStatus {
   return {
     Code: node.first("code", false, x => (x.content ?? '') as ClientVpnConnectionStatusCode),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -21205,8 +20989,7 @@ export type ClientVpnConnectionStatusCode =
 | "failed-to-terminate"
 | "terminating"
 | "terminated"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ClientVpnEndpoint {
@@ -21230,7 +21013,7 @@ export interface ClientVpnEndpoint {
   SecurityGroupIds: string[];
   VpcId?: string | null;
 }
-function ClientVpnEndpoint_Parse(node: XmlNode): ClientVpnEndpoint {
+function ClientVpnEndpoint_Parse(node: xmlP.XmlNode): ClientVpnEndpoint {
   return {
     ClientVpnEndpointId: node.first("clientVpnEndpointId", false, x => x.content ?? ''),
     Description: node.first("description", false, x => x.content ?? ''),
@@ -21257,15 +21040,14 @@ function ClientVpnEndpoint_Parse(node: XmlNode): ClientVpnEndpoint {
 // refs: 1 - tags: output, named, enum
 export type VpnProtocol =
 | "openvpn"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AssociatedTargetNetwork {
   NetworkId?: string | null;
   NetworkType?: AssociatedNetworkType | null;
 }
-function AssociatedTargetNetwork_Parse(node: XmlNode): AssociatedTargetNetwork {
+function AssociatedTargetNetwork_Parse(node: xmlP.XmlNode): AssociatedTargetNetwork {
   return {
     NetworkId: node.first("networkId", false, x => x.content ?? ''),
     NetworkType: node.first("networkType", false, x => (x.content ?? '') as AssociatedNetworkType),
@@ -21275,8 +21057,7 @@ function AssociatedTargetNetwork_Parse(node: XmlNode): AssociatedTargetNetwork {
 // refs: 1 - tags: output, named, enum
 export type AssociatedNetworkType =
 | "vpc"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ClientVpnAuthentication {
@@ -21285,7 +21066,7 @@ export interface ClientVpnAuthentication {
   MutualAuthentication?: CertificateAuthentication | null;
   FederatedAuthentication?: FederatedAuthentication | null;
 }
-function ClientVpnAuthentication_Parse(node: XmlNode): ClientVpnAuthentication {
+function ClientVpnAuthentication_Parse(node: xmlP.XmlNode): ClientVpnAuthentication {
   return {
     Type: node.first("type", false, x => (x.content ?? '') as ClientVpnAuthenticationType),
     ActiveDirectory: node.first("activeDirectory", false, DirectoryServiceAuthentication_Parse),
@@ -21298,7 +21079,7 @@ function ClientVpnAuthentication_Parse(node: XmlNode): ClientVpnAuthentication {
 export interface DirectoryServiceAuthentication {
   DirectoryId?: string | null;
 }
-function DirectoryServiceAuthentication_Parse(node: XmlNode): DirectoryServiceAuthentication {
+function DirectoryServiceAuthentication_Parse(node: xmlP.XmlNode): DirectoryServiceAuthentication {
   return {
     DirectoryId: node.first("directoryId", false, x => x.content ?? ''),
   };
@@ -21308,7 +21089,7 @@ function DirectoryServiceAuthentication_Parse(node: XmlNode): DirectoryServiceAu
 export interface CertificateAuthentication {
   ClientRootCertificateChain?: string | null;
 }
-function CertificateAuthentication_Parse(node: XmlNode): CertificateAuthentication {
+function CertificateAuthentication_Parse(node: xmlP.XmlNode): CertificateAuthentication {
   return {
     ClientRootCertificateChain: node.first("clientRootCertificateChain", false, x => x.content ?? ''),
   };
@@ -21318,7 +21099,7 @@ function CertificateAuthentication_Parse(node: XmlNode): CertificateAuthenticati
 export interface FederatedAuthentication {
   SamlProviderArn?: string | null;
 }
-function FederatedAuthentication_Parse(node: XmlNode): FederatedAuthentication {
+function FederatedAuthentication_Parse(node: xmlP.XmlNode): FederatedAuthentication {
   return {
     SamlProviderArn: node.first("samlProviderArn", false, x => x.content ?? ''),
   };
@@ -21330,7 +21111,7 @@ export interface ConnectionLogResponseOptions {
   CloudwatchLogGroup?: string | null;
   CloudwatchLogStream?: string | null;
 }
-function ConnectionLogResponseOptions_Parse(node: XmlNode): ConnectionLogResponseOptions {
+function ConnectionLogResponseOptions_Parse(node: xmlP.XmlNode): ConnectionLogResponseOptions {
   return {
     ...node.strings({
       optional: {"CloudwatchLogGroup":true,"CloudwatchLogStream":true},
@@ -21349,7 +21130,7 @@ export interface ClientVpnRoute {
   Status?: ClientVpnRouteStatus | null;
   Description?: string | null;
 }
-function ClientVpnRoute_Parse(node: XmlNode): ClientVpnRoute {
+function ClientVpnRoute_Parse(node: xmlP.XmlNode): ClientVpnRoute {
   return {
     ClientVpnEndpointId: node.first("clientVpnEndpointId", false, x => x.content ?? ''),
     DestinationCidr: node.first("destinationCidr", false, x => x.content ?? ''),
@@ -21370,7 +21151,7 @@ export interface TargetNetwork {
   Status?: AssociationStatus | null;
   SecurityGroups: string[];
 }
-function TargetNetwork_Parse(node: XmlNode): TargetNetwork {
+function TargetNetwork_Parse(node: xmlP.XmlNode): TargetNetwork {
   return {
     AssociationId: node.first("associationId", false, x => x.content ?? ''),
     VpcId: node.first("vpcId", false, x => x.content ?? ''),
@@ -21389,7 +21170,7 @@ export interface CoipPool {
   Tags: Tag[];
   PoolArn?: string | null;
 }
-function CoipPool_Parse(node: XmlNode): CoipPool {
+function CoipPool_Parse(node: xmlP.XmlNode): CoipPool {
   return {
     PoolId: node.first("poolId", false, x => x.content ?? ''),
     PoolCidrs: node.getList("poolCidrSet", "item").map(x => x.content ?? ''),
@@ -21409,7 +21190,7 @@ export interface ConversionTask {
   StatusMessage?: string | null;
   Tags: Tag[];
 }
-function ConversionTask_Parse(node: XmlNode): ConversionTask {
+function ConversionTask_Parse(node: xmlP.XmlNode): ConversionTask {
   return {
     ConversionTaskId: node.first("conversionTaskId", false, x => x.content ?? ''),
     ExpirationTime: node.first("expirationTime", false, x => x.content ?? ''),
@@ -21428,7 +21209,7 @@ export interface ImportInstanceTaskDetails {
   Platform?: PlatformValues | null;
   Volumes: ImportInstanceVolumeDetailItem[];
 }
-function ImportInstanceTaskDetails_Parse(node: XmlNode): ImportInstanceTaskDetails {
+function ImportInstanceTaskDetails_Parse(node: xmlP.XmlNode): ImportInstanceTaskDetails {
   return {
     Description: node.first("description", false, x => x.content ?? ''),
     InstanceId: node.first("instanceId", false, x => x.content ?? ''),
@@ -21447,7 +21228,7 @@ export interface ImportInstanceVolumeDetailItem {
   StatusMessage?: string | null;
   Volume?: DiskImageVolumeDescription | null;
 }
-function ImportInstanceVolumeDetailItem_Parse(node: XmlNode): ImportInstanceVolumeDetailItem {
+function ImportInstanceVolumeDetailItem_Parse(node: xmlP.XmlNode): ImportInstanceVolumeDetailItem {
   return {
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
     BytesConverted: node.first("bytesConverted", false, x => parseInt(x.content ?? '0')),
@@ -21466,7 +21247,7 @@ export interface DiskImageDescription {
   ImportManifestUrl?: string | null;
   Size?: number | null;
 }
-function DiskImageDescription_Parse(node: XmlNode): DiskImageDescription {
+function DiskImageDescription_Parse(node: xmlP.XmlNode): DiskImageDescription {
   return {
     Checksum: node.first("checksum", false, x => x.content ?? ''),
     Format: node.first("format", false, x => (x.content ?? '') as DiskImageFormat),
@@ -21480,7 +21261,7 @@ export interface DiskImageVolumeDescription {
   Id?: string | null;
   Size?: number | null;
 }
-function DiskImageVolumeDescription_Parse(node: XmlNode): DiskImageVolumeDescription {
+function DiskImageVolumeDescription_Parse(node: xmlP.XmlNode): DiskImageVolumeDescription {
   return {
     Id: node.first("id", false, x => x.content ?? ''),
     Size: node.first("size", false, x => parseInt(x.content ?? '0')),
@@ -21495,7 +21276,7 @@ export interface ImportVolumeTaskDetails {
   Image?: DiskImageDescription | null;
   Volume?: DiskImageVolumeDescription | null;
 }
-function ImportVolumeTaskDetails_Parse(node: XmlNode): ImportVolumeTaskDetails {
+function ImportVolumeTaskDetails_Parse(node: xmlP.XmlNode): ImportVolumeTaskDetails {
   return {
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
     BytesConverted: node.first("bytesConverted", false, x => parseInt(x.content ?? '0')),
@@ -21511,8 +21292,7 @@ export type ConversionTaskState =
 | "cancelling"
 | "cancelled"
 | "completed"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ElasticGpus {
@@ -21524,7 +21304,7 @@ export interface ElasticGpus {
   InstanceId?: string | null;
   Tags: Tag[];
 }
-function ElasticGpus_Parse(node: XmlNode): ElasticGpus {
+function ElasticGpus_Parse(node: xmlP.XmlNode): ElasticGpus {
   return {
     ElasticGpuId: node.first("elasticGpuId", false, x => x.content ?? ''),
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
@@ -21540,7 +21320,7 @@ function ElasticGpus_Parse(node: XmlNode): ElasticGpus {
 export interface ElasticGpuHealth {
   Status?: ElasticGpuStatus | null;
 }
-function ElasticGpuHealth_Parse(node: XmlNode): ElasticGpuHealth {
+function ElasticGpuHealth_Parse(node: xmlP.XmlNode): ElasticGpuHealth {
   return {
     Status: node.first("status", false, x => (x.content ?? '') as ElasticGpuStatus),
   };
@@ -21550,14 +21330,12 @@ function ElasticGpuHealth_Parse(node: XmlNode): ElasticGpuHealth {
 export type ElasticGpuStatus =
 | "OK"
 | "IMPAIRED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type ElasticGpuState =
 | "ATTACHED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ExportImageTask {
@@ -21570,7 +21348,7 @@ export interface ExportImageTask {
   StatusMessage?: string | null;
   Tags: Tag[];
 }
-function ExportImageTask_Parse(node: XmlNode): ExportImageTask {
+function ExportImageTask_Parse(node: xmlP.XmlNode): ExportImageTask {
   return {
     Description: node.first("description", false, x => x.content ?? ''),
     ExportImageTaskId: node.first("exportImageTaskId", false, x => x.content ?? ''),
@@ -21588,7 +21366,7 @@ export interface ExportTaskS3Location {
   S3Bucket?: string | null;
   S3Prefix?: string | null;
 }
-function ExportTaskS3Location_Parse(node: XmlNode): ExportTaskS3Location {
+function ExportTaskS3Location_Parse(node: xmlP.XmlNode): ExportTaskS3Location {
   return {
     S3Bucket: node.first("s3Bucket", false, x => x.content ?? ''),
     S3Prefix: node.first("s3Prefix", false, x => x.content ?? ''),
@@ -21609,7 +21387,7 @@ export interface DescribeFastSnapshotRestoreSuccessItem {
   DisablingTime?: Date | number | null;
   DisabledTime?: Date | number | null;
 }
-function DescribeFastSnapshotRestoreSuccessItem_Parse(node: XmlNode): DescribeFastSnapshotRestoreSuccessItem {
+function DescribeFastSnapshotRestoreSuccessItem_Parse(node: xmlP.XmlNode): DescribeFastSnapshotRestoreSuccessItem {
   return {
     SnapshotId: node.first("snapshotId", false, x => x.content ?? ''),
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
@@ -21617,11 +21395,11 @@ function DescribeFastSnapshotRestoreSuccessItem_Parse(node: XmlNode): DescribeFa
     StateTransitionReason: node.first("stateTransitionReason", false, x => x.content ?? ''),
     OwnerId: node.first("ownerId", false, x => x.content ?? ''),
     OwnerAlias: node.first("ownerAlias", false, x => x.content ?? ''),
-    EnablingTime: node.first("enablingTime", false, x => parseTimestamp(x.content)),
-    OptimizingTime: node.first("optimizingTime", false, x => parseTimestamp(x.content)),
-    EnabledTime: node.first("enabledTime", false, x => parseTimestamp(x.content)),
-    DisablingTime: node.first("disablingTime", false, x => parseTimestamp(x.content)),
-    DisabledTime: node.first("disabledTime", false, x => parseTimestamp(x.content)),
+    EnablingTime: node.first("enablingTime", false, x => xmlP.parseTimestamp(x.content)),
+    OptimizingTime: node.first("optimizingTime", false, x => xmlP.parseTimestamp(x.content)),
+    EnabledTime: node.first("enabledTime", false, x => xmlP.parseTimestamp(x.content)),
+    DisablingTime: node.first("disablingTime", false, x => xmlP.parseTimestamp(x.content)),
+    DisabledTime: node.first("disabledTime", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -21632,8 +21410,7 @@ export type FastSnapshotRestoreStateCode =
 | "enabled"
 | "disabling"
 | "disabled"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface HistoryRecordEntry {
@@ -21641,11 +21418,11 @@ export interface HistoryRecordEntry {
   EventType?: FleetEventType | null;
   Timestamp?: Date | number | null;
 }
-function HistoryRecordEntry_Parse(node: XmlNode): HistoryRecordEntry {
+function HistoryRecordEntry_Parse(node: xmlP.XmlNode): HistoryRecordEntry {
   return {
     EventInformation: node.first("eventInformation", false, EventInformation_Parse),
     EventType: node.first("eventType", false, x => (x.content ?? '') as FleetEventType),
-    Timestamp: node.first("timestamp", false, x => parseTimestamp(x.content)),
+    Timestamp: node.first("timestamp", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -21655,7 +21432,7 @@ export interface EventInformation {
   EventSubType?: string | null;
   InstanceId?: string | null;
 }
-function EventInformation_Parse(node: XmlNode): EventInformation {
+function EventInformation_Parse(node: xmlP.XmlNode): EventInformation {
   return {
     EventDescription: node.first("eventDescription", false, x => x.content ?? ''),
     EventSubType: node.first("eventSubType", false, x => x.content ?? ''),
@@ -21670,7 +21447,7 @@ export interface ActiveInstance {
   SpotInstanceRequestId?: string | null;
   InstanceHealth?: InstanceHealthStatus | null;
 }
-function ActiveInstance_Parse(node: XmlNode): ActiveInstance {
+function ActiveInstance_Parse(node: xmlP.XmlNode): ActiveInstance {
   return {
     InstanceId: node.first("instanceId", false, x => x.content ?? ''),
     InstanceType: node.first("instanceType", false, x => x.content ?? ''),
@@ -21683,8 +21460,7 @@ function ActiveInstance_Parse(node: XmlNode): ActiveInstance {
 export type InstanceHealthStatus =
 | "healthy"
 | "unhealthy"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface FleetData {
@@ -21709,10 +21485,10 @@ export interface FleetData {
   Errors: DescribeFleetError[];
   Instances: DescribeFleetsInstances[];
 }
-function FleetData_Parse(node: XmlNode): FleetData {
+function FleetData_Parse(node: xmlP.XmlNode): FleetData {
   return {
     ActivityStatus: node.first("activityStatus", false, x => (x.content ?? '') as FleetActivityStatus),
-    CreateTime: node.first("createTime", false, x => parseTimestamp(x.content)),
+    CreateTime: node.first("createTime", false, x => xmlP.parseTimestamp(x.content)),
     FleetId: node.first("fleetId", false, x => x.content ?? ''),
     FleetState: node.first("fleetState", false, x => (x.content ?? '') as FleetStateCode),
     ClientToken: node.first("clientToken", false, x => x.content ?? ''),
@@ -21723,8 +21499,8 @@ function FleetData_Parse(node: XmlNode): FleetData {
     TargetCapacitySpecification: node.first("targetCapacitySpecification", false, TargetCapacitySpecification_Parse),
     TerminateInstancesWithExpiration: node.first("terminateInstancesWithExpiration", false, x => x.content === 'true'),
     Type: node.first("type", false, x => (x.content ?? '') as FleetType),
-    ValidFrom: node.first("validFrom", false, x => parseTimestamp(x.content)),
-    ValidUntil: node.first("validUntil", false, x => parseTimestamp(x.content)),
+    ValidFrom: node.first("validFrom", false, x => xmlP.parseTimestamp(x.content)),
+    ValidUntil: node.first("validUntil", false, x => xmlP.parseTimestamp(x.content)),
     ReplaceUnhealthyInstances: node.first("replaceUnhealthyInstances", false, x => x.content === 'true'),
     SpotOptions: node.first("spotOptions", false, SpotOptions_Parse),
     OnDemandOptions: node.first("onDemandOptions", false, OnDemandOptions_Parse),
@@ -21740,15 +21516,14 @@ export type FleetActivityStatus =
 | "pending_fulfillment"
 | "pending_termination"
 | "fulfilled"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface FleetLaunchTemplateConfig {
   LaunchTemplateSpecification?: FleetLaunchTemplateSpecification | null;
   Overrides: FleetLaunchTemplateOverrides[];
 }
-function FleetLaunchTemplateConfig_Parse(node: XmlNode): FleetLaunchTemplateConfig {
+function FleetLaunchTemplateConfig_Parse(node: xmlP.XmlNode): FleetLaunchTemplateConfig {
   return {
     LaunchTemplateSpecification: node.first("launchTemplateSpecification", false, FleetLaunchTemplateSpecification_Parse),
     Overrides: node.getList("overrides", "item").map(FleetLaunchTemplateOverrides_Parse),
@@ -21762,7 +21537,7 @@ export interface TargetCapacitySpecification {
   SpotTargetCapacity?: number | null;
   DefaultTargetCapacityType?: DefaultTargetCapacityType | null;
 }
-function TargetCapacitySpecification_Parse(node: XmlNode): TargetCapacitySpecification {
+function TargetCapacitySpecification_Parse(node: xmlP.XmlNode): TargetCapacitySpecification {
   return {
     TotalTargetCapacity: node.first("totalTargetCapacity", false, x => parseInt(x.content ?? '0')),
     OnDemandTargetCapacity: node.first("onDemandTargetCapacity", false, x => parseInt(x.content ?? '0')),
@@ -21781,7 +21556,7 @@ export interface SpotOptions {
   MinTargetCapacity?: number | null;
   MaxTotalPrice?: string | null;
 }
-function SpotOptions_Parse(node: XmlNode): SpotOptions {
+function SpotOptions_Parse(node: xmlP.XmlNode): SpotOptions {
   return {
     AllocationStrategy: node.first("allocationStrategy", false, x => (x.content ?? '') as SpotAllocationStrategy),
     InstanceInterruptionBehavior: node.first("instanceInterruptionBehavior", false, x => (x.content ?? '') as SpotInstanceInterruptionBehavior),
@@ -21802,7 +21577,7 @@ export interface OnDemandOptions {
   MinTargetCapacity?: number | null;
   MaxTotalPrice?: string | null;
 }
-function OnDemandOptions_Parse(node: XmlNode): OnDemandOptions {
+function OnDemandOptions_Parse(node: xmlP.XmlNode): OnDemandOptions {
   return {
     AllocationStrategy: node.first("allocationStrategy", false, x => (x.content ?? '') as FleetOnDemandAllocationStrategy),
     CapacityReservationOptions: node.first("capacityReservationOptions", false, CapacityReservationOptions_Parse),
@@ -21817,7 +21592,7 @@ function OnDemandOptions_Parse(node: XmlNode): OnDemandOptions {
 export interface CapacityReservationOptions {
   UsageStrategy?: FleetCapacityReservationUsageStrategy | null;
 }
-function CapacityReservationOptions_Parse(node: XmlNode): CapacityReservationOptions {
+function CapacityReservationOptions_Parse(node: xmlP.XmlNode): CapacityReservationOptions {
   return {
     UsageStrategy: node.first("usageStrategy", false, x => (x.content ?? '') as FleetCapacityReservationUsageStrategy),
   };
@@ -21830,7 +21605,7 @@ export interface DescribeFleetError {
   ErrorCode?: string | null;
   ErrorMessage?: string | null;
 }
-function DescribeFleetError_Parse(node: XmlNode): DescribeFleetError {
+function DescribeFleetError_Parse(node: xmlP.XmlNode): DescribeFleetError {
   return {
     LaunchTemplateAndOverrides: node.first("launchTemplateAndOverrides", false, LaunchTemplateAndOverridesResponse_Parse),
     Lifecycle: node.first("lifecycle", false, x => (x.content ?? '') as InstanceLifecycle),
@@ -21847,7 +21622,7 @@ export interface DescribeFleetsInstances {
   InstanceType?: InstanceType | null;
   Platform?: PlatformValues | null;
 }
-function DescribeFleetsInstances_Parse(node: XmlNode): DescribeFleetsInstances {
+function DescribeFleetsInstances_Parse(node: xmlP.XmlNode): DescribeFleetsInstances {
   return {
     LaunchTemplateAndOverrides: node.first("launchTemplateAndOverrides", false, LaunchTemplateAndOverridesResponse_Parse),
     Lifecycle: node.first("lifecycle", false, x => (x.content ?? '') as InstanceLifecycle),
@@ -21874,9 +21649,9 @@ export interface FlowLog {
   Tags: Tag[];
   MaxAggregationInterval?: number | null;
 }
-function FlowLog_Parse(node: XmlNode): FlowLog {
+function FlowLog_Parse(node: xmlP.XmlNode): FlowLog {
   return {
-    CreationTime: node.first("creationTime", false, x => parseTimestamp(x.content)),
+    CreationTime: node.first("creationTime", false, x => xmlP.parseTimestamp(x.content)),
     DeliverLogsErrorMessage: node.first("deliverLogsErrorMessage", false, x => x.content ?? ''),
     DeliverLogsPermissionArn: node.first("deliverLogsPermissionArn", false, x => x.content ?? ''),
     DeliverLogsStatus: node.first("deliverLogsStatus", false, x => x.content ?? ''),
@@ -21901,7 +21676,7 @@ export interface FpgaImageAttribute {
   LoadPermissions: LoadPermission[];
   ProductCodes: ProductCode[];
 }
-function FpgaImageAttribute_Parse(node: XmlNode): FpgaImageAttribute {
+function FpgaImageAttribute_Parse(node: xmlP.XmlNode): FpgaImageAttribute {
   return {
     FpgaImageId: node.first("fpgaImageId", false, x => x.content ?? ''),
     Name: node.first("name", false, x => x.content ?? ''),
@@ -21916,7 +21691,7 @@ export interface LoadPermission {
   UserId?: string | null;
   Group?: PermissionGroup | null;
 }
-function LoadPermission_Parse(node: XmlNode): LoadPermission {
+function LoadPermission_Parse(node: xmlP.XmlNode): LoadPermission {
   return {
     UserId: node.first("userId", false, x => x.content ?? ''),
     Group: node.first("group", false, x => (x.content ?? '') as PermissionGroup),
@@ -21928,7 +21703,7 @@ export interface ProductCode {
   ProductCodeId?: string | null;
   ProductCodeType?: ProductCodeValues | null;
 }
-function ProductCode_Parse(node: XmlNode): ProductCode {
+function ProductCode_Parse(node: xmlP.XmlNode): ProductCode {
   return {
     ProductCodeId: node.first("productCode", false, x => x.content ?? ''),
     ProductCodeType: node.first("type", false, x => (x.content ?? '') as ProductCodeValues),
@@ -21939,8 +21714,7 @@ function ProductCode_Parse(node: XmlNode): ProductCode {
 export type ProductCodeValues =
 | "devpay"
 | "marketplace"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface FpgaImage {
@@ -21960,7 +21734,7 @@ export interface FpgaImage {
   Public?: boolean | null;
   DataRetentionSupport?: boolean | null;
 }
-function FpgaImage_Parse(node: XmlNode): FpgaImage {
+function FpgaImage_Parse(node: xmlP.XmlNode): FpgaImage {
   return {
     FpgaImageId: node.first("fpgaImageId", false, x => x.content ?? ''),
     FpgaImageGlobalId: node.first("fpgaImageGlobalId", false, x => x.content ?? ''),
@@ -21969,8 +21743,8 @@ function FpgaImage_Parse(node: XmlNode): FpgaImage {
     ShellVersion: node.first("shellVersion", false, x => x.content ?? ''),
     PciId: node.first("pciId", false, PciId_Parse),
     State: node.first("state", false, FpgaImageState_Parse),
-    CreateTime: node.first("createTime", false, x => parseTimestamp(x.content)),
-    UpdateTime: node.first("updateTime", false, x => parseTimestamp(x.content)),
+    CreateTime: node.first("createTime", false, x => xmlP.parseTimestamp(x.content)),
+    UpdateTime: node.first("updateTime", false, x => xmlP.parseTimestamp(x.content)),
     OwnerId: node.first("ownerId", false, x => x.content ?? ''),
     OwnerAlias: node.first("ownerAlias", false, x => x.content ?? ''),
     ProductCodes: node.getList("productCodes", "item").map(ProductCode_Parse),
@@ -21987,7 +21761,7 @@ export interface PciId {
   SubsystemId?: string | null;
   SubsystemVendorId?: string | null;
 }
-function PciId_Parse(node: XmlNode): PciId {
+function PciId_Parse(node: xmlP.XmlNode): PciId {
   return node.strings({
     optional: {"DeviceId":true,"VendorId":true,"SubsystemId":true,"SubsystemVendorId":true},
   });
@@ -21998,7 +21772,7 @@ export interface FpgaImageState {
   Code?: FpgaImageStateCode | null;
   Message?: string | null;
 }
-function FpgaImageState_Parse(node: XmlNode): FpgaImageState {
+function FpgaImageState_Parse(node: xmlP.XmlNode): FpgaImageState {
   return {
     Code: node.first("code", false, x => (x.content ?? '') as FpgaImageStateCode),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -22011,8 +21785,7 @@ export type FpgaImageStateCode =
 | "failed"
 | "available"
 | "unavailable"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface HostOffering {
@@ -22024,7 +21797,7 @@ export interface HostOffering {
   PaymentOption?: PaymentOption | null;
   UpfrontPrice?: string | null;
 }
-function HostOffering_Parse(node: XmlNode): HostOffering {
+function HostOffering_Parse(node: xmlP.XmlNode): HostOffering {
   return {
     CurrencyCode: node.first("currencyCode", false, x => (x.content ?? '') as CurrencyCodeValues),
     Duration: node.first("duration", false, x => parseInt(x.content ?? '0')),
@@ -22041,8 +21814,7 @@ export type PaymentOption =
 | "AllUpfront"
 | "PartialUpfront"
 | "NoUpfront"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface HostReservation {
@@ -22061,19 +21833,19 @@ export interface HostReservation {
   UpfrontPrice?: string | null;
   Tags: Tag[];
 }
-function HostReservation_Parse(node: XmlNode): HostReservation {
+function HostReservation_Parse(node: xmlP.XmlNode): HostReservation {
   return {
     Count: node.first("count", false, x => parseInt(x.content ?? '0')),
     CurrencyCode: node.first("currencyCode", false, x => (x.content ?? '') as CurrencyCodeValues),
     Duration: node.first("duration", false, x => parseInt(x.content ?? '0')),
-    End: node.first("end", false, x => parseTimestamp(x.content)),
+    End: node.first("end", false, x => xmlP.parseTimestamp(x.content)),
     HostIdSet: node.getList("hostIdSet", "item").map(x => x.content ?? ''),
     HostReservationId: node.first("hostReservationId", false, x => x.content ?? ''),
     HourlyPrice: node.first("hourlyPrice", false, x => x.content ?? ''),
     InstanceFamily: node.first("instanceFamily", false, x => x.content ?? ''),
     OfferingId: node.first("offeringId", false, x => x.content ?? ''),
     PaymentOption: node.first("paymentOption", false, x => (x.content ?? '') as PaymentOption),
-    Start: node.first("start", false, x => parseTimestamp(x.content)),
+    Start: node.first("start", false, x => xmlP.parseTimestamp(x.content)),
     State: node.first("state", false, x => (x.content ?? '') as ReservationState),
     UpfrontPrice: node.first("upfrontPrice", false, x => x.content ?? ''),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
@@ -22086,8 +21858,7 @@ export type ReservationState =
 | "payment-failed"
 | "active"
 | "retired"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Host {
@@ -22109,7 +21880,7 @@ export interface Host {
   AvailabilityZoneId?: string | null;
   MemberOfServiceLinkedResourceGroup?: boolean | null;
 }
-function Host_Parse(node: XmlNode): Host {
+function Host_Parse(node: xmlP.XmlNode): Host {
   return {
     AutoPlacement: node.first("autoPlacement", false, x => (x.content ?? '') as AutoPlacement),
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
@@ -22120,8 +21891,8 @@ function Host_Parse(node: XmlNode): Host {
     HostReservationId: node.first("hostReservationId", false, x => x.content ?? ''),
     Instances: node.getList("instances", "item").map(HostInstance_Parse),
     State: node.first("state", false, x => (x.content ?? '') as AllocationState),
-    AllocationTime: node.first("allocationTime", false, x => parseTimestamp(x.content)),
-    ReleaseTime: node.first("releaseTime", false, x => parseTimestamp(x.content)),
+    AllocationTime: node.first("allocationTime", false, x => xmlP.parseTimestamp(x.content)),
+    ReleaseTime: node.first("releaseTime", false, x => xmlP.parseTimestamp(x.content)),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
     HostRecovery: node.first("hostRecovery", false, x => (x.content ?? '') as HostRecovery),
     AllowsMultipleInstanceTypes: node.first("allowsMultipleInstanceTypes", false, x => (x.content ?? '') as AllowsMultipleInstanceTypes),
@@ -22136,7 +21907,7 @@ export interface AvailableCapacity {
   AvailableInstanceCapacity: InstanceCapacity[];
   AvailableVCpus?: number | null;
 }
-function AvailableCapacity_Parse(node: XmlNode): AvailableCapacity {
+function AvailableCapacity_Parse(node: xmlP.XmlNode): AvailableCapacity {
   return {
     AvailableInstanceCapacity: node.getList("availableInstanceCapacity", "item").map(InstanceCapacity_Parse),
     AvailableVCpus: node.first("availableVCpus", false, x => parseInt(x.content ?? '0')),
@@ -22149,7 +21920,7 @@ export interface InstanceCapacity {
   InstanceType?: string | null;
   TotalCapacity?: number | null;
 }
-function InstanceCapacity_Parse(node: XmlNode): InstanceCapacity {
+function InstanceCapacity_Parse(node: xmlP.XmlNode): InstanceCapacity {
   return {
     AvailableCapacity: node.first("availableCapacity", false, x => parseInt(x.content ?? '0')),
     InstanceType: node.first("instanceType", false, x => x.content ?? ''),
@@ -22165,7 +21936,7 @@ export interface HostProperties {
   Sockets?: number | null;
   TotalVCpus?: number | null;
 }
-function HostProperties_Parse(node: XmlNode): HostProperties {
+function HostProperties_Parse(node: xmlP.XmlNode): HostProperties {
   return {
     Cores: node.first("cores", false, x => parseInt(x.content ?? '0')),
     InstanceType: node.first("instanceType", false, x => x.content ?? ''),
@@ -22181,7 +21952,7 @@ export interface HostInstance {
   InstanceType?: string | null;
   OwnerId?: string | null;
 }
-function HostInstance_Parse(node: XmlNode): HostInstance {
+function HostInstance_Parse(node: xmlP.XmlNode): HostInstance {
   return {
     InstanceId: node.first("instanceId", false, x => x.content ?? ''),
     InstanceType: node.first("instanceType", false, x => x.content ?? ''),
@@ -22197,15 +21968,13 @@ export type AllocationState =
 | "released"
 | "released-permanent-failure"
 | "pending"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type AllowsMultipleInstanceTypes =
 | "on"
 | "off"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Image {
@@ -22236,7 +22005,7 @@ export interface Image {
   Tags: Tag[];
   VirtualizationType?: VirtualizationType | null;
 }
-function Image_Parse(node: XmlNode): Image {
+function Image_Parse(node: xmlP.XmlNode): Image {
   return {
     Architecture: node.first("architecture", false, x => (x.content ?? '') as ArchitectureValues),
     CreationDate: node.first("creationDate", false, x => x.content ?? ''),
@@ -22272,8 +22041,7 @@ export type ImageTypeValues =
 | "machine"
 | "kernel"
 | "ramdisk"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type ImageState =
@@ -22284,29 +22052,26 @@ export type ImageState =
 | "transient"
 | "failed"
 | "error"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, enum
 export type HypervisorType =
 | "ovm"
 | "xen"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, enum
 export type DeviceType =
 | "ebs"
 | "instance-store"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface StateReason {
   Code?: string | null;
   Message?: string | null;
 }
-function StateReason_Parse(node: XmlNode): StateReason {
+function StateReason_Parse(node: xmlP.XmlNode): StateReason {
   return {
     Code: node.first("code", false, x => x.content ?? ''),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -22317,8 +22082,7 @@ function StateReason_Parse(node: XmlNode): StateReason {
 export type VirtualizationType =
 | "hvm"
 | "paravirtual"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ImportImageTask {
@@ -22338,7 +22102,7 @@ export interface ImportImageTask {
   Tags: Tag[];
   LicenseSpecifications: ImportImageLicenseConfigurationResponse[];
 }
-function ImportImageTask_Parse(node: XmlNode): ImportImageTask {
+function ImportImageTask_Parse(node: xmlP.XmlNode): ImportImageTask {
   return {
     Architecture: node.first("architecture", false, x => x.content ?? ''),
     Description: node.first("description", false, x => x.content ?? ''),
@@ -22371,7 +22135,7 @@ export interface SnapshotDetail {
   Url?: string | null;
   UserBucket?: UserBucketDetails | null;
 }
-function SnapshotDetail_Parse(node: XmlNode): SnapshotDetail {
+function SnapshotDetail_Parse(node: xmlP.XmlNode): SnapshotDetail {
   return {
     Description: node.first("description", false, x => x.content ?? ''),
     DeviceName: node.first("deviceName", false, x => x.content ?? ''),
@@ -22391,7 +22155,7 @@ export interface UserBucketDetails {
   S3Bucket?: string | null;
   S3Key?: string | null;
 }
-function UserBucketDetails_Parse(node: XmlNode): UserBucketDetails {
+function UserBucketDetails_Parse(node: xmlP.XmlNode): UserBucketDetails {
   return {
     S3Bucket: node.first("s3Bucket", false, x => x.content ?? ''),
     S3Key: node.first("s3Key", false, x => x.content ?? ''),
@@ -22402,7 +22166,7 @@ function UserBucketDetails_Parse(node: XmlNode): UserBucketDetails {
 export interface ImportImageLicenseConfigurationResponse {
   LicenseConfigurationArn?: string | null;
 }
-function ImportImageLicenseConfigurationResponse_Parse(node: XmlNode): ImportImageLicenseConfigurationResponse {
+function ImportImageLicenseConfigurationResponse_Parse(node: xmlP.XmlNode): ImportImageLicenseConfigurationResponse {
   return {
     LicenseConfigurationArn: node.first("licenseConfigurationArn", false, x => x.content ?? ''),
   };
@@ -22415,7 +22179,7 @@ export interface ImportSnapshotTask {
   SnapshotTaskDetail?: SnapshotTaskDetail | null;
   Tags: Tag[];
 }
-function ImportSnapshotTask_Parse(node: XmlNode): ImportSnapshotTask {
+function ImportSnapshotTask_Parse(node: xmlP.XmlNode): ImportSnapshotTask {
   return {
     Description: node.first("description", false, x => x.content ?? ''),
     ImportTaskId: node.first("importTaskId", false, x => x.content ?? ''),
@@ -22438,7 +22202,7 @@ export interface SnapshotTaskDetail {
   Url?: string | null;
   UserBucket?: UserBucketDetails | null;
 }
-function SnapshotTaskDetail_Parse(node: XmlNode): SnapshotTaskDetail {
+function SnapshotTaskDetail_Parse(node: xmlP.XmlNode): SnapshotTaskDetail {
   return {
     Description: node.first("description", false, x => x.content ?? ''),
     DiskImageSize: node.first("diskImageSize", false, x => parseFloat(x.content ?? '0')),
@@ -22459,7 +22223,7 @@ export interface InstanceBlockDeviceMapping {
   DeviceName?: string | null;
   Ebs?: EbsInstanceBlockDevice | null;
 }
-function InstanceBlockDeviceMapping_Parse(node: XmlNode): InstanceBlockDeviceMapping {
+function InstanceBlockDeviceMapping_Parse(node: xmlP.XmlNode): InstanceBlockDeviceMapping {
   return {
     DeviceName: node.first("deviceName", false, x => x.content ?? ''),
     Ebs: node.first("ebs", false, EbsInstanceBlockDevice_Parse),
@@ -22473,9 +22237,9 @@ export interface EbsInstanceBlockDevice {
   Status?: AttachmentStatus | null;
   VolumeId?: string | null;
 }
-function EbsInstanceBlockDevice_Parse(node: XmlNode): EbsInstanceBlockDevice {
+function EbsInstanceBlockDevice_Parse(node: xmlP.XmlNode): EbsInstanceBlockDevice {
   return {
-    AttachTime: node.first("attachTime", false, x => parseTimestamp(x.content)),
+    AttachTime: node.first("attachTime", false, x => xmlP.parseTimestamp(x.content)),
     DeleteOnTermination: node.first("deleteOnTermination", false, x => x.content === 'true'),
     Status: node.first("status", false, x => (x.content ?? '') as AttachmentStatus),
     VolumeId: node.first("volumeId", false, x => x.content ?? ''),
@@ -22487,7 +22251,7 @@ export interface InstanceCreditSpecification {
   InstanceId?: string | null;
   CpuCredits?: string | null;
 }
-function InstanceCreditSpecification_Parse(node: XmlNode): InstanceCreditSpecification {
+function InstanceCreditSpecification_Parse(node: xmlP.XmlNode): InstanceCreditSpecification {
   return {
     InstanceId: node.first("instanceId", false, x => x.content ?? ''),
     CpuCredits: node.first("cpuCredits", false, x => x.content ?? ''),
@@ -22504,7 +22268,7 @@ export interface InstanceStatus {
   InstanceStatus?: InstanceStatusSummary | null;
   SystemStatus?: InstanceStatusSummary | null;
 }
-function InstanceStatus_Parse(node: XmlNode): InstanceStatus {
+function InstanceStatus_Parse(node: xmlP.XmlNode): InstanceStatus {
   return {
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
     OutpostArn: node.first("outpostArn", false, x => x.content ?? ''),
@@ -22525,14 +22289,14 @@ export interface InstanceStatusEvent {
   NotBefore?: Date | number | null;
   NotBeforeDeadline?: Date | number | null;
 }
-function InstanceStatusEvent_Parse(node: XmlNode): InstanceStatusEvent {
+function InstanceStatusEvent_Parse(node: xmlP.XmlNode): InstanceStatusEvent {
   return {
     InstanceEventId: node.first("instanceEventId", false, x => x.content ?? ''),
     Code: node.first("code", false, x => (x.content ?? '') as EventCode),
     Description: node.first("description", false, x => x.content ?? ''),
-    NotAfter: node.first("notAfter", false, x => parseTimestamp(x.content)),
-    NotBefore: node.first("notBefore", false, x => parseTimestamp(x.content)),
-    NotBeforeDeadline: node.first("notBeforeDeadline", false, x => parseTimestamp(x.content)),
+    NotAfter: node.first("notAfter", false, x => xmlP.parseTimestamp(x.content)),
+    NotBefore: node.first("notBefore", false, x => xmlP.parseTimestamp(x.content)),
+    NotBeforeDeadline: node.first("notBeforeDeadline", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -22543,15 +22307,14 @@ export type EventCode =
 | "system-maintenance"
 | "instance-retirement"
 | "instance-stop"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 9 - tags: output, named, interface
 export interface InstanceState {
   Code?: number | null;
   Name?: InstanceStateName | null;
 }
-function InstanceState_Parse(node: XmlNode): InstanceState {
+function InstanceState_Parse(node: xmlP.XmlNode): InstanceState {
   return {
     Code: node.first("code", false, x => parseInt(x.content ?? '0')),
     Name: node.first("name", false, x => (x.content ?? '') as InstanceStateName),
@@ -22566,15 +22329,14 @@ export type InstanceStateName =
 | "terminated"
 | "stopping"
 | "stopped"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface InstanceStatusSummary {
   Details: InstanceStatusDetails[];
   Status?: SummaryStatus | null;
 }
-function InstanceStatusSummary_Parse(node: XmlNode): InstanceStatusSummary {
+function InstanceStatusSummary_Parse(node: xmlP.XmlNode): InstanceStatusSummary {
   return {
     Details: node.getList("details", "item").map(InstanceStatusDetails_Parse),
     Status: node.first("status", false, x => (x.content ?? '') as SummaryStatus),
@@ -22587,9 +22349,9 @@ export interface InstanceStatusDetails {
   Name?: StatusName | null;
   Status?: StatusType | null;
 }
-function InstanceStatusDetails_Parse(node: XmlNode): InstanceStatusDetails {
+function InstanceStatusDetails_Parse(node: xmlP.XmlNode): InstanceStatusDetails {
   return {
-    ImpairedSince: node.first("impairedSince", false, x => parseTimestamp(x.content)),
+    ImpairedSince: node.first("impairedSince", false, x => xmlP.parseTimestamp(x.content)),
     Name: node.first("name", false, x => (x.content ?? '') as StatusName),
     Status: node.first("status", false, x => (x.content ?? '') as StatusType),
   };
@@ -22598,8 +22360,7 @@ function InstanceStatusDetails_Parse(node: XmlNode): InstanceStatusDetails {
 // refs: 2 - tags: output, named, enum
 export type StatusName =
 | "reachability"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type StatusType =
@@ -22607,8 +22368,7 @@ export type StatusType =
 | "failed"
 | "insufficient-data"
 | "initializing"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type SummaryStatus =
@@ -22617,8 +22377,7 @@ export type SummaryStatus =
 | "insufficient-data"
 | "not-applicable"
 | "initializing"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface InstanceTypeOffering {
@@ -22626,7 +22385,7 @@ export interface InstanceTypeOffering {
   LocationType?: LocationType | null;
   Location?: string | null;
 }
-function InstanceTypeOffering_Parse(node: XmlNode): InstanceTypeOffering {
+function InstanceTypeOffering_Parse(node: xmlP.XmlNode): InstanceTypeOffering {
   return {
     InstanceType: node.first("instanceType", false, x => (x.content ?? '') as InstanceType),
     LocationType: node.first("locationType", false, x => (x.content ?? '') as LocationType),
@@ -22660,7 +22419,7 @@ export interface InstanceTypeInfo {
   DedicatedHostsSupported?: boolean | null;
   AutoRecoverySupported?: boolean | null;
 }
-function InstanceTypeInfo_Parse(node: XmlNode): InstanceTypeInfo {
+function InstanceTypeInfo_Parse(node: xmlP.XmlNode): InstanceTypeInfo {
   return {
     InstanceType: node.first("instanceType", false, x => (x.content ?? '') as InstanceType),
     CurrentGeneration: node.first("currentGeneration", false, x => x.content === 'true'),
@@ -22692,29 +22451,26 @@ function InstanceTypeInfo_Parse(node: XmlNode): InstanceTypeInfo {
 export type UsageClassType =
 | "spot"
 | "on-demand"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type RootDeviceType =
 | "ebs"
 | "instance-store"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type InstanceTypeHypervisor =
 | "nitro"
 | "xen"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ProcessorInfo {
   SupportedArchitectures: ArchitectureType[];
   SustainedClockSpeedInGhz?: number | null;
 }
-function ProcessorInfo_Parse(node: XmlNode): ProcessorInfo {
+function ProcessorInfo_Parse(node: xmlP.XmlNode): ProcessorInfo {
   return {
     SupportedArchitectures: node.getList("supportedArchitectures", "item").map(x => (x.content ?? '') as ArchitectureType),
     SustainedClockSpeedInGhz: node.first("sustainedClockSpeedInGhz", false, x => parseFloat(x.content ?? '0')),
@@ -22726,8 +22482,7 @@ export type ArchitectureType =
 | "i386"
 | "x86_64"
 | "arm64"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface VCpuInfo {
@@ -22737,7 +22492,7 @@ export interface VCpuInfo {
   ValidCores: number[];
   ValidThreadsPerCore: number[];
 }
-function VCpuInfo_Parse(node: XmlNode): VCpuInfo {
+function VCpuInfo_Parse(node: xmlP.XmlNode): VCpuInfo {
   return {
     DefaultVCpus: node.first("defaultVCpus", false, x => parseInt(x.content ?? '0')),
     DefaultCores: node.first("defaultCores", false, x => parseInt(x.content ?? '0')),
@@ -22751,7 +22506,7 @@ function VCpuInfo_Parse(node: XmlNode): VCpuInfo {
 export interface MemoryInfo {
   SizeInMiB?: number | null;
 }
-function MemoryInfo_Parse(node: XmlNode): MemoryInfo {
+function MemoryInfo_Parse(node: xmlP.XmlNode): MemoryInfo {
   return {
     SizeInMiB: node.first("sizeInMiB", false, x => parseInt(x.content ?? '0')),
   };
@@ -22763,7 +22518,7 @@ export interface InstanceStorageInfo {
   Disks: DiskInfo[];
   NvmeSupport?: EphemeralNvmeSupport | null;
 }
-function InstanceStorageInfo_Parse(node: XmlNode): InstanceStorageInfo {
+function InstanceStorageInfo_Parse(node: xmlP.XmlNode): InstanceStorageInfo {
   return {
     TotalSizeInGB: node.first("totalSizeInGB", false, x => parseInt(x.content ?? '0')),
     Disks: node.getList("disks", "item").map(DiskInfo_Parse),
@@ -22777,7 +22532,7 @@ export interface DiskInfo {
   Count?: number | null;
   Type?: DiskType | null;
 }
-function DiskInfo_Parse(node: XmlNode): DiskInfo {
+function DiskInfo_Parse(node: xmlP.XmlNode): DiskInfo {
   return {
     SizeInGB: node.first("sizeInGB", false, x => parseInt(x.content ?? '0')),
     Count: node.first("count", false, x => parseInt(x.content ?? '0')),
@@ -22789,16 +22544,14 @@ function DiskInfo_Parse(node: XmlNode): DiskInfo {
 export type DiskType =
 | "hdd"
 | "ssd"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type EphemeralNvmeSupport =
 | "unsupported"
 | "supported"
 | "required"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface EbsInfo {
@@ -22807,7 +22560,7 @@ export interface EbsInfo {
   EbsOptimizedInfo?: EbsOptimizedInfo | null;
   NvmeSupport?: EbsNvmeSupport | null;
 }
-function EbsInfo_Parse(node: XmlNode): EbsInfo {
+function EbsInfo_Parse(node: xmlP.XmlNode): EbsInfo {
   return {
     EbsOptimizedSupport: node.first("ebsOptimizedSupport", false, x => (x.content ?? '') as EbsOptimizedSupport),
     EncryptionSupport: node.first("encryptionSupport", false, x => (x.content ?? '') as EbsEncryptionSupport),
@@ -22821,15 +22574,13 @@ export type EbsOptimizedSupport =
 | "unsupported"
 | "supported"
 | "default"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type EbsEncryptionSupport =
 | "unsupported"
 | "supported"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface EbsOptimizedInfo {
@@ -22840,7 +22591,7 @@ export interface EbsOptimizedInfo {
   MaximumThroughputInMBps?: number | null;
   MaximumIops?: number | null;
 }
-function EbsOptimizedInfo_Parse(node: XmlNode): EbsOptimizedInfo {
+function EbsOptimizedInfo_Parse(node: xmlP.XmlNode): EbsOptimizedInfo {
   return {
     BaselineBandwidthInMbps: node.first("baselineBandwidthInMbps", false, x => parseInt(x.content ?? '0')),
     BaselineThroughputInMBps: node.first("baselineThroughputInMBps", false, x => parseFloat(x.content ?? '0')),
@@ -22856,8 +22607,7 @@ export type EbsNvmeSupport =
 | "unsupported"
 | "supported"
 | "required"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface NetworkInfo {
@@ -22869,7 +22619,7 @@ export interface NetworkInfo {
   EnaSupport?: EnaSupport | null;
   EfaSupported?: boolean | null;
 }
-function NetworkInfo_Parse(node: XmlNode): NetworkInfo {
+function NetworkInfo_Parse(node: xmlP.XmlNode): NetworkInfo {
   return {
     NetworkPerformance: node.first("networkPerformance", false, x => x.content ?? ''),
     MaximumNetworkInterfaces: node.first("maximumNetworkInterfaces", false, x => parseInt(x.content ?? '0')),
@@ -22886,15 +22636,14 @@ export type EnaSupport =
 | "unsupported"
 | "supported"
 | "required"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface GpuInfo {
   Gpus: GpuDeviceInfo[];
   TotalGpuMemoryInMiB?: number | null;
 }
-function GpuInfo_Parse(node: XmlNode): GpuInfo {
+function GpuInfo_Parse(node: xmlP.XmlNode): GpuInfo {
   return {
     Gpus: node.getList("gpus", "item").map(GpuDeviceInfo_Parse),
     TotalGpuMemoryInMiB: node.first("totalGpuMemoryInMiB", false, x => parseInt(x.content ?? '0')),
@@ -22908,7 +22657,7 @@ export interface GpuDeviceInfo {
   Count?: number | null;
   MemoryInfo?: GpuDeviceMemoryInfo | null;
 }
-function GpuDeviceInfo_Parse(node: XmlNode): GpuDeviceInfo {
+function GpuDeviceInfo_Parse(node: xmlP.XmlNode): GpuDeviceInfo {
   return {
     Name: node.first("name", false, x => x.content ?? ''),
     Manufacturer: node.first("manufacturer", false, x => x.content ?? ''),
@@ -22921,7 +22670,7 @@ function GpuDeviceInfo_Parse(node: XmlNode): GpuDeviceInfo {
 export interface GpuDeviceMemoryInfo {
   SizeInMiB?: number | null;
 }
-function GpuDeviceMemoryInfo_Parse(node: XmlNode): GpuDeviceMemoryInfo {
+function GpuDeviceMemoryInfo_Parse(node: xmlP.XmlNode): GpuDeviceMemoryInfo {
   return {
     SizeInMiB: node.first("sizeInMiB", false, x => parseInt(x.content ?? '0')),
   };
@@ -22932,7 +22681,7 @@ export interface FpgaInfo {
   Fpgas: FpgaDeviceInfo[];
   TotalFpgaMemoryInMiB?: number | null;
 }
-function FpgaInfo_Parse(node: XmlNode): FpgaInfo {
+function FpgaInfo_Parse(node: xmlP.XmlNode): FpgaInfo {
   return {
     Fpgas: node.getList("fpgas", "item").map(FpgaDeviceInfo_Parse),
     TotalFpgaMemoryInMiB: node.first("totalFpgaMemoryInMiB", false, x => parseInt(x.content ?? '0')),
@@ -22946,7 +22695,7 @@ export interface FpgaDeviceInfo {
   Count?: number | null;
   MemoryInfo?: FpgaDeviceMemoryInfo | null;
 }
-function FpgaDeviceInfo_Parse(node: XmlNode): FpgaDeviceInfo {
+function FpgaDeviceInfo_Parse(node: xmlP.XmlNode): FpgaDeviceInfo {
   return {
     Name: node.first("name", false, x => x.content ?? ''),
     Manufacturer: node.first("manufacturer", false, x => x.content ?? ''),
@@ -22959,7 +22708,7 @@ function FpgaDeviceInfo_Parse(node: XmlNode): FpgaDeviceInfo {
 export interface FpgaDeviceMemoryInfo {
   SizeInMiB?: number | null;
 }
-function FpgaDeviceMemoryInfo_Parse(node: XmlNode): FpgaDeviceMemoryInfo {
+function FpgaDeviceMemoryInfo_Parse(node: xmlP.XmlNode): FpgaDeviceMemoryInfo {
   return {
     SizeInMiB: node.first("sizeInMiB", false, x => parseInt(x.content ?? '0')),
   };
@@ -22969,7 +22718,7 @@ function FpgaDeviceMemoryInfo_Parse(node: XmlNode): FpgaDeviceMemoryInfo {
 export interface PlacementGroupInfo {
   SupportedStrategies: PlacementGroupStrategy[];
 }
-function PlacementGroupInfo_Parse(node: XmlNode): PlacementGroupInfo {
+function PlacementGroupInfo_Parse(node: xmlP.XmlNode): PlacementGroupInfo {
   return {
     SupportedStrategies: node.getList("supportedStrategies", "item").map(x => (x.content ?? '') as PlacementGroupStrategy),
   };
@@ -22980,14 +22729,13 @@ export type PlacementGroupStrategy =
 | "cluster"
 | "partition"
 | "spread"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface InferenceAcceleratorInfo {
   Accelerators: InferenceDeviceInfo[];
 }
-function InferenceAcceleratorInfo_Parse(node: XmlNode): InferenceAcceleratorInfo {
+function InferenceAcceleratorInfo_Parse(node: xmlP.XmlNode): InferenceAcceleratorInfo {
   return {
     Accelerators: node.getList("accelerators", "item").map(InferenceDeviceInfo_Parse),
   };
@@ -22999,7 +22747,7 @@ export interface InferenceDeviceInfo {
   Name?: string | null;
   Manufacturer?: string | null;
 }
-function InferenceDeviceInfo_Parse(node: XmlNode): InferenceDeviceInfo {
+function InferenceDeviceInfo_Parse(node: xmlP.XmlNode): InferenceDeviceInfo {
   return {
     Count: node.first("count", false, x => parseInt(x.content ?? '0')),
     Name: node.first("name", false, x => x.content ?? ''),
@@ -23057,7 +22805,7 @@ export interface Instance {
   Licenses: LicenseConfiguration[];
   MetadataOptions?: InstanceMetadataOptionsResponse | null;
 }
-function Instance_Parse(node: XmlNode): Instance {
+function Instance_Parse(node: xmlP.XmlNode): Instance {
   return {
     AmiLaunchIndex: node.first("amiLaunchIndex", false, x => parseInt(x.content ?? '0')),
     ImageId: node.first("imageId", false, x => x.content ?? ''),
@@ -23065,7 +22813,7 @@ function Instance_Parse(node: XmlNode): Instance {
     InstanceType: node.first("instanceType", false, x => (x.content ?? '') as InstanceType),
     KernelId: node.first("kernelId", false, x => x.content ?? ''),
     KeyName: node.first("keyName", false, x => x.content ?? ''),
-    LaunchTime: node.first("launchTime", false, x => parseTimestamp(x.content)),
+    LaunchTime: node.first("launchTime", false, x => xmlP.parseTimestamp(x.content)),
     Monitoring: node.first("monitoring", false, Monitoring_Parse),
     Placement: node.first("placement", false, Placement_Parse),
     Platform: node.first("platform", false, x => (x.content ?? '') as PlatformValues),
@@ -23113,7 +22861,7 @@ function Instance_Parse(node: XmlNode): Instance {
 export interface Monitoring {
   State?: MonitoringState | null;
 }
-function Monitoring_Parse(node: XmlNode): Monitoring {
+function Monitoring_Parse(node: xmlP.XmlNode): Monitoring {
   return {
     State: node.first("state", false, x => (x.content ?? '') as MonitoringState),
   };
@@ -23125,15 +22873,13 @@ export type MonitoringState =
 | "disabling"
 | "enabled"
 | "pending"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type InstanceLifecycleType =
 | "spot"
 | "scheduled"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ElasticGpuAssociation {
@@ -23142,7 +22888,7 @@ export interface ElasticGpuAssociation {
   ElasticGpuAssociationState?: string | null;
   ElasticGpuAssociationTime?: string | null;
 }
-function ElasticGpuAssociation_Parse(node: XmlNode): ElasticGpuAssociation {
+function ElasticGpuAssociation_Parse(node: xmlP.XmlNode): ElasticGpuAssociation {
   return {
     ElasticGpuId: node.first("elasticGpuId", false, x => x.content ?? ''),
     ElasticGpuAssociationId: node.first("elasticGpuAssociationId", false, x => x.content ?? ''),
@@ -23158,12 +22904,12 @@ export interface ElasticInferenceAcceleratorAssociation {
   ElasticInferenceAcceleratorAssociationState?: string | null;
   ElasticInferenceAcceleratorAssociationTime?: Date | number | null;
 }
-function ElasticInferenceAcceleratorAssociation_Parse(node: XmlNode): ElasticInferenceAcceleratorAssociation {
+function ElasticInferenceAcceleratorAssociation_Parse(node: xmlP.XmlNode): ElasticInferenceAcceleratorAssociation {
   return {
     ElasticInferenceAcceleratorArn: node.first("elasticInferenceAcceleratorArn", false, x => x.content ?? ''),
     ElasticInferenceAcceleratorAssociationId: node.first("elasticInferenceAcceleratorAssociationId", false, x => x.content ?? ''),
     ElasticInferenceAcceleratorAssociationState: node.first("elasticInferenceAcceleratorAssociationState", false, x => x.content ?? ''),
-    ElasticInferenceAcceleratorAssociationTime: node.first("elasticInferenceAcceleratorAssociationTime", false, x => parseTimestamp(x.content)),
+    ElasticInferenceAcceleratorAssociationTime: node.first("elasticInferenceAcceleratorAssociationTime", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -23186,7 +22932,7 @@ export interface InstanceNetworkInterface {
   VpcId?: string | null;
   InterfaceType?: string | null;
 }
-function InstanceNetworkInterface_Parse(node: XmlNode): InstanceNetworkInterface {
+function InstanceNetworkInterface_Parse(node: xmlP.XmlNode): InstanceNetworkInterface {
   return {
     Association: node.first("association", false, InstanceNetworkInterfaceAssociation_Parse),
     Attachment: node.first("attachment", false, InstanceNetworkInterfaceAttachment_Parse),
@@ -23214,7 +22960,7 @@ export interface InstanceNetworkInterfaceAssociation {
   PublicDnsName?: string | null;
   PublicIp?: string | null;
 }
-function InstanceNetworkInterfaceAssociation_Parse(node: XmlNode): InstanceNetworkInterfaceAssociation {
+function InstanceNetworkInterfaceAssociation_Parse(node: xmlP.XmlNode): InstanceNetworkInterfaceAssociation {
   return {
     CarrierIp: node.first("carrierIp", false, x => x.content ?? ''),
     IpOwnerId: node.first("ipOwnerId", false, x => x.content ?? ''),
@@ -23231,9 +22977,9 @@ export interface InstanceNetworkInterfaceAttachment {
   DeviceIndex?: number | null;
   Status?: AttachmentStatus | null;
 }
-function InstanceNetworkInterfaceAttachment_Parse(node: XmlNode): InstanceNetworkInterfaceAttachment {
+function InstanceNetworkInterfaceAttachment_Parse(node: xmlP.XmlNode): InstanceNetworkInterfaceAttachment {
   return {
-    AttachTime: node.first("attachTime", false, x => parseTimestamp(x.content)),
+    AttachTime: node.first("attachTime", false, x => xmlP.parseTimestamp(x.content)),
     AttachmentId: node.first("attachmentId", false, x => x.content ?? ''),
     DeleteOnTermination: node.first("deleteOnTermination", false, x => x.content === 'true'),
     DeviceIndex: node.first("deviceIndex", false, x => parseInt(x.content ?? '0')),
@@ -23248,7 +22994,7 @@ export interface InstancePrivateIpAddress {
   PrivateDnsName?: string | null;
   PrivateIpAddress?: string | null;
 }
-function InstancePrivateIpAddress_Parse(node: XmlNode): InstancePrivateIpAddress {
+function InstancePrivateIpAddress_Parse(node: xmlP.XmlNode): InstancePrivateIpAddress {
   return {
     Association: node.first("association", false, InstanceNetworkInterfaceAssociation_Parse),
     Primary: node.first("primary", false, x => x.content === 'true'),
@@ -23262,7 +23008,7 @@ export interface CpuOptions {
   CoreCount?: number | null;
   ThreadsPerCore?: number | null;
 }
-function CpuOptions_Parse(node: XmlNode): CpuOptions {
+function CpuOptions_Parse(node: xmlP.XmlNode): CpuOptions {
   return {
     CoreCount: node.first("coreCount", false, x => parseInt(x.content ?? '0')),
     ThreadsPerCore: node.first("threadsPerCore", false, x => parseInt(x.content ?? '0')),
@@ -23274,7 +23020,7 @@ export interface CapacityReservationSpecificationResponse {
   CapacityReservationPreference?: CapacityReservationPreference | null;
   CapacityReservationTarget?: CapacityReservationTargetResponse | null;
 }
-function CapacityReservationSpecificationResponse_Parse(node: XmlNode): CapacityReservationSpecificationResponse {
+function CapacityReservationSpecificationResponse_Parse(node: xmlP.XmlNode): CapacityReservationSpecificationResponse {
   return {
     CapacityReservationPreference: node.first("capacityReservationPreference", false, x => (x.content ?? '') as CapacityReservationPreference),
     CapacityReservationTarget: node.first("capacityReservationTarget", false, CapacityReservationTargetResponse_Parse),
@@ -23285,7 +23031,7 @@ function CapacityReservationSpecificationResponse_Parse(node: XmlNode): Capacity
 export interface HibernationOptions {
   Configured?: boolean | null;
 }
-function HibernationOptions_Parse(node: XmlNode): HibernationOptions {
+function HibernationOptions_Parse(node: xmlP.XmlNode): HibernationOptions {
   return {
     Configured: node.first("configured", false, x => x.content === 'true'),
   };
@@ -23295,7 +23041,7 @@ function HibernationOptions_Parse(node: XmlNode): HibernationOptions {
 export interface LicenseConfiguration {
   LicenseConfigurationArn?: string | null;
 }
-function LicenseConfiguration_Parse(node: XmlNode): LicenseConfiguration {
+function LicenseConfiguration_Parse(node: xmlP.XmlNode): LicenseConfiguration {
   return {
     LicenseConfigurationArn: node.first("licenseConfigurationArn", false, x => x.content ?? ''),
   };
@@ -23308,7 +23054,7 @@ export interface InstanceMetadataOptionsResponse {
   HttpPutResponseHopLimit?: number | null;
   HttpEndpoint?: InstanceMetadataEndpointState | null;
 }
-function InstanceMetadataOptionsResponse_Parse(node: XmlNode): InstanceMetadataOptionsResponse {
+function InstanceMetadataOptionsResponse_Parse(node: xmlP.XmlNode): InstanceMetadataOptionsResponse {
   return {
     State: node.first("state", false, x => (x.content ?? '') as InstanceMetadataOptionsState),
     HttpTokens: node.first("httpTokens", false, x => (x.content ?? '') as HttpTokensState),
@@ -23321,8 +23067,7 @@ function InstanceMetadataOptionsResponse_Parse(node: XmlNode): InstanceMetadataO
 export type InstanceMetadataOptionsState =
 | "pending"
 | "applied"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Ipv6Pool {
@@ -23331,7 +23076,7 @@ export interface Ipv6Pool {
   PoolCidrBlocks: PoolCidrBlock[];
   Tags: Tag[];
 }
-function Ipv6Pool_Parse(node: XmlNode): Ipv6Pool {
+function Ipv6Pool_Parse(node: xmlP.XmlNode): Ipv6Pool {
   return {
     PoolId: node.first("poolId", false, x => x.content ?? ''),
     Description: node.first("description", false, x => x.content ?? ''),
@@ -23344,7 +23089,7 @@ function Ipv6Pool_Parse(node: XmlNode): Ipv6Pool {
 export interface PoolCidrBlock {
   Cidr?: string | null;
 }
-function PoolCidrBlock_Parse(node: XmlNode): PoolCidrBlock {
+function PoolCidrBlock_Parse(node: xmlP.XmlNode): PoolCidrBlock {
   return {
     Cidr: node.first("poolCidrBlock", false, x => x.content ?? ''),
   };
@@ -23357,7 +23102,7 @@ export interface KeyPairInfo {
   KeyName?: string | null;
   Tags: Tag[];
 }
-function KeyPairInfo_Parse(node: XmlNode): KeyPairInfo {
+function KeyPairInfo_Parse(node: xmlP.XmlNode): KeyPairInfo {
   return {
     KeyPairId: node.first("keyPairId", false, x => x.content ?? ''),
     KeyFingerprint: node.first("keyFingerprint", false, x => x.content ?? ''),
@@ -23377,7 +23122,7 @@ export interface LocalGatewayRouteTableVirtualInterfaceGroupAssociation {
   State?: string | null;
   Tags: Tag[];
 }
-function LocalGatewayRouteTableVirtualInterfaceGroupAssociation_Parse(node: XmlNode): LocalGatewayRouteTableVirtualInterfaceGroupAssociation {
+function LocalGatewayRouteTableVirtualInterfaceGroupAssociation_Parse(node: xmlP.XmlNode): LocalGatewayRouteTableVirtualInterfaceGroupAssociation {
   return {
     LocalGatewayRouteTableVirtualInterfaceGroupAssociationId: node.first("localGatewayRouteTableVirtualInterfaceGroupAssociationId", false, x => x.content ?? ''),
     LocalGatewayVirtualInterfaceGroupId: node.first("localGatewayVirtualInterfaceGroupId", false, x => x.content ?? ''),
@@ -23400,7 +23145,7 @@ export interface LocalGatewayRouteTable {
   State?: string | null;
   Tags: Tag[];
 }
-function LocalGatewayRouteTable_Parse(node: XmlNode): LocalGatewayRouteTable {
+function LocalGatewayRouteTable_Parse(node: xmlP.XmlNode): LocalGatewayRouteTable {
   return {
     LocalGatewayRouteTableId: node.first("localGatewayRouteTableId", false, x => x.content ?? ''),
     LocalGatewayRouteTableArn: node.first("localGatewayRouteTableArn", false, x => x.content ?? ''),
@@ -23420,7 +23165,7 @@ export interface LocalGatewayVirtualInterfaceGroup {
   OwnerId?: string | null;
   Tags: Tag[];
 }
-function LocalGatewayVirtualInterfaceGroup_Parse(node: XmlNode): LocalGatewayVirtualInterfaceGroup {
+function LocalGatewayVirtualInterfaceGroup_Parse(node: xmlP.XmlNode): LocalGatewayVirtualInterfaceGroup {
   return {
     LocalGatewayVirtualInterfaceGroupId: node.first("localGatewayVirtualInterfaceGroupId", false, x => x.content ?? ''),
     LocalGatewayVirtualInterfaceIds: node.getList("localGatewayVirtualInterfaceIdSet", "item").map(x => x.content ?? ''),
@@ -23442,7 +23187,7 @@ export interface LocalGatewayVirtualInterface {
   OwnerId?: string | null;
   Tags: Tag[];
 }
-function LocalGatewayVirtualInterface_Parse(node: XmlNode): LocalGatewayVirtualInterface {
+function LocalGatewayVirtualInterface_Parse(node: xmlP.XmlNode): LocalGatewayVirtualInterface {
   return {
     LocalGatewayVirtualInterfaceId: node.first("localGatewayVirtualInterfaceId", false, x => x.content ?? ''),
     LocalGatewayId: node.first("localGatewayId", false, x => x.content ?? ''),
@@ -23464,7 +23209,7 @@ export interface LocalGateway {
   State?: string | null;
   Tags: Tag[];
 }
-function LocalGateway_Parse(node: XmlNode): LocalGateway {
+function LocalGateway_Parse(node: xmlP.XmlNode): LocalGateway {
   return {
     LocalGatewayId: node.first("localGatewayId", false, x => x.content ?? ''),
     OutpostArn: node.first("outpostArn", false, x => x.content ?? ''),
@@ -23479,7 +23224,7 @@ export interface MovingAddressStatus {
   MoveStatus?: MoveStatus | null;
   PublicIp?: string | null;
 }
-function MovingAddressStatus_Parse(node: XmlNode): MovingAddressStatus {
+function MovingAddressStatus_Parse(node: xmlP.XmlNode): MovingAddressStatus {
   return {
     MoveStatus: node.first("moveStatus", false, x => (x.content ?? '') as MoveStatus),
     PublicIp: node.first("publicIp", false, x => x.content ?? ''),
@@ -23490,8 +23235,7 @@ function MovingAddressStatus_Parse(node: XmlNode): MovingAddressStatus {
 export type MoveStatus =
 | "movingToVpc"
 | "restoringToClassic"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface PrefixList {
@@ -23499,7 +23243,7 @@ export interface PrefixList {
   PrefixListId?: string | null;
   PrefixListName?: string | null;
 }
-function PrefixList_Parse(node: XmlNode): PrefixList {
+function PrefixList_Parse(node: xmlP.XmlNode): PrefixList {
   return {
     Cidrs: node.getList("cidrSet", "item").map(x => x.content ?? ''),
     PrefixListId: node.first("prefixListId", false, x => x.content ?? ''),
@@ -23512,7 +23256,7 @@ export interface PrincipalIdFormat {
   Arn?: string | null;
   Statuses: IdFormat[];
 }
-function PrincipalIdFormat_Parse(node: XmlNode): PrincipalIdFormat {
+function PrincipalIdFormat_Parse(node: xmlP.XmlNode): PrincipalIdFormat {
   return {
     Arn: node.first("arn", false, x => x.content ?? ''),
     Statuses: node.getList("statusSet", "item").map(IdFormat_Parse),
@@ -23529,7 +23273,7 @@ export interface PublicIpv4Pool {
   NetworkBorderGroup?: string | null;
   Tags: Tag[];
 }
-function PublicIpv4Pool_Parse(node: XmlNode): PublicIpv4Pool {
+function PublicIpv4Pool_Parse(node: xmlP.XmlNode): PublicIpv4Pool {
   return {
     PoolId: node.first("poolId", false, x => x.content ?? ''),
     Description: node.first("description", false, x => x.content ?? ''),
@@ -23548,7 +23292,7 @@ export interface PublicIpv4PoolRange {
   AddressCount?: number | null;
   AvailableAddressCount?: number | null;
 }
-function PublicIpv4PoolRange_Parse(node: XmlNode): PublicIpv4PoolRange {
+function PublicIpv4PoolRange_Parse(node: xmlP.XmlNode): PublicIpv4PoolRange {
   return {
     FirstAddress: node.first("firstAddress", false, x => x.content ?? ''),
     LastAddress: node.first("lastAddress", false, x => x.content ?? ''),
@@ -23563,7 +23307,7 @@ export interface Region {
   RegionName?: string | null;
   OptInStatus?: string | null;
 }
-function Region_Parse(node: XmlNode): Region {
+function Region_Parse(node: xmlP.XmlNode): Region {
   return {
     Endpoint: node.first("regionEndpoint", false, x => x.content ?? ''),
     RegionName: node.first("regionName", false, x => x.content ?? ''),
@@ -23592,17 +23336,17 @@ export interface ReservedInstances {
   Scope?: scope | null;
   Tags: Tag[];
 }
-function ReservedInstances_Parse(node: XmlNode): ReservedInstances {
+function ReservedInstances_Parse(node: xmlP.XmlNode): ReservedInstances {
   return {
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
     Duration: node.first("duration", false, x => parseInt(x.content ?? '0')),
-    End: node.first("end", false, x => parseTimestamp(x.content)),
+    End: node.first("end", false, x => xmlP.parseTimestamp(x.content)),
     FixedPrice: node.first("fixedPrice", false, x => parseFloat(x.content ?? '0')),
     InstanceCount: node.first("instanceCount", false, x => parseInt(x.content ?? '0')),
     InstanceType: node.first("instanceType", false, x => (x.content ?? '') as InstanceType),
     ProductDescription: node.first("productDescription", false, x => (x.content ?? '') as RIProductDescription),
     ReservedInstancesId: node.first("reservedInstancesId", false, x => x.content ?? ''),
-    Start: node.first("start", false, x => parseTimestamp(x.content)),
+    Start: node.first("start", false, x => xmlP.parseTimestamp(x.content)),
     State: node.first("state", false, x => (x.content ?? '') as ReservedInstanceState),
     UsagePrice: node.first("usagePrice", false, x => parseFloat(x.content ?? '0')),
     CurrencyCode: node.first("currencyCode", false, x => (x.content ?? '') as CurrencyCodeValues),
@@ -23623,15 +23367,14 @@ export type ReservedInstanceState =
 | "retired"
 | "queued"
 | "queued-deleted"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface RecurringCharge {
   Amount?: number | null;
   Frequency?: RecurringChargeFrequency | null;
 }
-function RecurringCharge_Parse(node: XmlNode): RecurringCharge {
+function RecurringCharge_Parse(node: xmlP.XmlNode): RecurringCharge {
   return {
     Amount: node.first("amount", false, x => parseFloat(x.content ?? '0')),
     Frequency: node.first("frequency", false, x => (x.content ?? '') as RecurringChargeFrequency),
@@ -23641,8 +23384,7 @@ function RecurringCharge_Parse(node: XmlNode): RecurringCharge {
 // refs: 2 - tags: output, named, enum
 export type RecurringChargeFrequency =
 | "Hourly"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ReservedInstancesModification {
@@ -23656,17 +23398,17 @@ export interface ReservedInstancesModification {
   StatusMessage?: string | null;
   UpdateDate?: Date | number | null;
 }
-function ReservedInstancesModification_Parse(node: XmlNode): ReservedInstancesModification {
+function ReservedInstancesModification_Parse(node: xmlP.XmlNode): ReservedInstancesModification {
   return {
     ClientToken: node.first("clientToken", false, x => x.content ?? ''),
-    CreateDate: node.first("createDate", false, x => parseTimestamp(x.content)),
-    EffectiveDate: node.first("effectiveDate", false, x => parseTimestamp(x.content)),
+    CreateDate: node.first("createDate", false, x => xmlP.parseTimestamp(x.content)),
+    EffectiveDate: node.first("effectiveDate", false, x => xmlP.parseTimestamp(x.content)),
     ModificationResults: node.getList("modificationResultSet", "item").map(ReservedInstancesModificationResult_Parse),
     ReservedInstancesIds: node.getList("reservedInstancesSet", "item").map(ReservedInstancesId_Parse),
     ReservedInstancesModificationId: node.first("reservedInstancesModificationId", false, x => x.content ?? ''),
     Status: node.first("status", false, x => x.content ?? ''),
     StatusMessage: node.first("statusMessage", false, x => x.content ?? ''),
-    UpdateDate: node.first("updateDate", false, x => parseTimestamp(x.content)),
+    UpdateDate: node.first("updateDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -23675,7 +23417,7 @@ export interface ReservedInstancesModificationResult {
   ReservedInstancesId?: string | null;
   TargetConfiguration?: ReservedInstancesConfiguration | null;
 }
-function ReservedInstancesModificationResult_Parse(node: XmlNode): ReservedInstancesModificationResult {
+function ReservedInstancesModificationResult_Parse(node: xmlP.XmlNode): ReservedInstancesModificationResult {
   return {
     ReservedInstancesId: node.first("reservedInstancesId", false, x => x.content ?? ''),
     TargetConfiguration: node.first("targetConfiguration", false, ReservedInstancesConfiguration_Parse),
@@ -23686,7 +23428,7 @@ function ReservedInstancesModificationResult_Parse(node: XmlNode): ReservedInsta
 export interface ReservedInstancesId {
   ReservedInstancesId?: string | null;
 }
-function ReservedInstancesId_Parse(node: XmlNode): ReservedInstancesId {
+function ReservedInstancesId_Parse(node: xmlP.XmlNode): ReservedInstancesId {
   return {
     ReservedInstancesId: node.first("reservedInstancesId", false, x => x.content ?? ''),
   };
@@ -23710,7 +23452,7 @@ export interface ReservedInstancesOffering {
   RecurringCharges: RecurringCharge[];
   Scope?: scope | null;
 }
-function ReservedInstancesOffering_Parse(node: XmlNode): ReservedInstancesOffering {
+function ReservedInstancesOffering_Parse(node: xmlP.XmlNode): ReservedInstancesOffering {
   return {
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
     Duration: node.first("duration", false, x => parseInt(x.content ?? '0')),
@@ -23735,7 +23477,7 @@ export interface PricingDetail {
   Count?: number | null;
   Price?: number | null;
 }
-function PricingDetail_Parse(node: XmlNode): PricingDetail {
+function PricingDetail_Parse(node: xmlP.XmlNode): PricingDetail {
   return {
     Count: node.first("count", false, x => parseInt(x.content ?? '0')),
     Price: node.first("price", false, x => parseFloat(x.content ?? '0')),
@@ -23758,11 +23500,11 @@ export interface ScheduledInstanceAvailability {
   SlotDurationInHours?: number | null;
   TotalScheduledInstanceHours?: number | null;
 }
-function ScheduledInstanceAvailability_Parse(node: XmlNode): ScheduledInstanceAvailability {
+function ScheduledInstanceAvailability_Parse(node: xmlP.XmlNode): ScheduledInstanceAvailability {
   return {
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
     AvailableInstanceCount: node.first("availableInstanceCount", false, x => parseInt(x.content ?? '0')),
-    FirstSlotStartTime: node.first("firstSlotStartTime", false, x => parseTimestamp(x.content)),
+    FirstSlotStartTime: node.first("firstSlotStartTime", false, x => xmlP.parseTimestamp(x.content)),
     HourlyPrice: node.first("hourlyPrice", false, x => x.content ?? ''),
     InstanceType: node.first("instanceType", false, x => x.content ?? ''),
     MaxTermDurationInDays: node.first("maxTermDurationInDays", false, x => parseInt(x.content ?? '0')),
@@ -23784,7 +23526,7 @@ export interface ScheduledInstanceRecurrence {
   OccurrenceRelativeToEnd?: boolean | null;
   OccurrenceUnit?: string | null;
 }
-function ScheduledInstanceRecurrence_Parse(node: XmlNode): ScheduledInstanceRecurrence {
+function ScheduledInstanceRecurrence_Parse(node: xmlP.XmlNode): ScheduledInstanceRecurrence {
   return {
     Frequency: node.first("frequency", false, x => x.content ?? ''),
     Interval: node.first("interval", false, x => parseInt(x.content ?? '0')),
@@ -23812,22 +23554,22 @@ export interface ScheduledInstance {
   TermStartDate?: Date | number | null;
   TotalScheduledInstanceHours?: number | null;
 }
-function ScheduledInstance_Parse(node: XmlNode): ScheduledInstance {
+function ScheduledInstance_Parse(node: xmlP.XmlNode): ScheduledInstance {
   return {
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
-    CreateDate: node.first("createDate", false, x => parseTimestamp(x.content)),
+    CreateDate: node.first("createDate", false, x => xmlP.parseTimestamp(x.content)),
     HourlyPrice: node.first("hourlyPrice", false, x => x.content ?? ''),
     InstanceCount: node.first("instanceCount", false, x => parseInt(x.content ?? '0')),
     InstanceType: node.first("instanceType", false, x => x.content ?? ''),
     NetworkPlatform: node.first("networkPlatform", false, x => x.content ?? ''),
-    NextSlotStartTime: node.first("nextSlotStartTime", false, x => parseTimestamp(x.content)),
+    NextSlotStartTime: node.first("nextSlotStartTime", false, x => xmlP.parseTimestamp(x.content)),
     Platform: node.first("platform", false, x => x.content ?? ''),
-    PreviousSlotEndTime: node.first("previousSlotEndTime", false, x => parseTimestamp(x.content)),
+    PreviousSlotEndTime: node.first("previousSlotEndTime", false, x => xmlP.parseTimestamp(x.content)),
     Recurrence: node.first("recurrence", false, ScheduledInstanceRecurrence_Parse),
     ScheduledInstanceId: node.first("scheduledInstanceId", false, x => x.content ?? ''),
     SlotDurationInHours: node.first("slotDurationInHours", false, x => parseInt(x.content ?? '0')),
-    TermEndDate: node.first("termEndDate", false, x => parseTimestamp(x.content)),
-    TermStartDate: node.first("termStartDate", false, x => parseTimestamp(x.content)),
+    TermEndDate: node.first("termEndDate", false, x => xmlP.parseTimestamp(x.content)),
+    TermStartDate: node.first("termStartDate", false, x => xmlP.parseTimestamp(x.content)),
     TotalScheduledInstanceHours: node.first("totalScheduledInstanceHours", false, x => parseInt(x.content ?? '0')),
   };
 }
@@ -23838,7 +23580,7 @@ export interface SecurityGroupReference {
   ReferencingVpcId?: string | null;
   VpcPeeringConnectionId?: string | null;
 }
-function SecurityGroupReference_Parse(node: XmlNode): SecurityGroupReference {
+function SecurityGroupReference_Parse(node: xmlP.XmlNode): SecurityGroupReference {
   return {
     GroupId: node.first("groupId", false, x => x.content ?? ''),
     ReferencingVpcId: node.first("referencingVpcId", false, x => x.content ?? ''),
@@ -23857,7 +23599,7 @@ export interface SecurityGroup {
   Tags: Tag[];
   VpcId?: string | null;
 }
-function SecurityGroup_Parse(node: XmlNode): SecurityGroup {
+function SecurityGroup_Parse(node: xmlP.XmlNode): SecurityGroup {
   return {
     Description: node.first("groupDescription", false, x => x.content ?? ''),
     GroupName: node.first("groupName", false, x => x.content ?? ''),
@@ -23876,11 +23618,11 @@ export interface HistoryRecord {
   EventType?: EventType | null;
   Timestamp?: Date | number | null;
 }
-function HistoryRecord_Parse(node: XmlNode): HistoryRecord {
+function HistoryRecord_Parse(node: xmlP.XmlNode): HistoryRecord {
   return {
     EventInformation: node.first("eventInformation", false, EventInformation_Parse),
     EventType: node.first("eventType", false, x => (x.content ?? '') as EventType),
-    Timestamp: node.first("timestamp", false, x => parseTimestamp(x.content)),
+    Timestamp: node.first("timestamp", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -23893,10 +23635,10 @@ export interface SpotFleetRequestConfig {
   SpotFleetRequestState?: BatchState | null;
   Tags: Tag[];
 }
-function SpotFleetRequestConfig_Parse(node: XmlNode): SpotFleetRequestConfig {
+function SpotFleetRequestConfig_Parse(node: xmlP.XmlNode): SpotFleetRequestConfig {
   return {
     ActivityStatus: node.first("activityStatus", false, x => (x.content ?? '') as ActivityStatus),
-    CreateTime: node.first("createTime", false, x => parseTimestamp(x.content)),
+    CreateTime: node.first("createTime", false, x => xmlP.parseTimestamp(x.content)),
     SpotFleetRequestConfig: node.first("spotFleetRequestConfig", false, SpotFleetRequestConfigData_Parse),
     SpotFleetRequestId: node.first("spotFleetRequestId", false, x => x.content ?? ''),
     SpotFleetRequestState: node.first("spotFleetRequestState", false, x => (x.content ?? '') as BatchState),
@@ -23910,8 +23652,7 @@ export type ActivityStatus =
 | "pending_fulfillment"
 | "pending_termination"
 | "fulfilled"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface SpotInstanceRequest {
@@ -23935,12 +23676,12 @@ export interface SpotInstanceRequest {
   ValidUntil?: Date | number | null;
   InstanceInterruptionBehavior?: InstanceInterruptionBehavior | null;
 }
-function SpotInstanceRequest_Parse(node: XmlNode): SpotInstanceRequest {
+function SpotInstanceRequest_Parse(node: xmlP.XmlNode): SpotInstanceRequest {
   return {
     ActualBlockHourlyPrice: node.first("actualBlockHourlyPrice", false, x => x.content ?? ''),
     AvailabilityZoneGroup: node.first("availabilityZoneGroup", false, x => x.content ?? ''),
     BlockDurationMinutes: node.first("blockDurationMinutes", false, x => parseInt(x.content ?? '0')),
-    CreateTime: node.first("createTime", false, x => parseTimestamp(x.content)),
+    CreateTime: node.first("createTime", false, x => xmlP.parseTimestamp(x.content)),
     Fault: node.first("fault", false, SpotInstanceStateFault_Parse),
     InstanceId: node.first("instanceId", false, x => x.content ?? ''),
     LaunchGroup: node.first("launchGroup", false, x => x.content ?? ''),
@@ -23953,8 +23694,8 @@ function SpotInstanceRequest_Parse(node: XmlNode): SpotInstanceRequest {
     Status: node.first("status", false, SpotInstanceStatus_Parse),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
     Type: node.first("type", false, x => (x.content ?? '') as SpotInstanceType),
-    ValidFrom: node.first("validFrom", false, x => parseTimestamp(x.content)),
-    ValidUntil: node.first("validUntil", false, x => parseTimestamp(x.content)),
+    ValidFrom: node.first("validFrom", false, x => xmlP.parseTimestamp(x.content)),
+    ValidUntil: node.first("validUntil", false, x => xmlP.parseTimestamp(x.content)),
     InstanceInterruptionBehavior: node.first("instanceInterruptionBehavior", false, x => (x.content ?? '') as InstanceInterruptionBehavior),
   };
 }
@@ -23977,7 +23718,7 @@ export interface LaunchSpecification {
   SubnetId?: string | null;
   Monitoring?: RunInstancesMonitoringEnabled | null;
 }
-function LaunchSpecification_Parse(node: XmlNode): LaunchSpecification {
+function LaunchSpecification_Parse(node: xmlP.XmlNode): LaunchSpecification {
   return {
     UserData: node.first("userData", false, x => x.content ?? ''),
     SecurityGroups: node.getList("groupSet", "item").map(GroupIdentifier_Parse),
@@ -24004,8 +23745,7 @@ export type SpotInstanceState =
 | "closed"
 | "cancelled"
 | "failed"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface SpotInstanceStatus {
@@ -24013,11 +23753,11 @@ export interface SpotInstanceStatus {
   Message?: string | null;
   UpdateTime?: Date | number | null;
 }
-function SpotInstanceStatus_Parse(node: XmlNode): SpotInstanceStatus {
+function SpotInstanceStatus_Parse(node: xmlP.XmlNode): SpotInstanceStatus {
   return {
     Code: node.first("code", false, x => x.content ?? ''),
     Message: node.first("message", false, x => x.content ?? ''),
-    UpdateTime: node.first("updateTime", false, x => parseTimestamp(x.content)),
+    UpdateTime: node.first("updateTime", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -24029,13 +23769,13 @@ export interface SpotPrice {
   SpotPrice?: string | null;
   Timestamp?: Date | number | null;
 }
-function SpotPrice_Parse(node: XmlNode): SpotPrice {
+function SpotPrice_Parse(node: xmlP.XmlNode): SpotPrice {
   return {
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
     InstanceType: node.first("instanceType", false, x => (x.content ?? '') as InstanceType),
     ProductDescription: node.first("productDescription", false, x => (x.content ?? '') as RIProductDescription),
     SpotPrice: node.first("spotPrice", false, x => x.content ?? ''),
-    Timestamp: node.first("timestamp", false, x => parseTimestamp(x.content)),
+    Timestamp: node.first("timestamp", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -24048,7 +23788,7 @@ export interface StaleSecurityGroup {
   StaleIpPermissionsEgress: StaleIpPermission[];
   VpcId?: string | null;
 }
-function StaleSecurityGroup_Parse(node: XmlNode): StaleSecurityGroup {
+function StaleSecurityGroup_Parse(node: xmlP.XmlNode): StaleSecurityGroup {
   return {
     Description: node.first("description", false, x => x.content ?? ''),
     GroupId: node.first("groupId", false, x => x.content ?? ''),
@@ -24068,7 +23808,7 @@ export interface StaleIpPermission {
   ToPort?: number | null;
   UserIdGroupPairs: UserIdGroupPair[];
 }
-function StaleIpPermission_Parse(node: XmlNode): StaleIpPermission {
+function StaleIpPermission_Parse(node: xmlP.XmlNode): StaleIpPermission {
   return {
     FromPort: node.first("fromPort", false, x => parseInt(x.content ?? '0')),
     IpProtocol: node.first("ipProtocol", false, x => x.content ?? ''),
@@ -24086,7 +23826,7 @@ export interface TagDescription {
   ResourceType?: ResourceType | null;
   Value?: string | null;
 }
-function TagDescription_Parse(node: XmlNode): TagDescription {
+function TagDescription_Parse(node: xmlP.XmlNode): TagDescription {
   return {
     Key: node.first("key", false, x => x.content ?? ''),
     ResourceId: node.first("resourceId", false, x => x.content ?? ''),
@@ -24108,7 +23848,7 @@ export interface TransitGatewayAttachment {
   CreationTime?: Date | number | null;
   Tags: Tag[];
 }
-function TransitGatewayAttachment_Parse(node: XmlNode): TransitGatewayAttachment {
+function TransitGatewayAttachment_Parse(node: xmlP.XmlNode): TransitGatewayAttachment {
   return {
     TransitGatewayAttachmentId: node.first("transitGatewayAttachmentId", false, x => x.content ?? ''),
     TransitGatewayId: node.first("transitGatewayId", false, x => x.content ?? ''),
@@ -24118,7 +23858,7 @@ function TransitGatewayAttachment_Parse(node: XmlNode): TransitGatewayAttachment
     ResourceId: node.first("resourceId", false, x => x.content ?? ''),
     State: node.first("state", false, x => (x.content ?? '') as TransitGatewayAttachmentState),
     Association: node.first("association", false, TransitGatewayAttachmentAssociation_Parse),
-    CreationTime: node.first("creationTime", false, x => parseTimestamp(x.content)),
+    CreationTime: node.first("creationTime", false, x => xmlP.parseTimestamp(x.content)),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
   };
 }
@@ -24128,7 +23868,7 @@ export interface TransitGatewayAttachmentAssociation {
   TransitGatewayRouteTableId?: string | null;
   State?: TransitGatewayAssociationState | null;
 }
-function TransitGatewayAttachmentAssociation_Parse(node: XmlNode): TransitGatewayAttachmentAssociation {
+function TransitGatewayAttachmentAssociation_Parse(node: xmlP.XmlNode): TransitGatewayAttachmentAssociation {
   return {
     TransitGatewayRouteTableId: node.first("transitGatewayRouteTableId", false, x => x.content ?? ''),
     State: node.first("state", false, x => (x.content ?? '') as TransitGatewayAssociationState),
@@ -24145,7 +23885,7 @@ export interface VolumeStatusItem {
   VolumeStatus?: VolumeStatusInfo | null;
   AttachmentStatuses: VolumeStatusAttachmentStatus[];
 }
-function VolumeStatusItem_Parse(node: XmlNode): VolumeStatusItem {
+function VolumeStatusItem_Parse(node: xmlP.XmlNode): VolumeStatusItem {
   return {
     Actions: node.getList("actionsSet", "item").map(VolumeStatusAction_Parse),
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
@@ -24164,7 +23904,7 @@ export interface VolumeStatusAction {
   EventId?: string | null;
   EventType?: string | null;
 }
-function VolumeStatusAction_Parse(node: XmlNode): VolumeStatusAction {
+function VolumeStatusAction_Parse(node: xmlP.XmlNode): VolumeStatusAction {
   return {
     Code: node.first("code", false, x => x.content ?? ''),
     Description: node.first("description", false, x => x.content ?? ''),
@@ -24182,13 +23922,13 @@ export interface VolumeStatusEvent {
   NotBefore?: Date | number | null;
   InstanceId?: string | null;
 }
-function VolumeStatusEvent_Parse(node: XmlNode): VolumeStatusEvent {
+function VolumeStatusEvent_Parse(node: xmlP.XmlNode): VolumeStatusEvent {
   return {
     Description: node.first("description", false, x => x.content ?? ''),
     EventId: node.first("eventId", false, x => x.content ?? ''),
     EventType: node.first("eventType", false, x => x.content ?? ''),
-    NotAfter: node.first("notAfter", false, x => parseTimestamp(x.content)),
-    NotBefore: node.first("notBefore", false, x => parseTimestamp(x.content)),
+    NotAfter: node.first("notAfter", false, x => xmlP.parseTimestamp(x.content)),
+    NotBefore: node.first("notBefore", false, x => xmlP.parseTimestamp(x.content)),
     InstanceId: node.first("instanceId", false, x => x.content ?? ''),
   };
 }
@@ -24198,7 +23938,7 @@ export interface VolumeStatusInfo {
   Details: VolumeStatusDetails[];
   Status?: VolumeStatusInfoStatus | null;
 }
-function VolumeStatusInfo_Parse(node: XmlNode): VolumeStatusInfo {
+function VolumeStatusInfo_Parse(node: xmlP.XmlNode): VolumeStatusInfo {
   return {
     Details: node.getList("details", "item").map(VolumeStatusDetails_Parse),
     Status: node.first("status", false, x => (x.content ?? '') as VolumeStatusInfoStatus),
@@ -24210,7 +23950,7 @@ export interface VolumeStatusDetails {
   Name?: VolumeStatusName | null;
   Status?: string | null;
 }
-function VolumeStatusDetails_Parse(node: XmlNode): VolumeStatusDetails {
+function VolumeStatusDetails_Parse(node: xmlP.XmlNode): VolumeStatusDetails {
   return {
     Name: node.first("name", false, x => (x.content ?? '') as VolumeStatusName),
     Status: node.first("status", false, x => x.content ?? ''),
@@ -24221,23 +23961,21 @@ function VolumeStatusDetails_Parse(node: XmlNode): VolumeStatusDetails {
 export type VolumeStatusName =
 | "io-enabled"
 | "io-performance"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type VolumeStatusInfoStatus =
 | "ok"
 | "impaired"
 | "insufficient-data"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface VolumeStatusAttachmentStatus {
   IoPerformance?: string | null;
   InstanceId?: string | null;
 }
-function VolumeStatusAttachmentStatus_Parse(node: XmlNode): VolumeStatusAttachmentStatus {
+function VolumeStatusAttachmentStatus_Parse(node: xmlP.XmlNode): VolumeStatusAttachmentStatus {
   return {
     IoPerformance: node.first("ioPerformance", false, x => x.content ?? ''),
     InstanceId: node.first("instanceId", false, x => x.content ?? ''),
@@ -24259,7 +23997,7 @@ export interface VolumeModification {
   StartTime?: Date | number | null;
   EndTime?: Date | number | null;
 }
-function VolumeModification_Parse(node: XmlNode): VolumeModification {
+function VolumeModification_Parse(node: xmlP.XmlNode): VolumeModification {
   return {
     VolumeId: node.first("volumeId", false, x => x.content ?? ''),
     ModificationState: node.first("modificationState", false, x => (x.content ?? '') as VolumeModificationState),
@@ -24271,8 +24009,8 @@ function VolumeModification_Parse(node: XmlNode): VolumeModification {
     OriginalIops: node.first("originalIops", false, x => parseInt(x.content ?? '0')),
     OriginalVolumeType: node.first("originalVolumeType", false, x => (x.content ?? '') as VolumeType),
     Progress: node.first("progress", false, x => parseInt(x.content ?? '0')),
-    StartTime: node.first("startTime", false, x => parseTimestamp(x.content)),
-    EndTime: node.first("endTime", false, x => parseTimestamp(x.content)),
+    StartTime: node.first("startTime", false, x => xmlP.parseTimestamp(x.content)),
+    EndTime: node.first("endTime", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -24282,8 +24020,7 @@ export type VolumeModificationState =
 | "optimizing"
 | "completed"
 | "failed"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface VpcClassicLink {
@@ -24291,7 +24028,7 @@ export interface VpcClassicLink {
   Tags: Tag[];
   VpcId?: string | null;
 }
-function VpcClassicLink_Parse(node: XmlNode): VpcClassicLink {
+function VpcClassicLink_Parse(node: xmlP.XmlNode): VpcClassicLink {
   return {
     ClassicLinkEnabled: node.first("classicLinkEnabled", false, x => x.content === 'true'),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
@@ -24304,7 +24041,7 @@ export interface ClassicLinkDnsSupport {
   ClassicLinkDnsSupported?: boolean | null;
   VpcId?: string | null;
 }
-function ClassicLinkDnsSupport_Parse(node: XmlNode): ClassicLinkDnsSupport {
+function ClassicLinkDnsSupport_Parse(node: xmlP.XmlNode): ClassicLinkDnsSupport {
   return {
     ClassicLinkDnsSupported: node.first("classicLinkDnsSupported", false, x => x.content === 'true'),
     VpcId: node.first("vpcId", false, x => x.content ?? ''),
@@ -24321,13 +24058,13 @@ export interface VpcEndpointConnection {
   DnsEntries: DnsEntry[];
   NetworkLoadBalancerArns: string[];
 }
-function VpcEndpointConnection_Parse(node: XmlNode): VpcEndpointConnection {
+function VpcEndpointConnection_Parse(node: xmlP.XmlNode): VpcEndpointConnection {
   return {
     ServiceId: node.first("serviceId", false, x => x.content ?? ''),
     VpcEndpointId: node.first("vpcEndpointId", false, x => x.content ?? ''),
     VpcEndpointOwner: node.first("vpcEndpointOwner", false, x => x.content ?? ''),
     VpcEndpointState: node.first("vpcEndpointState", false, x => (x.content ?? '') as State),
-    CreationTimestamp: node.first("creationTimestamp", false, x => parseTimestamp(x.content)),
+    CreationTimestamp: node.first("creationTimestamp", false, x => xmlP.parseTimestamp(x.content)),
     DnsEntries: node.getList("dnsEntrySet", "item").map(DnsEntry_Parse),
     NetworkLoadBalancerArns: node.getList("networkLoadBalancerArnSet", "item").map(x => x.content ?? ''),
   };
@@ -24338,7 +24075,7 @@ export interface AllowedPrincipal {
   PrincipalType?: PrincipalType | null;
   Principal?: string | null;
 }
-function AllowedPrincipal_Parse(node: XmlNode): AllowedPrincipal {
+function AllowedPrincipal_Parse(node: xmlP.XmlNode): AllowedPrincipal {
   return {
     PrincipalType: node.first("principalType", false, x => (x.content ?? '') as PrincipalType),
     Principal: node.first("principal", false, x => x.content ?? ''),
@@ -24353,8 +24090,7 @@ export type PrincipalType =
 | "Account"
 | "User"
 | "Role"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ServiceDetail {
@@ -24371,7 +24107,7 @@ export interface ServiceDetail {
   Tags: Tag[];
   PrivateDnsNameVerificationState?: DnsNameState | null;
 }
-function ServiceDetail_Parse(node: XmlNode): ServiceDetail {
+function ServiceDetail_Parse(node: xmlP.XmlNode): ServiceDetail {
   return {
     ServiceName: node.first("serviceName", false, x => x.content ?? ''),
     ServiceId: node.first("serviceId", false, x => x.content ?? ''),
@@ -24402,7 +24138,7 @@ export interface DisableFastSnapshotRestoreSuccessItem {
   DisablingTime?: Date | number | null;
   DisabledTime?: Date | number | null;
 }
-function DisableFastSnapshotRestoreSuccessItem_Parse(node: XmlNode): DisableFastSnapshotRestoreSuccessItem {
+function DisableFastSnapshotRestoreSuccessItem_Parse(node: xmlP.XmlNode): DisableFastSnapshotRestoreSuccessItem {
   return {
     SnapshotId: node.first("snapshotId", false, x => x.content ?? ''),
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
@@ -24410,11 +24146,11 @@ function DisableFastSnapshotRestoreSuccessItem_Parse(node: XmlNode): DisableFast
     StateTransitionReason: node.first("stateTransitionReason", false, x => x.content ?? ''),
     OwnerId: node.first("ownerId", false, x => x.content ?? ''),
     OwnerAlias: node.first("ownerAlias", false, x => x.content ?? ''),
-    EnablingTime: node.first("enablingTime", false, x => parseTimestamp(x.content)),
-    OptimizingTime: node.first("optimizingTime", false, x => parseTimestamp(x.content)),
-    EnabledTime: node.first("enabledTime", false, x => parseTimestamp(x.content)),
-    DisablingTime: node.first("disablingTime", false, x => parseTimestamp(x.content)),
-    DisabledTime: node.first("disabledTime", false, x => parseTimestamp(x.content)),
+    EnablingTime: node.first("enablingTime", false, x => xmlP.parseTimestamp(x.content)),
+    OptimizingTime: node.first("optimizingTime", false, x => xmlP.parseTimestamp(x.content)),
+    EnabledTime: node.first("enabledTime", false, x => xmlP.parseTimestamp(x.content)),
+    DisablingTime: node.first("disablingTime", false, x => xmlP.parseTimestamp(x.content)),
+    DisabledTime: node.first("disabledTime", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -24423,7 +24159,7 @@ export interface DisableFastSnapshotRestoreErrorItem {
   SnapshotId?: string | null;
   FastSnapshotRestoreStateErrors: DisableFastSnapshotRestoreStateErrorItem[];
 }
-function DisableFastSnapshotRestoreErrorItem_Parse(node: XmlNode): DisableFastSnapshotRestoreErrorItem {
+function DisableFastSnapshotRestoreErrorItem_Parse(node: xmlP.XmlNode): DisableFastSnapshotRestoreErrorItem {
   return {
     SnapshotId: node.first("snapshotId", false, x => x.content ?? ''),
     FastSnapshotRestoreStateErrors: node.getList("fastSnapshotRestoreStateErrorSet", "item").map(DisableFastSnapshotRestoreStateErrorItem_Parse),
@@ -24435,7 +24171,7 @@ export interface DisableFastSnapshotRestoreStateErrorItem {
   AvailabilityZone?: string | null;
   Error?: DisableFastSnapshotRestoreStateError | null;
 }
-function DisableFastSnapshotRestoreStateErrorItem_Parse(node: XmlNode): DisableFastSnapshotRestoreStateErrorItem {
+function DisableFastSnapshotRestoreStateErrorItem_Parse(node: xmlP.XmlNode): DisableFastSnapshotRestoreStateErrorItem {
   return {
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
     Error: node.first("error", false, DisableFastSnapshotRestoreStateError_Parse),
@@ -24447,7 +24183,7 @@ export interface DisableFastSnapshotRestoreStateError {
   Code?: string | null;
   Message?: string | null;
 }
-function DisableFastSnapshotRestoreStateError_Parse(node: XmlNode): DisableFastSnapshotRestoreStateError {
+function DisableFastSnapshotRestoreStateError_Parse(node: xmlP.XmlNode): DisableFastSnapshotRestoreStateError {
   return {
     Code: node.first("code", false, x => x.content ?? ''),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -24462,7 +24198,7 @@ export interface TransitGatewayPropagation {
   TransitGatewayRouteTableId?: string | null;
   State?: TransitGatewayPropagationState | null;
 }
-function TransitGatewayPropagation_Parse(node: XmlNode): TransitGatewayPropagation {
+function TransitGatewayPropagation_Parse(node: xmlP.XmlNode): TransitGatewayPropagation {
   return {
     TransitGatewayAttachmentId: node.first("transitGatewayAttachmentId", false, x => x.content ?? ''),
     ResourceId: node.first("resourceId", false, x => x.content ?? ''),
@@ -24478,8 +24214,7 @@ export type TransitGatewayPropagationState =
 | "enabled"
 | "disabling"
 | "disabled"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface EnableFastSnapshotRestoreSuccessItem {
@@ -24495,7 +24230,7 @@ export interface EnableFastSnapshotRestoreSuccessItem {
   DisablingTime?: Date | number | null;
   DisabledTime?: Date | number | null;
 }
-function EnableFastSnapshotRestoreSuccessItem_Parse(node: XmlNode): EnableFastSnapshotRestoreSuccessItem {
+function EnableFastSnapshotRestoreSuccessItem_Parse(node: xmlP.XmlNode): EnableFastSnapshotRestoreSuccessItem {
   return {
     SnapshotId: node.first("snapshotId", false, x => x.content ?? ''),
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
@@ -24503,11 +24238,11 @@ function EnableFastSnapshotRestoreSuccessItem_Parse(node: XmlNode): EnableFastSn
     StateTransitionReason: node.first("stateTransitionReason", false, x => x.content ?? ''),
     OwnerId: node.first("ownerId", false, x => x.content ?? ''),
     OwnerAlias: node.first("ownerAlias", false, x => x.content ?? ''),
-    EnablingTime: node.first("enablingTime", false, x => parseTimestamp(x.content)),
-    OptimizingTime: node.first("optimizingTime", false, x => parseTimestamp(x.content)),
-    EnabledTime: node.first("enabledTime", false, x => parseTimestamp(x.content)),
-    DisablingTime: node.first("disablingTime", false, x => parseTimestamp(x.content)),
-    DisabledTime: node.first("disabledTime", false, x => parseTimestamp(x.content)),
+    EnablingTime: node.first("enablingTime", false, x => xmlP.parseTimestamp(x.content)),
+    OptimizingTime: node.first("optimizingTime", false, x => xmlP.parseTimestamp(x.content)),
+    EnabledTime: node.first("enabledTime", false, x => xmlP.parseTimestamp(x.content)),
+    DisablingTime: node.first("disablingTime", false, x => xmlP.parseTimestamp(x.content)),
+    DisabledTime: node.first("disabledTime", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -24516,7 +24251,7 @@ export interface EnableFastSnapshotRestoreErrorItem {
   SnapshotId?: string | null;
   FastSnapshotRestoreStateErrors: EnableFastSnapshotRestoreStateErrorItem[];
 }
-function EnableFastSnapshotRestoreErrorItem_Parse(node: XmlNode): EnableFastSnapshotRestoreErrorItem {
+function EnableFastSnapshotRestoreErrorItem_Parse(node: xmlP.XmlNode): EnableFastSnapshotRestoreErrorItem {
   return {
     SnapshotId: node.first("snapshotId", false, x => x.content ?? ''),
     FastSnapshotRestoreStateErrors: node.getList("fastSnapshotRestoreStateErrorSet", "item").map(EnableFastSnapshotRestoreStateErrorItem_Parse),
@@ -24528,7 +24263,7 @@ export interface EnableFastSnapshotRestoreStateErrorItem {
   AvailabilityZone?: string | null;
   Error?: EnableFastSnapshotRestoreStateError | null;
 }
-function EnableFastSnapshotRestoreStateErrorItem_Parse(node: XmlNode): EnableFastSnapshotRestoreStateErrorItem {
+function EnableFastSnapshotRestoreStateErrorItem_Parse(node: xmlP.XmlNode): EnableFastSnapshotRestoreStateErrorItem {
   return {
     AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
     Error: node.first("error", false, EnableFastSnapshotRestoreStateError_Parse),
@@ -24540,7 +24275,7 @@ export interface EnableFastSnapshotRestoreStateError {
   Code?: string | null;
   Message?: string | null;
 }
-function EnableFastSnapshotRestoreStateError_Parse(node: XmlNode): EnableFastSnapshotRestoreStateError {
+function EnableFastSnapshotRestoreStateError_Parse(node: xmlP.XmlNode): EnableFastSnapshotRestoreStateError {
   return {
     Code: node.first("code", false, x => x.content ?? ''),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -24552,7 +24287,7 @@ export interface ClientCertificateRevocationListStatus {
   Code?: ClientCertificateRevocationListStatusCode | null;
   Message?: string | null;
 }
-function ClientCertificateRevocationListStatus_Parse(node: XmlNode): ClientCertificateRevocationListStatus {
+function ClientCertificateRevocationListStatus_Parse(node: xmlP.XmlNode): ClientCertificateRevocationListStatus {
   return {
     Code: node.first("code", false, x => (x.content ?? '') as ClientCertificateRevocationListStatusCode),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -24563,15 +24298,14 @@ function ClientCertificateRevocationListStatus_Parse(node: XmlNode): ClientCerti
 export type ClientCertificateRevocationListStatusCode =
 | "pending"
 | "active"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Ipv6CidrAssociation {
   Ipv6Cidr?: string | null;
   AssociatedResource?: string | null;
 }
-function Ipv6CidrAssociation_Parse(node: XmlNode): Ipv6CidrAssociation {
+function Ipv6CidrAssociation_Parse(node: xmlP.XmlNode): Ipv6CidrAssociation {
   return {
     Ipv6Cidr: node.first("ipv6Cidr", false, x => x.content ?? ''),
     AssociatedResource: node.first("associatedResource", false, x => x.content ?? ''),
@@ -24583,7 +24317,7 @@ export interface InstanceUsage {
   AccountId?: string | null;
   UsedInstanceCount?: number | null;
 }
-function InstanceUsage_Parse(node: XmlNode): InstanceUsage {
+function InstanceUsage_Parse(node: xmlP.XmlNode): InstanceUsage {
   return {
     AccountId: node.first("accountId", false, x => x.content ?? ''),
     UsedInstanceCount: node.first("usedInstanceCount", false, x => parseInt(x.content ?? '0')),
@@ -24597,7 +24331,7 @@ export interface CoipAddressUsage {
   AwsService?: string | null;
   CoIp?: string | null;
 }
-function CoipAddressUsage_Parse(node: XmlNode): CoipAddressUsage {
+function CoipAddressUsage_Parse(node: xmlP.XmlNode): CoipAddressUsage {
   return {
     AllocationId: node.first("allocationId", false, x => x.content ?? ''),
     AwsAccountId: node.first("awsAccountId", false, x => x.content ?? ''),
@@ -24611,7 +24345,7 @@ export interface InstanceFamilyCreditSpecification {
   InstanceFamily?: UnlimitedSupportedInstanceFamily | null;
   CpuCredits?: string | null;
 }
-function InstanceFamilyCreditSpecification_Parse(node: XmlNode): InstanceFamilyCreditSpecification {
+function InstanceFamilyCreditSpecification_Parse(node: xmlP.XmlNode): InstanceFamilyCreditSpecification {
   return {
     InstanceFamily: node.first("instanceFamily", false, x => (x.content ?? '') as UnlimitedSupportedInstanceFamily),
     CpuCredits: node.first("cpuCredits", false, x => x.content ?? ''),
@@ -24623,7 +24357,7 @@ export interface CapacityReservationGroup {
   GroupArn?: string | null;
   OwnerId?: string | null;
 }
-function CapacityReservationGroup_Parse(node: XmlNode): CapacityReservationGroup {
+function CapacityReservationGroup_Parse(node: xmlP.XmlNode): CapacityReservationGroup {
   return {
     GroupArn: node.first("groupArn", false, x => x.content ?? ''),
     OwnerId: node.first("ownerId", false, x => x.content ?? ''),
@@ -24641,7 +24375,7 @@ export interface Purchase {
   PaymentOption?: PaymentOption | null;
   UpfrontPrice?: string | null;
 }
-function Purchase_Parse(node: XmlNode): Purchase {
+function Purchase_Parse(node: xmlP.XmlNode): Purchase {
   return {
     CurrencyCode: node.first("currencyCode", false, x => (x.content ?? '') as CurrencyCodeValues),
     Duration: node.first("duration", false, x => parseInt(x.content ?? '0')),
@@ -24659,7 +24393,7 @@ export interface PrefixListAssociation {
   ResourceId?: string | null;
   ResourceOwner?: string | null;
 }
-function PrefixListAssociation_Parse(node: XmlNode): PrefixListAssociation {
+function PrefixListAssociation_Parse(node: xmlP.XmlNode): PrefixListAssociation {
   return {
     ResourceId: node.first("resourceId", false, x => x.content ?? ''),
     ResourceOwner: node.first("resourceOwner", false, x => x.content ?? ''),
@@ -24671,7 +24405,7 @@ export interface PrefixListEntry {
   Cidr?: string | null;
   Description?: string | null;
 }
-function PrefixListEntry_Parse(node: XmlNode): PrefixListEntry {
+function PrefixListEntry_Parse(node: xmlP.XmlNode): PrefixListEntry {
   return {
     Cidr: node.first("cidr", false, x => x.content ?? ''),
     Description: node.first("description", false, x => x.content ?? ''),
@@ -24684,7 +24418,7 @@ export interface ReservationValue {
   RemainingTotalValue?: string | null;
   RemainingUpfrontValue?: string | null;
 }
-function ReservationValue_Parse(node: XmlNode): ReservationValue {
+function ReservationValue_Parse(node: xmlP.XmlNode): ReservationValue {
   return {
     HourlyPrice: node.first("hourlyPrice", false, x => x.content ?? ''),
     RemainingTotalValue: node.first("remainingTotalValue", false, x => x.content ?? ''),
@@ -24697,7 +24431,7 @@ export interface ReservedInstanceReservationValue {
   ReservationValue?: ReservationValue | null;
   ReservedInstanceId?: string | null;
 }
-function ReservedInstanceReservationValue_Parse(node: XmlNode): ReservedInstanceReservationValue {
+function ReservedInstanceReservationValue_Parse(node: xmlP.XmlNode): ReservedInstanceReservationValue {
   return {
     ReservationValue: node.first("reservationValue", false, ReservationValue_Parse),
     ReservedInstanceId: node.first("reservedInstanceId", false, x => x.content ?? ''),
@@ -24709,7 +24443,7 @@ export interface TargetReservationValue {
   ReservationValue?: ReservationValue | null;
   TargetConfiguration?: TargetConfiguration | null;
 }
-function TargetReservationValue_Parse(node: XmlNode): TargetReservationValue {
+function TargetReservationValue_Parse(node: xmlP.XmlNode): TargetReservationValue {
   return {
     ReservationValue: node.first("reservationValue", false, ReservationValue_Parse),
     TargetConfiguration: node.first("targetConfiguration", false, TargetConfiguration_Parse),
@@ -24721,7 +24455,7 @@ export interface TargetConfiguration {
   InstanceCount?: number | null;
   OfferingId?: string | null;
 }
-function TargetConfiguration_Parse(node: XmlNode): TargetConfiguration {
+function TargetConfiguration_Parse(node: xmlP.XmlNode): TargetConfiguration {
   return {
     InstanceCount: node.first("instanceCount", false, x => parseInt(x.content ?? '0')),
     OfferingId: node.first("offeringId", false, x => x.content ?? ''),
@@ -24733,7 +24467,7 @@ export interface TransitGatewayAttachmentPropagation {
   TransitGatewayRouteTableId?: string | null;
   State?: TransitGatewayPropagationState | null;
 }
-function TransitGatewayAttachmentPropagation_Parse(node: XmlNode): TransitGatewayAttachmentPropagation {
+function TransitGatewayAttachmentPropagation_Parse(node: xmlP.XmlNode): TransitGatewayAttachmentPropagation {
   return {
     TransitGatewayRouteTableId: node.first("transitGatewayRouteTableId", false, x => x.content ?? ''),
     State: node.first("state", false, x => (x.content ?? '') as TransitGatewayPropagationState),
@@ -24747,7 +24481,7 @@ export interface TransitGatewayMulticastDomainAssociation {
   ResourceType?: TransitGatewayAttachmentResourceType | null;
   Subnet?: SubnetAssociation | null;
 }
-function TransitGatewayMulticastDomainAssociation_Parse(node: XmlNode): TransitGatewayMulticastDomainAssociation {
+function TransitGatewayMulticastDomainAssociation_Parse(node: xmlP.XmlNode): TransitGatewayMulticastDomainAssociation {
   return {
     TransitGatewayAttachmentId: node.first("transitGatewayAttachmentId", false, x => x.content ?? ''),
     ResourceId: node.first("resourceId", false, x => x.content ?? ''),
@@ -24763,7 +24497,7 @@ export interface TransitGatewayRouteTableAssociation {
   ResourceType?: TransitGatewayAttachmentResourceType | null;
   State?: TransitGatewayAssociationState | null;
 }
-function TransitGatewayRouteTableAssociation_Parse(node: XmlNode): TransitGatewayRouteTableAssociation {
+function TransitGatewayRouteTableAssociation_Parse(node: xmlP.XmlNode): TransitGatewayRouteTableAssociation {
   return {
     TransitGatewayAttachmentId: node.first("transitGatewayAttachmentId", false, x => x.content ?? ''),
     ResourceId: node.first("resourceId", false, x => x.content ?? ''),
@@ -24779,7 +24513,7 @@ export interface TransitGatewayRouteTablePropagation {
   ResourceType?: TransitGatewayAttachmentResourceType | null;
   State?: TransitGatewayPropagationState | null;
 }
-function TransitGatewayRouteTablePropagation_Parse(node: XmlNode): TransitGatewayRouteTablePropagation {
+function TransitGatewayRouteTablePropagation_Parse(node: xmlP.XmlNode): TransitGatewayRouteTablePropagation {
   return {
     TransitGatewayAttachmentId: node.first("transitGatewayAttachmentId", false, x => x.content ?? ''),
     ResourceId: node.first("resourceId", false, x => x.content ?? ''),
@@ -24792,7 +24526,7 @@ function TransitGatewayRouteTablePropagation_Parse(node: XmlNode): TransitGatewa
 export interface SuccessfulInstanceCreditSpecificationItem {
   InstanceId?: string | null;
 }
-function SuccessfulInstanceCreditSpecificationItem_Parse(node: XmlNode): SuccessfulInstanceCreditSpecificationItem {
+function SuccessfulInstanceCreditSpecificationItem_Parse(node: xmlP.XmlNode): SuccessfulInstanceCreditSpecificationItem {
   return {
     InstanceId: node.first("instanceId", false, x => x.content ?? ''),
   };
@@ -24803,7 +24537,7 @@ export interface UnsuccessfulInstanceCreditSpecificationItem {
   InstanceId?: string | null;
   Error?: UnsuccessfulInstanceCreditSpecificationItemError | null;
 }
-function UnsuccessfulInstanceCreditSpecificationItem_Parse(node: XmlNode): UnsuccessfulInstanceCreditSpecificationItem {
+function UnsuccessfulInstanceCreditSpecificationItem_Parse(node: xmlP.XmlNode): UnsuccessfulInstanceCreditSpecificationItem {
   return {
     InstanceId: node.first("instanceId", false, x => x.content ?? ''),
     Error: node.first("error", false, UnsuccessfulInstanceCreditSpecificationItemError_Parse),
@@ -24815,7 +24549,7 @@ export interface UnsuccessfulInstanceCreditSpecificationItemError {
   Code?: UnsuccessfulInstanceCreditSpecificationErrorCode | null;
   Message?: string | null;
 }
-function UnsuccessfulInstanceCreditSpecificationItemError_Parse(node: XmlNode): UnsuccessfulInstanceCreditSpecificationItemError {
+function UnsuccessfulInstanceCreditSpecificationItemError_Parse(node: xmlP.XmlNode): UnsuccessfulInstanceCreditSpecificationItemError {
   return {
     Code: node.first("code", false, x => (x.content ?? '') as UnsuccessfulInstanceCreditSpecificationErrorCode),
     Message: node.first("message", false, x => x.content ?? ''),
@@ -24828,8 +24562,7 @@ export type UnsuccessfulInstanceCreditSpecificationErrorCode =
 | "InvalidInstanceID.NotFound"
 | "IncorrectInstanceState"
 | "InstanceCreditSpecification.NotSupported"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface PeeringConnectionOptions {
@@ -24837,7 +24570,7 @@ export interface PeeringConnectionOptions {
   AllowEgressFromLocalClassicLinkToRemoteVpc?: boolean | null;
   AllowEgressFromLocalVpcToRemoteClassicLink?: boolean | null;
 }
-function PeeringConnectionOptions_Parse(node: XmlNode): PeeringConnectionOptions {
+function PeeringConnectionOptions_Parse(node: xmlP.XmlNode): PeeringConnectionOptions {
   return {
     AllowDnsResolutionFromRemoteVpc: node.first("allowDnsResolutionFromRemoteVpc", false, x => x.content === 'true'),
     AllowEgressFromLocalClassicLinkToRemoteVpc: node.first("allowEgressFromLocalClassicLinkToRemoteVpc", false, x => x.content === 'true'),
@@ -24850,7 +24583,7 @@ export interface InstanceMonitoring {
   InstanceId?: string | null;
   Monitoring?: Monitoring | null;
 }
-function InstanceMonitoring_Parse(node: XmlNode): InstanceMonitoring {
+function InstanceMonitoring_Parse(node: xmlP.XmlNode): InstanceMonitoring {
   return {
     InstanceId: node.first("instanceId", false, x => x.content ?? ''),
     Monitoring: node.first("monitoring", false, Monitoring_Parse),
@@ -24862,8 +24595,7 @@ export type Status =
 | "MoveInProgress"
 | "InVpc"
 | "InClassic"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface TransitGatewayMulticastRegisteredGroupMembers {
@@ -24871,7 +24603,7 @@ export interface TransitGatewayMulticastRegisteredGroupMembers {
   RegisteredNetworkInterfaceIds: string[];
   GroupIpAddress?: string | null;
 }
-function TransitGatewayMulticastRegisteredGroupMembers_Parse(node: XmlNode): TransitGatewayMulticastRegisteredGroupMembers {
+function TransitGatewayMulticastRegisteredGroupMembers_Parse(node: xmlP.XmlNode): TransitGatewayMulticastRegisteredGroupMembers {
   return {
     TransitGatewayMulticastDomainId: node.first("transitGatewayMulticastDomainId", false, x => x.content ?? ''),
     RegisteredNetworkInterfaceIds: node.getList("registeredNetworkInterfaceIds", "item").map(x => x.content ?? ''),
@@ -24885,7 +24617,7 @@ export interface TransitGatewayMulticastRegisteredGroupSources {
   RegisteredNetworkInterfaceIds: string[];
   GroupIpAddress?: string | null;
 }
-function TransitGatewayMulticastRegisteredGroupSources_Parse(node: XmlNode): TransitGatewayMulticastRegisteredGroupSources {
+function TransitGatewayMulticastRegisteredGroupSources_Parse(node: xmlP.XmlNode): TransitGatewayMulticastRegisteredGroupSources {
   return {
     TransitGatewayMulticastDomainId: node.first("transitGatewayMulticastDomainId", false, x => x.content ?? ''),
     RegisteredNetworkInterfaceIds: node.getList("registeredNetworkInterfaceIds", "item").map(x => x.content ?? ''),
@@ -24906,7 +24638,7 @@ export interface TransitGatewayMulticastGroup {
   MemberType?: MembershipType | null;
   SourceType?: MembershipType | null;
 }
-function TransitGatewayMulticastGroup_Parse(node: XmlNode): TransitGatewayMulticastGroup {
+function TransitGatewayMulticastGroup_Parse(node: xmlP.XmlNode): TransitGatewayMulticastGroup {
   return {
     GroupIpAddress: node.first("groupIpAddress", false, x => x.content ?? ''),
     TransitGatewayAttachmentId: node.first("transitGatewayAttachmentId", false, x => x.content ?? ''),
@@ -24925,8 +24657,7 @@ function TransitGatewayMulticastGroup_Parse(node: XmlNode): TransitGatewayMultic
 export type MembershipType =
 | "static"
 | "igmp"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface InstanceStateChange {
@@ -24934,7 +24665,7 @@ export interface InstanceStateChange {
   InstanceId?: string | null;
   PreviousState?: InstanceState | null;
 }
-function InstanceStateChange_Parse(node: XmlNode): InstanceStateChange {
+function InstanceStateChange_Parse(node: xmlP.XmlNode): InstanceStateChange {
   return {
     CurrentState: node.first("currentState", false, InstanceState_Parse),
     InstanceId: node.first("instanceId", false, x => x.content ?? ''),
@@ -24948,7 +24679,7 @@ export interface TerminateConnectionStatus {
   PreviousStatus?: ClientVpnConnectionStatus | null;
   CurrentStatus?: ClientVpnConnectionStatus | null;
 }
-function TerminateConnectionStatus_Parse(node: XmlNode): TerminateConnectionStatus {
+function TerminateConnectionStatus_Parse(node: xmlP.XmlNode): TerminateConnectionStatus {
   return {
     ConnectionId: node.first("connectionId", false, x => x.content ?? ''),
     PreviousStatus: node.first("previousStatus", false, ClientVpnConnectionStatus_Parse),

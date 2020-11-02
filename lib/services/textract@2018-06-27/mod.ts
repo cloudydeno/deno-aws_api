@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class Textract {
   #client: ServiceClient;
@@ -29,15 +29,16 @@ export default class Textract {
   async analyzeDocument(
     {abortSignal, ...params}: RequestConfig & AnalyzeDocumentRequest,
   ): Promise<AnalyzeDocumentResponse> {
-    const body: JSONObject = {...params,
-    Document: fromDocument(params["Document"]),
-    HumanLoopConfig: fromHumanLoopConfig(params["HumanLoopConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Document: fromDocument(params["Document"]),
+      FeatureTypes: params["FeatureTypes"],
+      HumanLoopConfig: fromHumanLoopConfig(params["HumanLoopConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AnalyzeDocument",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DocumentMetadata": toDocumentMetadata,
@@ -51,14 +52,14 @@ export default class Textract {
   async detectDocumentText(
     {abortSignal, ...params}: RequestConfig & DetectDocumentTextRequest,
   ): Promise<DetectDocumentTextResponse> {
-    const body: JSONObject = {...params,
-    Document: fromDocument(params["Document"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Document: fromDocument(params["Document"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectDocumentText",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DocumentMetadata": toDocumentMetadata,
@@ -71,17 +72,20 @@ export default class Textract {
   async getDocumentAnalysis(
     {abortSignal, ...params}: RequestConfig & GetDocumentAnalysisRequest,
   ): Promise<GetDocumentAnalysisResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDocumentAnalysis",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DocumentMetadata": toDocumentMetadata,
-        "JobStatus": toJobStatus,
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
         "NextToken": "s",
         "Blocks": [toBlock],
         "Warnings": [toWarning],
@@ -94,17 +98,20 @@ export default class Textract {
   async getDocumentTextDetection(
     {abortSignal, ...params}: RequestConfig & GetDocumentTextDetectionRequest,
   ): Promise<GetDocumentTextDetectionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDocumentTextDetection",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DocumentMetadata": toDocumentMetadata,
-        "JobStatus": toJobStatus,
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
         "NextToken": "s",
         "Blocks": [toBlock],
         "Warnings": [toWarning],
@@ -117,16 +124,19 @@ export default class Textract {
   async startDocumentAnalysis(
     {abortSignal, ...params}: RequestConfig & StartDocumentAnalysisRequest,
   ): Promise<StartDocumentAnalysisResponse> {
-    const body: JSONObject = {...params,
-    DocumentLocation: fromDocumentLocation(params["DocumentLocation"]),
-    NotificationChannel: fromNotificationChannel(params["NotificationChannel"]),
-    OutputConfig: fromOutputConfig(params["OutputConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DocumentLocation: fromDocumentLocation(params["DocumentLocation"]),
+      FeatureTypes: params["FeatureTypes"],
+      ClientRequestToken: params["ClientRequestToken"],
+      JobTag: params["JobTag"],
+      NotificationChannel: fromNotificationChannel(params["NotificationChannel"]),
+      OutputConfig: fromOutputConfig(params["OutputConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartDocumentAnalysis",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
@@ -137,16 +147,18 @@ export default class Textract {
   async startDocumentTextDetection(
     {abortSignal, ...params}: RequestConfig & StartDocumentTextDetectionRequest,
   ): Promise<StartDocumentTextDetectionResponse> {
-    const body: JSONObject = {...params,
-    DocumentLocation: fromDocumentLocation(params["DocumentLocation"]),
-    NotificationChannel: fromNotificationChannel(params["NotificationChannel"]),
-    OutputConfig: fromOutputConfig(params["OutputConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DocumentLocation: fromDocumentLocation(params["DocumentLocation"]),
+      ClientRequestToken: params["ClientRequestToken"],
+      JobTag: params["JobTag"],
+      NotificationChannel: fromNotificationChannel(params["NotificationChannel"]),
+      OutputConfig: fromOutputConfig(params["OutputConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartDocumentTextDetection",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
@@ -253,10 +265,10 @@ export interface Document {
   Bytes?: Uint8Array | string | null;
   S3Object?: S3Object | null;
 }
-function fromDocument(input?: Document | null): JSONValue {
+function fromDocument(input?: Document | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Bytes: prt.serializeBlob(input["Bytes"]),
+  return {
+    Bytes: jsonP.serializeBlob(input["Bytes"]),
     S3Object: fromS3Object(input["S3Object"]),
   }
 }
@@ -267,9 +279,12 @@ export interface S3Object {
   Name?: string | null;
   Version?: string | null;
 }
-function fromS3Object(input?: S3Object | null): JSONValue {
+function fromS3Object(input?: S3Object | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Bucket: input["Bucket"],
+    Name: input["Name"],
+    Version: input["Version"],
   }
 }
 
@@ -277,8 +292,7 @@ function fromS3Object(input?: S3Object | null): JSONValue {
 export type FeatureType =
 | "TABLES"
 | "FORMS"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface HumanLoopConfig {
@@ -286,9 +300,11 @@ export interface HumanLoopConfig {
   FlowDefinitionArn: string;
   DataAttributes?: HumanLoopDataAttributes | null;
 }
-function fromHumanLoopConfig(input?: HumanLoopConfig | null): JSONValue {
+function fromHumanLoopConfig(input?: HumanLoopConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    HumanLoopName: input["HumanLoopName"],
+    FlowDefinitionArn: input["FlowDefinitionArn"],
     DataAttributes: fromHumanLoopDataAttributes(input["DataAttributes"]),
   }
 }
@@ -297,9 +313,10 @@ function fromHumanLoopConfig(input?: HumanLoopConfig | null): JSONValue {
 export interface HumanLoopDataAttributes {
   ContentClassifiers?: ContentClassifier[] | null;
 }
-function fromHumanLoopDataAttributes(input?: HumanLoopDataAttributes | null): JSONValue {
+function fromHumanLoopDataAttributes(input?: HumanLoopDataAttributes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ContentClassifiers: input["ContentClassifiers"],
   }
 }
 
@@ -307,16 +324,15 @@ function fromHumanLoopDataAttributes(input?: HumanLoopDataAttributes | null): JS
 export type ContentClassifier =
 | "FreeOfPersonallyIdentifiableInformation"
 | "FreeOfAdultContent"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface DocumentLocation {
   S3Object?: S3Object | null;
 }
-function fromDocumentLocation(input?: DocumentLocation | null): JSONValue {
+function fromDocumentLocation(input?: DocumentLocation | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     S3Object: fromS3Object(input["S3Object"]),
   }
 }
@@ -326,9 +342,11 @@ export interface NotificationChannel {
   SNSTopicArn: string;
   RoleArn: string;
 }
-function fromNotificationChannel(input?: NotificationChannel | null): JSONValue {
+function fromNotificationChannel(input?: NotificationChannel | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SNSTopicArn: input["SNSTopicArn"],
+    RoleArn: input["RoleArn"],
   }
 }
 
@@ -337,9 +355,11 @@ export interface OutputConfig {
   S3Bucket: string;
   S3Prefix?: string | null;
 }
-function fromOutputConfig(input?: OutputConfig | null): JSONValue {
+function fromOutputConfig(input?: OutputConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Bucket: input["S3Bucket"],
+    S3Prefix: input["S3Prefix"],
   }
 }
 
@@ -347,8 +367,8 @@ function fromOutputConfig(input?: OutputConfig | null): JSONValue {
 export interface DocumentMetadata {
   Pages?: number | null;
 }
-function toDocumentMetadata(root: JSONValue): DocumentMetadata {
-  return prt.readObj({
+function toDocumentMetadata(root: jsonP.JSONValue): DocumentMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Pages": "n",
@@ -372,11 +392,11 @@ export interface Block {
   SelectionStatus?: SelectionStatus | null;
   Page?: number | null;
 }
-function toBlock(root: JSONValue): Block {
-  return prt.readObj({
+function toBlock(root: jsonP.JSONValue): Block {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "BlockType": toBlockType,
+      "BlockType": (x: jsonP.JSONValue) => cmnP.readEnum<BlockType>(x),
       "Confidence": "n",
       "Text": "s",
       "RowIndex": "n",
@@ -386,8 +406,8 @@ function toBlock(root: JSONValue): Block {
       "Geometry": toGeometry,
       "Id": "s",
       "Relationships": [toRelationship],
-      "EntityTypes": [toEntityType],
-      "SelectionStatus": toSelectionStatus,
+      "EntityTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<EntityType>(x)],
+      "SelectionStatus": (x: jsonP.JSONValue) => cmnP.readEnum<SelectionStatus>(x),
       "Page": "n",
     },
   }, root);
@@ -402,26 +422,15 @@ export type BlockType =
 | "TABLE"
 | "CELL"
 | "SELECTION_ELEMENT"
-;
-function toBlockType(root: JSONValue): BlockType | null {
-  return ( false
-    || root == "KEY_VALUE_SET"
-    || root == "PAGE"
-    || root == "LINE"
-    || root == "WORD"
-    || root == "TABLE"
-    || root == "CELL"
-    || root == "SELECTION_ELEMENT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface Geometry {
   BoundingBox?: BoundingBox | null;
   Polygon?: Point[] | null;
 }
-function toGeometry(root: JSONValue): Geometry {
-  return prt.readObj({
+function toGeometry(root: jsonP.JSONValue): Geometry {
+  return jsonP.readObj({
     required: {},
     optional: {
       "BoundingBox": toBoundingBox,
@@ -437,8 +446,8 @@ export interface BoundingBox {
   Left?: number | null;
   Top?: number | null;
 }
-function toBoundingBox(root: JSONValue): BoundingBox {
-  return prt.readObj({
+function toBoundingBox(root: jsonP.JSONValue): BoundingBox {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Width": "n",
@@ -454,8 +463,8 @@ export interface Point {
   X?: number | null;
   Y?: number | null;
 }
-function toPoint(root: JSONValue): Point {
-  return prt.readObj({
+function toPoint(root: jsonP.JSONValue): Point {
+  return jsonP.readObj({
     required: {},
     optional: {
       "X": "n",
@@ -469,11 +478,11 @@ export interface Relationship {
   Type?: RelationshipType | null;
   Ids?: string[] | null;
 }
-function toRelationship(root: JSONValue): Relationship {
-  return prt.readObj({
+function toRelationship(root: jsonP.JSONValue): Relationship {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Type": toRelationshipType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<RelationshipType>(x),
       "Ids": ["s"],
     },
   }, root);
@@ -484,52 +493,33 @@ export type RelationshipType =
 | "VALUE"
 | "CHILD"
 | "COMPLEX_FEATURES"
-;
-function toRelationshipType(root: JSONValue): RelationshipType | null {
-  return ( false
-    || root == "VALUE"
-    || root == "CHILD"
-    || root == "COMPLEX_FEATURES"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, enum
 export type EntityType =
 | "KEY"
 | "VALUE"
-;
-function toEntityType(root: JSONValue): EntityType | null {
-  return ( false
-    || root == "KEY"
-    || root == "VALUE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, enum
 export type SelectionStatus =
 | "SELECTED"
 | "NOT_SELECTED"
-;
-function toSelectionStatus(root: JSONValue): SelectionStatus | null {
-  return ( false
-    || root == "SELECTED"
-    || root == "NOT_SELECTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface HumanLoopActivationOutput {
   HumanLoopArn?: string | null;
   HumanLoopActivationReasons?: string[] | null;
-  HumanLoopActivationConditionsEvaluationResults?: string | null;
+  HumanLoopActivationConditionsEvaluationResults?: jsonP.JSONValue | null;
 }
-function toHumanLoopActivationOutput(root: JSONValue): HumanLoopActivationOutput {
-  return prt.readObj({
+function toHumanLoopActivationOutput(root: jsonP.JSONValue): HumanLoopActivationOutput {
+  return jsonP.readObj({
     required: {},
     optional: {
       "HumanLoopArn": "s",
       "HumanLoopActivationReasons": ["s"],
-      "HumanLoopActivationConditionsEvaluationResults": "s",
+      "HumanLoopActivationConditionsEvaluationResults": jsonP.readJsonValue,
     },
   }, root);
 }
@@ -540,23 +530,15 @@ export type JobStatus =
 | "SUCCEEDED"
 | "FAILED"
 | "PARTIAL_SUCCESS"
-;
-function toJobStatus(root: JSONValue): JobStatus | null {
-  return ( false
-    || root == "IN_PROGRESS"
-    || root == "SUCCEEDED"
-    || root == "FAILED"
-    || root == "PARTIAL_SUCCESS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface Warning {
   ErrorCode?: string | null;
   Pages?: number[] | null;
 }
-function toWarning(root: JSONValue): Warning {
-  return prt.readObj({
+function toWarning(root: jsonP.JSONValue): Warning {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ErrorCode": "s",

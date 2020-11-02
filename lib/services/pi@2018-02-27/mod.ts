@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class PI {
   #client: ServiceClient;
@@ -31,17 +31,24 @@ export default class PI {
   async describeDimensionKeys(
     {abortSignal, ...params}: RequestConfig & DescribeDimensionKeysRequest,
   ): Promise<DescribeDimensionKeysResponse> {
-    const body: JSONObject = {...params,
-    StartTime: prt.serializeDate_unixTimestamp(params["StartTime"]),
-    EndTime: prt.serializeDate_unixTimestamp(params["EndTime"]),
-    GroupBy: fromDimensionGroup(params["GroupBy"]),
-    PartitionBy: fromDimensionGroup(params["PartitionBy"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceType: params["ServiceType"],
+      Identifier: params["Identifier"],
+      StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
+      EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
+      Metric: params["Metric"],
+      PeriodInSeconds: params["PeriodInSeconds"],
+      GroupBy: fromDimensionGroup(params["GroupBy"]),
+      PartitionBy: fromDimensionGroup(params["PartitionBy"]),
+      Filter: params["Filter"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDimensionKeys",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AlignedStartTime": "d",
@@ -56,16 +63,21 @@ export default class PI {
   async getResourceMetrics(
     {abortSignal, ...params}: RequestConfig & GetResourceMetricsRequest,
   ): Promise<GetResourceMetricsResponse> {
-    const body: JSONObject = {...params,
-    MetricQueries: params["MetricQueries"]?.map(x => fromMetricQuery(x)),
-    StartTime: prt.serializeDate_unixTimestamp(params["StartTime"]),
-    EndTime: prt.serializeDate_unixTimestamp(params["EndTime"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ServiceType: params["ServiceType"],
+      Identifier: params["Identifier"],
+      MetricQueries: params["MetricQueries"]?.map(x => fromMetricQuery(x)),
+      StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
+      EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
+      PeriodInSeconds: params["PeriodInSeconds"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResourceMetrics",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AlignedStartTime": "d",
@@ -89,7 +101,7 @@ export interface DescribeDimensionKeysRequest {
   PeriodInSeconds?: number | null;
   GroupBy: DimensionGroup;
   PartitionBy?: DimensionGroup | null;
-  Filter?: { [key: string]: string } | null;
+  Filter?: { [key: string]: string | null | undefined } | null;
   MaxResults?: number | null;
   NextToken?: string | null;
 }
@@ -127,8 +139,7 @@ export interface GetResourceMetricsResponse {
 // refs: 2 - tags: input, named, enum
 export type ServiceType =
 | "RDS"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface
 export interface DimensionGroup {
@@ -136,9 +147,12 @@ export interface DimensionGroup {
   Dimensions?: string[] | null;
   Limit?: number | null;
 }
-function fromDimensionGroup(input?: DimensionGroup | null): JSONValue {
+function fromDimensionGroup(input?: DimensionGroup | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Group: input["Group"],
+    Dimensions: input["Dimensions"],
+    Limit: input["Limit"],
   }
 }
 
@@ -146,23 +160,25 @@ function fromDimensionGroup(input?: DimensionGroup | null): JSONValue {
 export interface MetricQuery {
   Metric: string;
   GroupBy?: DimensionGroup | null;
-  Filter?: { [key: string]: string } | null;
+  Filter?: { [key: string]: string | null | undefined } | null;
 }
-function fromMetricQuery(input?: MetricQuery | null): JSONValue {
+function fromMetricQuery(input?: MetricQuery | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Metric: input["Metric"],
     GroupBy: fromDimensionGroup(input["GroupBy"]),
+    Filter: input["Filter"],
   }
 }
 
 // refs: 1 - tags: output, named, interface
 export interface ResponsePartitionKey {
-  Dimensions: { [key: string]: string };
+  Dimensions: { [key: string]: string | null | undefined };
 }
-function toResponsePartitionKey(root: JSONValue): ResponsePartitionKey {
-  return prt.readObj({
+function toResponsePartitionKey(root: jsonP.JSONValue): ResponsePartitionKey {
+  return jsonP.readObj({
     required: {
-      "Dimensions": x => prt.readMap(String, String, x),
+      "Dimensions": x => jsonP.readMap(String, String, x),
     },
     optional: {},
   }, root);
@@ -170,15 +186,15 @@ function toResponsePartitionKey(root: JSONValue): ResponsePartitionKey {
 
 // refs: 1 - tags: output, named, interface
 export interface DimensionKeyDescription {
-  Dimensions?: { [key: string]: string } | null;
+  Dimensions?: { [key: string]: string | null | undefined } | null;
   Total?: number | null;
   Partitions?: number[] | null;
 }
-function toDimensionKeyDescription(root: JSONValue): DimensionKeyDescription {
-  return prt.readObj({
+function toDimensionKeyDescription(root: jsonP.JSONValue): DimensionKeyDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Dimensions": x => prt.readMap(String, String, x),
+      "Dimensions": x => jsonP.readMap(String, String, x),
       "Total": "n",
       "Partitions": ["n"],
     },
@@ -190,8 +206,8 @@ export interface MetricKeyDataPoints {
   Key?: ResponseResourceMetricKey | null;
   DataPoints?: DataPoint[] | null;
 }
-function toMetricKeyDataPoints(root: JSONValue): MetricKeyDataPoints {
-  return prt.readObj({
+function toMetricKeyDataPoints(root: jsonP.JSONValue): MetricKeyDataPoints {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Key": toResponseResourceMetricKey,
@@ -203,15 +219,15 @@ function toMetricKeyDataPoints(root: JSONValue): MetricKeyDataPoints {
 // refs: 1 - tags: output, named, interface
 export interface ResponseResourceMetricKey {
   Metric: string;
-  Dimensions?: { [key: string]: string } | null;
+  Dimensions?: { [key: string]: string | null | undefined } | null;
 }
-function toResponseResourceMetricKey(root: JSONValue): ResponseResourceMetricKey {
-  return prt.readObj({
+function toResponseResourceMetricKey(root: jsonP.JSONValue): ResponseResourceMetricKey {
+  return jsonP.readObj({
     required: {
       "Metric": "s",
     },
     optional: {
-      "Dimensions": x => prt.readMap(String, String, x),
+      "Dimensions": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -221,8 +237,8 @@ export interface DataPoint {
   Timestamp: Date | number;
   Value: number;
 }
-function toDataPoint(root: JSONValue): DataPoint {
-  return prt.readObj({
+function toDataPoint(root: jsonP.JSONValue): DataPoint {
+  return jsonP.readObj({
     required: {
       "Timestamp": "d",
       "Value": "n",

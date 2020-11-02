@@ -5,10 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }
@@ -35,18 +34,19 @@ export default class DynamoDB {
   async batchGetItem(
     {abortSignal, ...params}: RequestConfig & BatchGetItemInput,
   ): Promise<BatchGetItemOutput> {
-    const body: JSONObject = {...params,
-    RequestItems: prt.serializeMap(params["RequestItems"], x => fromKeysAndAttributes(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      RequestItems: jsonP.serializeMap(params["RequestItems"], x => fromKeysAndAttributes(x)),
+      ReturnConsumedCapacity: params["ReturnConsumedCapacity"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetItem",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Responses": x => prt.readMap(String, l => Array.isArray(l) ? l.map(y => prt.readMap(String, toAttributeValue, y)!) : [], x),
-        "UnprocessedKeys": x => prt.readMap(String, toKeysAndAttributes, x),
+        "Responses": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(y => jsonP.readMap(String, toAttributeValue, y)!) : [], x),
+        "UnprocessedKeys": x => jsonP.readMap(String, toKeysAndAttributes, x),
         "ConsumedCapacity": [toConsumedCapacity],
       },
     }, await resp.json());
@@ -55,18 +55,20 @@ export default class DynamoDB {
   async batchWriteItem(
     {abortSignal, ...params}: RequestConfig & BatchWriteItemInput,
   ): Promise<BatchWriteItemOutput> {
-    const body: JSONObject = {...params,
-    RequestItems: prt.serializeMap(params["RequestItems"], x => x.map(fromWriteRequest)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      RequestItems: jsonP.serializeMap(params["RequestItems"], x => x?.map(fromWriteRequest)),
+      ReturnConsumedCapacity: params["ReturnConsumedCapacity"],
+      ReturnItemCollectionMetrics: params["ReturnItemCollectionMetrics"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchWriteItem",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "UnprocessedItems": x => prt.readMap(String, l => Array.isArray(l) ? l.map(toWriteRequest) : [], x),
-        "ItemCollectionMetrics": x => prt.readMap(String, l => Array.isArray(l) ? l.map(toItemCollectionMetrics) : [], x),
+        "UnprocessedItems": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(toWriteRequest) : [], x),
+        "ItemCollectionMetrics": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(toItemCollectionMetrics) : [], x),
         "ConsumedCapacity": [toConsumedCapacity],
       },
     }, await resp.json());
@@ -75,13 +77,15 @@ export default class DynamoDB {
   async createBackup(
     {abortSignal, ...params}: RequestConfig & CreateBackupInput,
   ): Promise<CreateBackupOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      BackupName: params["BackupName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBackup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BackupDetails": toBackupDetails,
@@ -92,14 +96,15 @@ export default class DynamoDB {
   async createGlobalTable(
     {abortSignal, ...params}: RequestConfig & CreateGlobalTableInput,
   ): Promise<CreateGlobalTableOutput> {
-    const body: JSONObject = {...params,
-    ReplicationGroup: params["ReplicationGroup"]?.map(x => fromReplica(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      GlobalTableName: params["GlobalTableName"],
+      ReplicationGroup: params["ReplicationGroup"]?.map(x => fromReplica(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGlobalTable",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GlobalTableDescription": toGlobalTableDescription,
@@ -110,21 +115,23 @@ export default class DynamoDB {
   async createTable(
     {abortSignal, ...params}: RequestConfig & CreateTableInput,
   ): Promise<CreateTableOutput> {
-    const body: JSONObject = {...params,
-    AttributeDefinitions: params["AttributeDefinitions"]?.map(x => fromAttributeDefinition(x)),
-    KeySchema: params["KeySchema"]?.map(x => fromKeySchemaElement(x)),
-    LocalSecondaryIndexes: params["LocalSecondaryIndexes"]?.map(x => fromLocalSecondaryIndex(x)),
-    GlobalSecondaryIndexes: params["GlobalSecondaryIndexes"]?.map(x => fromGlobalSecondaryIndex(x)),
-    ProvisionedThroughput: fromProvisionedThroughput(params["ProvisionedThroughput"]),
-    StreamSpecification: fromStreamSpecification(params["StreamSpecification"]),
-    SSESpecification: fromSSESpecification(params["SSESpecification"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AttributeDefinitions: params["AttributeDefinitions"]?.map(x => fromAttributeDefinition(x)),
+      TableName: params["TableName"],
+      KeySchema: params["KeySchema"]?.map(x => fromKeySchemaElement(x)),
+      LocalSecondaryIndexes: params["LocalSecondaryIndexes"]?.map(x => fromLocalSecondaryIndex(x)),
+      GlobalSecondaryIndexes: params["GlobalSecondaryIndexes"]?.map(x => fromGlobalSecondaryIndex(x)),
+      BillingMode: params["BillingMode"],
+      ProvisionedThroughput: fromProvisionedThroughput(params["ProvisionedThroughput"]),
+      StreamSpecification: fromStreamSpecification(params["StreamSpecification"]),
+      SSESpecification: fromSSESpecification(params["SSESpecification"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTable",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TableDescription": toTableDescription,
@@ -135,13 +142,14 @@ export default class DynamoDB {
   async deleteBackup(
     {abortSignal, ...params}: RequestConfig & DeleteBackupInput,
   ): Promise<DeleteBackupOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      BackupArn: params["BackupArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBackup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BackupDescription": toBackupDescription,
@@ -152,19 +160,26 @@ export default class DynamoDB {
   async deleteItem(
     {abortSignal, ...params}: RequestConfig & DeleteItemInput,
   ): Promise<DeleteItemOutput> {
-    const body: JSONObject = {...params,
-    Key: prt.serializeMap(params["Key"], x => fromAttributeValue(x)),
-    Expected: prt.serializeMap(params["Expected"], x => fromExpectedAttributeValue(x)),
-    ExpressionAttributeValues: prt.serializeMap(params["ExpressionAttributeValues"], x => fromAttributeValue(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      Key: jsonP.serializeMap(params["Key"], x => fromAttributeValue(x)),
+      Expected: jsonP.serializeMap(params["Expected"], x => fromExpectedAttributeValue(x)),
+      ConditionalOperator: params["ConditionalOperator"],
+      ReturnValues: params["ReturnValues"],
+      ReturnConsumedCapacity: params["ReturnConsumedCapacity"],
+      ReturnItemCollectionMetrics: params["ReturnItemCollectionMetrics"],
+      ConditionExpression: params["ConditionExpression"],
+      ExpressionAttributeNames: params["ExpressionAttributeNames"],
+      ExpressionAttributeValues: jsonP.serializeMap(params["ExpressionAttributeValues"], x => fromAttributeValue(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteItem",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Attributes": x => prt.readMap(String, toAttributeValue, x),
+        "Attributes": x => jsonP.readMap(String, toAttributeValue, x),
         "ConsumedCapacity": toConsumedCapacity,
         "ItemCollectionMetrics": toItemCollectionMetrics,
       },
@@ -174,13 +189,14 @@ export default class DynamoDB {
   async deleteTable(
     {abortSignal, ...params}: RequestConfig & DeleteTableInput,
   ): Promise<DeleteTableOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTable",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TableDescription": toTableDescription,
@@ -191,13 +207,14 @@ export default class DynamoDB {
   async describeBackup(
     {abortSignal, ...params}: RequestConfig & DescribeBackupInput,
   ): Promise<DescribeBackupOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      BackupArn: params["BackupArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBackup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BackupDescription": toBackupDescription,
@@ -208,13 +225,14 @@ export default class DynamoDB {
   async describeContinuousBackups(
     {abortSignal, ...params}: RequestConfig & DescribeContinuousBackupsInput,
   ): Promise<DescribeContinuousBackupsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeContinuousBackups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ContinuousBackupsDescription": toContinuousBackupsDescription,
@@ -225,19 +243,21 @@ export default class DynamoDB {
   async describeContributorInsights(
     {abortSignal, ...params}: RequestConfig & DescribeContributorInsightsInput,
   ): Promise<DescribeContributorInsightsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      IndexName: params["IndexName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeContributorInsights",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TableName": "s",
         "IndexName": "s",
         "ContributorInsightsRuleList": ["s"],
-        "ContributorInsightsStatus": toContributorInsightsStatus,
+        "ContributorInsightsStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ContributorInsightsStatus>(x),
         "LastUpdateDateTime": "d",
         "FailureException": toFailureException,
       },
@@ -247,13 +267,13 @@ export default class DynamoDB {
   async describeEndpoints(
     {abortSignal, ...params}: RequestConfig & DescribeEndpointsRequest = {},
   ): Promise<DescribeEndpointsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEndpoints",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Endpoints": [toEndpoint],
       },
@@ -264,13 +284,14 @@ export default class DynamoDB {
   async describeGlobalTable(
     {abortSignal, ...params}: RequestConfig & DescribeGlobalTableInput,
   ): Promise<DescribeGlobalTableOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GlobalTableName: params["GlobalTableName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGlobalTable",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GlobalTableDescription": toGlobalTableDescription,
@@ -281,13 +302,14 @@ export default class DynamoDB {
   async describeGlobalTableSettings(
     {abortSignal, ...params}: RequestConfig & DescribeGlobalTableSettingsInput,
   ): Promise<DescribeGlobalTableSettingsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GlobalTableName: params["GlobalTableName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGlobalTableSettings",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GlobalTableName": "s",
@@ -299,13 +321,13 @@ export default class DynamoDB {
   async describeLimits(
     {abortSignal, ...params}: RequestConfig & DescribeLimitsInput = {},
   ): Promise<DescribeLimitsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLimits",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AccountMaxReadCapacityUnits": "n",
@@ -319,13 +341,14 @@ export default class DynamoDB {
   async describeTable(
     {abortSignal, ...params}: RequestConfig & DescribeTableInput,
   ): Promise<DescribeTableOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTable",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Table": toTableDescription,
@@ -336,13 +359,14 @@ export default class DynamoDB {
   async describeTableReplicaAutoScaling(
     {abortSignal, ...params}: RequestConfig & DescribeTableReplicaAutoScalingInput,
   ): Promise<DescribeTableReplicaAutoScalingOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTableReplicaAutoScaling",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TableAutoScalingDescription": toTableAutoScalingDescription,
@@ -353,13 +377,14 @@ export default class DynamoDB {
   async describeTimeToLive(
     {abortSignal, ...params}: RequestConfig & DescribeTimeToLiveInput,
   ): Promise<DescribeTimeToLiveOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTimeToLive",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TimeToLiveDescription": toTimeToLiveDescription,
@@ -370,17 +395,23 @@ export default class DynamoDB {
   async getItem(
     {abortSignal, ...params}: RequestConfig & GetItemInput,
   ): Promise<GetItemOutput> {
-    const body: JSONObject = {...params,
-    Key: prt.serializeMap(params["Key"], x => fromAttributeValue(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      Key: jsonP.serializeMap(params["Key"], x => fromAttributeValue(x)),
+      AttributesToGet: params["AttributesToGet"],
+      ConsistentRead: params["ConsistentRead"],
+      ReturnConsumedCapacity: params["ReturnConsumedCapacity"],
+      ProjectionExpression: params["ProjectionExpression"],
+      ExpressionAttributeNames: params["ExpressionAttributeNames"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetItem",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Item": x => prt.readMap(String, toAttributeValue, x),
+        "Item": x => jsonP.readMap(String, toAttributeValue, x),
         "ConsumedCapacity": toConsumedCapacity,
       },
     }, await resp.json());
@@ -389,15 +420,19 @@ export default class DynamoDB {
   async listBackups(
     {abortSignal, ...params}: RequestConfig & ListBackupsInput = {},
   ): Promise<ListBackupsOutput> {
-    const body: JSONObject = {...params,
-    TimeRangeLowerBound: prt.serializeDate_unixTimestamp(params["TimeRangeLowerBound"]),
-    TimeRangeUpperBound: prt.serializeDate_unixTimestamp(params["TimeRangeUpperBound"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      Limit: params["Limit"],
+      TimeRangeLowerBound: jsonP.serializeDate_unixTimestamp(params["TimeRangeLowerBound"]),
+      TimeRangeUpperBound: jsonP.serializeDate_unixTimestamp(params["TimeRangeUpperBound"]),
+      ExclusiveStartBackupArn: params["ExclusiveStartBackupArn"],
+      BackupType: params["BackupType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListBackups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BackupSummaries": [toBackupSummary],
@@ -409,13 +444,16 @@ export default class DynamoDB {
   async listContributorInsights(
     {abortSignal, ...params}: RequestConfig & ListContributorInsightsInput = {},
   ): Promise<ListContributorInsightsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListContributorInsights",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ContributorInsightsSummaries": [toContributorInsightsSummary],
@@ -427,13 +465,16 @@ export default class DynamoDB {
   async listGlobalTables(
     {abortSignal, ...params}: RequestConfig & ListGlobalTablesInput = {},
   ): Promise<ListGlobalTablesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ExclusiveStartGlobalTableName: params["ExclusiveStartGlobalTableName"],
+      Limit: params["Limit"],
+      RegionName: params["RegionName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGlobalTables",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GlobalTables": [toGlobalTable],
@@ -445,13 +486,15 @@ export default class DynamoDB {
   async listTables(
     {abortSignal, ...params}: RequestConfig & ListTablesInput = {},
   ): Promise<ListTablesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ExclusiveStartTableName: params["ExclusiveStartTableName"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTables",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TableNames": ["s"],
@@ -463,13 +506,15 @@ export default class DynamoDB {
   async listTagsOfResource(
     {abortSignal, ...params}: RequestConfig & ListTagsOfResourceInput,
   ): Promise<ListTagsOfResourceOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsOfResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -481,19 +526,26 @@ export default class DynamoDB {
   async putItem(
     {abortSignal, ...params}: RequestConfig & PutItemInput,
   ): Promise<PutItemOutput> {
-    const body: JSONObject = {...params,
-    Item: prt.serializeMap(params["Item"], x => fromAttributeValue(x)),
-    Expected: prt.serializeMap(params["Expected"], x => fromExpectedAttributeValue(x)),
-    ExpressionAttributeValues: prt.serializeMap(params["ExpressionAttributeValues"], x => fromAttributeValue(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      Item: jsonP.serializeMap(params["Item"], x => fromAttributeValue(x)),
+      Expected: jsonP.serializeMap(params["Expected"], x => fromExpectedAttributeValue(x)),
+      ReturnValues: params["ReturnValues"],
+      ReturnConsumedCapacity: params["ReturnConsumedCapacity"],
+      ReturnItemCollectionMetrics: params["ReturnItemCollectionMetrics"],
+      ConditionalOperator: params["ConditionalOperator"],
+      ConditionExpression: params["ConditionExpression"],
+      ExpressionAttributeNames: params["ExpressionAttributeNames"],
+      ExpressionAttributeValues: jsonP.serializeMap(params["ExpressionAttributeValues"], x => fromAttributeValue(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutItem",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Attributes": x => prt.readMap(String, toAttributeValue, x),
+        "Attributes": x => jsonP.readMap(String, toAttributeValue, x),
         "ConsumedCapacity": toConsumedCapacity,
         "ItemCollectionMetrics": toItemCollectionMetrics,
       },
@@ -503,23 +555,36 @@ export default class DynamoDB {
   async query(
     {abortSignal, ...params}: RequestConfig & QueryInput,
   ): Promise<QueryOutput> {
-    const body: JSONObject = {...params,
-    KeyConditions: prt.serializeMap(params["KeyConditions"], x => fromCondition(x)),
-    QueryFilter: prt.serializeMap(params["QueryFilter"], x => fromCondition(x)),
-    ExclusiveStartKey: prt.serializeMap(params["ExclusiveStartKey"], x => fromAttributeValue(x)),
-    ExpressionAttributeValues: prt.serializeMap(params["ExpressionAttributeValues"], x => fromAttributeValue(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      IndexName: params["IndexName"],
+      Select: params["Select"],
+      AttributesToGet: params["AttributesToGet"],
+      Limit: params["Limit"],
+      ConsistentRead: params["ConsistentRead"],
+      KeyConditions: jsonP.serializeMap(params["KeyConditions"], x => fromCondition(x)),
+      QueryFilter: jsonP.serializeMap(params["QueryFilter"], x => fromCondition(x)),
+      ConditionalOperator: params["ConditionalOperator"],
+      ScanIndexForward: params["ScanIndexForward"],
+      ExclusiveStartKey: jsonP.serializeMap(params["ExclusiveStartKey"], x => fromAttributeValue(x)),
+      ReturnConsumedCapacity: params["ReturnConsumedCapacity"],
+      ProjectionExpression: params["ProjectionExpression"],
+      FilterExpression: params["FilterExpression"],
+      KeyConditionExpression: params["KeyConditionExpression"],
+      ExpressionAttributeNames: params["ExpressionAttributeNames"],
+      ExpressionAttributeValues: jsonP.serializeMap(params["ExpressionAttributeValues"], x => fromAttributeValue(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Query",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Items": [x => prt.readMap(String, toAttributeValue, x)],
+        "Items": [x => jsonP.readMap(String, toAttributeValue, x)],
         "Count": "n",
         "ScannedCount": "n",
-        "LastEvaluatedKey": x => prt.readMap(String, toAttributeValue, x),
+        "LastEvaluatedKey": x => jsonP.readMap(String, toAttributeValue, x),
         "ConsumedCapacity": toConsumedCapacity,
       },
     }, await resp.json());
@@ -528,17 +593,20 @@ export default class DynamoDB {
   async restoreTableFromBackup(
     {abortSignal, ...params}: RequestConfig & RestoreTableFromBackupInput,
   ): Promise<RestoreTableFromBackupOutput> {
-    const body: JSONObject = {...params,
-    GlobalSecondaryIndexOverride: params["GlobalSecondaryIndexOverride"]?.map(x => fromGlobalSecondaryIndex(x)),
-    LocalSecondaryIndexOverride: params["LocalSecondaryIndexOverride"]?.map(x => fromLocalSecondaryIndex(x)),
-    ProvisionedThroughputOverride: fromProvisionedThroughput(params["ProvisionedThroughputOverride"]),
-    SSESpecificationOverride: fromSSESpecification(params["SSESpecificationOverride"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TargetTableName: params["TargetTableName"],
+      BackupArn: params["BackupArn"],
+      BillingModeOverride: params["BillingModeOverride"],
+      GlobalSecondaryIndexOverride: params["GlobalSecondaryIndexOverride"]?.map(x => fromGlobalSecondaryIndex(x)),
+      LocalSecondaryIndexOverride: params["LocalSecondaryIndexOverride"]?.map(x => fromLocalSecondaryIndex(x)),
+      ProvisionedThroughputOverride: fromProvisionedThroughput(params["ProvisionedThroughputOverride"]),
+      SSESpecificationOverride: fromSSESpecification(params["SSESpecificationOverride"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreTableFromBackup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TableDescription": toTableDescription,
@@ -549,18 +617,23 @@ export default class DynamoDB {
   async restoreTableToPointInTime(
     {abortSignal, ...params}: RequestConfig & RestoreTableToPointInTimeInput,
   ): Promise<RestoreTableToPointInTimeOutput> {
-    const body: JSONObject = {...params,
-    RestoreDateTime: prt.serializeDate_unixTimestamp(params["RestoreDateTime"]),
-    GlobalSecondaryIndexOverride: params["GlobalSecondaryIndexOverride"]?.map(x => fromGlobalSecondaryIndex(x)),
-    LocalSecondaryIndexOverride: params["LocalSecondaryIndexOverride"]?.map(x => fromLocalSecondaryIndex(x)),
-    ProvisionedThroughputOverride: fromProvisionedThroughput(params["ProvisionedThroughputOverride"]),
-    SSESpecificationOverride: fromSSESpecification(params["SSESpecificationOverride"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SourceTableArn: params["SourceTableArn"],
+      SourceTableName: params["SourceTableName"],
+      TargetTableName: params["TargetTableName"],
+      UseLatestRestorableTime: params["UseLatestRestorableTime"],
+      RestoreDateTime: jsonP.serializeDate_unixTimestamp(params["RestoreDateTime"]),
+      BillingModeOverride: params["BillingModeOverride"],
+      GlobalSecondaryIndexOverride: params["GlobalSecondaryIndexOverride"]?.map(x => fromGlobalSecondaryIndex(x)),
+      LocalSecondaryIndexOverride: params["LocalSecondaryIndexOverride"]?.map(x => fromLocalSecondaryIndex(x)),
+      ProvisionedThroughputOverride: fromProvisionedThroughput(params["ProvisionedThroughputOverride"]),
+      SSESpecificationOverride: fromSSESpecification(params["SSESpecificationOverride"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreTableToPointInTime",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TableDescription": toTableDescription,
@@ -571,22 +644,35 @@ export default class DynamoDB {
   async scan(
     {abortSignal, ...params}: RequestConfig & ScanInput,
   ): Promise<ScanOutput> {
-    const body: JSONObject = {...params,
-    ScanFilter: prt.serializeMap(params["ScanFilter"], x => fromCondition(x)),
-    ExclusiveStartKey: prt.serializeMap(params["ExclusiveStartKey"], x => fromAttributeValue(x)),
-    ExpressionAttributeValues: prt.serializeMap(params["ExpressionAttributeValues"], x => fromAttributeValue(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      IndexName: params["IndexName"],
+      AttributesToGet: params["AttributesToGet"],
+      Limit: params["Limit"],
+      Select: params["Select"],
+      ScanFilter: jsonP.serializeMap(params["ScanFilter"], x => fromCondition(x)),
+      ConditionalOperator: params["ConditionalOperator"],
+      ExclusiveStartKey: jsonP.serializeMap(params["ExclusiveStartKey"], x => fromAttributeValue(x)),
+      ReturnConsumedCapacity: params["ReturnConsumedCapacity"],
+      TotalSegments: params["TotalSegments"],
+      Segment: params["Segment"],
+      ProjectionExpression: params["ProjectionExpression"],
+      FilterExpression: params["FilterExpression"],
+      ExpressionAttributeNames: params["ExpressionAttributeNames"],
+      ExpressionAttributeValues: jsonP.serializeMap(params["ExpressionAttributeValues"], x => fromAttributeValue(x)),
+      ConsistentRead: params["ConsistentRead"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Scan",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Items": [x => prt.readMap(String, toAttributeValue, x)],
+        "Items": [x => jsonP.readMap(String, toAttributeValue, x)],
         "Count": "n",
         "ScannedCount": "n",
-        "LastEvaluatedKey": x => prt.readMap(String, toAttributeValue, x),
+        "LastEvaluatedKey": x => jsonP.readMap(String, toAttributeValue, x),
         "ConsumedCapacity": toConsumedCapacity,
       },
     }, await resp.json());
@@ -595,9 +681,10 @@ export default class DynamoDB {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -607,14 +694,15 @@ export default class DynamoDB {
   async transactGetItems(
     {abortSignal, ...params}: RequestConfig & TransactGetItemsInput,
   ): Promise<TransactGetItemsOutput> {
-    const body: JSONObject = {...params,
-    TransactItems: params["TransactItems"]?.map(x => fromTransactGetItem(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TransactItems: params["TransactItems"]?.map(x => fromTransactGetItem(x)),
+      ReturnConsumedCapacity: params["ReturnConsumedCapacity"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TransactGetItems",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConsumedCapacity": [toConsumedCapacity],
@@ -626,19 +714,21 @@ export default class DynamoDB {
   async transactWriteItems(
     {abortSignal, ...params}: RequestConfig & TransactWriteItemsInput,
   ): Promise<TransactWriteItemsOutput> {
-    const body: JSONObject = {...params,
-    TransactItems: params["TransactItems"]?.map(x => fromTransactWriteItem(x)),
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TransactItems: params["TransactItems"]?.map(x => fromTransactWriteItem(x)),
+      ReturnConsumedCapacity: params["ReturnConsumedCapacity"],
+      ReturnItemCollectionMetrics: params["ReturnItemCollectionMetrics"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TransactWriteItems",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ConsumedCapacity": [toConsumedCapacity],
-        "ItemCollectionMetrics": x => prt.readMap(String, l => Array.isArray(l) ? l.map(toItemCollectionMetrics) : [], x),
+        "ItemCollectionMetrics": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(toItemCollectionMetrics) : [], x),
       },
     }, await resp.json());
   }
@@ -646,8 +736,10 @@ export default class DynamoDB {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -657,14 +749,15 @@ export default class DynamoDB {
   async updateContinuousBackups(
     {abortSignal, ...params}: RequestConfig & UpdateContinuousBackupsInput,
   ): Promise<UpdateContinuousBackupsOutput> {
-    const body: JSONObject = {...params,
-    PointInTimeRecoverySpecification: fromPointInTimeRecoverySpecification(params["PointInTimeRecoverySpecification"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      PointInTimeRecoverySpecification: fromPointInTimeRecoverySpecification(params["PointInTimeRecoverySpecification"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateContinuousBackups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ContinuousBackupsDescription": toContinuousBackupsDescription,
@@ -675,18 +768,21 @@ export default class DynamoDB {
   async updateContributorInsights(
     {abortSignal, ...params}: RequestConfig & UpdateContributorInsightsInput,
   ): Promise<UpdateContributorInsightsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      IndexName: params["IndexName"],
+      ContributorInsightsAction: params["ContributorInsightsAction"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateContributorInsights",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TableName": "s",
         "IndexName": "s",
-        "ContributorInsightsStatus": toContributorInsightsStatus,
+        "ContributorInsightsStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ContributorInsightsStatus>(x),
       },
     }, await resp.json());
   }
@@ -694,14 +790,15 @@ export default class DynamoDB {
   async updateGlobalTable(
     {abortSignal, ...params}: RequestConfig & UpdateGlobalTableInput,
   ): Promise<UpdateGlobalTableOutput> {
-    const body: JSONObject = {...params,
-    ReplicaUpdates: params["ReplicaUpdates"]?.map(x => fromReplicaUpdate(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      GlobalTableName: params["GlobalTableName"],
+      ReplicaUpdates: params["ReplicaUpdates"]?.map(x => fromReplicaUpdate(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGlobalTable",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GlobalTableDescription": toGlobalTableDescription,
@@ -712,16 +809,19 @@ export default class DynamoDB {
   async updateGlobalTableSettings(
     {abortSignal, ...params}: RequestConfig & UpdateGlobalTableSettingsInput,
   ): Promise<UpdateGlobalTableSettingsOutput> {
-    const body: JSONObject = {...params,
-    GlobalTableProvisionedWriteCapacityAutoScalingSettingsUpdate: fromAutoScalingSettingsUpdate(params["GlobalTableProvisionedWriteCapacityAutoScalingSettingsUpdate"]),
-    GlobalTableGlobalSecondaryIndexSettingsUpdate: params["GlobalTableGlobalSecondaryIndexSettingsUpdate"]?.map(x => fromGlobalTableGlobalSecondaryIndexSettingsUpdate(x)),
-    ReplicaSettingsUpdate: params["ReplicaSettingsUpdate"]?.map(x => fromReplicaSettingsUpdate(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      GlobalTableName: params["GlobalTableName"],
+      GlobalTableBillingMode: params["GlobalTableBillingMode"],
+      GlobalTableProvisionedWriteCapacityUnits: params["GlobalTableProvisionedWriteCapacityUnits"],
+      GlobalTableProvisionedWriteCapacityAutoScalingSettingsUpdate: fromAutoScalingSettingsUpdate(params["GlobalTableProvisionedWriteCapacityAutoScalingSettingsUpdate"]),
+      GlobalTableGlobalSecondaryIndexSettingsUpdate: params["GlobalTableGlobalSecondaryIndexSettingsUpdate"]?.map(x => fromGlobalTableGlobalSecondaryIndexSettingsUpdate(x)),
+      ReplicaSettingsUpdate: params["ReplicaSettingsUpdate"]?.map(x => fromReplicaSettingsUpdate(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGlobalTableSettings",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GlobalTableName": "s",
@@ -733,20 +833,28 @@ export default class DynamoDB {
   async updateItem(
     {abortSignal, ...params}: RequestConfig & UpdateItemInput,
   ): Promise<UpdateItemOutput> {
-    const body: JSONObject = {...params,
-    Key: prt.serializeMap(params["Key"], x => fromAttributeValue(x)),
-    AttributeUpdates: prt.serializeMap(params["AttributeUpdates"], x => fromAttributeValueUpdate(x)),
-    Expected: prt.serializeMap(params["Expected"], x => fromExpectedAttributeValue(x)),
-    ExpressionAttributeValues: prt.serializeMap(params["ExpressionAttributeValues"], x => fromAttributeValue(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      Key: jsonP.serializeMap(params["Key"], x => fromAttributeValue(x)),
+      AttributeUpdates: jsonP.serializeMap(params["AttributeUpdates"], x => fromAttributeValueUpdate(x)),
+      Expected: jsonP.serializeMap(params["Expected"], x => fromExpectedAttributeValue(x)),
+      ConditionalOperator: params["ConditionalOperator"],
+      ReturnValues: params["ReturnValues"],
+      ReturnConsumedCapacity: params["ReturnConsumedCapacity"],
+      ReturnItemCollectionMetrics: params["ReturnItemCollectionMetrics"],
+      UpdateExpression: params["UpdateExpression"],
+      ConditionExpression: params["ConditionExpression"],
+      ExpressionAttributeNames: params["ExpressionAttributeNames"],
+      ExpressionAttributeValues: jsonP.serializeMap(params["ExpressionAttributeValues"], x => fromAttributeValue(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateItem",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "Attributes": x => prt.readMap(String, toAttributeValue, x),
+        "Attributes": x => jsonP.readMap(String, toAttributeValue, x),
         "ConsumedCapacity": toConsumedCapacity,
         "ItemCollectionMetrics": toItemCollectionMetrics,
       },
@@ -756,19 +864,21 @@ export default class DynamoDB {
   async updateTable(
     {abortSignal, ...params}: RequestConfig & UpdateTableInput,
   ): Promise<UpdateTableOutput> {
-    const body: JSONObject = {...params,
-    AttributeDefinitions: params["AttributeDefinitions"]?.map(x => fromAttributeDefinition(x)),
-    ProvisionedThroughput: fromProvisionedThroughput(params["ProvisionedThroughput"]),
-    GlobalSecondaryIndexUpdates: params["GlobalSecondaryIndexUpdates"]?.map(x => fromGlobalSecondaryIndexUpdate(x)),
-    StreamSpecification: fromStreamSpecification(params["StreamSpecification"]),
-    SSESpecification: fromSSESpecification(params["SSESpecification"]),
-    ReplicaUpdates: params["ReplicaUpdates"]?.map(x => fromReplicationGroupUpdate(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AttributeDefinitions: params["AttributeDefinitions"]?.map(x => fromAttributeDefinition(x)),
+      TableName: params["TableName"],
+      BillingMode: params["BillingMode"],
+      ProvisionedThroughput: fromProvisionedThroughput(params["ProvisionedThroughput"]),
+      GlobalSecondaryIndexUpdates: params["GlobalSecondaryIndexUpdates"]?.map(x => fromGlobalSecondaryIndexUpdate(x)),
+      StreamSpecification: fromStreamSpecification(params["StreamSpecification"]),
+      SSESpecification: fromSSESpecification(params["SSESpecification"]),
+      ReplicaUpdates: params["ReplicaUpdates"]?.map(x => fromReplicationGroupUpdate(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTable",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TableDescription": toTableDescription,
@@ -779,16 +889,17 @@ export default class DynamoDB {
   async updateTableReplicaAutoScaling(
     {abortSignal, ...params}: RequestConfig & UpdateTableReplicaAutoScalingInput,
   ): Promise<UpdateTableReplicaAutoScalingOutput> {
-    const body: JSONObject = {...params,
-    GlobalSecondaryIndexUpdates: params["GlobalSecondaryIndexUpdates"]?.map(x => fromGlobalSecondaryIndexAutoScalingUpdate(x)),
-    ProvisionedWriteCapacityAutoScalingUpdate: fromAutoScalingSettingsUpdate(params["ProvisionedWriteCapacityAutoScalingUpdate"]),
-    ReplicaUpdates: params["ReplicaUpdates"]?.map(x => fromReplicaAutoScalingUpdate(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      GlobalSecondaryIndexUpdates: params["GlobalSecondaryIndexUpdates"]?.map(x => fromGlobalSecondaryIndexAutoScalingUpdate(x)),
+      TableName: params["TableName"],
+      ProvisionedWriteCapacityAutoScalingUpdate: fromAutoScalingSettingsUpdate(params["ProvisionedWriteCapacityAutoScalingUpdate"]),
+      ReplicaUpdates: params["ReplicaUpdates"]?.map(x => fromReplicaAutoScalingUpdate(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTableReplicaAutoScaling",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TableAutoScalingDescription": toTableAutoScalingDescription,
@@ -799,14 +910,15 @@ export default class DynamoDB {
   async updateTimeToLive(
     {abortSignal, ...params}: RequestConfig & UpdateTimeToLiveInput,
   ): Promise<UpdateTimeToLiveOutput> {
-    const body: JSONObject = {...params,
-    TimeToLiveSpecification: fromTimeToLiveSpecification(params["TimeToLiveSpecification"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      TimeToLiveSpecification: fromTimeToLiveSpecification(params["TimeToLiveSpecification"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTimeToLive",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TimeToLiveSpecification": toTimeToLiveSpecification,
@@ -824,7 +936,7 @@ export default class DynamoDB {
     for (let i = 0; i < 25; i++) {
       try {
         const resp = await this.describeTable(params);
-        if (resp["Table"]?.["TableStatus"] === "ACTIVE") return resp;
+        if (resp?.Table?.TableStatus === "ACTIVE") return resp;
       } catch (err) {
         if (!["ResourceNotFoundException"].includes(err.code)) throw err;
       }
@@ -854,13 +966,13 @@ export default class DynamoDB {
 
 // refs: 1 - tags: named, input
 export interface BatchGetItemInput {
-  RequestItems: { [key: string]: KeysAndAttributes };
+  RequestItems: { [key: string]: KeysAndAttributes | null | undefined };
   ReturnConsumedCapacity?: ReturnConsumedCapacity | null;
 }
 
 // refs: 1 - tags: named, input
 export interface BatchWriteItemInput {
-  RequestItems: { [key: string]: WriteRequest[] };
+  RequestItems: { [key: string]: WriteRequest[] | null | undefined };
   ReturnConsumedCapacity?: ReturnConsumedCapacity | null;
   ReturnItemCollectionMetrics?: ReturnItemCollectionMetrics | null;
 }
@@ -899,15 +1011,15 @@ export interface DeleteBackupInput {
 // refs: 1 - tags: named, input
 export interface DeleteItemInput {
   TableName: string;
-  Key: { [key: string]: AttributeValue };
-  Expected?: { [key: string]: ExpectedAttributeValue } | null;
+  Key: { [key: string]: AttributeValue | null | undefined };
+  Expected?: { [key: string]: ExpectedAttributeValue | null | undefined } | null;
   ConditionalOperator?: ConditionalOperator | null;
   ReturnValues?: ReturnValue | null;
   ReturnConsumedCapacity?: ReturnConsumedCapacity | null;
   ReturnItemCollectionMetrics?: ReturnItemCollectionMetrics | null;
   ConditionExpression?: string | null;
-  ExpressionAttributeNames?: { [key: string]: string } | null;
-  ExpressionAttributeValues?: { [key: string]: AttributeValue } | null;
+  ExpressionAttributeNames?: { [key: string]: string | null | undefined } | null;
+  ExpressionAttributeValues?: { [key: string]: AttributeValue | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -967,12 +1079,12 @@ export interface DescribeTimeToLiveInput {
 // refs: 1 - tags: named, input
 export interface GetItemInput {
   TableName: string;
-  Key: { [key: string]: AttributeValue };
+  Key: { [key: string]: AttributeValue | null | undefined };
   AttributesToGet?: string[] | null;
   ConsistentRead?: boolean | null;
   ReturnConsumedCapacity?: ReturnConsumedCapacity | null;
   ProjectionExpression?: string | null;
-  ExpressionAttributeNames?: { [key: string]: string } | null;
+  ExpressionAttributeNames?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1014,15 +1126,15 @@ export interface ListTagsOfResourceInput {
 // refs: 1 - tags: named, input
 export interface PutItemInput {
   TableName: string;
-  Item: { [key: string]: AttributeValue };
-  Expected?: { [key: string]: ExpectedAttributeValue } | null;
+  Item: { [key: string]: AttributeValue | null | undefined };
+  Expected?: { [key: string]: ExpectedAttributeValue | null | undefined } | null;
   ReturnValues?: ReturnValue | null;
   ReturnConsumedCapacity?: ReturnConsumedCapacity | null;
   ReturnItemCollectionMetrics?: ReturnItemCollectionMetrics | null;
   ConditionalOperator?: ConditionalOperator | null;
   ConditionExpression?: string | null;
-  ExpressionAttributeNames?: { [key: string]: string } | null;
-  ExpressionAttributeValues?: { [key: string]: AttributeValue } | null;
+  ExpressionAttributeNames?: { [key: string]: string | null | undefined } | null;
+  ExpressionAttributeValues?: { [key: string]: AttributeValue | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1033,17 +1145,17 @@ export interface QueryInput {
   AttributesToGet?: string[] | null;
   Limit?: number | null;
   ConsistentRead?: boolean | null;
-  KeyConditions?: { [key: string]: Condition } | null;
-  QueryFilter?: { [key: string]: Condition } | null;
+  KeyConditions?: { [key: string]: Condition | null | undefined } | null;
+  QueryFilter?: { [key: string]: Condition | null | undefined } | null;
   ConditionalOperator?: ConditionalOperator | null;
   ScanIndexForward?: boolean | null;
-  ExclusiveStartKey?: { [key: string]: AttributeValue } | null;
+  ExclusiveStartKey?: { [key: string]: AttributeValue | null | undefined } | null;
   ReturnConsumedCapacity?: ReturnConsumedCapacity | null;
   ProjectionExpression?: string | null;
   FilterExpression?: string | null;
   KeyConditionExpression?: string | null;
-  ExpressionAttributeNames?: { [key: string]: string } | null;
-  ExpressionAttributeValues?: { [key: string]: AttributeValue } | null;
+  ExpressionAttributeNames?: { [key: string]: string | null | undefined } | null;
+  ExpressionAttributeValues?: { [key: string]: AttributeValue | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1078,16 +1190,16 @@ export interface ScanInput {
   AttributesToGet?: string[] | null;
   Limit?: number | null;
   Select?: Select | null;
-  ScanFilter?: { [key: string]: Condition } | null;
+  ScanFilter?: { [key: string]: Condition | null | undefined } | null;
   ConditionalOperator?: ConditionalOperator | null;
-  ExclusiveStartKey?: { [key: string]: AttributeValue } | null;
+  ExclusiveStartKey?: { [key: string]: AttributeValue | null | undefined } | null;
   ReturnConsumedCapacity?: ReturnConsumedCapacity | null;
   TotalSegments?: number | null;
   Segment?: number | null;
   ProjectionExpression?: string | null;
   FilterExpression?: string | null;
-  ExpressionAttributeNames?: { [key: string]: string } | null;
-  ExpressionAttributeValues?: { [key: string]: AttributeValue } | null;
+  ExpressionAttributeNames?: { [key: string]: string | null | undefined } | null;
+  ExpressionAttributeValues?: { [key: string]: AttributeValue | null | undefined } | null;
   ConsistentRead?: boolean | null;
 }
 
@@ -1149,17 +1261,17 @@ export interface UpdateGlobalTableSettingsInput {
 // refs: 1 - tags: named, input
 export interface UpdateItemInput {
   TableName: string;
-  Key: { [key: string]: AttributeValue };
-  AttributeUpdates?: { [key: string]: AttributeValueUpdate } | null;
-  Expected?: { [key: string]: ExpectedAttributeValue } | null;
+  Key: { [key: string]: AttributeValue | null | undefined };
+  AttributeUpdates?: { [key: string]: AttributeValueUpdate | null | undefined } | null;
+  Expected?: { [key: string]: ExpectedAttributeValue | null | undefined } | null;
   ConditionalOperator?: ConditionalOperator | null;
   ReturnValues?: ReturnValue | null;
   ReturnConsumedCapacity?: ReturnConsumedCapacity | null;
   ReturnItemCollectionMetrics?: ReturnItemCollectionMetrics | null;
   UpdateExpression?: string | null;
   ConditionExpression?: string | null;
-  ExpressionAttributeNames?: { [key: string]: string } | null;
-  ExpressionAttributeValues?: { [key: string]: AttributeValue } | null;
+  ExpressionAttributeNames?: { [key: string]: string | null | undefined } | null;
+  ExpressionAttributeValues?: { [key: string]: AttributeValue | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1190,15 +1302,15 @@ export interface UpdateTimeToLiveInput {
 
 // refs: 1 - tags: named, output
 export interface BatchGetItemOutput {
-  Responses?: { [key: string]: ({ [key: string]: AttributeValue })[] } | null;
-  UnprocessedKeys?: { [key: string]: KeysAndAttributes } | null;
+  Responses?: { [key: string]: ({ [key: string]: AttributeValue | null | undefined })[] | null | undefined } | null;
+  UnprocessedKeys?: { [key: string]: KeysAndAttributes | null | undefined } | null;
   ConsumedCapacity?: ConsumedCapacity[] | null;
 }
 
 // refs: 1 - tags: named, output
 export interface BatchWriteItemOutput {
-  UnprocessedItems?: { [key: string]: WriteRequest[] } | null;
-  ItemCollectionMetrics?: { [key: string]: ItemCollectionMetrics[] } | null;
+  UnprocessedItems?: { [key: string]: WriteRequest[] | null | undefined } | null;
+  ItemCollectionMetrics?: { [key: string]: ItemCollectionMetrics[] | null | undefined } | null;
   ConsumedCapacity?: ConsumedCapacity[] | null;
 }
 
@@ -1224,7 +1336,7 @@ export interface DeleteBackupOutput {
 
 // refs: 1 - tags: named, output
 export interface DeleteItemOutput {
-  Attributes?: { [key: string]: AttributeValue } | null;
+  Attributes?: { [key: string]: AttributeValue | null | undefined } | null;
   ConsumedCapacity?: ConsumedCapacity | null;
   ItemCollectionMetrics?: ItemCollectionMetrics | null;
 }
@@ -1295,7 +1407,7 @@ export interface DescribeTimeToLiveOutput {
 
 // refs: 1 - tags: named, output
 export interface GetItemOutput {
-  Item?: { [key: string]: AttributeValue } | null;
+  Item?: { [key: string]: AttributeValue | null | undefined } | null;
   ConsumedCapacity?: ConsumedCapacity | null;
 }
 
@@ -1331,17 +1443,17 @@ export interface ListTagsOfResourceOutput {
 
 // refs: 1 - tags: named, output
 export interface PutItemOutput {
-  Attributes?: { [key: string]: AttributeValue } | null;
+  Attributes?: { [key: string]: AttributeValue | null | undefined } | null;
   ConsumedCapacity?: ConsumedCapacity | null;
   ItemCollectionMetrics?: ItemCollectionMetrics | null;
 }
 
 // refs: 1 - tags: named, output
 export interface QueryOutput {
-  Items?: ({ [key: string]: AttributeValue })[] | null;
+  Items?: ({ [key: string]: AttributeValue | null | undefined })[] | null;
   Count?: number | null;
   ScannedCount?: number | null;
-  LastEvaluatedKey?: { [key: string]: AttributeValue } | null;
+  LastEvaluatedKey?: { [key: string]: AttributeValue | null | undefined } | null;
   ConsumedCapacity?: ConsumedCapacity | null;
 }
 
@@ -1357,10 +1469,10 @@ export interface RestoreTableToPointInTimeOutput {
 
 // refs: 1 - tags: named, output
 export interface ScanOutput {
-  Items?: ({ [key: string]: AttributeValue })[] | null;
+  Items?: ({ [key: string]: AttributeValue | null | undefined })[] | null;
   Count?: number | null;
   ScannedCount?: number | null;
-  LastEvaluatedKey?: { [key: string]: AttributeValue } | null;
+  LastEvaluatedKey?: { [key: string]: AttributeValue | null | undefined } | null;
   ConsumedCapacity?: ConsumedCapacity | null;
 }
 
@@ -1373,7 +1485,7 @@ export interface TransactGetItemsOutput {
 // refs: 1 - tags: named, output
 export interface TransactWriteItemsOutput {
   ConsumedCapacity?: ConsumedCapacity[] | null;
-  ItemCollectionMetrics?: { [key: string]: ItemCollectionMetrics[] } | null;
+  ItemCollectionMetrics?: { [key: string]: ItemCollectionMetrics[] | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1401,7 +1513,7 @@ export interface UpdateGlobalTableSettingsOutput {
 
 // refs: 1 - tags: named, output
 export interface UpdateItemOutput {
-  Attributes?: { [key: string]: AttributeValue } | null;
+  Attributes?: { [key: string]: AttributeValue | null | undefined } | null;
   ConsumedCapacity?: ConsumedCapacity | null;
   ItemCollectionMetrics?: ItemCollectionMetrics | null;
 }
@@ -1423,28 +1535,32 @@ export interface UpdateTimeToLiveOutput {
 
 // refs: 2 - tags: input, named, interface, output
 export interface KeysAndAttributes {
-  Keys: ({ [key: string]: AttributeValue })[];
+  Keys: ({ [key: string]: AttributeValue | null | undefined })[];
   AttributesToGet?: string[] | null;
   ConsistentRead?: boolean | null;
   ProjectionExpression?: string | null;
-  ExpressionAttributeNames?: { [key: string]: string } | null;
+  ExpressionAttributeNames?: { [key: string]: string | null | undefined } | null;
 }
-function fromKeysAndAttributes(input?: KeysAndAttributes | null): JSONValue {
+function fromKeysAndAttributes(input?: KeysAndAttributes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Keys: input["Keys"]?.map(x => prt.serializeMap(x, fromAttributeValue)),
+  return {
+    Keys: input["Keys"]?.map(x => jsonP.serializeMap(x, fromAttributeValue)),
+    AttributesToGet: input["AttributesToGet"],
+    ConsistentRead: input["ConsistentRead"],
+    ProjectionExpression: input["ProjectionExpression"],
+    ExpressionAttributeNames: input["ExpressionAttributeNames"],
   }
 }
-function toKeysAndAttributes(root: JSONValue): KeysAndAttributes {
-  return prt.readObj({
+function toKeysAndAttributes(root: jsonP.JSONValue): KeysAndAttributes {
+  return jsonP.readObj({
     required: {
-      "Keys": [x => prt.readMap(String, toAttributeValue, x)],
+      "Keys": [x => jsonP.readMap(String, toAttributeValue, x)],
     },
     optional: {
       "AttributesToGet": ["s"],
       "ConsistentRead": "b",
       "ProjectionExpression": "s",
-      "ExpressionAttributeNames": x => prt.readMap(String, String, x),
+      "ExpressionAttributeNames": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -1457,22 +1573,28 @@ export interface AttributeValue {
   SS?: string[] | null;
   NS?: string[] | null;
   BS?: (Uint8Array | string)[] | null;
-  M?: { [key: string]: AttributeValue } | null;
+  M?: { [key: string]: AttributeValue | null | undefined } | null;
   L?: AttributeValue[] | null;
   NULL?: boolean | null;
   BOOL?: boolean | null;
 }
-function fromAttributeValue(input?: AttributeValue | null): JSONValue {
+function fromAttributeValue(input?: AttributeValue | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    B: prt.serializeBlob(input["B"]),
-    BS: input["BS"]?.map(x => prt.serializeBlob(x)),
-    M: prt.serializeMap(input["M"], x => fromAttributeValue(x)),
+  return {
+    S: input["S"],
+    N: input["N"],
+    B: jsonP.serializeBlob(input["B"]),
+    SS: input["SS"],
+    NS: input["NS"],
+    BS: input["BS"]?.map(x => jsonP.serializeBlob(x)),
+    M: jsonP.serializeMap(input["M"], x => fromAttributeValue(x)),
     L: input["L"]?.map(x => fromAttributeValue(x)),
+    NULL: input["NULL"],
+    BOOL: input["BOOL"],
   }
 }
-function toAttributeValue(root: JSONValue): AttributeValue {
-  return prt.readObj({
+function toAttributeValue(root: jsonP.JSONValue): AttributeValue {
+  return jsonP.readObj({
     required: {},
     optional: {
       "S": "s",
@@ -1481,7 +1603,7 @@ function toAttributeValue(root: JSONValue): AttributeValue {
       "SS": ["s"],
       "NS": ["s"],
       "BS": ["a"],
-      "M": x => prt.readMap(String, toAttributeValue, x),
+      "M": x => jsonP.readMap(String, toAttributeValue, x),
       "L": [toAttributeValue],
       "NULL": "b",
       "BOOL": "b",
@@ -1494,23 +1616,22 @@ export type ReturnConsumedCapacity =
 | "INDEXES"
 | "TOTAL"
 | "NONE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface WriteRequest {
   PutRequest?: PutRequest | null;
   DeleteRequest?: DeleteRequest | null;
 }
-function fromWriteRequest(input?: WriteRequest | null): JSONValue {
+function fromWriteRequest(input?: WriteRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     PutRequest: fromPutRequest(input["PutRequest"]),
     DeleteRequest: fromDeleteRequest(input["DeleteRequest"]),
   }
 }
-function toWriteRequest(root: JSONValue): WriteRequest {
-  return prt.readObj({
+function toWriteRequest(root: jsonP.JSONValue): WriteRequest {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PutRequest": toPutRequest,
@@ -1521,18 +1642,18 @@ function toWriteRequest(root: JSONValue): WriteRequest {
 
 // refs: 2 - tags: input, named, interface, output
 export interface PutRequest {
-  Item: { [key: string]: AttributeValue };
+  Item: { [key: string]: AttributeValue | null | undefined };
 }
-function fromPutRequest(input?: PutRequest | null): JSONValue {
+function fromPutRequest(input?: PutRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Item: prt.serializeMap(input["Item"], x => fromAttributeValue(x)),
+  return {
+    Item: jsonP.serializeMap(input["Item"], x => fromAttributeValue(x)),
   }
 }
-function toPutRequest(root: JSONValue): PutRequest {
-  return prt.readObj({
+function toPutRequest(root: jsonP.JSONValue): PutRequest {
+  return jsonP.readObj({
     required: {
-      "Item": x => prt.readMap(String, toAttributeValue, x),
+      "Item": x => jsonP.readMap(String, toAttributeValue, x),
     },
     optional: {},
   }, root);
@@ -1540,18 +1661,18 @@ function toPutRequest(root: JSONValue): PutRequest {
 
 // refs: 2 - tags: input, named, interface, output
 export interface DeleteRequest {
-  Key: { [key: string]: AttributeValue };
+  Key: { [key: string]: AttributeValue | null | undefined };
 }
-function fromDeleteRequest(input?: DeleteRequest | null): JSONValue {
+function fromDeleteRequest(input?: DeleteRequest | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Key: prt.serializeMap(input["Key"], x => fromAttributeValue(x)),
+  return {
+    Key: jsonP.serializeMap(input["Key"], x => fromAttributeValue(x)),
   }
 }
-function toDeleteRequest(root: JSONValue): DeleteRequest {
-  return prt.readObj({
+function toDeleteRequest(root: jsonP.JSONValue): DeleteRequest {
+  return jsonP.readObj({
     required: {
-      "Key": x => prt.readMap(String, toAttributeValue, x),
+      "Key": x => jsonP.readMap(String, toAttributeValue, x),
     },
     optional: {},
   }, root);
@@ -1561,20 +1682,20 @@ function toDeleteRequest(root: JSONValue): DeleteRequest {
 export type ReturnItemCollectionMetrics =
 | "SIZE"
 | "NONE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface Replica {
   RegionName?: string | null;
 }
-function fromReplica(input?: Replica | null): JSONValue {
+function fromReplica(input?: Replica | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RegionName: input["RegionName"],
   }
 }
-function toReplica(root: JSONValue): Replica {
-  return prt.readObj({
+function toReplica(root: jsonP.JSONValue): Replica {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RegionName": "s",
@@ -1587,16 +1708,18 @@ export interface AttributeDefinition {
   AttributeName: string;
   AttributeType: ScalarAttributeType;
 }
-function fromAttributeDefinition(input?: AttributeDefinition | null): JSONValue {
+function fromAttributeDefinition(input?: AttributeDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AttributeName: input["AttributeName"],
+    AttributeType: input["AttributeType"],
   }
 }
-function toAttributeDefinition(root: JSONValue): AttributeDefinition {
-  return prt.readObj({
+function toAttributeDefinition(root: jsonP.JSONValue): AttributeDefinition {
+  return jsonP.readObj({
     required: {
       "AttributeName": "s",
-      "AttributeType": toScalarAttributeType,
+      "AttributeType": (x: jsonP.JSONValue) => cmnP.readEnum<ScalarAttributeType>(x),
     },
     optional: {},
   }, root);
@@ -1607,31 +1730,25 @@ export type ScalarAttributeType =
 | "S"
 | "N"
 | "B"
-;
-
-function toScalarAttributeType(root: JSONValue): ScalarAttributeType | null {
-  return ( false
-    || root == "S"
-    || root == "N"
-    || root == "B"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 32 - tags: input, named, interface, output
 export interface KeySchemaElement {
   AttributeName: string;
   KeyType: KeyType;
 }
-function fromKeySchemaElement(input?: KeySchemaElement | null): JSONValue {
+function fromKeySchemaElement(input?: KeySchemaElement | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AttributeName: input["AttributeName"],
+    KeyType: input["KeyType"],
   }
 }
-function toKeySchemaElement(root: JSONValue): KeySchemaElement {
-  return prt.readObj({
+function toKeySchemaElement(root: jsonP.JSONValue): KeySchemaElement {
+  return jsonP.readObj({
     required: {
       "AttributeName": "s",
-      "KeyType": toKeyType,
+      "KeyType": (x: jsonP.JSONValue) => cmnP.readEnum<KeyType>(x),
     },
     optional: {},
   }, root);
@@ -1641,14 +1758,7 @@ function toKeySchemaElement(root: JSONValue): KeySchemaElement {
 export type KeyType =
 | "HASH"
 | "RANGE"
-;
-
-function toKeyType(root: JSONValue): KeyType | null {
-  return ( false
-    || root == "HASH"
-    || root == "RANGE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface
 export interface LocalSecondaryIndex {
@@ -1656,9 +1766,10 @@ export interface LocalSecondaryIndex {
   KeySchema: KeySchemaElement[];
   Projection: Projection;
 }
-function fromLocalSecondaryIndex(input?: LocalSecondaryIndex | null): JSONValue {
+function fromLocalSecondaryIndex(input?: LocalSecondaryIndex | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    IndexName: input["IndexName"],
     KeySchema: input["KeySchema"]?.map(x => fromKeySchemaElement(x)),
     Projection: fromProjection(input["Projection"]),
   }
@@ -1669,16 +1780,18 @@ export interface Projection {
   ProjectionType?: ProjectionType | null;
   NonKeyAttributes?: string[] | null;
 }
-function fromProjection(input?: Projection | null): JSONValue {
+function fromProjection(input?: Projection | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ProjectionType: input["ProjectionType"],
+    NonKeyAttributes: input["NonKeyAttributes"],
   }
 }
-function toProjection(root: JSONValue): Projection {
-  return prt.readObj({
+function toProjection(root: jsonP.JSONValue): Projection {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "ProjectionType": toProjectionType,
+      "ProjectionType": (x: jsonP.JSONValue) => cmnP.readEnum<ProjectionType>(x),
       "NonKeyAttributes": ["s"],
     },
   }, root);
@@ -1689,15 +1802,7 @@ export type ProjectionType =
 | "ALL"
 | "KEYS_ONLY"
 | "INCLUDE"
-;
-
-function toProjectionType(root: JSONValue): ProjectionType | null {
-  return ( false
-    || root == "ALL"
-    || root == "KEYS_ONLY"
-    || root == "INCLUDE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface
 export interface GlobalSecondaryIndex {
@@ -1706,9 +1811,10 @@ export interface GlobalSecondaryIndex {
   Projection: Projection;
   ProvisionedThroughput?: ProvisionedThroughput | null;
 }
-function fromGlobalSecondaryIndex(input?: GlobalSecondaryIndex | null): JSONValue {
+function fromGlobalSecondaryIndex(input?: GlobalSecondaryIndex | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    IndexName: input["IndexName"],
     KeySchema: input["KeySchema"]?.map(x => fromKeySchemaElement(x)),
     Projection: fromProjection(input["Projection"]),
     ProvisionedThroughput: fromProvisionedThroughput(input["ProvisionedThroughput"]),
@@ -1720,13 +1826,15 @@ export interface ProvisionedThroughput {
   ReadCapacityUnits: number;
   WriteCapacityUnits: number;
 }
-function fromProvisionedThroughput(input?: ProvisionedThroughput | null): JSONValue {
+function fromProvisionedThroughput(input?: ProvisionedThroughput | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ReadCapacityUnits: input["ReadCapacityUnits"],
+    WriteCapacityUnits: input["WriteCapacityUnits"],
   }
 }
-function toProvisionedThroughput(root: JSONValue): ProvisionedThroughput {
-  return prt.readObj({
+function toProvisionedThroughput(root: jsonP.JSONValue): ProvisionedThroughput {
+  return jsonP.readObj({
     required: {
       "ReadCapacityUnits": "n",
       "WriteCapacityUnits": "n",
@@ -1739,32 +1847,27 @@ function toProvisionedThroughput(root: JSONValue): ProvisionedThroughput {
 export type BillingMode =
 | "PROVISIONED"
 | "PAY_PER_REQUEST"
-;
-
-function toBillingMode(root: JSONValue): BillingMode | null {
-  return ( false
-    || root == "PROVISIONED"
-    || root == "PAY_PER_REQUEST"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, interface, output
 export interface StreamSpecification {
   StreamEnabled: boolean;
   StreamViewType?: StreamViewType | null;
 }
-function fromStreamSpecification(input?: StreamSpecification | null): JSONValue {
+function fromStreamSpecification(input?: StreamSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    StreamEnabled: input["StreamEnabled"],
+    StreamViewType: input["StreamViewType"],
   }
 }
-function toStreamSpecification(root: JSONValue): StreamSpecification {
-  return prt.readObj({
+function toStreamSpecification(root: jsonP.JSONValue): StreamSpecification {
+  return jsonP.readObj({
     required: {
       "StreamEnabled": "b",
     },
     optional: {
-      "StreamViewType": toStreamViewType,
+      "StreamViewType": (x: jsonP.JSONValue) => cmnP.readEnum<StreamViewType>(x),
     },
   }, root);
 }
@@ -1775,16 +1878,7 @@ export type StreamViewType =
 | "OLD_IMAGE"
 | "NEW_AND_OLD_IMAGES"
 | "KEYS_ONLY"
-;
-
-function toStreamViewType(root: JSONValue): StreamViewType | null {
-  return ( false
-    || root == "NEW_IMAGE"
-    || root == "OLD_IMAGE"
-    || root == "NEW_AND_OLD_IMAGES"
-    || root == "KEYS_ONLY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface
 export interface SSESpecification {
@@ -1792,9 +1886,12 @@ export interface SSESpecification {
   SSEType?: SSEType | null;
   KMSMasterKeyId?: string | null;
 }
-function fromSSESpecification(input?: SSESpecification | null): JSONValue {
+function fromSSESpecification(input?: SSESpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Enabled: input["Enabled"],
+    SSEType: input["SSEType"],
+    KMSMasterKeyId: input["KMSMasterKeyId"],
   }
 }
 
@@ -1802,27 +1899,22 @@ function fromSSESpecification(input?: SSESpecification | null): JSONValue {
 export type SSEType =
 | "AES256"
 | "KMS"
-;
-
-function toSSEType(root: JSONValue): SSEType | null {
-  return ( false
-    || root == "AES256"
-    || root == "KMS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -1838,10 +1930,12 @@ export interface ExpectedAttributeValue {
   ComparisonOperator?: ComparisonOperator | null;
   AttributeValueList?: AttributeValue[] | null;
 }
-function fromExpectedAttributeValue(input?: ExpectedAttributeValue | null): JSONValue {
+function fromExpectedAttributeValue(input?: ExpectedAttributeValue | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Value: fromAttributeValue(input["Value"]),
+    Exists: input["Exists"],
+    ComparisonOperator: input["ComparisonOperator"],
     AttributeValueList: input["AttributeValueList"]?.map(x => fromAttributeValue(x)),
   }
 }
@@ -1861,15 +1955,13 @@ export type ComparisonOperator =
 | "CONTAINS"
 | "NOT_CONTAINS"
 | "BEGINS_WITH"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum
 export type ConditionalOperator =
 | "AND"
 | "OR"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum
 export type ReturnValue =
@@ -1878,8 +1970,7 @@ export type ReturnValue =
 | "UPDATED_OLD"
 | "ALL_NEW"
 | "UPDATED_NEW"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type BackupTypeFilter =
@@ -1887,8 +1978,7 @@ export type BackupTypeFilter =
 | "SYSTEM"
 | "AWS_BACKUP"
 | "ALL"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
 export type Select =
@@ -1896,18 +1986,18 @@ export type Select =
 | "ALL_PROJECTED_ATTRIBUTES"
 | "SPECIFIC_ATTRIBUTES"
 | "COUNT"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface
 export interface Condition {
   AttributeValueList?: AttributeValue[] | null;
   ComparisonOperator: ComparisonOperator;
 }
-function fromCondition(input?: Condition | null): JSONValue {
+function fromCondition(input?: Condition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     AttributeValueList: input["AttributeValueList"]?.map(x => fromAttributeValue(x)),
+    ComparisonOperator: input["ComparisonOperator"],
   }
 }
 
@@ -1915,24 +2005,27 @@ function fromCondition(input?: Condition | null): JSONValue {
 export interface TransactGetItem {
   Get: Get;
 }
-function fromTransactGetItem(input?: TransactGetItem | null): JSONValue {
+function fromTransactGetItem(input?: TransactGetItem | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Get: fromGet(input["Get"]),
   }
 }
 
 // refs: 1 - tags: input, named, interface
 export interface Get {
-  Key: { [key: string]: AttributeValue };
+  Key: { [key: string]: AttributeValue | null | undefined };
   TableName: string;
   ProjectionExpression?: string | null;
-  ExpressionAttributeNames?: { [key: string]: string } | null;
+  ExpressionAttributeNames?: { [key: string]: string | null | undefined } | null;
 }
-function fromGet(input?: Get | null): JSONValue {
+function fromGet(input?: Get | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Key: prt.serializeMap(input["Key"], x => fromAttributeValue(x)),
+  return {
+    Key: jsonP.serializeMap(input["Key"], x => fromAttributeValue(x)),
+    TableName: input["TableName"],
+    ProjectionExpression: input["ProjectionExpression"],
+    ExpressionAttributeNames: input["ExpressionAttributeNames"],
   }
 }
 
@@ -1943,9 +2036,9 @@ export interface TransactWriteItem {
   Delete?: Delete | null;
   Update?: Update | null;
 }
-function fromTransactWriteItem(input?: TransactWriteItem | null): JSONValue {
+function fromTransactWriteItem(input?: TransactWriteItem | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     ConditionCheck: fromConditionCheck(input["ConditionCheck"]),
     Put: fromPut(input["Put"]),
     Delete: fromDelete(input["Delete"]),
@@ -1955,18 +2048,22 @@ function fromTransactWriteItem(input?: TransactWriteItem | null): JSONValue {
 
 // refs: 1 - tags: input, named, interface
 export interface ConditionCheck {
-  Key: { [key: string]: AttributeValue };
+  Key: { [key: string]: AttributeValue | null | undefined };
   TableName: string;
   ConditionExpression: string;
-  ExpressionAttributeNames?: { [key: string]: string } | null;
-  ExpressionAttributeValues?: { [key: string]: AttributeValue } | null;
+  ExpressionAttributeNames?: { [key: string]: string | null | undefined } | null;
+  ExpressionAttributeValues?: { [key: string]: AttributeValue | null | undefined } | null;
   ReturnValuesOnConditionCheckFailure?: ReturnValuesOnConditionCheckFailure | null;
 }
-function fromConditionCheck(input?: ConditionCheck | null): JSONValue {
+function fromConditionCheck(input?: ConditionCheck | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Key: prt.serializeMap(input["Key"], x => fromAttributeValue(x)),
-    ExpressionAttributeValues: prt.serializeMap(input["ExpressionAttributeValues"], x => fromAttributeValue(x)),
+  return {
+    Key: jsonP.serializeMap(input["Key"], x => fromAttributeValue(x)),
+    TableName: input["TableName"],
+    ConditionExpression: input["ConditionExpression"],
+    ExpressionAttributeNames: input["ExpressionAttributeNames"],
+    ExpressionAttributeValues: jsonP.serializeMap(input["ExpressionAttributeValues"], x => fromAttributeValue(x)),
+    ReturnValuesOnConditionCheckFailure: input["ReturnValuesOnConditionCheckFailure"],
   }
 }
 
@@ -1974,58 +2071,70 @@ function fromConditionCheck(input?: ConditionCheck | null): JSONValue {
 export type ReturnValuesOnConditionCheckFailure =
 | "ALL_OLD"
 | "NONE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface Put {
-  Item: { [key: string]: AttributeValue };
+  Item: { [key: string]: AttributeValue | null | undefined };
   TableName: string;
   ConditionExpression?: string | null;
-  ExpressionAttributeNames?: { [key: string]: string } | null;
-  ExpressionAttributeValues?: { [key: string]: AttributeValue } | null;
+  ExpressionAttributeNames?: { [key: string]: string | null | undefined } | null;
+  ExpressionAttributeValues?: { [key: string]: AttributeValue | null | undefined } | null;
   ReturnValuesOnConditionCheckFailure?: ReturnValuesOnConditionCheckFailure | null;
 }
-function fromPut(input?: Put | null): JSONValue {
+function fromPut(input?: Put | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Item: prt.serializeMap(input["Item"], x => fromAttributeValue(x)),
-    ExpressionAttributeValues: prt.serializeMap(input["ExpressionAttributeValues"], x => fromAttributeValue(x)),
+  return {
+    Item: jsonP.serializeMap(input["Item"], x => fromAttributeValue(x)),
+    TableName: input["TableName"],
+    ConditionExpression: input["ConditionExpression"],
+    ExpressionAttributeNames: input["ExpressionAttributeNames"],
+    ExpressionAttributeValues: jsonP.serializeMap(input["ExpressionAttributeValues"], x => fromAttributeValue(x)),
+    ReturnValuesOnConditionCheckFailure: input["ReturnValuesOnConditionCheckFailure"],
   }
 }
 
 // refs: 1 - tags: input, named, interface
 export interface Delete {
-  Key: { [key: string]: AttributeValue };
+  Key: { [key: string]: AttributeValue | null | undefined };
   TableName: string;
   ConditionExpression?: string | null;
-  ExpressionAttributeNames?: { [key: string]: string } | null;
-  ExpressionAttributeValues?: { [key: string]: AttributeValue } | null;
+  ExpressionAttributeNames?: { [key: string]: string | null | undefined } | null;
+  ExpressionAttributeValues?: { [key: string]: AttributeValue | null | undefined } | null;
   ReturnValuesOnConditionCheckFailure?: ReturnValuesOnConditionCheckFailure | null;
 }
-function fromDelete(input?: Delete | null): JSONValue {
+function fromDelete(input?: Delete | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Key: prt.serializeMap(input["Key"], x => fromAttributeValue(x)),
-    ExpressionAttributeValues: prt.serializeMap(input["ExpressionAttributeValues"], x => fromAttributeValue(x)),
+  return {
+    Key: jsonP.serializeMap(input["Key"], x => fromAttributeValue(x)),
+    TableName: input["TableName"],
+    ConditionExpression: input["ConditionExpression"],
+    ExpressionAttributeNames: input["ExpressionAttributeNames"],
+    ExpressionAttributeValues: jsonP.serializeMap(input["ExpressionAttributeValues"], x => fromAttributeValue(x)),
+    ReturnValuesOnConditionCheckFailure: input["ReturnValuesOnConditionCheckFailure"],
   }
 }
 
 // refs: 1 - tags: input, named, interface
 export interface Update {
-  Key: { [key: string]: AttributeValue };
+  Key: { [key: string]: AttributeValue | null | undefined };
   UpdateExpression: string;
   TableName: string;
   ConditionExpression?: string | null;
-  ExpressionAttributeNames?: { [key: string]: string } | null;
-  ExpressionAttributeValues?: { [key: string]: AttributeValue } | null;
+  ExpressionAttributeNames?: { [key: string]: string | null | undefined } | null;
+  ExpressionAttributeValues?: { [key: string]: AttributeValue | null | undefined } | null;
   ReturnValuesOnConditionCheckFailure?: ReturnValuesOnConditionCheckFailure | null;
 }
-function fromUpdate(input?: Update | null): JSONValue {
+function fromUpdate(input?: Update | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Key: prt.serializeMap(input["Key"], x => fromAttributeValue(x)),
-    ExpressionAttributeValues: prt.serializeMap(input["ExpressionAttributeValues"], x => fromAttributeValue(x)),
+  return {
+    Key: jsonP.serializeMap(input["Key"], x => fromAttributeValue(x)),
+    UpdateExpression: input["UpdateExpression"],
+    TableName: input["TableName"],
+    ConditionExpression: input["ConditionExpression"],
+    ExpressionAttributeNames: input["ExpressionAttributeNames"],
+    ExpressionAttributeValues: jsonP.serializeMap(input["ExpressionAttributeValues"], x => fromAttributeValue(x)),
+    ReturnValuesOnConditionCheckFailure: input["ReturnValuesOnConditionCheckFailure"],
   }
 }
 
@@ -2033,9 +2142,10 @@ function fromUpdate(input?: Update | null): JSONValue {
 export interface PointInTimeRecoverySpecification {
   PointInTimeRecoveryEnabled: boolean;
 }
-function fromPointInTimeRecoverySpecification(input?: PointInTimeRecoverySpecification | null): JSONValue {
+function fromPointInTimeRecoverySpecification(input?: PointInTimeRecoverySpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    PointInTimeRecoveryEnabled: input["PointInTimeRecoveryEnabled"],
   }
 }
 
@@ -2043,17 +2153,16 @@ function fromPointInTimeRecoverySpecification(input?: PointInTimeRecoverySpecifi
 export type ContributorInsightsAction =
 | "ENABLE"
 | "DISABLE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ReplicaUpdate {
   Create?: CreateReplicaAction | null;
   Delete?: DeleteReplicaAction | null;
 }
-function fromReplicaUpdate(input?: ReplicaUpdate | null): JSONValue {
+function fromReplicaUpdate(input?: ReplicaUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Create: fromCreateReplicaAction(input["Create"]),
     Delete: fromDeleteReplicaAction(input["Delete"]),
   }
@@ -2063,9 +2172,10 @@ function fromReplicaUpdate(input?: ReplicaUpdate | null): JSONValue {
 export interface CreateReplicaAction {
   RegionName: string;
 }
-function fromCreateReplicaAction(input?: CreateReplicaAction | null): JSONValue {
+function fromCreateReplicaAction(input?: CreateReplicaAction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RegionName: input["RegionName"],
   }
 }
 
@@ -2073,9 +2183,10 @@ function fromCreateReplicaAction(input?: CreateReplicaAction | null): JSONValue 
 export interface DeleteReplicaAction {
   RegionName: string;
 }
-function fromDeleteReplicaAction(input?: DeleteReplicaAction | null): JSONValue {
+function fromDeleteReplicaAction(input?: DeleteReplicaAction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RegionName: input["RegionName"],
   }
 }
 
@@ -2087,9 +2198,13 @@ export interface AutoScalingSettingsUpdate {
   AutoScalingRoleArn?: string | null;
   ScalingPolicyUpdate?: AutoScalingPolicyUpdate | null;
 }
-function fromAutoScalingSettingsUpdate(input?: AutoScalingSettingsUpdate | null): JSONValue {
+function fromAutoScalingSettingsUpdate(input?: AutoScalingSettingsUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MinimumUnits: input["MinimumUnits"],
+    MaximumUnits: input["MaximumUnits"],
+    AutoScalingDisabled: input["AutoScalingDisabled"],
+    AutoScalingRoleArn: input["AutoScalingRoleArn"],
     ScalingPolicyUpdate: fromAutoScalingPolicyUpdate(input["ScalingPolicyUpdate"]),
   }
 }
@@ -2099,9 +2214,10 @@ export interface AutoScalingPolicyUpdate {
   PolicyName?: string | null;
   TargetTrackingScalingPolicyConfiguration: AutoScalingTargetTrackingScalingPolicyConfigurationUpdate;
 }
-function fromAutoScalingPolicyUpdate(input?: AutoScalingPolicyUpdate | null): JSONValue {
+function fromAutoScalingPolicyUpdate(input?: AutoScalingPolicyUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    PolicyName: input["PolicyName"],
     TargetTrackingScalingPolicyConfiguration: fromAutoScalingTargetTrackingScalingPolicyConfigurationUpdate(input["TargetTrackingScalingPolicyConfiguration"]),
   }
 }
@@ -2113,9 +2229,13 @@ export interface AutoScalingTargetTrackingScalingPolicyConfigurationUpdate {
   ScaleOutCooldown?: number | null;
   TargetValue: number;
 }
-function fromAutoScalingTargetTrackingScalingPolicyConfigurationUpdate(input?: AutoScalingTargetTrackingScalingPolicyConfigurationUpdate | null): JSONValue {
+function fromAutoScalingTargetTrackingScalingPolicyConfigurationUpdate(input?: AutoScalingTargetTrackingScalingPolicyConfigurationUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DisableScaleIn: input["DisableScaleIn"],
+    ScaleInCooldown: input["ScaleInCooldown"],
+    ScaleOutCooldown: input["ScaleOutCooldown"],
+    TargetValue: input["TargetValue"],
   }
 }
 
@@ -2125,9 +2245,11 @@ export interface GlobalTableGlobalSecondaryIndexSettingsUpdate {
   ProvisionedWriteCapacityUnits?: number | null;
   ProvisionedWriteCapacityAutoScalingSettingsUpdate?: AutoScalingSettingsUpdate | null;
 }
-function fromGlobalTableGlobalSecondaryIndexSettingsUpdate(input?: GlobalTableGlobalSecondaryIndexSettingsUpdate | null): JSONValue {
+function fromGlobalTableGlobalSecondaryIndexSettingsUpdate(input?: GlobalTableGlobalSecondaryIndexSettingsUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    IndexName: input["IndexName"],
+    ProvisionedWriteCapacityUnits: input["ProvisionedWriteCapacityUnits"],
     ProvisionedWriteCapacityAutoScalingSettingsUpdate: fromAutoScalingSettingsUpdate(input["ProvisionedWriteCapacityAutoScalingSettingsUpdate"]),
   }
 }
@@ -2139,9 +2261,11 @@ export interface ReplicaSettingsUpdate {
   ReplicaProvisionedReadCapacityAutoScalingSettingsUpdate?: AutoScalingSettingsUpdate | null;
   ReplicaGlobalSecondaryIndexSettingsUpdate?: ReplicaGlobalSecondaryIndexSettingsUpdate[] | null;
 }
-function fromReplicaSettingsUpdate(input?: ReplicaSettingsUpdate | null): JSONValue {
+function fromReplicaSettingsUpdate(input?: ReplicaSettingsUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RegionName: input["RegionName"],
+    ReplicaProvisionedReadCapacityUnits: input["ReplicaProvisionedReadCapacityUnits"],
     ReplicaProvisionedReadCapacityAutoScalingSettingsUpdate: fromAutoScalingSettingsUpdate(input["ReplicaProvisionedReadCapacityAutoScalingSettingsUpdate"]),
     ReplicaGlobalSecondaryIndexSettingsUpdate: input["ReplicaGlobalSecondaryIndexSettingsUpdate"]?.map(x => fromReplicaGlobalSecondaryIndexSettingsUpdate(x)),
   }
@@ -2153,9 +2277,11 @@ export interface ReplicaGlobalSecondaryIndexSettingsUpdate {
   ProvisionedReadCapacityUnits?: number | null;
   ProvisionedReadCapacityAutoScalingSettingsUpdate?: AutoScalingSettingsUpdate | null;
 }
-function fromReplicaGlobalSecondaryIndexSettingsUpdate(input?: ReplicaGlobalSecondaryIndexSettingsUpdate | null): JSONValue {
+function fromReplicaGlobalSecondaryIndexSettingsUpdate(input?: ReplicaGlobalSecondaryIndexSettingsUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    IndexName: input["IndexName"],
+    ProvisionedReadCapacityUnits: input["ProvisionedReadCapacityUnits"],
     ProvisionedReadCapacityAutoScalingSettingsUpdate: fromAutoScalingSettingsUpdate(input["ProvisionedReadCapacityAutoScalingSettingsUpdate"]),
   }
 }
@@ -2165,10 +2291,11 @@ export interface AttributeValueUpdate {
   Value?: AttributeValue | null;
   Action?: AttributeAction | null;
 }
-function fromAttributeValueUpdate(input?: AttributeValueUpdate | null): JSONValue {
+function fromAttributeValueUpdate(input?: AttributeValueUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Value: fromAttributeValue(input["Value"]),
+    Action: input["Action"],
   }
 }
 
@@ -2177,8 +2304,7 @@ export type AttributeAction =
 | "ADD"
 | "PUT"
 | "DELETE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface GlobalSecondaryIndexUpdate {
@@ -2186,9 +2312,9 @@ export interface GlobalSecondaryIndexUpdate {
   Create?: CreateGlobalSecondaryIndexAction | null;
   Delete?: DeleteGlobalSecondaryIndexAction | null;
 }
-function fromGlobalSecondaryIndexUpdate(input?: GlobalSecondaryIndexUpdate | null): JSONValue {
+function fromGlobalSecondaryIndexUpdate(input?: GlobalSecondaryIndexUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Update: fromUpdateGlobalSecondaryIndexAction(input["Update"]),
     Create: fromCreateGlobalSecondaryIndexAction(input["Create"]),
     Delete: fromDeleteGlobalSecondaryIndexAction(input["Delete"]),
@@ -2200,9 +2326,10 @@ export interface UpdateGlobalSecondaryIndexAction {
   IndexName: string;
   ProvisionedThroughput: ProvisionedThroughput;
 }
-function fromUpdateGlobalSecondaryIndexAction(input?: UpdateGlobalSecondaryIndexAction | null): JSONValue {
+function fromUpdateGlobalSecondaryIndexAction(input?: UpdateGlobalSecondaryIndexAction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    IndexName: input["IndexName"],
     ProvisionedThroughput: fromProvisionedThroughput(input["ProvisionedThroughput"]),
   }
 }
@@ -2214,9 +2341,10 @@ export interface CreateGlobalSecondaryIndexAction {
   Projection: Projection;
   ProvisionedThroughput?: ProvisionedThroughput | null;
 }
-function fromCreateGlobalSecondaryIndexAction(input?: CreateGlobalSecondaryIndexAction | null): JSONValue {
+function fromCreateGlobalSecondaryIndexAction(input?: CreateGlobalSecondaryIndexAction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    IndexName: input["IndexName"],
     KeySchema: input["KeySchema"]?.map(x => fromKeySchemaElement(x)),
     Projection: fromProjection(input["Projection"]),
     ProvisionedThroughput: fromProvisionedThroughput(input["ProvisionedThroughput"]),
@@ -2227,9 +2355,10 @@ function fromCreateGlobalSecondaryIndexAction(input?: CreateGlobalSecondaryIndex
 export interface DeleteGlobalSecondaryIndexAction {
   IndexName: string;
 }
-function fromDeleteGlobalSecondaryIndexAction(input?: DeleteGlobalSecondaryIndexAction | null): JSONValue {
+function fromDeleteGlobalSecondaryIndexAction(input?: DeleteGlobalSecondaryIndexAction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    IndexName: input["IndexName"],
   }
 }
 
@@ -2239,9 +2368,9 @@ export interface ReplicationGroupUpdate {
   Update?: UpdateReplicationGroupMemberAction | null;
   Delete?: DeleteReplicationGroupMemberAction | null;
 }
-function fromReplicationGroupUpdate(input?: ReplicationGroupUpdate | null): JSONValue {
+function fromReplicationGroupUpdate(input?: ReplicationGroupUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Create: fromCreateReplicationGroupMemberAction(input["Create"]),
     Update: fromUpdateReplicationGroupMemberAction(input["Update"]),
     Delete: fromDeleteReplicationGroupMemberAction(input["Delete"]),
@@ -2255,9 +2384,11 @@ export interface CreateReplicationGroupMemberAction {
   ProvisionedThroughputOverride?: ProvisionedThroughputOverride | null;
   GlobalSecondaryIndexes?: ReplicaGlobalSecondaryIndex[] | null;
 }
-function fromCreateReplicationGroupMemberAction(input?: CreateReplicationGroupMemberAction | null): JSONValue {
+function fromCreateReplicationGroupMemberAction(input?: CreateReplicationGroupMemberAction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RegionName: input["RegionName"],
+    KMSMasterKeyId: input["KMSMasterKeyId"],
     ProvisionedThroughputOverride: fromProvisionedThroughputOverride(input["ProvisionedThroughputOverride"]),
     GlobalSecondaryIndexes: input["GlobalSecondaryIndexes"]?.map(x => fromReplicaGlobalSecondaryIndex(x)),
   }
@@ -2267,13 +2398,14 @@ function fromCreateReplicationGroupMemberAction(input?: CreateReplicationGroupMe
 export interface ProvisionedThroughputOverride {
   ReadCapacityUnits?: number | null;
 }
-function fromProvisionedThroughputOverride(input?: ProvisionedThroughputOverride | null): JSONValue {
+function fromProvisionedThroughputOverride(input?: ProvisionedThroughputOverride | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ReadCapacityUnits: input["ReadCapacityUnits"],
   }
 }
-function toProvisionedThroughputOverride(root: JSONValue): ProvisionedThroughputOverride {
-  return prt.readObj({
+function toProvisionedThroughputOverride(root: jsonP.JSONValue): ProvisionedThroughputOverride {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ReadCapacityUnits": "n",
@@ -2286,9 +2418,10 @@ export interface ReplicaGlobalSecondaryIndex {
   IndexName: string;
   ProvisionedThroughputOverride?: ProvisionedThroughputOverride | null;
 }
-function fromReplicaGlobalSecondaryIndex(input?: ReplicaGlobalSecondaryIndex | null): JSONValue {
+function fromReplicaGlobalSecondaryIndex(input?: ReplicaGlobalSecondaryIndex | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    IndexName: input["IndexName"],
     ProvisionedThroughputOverride: fromProvisionedThroughputOverride(input["ProvisionedThroughputOverride"]),
   }
 }
@@ -2300,9 +2433,11 @@ export interface UpdateReplicationGroupMemberAction {
   ProvisionedThroughputOverride?: ProvisionedThroughputOverride | null;
   GlobalSecondaryIndexes?: ReplicaGlobalSecondaryIndex[] | null;
 }
-function fromUpdateReplicationGroupMemberAction(input?: UpdateReplicationGroupMemberAction | null): JSONValue {
+function fromUpdateReplicationGroupMemberAction(input?: UpdateReplicationGroupMemberAction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RegionName: input["RegionName"],
+    KMSMasterKeyId: input["KMSMasterKeyId"],
     ProvisionedThroughputOverride: fromProvisionedThroughputOverride(input["ProvisionedThroughputOverride"]),
     GlobalSecondaryIndexes: input["GlobalSecondaryIndexes"]?.map(x => fromReplicaGlobalSecondaryIndex(x)),
   }
@@ -2312,9 +2447,10 @@ function fromUpdateReplicationGroupMemberAction(input?: UpdateReplicationGroupMe
 export interface DeleteReplicationGroupMemberAction {
   RegionName: string;
 }
-function fromDeleteReplicationGroupMemberAction(input?: DeleteReplicationGroupMemberAction | null): JSONValue {
+function fromDeleteReplicationGroupMemberAction(input?: DeleteReplicationGroupMemberAction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RegionName: input["RegionName"],
   }
 }
 
@@ -2323,9 +2459,10 @@ export interface GlobalSecondaryIndexAutoScalingUpdate {
   IndexName?: string | null;
   ProvisionedWriteCapacityAutoScalingUpdate?: AutoScalingSettingsUpdate | null;
 }
-function fromGlobalSecondaryIndexAutoScalingUpdate(input?: GlobalSecondaryIndexAutoScalingUpdate | null): JSONValue {
+function fromGlobalSecondaryIndexAutoScalingUpdate(input?: GlobalSecondaryIndexAutoScalingUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    IndexName: input["IndexName"],
     ProvisionedWriteCapacityAutoScalingUpdate: fromAutoScalingSettingsUpdate(input["ProvisionedWriteCapacityAutoScalingUpdate"]),
   }
 }
@@ -2336,9 +2473,10 @@ export interface ReplicaAutoScalingUpdate {
   ReplicaGlobalSecondaryIndexUpdates?: ReplicaGlobalSecondaryIndexAutoScalingUpdate[] | null;
   ReplicaProvisionedReadCapacityAutoScalingUpdate?: AutoScalingSettingsUpdate | null;
 }
-function fromReplicaAutoScalingUpdate(input?: ReplicaAutoScalingUpdate | null): JSONValue {
+function fromReplicaAutoScalingUpdate(input?: ReplicaAutoScalingUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RegionName: input["RegionName"],
     ReplicaGlobalSecondaryIndexUpdates: input["ReplicaGlobalSecondaryIndexUpdates"]?.map(x => fromReplicaGlobalSecondaryIndexAutoScalingUpdate(x)),
     ReplicaProvisionedReadCapacityAutoScalingUpdate: fromAutoScalingSettingsUpdate(input["ReplicaProvisionedReadCapacityAutoScalingUpdate"]),
   }
@@ -2349,9 +2487,10 @@ export interface ReplicaGlobalSecondaryIndexAutoScalingUpdate {
   IndexName?: string | null;
   ProvisionedReadCapacityAutoScalingUpdate?: AutoScalingSettingsUpdate | null;
 }
-function fromReplicaGlobalSecondaryIndexAutoScalingUpdate(input?: ReplicaGlobalSecondaryIndexAutoScalingUpdate | null): JSONValue {
+function fromReplicaGlobalSecondaryIndexAutoScalingUpdate(input?: ReplicaGlobalSecondaryIndexAutoScalingUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    IndexName: input["IndexName"],
     ProvisionedReadCapacityAutoScalingUpdate: fromAutoScalingSettingsUpdate(input["ProvisionedReadCapacityAutoScalingUpdate"]),
   }
 }
@@ -2361,13 +2500,15 @@ export interface TimeToLiveSpecification {
   Enabled: boolean;
   AttributeName: string;
 }
-function fromTimeToLiveSpecification(input?: TimeToLiveSpecification | null): JSONValue {
+function fromTimeToLiveSpecification(input?: TimeToLiveSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Enabled: input["Enabled"],
+    AttributeName: input["AttributeName"],
   }
 }
-function toTimeToLiveSpecification(root: JSONValue): TimeToLiveSpecification {
-  return prt.readObj({
+function toTimeToLiveSpecification(root: jsonP.JSONValue): TimeToLiveSpecification {
+  return jsonP.readObj({
     required: {
       "Enabled": "b",
       "AttributeName": "s",
@@ -2383,11 +2524,11 @@ export interface ConsumedCapacity {
   ReadCapacityUnits?: number | null;
   WriteCapacityUnits?: number | null;
   Table?: Capacity | null;
-  LocalSecondaryIndexes?: { [key: string]: Capacity } | null;
-  GlobalSecondaryIndexes?: { [key: string]: Capacity } | null;
+  LocalSecondaryIndexes?: { [key: string]: Capacity | null | undefined } | null;
+  GlobalSecondaryIndexes?: { [key: string]: Capacity | null | undefined } | null;
 }
-function toConsumedCapacity(root: JSONValue): ConsumedCapacity {
-  return prt.readObj({
+function toConsumedCapacity(root: jsonP.JSONValue): ConsumedCapacity {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TableName": "s",
@@ -2395,8 +2536,8 @@ function toConsumedCapacity(root: JSONValue): ConsumedCapacity {
       "ReadCapacityUnits": "n",
       "WriteCapacityUnits": "n",
       "Table": toCapacity,
-      "LocalSecondaryIndexes": x => prt.readMap(String, toCapacity, x),
-      "GlobalSecondaryIndexes": x => prt.readMap(String, toCapacity, x),
+      "LocalSecondaryIndexes": x => jsonP.readMap(String, toCapacity, x),
+      "GlobalSecondaryIndexes": x => jsonP.readMap(String, toCapacity, x),
     },
   }, root);
 }
@@ -2407,8 +2548,8 @@ export interface Capacity {
   WriteCapacityUnits?: number | null;
   CapacityUnits?: number | null;
 }
-function toCapacity(root: JSONValue): Capacity {
-  return prt.readObj({
+function toCapacity(root: jsonP.JSONValue): Capacity {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ReadCapacityUnits": "n",
@@ -2420,14 +2561,14 @@ function toCapacity(root: JSONValue): Capacity {
 
 // refs: 5 - tags: output, named, interface
 export interface ItemCollectionMetrics {
-  ItemCollectionKey?: { [key: string]: AttributeValue } | null;
+  ItemCollectionKey?: { [key: string]: AttributeValue | null | undefined } | null;
   SizeEstimateRangeGB?: number[] | null;
 }
-function toItemCollectionMetrics(root: JSONValue): ItemCollectionMetrics {
-  return prt.readObj({
+function toItemCollectionMetrics(root: jsonP.JSONValue): ItemCollectionMetrics {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "ItemCollectionKey": x => prt.readMap(String, toAttributeValue, x),
+      "ItemCollectionKey": x => jsonP.readMap(String, toAttributeValue, x),
       "SizeEstimateRangeGB": ["n"],
     },
   }, root);
@@ -2443,13 +2584,13 @@ export interface BackupDetails {
   BackupCreationDateTime: Date | number;
   BackupExpiryDateTime?: Date | number | null;
 }
-function toBackupDetails(root: JSONValue): BackupDetails {
-  return prt.readObj({
+function toBackupDetails(root: jsonP.JSONValue): BackupDetails {
+  return jsonP.readObj({
     required: {
       "BackupArn": "s",
       "BackupName": "s",
-      "BackupStatus": toBackupStatus,
-      "BackupType": toBackupType,
+      "BackupStatus": (x: jsonP.JSONValue) => cmnP.readEnum<BackupStatus>(x),
+      "BackupType": (x: jsonP.JSONValue) => cmnP.readEnum<BackupType>(x),
       "BackupCreationDateTime": "d",
     },
     optional: {
@@ -2464,28 +2605,14 @@ export type BackupStatus =
 | "CREATING"
 | "DELETED"
 | "AVAILABLE"
-;
-function toBackupStatus(root: JSONValue): BackupStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "DELETED"
-    || root == "AVAILABLE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, enum
 export type BackupType =
 | "USER"
 | "SYSTEM"
 | "AWS_BACKUP"
-;
-function toBackupType(root: JSONValue): BackupType | null {
-  return ( false
-    || root == "USER"
-    || root == "SYSTEM"
-    || root == "AWS_BACKUP"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface GlobalTableDescription {
@@ -2495,14 +2622,14 @@ export interface GlobalTableDescription {
   GlobalTableStatus?: GlobalTableStatus | null;
   GlobalTableName?: string | null;
 }
-function toGlobalTableDescription(root: JSONValue): GlobalTableDescription {
-  return prt.readObj({
+function toGlobalTableDescription(root: jsonP.JSONValue): GlobalTableDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ReplicationGroup": [toReplicaDescription],
       "GlobalTableArn": "s",
       "CreationDateTime": "d",
-      "GlobalTableStatus": toGlobalTableStatus,
+      "GlobalTableStatus": (x: jsonP.JSONValue) => cmnP.readEnum<GlobalTableStatus>(x),
       "GlobalTableName": "s",
     },
   }, root);
@@ -2519,12 +2646,12 @@ export interface ReplicaDescription {
   GlobalSecondaryIndexes?: ReplicaGlobalSecondaryIndexDescription[] | null;
   ReplicaInaccessibleDateTime?: Date | number | null;
 }
-function toReplicaDescription(root: JSONValue): ReplicaDescription {
-  return prt.readObj({
+function toReplicaDescription(root: jsonP.JSONValue): ReplicaDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RegionName": "s",
-      "ReplicaStatus": toReplicaStatus,
+      "ReplicaStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ReplicaStatus>(x),
       "ReplicaStatusDescription": "s",
       "ReplicaStatusPercentProgress": "s",
       "KMSMasterKeyId": "s",
@@ -2543,25 +2670,15 @@ export type ReplicaStatus =
 | "DELETING"
 | "ACTIVE"
 | "REGION_DISABLED"
-;
-function toReplicaStatus(root: JSONValue): ReplicaStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "CREATION_FAILED"
-    || root == "UPDATING"
-    || root == "DELETING"
-    || root == "ACTIVE"
-    || root == "REGION_DISABLED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 9 - tags: output, named, interface
 export interface ReplicaGlobalSecondaryIndexDescription {
   IndexName?: string | null;
   ProvisionedThroughputOverride?: ProvisionedThroughputOverride | null;
 }
-function toReplicaGlobalSecondaryIndexDescription(root: JSONValue): ReplicaGlobalSecondaryIndexDescription {
-  return prt.readObj({
+function toReplicaGlobalSecondaryIndexDescription(root: jsonP.JSONValue): ReplicaGlobalSecondaryIndexDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "IndexName": "s",
@@ -2576,15 +2693,7 @@ export type GlobalTableStatus =
 | "ACTIVE"
 | "DELETING"
 | "UPDATING"
-;
-function toGlobalTableStatus(root: JSONValue): GlobalTableStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "ACTIVE"
-    || root == "DELETING"
-    || root == "UPDATING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: output, named, interface
 export interface TableDescription {
@@ -2610,14 +2719,14 @@ export interface TableDescription {
   SSEDescription?: SSEDescription | null;
   ArchivalSummary?: ArchivalSummary | null;
 }
-function toTableDescription(root: JSONValue): TableDescription {
-  return prt.readObj({
+function toTableDescription(root: jsonP.JSONValue): TableDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AttributeDefinitions": [toAttributeDefinition],
       "TableName": "s",
       "KeySchema": [toKeySchemaElement],
-      "TableStatus": toTableStatus,
+      "TableStatus": (x: jsonP.JSONValue) => cmnP.readEnum<TableStatus>(x),
       "CreationDateTime": "d",
       "ProvisionedThroughput": toProvisionedThroughputDescription,
       "TableSizeBytes": "n",
@@ -2648,18 +2757,7 @@ export type TableStatus =
 | "INACCESSIBLE_ENCRYPTION_CREDENTIALS"
 | "ARCHIVING"
 | "ARCHIVED"
-;
-function toTableStatus(root: JSONValue): TableStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "UPDATING"
-    || root == "DELETING"
-    || root == "ACTIVE"
-    || root == "INACCESSIBLE_ENCRYPTION_CREDENTIALS"
-    || root == "ARCHIVING"
-    || root == "ARCHIVED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 12 - tags: output, named, interface
 export interface ProvisionedThroughputDescription {
@@ -2669,8 +2767,8 @@ export interface ProvisionedThroughputDescription {
   ReadCapacityUnits?: number | null;
   WriteCapacityUnits?: number | null;
 }
-function toProvisionedThroughputDescription(root: JSONValue): ProvisionedThroughputDescription {
-  return prt.readObj({
+function toProvisionedThroughputDescription(root: jsonP.JSONValue): ProvisionedThroughputDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "LastIncreaseDateTime": "d",
@@ -2687,11 +2785,11 @@ export interface BillingModeSummary {
   BillingMode?: BillingMode | null;
   LastUpdateToPayPerRequestDateTime?: Date | number | null;
 }
-function toBillingModeSummary(root: JSONValue): BillingModeSummary {
-  return prt.readObj({
+function toBillingModeSummary(root: jsonP.JSONValue): BillingModeSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "BillingMode": toBillingMode,
+      "BillingMode": (x: jsonP.JSONValue) => cmnP.readEnum<BillingMode>(x),
       "LastUpdateToPayPerRequestDateTime": "d",
     },
   }, root);
@@ -2706,8 +2804,8 @@ export interface LocalSecondaryIndexDescription {
   ItemCount?: number | null;
   IndexArn?: string | null;
 }
-function toLocalSecondaryIndexDescription(root: JSONValue): LocalSecondaryIndexDescription {
-  return prt.readObj({
+function toLocalSecondaryIndexDescription(root: jsonP.JSONValue): LocalSecondaryIndexDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "IndexName": "s",
@@ -2732,14 +2830,14 @@ export interface GlobalSecondaryIndexDescription {
   ItemCount?: number | null;
   IndexArn?: string | null;
 }
-function toGlobalSecondaryIndexDescription(root: JSONValue): GlobalSecondaryIndexDescription {
-  return prt.readObj({
+function toGlobalSecondaryIndexDescription(root: jsonP.JSONValue): GlobalSecondaryIndexDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "IndexName": "s",
       "KeySchema": [toKeySchemaElement],
       "Projection": toProjection,
-      "IndexStatus": toIndexStatus,
+      "IndexStatus": (x: jsonP.JSONValue) => cmnP.readEnum<IndexStatus>(x),
       "Backfilling": "b",
       "ProvisionedThroughput": toProvisionedThroughputDescription,
       "IndexSizeBytes": "n",
@@ -2755,15 +2853,7 @@ export type IndexStatus =
 | "UPDATING"
 | "DELETING"
 | "ACTIVE"
-;
-function toIndexStatus(root: JSONValue): IndexStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "UPDATING"
-    || root == "DELETING"
-    || root == "ACTIVE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: output, named, interface
 export interface RestoreSummary {
@@ -2772,8 +2862,8 @@ export interface RestoreSummary {
   RestoreDateTime: Date | number;
   RestoreInProgress: boolean;
 }
-function toRestoreSummary(root: JSONValue): RestoreSummary {
-  return prt.readObj({
+function toRestoreSummary(root: jsonP.JSONValue): RestoreSummary {
+  return jsonP.readObj({
     required: {
       "RestoreDateTime": "d",
       "RestoreInProgress": "b",
@@ -2792,12 +2882,12 @@ export interface SSEDescription {
   KMSMasterKeyArn?: string | null;
   InaccessibleEncryptionDateTime?: Date | number | null;
 }
-function toSSEDescription(root: JSONValue): SSEDescription {
-  return prt.readObj({
+function toSSEDescription(root: jsonP.JSONValue): SSEDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Status": toSSEStatus,
-      "SSEType": toSSEType,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<SSEStatus>(x),
+      "SSEType": (x: jsonP.JSONValue) => cmnP.readEnum<SSEType>(x),
       "KMSMasterKeyArn": "s",
       "InaccessibleEncryptionDateTime": "d",
     },
@@ -2811,16 +2901,7 @@ export type SSEStatus =
 | "DISABLING"
 | "DISABLED"
 | "UPDATING"
-;
-function toSSEStatus(root: JSONValue): SSEStatus | null {
-  return ( false
-    || root == "ENABLING"
-    || root == "ENABLED"
-    || root == "DISABLING"
-    || root == "DISABLED"
-    || root == "UPDATING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: output, named, interface
 export interface ArchivalSummary {
@@ -2828,8 +2909,8 @@ export interface ArchivalSummary {
   ArchivalReason?: string | null;
   ArchivalBackupArn?: string | null;
 }
-function toArchivalSummary(root: JSONValue): ArchivalSummary {
-  return prt.readObj({
+function toArchivalSummary(root: jsonP.JSONValue): ArchivalSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ArchivalDateTime": "d",
@@ -2845,8 +2926,8 @@ export interface BackupDescription {
   SourceTableDetails?: SourceTableDetails | null;
   SourceTableFeatureDetails?: SourceTableFeatureDetails | null;
 }
-function toBackupDescription(root: JSONValue): BackupDescription {
-  return prt.readObj({
+function toBackupDescription(root: jsonP.JSONValue): BackupDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "BackupDetails": toBackupDetails,
@@ -2868,8 +2949,8 @@ export interface SourceTableDetails {
   ItemCount?: number | null;
   BillingMode?: BillingMode | null;
 }
-function toSourceTableDetails(root: JSONValue): SourceTableDetails {
-  return prt.readObj({
+function toSourceTableDetails(root: jsonP.JSONValue): SourceTableDetails {
+  return jsonP.readObj({
     required: {
       "TableName": "s",
       "TableId": "s",
@@ -2881,7 +2962,7 @@ function toSourceTableDetails(root: JSONValue): SourceTableDetails {
       "TableArn": "s",
       "TableSizeBytes": "n",
       "ItemCount": "n",
-      "BillingMode": toBillingMode,
+      "BillingMode": (x: jsonP.JSONValue) => cmnP.readEnum<BillingMode>(x),
     },
   }, root);
 }
@@ -2894,8 +2975,8 @@ export interface SourceTableFeatureDetails {
   TimeToLiveDescription?: TimeToLiveDescription | null;
   SSEDescription?: SSEDescription | null;
 }
-function toSourceTableFeatureDetails(root: JSONValue): SourceTableFeatureDetails {
-  return prt.readObj({
+function toSourceTableFeatureDetails(root: jsonP.JSONValue): SourceTableFeatureDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "LocalSecondaryIndexes": [toLocalSecondaryIndexInfo],
@@ -2913,8 +2994,8 @@ export interface LocalSecondaryIndexInfo {
   KeySchema?: KeySchemaElement[] | null;
   Projection?: Projection | null;
 }
-function toLocalSecondaryIndexInfo(root: JSONValue): LocalSecondaryIndexInfo {
-  return prt.readObj({
+function toLocalSecondaryIndexInfo(root: jsonP.JSONValue): LocalSecondaryIndexInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "IndexName": "s",
@@ -2931,8 +3012,8 @@ export interface GlobalSecondaryIndexInfo {
   Projection?: Projection | null;
   ProvisionedThroughput?: ProvisionedThroughput | null;
 }
-function toGlobalSecondaryIndexInfo(root: JSONValue): GlobalSecondaryIndexInfo {
-  return prt.readObj({
+function toGlobalSecondaryIndexInfo(root: jsonP.JSONValue): GlobalSecondaryIndexInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "IndexName": "s",
@@ -2948,11 +3029,11 @@ export interface TimeToLiveDescription {
   TimeToLiveStatus?: TimeToLiveStatus | null;
   AttributeName?: string | null;
 }
-function toTimeToLiveDescription(root: JSONValue): TimeToLiveDescription {
-  return prt.readObj({
+function toTimeToLiveDescription(root: jsonP.JSONValue): TimeToLiveDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "TimeToLiveStatus": toTimeToLiveStatus,
+      "TimeToLiveStatus": (x: jsonP.JSONValue) => cmnP.readEnum<TimeToLiveStatus>(x),
       "AttributeName": "s",
     },
   }, root);
@@ -2964,25 +3045,17 @@ export type TimeToLiveStatus =
 | "DISABLING"
 | "ENABLED"
 | "DISABLED"
-;
-function toTimeToLiveStatus(root: JSONValue): TimeToLiveStatus | null {
-  return ( false
-    || root == "ENABLING"
-    || root == "DISABLING"
-    || root == "ENABLED"
-    || root == "DISABLED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ContinuousBackupsDescription {
   ContinuousBackupsStatus: ContinuousBackupsStatus;
   PointInTimeRecoveryDescription?: PointInTimeRecoveryDescription | null;
 }
-function toContinuousBackupsDescription(root: JSONValue): ContinuousBackupsDescription {
-  return prt.readObj({
+function toContinuousBackupsDescription(root: jsonP.JSONValue): ContinuousBackupsDescription {
+  return jsonP.readObj({
     required: {
-      "ContinuousBackupsStatus": toContinuousBackupsStatus,
+      "ContinuousBackupsStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ContinuousBackupsStatus>(x),
     },
     optional: {
       "PointInTimeRecoveryDescription": toPointInTimeRecoveryDescription,
@@ -2994,13 +3067,7 @@ function toContinuousBackupsDescription(root: JSONValue): ContinuousBackupsDescr
 export type ContinuousBackupsStatus =
 | "ENABLED"
 | "DISABLED"
-;
-function toContinuousBackupsStatus(root: JSONValue): ContinuousBackupsStatus | null {
-  return ( false
-    || root == "ENABLED"
-    || root == "DISABLED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface PointInTimeRecoveryDescription {
@@ -3008,11 +3075,11 @@ export interface PointInTimeRecoveryDescription {
   EarliestRestorableDateTime?: Date | number | null;
   LatestRestorableDateTime?: Date | number | null;
 }
-function toPointInTimeRecoveryDescription(root: JSONValue): PointInTimeRecoveryDescription {
-  return prt.readObj({
+function toPointInTimeRecoveryDescription(root: jsonP.JSONValue): PointInTimeRecoveryDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "PointInTimeRecoveryStatus": toPointInTimeRecoveryStatus,
+      "PointInTimeRecoveryStatus": (x: jsonP.JSONValue) => cmnP.readEnum<PointInTimeRecoveryStatus>(x),
       "EarliestRestorableDateTime": "d",
       "LatestRestorableDateTime": "d",
     },
@@ -3023,13 +3090,7 @@ function toPointInTimeRecoveryDescription(root: JSONValue): PointInTimeRecoveryD
 export type PointInTimeRecoveryStatus =
 | "ENABLED"
 | "DISABLED"
-;
-function toPointInTimeRecoveryStatus(root: JSONValue): PointInTimeRecoveryStatus | null {
-  return ( false
-    || root == "ENABLED"
-    || root == "DISABLED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, enum
 export type ContributorInsightsStatus =
@@ -3038,24 +3099,15 @@ export type ContributorInsightsStatus =
 | "DISABLING"
 | "DISABLED"
 | "FAILED"
-;
-function toContributorInsightsStatus(root: JSONValue): ContributorInsightsStatus | null {
-  return ( false
-    || root == "ENABLING"
-    || root == "ENABLED"
-    || root == "DISABLING"
-    || root == "DISABLED"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface FailureException {
   ExceptionName?: string | null;
   ExceptionDescription?: string | null;
 }
-function toFailureException(root: JSONValue): FailureException {
-  return prt.readObj({
+function toFailureException(root: jsonP.JSONValue): FailureException {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ExceptionName": "s",
@@ -3069,8 +3121,8 @@ export interface Endpoint {
   Address: string;
   CachePeriodInMinutes: number;
 }
-function toEndpoint(root: JSONValue): Endpoint {
-  return prt.readObj({
+function toEndpoint(root: jsonP.JSONValue): Endpoint {
+  return jsonP.readObj({
     required: {
       "Address": "s",
       "CachePeriodInMinutes": "n",
@@ -3090,13 +3142,13 @@ export interface ReplicaSettingsDescription {
   ReplicaProvisionedWriteCapacityAutoScalingSettings?: AutoScalingSettingsDescription | null;
   ReplicaGlobalSecondaryIndexSettings?: ReplicaGlobalSecondaryIndexSettingsDescription[] | null;
 }
-function toReplicaSettingsDescription(root: JSONValue): ReplicaSettingsDescription {
-  return prt.readObj({
+function toReplicaSettingsDescription(root: jsonP.JSONValue): ReplicaSettingsDescription {
+  return jsonP.readObj({
     required: {
       "RegionName": "s",
     },
     optional: {
-      "ReplicaStatus": toReplicaStatus,
+      "ReplicaStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ReplicaStatus>(x),
       "ReplicaBillingModeSummary": toBillingModeSummary,
       "ReplicaProvisionedReadCapacityUnits": "n",
       "ReplicaProvisionedReadCapacityAutoScalingSettings": toAutoScalingSettingsDescription,
@@ -3115,8 +3167,8 @@ export interface AutoScalingSettingsDescription {
   AutoScalingRoleArn?: string | null;
   ScalingPolicies?: AutoScalingPolicyDescription[] | null;
 }
-function toAutoScalingSettingsDescription(root: JSONValue): AutoScalingSettingsDescription {
-  return prt.readObj({
+function toAutoScalingSettingsDescription(root: jsonP.JSONValue): AutoScalingSettingsDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MinimumUnits": "n",
@@ -3133,8 +3185,8 @@ export interface AutoScalingPolicyDescription {
   PolicyName?: string | null;
   TargetTrackingScalingPolicyConfiguration?: AutoScalingTargetTrackingScalingPolicyConfigurationDescription | null;
 }
-function toAutoScalingPolicyDescription(root: JSONValue): AutoScalingPolicyDescription {
-  return prt.readObj({
+function toAutoScalingPolicyDescription(root: jsonP.JSONValue): AutoScalingPolicyDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PolicyName": "s",
@@ -3150,8 +3202,8 @@ export interface AutoScalingTargetTrackingScalingPolicyConfigurationDescription 
   ScaleOutCooldown?: number | null;
   TargetValue: number;
 }
-function toAutoScalingTargetTrackingScalingPolicyConfigurationDescription(root: JSONValue): AutoScalingTargetTrackingScalingPolicyConfigurationDescription {
-  return prt.readObj({
+function toAutoScalingTargetTrackingScalingPolicyConfigurationDescription(root: jsonP.JSONValue): AutoScalingTargetTrackingScalingPolicyConfigurationDescription {
+  return jsonP.readObj({
     required: {
       "TargetValue": "n",
     },
@@ -3172,13 +3224,13 @@ export interface ReplicaGlobalSecondaryIndexSettingsDescription {
   ProvisionedWriteCapacityUnits?: number | null;
   ProvisionedWriteCapacityAutoScalingSettings?: AutoScalingSettingsDescription | null;
 }
-function toReplicaGlobalSecondaryIndexSettingsDescription(root: JSONValue): ReplicaGlobalSecondaryIndexSettingsDescription {
-  return prt.readObj({
+function toReplicaGlobalSecondaryIndexSettingsDescription(root: jsonP.JSONValue): ReplicaGlobalSecondaryIndexSettingsDescription {
+  return jsonP.readObj({
     required: {
       "IndexName": "s",
     },
     optional: {
-      "IndexStatus": toIndexStatus,
+      "IndexStatus": (x: jsonP.JSONValue) => cmnP.readEnum<IndexStatus>(x),
       "ProvisionedReadCapacityUnits": "n",
       "ProvisionedReadCapacityAutoScalingSettings": toAutoScalingSettingsDescription,
       "ProvisionedWriteCapacityUnits": "n",
@@ -3193,12 +3245,12 @@ export interface TableAutoScalingDescription {
   TableStatus?: TableStatus | null;
   Replicas?: ReplicaAutoScalingDescription[] | null;
 }
-function toTableAutoScalingDescription(root: JSONValue): TableAutoScalingDescription {
-  return prt.readObj({
+function toTableAutoScalingDescription(root: jsonP.JSONValue): TableAutoScalingDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TableName": "s",
-      "TableStatus": toTableStatus,
+      "TableStatus": (x: jsonP.JSONValue) => cmnP.readEnum<TableStatus>(x),
       "Replicas": [toReplicaAutoScalingDescription],
     },
   }, root);
@@ -3212,15 +3264,15 @@ export interface ReplicaAutoScalingDescription {
   ReplicaProvisionedWriteCapacityAutoScalingSettings?: AutoScalingSettingsDescription | null;
   ReplicaStatus?: ReplicaStatus | null;
 }
-function toReplicaAutoScalingDescription(root: JSONValue): ReplicaAutoScalingDescription {
-  return prt.readObj({
+function toReplicaAutoScalingDescription(root: jsonP.JSONValue): ReplicaAutoScalingDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RegionName": "s",
       "GlobalSecondaryIndexes": [toReplicaGlobalSecondaryIndexAutoScalingDescription],
       "ReplicaProvisionedReadCapacityAutoScalingSettings": toAutoScalingSettingsDescription,
       "ReplicaProvisionedWriteCapacityAutoScalingSettings": toAutoScalingSettingsDescription,
-      "ReplicaStatus": toReplicaStatus,
+      "ReplicaStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ReplicaStatus>(x),
     },
   }, root);
 }
@@ -3232,12 +3284,12 @@ export interface ReplicaGlobalSecondaryIndexAutoScalingDescription {
   ProvisionedReadCapacityAutoScalingSettings?: AutoScalingSettingsDescription | null;
   ProvisionedWriteCapacityAutoScalingSettings?: AutoScalingSettingsDescription | null;
 }
-function toReplicaGlobalSecondaryIndexAutoScalingDescription(root: JSONValue): ReplicaGlobalSecondaryIndexAutoScalingDescription {
-  return prt.readObj({
+function toReplicaGlobalSecondaryIndexAutoScalingDescription(root: jsonP.JSONValue): ReplicaGlobalSecondaryIndexAutoScalingDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "IndexName": "s",
-      "IndexStatus": toIndexStatus,
+      "IndexStatus": (x: jsonP.JSONValue) => cmnP.readEnum<IndexStatus>(x),
       "ProvisionedReadCapacityAutoScalingSettings": toAutoScalingSettingsDescription,
       "ProvisionedWriteCapacityAutoScalingSettings": toAutoScalingSettingsDescription,
     },
@@ -3257,8 +3309,8 @@ export interface BackupSummary {
   BackupType?: BackupType | null;
   BackupSizeBytes?: number | null;
 }
-function toBackupSummary(root: JSONValue): BackupSummary {
-  return prt.readObj({
+function toBackupSummary(root: jsonP.JSONValue): BackupSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TableName": "s",
@@ -3268,8 +3320,8 @@ function toBackupSummary(root: JSONValue): BackupSummary {
       "BackupName": "s",
       "BackupCreationDateTime": "d",
       "BackupExpiryDateTime": "d",
-      "BackupStatus": toBackupStatus,
-      "BackupType": toBackupType,
+      "BackupStatus": (x: jsonP.JSONValue) => cmnP.readEnum<BackupStatus>(x),
+      "BackupType": (x: jsonP.JSONValue) => cmnP.readEnum<BackupType>(x),
       "BackupSizeBytes": "n",
     },
   }, root);
@@ -3281,13 +3333,13 @@ export interface ContributorInsightsSummary {
   IndexName?: string | null;
   ContributorInsightsStatus?: ContributorInsightsStatus | null;
 }
-function toContributorInsightsSummary(root: JSONValue): ContributorInsightsSummary {
-  return prt.readObj({
+function toContributorInsightsSummary(root: jsonP.JSONValue): ContributorInsightsSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TableName": "s",
       "IndexName": "s",
-      "ContributorInsightsStatus": toContributorInsightsStatus,
+      "ContributorInsightsStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ContributorInsightsStatus>(x),
     },
   }, root);
 }
@@ -3297,8 +3349,8 @@ export interface GlobalTable {
   GlobalTableName?: string | null;
   ReplicationGroup?: Replica[] | null;
 }
-function toGlobalTable(root: JSONValue): GlobalTable {
-  return prt.readObj({
+function toGlobalTable(root: jsonP.JSONValue): GlobalTable {
+  return jsonP.readObj({
     required: {},
     optional: {
       "GlobalTableName": "s",
@@ -3309,13 +3361,13 @@ function toGlobalTable(root: JSONValue): GlobalTable {
 
 // refs: 1 - tags: output, named, interface
 export interface ItemResponse {
-  Item?: { [key: string]: AttributeValue } | null;
+  Item?: { [key: string]: AttributeValue | null | undefined } | null;
 }
-function toItemResponse(root: JSONValue): ItemResponse {
-  return prt.readObj({
+function toItemResponse(root: jsonP.JSONValue): ItemResponse {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Item": x => prt.readMap(String, toAttributeValue, x),
+      "Item": x => jsonP.readMap(String, toAttributeValue, x),
     },
   }, root);
 }

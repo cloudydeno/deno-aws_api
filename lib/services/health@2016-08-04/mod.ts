@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class Health {
   #client: ServiceClient;
@@ -30,17 +30,20 @@ export default class Health {
   async describeAffectedAccountsForOrganization(
     {abortSignal, ...params}: RequestConfig & DescribeAffectedAccountsForOrganizationRequest,
   ): Promise<DescribeAffectedAccountsForOrganizationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      eventArn: params["eventArn"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAffectedAccountsForOrganization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "affectedAccounts": ["s"],
-        "eventScopeCode": toeventScopeCode,
+        "eventScopeCode": (x: jsonP.JSONValue) => cmnP.readEnum<eventScopeCode>(x),
         "nextToken": "s",
       },
     }, await resp.json());
@@ -49,14 +52,17 @@ export default class Health {
   async describeAffectedEntities(
     {abortSignal, ...params}: RequestConfig & DescribeAffectedEntitiesRequest,
   ): Promise<DescribeAffectedEntitiesResponse> {
-    const body: JSONObject = {...params,
-    filter: fromEntityFilter(params["filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      filter: fromEntityFilter(params["filter"]),
+      locale: params["locale"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAffectedEntities",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "entities": [toAffectedEntity],
@@ -68,14 +74,17 @@ export default class Health {
   async describeAffectedEntitiesForOrganization(
     {abortSignal, ...params}: RequestConfig & DescribeAffectedEntitiesForOrganizationRequest,
   ): Promise<DescribeAffectedEntitiesForOrganizationResponse> {
-    const body: JSONObject = {...params,
-    organizationEntityFilters: params["organizationEntityFilters"]?.map(x => fromEventAccountFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      organizationEntityFilters: params["organizationEntityFilters"]?.map(x => fromEventAccountFilter(x)),
+      locale: params["locale"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAffectedEntitiesForOrganization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "entities": [toAffectedEntity],
@@ -88,13 +97,14 @@ export default class Health {
   async describeEntityAggregates(
     {abortSignal, ...params}: RequestConfig & DescribeEntityAggregatesRequest = {},
   ): Promise<DescribeEntityAggregatesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      eventArns: params["eventArns"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEntityAggregates",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "entityAggregates": [toEntityAggregate],
@@ -105,14 +115,17 @@ export default class Health {
   async describeEventAggregates(
     {abortSignal, ...params}: RequestConfig & DescribeEventAggregatesRequest,
   ): Promise<DescribeEventAggregatesResponse> {
-    const body: JSONObject = {...params,
-    filter: fromEventFilter(params["filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      filter: fromEventFilter(params["filter"]),
+      aggregateField: params["aggregateField"],
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventAggregates",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "eventAggregates": [toEventAggregate],
@@ -124,13 +137,15 @@ export default class Health {
   async describeEventDetails(
     {abortSignal, ...params}: RequestConfig & DescribeEventDetailsRequest,
   ): Promise<DescribeEventDetailsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      eventArns: params["eventArns"],
+      locale: params["locale"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventDetails",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "successfulSet": [toEventDetails],
@@ -142,14 +157,15 @@ export default class Health {
   async describeEventDetailsForOrganization(
     {abortSignal, ...params}: RequestConfig & DescribeEventDetailsForOrganizationRequest,
   ): Promise<DescribeEventDetailsForOrganizationResponse> {
-    const body: JSONObject = {...params,
-    organizationEventDetailFilters: params["organizationEventDetailFilters"]?.map(x => fromEventAccountFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      organizationEventDetailFilters: params["organizationEventDetailFilters"]?.map(x => fromEventAccountFilter(x)),
+      locale: params["locale"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventDetailsForOrganization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "successfulSet": [toOrganizationEventDetails],
@@ -161,14 +177,17 @@ export default class Health {
   async describeEventTypes(
     {abortSignal, ...params}: RequestConfig & DescribeEventTypesRequest = {},
   ): Promise<DescribeEventTypesResponse> {
-    const body: JSONObject = {...params,
-    filter: fromEventTypeFilter(params["filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      filter: fromEventTypeFilter(params["filter"]),
+      locale: params["locale"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventTypes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "eventTypes": [toEventType],
@@ -180,14 +199,17 @@ export default class Health {
   async describeEvents(
     {abortSignal, ...params}: RequestConfig & DescribeEventsRequest = {},
   ): Promise<DescribeEventsResponse> {
-    const body: JSONObject = {...params,
-    filter: fromEventFilter(params["filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      filter: fromEventFilter(params["filter"]),
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+      locale: params["locale"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEvents",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "events": [toEvent],
@@ -199,14 +221,17 @@ export default class Health {
   async describeEventsForOrganization(
     {abortSignal, ...params}: RequestConfig & DescribeEventsForOrganizationRequest = {},
   ): Promise<DescribeEventsForOrganizationResponse> {
-    const body: JSONObject = {...params,
-    filter: fromOrganizationEventFilter(params["filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      filter: fromOrganizationEventFilter(params["filter"]),
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+      locale: params["locale"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventsForOrganization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "events": [toOrganizationEvent],
@@ -222,7 +247,7 @@ export default class Health {
       abortSignal,
       action: "DescribeHealthServiceStatusForOrganization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "healthServiceAccessStatusForOrganization": "s",
@@ -394,13 +419,18 @@ export interface EntityFilter {
   entityArns?: string[] | null;
   entityValues?: string[] | null;
   lastUpdatedTimes?: DateTimeRange[] | null;
-  tags?: ({ [key: string]: string })[] | null;
+  tags?: ({ [key: string]: string | null | undefined })[] | null;
   statusCodes?: entityStatusCode[] | null;
 }
-function fromEntityFilter(input?: EntityFilter | null): JSONValue {
+function fromEntityFilter(input?: EntityFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    eventArns: input["eventArns"],
+    entityArns: input["entityArns"],
+    entityValues: input["entityValues"],
     lastUpdatedTimes: input["lastUpdatedTimes"]?.map(x => fromDateTimeRange(x)),
+    tags: input["tags"],
+    statusCodes: input["statusCodes"],
   }
 }
 
@@ -409,11 +439,11 @@ export interface DateTimeRange {
   from?: Date | number | null;
   to?: Date | number | null;
 }
-function fromDateTimeRange(input?: DateTimeRange | null): JSONValue {
+function fromDateTimeRange(input?: DateTimeRange | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    from: prt.serializeDate_unixTimestamp(input["from"]),
-    to: prt.serializeDate_unixTimestamp(input["to"]),
+  return {
+    from: jsonP.serializeDate_unixTimestamp(input["from"]),
+    to: jsonP.serializeDate_unixTimestamp(input["to"]),
   }
 }
 
@@ -422,24 +452,18 @@ export type entityStatusCode =
 | "IMPAIRED"
 | "UNIMPAIRED"
 | "UNKNOWN"
-;
-
-function toentityStatusCode(root: JSONValue): entityStatusCode | null {
-  return ( false
-    || root == "IMPAIRED"
-    || root == "UNIMPAIRED"
-    || root == "UNKNOWN"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface EventAccountFilter {
   eventArn: string;
   awsAccountId?: string | null;
 }
-function fromEventAccountFilter(input?: EventAccountFilter | null): JSONValue {
+function fromEventAccountFilter(input?: EventAccountFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    eventArn: input["eventArn"],
+    awsAccountId: input["awsAccountId"],
   }
 }
 
@@ -456,15 +480,25 @@ export interface EventFilter {
   entityArns?: string[] | null;
   entityValues?: string[] | null;
   eventTypeCategories?: eventTypeCategory[] | null;
-  tags?: ({ [key: string]: string })[] | null;
+  tags?: ({ [key: string]: string | null | undefined })[] | null;
   eventStatusCodes?: eventStatusCode[] | null;
 }
-function fromEventFilter(input?: EventFilter | null): JSONValue {
+function fromEventFilter(input?: EventFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    eventArns: input["eventArns"],
+    eventTypeCodes: input["eventTypeCodes"],
+    services: input["services"],
+    regions: input["regions"],
+    availabilityZones: input["availabilityZones"],
     startTimes: input["startTimes"]?.map(x => fromDateTimeRange(x)),
     endTimes: input["endTimes"]?.map(x => fromDateTimeRange(x)),
     lastUpdatedTimes: input["lastUpdatedTimes"]?.map(x => fromDateTimeRange(x)),
+    entityArns: input["entityArns"],
+    entityValues: input["entityValues"],
+    eventTypeCategories: input["eventTypeCategories"],
+    tags: input["tags"],
+    eventStatusCodes: input["eventStatusCodes"],
   }
 }
 
@@ -474,37 +508,19 @@ export type eventTypeCategory =
 | "accountNotification"
 | "scheduledChange"
 | "investigation"
-;
-
-function toeventTypeCategory(root: JSONValue): eventTypeCategory | null {
-  return ( false
-    || root == "issue"
-    || root == "accountNotification"
-    || root == "scheduledChange"
-    || root == "investigation"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: input, named, enum, output
 export type eventStatusCode =
 | "open"
 | "closed"
 | "upcoming"
-;
-
-function toeventStatusCode(root: JSONValue): eventStatusCode | null {
-  return ( false
-    || root == "open"
-    || root == "closed"
-    || root == "upcoming"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type eventAggregateField =
 | "eventTypeCategory"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface EventTypeFilter {
@@ -512,9 +528,12 @@ export interface EventTypeFilter {
   services?: string[] | null;
   eventTypeCategories?: eventTypeCategory[] | null;
 }
-function fromEventTypeFilter(input?: EventTypeFilter | null): JSONValue {
+function fromEventTypeFilter(input?: EventTypeFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    eventTypeCodes: input["eventTypeCodes"],
+    services: input["services"],
+    eventTypeCategories: input["eventTypeCategories"],
   }
 }
 
@@ -532,12 +551,20 @@ export interface OrganizationEventFilter {
   eventTypeCategories?: eventTypeCategory[] | null;
   eventStatusCodes?: eventStatusCode[] | null;
 }
-function fromOrganizationEventFilter(input?: OrganizationEventFilter | null): JSONValue {
+function fromOrganizationEventFilter(input?: OrganizationEventFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    eventTypeCodes: input["eventTypeCodes"],
+    awsAccountIds: input["awsAccountIds"],
+    services: input["services"],
+    regions: input["regions"],
     startTime: fromDateTimeRange(input["startTime"]),
     endTime: fromDateTimeRange(input["endTime"]),
     lastUpdatedTime: fromDateTimeRange(input["lastUpdatedTime"]),
+    entityArns: input["entityArns"],
+    entityValues: input["entityValues"],
+    eventTypeCategories: input["eventTypeCategories"],
+    eventStatusCodes: input["eventStatusCodes"],
   }
 }
 
@@ -546,14 +573,7 @@ export type eventScopeCode =
 | "PUBLIC"
 | "ACCOUNT_SPECIFIC"
 | "NONE"
-;
-function toeventScopeCode(root: JSONValue): eventScopeCode | null {
-  return ( false
-    || root == "PUBLIC"
-    || root == "ACCOUNT_SPECIFIC"
-    || root == "NONE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface AffectedEntity {
@@ -564,10 +584,10 @@ export interface AffectedEntity {
   awsAccountId?: string | null;
   lastUpdatedTime?: Date | number | null;
   statusCode?: entityStatusCode | null;
-  tags?: { [key: string]: string } | null;
+  tags?: { [key: string]: string | null | undefined } | null;
 }
-function toAffectedEntity(root: JSONValue): AffectedEntity {
-  return prt.readObj({
+function toAffectedEntity(root: jsonP.JSONValue): AffectedEntity {
+  return jsonP.readObj({
     required: {},
     optional: {
       "entityArn": "s",
@@ -576,8 +596,8 @@ function toAffectedEntity(root: JSONValue): AffectedEntity {
       "entityUrl": "s",
       "awsAccountId": "s",
       "lastUpdatedTime": "d",
-      "statusCode": toentityStatusCode,
-      "tags": x => prt.readMap(String, String, x),
+      "statusCode": (x: jsonP.JSONValue) => cmnP.readEnum<entityStatusCode>(x),
+      "tags": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -589,8 +609,8 @@ export interface OrganizationAffectedEntitiesErrorItem {
   errorName?: string | null;
   errorMessage?: string | null;
 }
-function toOrganizationAffectedEntitiesErrorItem(root: JSONValue): OrganizationAffectedEntitiesErrorItem {
-  return prt.readObj({
+function toOrganizationAffectedEntitiesErrorItem(root: jsonP.JSONValue): OrganizationAffectedEntitiesErrorItem {
+  return jsonP.readObj({
     required: {},
     optional: {
       "awsAccountId": "s",
@@ -606,8 +626,8 @@ export interface EntityAggregate {
   eventArn?: string | null;
   count?: number | null;
 }
-function toEntityAggregate(root: JSONValue): EntityAggregate {
-  return prt.readObj({
+function toEntityAggregate(root: jsonP.JSONValue): EntityAggregate {
+  return jsonP.readObj({
     required: {},
     optional: {
       "eventArn": "s",
@@ -621,8 +641,8 @@ export interface EventAggregate {
   aggregateValue?: string | null;
   count?: number | null;
 }
-function toEventAggregate(root: JSONValue): EventAggregate {
-  return prt.readObj({
+function toEventAggregate(root: jsonP.JSONValue): EventAggregate {
+  return jsonP.readObj({
     required: {},
     optional: {
       "aggregateValue": "s",
@@ -635,15 +655,15 @@ function toEventAggregate(root: JSONValue): EventAggregate {
 export interface EventDetails {
   event?: Event | null;
   eventDescription?: EventDescription | null;
-  eventMetadata?: { [key: string]: string } | null;
+  eventMetadata?: { [key: string]: string | null | undefined } | null;
 }
-function toEventDetails(root: JSONValue): EventDetails {
-  return prt.readObj({
+function toEventDetails(root: jsonP.JSONValue): EventDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "event": toEvent,
       "eventDescription": toEventDescription,
-      "eventMetadata": x => prt.readMap(String, String, x),
+      "eventMetadata": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -662,21 +682,21 @@ export interface Event {
   statusCode?: eventStatusCode | null;
   eventScopeCode?: eventScopeCode | null;
 }
-function toEvent(root: JSONValue): Event {
-  return prt.readObj({
+function toEvent(root: jsonP.JSONValue): Event {
+  return jsonP.readObj({
     required: {},
     optional: {
       "arn": "s",
       "service": "s",
       "eventTypeCode": "s",
-      "eventTypeCategory": toeventTypeCategory,
+      "eventTypeCategory": (x: jsonP.JSONValue) => cmnP.readEnum<eventTypeCategory>(x),
       "region": "s",
       "availabilityZone": "s",
       "startTime": "d",
       "endTime": "d",
       "lastUpdatedTime": "d",
-      "statusCode": toeventStatusCode,
-      "eventScopeCode": toeventScopeCode,
+      "statusCode": (x: jsonP.JSONValue) => cmnP.readEnum<eventStatusCode>(x),
+      "eventScopeCode": (x: jsonP.JSONValue) => cmnP.readEnum<eventScopeCode>(x),
     },
   }, root);
 }
@@ -685,8 +705,8 @@ function toEvent(root: JSONValue): Event {
 export interface EventDescription {
   latestDescription?: string | null;
 }
-function toEventDescription(root: JSONValue): EventDescription {
-  return prt.readObj({
+function toEventDescription(root: jsonP.JSONValue): EventDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "latestDescription": "s",
@@ -700,8 +720,8 @@ export interface EventDetailsErrorItem {
   errorName?: string | null;
   errorMessage?: string | null;
 }
-function toEventDetailsErrorItem(root: JSONValue): EventDetailsErrorItem {
-  return prt.readObj({
+function toEventDetailsErrorItem(root: jsonP.JSONValue): EventDetailsErrorItem {
+  return jsonP.readObj({
     required: {},
     optional: {
       "eventArn": "s",
@@ -716,16 +736,16 @@ export interface OrganizationEventDetails {
   awsAccountId?: string | null;
   event?: Event | null;
   eventDescription?: EventDescription | null;
-  eventMetadata?: { [key: string]: string } | null;
+  eventMetadata?: { [key: string]: string | null | undefined } | null;
 }
-function toOrganizationEventDetails(root: JSONValue): OrganizationEventDetails {
-  return prt.readObj({
+function toOrganizationEventDetails(root: jsonP.JSONValue): OrganizationEventDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "awsAccountId": "s",
       "event": toEvent,
       "eventDescription": toEventDescription,
-      "eventMetadata": x => prt.readMap(String, String, x),
+      "eventMetadata": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -737,8 +757,8 @@ export interface OrganizationEventDetailsErrorItem {
   errorName?: string | null;
   errorMessage?: string | null;
 }
-function toOrganizationEventDetailsErrorItem(root: JSONValue): OrganizationEventDetailsErrorItem {
-  return prt.readObj({
+function toOrganizationEventDetailsErrorItem(root: jsonP.JSONValue): OrganizationEventDetailsErrorItem {
+  return jsonP.readObj({
     required: {},
     optional: {
       "awsAccountId": "s",
@@ -755,13 +775,13 @@ export interface EventType {
   code?: string | null;
   category?: eventTypeCategory | null;
 }
-function toEventType(root: JSONValue): EventType {
-  return prt.readObj({
+function toEventType(root: jsonP.JSONValue): EventType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "service": "s",
       "code": "s",
-      "category": toeventTypeCategory,
+      "category": (x: jsonP.JSONValue) => cmnP.readEnum<eventTypeCategory>(x),
     },
   }, root);
 }
@@ -779,20 +799,20 @@ export interface OrganizationEvent {
   lastUpdatedTime?: Date | number | null;
   statusCode?: eventStatusCode | null;
 }
-function toOrganizationEvent(root: JSONValue): OrganizationEvent {
-  return prt.readObj({
+function toOrganizationEvent(root: jsonP.JSONValue): OrganizationEvent {
+  return jsonP.readObj({
     required: {},
     optional: {
       "arn": "s",
       "service": "s",
       "eventTypeCode": "s",
-      "eventTypeCategory": toeventTypeCategory,
-      "eventScopeCode": toeventScopeCode,
+      "eventTypeCategory": (x: jsonP.JSONValue) => cmnP.readEnum<eventTypeCategory>(x),
+      "eventScopeCode": (x: jsonP.JSONValue) => cmnP.readEnum<eventScopeCode>(x),
       "region": "s",
       "startTime": "d",
       "endTime": "d",
       "lastUpdatedTime": "d",
-      "statusCode": toeventStatusCode,
+      "statusCode": (x: jsonP.JSONValue) => cmnP.readEnum<eventStatusCode>(x),
     },
   }, root);
 }

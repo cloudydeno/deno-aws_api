@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class SSOAdmin {
   #client: ServiceClient;
@@ -31,13 +31,16 @@ export default class SSOAdmin {
   async attachManagedPolicyToPermissionSet(
     {abortSignal, ...params}: RequestConfig & AttachManagedPolicyToPermissionSetRequest,
   ): Promise<AttachManagedPolicyToPermissionSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      PermissionSetArn: params["PermissionSetArn"],
+      ManagedPolicyArn: params["ManagedPolicyArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AttachManagedPolicyToPermissionSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -46,13 +49,19 @@ export default class SSOAdmin {
   async createAccountAssignment(
     {abortSignal, ...params}: RequestConfig & CreateAccountAssignmentRequest,
   ): Promise<CreateAccountAssignmentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      TargetId: params["TargetId"],
+      TargetType: params["TargetType"],
+      PermissionSetArn: params["PermissionSetArn"],
+      PrincipalType: params["PrincipalType"],
+      PrincipalId: params["PrincipalId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAccountAssignment",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AccountAssignmentCreationStatus": toAccountAssignmentOperationStatus,
@@ -63,14 +72,19 @@ export default class SSOAdmin {
   async createPermissionSet(
     {abortSignal, ...params}: RequestConfig & CreatePermissionSetRequest,
   ): Promise<CreatePermissionSetResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Description: params["Description"],
+      InstanceArn: params["InstanceArn"],
+      SessionDuration: params["SessionDuration"],
+      RelayState: params["RelayState"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePermissionSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PermissionSet": toPermissionSet,
@@ -81,13 +95,19 @@ export default class SSOAdmin {
   async deleteAccountAssignment(
     {abortSignal, ...params}: RequestConfig & DeleteAccountAssignmentRequest,
   ): Promise<DeleteAccountAssignmentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      TargetId: params["TargetId"],
+      TargetType: params["TargetType"],
+      PermissionSetArn: params["PermissionSetArn"],
+      PrincipalType: params["PrincipalType"],
+      PrincipalId: params["PrincipalId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAccountAssignment",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AccountAssignmentDeletionStatus": toAccountAssignmentOperationStatus,
@@ -98,13 +118,15 @@ export default class SSOAdmin {
   async deleteInlinePolicyFromPermissionSet(
     {abortSignal, ...params}: RequestConfig & DeleteInlinePolicyFromPermissionSetRequest,
   ): Promise<DeleteInlinePolicyFromPermissionSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      PermissionSetArn: params["PermissionSetArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteInlinePolicyFromPermissionSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -113,13 +135,15 @@ export default class SSOAdmin {
   async deletePermissionSet(
     {abortSignal, ...params}: RequestConfig & DeletePermissionSetRequest,
   ): Promise<DeletePermissionSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      PermissionSetArn: params["PermissionSetArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePermissionSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -128,13 +152,15 @@ export default class SSOAdmin {
   async describeAccountAssignmentCreationStatus(
     {abortSignal, ...params}: RequestConfig & DescribeAccountAssignmentCreationStatusRequest,
   ): Promise<DescribeAccountAssignmentCreationStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      AccountAssignmentCreationRequestId: params["AccountAssignmentCreationRequestId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccountAssignmentCreationStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AccountAssignmentCreationStatus": toAccountAssignmentOperationStatus,
@@ -145,13 +171,15 @@ export default class SSOAdmin {
   async describeAccountAssignmentDeletionStatus(
     {abortSignal, ...params}: RequestConfig & DescribeAccountAssignmentDeletionStatusRequest,
   ): Promise<DescribeAccountAssignmentDeletionStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      AccountAssignmentDeletionRequestId: params["AccountAssignmentDeletionRequestId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccountAssignmentDeletionStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AccountAssignmentDeletionStatus": toAccountAssignmentOperationStatus,
@@ -162,13 +190,15 @@ export default class SSOAdmin {
   async describePermissionSet(
     {abortSignal, ...params}: RequestConfig & DescribePermissionSetRequest,
   ): Promise<DescribePermissionSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      PermissionSetArn: params["PermissionSetArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePermissionSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PermissionSet": toPermissionSet,
@@ -179,13 +209,15 @@ export default class SSOAdmin {
   async describePermissionSetProvisioningStatus(
     {abortSignal, ...params}: RequestConfig & DescribePermissionSetProvisioningStatusRequest,
   ): Promise<DescribePermissionSetProvisioningStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      ProvisionPermissionSetRequestId: params["ProvisionPermissionSetRequestId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePermissionSetProvisioningStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PermissionSetProvisioningStatus": toPermissionSetProvisioningStatus,
@@ -196,13 +228,16 @@ export default class SSOAdmin {
   async detachManagedPolicyFromPermissionSet(
     {abortSignal, ...params}: RequestConfig & DetachManagedPolicyFromPermissionSetRequest,
   ): Promise<DetachManagedPolicyFromPermissionSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      PermissionSetArn: params["PermissionSetArn"],
+      ManagedPolicyArn: params["ManagedPolicyArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetachManagedPolicyFromPermissionSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -211,13 +246,15 @@ export default class SSOAdmin {
   async getInlinePolicyForPermissionSet(
     {abortSignal, ...params}: RequestConfig & GetInlinePolicyForPermissionSetRequest,
   ): Promise<GetInlinePolicyForPermissionSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      PermissionSetArn: params["PermissionSetArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInlinePolicyForPermissionSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "InlinePolicy": "s",
@@ -228,14 +265,17 @@ export default class SSOAdmin {
   async listAccountAssignmentCreationStatus(
     {abortSignal, ...params}: RequestConfig & ListAccountAssignmentCreationStatusRequest,
   ): Promise<ListAccountAssignmentCreationStatusResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromOperationStatusFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filter: fromOperationStatusFilter(params["Filter"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAccountAssignmentCreationStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AccountAssignmentsCreationStatus": [toAccountAssignmentOperationStatusMetadata],
@@ -247,14 +287,17 @@ export default class SSOAdmin {
   async listAccountAssignmentDeletionStatus(
     {abortSignal, ...params}: RequestConfig & ListAccountAssignmentDeletionStatusRequest,
   ): Promise<ListAccountAssignmentDeletionStatusResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromOperationStatusFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filter: fromOperationStatusFilter(params["Filter"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAccountAssignmentDeletionStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AccountAssignmentsDeletionStatus": [toAccountAssignmentOperationStatusMetadata],
@@ -266,13 +309,18 @@ export default class SSOAdmin {
   async listAccountAssignments(
     {abortSignal, ...params}: RequestConfig & ListAccountAssignmentsRequest,
   ): Promise<ListAccountAssignmentsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      AccountId: params["AccountId"],
+      PermissionSetArn: params["PermissionSetArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAccountAssignments",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AccountAssignments": [toAccountAssignment],
@@ -284,13 +332,18 @@ export default class SSOAdmin {
   async listAccountsForProvisionedPermissionSet(
     {abortSignal, ...params}: RequestConfig & ListAccountsForProvisionedPermissionSetRequest,
   ): Promise<ListAccountsForProvisionedPermissionSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      PermissionSetArn: params["PermissionSetArn"],
+      ProvisioningStatus: params["ProvisioningStatus"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAccountsForProvisionedPermissionSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AccountIds": ["s"],
@@ -302,13 +355,15 @@ export default class SSOAdmin {
   async listInstances(
     {abortSignal, ...params}: RequestConfig & ListInstancesRequest = {},
   ): Promise<ListInstancesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListInstances",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Instances": [toInstanceMetadata],
@@ -320,13 +375,17 @@ export default class SSOAdmin {
   async listManagedPoliciesInPermissionSet(
     {abortSignal, ...params}: RequestConfig & ListManagedPoliciesInPermissionSetRequest,
   ): Promise<ListManagedPoliciesInPermissionSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      PermissionSetArn: params["PermissionSetArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListManagedPoliciesInPermissionSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "AttachedManagedPolicies": [toAttachedManagedPolicy],
@@ -338,14 +397,17 @@ export default class SSOAdmin {
   async listPermissionSetProvisioningStatus(
     {abortSignal, ...params}: RequestConfig & ListPermissionSetProvisioningStatusRequest,
   ): Promise<ListPermissionSetProvisioningStatusResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromOperationStatusFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filter: fromOperationStatusFilter(params["Filter"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPermissionSetProvisioningStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PermissionSetsProvisioningStatus": [toPermissionSetProvisioningStatusMetadata],
@@ -357,13 +419,16 @@ export default class SSOAdmin {
   async listPermissionSets(
     {abortSignal, ...params}: RequestConfig & ListPermissionSetsRequest,
   ): Promise<ListPermissionSetsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPermissionSets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PermissionSets": ["s"],
@@ -375,13 +440,18 @@ export default class SSOAdmin {
   async listPermissionSetsProvisionedToAccount(
     {abortSignal, ...params}: RequestConfig & ListPermissionSetsProvisionedToAccountRequest,
   ): Promise<ListPermissionSetsProvisionedToAccountResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      AccountId: params["AccountId"],
+      ProvisioningStatus: params["ProvisioningStatus"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPermissionSetsProvisionedToAccount",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextToken": "s",
@@ -393,13 +463,16 @@ export default class SSOAdmin {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      ResourceArn: params["ResourceArn"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -411,13 +484,17 @@ export default class SSOAdmin {
   async provisionPermissionSet(
     {abortSignal, ...params}: RequestConfig & ProvisionPermissionSetRequest,
   ): Promise<ProvisionPermissionSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      PermissionSetArn: params["PermissionSetArn"],
+      TargetId: params["TargetId"],
+      TargetType: params["TargetType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ProvisionPermissionSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PermissionSetProvisioningStatus": toPermissionSetProvisioningStatus,
@@ -428,13 +505,16 @@ export default class SSOAdmin {
   async putInlinePolicyToPermissionSet(
     {abortSignal, ...params}: RequestConfig & PutInlinePolicyToPermissionSetRequest,
   ): Promise<PutInlinePolicyToPermissionSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      PermissionSetArn: params["PermissionSetArn"],
+      InlinePolicy: params["InlinePolicy"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutInlinePolicyToPermissionSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -443,14 +523,16 @@ export default class SSOAdmin {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      ResourceArn: params["ResourceArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -459,13 +541,16 @@ export default class SSOAdmin {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      ResourceArn: params["ResourceArn"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -474,13 +559,18 @@ export default class SSOAdmin {
   async updatePermissionSet(
     {abortSignal, ...params}: RequestConfig & UpdatePermissionSetRequest,
   ): Promise<UpdatePermissionSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceArn: params["InstanceArn"],
+      PermissionSetArn: params["PermissionSetArn"],
+      Description: params["Description"],
+      SessionDuration: params["SessionDuration"],
+      RelayState: params["RelayState"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePermissionSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -831,39 +921,28 @@ export interface UpdatePermissionSetResponse {
 // refs: 6 - tags: input, named, enum, output
 export type TargetType =
 | "AWS_ACCOUNT"
-;
-
-function toTargetType(root: JSONValue): TargetType | null {
-  return ( false
-    || root == "AWS_ACCOUNT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: input, named, enum, output
 export type PrincipalType =
 | "USER"
 | "GROUP"
-;
-
-function toPrincipalType(root: JSONValue): PrincipalType | null {
-  return ( false
-    || root == "USER"
-    || root == "GROUP"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface Tag {
   Key?: string | null;
   Value?: string | null;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Key": "s",
@@ -876,9 +955,10 @@ function toTag(root: JSONValue): Tag {
 export interface OperationStatusFilter {
   Status?: StatusValues | null;
 }
-function fromOperationStatusFilter(input?: OperationStatusFilter | null): JSONValue {
+function fromOperationStatusFilter(input?: OperationStatusFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Status: input["Status"],
   }
 }
 
@@ -887,29 +967,19 @@ export type StatusValues =
 | "IN_PROGRESS"
 | "FAILED"
 | "SUCCEEDED"
-;
-
-function toStatusValues(root: JSONValue): StatusValues | null {
-  return ( false
-    || root == "IN_PROGRESS"
-    || root == "FAILED"
-    || root == "SUCCEEDED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
 export type ProvisioningStatus =
 | "LATEST_PERMISSION_SET_PROVISIONED"
 | "LATEST_PERMISSION_SET_NOT_PROVISIONED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ProvisionTargetType =
 | "AWS_ACCOUNT"
 | "ALL_PROVISIONED_ACCOUNTS"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface AccountAssignmentOperationStatus {
@@ -923,17 +993,17 @@ export interface AccountAssignmentOperationStatus {
   PrincipalId?: string | null;
   CreatedDate?: Date | number | null;
 }
-function toAccountAssignmentOperationStatus(root: JSONValue): AccountAssignmentOperationStatus {
-  return prt.readObj({
+function toAccountAssignmentOperationStatus(root: jsonP.JSONValue): AccountAssignmentOperationStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Status": toStatusValues,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<StatusValues>(x),
       "RequestId": "s",
       "FailureReason": "s",
       "TargetId": "s",
-      "TargetType": toTargetType,
+      "TargetType": (x: jsonP.JSONValue) => cmnP.readEnum<TargetType>(x),
       "PermissionSetArn": "s",
-      "PrincipalType": toPrincipalType,
+      "PrincipalType": (x: jsonP.JSONValue) => cmnP.readEnum<PrincipalType>(x),
       "PrincipalId": "s",
       "CreatedDate": "d",
     },
@@ -949,8 +1019,8 @@ export interface PermissionSet {
   SessionDuration?: string | null;
   RelayState?: string | null;
 }
-function toPermissionSet(root: JSONValue): PermissionSet {
-  return prt.readObj({
+function toPermissionSet(root: jsonP.JSONValue): PermissionSet {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -972,11 +1042,11 @@ export interface PermissionSetProvisioningStatus {
   FailureReason?: string | null;
   CreatedDate?: Date | number | null;
 }
-function toPermissionSetProvisioningStatus(root: JSONValue): PermissionSetProvisioningStatus {
-  return prt.readObj({
+function toPermissionSetProvisioningStatus(root: jsonP.JSONValue): PermissionSetProvisioningStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Status": toStatusValues,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<StatusValues>(x),
       "RequestId": "s",
       "AccountId": "s",
       "PermissionSetArn": "s",
@@ -992,11 +1062,11 @@ export interface AccountAssignmentOperationStatusMetadata {
   RequestId?: string | null;
   CreatedDate?: Date | number | null;
 }
-function toAccountAssignmentOperationStatusMetadata(root: JSONValue): AccountAssignmentOperationStatusMetadata {
-  return prt.readObj({
+function toAccountAssignmentOperationStatusMetadata(root: jsonP.JSONValue): AccountAssignmentOperationStatusMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Status": toStatusValues,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<StatusValues>(x),
       "RequestId": "s",
       "CreatedDate": "d",
     },
@@ -1010,13 +1080,13 @@ export interface AccountAssignment {
   PrincipalType?: PrincipalType | null;
   PrincipalId?: string | null;
 }
-function toAccountAssignment(root: JSONValue): AccountAssignment {
-  return prt.readObj({
+function toAccountAssignment(root: jsonP.JSONValue): AccountAssignment {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AccountId": "s",
       "PermissionSetArn": "s",
-      "PrincipalType": toPrincipalType,
+      "PrincipalType": (x: jsonP.JSONValue) => cmnP.readEnum<PrincipalType>(x),
       "PrincipalId": "s",
     },
   }, root);
@@ -1027,8 +1097,8 @@ export interface InstanceMetadata {
   InstanceArn?: string | null;
   IdentityStoreId?: string | null;
 }
-function toInstanceMetadata(root: JSONValue): InstanceMetadata {
-  return prt.readObj({
+function toInstanceMetadata(root: jsonP.JSONValue): InstanceMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "InstanceArn": "s",
@@ -1042,8 +1112,8 @@ export interface AttachedManagedPolicy {
   Name?: string | null;
   Arn?: string | null;
 }
-function toAttachedManagedPolicy(root: JSONValue): AttachedManagedPolicy {
-  return prt.readObj({
+function toAttachedManagedPolicy(root: jsonP.JSONValue): AttachedManagedPolicy {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -1058,11 +1128,11 @@ export interface PermissionSetProvisioningStatusMetadata {
   RequestId?: string | null;
   CreatedDate?: Date | number | null;
 }
-function toPermissionSetProvisioningStatusMetadata(root: JSONValue): PermissionSetProvisioningStatusMetadata {
-  return prt.readObj({
+function toPermissionSetProvisioningStatusMetadata(root: jsonP.JSONValue): PermissionSetProvisioningStatusMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Status": toStatusValues,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<StatusValues>(x),
       "RequestId": "s",
       "CreatedDate": "d",
     },

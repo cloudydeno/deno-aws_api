@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class Personalize {
   #client: ServiceClient;
@@ -30,16 +30,21 @@ export default class Personalize {
   async createBatchInferenceJob(
     {abortSignal, ...params}: RequestConfig & CreateBatchInferenceJobRequest,
   ): Promise<CreateBatchInferenceJobResponse> {
-    const body: JSONObject = {...params,
-    jobInput: fromBatchInferenceJobInput(params["jobInput"]),
-    jobOutput: fromBatchInferenceJobOutput(params["jobOutput"]),
-    batchInferenceJobConfig: fromBatchInferenceJobConfig(params["batchInferenceJobConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      jobName: params["jobName"],
+      solutionVersionArn: params["solutionVersionArn"],
+      filterArn: params["filterArn"],
+      numResults: params["numResults"],
+      jobInput: fromBatchInferenceJobInput(params["jobInput"]),
+      jobOutput: fromBatchInferenceJobOutput(params["jobOutput"]),
+      roleArn: params["roleArn"],
+      batchInferenceJobConfig: fromBatchInferenceJobConfig(params["batchInferenceJobConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBatchInferenceJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "batchInferenceJobArn": "s",
@@ -50,14 +55,17 @@ export default class Personalize {
   async createCampaign(
     {abortSignal, ...params}: RequestConfig & CreateCampaignRequest,
   ): Promise<CreateCampaignResponse> {
-    const body: JSONObject = {...params,
-    campaignConfig: fromCampaignConfig(params["campaignConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      solutionVersionArn: params["solutionVersionArn"],
+      minProvisionedTPS: params["minProvisionedTPS"],
+      campaignConfig: fromCampaignConfig(params["campaignConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCampaign",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "campaignArn": "s",
@@ -68,13 +76,17 @@ export default class Personalize {
   async createDataset(
     {abortSignal, ...params}: RequestConfig & CreateDatasetRequest,
   ): Promise<CreateDatasetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      schemaArn: params["schemaArn"],
+      datasetGroupArn: params["datasetGroupArn"],
+      datasetType: params["datasetType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDataset",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "datasetArn": "s",
@@ -85,13 +97,16 @@ export default class Personalize {
   async createDatasetGroup(
     {abortSignal, ...params}: RequestConfig & CreateDatasetGroupRequest,
   ): Promise<CreateDatasetGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      roleArn: params["roleArn"],
+      kmsKeyArn: params["kmsKeyArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDatasetGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "datasetGroupArn": "s",
@@ -102,14 +117,17 @@ export default class Personalize {
   async createDatasetImportJob(
     {abortSignal, ...params}: RequestConfig & CreateDatasetImportJobRequest,
   ): Promise<CreateDatasetImportJobResponse> {
-    const body: JSONObject = {...params,
-    dataSource: fromDataSource(params["dataSource"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      jobName: params["jobName"],
+      datasetArn: params["datasetArn"],
+      dataSource: fromDataSource(params["dataSource"]),
+      roleArn: params["roleArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDatasetImportJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "datasetImportJobArn": "s",
@@ -120,13 +138,15 @@ export default class Personalize {
   async createEventTracker(
     {abortSignal, ...params}: RequestConfig & CreateEventTrackerRequest,
   ): Promise<CreateEventTrackerResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      datasetGroupArn: params["datasetGroupArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEventTracker",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "eventTrackerArn": "s",
@@ -138,13 +158,16 @@ export default class Personalize {
   async createFilter(
     {abortSignal, ...params}: RequestConfig & CreateFilterRequest,
   ): Promise<CreateFilterResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      datasetGroupArn: params["datasetGroupArn"],
+      filterExpression: params["filterExpression"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFilter",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "filterArn": "s",
@@ -155,13 +178,15 @@ export default class Personalize {
   async createSchema(
     {abortSignal, ...params}: RequestConfig & CreateSchemaRequest,
   ): Promise<CreateSchemaResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      schema: params["schema"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSchema",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "schemaArn": "s",
@@ -172,14 +197,20 @@ export default class Personalize {
   async createSolution(
     {abortSignal, ...params}: RequestConfig & CreateSolutionRequest,
   ): Promise<CreateSolutionResponse> {
-    const body: JSONObject = {...params,
-    solutionConfig: fromSolutionConfig(params["solutionConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      performHPO: params["performHPO"],
+      performAutoML: params["performAutoML"],
+      recipeArn: params["recipeArn"],
+      datasetGroupArn: params["datasetGroupArn"],
+      eventType: params["eventType"],
+      solutionConfig: fromSolutionConfig(params["solutionConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSolution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "solutionArn": "s",
@@ -190,13 +221,15 @@ export default class Personalize {
   async createSolutionVersion(
     {abortSignal, ...params}: RequestConfig & CreateSolutionVersionRequest,
   ): Promise<CreateSolutionVersionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      solutionArn: params["solutionArn"],
+      trainingMode: params["trainingMode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSolutionVersion",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "solutionVersionArn": "s",
@@ -207,8 +240,9 @@ export default class Personalize {
   async deleteCampaign(
     {abortSignal, ...params}: RequestConfig & DeleteCampaignRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      campaignArn: params["campaignArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCampaign",
@@ -218,8 +252,9 @@ export default class Personalize {
   async deleteDataset(
     {abortSignal, ...params}: RequestConfig & DeleteDatasetRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      datasetArn: params["datasetArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDataset",
@@ -229,8 +264,9 @@ export default class Personalize {
   async deleteDatasetGroup(
     {abortSignal, ...params}: RequestConfig & DeleteDatasetGroupRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      datasetGroupArn: params["datasetGroupArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDatasetGroup",
@@ -240,8 +276,9 @@ export default class Personalize {
   async deleteEventTracker(
     {abortSignal, ...params}: RequestConfig & DeleteEventTrackerRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      eventTrackerArn: params["eventTrackerArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEventTracker",
@@ -251,8 +288,9 @@ export default class Personalize {
   async deleteFilter(
     {abortSignal, ...params}: RequestConfig & DeleteFilterRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      filterArn: params["filterArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFilter",
@@ -262,8 +300,9 @@ export default class Personalize {
   async deleteSchema(
     {abortSignal, ...params}: RequestConfig & DeleteSchemaRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      schemaArn: params["schemaArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSchema",
@@ -273,8 +312,9 @@ export default class Personalize {
   async deleteSolution(
     {abortSignal, ...params}: RequestConfig & DeleteSolutionRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      solutionArn: params["solutionArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSolution",
@@ -284,13 +324,14 @@ export default class Personalize {
   async describeAlgorithm(
     {abortSignal, ...params}: RequestConfig & DescribeAlgorithmRequest,
   ): Promise<DescribeAlgorithmResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      algorithmArn: params["algorithmArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAlgorithm",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "algorithm": toAlgorithm,
@@ -301,13 +342,14 @@ export default class Personalize {
   async describeBatchInferenceJob(
     {abortSignal, ...params}: RequestConfig & DescribeBatchInferenceJobRequest,
   ): Promise<DescribeBatchInferenceJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      batchInferenceJobArn: params["batchInferenceJobArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBatchInferenceJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "batchInferenceJob": toBatchInferenceJob,
@@ -318,13 +360,14 @@ export default class Personalize {
   async describeCampaign(
     {abortSignal, ...params}: RequestConfig & DescribeCampaignRequest,
   ): Promise<DescribeCampaignResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      campaignArn: params["campaignArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCampaign",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "campaign": toCampaign,
@@ -335,13 +378,14 @@ export default class Personalize {
   async describeDataset(
     {abortSignal, ...params}: RequestConfig & DescribeDatasetRequest,
   ): Promise<DescribeDatasetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      datasetArn: params["datasetArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDataset",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "dataset": toDataset,
@@ -352,13 +396,14 @@ export default class Personalize {
   async describeDatasetGroup(
     {abortSignal, ...params}: RequestConfig & DescribeDatasetGroupRequest,
   ): Promise<DescribeDatasetGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      datasetGroupArn: params["datasetGroupArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDatasetGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "datasetGroup": toDatasetGroup,
@@ -369,13 +414,14 @@ export default class Personalize {
   async describeDatasetImportJob(
     {abortSignal, ...params}: RequestConfig & DescribeDatasetImportJobRequest,
   ): Promise<DescribeDatasetImportJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      datasetImportJobArn: params["datasetImportJobArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDatasetImportJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "datasetImportJob": toDatasetImportJob,
@@ -386,13 +432,14 @@ export default class Personalize {
   async describeEventTracker(
     {abortSignal, ...params}: RequestConfig & DescribeEventTrackerRequest,
   ): Promise<DescribeEventTrackerResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      eventTrackerArn: params["eventTrackerArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventTracker",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "eventTracker": toEventTracker,
@@ -403,13 +450,14 @@ export default class Personalize {
   async describeFeatureTransformation(
     {abortSignal, ...params}: RequestConfig & DescribeFeatureTransformationRequest,
   ): Promise<DescribeFeatureTransformationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      featureTransformationArn: params["featureTransformationArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFeatureTransformation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "featureTransformation": toFeatureTransformation,
@@ -420,13 +468,14 @@ export default class Personalize {
   async describeFilter(
     {abortSignal, ...params}: RequestConfig & DescribeFilterRequest,
   ): Promise<DescribeFilterResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      filterArn: params["filterArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFilter",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "filter": toFilter,
@@ -437,13 +486,14 @@ export default class Personalize {
   async describeRecipe(
     {abortSignal, ...params}: RequestConfig & DescribeRecipeRequest,
   ): Promise<DescribeRecipeResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      recipeArn: params["recipeArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRecipe",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "recipe": toRecipe,
@@ -454,13 +504,14 @@ export default class Personalize {
   async describeSchema(
     {abortSignal, ...params}: RequestConfig & DescribeSchemaRequest,
   ): Promise<DescribeSchemaResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      schemaArn: params["schemaArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSchema",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "schema": toDatasetSchema,
@@ -471,13 +522,14 @@ export default class Personalize {
   async describeSolution(
     {abortSignal, ...params}: RequestConfig & DescribeSolutionRequest,
   ): Promise<DescribeSolutionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      solutionArn: params["solutionArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSolution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "solution": toSolution,
@@ -488,13 +540,14 @@ export default class Personalize {
   async describeSolutionVersion(
     {abortSignal, ...params}: RequestConfig & DescribeSolutionVersionRequest,
   ): Promise<DescribeSolutionVersionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      solutionVersionArn: params["solutionVersionArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSolutionVersion",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "solutionVersion": toSolutionVersion,
@@ -505,17 +558,18 @@ export default class Personalize {
   async getSolutionMetrics(
     {abortSignal, ...params}: RequestConfig & GetSolutionMetricsRequest,
   ): Promise<GetSolutionMetricsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      solutionVersionArn: params["solutionVersionArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSolutionMetrics",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "solutionVersionArn": "s",
-        "metrics": x => prt.readMap(String, Number, x),
+        "metrics": x => jsonP.readMap(String, Number, x),
       },
     }, await resp.json());
   }
@@ -523,13 +577,16 @@ export default class Personalize {
   async listBatchInferenceJobs(
     {abortSignal, ...params}: RequestConfig & ListBatchInferenceJobsRequest = {},
   ): Promise<ListBatchInferenceJobsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      solutionVersionArn: params["solutionVersionArn"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListBatchInferenceJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "batchInferenceJobs": [toBatchInferenceJobSummary],
@@ -541,13 +598,16 @@ export default class Personalize {
   async listCampaigns(
     {abortSignal, ...params}: RequestConfig & ListCampaignsRequest = {},
   ): Promise<ListCampaignsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      solutionArn: params["solutionArn"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCampaigns",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "campaigns": [toCampaignSummary],
@@ -559,13 +619,15 @@ export default class Personalize {
   async listDatasetGroups(
     {abortSignal, ...params}: RequestConfig & ListDatasetGroupsRequest = {},
   ): Promise<ListDatasetGroupsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDatasetGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "datasetGroups": [toDatasetGroupSummary],
@@ -577,13 +639,16 @@ export default class Personalize {
   async listDatasetImportJobs(
     {abortSignal, ...params}: RequestConfig & ListDatasetImportJobsRequest = {},
   ): Promise<ListDatasetImportJobsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      datasetArn: params["datasetArn"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDatasetImportJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "datasetImportJobs": [toDatasetImportJobSummary],
@@ -595,13 +660,16 @@ export default class Personalize {
   async listDatasets(
     {abortSignal, ...params}: RequestConfig & ListDatasetsRequest = {},
   ): Promise<ListDatasetsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      datasetGroupArn: params["datasetGroupArn"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDatasets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "datasets": [toDatasetSummary],
@@ -613,13 +681,16 @@ export default class Personalize {
   async listEventTrackers(
     {abortSignal, ...params}: RequestConfig & ListEventTrackersRequest = {},
   ): Promise<ListEventTrackersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      datasetGroupArn: params["datasetGroupArn"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEventTrackers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "eventTrackers": [toEventTrackerSummary],
@@ -631,13 +702,16 @@ export default class Personalize {
   async listFilters(
     {abortSignal, ...params}: RequestConfig & ListFiltersRequest = {},
   ): Promise<ListFiltersResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      datasetGroupArn: params["datasetGroupArn"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFilters",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Filters": [toFilterSummary],
@@ -649,13 +723,16 @@ export default class Personalize {
   async listRecipes(
     {abortSignal, ...params}: RequestConfig & ListRecipesRequest = {},
   ): Promise<ListRecipesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      recipeProvider: params["recipeProvider"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRecipes",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "recipes": [toRecipeSummary],
@@ -667,13 +744,15 @@ export default class Personalize {
   async listSchemas(
     {abortSignal, ...params}: RequestConfig & ListSchemasRequest = {},
   ): Promise<ListSchemasResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSchemas",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "schemas": [toDatasetSchemaSummary],
@@ -685,13 +764,16 @@ export default class Personalize {
   async listSolutionVersions(
     {abortSignal, ...params}: RequestConfig & ListSolutionVersionsRequest = {},
   ): Promise<ListSolutionVersionsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      solutionArn: params["solutionArn"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSolutionVersions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "solutionVersions": [toSolutionVersionSummary],
@@ -703,13 +785,16 @@ export default class Personalize {
   async listSolutions(
     {abortSignal, ...params}: RequestConfig & ListSolutionsRequest = {},
   ): Promise<ListSolutionsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      datasetGroupArn: params["datasetGroupArn"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSolutions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "solutions": [toSolutionSummary],
@@ -721,14 +806,17 @@ export default class Personalize {
   async updateCampaign(
     {abortSignal, ...params}: RequestConfig & UpdateCampaignRequest,
   ): Promise<UpdateCampaignResponse> {
-    const body: JSONObject = {...params,
-    campaignConfig: fromCampaignConfig(params["campaignConfig"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      campaignArn: params["campaignArn"],
+      solutionVersionArn: params["solutionVersionArn"],
+      minProvisionedTPS: params["minProvisionedTPS"],
+      campaignConfig: fromCampaignConfig(params["campaignConfig"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateCampaign",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "campaignArn": "s",
@@ -1124,7 +1212,7 @@ export interface DescribeSolutionVersionResponse {
 // refs: 1 - tags: named, output
 export interface GetSolutionMetricsResponse {
   solutionVersionArn?: string | null;
-  metrics?: { [key: string]: number } | null;
+  metrics?: { [key: string]: number | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1202,14 +1290,14 @@ export interface UpdateCampaignResponse {
 export interface BatchInferenceJobInput {
   s3DataSource: S3DataConfig;
 }
-function fromBatchInferenceJobInput(input?: BatchInferenceJobInput | null): JSONValue {
+function fromBatchInferenceJobInput(input?: BatchInferenceJobInput | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     s3DataSource: fromS3DataConfig(input["s3DataSource"]),
   }
 }
-function toBatchInferenceJobInput(root: JSONValue): BatchInferenceJobInput {
-  return prt.readObj({
+function toBatchInferenceJobInput(root: jsonP.JSONValue): BatchInferenceJobInput {
+  return jsonP.readObj({
     required: {
       "s3DataSource": toS3DataConfig,
     },
@@ -1222,13 +1310,15 @@ export interface S3DataConfig {
   path: string;
   kmsKeyArn?: string | null;
 }
-function fromS3DataConfig(input?: S3DataConfig | null): JSONValue {
+function fromS3DataConfig(input?: S3DataConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    path: input["path"],
+    kmsKeyArn: input["kmsKeyArn"],
   }
 }
-function toS3DataConfig(root: JSONValue): S3DataConfig {
-  return prt.readObj({
+function toS3DataConfig(root: jsonP.JSONValue): S3DataConfig {
+  return jsonP.readObj({
     required: {
       "path": "s",
     },
@@ -1242,14 +1332,14 @@ function toS3DataConfig(root: JSONValue): S3DataConfig {
 export interface BatchInferenceJobOutput {
   s3DataDestination: S3DataConfig;
 }
-function fromBatchInferenceJobOutput(input?: BatchInferenceJobOutput | null): JSONValue {
+function fromBatchInferenceJobOutput(input?: BatchInferenceJobOutput | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     s3DataDestination: fromS3DataConfig(input["s3DataDestination"]),
   }
 }
-function toBatchInferenceJobOutput(root: JSONValue): BatchInferenceJobOutput {
-  return prt.readObj({
+function toBatchInferenceJobOutput(root: jsonP.JSONValue): BatchInferenceJobOutput {
+  return jsonP.readObj({
     required: {
       "s3DataDestination": toS3DataConfig,
     },
@@ -1259,36 +1349,38 @@ function toBatchInferenceJobOutput(root: JSONValue): BatchInferenceJobOutput {
 
 // refs: 2 - tags: input, named, interface, output
 export interface BatchInferenceJobConfig {
-  itemExplorationConfig?: { [key: string]: string } | null;
+  itemExplorationConfig?: { [key: string]: string | null | undefined } | null;
 }
-function fromBatchInferenceJobConfig(input?: BatchInferenceJobConfig | null): JSONValue {
+function fromBatchInferenceJobConfig(input?: BatchInferenceJobConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    itemExplorationConfig: input["itemExplorationConfig"],
   }
 }
-function toBatchInferenceJobConfig(root: JSONValue): BatchInferenceJobConfig {
-  return prt.readObj({
+function toBatchInferenceJobConfig(root: jsonP.JSONValue): BatchInferenceJobConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "itemExplorationConfig": x => prt.readMap(String, String, x),
+      "itemExplorationConfig": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
 
 // refs: 4 - tags: input, named, interface, output
 export interface CampaignConfig {
-  itemExplorationConfig?: { [key: string]: string } | null;
+  itemExplorationConfig?: { [key: string]: string | null | undefined } | null;
 }
-function fromCampaignConfig(input?: CampaignConfig | null): JSONValue {
+function fromCampaignConfig(input?: CampaignConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    itemExplorationConfig: input["itemExplorationConfig"],
   }
 }
-function toCampaignConfig(root: JSONValue): CampaignConfig {
-  return prt.readObj({
+function toCampaignConfig(root: jsonP.JSONValue): CampaignConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "itemExplorationConfig": x => prt.readMap(String, String, x),
+      "itemExplorationConfig": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -1297,13 +1389,14 @@ function toCampaignConfig(root: JSONValue): CampaignConfig {
 export interface DataSource {
   dataLocation?: string | null;
 }
-function fromDataSource(input?: DataSource | null): JSONValue {
+function fromDataSource(input?: DataSource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    dataLocation: input["dataLocation"],
   }
 }
-function toDataSource(root: JSONValue): DataSource {
-  return prt.readObj({
+function toDataSource(root: jsonP.JSONValue): DataSource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "dataLocation": "s",
@@ -1315,25 +1408,28 @@ function toDataSource(root: JSONValue): DataSource {
 export interface SolutionConfig {
   eventValueThreshold?: string | null;
   hpoConfig?: HPOConfig | null;
-  algorithmHyperParameters?: { [key: string]: string } | null;
-  featureTransformationParameters?: { [key: string]: string } | null;
+  algorithmHyperParameters?: { [key: string]: string | null | undefined } | null;
+  featureTransformationParameters?: { [key: string]: string | null | undefined } | null;
   autoMLConfig?: AutoMLConfig | null;
 }
-function fromSolutionConfig(input?: SolutionConfig | null): JSONValue {
+function fromSolutionConfig(input?: SolutionConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    eventValueThreshold: input["eventValueThreshold"],
     hpoConfig: fromHPOConfig(input["hpoConfig"]),
+    algorithmHyperParameters: input["algorithmHyperParameters"],
+    featureTransformationParameters: input["featureTransformationParameters"],
     autoMLConfig: fromAutoMLConfig(input["autoMLConfig"]),
   }
 }
-function toSolutionConfig(root: JSONValue): SolutionConfig {
-  return prt.readObj({
+function toSolutionConfig(root: jsonP.JSONValue): SolutionConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "eventValueThreshold": "s",
       "hpoConfig": toHPOConfig,
-      "algorithmHyperParameters": x => prt.readMap(String, String, x),
-      "featureTransformationParameters": x => prt.readMap(String, String, x),
+      "algorithmHyperParameters": x => jsonP.readMap(String, String, x),
+      "featureTransformationParameters": x => jsonP.readMap(String, String, x),
       "autoMLConfig": toAutoMLConfig,
     },
   }, root);
@@ -1345,16 +1441,16 @@ export interface HPOConfig {
   hpoResourceConfig?: HPOResourceConfig | null;
   algorithmHyperParameterRanges?: HyperParameterRanges | null;
 }
-function fromHPOConfig(input?: HPOConfig | null): JSONValue {
+function fromHPOConfig(input?: HPOConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     hpoObjective: fromHPOObjective(input["hpoObjective"]),
     hpoResourceConfig: fromHPOResourceConfig(input["hpoResourceConfig"]),
     algorithmHyperParameterRanges: fromHyperParameterRanges(input["algorithmHyperParameterRanges"]),
   }
 }
-function toHPOConfig(root: JSONValue): HPOConfig {
-  return prt.readObj({
+function toHPOConfig(root: jsonP.JSONValue): HPOConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "hpoObjective": toHPOObjective,
@@ -1370,13 +1466,16 @@ export interface HPOObjective {
   metricName?: string | null;
   metricRegex?: string | null;
 }
-function fromHPOObjective(input?: HPOObjective | null): JSONValue {
+function fromHPOObjective(input?: HPOObjective | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    type: input["type"],
+    metricName: input["metricName"],
+    metricRegex: input["metricRegex"],
   }
 }
-function toHPOObjective(root: JSONValue): HPOObjective {
-  return prt.readObj({
+function toHPOObjective(root: jsonP.JSONValue): HPOObjective {
+  return jsonP.readObj({
     required: {},
     optional: {
       "type": "s",
@@ -1391,13 +1490,15 @@ export interface HPOResourceConfig {
   maxNumberOfTrainingJobs?: string | null;
   maxParallelTrainingJobs?: string | null;
 }
-function fromHPOResourceConfig(input?: HPOResourceConfig | null): JSONValue {
+function fromHPOResourceConfig(input?: HPOResourceConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    maxNumberOfTrainingJobs: input["maxNumberOfTrainingJobs"],
+    maxParallelTrainingJobs: input["maxParallelTrainingJobs"],
   }
 }
-function toHPOResourceConfig(root: JSONValue): HPOResourceConfig {
-  return prt.readObj({
+function toHPOResourceConfig(root: jsonP.JSONValue): HPOResourceConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "maxNumberOfTrainingJobs": "s",
@@ -1412,16 +1513,16 @@ export interface HyperParameterRanges {
   continuousHyperParameterRanges?: ContinuousHyperParameterRange[] | null;
   categoricalHyperParameterRanges?: CategoricalHyperParameterRange[] | null;
 }
-function fromHyperParameterRanges(input?: HyperParameterRanges | null): JSONValue {
+function fromHyperParameterRanges(input?: HyperParameterRanges | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     integerHyperParameterRanges: input["integerHyperParameterRanges"]?.map(x => fromIntegerHyperParameterRange(x)),
     continuousHyperParameterRanges: input["continuousHyperParameterRanges"]?.map(x => fromContinuousHyperParameterRange(x)),
     categoricalHyperParameterRanges: input["categoricalHyperParameterRanges"]?.map(x => fromCategoricalHyperParameterRange(x)),
   }
 }
-function toHyperParameterRanges(root: JSONValue): HyperParameterRanges {
-  return prt.readObj({
+function toHyperParameterRanges(root: jsonP.JSONValue): HyperParameterRanges {
+  return jsonP.readObj({
     required: {},
     optional: {
       "integerHyperParameterRanges": [toIntegerHyperParameterRange],
@@ -1437,13 +1538,16 @@ export interface IntegerHyperParameterRange {
   minValue?: number | null;
   maxValue?: number | null;
 }
-function fromIntegerHyperParameterRange(input?: IntegerHyperParameterRange | null): JSONValue {
+function fromIntegerHyperParameterRange(input?: IntegerHyperParameterRange | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    minValue: input["minValue"],
+    maxValue: input["maxValue"],
   }
 }
-function toIntegerHyperParameterRange(root: JSONValue): IntegerHyperParameterRange {
-  return prt.readObj({
+function toIntegerHyperParameterRange(root: jsonP.JSONValue): IntegerHyperParameterRange {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1459,13 +1563,16 @@ export interface ContinuousHyperParameterRange {
   minValue?: number | null;
   maxValue?: number | null;
 }
-function fromContinuousHyperParameterRange(input?: ContinuousHyperParameterRange | null): JSONValue {
+function fromContinuousHyperParameterRange(input?: ContinuousHyperParameterRange | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    minValue: input["minValue"],
+    maxValue: input["maxValue"],
   }
 }
-function toContinuousHyperParameterRange(root: JSONValue): ContinuousHyperParameterRange {
-  return prt.readObj({
+function toContinuousHyperParameterRange(root: jsonP.JSONValue): ContinuousHyperParameterRange {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1480,13 +1587,15 @@ export interface CategoricalHyperParameterRange {
   name?: string | null;
   values?: string[] | null;
 }
-function fromCategoricalHyperParameterRange(input?: CategoricalHyperParameterRange | null): JSONValue {
+function fromCategoricalHyperParameterRange(input?: CategoricalHyperParameterRange | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    values: input["values"],
   }
 }
-function toCategoricalHyperParameterRange(root: JSONValue): CategoricalHyperParameterRange {
-  return prt.readObj({
+function toCategoricalHyperParameterRange(root: jsonP.JSONValue): CategoricalHyperParameterRange {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1500,13 +1609,15 @@ export interface AutoMLConfig {
   metricName?: string | null;
   recipeList?: string[] | null;
 }
-function fromAutoMLConfig(input?: AutoMLConfig | null): JSONValue {
+function fromAutoMLConfig(input?: AutoMLConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    metricName: input["metricName"],
+    recipeList: input["recipeList"],
   }
 }
-function toAutoMLConfig(root: JSONValue): AutoMLConfig {
-  return prt.readObj({
+function toAutoMLConfig(root: jsonP.JSONValue): AutoMLConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "metricName": "s",
@@ -1519,44 +1630,36 @@ function toAutoMLConfig(root: JSONValue): AutoMLConfig {
 export type TrainingMode =
 | "FULL"
 | "UPDATE"
-;
-
-function toTrainingMode(root: JSONValue): TrainingMode | null {
-  return ( false
-    || root == "FULL"
-    || root == "UPDATE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type RecipeProvider =
 | "SERVICE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Algorithm {
   name?: string | null;
   algorithmArn?: string | null;
   algorithmImage?: AlgorithmImage | null;
-  defaultHyperParameters?: { [key: string]: string } | null;
+  defaultHyperParameters?: { [key: string]: string | null | undefined } | null;
   defaultHyperParameterRanges?: DefaultHyperParameterRanges | null;
-  defaultResourceConfig?: { [key: string]: string } | null;
+  defaultResourceConfig?: { [key: string]: string | null | undefined } | null;
   trainingInputMode?: string | null;
   roleArn?: string | null;
   creationDateTime?: Date | number | null;
   lastUpdatedDateTime?: Date | number | null;
 }
-function toAlgorithm(root: JSONValue): Algorithm {
-  return prt.readObj({
+function toAlgorithm(root: jsonP.JSONValue): Algorithm {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
       "algorithmArn": "s",
       "algorithmImage": toAlgorithmImage,
-      "defaultHyperParameters": x => prt.readMap(String, String, x),
+      "defaultHyperParameters": x => jsonP.readMap(String, String, x),
       "defaultHyperParameterRanges": toDefaultHyperParameterRanges,
-      "defaultResourceConfig": x => prt.readMap(String, String, x),
+      "defaultResourceConfig": x => jsonP.readMap(String, String, x),
       "trainingInputMode": "s",
       "roleArn": "s",
       "creationDateTime": "d",
@@ -1570,8 +1673,8 @@ export interface AlgorithmImage {
   name?: string | null;
   dockerURI: string;
 }
-function toAlgorithmImage(root: JSONValue): AlgorithmImage {
-  return prt.readObj({
+function toAlgorithmImage(root: jsonP.JSONValue): AlgorithmImage {
+  return jsonP.readObj({
     required: {
       "dockerURI": "s",
     },
@@ -1587,8 +1690,8 @@ export interface DefaultHyperParameterRanges {
   continuousHyperParameterRanges?: DefaultContinuousHyperParameterRange[] | null;
   categoricalHyperParameterRanges?: DefaultCategoricalHyperParameterRange[] | null;
 }
-function toDefaultHyperParameterRanges(root: JSONValue): DefaultHyperParameterRanges {
-  return prt.readObj({
+function toDefaultHyperParameterRanges(root: jsonP.JSONValue): DefaultHyperParameterRanges {
+  return jsonP.readObj({
     required: {},
     optional: {
       "integerHyperParameterRanges": [toDefaultIntegerHyperParameterRange],
@@ -1605,8 +1708,8 @@ export interface DefaultIntegerHyperParameterRange {
   maxValue?: number | null;
   isTunable?: boolean | null;
 }
-function toDefaultIntegerHyperParameterRange(root: JSONValue): DefaultIntegerHyperParameterRange {
-  return prt.readObj({
+function toDefaultIntegerHyperParameterRange(root: jsonP.JSONValue): DefaultIntegerHyperParameterRange {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1624,8 +1727,8 @@ export interface DefaultContinuousHyperParameterRange {
   maxValue?: number | null;
   isTunable?: boolean | null;
 }
-function toDefaultContinuousHyperParameterRange(root: JSONValue): DefaultContinuousHyperParameterRange {
-  return prt.readObj({
+function toDefaultContinuousHyperParameterRange(root: jsonP.JSONValue): DefaultContinuousHyperParameterRange {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1642,8 +1745,8 @@ export interface DefaultCategoricalHyperParameterRange {
   values?: string[] | null;
   isTunable?: boolean | null;
 }
-function toDefaultCategoricalHyperParameterRange(root: JSONValue): DefaultCategoricalHyperParameterRange {
-  return prt.readObj({
+function toDefaultCategoricalHyperParameterRange(root: jsonP.JSONValue): DefaultCategoricalHyperParameterRange {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1669,8 +1772,8 @@ export interface BatchInferenceJob {
   creationDateTime?: Date | number | null;
   lastUpdatedDateTime?: Date | number | null;
 }
-function toBatchInferenceJob(root: JSONValue): BatchInferenceJob {
-  return prt.readObj({
+function toBatchInferenceJob(root: jsonP.JSONValue): BatchInferenceJob {
+  return jsonP.readObj({
     required: {},
     optional: {
       "jobName": "s",
@@ -1703,8 +1806,8 @@ export interface Campaign {
   lastUpdatedDateTime?: Date | number | null;
   latestCampaignUpdate?: CampaignUpdateSummary | null;
 }
-function toCampaign(root: JSONValue): Campaign {
-  return prt.readObj({
+function toCampaign(root: jsonP.JSONValue): Campaign {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1731,8 +1834,8 @@ export interface CampaignUpdateSummary {
   creationDateTime?: Date | number | null;
   lastUpdatedDateTime?: Date | number | null;
 }
-function toCampaignUpdateSummary(root: JSONValue): CampaignUpdateSummary {
-  return prt.readObj({
+function toCampaignUpdateSummary(root: jsonP.JSONValue): CampaignUpdateSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "solutionVersionArn": "s",
@@ -1757,8 +1860,8 @@ export interface Dataset {
   creationDateTime?: Date | number | null;
   lastUpdatedDateTime?: Date | number | null;
 }
-function toDataset(root: JSONValue): Dataset {
-  return prt.readObj({
+function toDataset(root: jsonP.JSONValue): Dataset {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1784,8 +1887,8 @@ export interface DatasetGroup {
   lastUpdatedDateTime?: Date | number | null;
   failureReason?: string | null;
 }
-function toDatasetGroup(root: JSONValue): DatasetGroup {
-  return prt.readObj({
+function toDatasetGroup(root: jsonP.JSONValue): DatasetGroup {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1812,8 +1915,8 @@ export interface DatasetImportJob {
   lastUpdatedDateTime?: Date | number | null;
   failureReason?: string | null;
 }
-function toDatasetImportJob(root: JSONValue): DatasetImportJob {
-  return prt.readObj({
+function toDatasetImportJob(root: jsonP.JSONValue): DatasetImportJob {
+  return jsonP.readObj({
     required: {},
     optional: {
       "jobName": "s",
@@ -1840,8 +1943,8 @@ export interface EventTracker {
   creationDateTime?: Date | number | null;
   lastUpdatedDateTime?: Date | number | null;
 }
-function toEventTracker(root: JSONValue): EventTracker {
-  return prt.readObj({
+function toEventTracker(root: jsonP.JSONValue): EventTracker {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1860,18 +1963,18 @@ function toEventTracker(root: JSONValue): EventTracker {
 export interface FeatureTransformation {
   name?: string | null;
   featureTransformationArn?: string | null;
-  defaultParameters?: { [key: string]: string } | null;
+  defaultParameters?: { [key: string]: string | null | undefined } | null;
   creationDateTime?: Date | number | null;
   lastUpdatedDateTime?: Date | number | null;
   status?: string | null;
 }
-function toFeatureTransformation(root: JSONValue): FeatureTransformation {
-  return prt.readObj({
+function toFeatureTransformation(root: jsonP.JSONValue): FeatureTransformation {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
       "featureTransformationArn": "s",
-      "defaultParameters": x => prt.readMap(String, String, x),
+      "defaultParameters": x => jsonP.readMap(String, String, x),
       "creationDateTime": "d",
       "lastUpdatedDateTime": "d",
       "status": "s",
@@ -1890,8 +1993,8 @@ export interface Filter {
   filterExpression?: string | null;
   status?: string | null;
 }
-function toFilter(root: JSONValue): Filter {
-  return prt.readObj({
+function toFilter(root: jsonP.JSONValue): Filter {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1918,8 +2021,8 @@ export interface Recipe {
   recipeType?: string | null;
   lastUpdatedDateTime?: Date | number | null;
 }
-function toRecipe(root: JSONValue): Recipe {
-  return prt.readObj({
+function toRecipe(root: jsonP.JSONValue): Recipe {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1943,8 +2046,8 @@ export interface DatasetSchema {
   creationDateTime?: Date | number | null;
   lastUpdatedDateTime?: Date | number | null;
 }
-function toDatasetSchema(root: JSONValue): DatasetSchema {
-  return prt.readObj({
+function toDatasetSchema(root: jsonP.JSONValue): DatasetSchema {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1972,8 +2075,8 @@ export interface Solution {
   lastUpdatedDateTime?: Date | number | null;
   latestSolutionVersion?: SolutionVersionSummary | null;
 }
-function toSolution(root: JSONValue): Solution {
-  return prt.readObj({
+function toSolution(root: jsonP.JSONValue): Solution {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -1997,8 +2100,8 @@ function toSolution(root: JSONValue): Solution {
 export interface AutoMLResult {
   bestRecipeArn?: string | null;
 }
-function toAutoMLResult(root: JSONValue): AutoMLResult {
-  return prt.readObj({
+function toAutoMLResult(root: jsonP.JSONValue): AutoMLResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "bestRecipeArn": "s",
@@ -2014,8 +2117,8 @@ export interface SolutionVersionSummary {
   lastUpdatedDateTime?: Date | number | null;
   failureReason?: string | null;
 }
-function toSolutionVersionSummary(root: JSONValue): SolutionVersionSummary {
-  return prt.readObj({
+function toSolutionVersionSummary(root: jsonP.JSONValue): SolutionVersionSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "solutionVersionArn": "s",
@@ -2045,8 +2148,8 @@ export interface SolutionVersion {
   creationDateTime?: Date | number | null;
   lastUpdatedDateTime?: Date | number | null;
 }
-function toSolutionVersion(root: JSONValue): SolutionVersion {
-  return prt.readObj({
+function toSolutionVersion(root: jsonP.JSONValue): SolutionVersion {
+  return jsonP.readObj({
     required: {},
     optional: {
       "solutionVersionArn": "s",
@@ -2058,7 +2161,7 @@ function toSolutionVersion(root: JSONValue): SolutionVersion {
       "datasetGroupArn": "s",
       "solutionConfig": toSolutionConfig,
       "trainingHours": "n",
-      "trainingMode": toTrainingMode,
+      "trainingMode": (x: jsonP.JSONValue) => cmnP.readEnum<TrainingMode>(x),
       "tunedHPOParams": toTunedHPOParams,
       "status": "s",
       "failureReason": "s",
@@ -2070,13 +2173,13 @@ function toSolutionVersion(root: JSONValue): SolutionVersion {
 
 // refs: 1 - tags: output, named, interface
 export interface TunedHPOParams {
-  algorithmHyperParameters?: { [key: string]: string } | null;
+  algorithmHyperParameters?: { [key: string]: string | null | undefined } | null;
 }
-function toTunedHPOParams(root: JSONValue): TunedHPOParams {
-  return prt.readObj({
+function toTunedHPOParams(root: jsonP.JSONValue): TunedHPOParams {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "algorithmHyperParameters": x => prt.readMap(String, String, x),
+      "algorithmHyperParameters": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -2091,8 +2194,8 @@ export interface BatchInferenceJobSummary {
   failureReason?: string | null;
   solutionVersionArn?: string | null;
 }
-function toBatchInferenceJobSummary(root: JSONValue): BatchInferenceJobSummary {
-  return prt.readObj({
+function toBatchInferenceJobSummary(root: jsonP.JSONValue): BatchInferenceJobSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "batchInferenceJobArn": "s",
@@ -2115,8 +2218,8 @@ export interface CampaignSummary {
   lastUpdatedDateTime?: Date | number | null;
   failureReason?: string | null;
 }
-function toCampaignSummary(root: JSONValue): CampaignSummary {
-  return prt.readObj({
+function toCampaignSummary(root: jsonP.JSONValue): CampaignSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -2138,8 +2241,8 @@ export interface DatasetGroupSummary {
   lastUpdatedDateTime?: Date | number | null;
   failureReason?: string | null;
 }
-function toDatasetGroupSummary(root: JSONValue): DatasetGroupSummary {
-  return prt.readObj({
+function toDatasetGroupSummary(root: jsonP.JSONValue): DatasetGroupSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -2161,8 +2264,8 @@ export interface DatasetImportJobSummary {
   lastUpdatedDateTime?: Date | number | null;
   failureReason?: string | null;
 }
-function toDatasetImportJobSummary(root: JSONValue): DatasetImportJobSummary {
-  return prt.readObj({
+function toDatasetImportJobSummary(root: jsonP.JSONValue): DatasetImportJobSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "datasetImportJobArn": "s",
@@ -2184,8 +2287,8 @@ export interface DatasetSummary {
   creationDateTime?: Date | number | null;
   lastUpdatedDateTime?: Date | number | null;
 }
-function toDatasetSummary(root: JSONValue): DatasetSummary {
-  return prt.readObj({
+function toDatasetSummary(root: jsonP.JSONValue): DatasetSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -2206,8 +2309,8 @@ export interface EventTrackerSummary {
   creationDateTime?: Date | number | null;
   lastUpdatedDateTime?: Date | number | null;
 }
-function toEventTrackerSummary(root: JSONValue): EventTrackerSummary {
-  return prt.readObj({
+function toEventTrackerSummary(root: jsonP.JSONValue): EventTrackerSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -2229,8 +2332,8 @@ export interface FilterSummary {
   failureReason?: string | null;
   status?: string | null;
 }
-function toFilterSummary(root: JSONValue): FilterSummary {
-  return prt.readObj({
+function toFilterSummary(root: jsonP.JSONValue): FilterSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -2252,8 +2355,8 @@ export interface RecipeSummary {
   creationDateTime?: Date | number | null;
   lastUpdatedDateTime?: Date | number | null;
 }
-function toRecipeSummary(root: JSONValue): RecipeSummary {
-  return prt.readObj({
+function toRecipeSummary(root: jsonP.JSONValue): RecipeSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -2272,8 +2375,8 @@ export interface DatasetSchemaSummary {
   creationDateTime?: Date | number | null;
   lastUpdatedDateTime?: Date | number | null;
 }
-function toDatasetSchemaSummary(root: JSONValue): DatasetSchemaSummary {
-  return prt.readObj({
+function toDatasetSchemaSummary(root: jsonP.JSONValue): DatasetSchemaSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",
@@ -2292,8 +2395,8 @@ export interface SolutionSummary {
   creationDateTime?: Date | number | null;
   lastUpdatedDateTime?: Date | number | null;
 }
-function toSolutionSummary(root: JSONValue): SolutionSummary {
-  return prt.readObj({
+function toSolutionSummary(root: jsonP.JSONValue): SolutionSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "name": "s",

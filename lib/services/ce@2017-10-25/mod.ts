@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class CostExplorer {
   #client: ServiceClient;
@@ -31,14 +31,14 @@ export default class CostExplorer {
   async createAnomalyMonitor(
     {abortSignal, ...params}: RequestConfig & CreateAnomalyMonitorRequest,
   ): Promise<CreateAnomalyMonitorResponse> {
-    const body: JSONObject = {...params,
-    AnomalyMonitor: fromAnomalyMonitor(params["AnomalyMonitor"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AnomalyMonitor: fromAnomalyMonitor(params["AnomalyMonitor"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAnomalyMonitor",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "MonitorArn": "s",
       },
@@ -49,14 +49,14 @@ export default class CostExplorer {
   async createAnomalySubscription(
     {abortSignal, ...params}: RequestConfig & CreateAnomalySubscriptionRequest,
   ): Promise<CreateAnomalySubscriptionResponse> {
-    const body: JSONObject = {...params,
-    AnomalySubscription: fromAnomalySubscription(params["AnomalySubscription"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AnomalySubscription: fromAnomalySubscription(params["AnomalySubscription"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAnomalySubscription",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "SubscriptionArn": "s",
       },
@@ -67,14 +67,16 @@ export default class CostExplorer {
   async createCostCategoryDefinition(
     {abortSignal, ...params}: RequestConfig & CreateCostCategoryDefinitionRequest,
   ): Promise<CreateCostCategoryDefinitionResponse> {
-    const body: JSONObject = {...params,
-    Rules: params["Rules"]?.map(x => fromCostCategoryRule(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      RuleVersion: params["RuleVersion"],
+      Rules: params["Rules"]?.map(x => fromCostCategoryRule(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCostCategoryDefinition",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CostCategoryArn": "s",
@@ -86,13 +88,14 @@ export default class CostExplorer {
   async deleteAnomalyMonitor(
     {abortSignal, ...params}: RequestConfig & DeleteAnomalyMonitorRequest,
   ): Promise<DeleteAnomalyMonitorResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MonitorArn: params["MonitorArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAnomalyMonitor",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -101,13 +104,14 @@ export default class CostExplorer {
   async deleteAnomalySubscription(
     {abortSignal, ...params}: RequestConfig & DeleteAnomalySubscriptionRequest,
   ): Promise<DeleteAnomalySubscriptionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SubscriptionArn: params["SubscriptionArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAnomalySubscription",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -116,13 +120,14 @@ export default class CostExplorer {
   async deleteCostCategoryDefinition(
     {abortSignal, ...params}: RequestConfig & DeleteCostCategoryDefinitionRequest,
   ): Promise<DeleteCostCategoryDefinitionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CostCategoryArn: params["CostCategoryArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCostCategoryDefinition",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CostCategoryArn": "s",
@@ -134,13 +139,15 @@ export default class CostExplorer {
   async describeCostCategoryDefinition(
     {abortSignal, ...params}: RequestConfig & DescribeCostCategoryDefinitionRequest,
   ): Promise<DescribeCostCategoryDefinitionResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      CostCategoryArn: params["CostCategoryArn"],
+      EffectiveOn: params["EffectiveOn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCostCategoryDefinition",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CostCategory": toCostCategory,
@@ -151,15 +158,19 @@ export default class CostExplorer {
   async getAnomalies(
     {abortSignal, ...params}: RequestConfig & GetAnomaliesRequest,
   ): Promise<GetAnomaliesResponse> {
-    const body: JSONObject = {...params,
-    DateInterval: fromAnomalyDateInterval(params["DateInterval"]),
-    TotalImpact: fromTotalImpactFilter(params["TotalImpact"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      MonitorArn: params["MonitorArn"],
+      DateInterval: fromAnomalyDateInterval(params["DateInterval"]),
+      Feedback: params["Feedback"],
+      TotalImpact: fromTotalImpactFilter(params["TotalImpact"]),
+      NextPageToken: params["NextPageToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAnomalies",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Anomalies": [toAnomaly],
       },
@@ -172,13 +183,16 @@ export default class CostExplorer {
   async getAnomalyMonitors(
     {abortSignal, ...params}: RequestConfig & GetAnomalyMonitorsRequest = {},
   ): Promise<GetAnomalyMonitorsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MonitorArnList: params["MonitorArnList"],
+      NextPageToken: params["NextPageToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAnomalyMonitors",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "AnomalyMonitors": [toAnomalyMonitor],
       },
@@ -191,13 +205,17 @@ export default class CostExplorer {
   async getAnomalySubscriptions(
     {abortSignal, ...params}: RequestConfig & GetAnomalySubscriptionsRequest = {},
   ): Promise<GetAnomalySubscriptionsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SubscriptionArnList: params["SubscriptionArnList"],
+      MonitorArn: params["MonitorArn"],
+      NextPageToken: params["NextPageToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAnomalySubscriptions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "AnomalySubscriptions": [toAnomalySubscription],
       },
@@ -210,16 +228,19 @@ export default class CostExplorer {
   async getCostAndUsage(
     {abortSignal, ...params}: RequestConfig & GetCostAndUsageRequest,
   ): Promise<GetCostAndUsageResponse> {
-    const body: JSONObject = {...params,
-    TimePeriod: fromDateInterval(params["TimePeriod"]),
-    Filter: fromExpression(params["Filter"]),
-    GroupBy: params["GroupBy"]?.map(x => fromGroupDefinition(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TimePeriod: fromDateInterval(params["TimePeriod"]),
+      Granularity: params["Granularity"],
+      Filter: fromExpression(params["Filter"]),
+      Metrics: params["Metrics"],
+      GroupBy: params["GroupBy"]?.map(x => fromGroupDefinition(x)),
+      NextPageToken: params["NextPageToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCostAndUsage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextPageToken": "s",
@@ -232,16 +253,19 @@ export default class CostExplorer {
   async getCostAndUsageWithResources(
     {abortSignal, ...params}: RequestConfig & GetCostAndUsageWithResourcesRequest,
   ): Promise<GetCostAndUsageWithResourcesResponse> {
-    const body: JSONObject = {...params,
-    TimePeriod: fromDateInterval(params["TimePeriod"]),
-    Filter: fromExpression(params["Filter"]),
-    GroupBy: params["GroupBy"]?.map(x => fromGroupDefinition(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TimePeriod: fromDateInterval(params["TimePeriod"]),
+      Granularity: params["Granularity"],
+      Filter: fromExpression(params["Filter"]),
+      Metrics: params["Metrics"],
+      GroupBy: params["GroupBy"]?.map(x => fromGroupDefinition(x)),
+      NextPageToken: params["NextPageToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCostAndUsageWithResources",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextPageToken": "s",
@@ -254,15 +278,18 @@ export default class CostExplorer {
   async getCostForecast(
     {abortSignal, ...params}: RequestConfig & GetCostForecastRequest,
   ): Promise<GetCostForecastResponse> {
-    const body: JSONObject = {...params,
-    TimePeriod: fromDateInterval(params["TimePeriod"]),
-    Filter: fromExpression(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TimePeriod: fromDateInterval(params["TimePeriod"]),
+      Metric: params["Metric"],
+      Granularity: params["Granularity"],
+      Filter: fromExpression(params["Filter"]),
+      PredictionIntervalLevel: params["PredictionIntervalLevel"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCostForecast",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Total": toMetricValue,
@@ -274,14 +301,18 @@ export default class CostExplorer {
   async getDimensionValues(
     {abortSignal, ...params}: RequestConfig & GetDimensionValuesRequest,
   ): Promise<GetDimensionValuesResponse> {
-    const body: JSONObject = {...params,
-    TimePeriod: fromDateInterval(params["TimePeriod"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SearchString: params["SearchString"],
+      TimePeriod: fromDateInterval(params["TimePeriod"]),
+      Dimension: params["Dimension"],
+      Context: params["Context"],
+      NextPageToken: params["NextPageToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDimensionValues",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "DimensionValues": [toDimensionValuesWithAttributes],
         "ReturnSize": "n",
@@ -296,16 +327,19 @@ export default class CostExplorer {
   async getReservationCoverage(
     {abortSignal, ...params}: RequestConfig & GetReservationCoverageRequest,
   ): Promise<GetReservationCoverageResponse> {
-    const body: JSONObject = {...params,
-    TimePeriod: fromDateInterval(params["TimePeriod"]),
-    GroupBy: params["GroupBy"]?.map(x => fromGroupDefinition(x)),
-    Filter: fromExpression(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TimePeriod: fromDateInterval(params["TimePeriod"]),
+      GroupBy: params["GroupBy"]?.map(x => fromGroupDefinition(x)),
+      Granularity: params["Granularity"],
+      Filter: fromExpression(params["Filter"]),
+      Metrics: params["Metrics"],
+      NextPageToken: params["NextPageToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetReservationCoverage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "CoveragesByTime": [toCoverageByTime],
       },
@@ -319,14 +353,22 @@ export default class CostExplorer {
   async getReservationPurchaseRecommendation(
     {abortSignal, ...params}: RequestConfig & GetReservationPurchaseRecommendationRequest,
   ): Promise<GetReservationPurchaseRecommendationResponse> {
-    const body: JSONObject = {...params,
-    ServiceSpecification: fromServiceSpecification(params["ServiceSpecification"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      AccountId: params["AccountId"],
+      Service: params["Service"],
+      AccountScope: params["AccountScope"],
+      LookbackPeriodInDays: params["LookbackPeriodInDays"],
+      TermInYears: params["TermInYears"],
+      PaymentOption: params["PaymentOption"],
+      ServiceSpecification: fromServiceSpecification(params["ServiceSpecification"]),
+      PageSize: params["PageSize"],
+      NextPageToken: params["NextPageToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetReservationPurchaseRecommendation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Metadata": toReservationPurchaseRecommendationMetadata,
@@ -339,16 +381,18 @@ export default class CostExplorer {
   async getReservationUtilization(
     {abortSignal, ...params}: RequestConfig & GetReservationUtilizationRequest,
   ): Promise<GetReservationUtilizationResponse> {
-    const body: JSONObject = {...params,
-    TimePeriod: fromDateInterval(params["TimePeriod"]),
-    GroupBy: params["GroupBy"]?.map(x => fromGroupDefinition(x)),
-    Filter: fromExpression(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TimePeriod: fromDateInterval(params["TimePeriod"]),
+      GroupBy: params["GroupBy"]?.map(x => fromGroupDefinition(x)),
+      Granularity: params["Granularity"],
+      Filter: fromExpression(params["Filter"]),
+      NextPageToken: params["NextPageToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetReservationUtilization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "UtilizationsByTime": [toUtilizationByTime],
       },
@@ -362,15 +406,18 @@ export default class CostExplorer {
   async getRightsizingRecommendation(
     {abortSignal, ...params}: RequestConfig & GetRightsizingRecommendationRequest,
   ): Promise<GetRightsizingRecommendationResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromExpression(params["Filter"]),
-    Configuration: fromRightsizingRecommendationConfiguration(params["Configuration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filter: fromExpression(params["Filter"]),
+      Configuration: fromRightsizingRecommendationConfiguration(params["Configuration"]),
+      Service: params["Service"],
+      PageSize: params["PageSize"],
+      NextPageToken: params["NextPageToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRightsizingRecommendation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Metadata": toRightsizingRecommendationMetadata,
@@ -385,16 +432,20 @@ export default class CostExplorer {
   async getSavingsPlansCoverage(
     {abortSignal, ...params}: RequestConfig & GetSavingsPlansCoverageRequest,
   ): Promise<GetSavingsPlansCoverageResponse> {
-    const body: JSONObject = {...params,
-    TimePeriod: fromDateInterval(params["TimePeriod"]),
-    GroupBy: params["GroupBy"]?.map(x => fromGroupDefinition(x)),
-    Filter: fromExpression(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TimePeriod: fromDateInterval(params["TimePeriod"]),
+      GroupBy: params["GroupBy"]?.map(x => fromGroupDefinition(x)),
+      Granularity: params["Granularity"],
+      Filter: fromExpression(params["Filter"]),
+      Metrics: params["Metrics"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSavingsPlansCoverage",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "SavingsPlansCoverages": [toSavingsPlansCoverage],
       },
@@ -407,14 +458,21 @@ export default class CostExplorer {
   async getSavingsPlansPurchaseRecommendation(
     {abortSignal, ...params}: RequestConfig & GetSavingsPlansPurchaseRecommendationRequest,
   ): Promise<GetSavingsPlansPurchaseRecommendationResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromExpression(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SavingsPlansType: params["SavingsPlansType"],
+      TermInYears: params["TermInYears"],
+      PaymentOption: params["PaymentOption"],
+      AccountScope: params["AccountScope"],
+      NextPageToken: params["NextPageToken"],
+      PageSize: params["PageSize"],
+      LookbackPeriodInDays: params["LookbackPeriodInDays"],
+      Filter: fromExpression(params["Filter"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSavingsPlansPurchaseRecommendation",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Metadata": toSavingsPlansPurchaseRecommendationMetadata,
@@ -427,15 +485,16 @@ export default class CostExplorer {
   async getSavingsPlansUtilization(
     {abortSignal, ...params}: RequestConfig & GetSavingsPlansUtilizationRequest,
   ): Promise<GetSavingsPlansUtilizationResponse> {
-    const body: JSONObject = {...params,
-    TimePeriod: fromDateInterval(params["TimePeriod"]),
-    Filter: fromExpression(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TimePeriod: fromDateInterval(params["TimePeriod"]),
+      Granularity: params["Granularity"],
+      Filter: fromExpression(params["Filter"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSavingsPlansUtilization",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Total": toSavingsPlansUtilizationAggregates,
       },
@@ -448,15 +507,17 @@ export default class CostExplorer {
   async getSavingsPlansUtilizationDetails(
     {abortSignal, ...params}: RequestConfig & GetSavingsPlansUtilizationDetailsRequest,
   ): Promise<GetSavingsPlansUtilizationDetailsResponse> {
-    const body: JSONObject = {...params,
-    TimePeriod: fromDateInterval(params["TimePeriod"]),
-    Filter: fromExpression(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TimePeriod: fromDateInterval(params["TimePeriod"]),
+      Filter: fromExpression(params["Filter"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSavingsPlansUtilizationDetails",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "SavingsPlansUtilizationDetails": [toSavingsPlansUtilizationDetail],
         "TimePeriod": toDateInterval,
@@ -471,14 +532,17 @@ export default class CostExplorer {
   async getTags(
     {abortSignal, ...params}: RequestConfig & GetTagsRequest,
   ): Promise<GetTagsResponse> {
-    const body: JSONObject = {...params,
-    TimePeriod: fromDateInterval(params["TimePeriod"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SearchString: params["SearchString"],
+      TimePeriod: fromDateInterval(params["TimePeriod"]),
+      TagKey: params["TagKey"],
+      NextPageToken: params["NextPageToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Tags": ["s"],
         "ReturnSize": "n",
@@ -493,15 +557,18 @@ export default class CostExplorer {
   async getUsageForecast(
     {abortSignal, ...params}: RequestConfig & GetUsageForecastRequest,
   ): Promise<GetUsageForecastResponse> {
-    const body: JSONObject = {...params,
-    TimePeriod: fromDateInterval(params["TimePeriod"]),
-    Filter: fromExpression(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TimePeriod: fromDateInterval(params["TimePeriod"]),
+      Metric: params["Metric"],
+      Granularity: params["Granularity"],
+      Filter: fromExpression(params["Filter"]),
+      PredictionIntervalLevel: params["PredictionIntervalLevel"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetUsageForecast",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Total": toMetricValue,
@@ -513,13 +580,16 @@ export default class CostExplorer {
   async listCostCategoryDefinitions(
     {abortSignal, ...params}: RequestConfig & ListCostCategoryDefinitionsRequest = {},
   ): Promise<ListCostCategoryDefinitionsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      EffectiveOn: params["EffectiveOn"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCostCategoryDefinitions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CostCategoryReferences": [toCostCategoryReference],
@@ -531,13 +601,15 @@ export default class CostExplorer {
   async provideAnomalyFeedback(
     {abortSignal, ...params}: RequestConfig & ProvideAnomalyFeedbackRequest,
   ): Promise<ProvideAnomalyFeedbackResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      AnomalyId: params["AnomalyId"],
+      Feedback: params["Feedback"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ProvideAnomalyFeedback",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "AnomalyId": "s",
       },
@@ -548,13 +620,15 @@ export default class CostExplorer {
   async updateAnomalyMonitor(
     {abortSignal, ...params}: RequestConfig & UpdateAnomalyMonitorRequest,
   ): Promise<UpdateAnomalyMonitorResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      MonitorArn: params["MonitorArn"],
+      MonitorName: params["MonitorName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAnomalyMonitor",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "MonitorArn": "s",
       },
@@ -565,14 +639,19 @@ export default class CostExplorer {
   async updateAnomalySubscription(
     {abortSignal, ...params}: RequestConfig & UpdateAnomalySubscriptionRequest,
   ): Promise<UpdateAnomalySubscriptionResponse> {
-    const body: JSONObject = {...params,
-    Subscribers: params["Subscribers"]?.map(x => fromSubscriber(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SubscriptionArn: params["SubscriptionArn"],
+      Threshold: params["Threshold"],
+      Frequency: params["Frequency"],
+      MonitorArnList: params["MonitorArnList"],
+      Subscribers: params["Subscribers"]?.map(x => fromSubscriber(x)),
+      SubscriptionName: params["SubscriptionName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAnomalySubscription",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "SubscriptionArn": "s",
       },
@@ -583,14 +662,16 @@ export default class CostExplorer {
   async updateCostCategoryDefinition(
     {abortSignal, ...params}: RequestConfig & UpdateCostCategoryDefinitionRequest,
   ): Promise<UpdateCostCategoryDefinitionResponse> {
-    const body: JSONObject = {...params,
-    Rules: params["Rules"]?.map(x => fromCostCategoryRule(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CostCategoryArn: params["CostCategoryArn"],
+      RuleVersion: params["RuleVersion"],
+      Rules: params["Rules"]?.map(x => fromCostCategoryRule(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateCostCategoryDefinition",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CostCategoryArn": "s",
@@ -1025,24 +1106,32 @@ export interface AnomalyMonitor {
   MonitorSpecification?: Expression | null;
   DimensionalValueCount?: number | null;
 }
-function fromAnomalyMonitor(input?: AnomalyMonitor | null): JSONValue {
+function fromAnomalyMonitor(input?: AnomalyMonitor | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MonitorArn: input["MonitorArn"],
+    MonitorName: input["MonitorName"],
+    CreationDate: input["CreationDate"],
+    LastUpdatedDate: input["LastUpdatedDate"],
+    LastEvaluatedDate: input["LastEvaluatedDate"],
+    MonitorType: input["MonitorType"],
+    MonitorDimension: input["MonitorDimension"],
     MonitorSpecification: fromExpression(input["MonitorSpecification"]),
+    DimensionalValueCount: input["DimensionalValueCount"],
   }
 }
-function toAnomalyMonitor(root: JSONValue): AnomalyMonitor {
-  return prt.readObj({
+function toAnomalyMonitor(root: jsonP.JSONValue): AnomalyMonitor {
+  return jsonP.readObj({
     required: {
       "MonitorName": "s",
-      "MonitorType": toMonitorType,
+      "MonitorType": (x: jsonP.JSONValue) => cmnP.readEnum<MonitorType>(x),
     },
     optional: {
       "MonitorArn": "s",
       "CreationDate": "s",
       "LastUpdatedDate": "s",
       "LastEvaluatedDate": "s",
-      "MonitorDimension": toMonitorDimension,
+      "MonitorDimension": (x: jsonP.JSONValue) => cmnP.readEnum<MonitorDimension>(x),
       "MonitorSpecification": toExpression,
       "DimensionalValueCount": "n",
     },
@@ -1053,25 +1142,12 @@ function toAnomalyMonitor(root: JSONValue): AnomalyMonitor {
 export type MonitorType =
 | "DIMENSIONAL"
 | "CUSTOM"
-;
-
-function toMonitorType(root: JSONValue): MonitorType | null {
-  return ( false
-    || root == "DIMENSIONAL"
-    || root == "CUSTOM"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type MonitorDimension =
 | "SERVICE"
-;
-
-function toMonitorDimension(root: JSONValue): MonitorDimension | null {
-  return ( false
-    || root == "SERVICE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 64 - tags: input, named, interface, recursed, recursive, output
 export interface Expression {
@@ -1082,9 +1158,9 @@ export interface Expression {
   Tags?: TagValues | null;
   CostCategories?: CostCategoryValues | null;
 }
-function fromExpression(input?: Expression | null): JSONValue {
+function fromExpression(input?: Expression | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Or: input["Or"]?.map(x => fromExpression(x)),
     And: input["And"]?.map(x => fromExpression(x)),
     Not: fromExpression(input["Not"]),
@@ -1093,8 +1169,8 @@ function fromExpression(input?: Expression | null): JSONValue {
     CostCategories: fromCostCategoryValues(input["CostCategories"]),
   }
 }
-function toExpression(root: JSONValue): Expression {
-  return prt.readObj({
+function toExpression(root: jsonP.JSONValue): Expression {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Or": [toExpression],
@@ -1113,18 +1189,21 @@ export interface DimensionValues {
   Values?: string[] | null;
   MatchOptions?: MatchOption[] | null;
 }
-function fromDimensionValues(input?: DimensionValues | null): JSONValue {
+function fromDimensionValues(input?: DimensionValues | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
+    MatchOptions: input["MatchOptions"],
   }
 }
-function toDimensionValues(root: JSONValue): DimensionValues {
-  return prt.readObj({
+function toDimensionValues(root: jsonP.JSONValue): DimensionValues {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Key": toDimension,
+      "Key": (x: jsonP.JSONValue) => cmnP.readEnum<Dimension>(x),
       "Values": ["s"],
-      "MatchOptions": [toMatchOption],
+      "MatchOptions": [(x: jsonP.JSONValue) => cmnP.readEnum<MatchOption>(x)],
     },
   }, root);
 }
@@ -1160,41 +1239,7 @@ export type Dimension =
 | "SAVINGS_PLANS_TYPE"
 | "SAVINGS_PLAN_ARN"
 | "PAYMENT_OPTION"
-;
-
-function toDimension(root: JSONValue): Dimension | null {
-  return ( false
-    || root == "AZ"
-    || root == "INSTANCE_TYPE"
-    || root == "LINKED_ACCOUNT"
-    || root == "LINKED_ACCOUNT_NAME"
-    || root == "OPERATION"
-    || root == "PURCHASE_TYPE"
-    || root == "REGION"
-    || root == "SERVICE"
-    || root == "SERVICE_CODE"
-    || root == "USAGE_TYPE"
-    || root == "USAGE_TYPE_GROUP"
-    || root == "RECORD_TYPE"
-    || root == "OPERATING_SYSTEM"
-    || root == "TENANCY"
-    || root == "SCOPE"
-    || root == "PLATFORM"
-    || root == "SUBSCRIPTION_ID"
-    || root == "LEGAL_ENTITY_NAME"
-    || root == "DEPLOYMENT_OPTION"
-    || root == "DATABASE_ENGINE"
-    || root == "CACHE_ENGINE"
-    || root == "INSTANCE_TYPE_FAMILY"
-    || root == "BILLING_ENTITY"
-    || root == "RESERVATION_ID"
-    || root == "RESOURCE_ID"
-    || root == "RIGHTSIZING_TYPE"
-    || root == "SAVINGS_PLANS_TYPE"
-    || root == "SAVINGS_PLAN_ARN"
-    || root == "PAYMENT_OPTION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 49 - tags: input, named, enum, output
 export type MatchOption =
@@ -1204,18 +1249,7 @@ export type MatchOption =
 | "CONTAINS"
 | "CASE_SENSITIVE"
 | "CASE_INSENSITIVE"
-;
-
-function toMatchOption(root: JSONValue): MatchOption | null {
-  return ( false
-    || root == "EQUALS"
-    || root == "STARTS_WITH"
-    || root == "ENDS_WITH"
-    || root == "CONTAINS"
-    || root == "CASE_SENSITIVE"
-    || root == "CASE_INSENSITIVE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 17 - tags: input, named, interface, output
 export interface TagValues {
@@ -1223,18 +1257,21 @@ export interface TagValues {
   Values?: string[] | null;
   MatchOptions?: MatchOption[] | null;
 }
-function fromTagValues(input?: TagValues | null): JSONValue {
+function fromTagValues(input?: TagValues | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
+    MatchOptions: input["MatchOptions"],
   }
 }
-function toTagValues(root: JSONValue): TagValues {
-  return prt.readObj({
+function toTagValues(root: jsonP.JSONValue): TagValues {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Key": "s",
       "Values": ["s"],
-      "MatchOptions": [toMatchOption],
+      "MatchOptions": [(x: jsonP.JSONValue) => cmnP.readEnum<MatchOption>(x)],
     },
   }, root);
 }
@@ -1245,18 +1282,21 @@ export interface CostCategoryValues {
   Values?: string[] | null;
   MatchOptions?: MatchOption[] | null;
 }
-function fromCostCategoryValues(input?: CostCategoryValues | null): JSONValue {
+function fromCostCategoryValues(input?: CostCategoryValues | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
+    MatchOptions: input["MatchOptions"],
   }
 }
-function toCostCategoryValues(root: JSONValue): CostCategoryValues {
-  return prt.readObj({
+function toCostCategoryValues(root: jsonP.JSONValue): CostCategoryValues {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Key": "s",
       "Values": ["s"],
-      "MatchOptions": [toMatchOption],
+      "MatchOptions": [(x: jsonP.JSONValue) => cmnP.readEnum<MatchOption>(x)],
     },
   }, root);
 }
@@ -1271,19 +1311,25 @@ export interface AnomalySubscription {
   Frequency: AnomalySubscriptionFrequency;
   SubscriptionName: string;
 }
-function fromAnomalySubscription(input?: AnomalySubscription | null): JSONValue {
+function fromAnomalySubscription(input?: AnomalySubscription | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SubscriptionArn: input["SubscriptionArn"],
+    AccountId: input["AccountId"],
+    MonitorArnList: input["MonitorArnList"],
     Subscribers: input["Subscribers"]?.map(x => fromSubscriber(x)),
+    Threshold: input["Threshold"],
+    Frequency: input["Frequency"],
+    SubscriptionName: input["SubscriptionName"],
   }
 }
-function toAnomalySubscription(root: JSONValue): AnomalySubscription {
-  return prt.readObj({
+function toAnomalySubscription(root: jsonP.JSONValue): AnomalySubscription {
+  return jsonP.readObj({
     required: {
       "MonitorArnList": ["s"],
       "Subscribers": [toSubscriber],
       "Threshold": "n",
-      "Frequency": toAnomalySubscriptionFrequency,
+      "Frequency": (x: jsonP.JSONValue) => cmnP.readEnum<AnomalySubscriptionFrequency>(x),
       "SubscriptionName": "s",
     },
     optional: {
@@ -1299,18 +1345,21 @@ export interface Subscriber {
   Type?: SubscriberType | null;
   Status?: SubscriberStatus | null;
 }
-function fromSubscriber(input?: Subscriber | null): JSONValue {
+function fromSubscriber(input?: Subscriber | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Address: input["Address"],
+    Type: input["Type"],
+    Status: input["Status"],
   }
 }
-function toSubscriber(root: JSONValue): Subscriber {
-  return prt.readObj({
+function toSubscriber(root: jsonP.JSONValue): Subscriber {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Address": "s",
-      "Type": toSubscriberType,
-      "Status": toSubscriberStatus,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<SubscriberType>(x),
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<SubscriberStatus>(x),
     },
   }, root);
 }
@@ -1319,67 +1368,40 @@ function toSubscriber(root: JSONValue): Subscriber {
 export type SubscriberType =
 | "EMAIL"
 | "SNS"
-;
-
-function toSubscriberType(root: JSONValue): SubscriberType | null {
-  return ( false
-    || root == "EMAIL"
-    || root == "SNS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type SubscriberStatus =
 | "CONFIRMED"
 | "DECLINED"
-;
-
-function toSubscriberStatus(root: JSONValue): SubscriberStatus | null {
-  return ( false
-    || root == "CONFIRMED"
-    || root == "DECLINED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type AnomalySubscriptionFrequency =
 | "DAILY"
 | "IMMEDIATE"
 | "WEEKLY"
-;
-
-function toAnomalySubscriptionFrequency(root: JSONValue): AnomalySubscriptionFrequency | null {
-  return ( false
-    || root == "DAILY"
-    || root == "IMMEDIATE"
-    || root == "WEEKLY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type CostCategoryRuleVersion =
 | "CostCategoryExpression.v1"
-;
-
-function toCostCategoryRuleVersion(root: JSONValue): CostCategoryRuleVersion | null {
-  return ( false
-    || root == "CostCategoryExpression.v1"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface CostCategoryRule {
   Value: string;
   Rule: Expression;
 }
-function fromCostCategoryRule(input?: CostCategoryRule | null): JSONValue {
+function fromCostCategoryRule(input?: CostCategoryRule | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Value: input["Value"],
     Rule: fromExpression(input["Rule"]),
   }
 }
-function toCostCategoryRule(root: JSONValue): CostCategoryRule {
-  return prt.readObj({
+function toCostCategoryRule(root: jsonP.JSONValue): CostCategoryRule {
+  return jsonP.readObj({
     required: {
       "Value": "s",
       "Rule": toExpression,
@@ -1393,9 +1415,11 @@ export interface AnomalyDateInterval {
   StartDate: string;
   EndDate?: string | null;
 }
-function fromAnomalyDateInterval(input?: AnomalyDateInterval | null): JSONValue {
+function fromAnomalyDateInterval(input?: AnomalyDateInterval | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    StartDate: input["StartDate"],
+    EndDate: input["EndDate"],
   }
 }
 
@@ -1404,15 +1428,7 @@ export type AnomalyFeedbackType =
 | "YES"
 | "NO"
 | "PLANNED_ACTIVITY"
-;
-
-function toAnomalyFeedbackType(root: JSONValue): AnomalyFeedbackType | null {
-  return ( false
-    || root == "YES"
-    || root == "NO"
-    || root == "PLANNED_ACTIVITY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface TotalImpactFilter {
@@ -1420,9 +1436,12 @@ export interface TotalImpactFilter {
   StartValue: number;
   EndValue?: number | null;
 }
-function fromTotalImpactFilter(input?: TotalImpactFilter | null): JSONValue {
+function fromTotalImpactFilter(input?: TotalImpactFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    NumericOperator: input["NumericOperator"],
+    StartValue: input["StartValue"],
+    EndValue: input["EndValue"],
   }
 }
 
@@ -1434,21 +1453,22 @@ export type NumericOperator =
 | "GREATER_THAN"
 | "LESS_THAN"
 | "BETWEEN"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 20 - tags: input, named, interface, output
 export interface DateInterval {
   Start: string;
   End: string;
 }
-function fromDateInterval(input?: DateInterval | null): JSONValue {
+function fromDateInterval(input?: DateInterval | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Start: input["Start"],
+    End: input["End"],
   }
 }
-function toDateInterval(root: JSONValue): DateInterval {
-  return prt.readObj({
+function toDateInterval(root: jsonP.JSONValue): DateInterval {
+  return jsonP.readObj({
     required: {
       "Start": "s",
       "End": "s",
@@ -1462,24 +1482,25 @@ export type Granularity =
 | "DAILY"
 | "MONTHLY"
 | "HOURLY"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: input, named, interface, output
 export interface GroupDefinition {
   Type?: GroupDefinitionType | null;
   Key?: string | null;
 }
-function fromGroupDefinition(input?: GroupDefinition | null): JSONValue {
+function fromGroupDefinition(input?: GroupDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Type: input["Type"],
+    Key: input["Key"],
   }
 }
-function toGroupDefinition(root: JSONValue): GroupDefinition {
-  return prt.readObj({
+function toGroupDefinition(root: jsonP.JSONValue): GroupDefinition {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Type": toGroupDefinitionType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<GroupDefinitionType>(x),
       "Key": "s",
     },
   }, root);
@@ -1490,15 +1511,7 @@ export type GroupDefinitionType =
 | "DIMENSION"
 | "TAG"
 | "COST_CATEGORY"
-;
-
-function toGroupDefinitionType(root: JSONValue): GroupDefinitionType | null {
-  return ( false
-    || root == "DIMENSION"
-    || root == "TAG"
-    || root == "COST_CATEGORY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
 export type Metric =
@@ -1509,57 +1522,33 @@ export type Metric =
 | "NET_AMORTIZED_COST"
 | "USAGE_QUANTITY"
 | "NORMALIZED_USAGE_AMOUNT"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type Context =
 | "COST_AND_USAGE"
 | "RESERVATIONS"
 | "SAVINGS_PLANS"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type AccountScope =
 | "PAYER"
 | "LINKED"
-;
-
-function toAccountScope(root: JSONValue): AccountScope | null {
-  return ( false
-    || root == "PAYER"
-    || root == "LINKED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type LookbackPeriodInDays =
 | "SEVEN_DAYS"
 | "THIRTY_DAYS"
 | "SIXTY_DAYS"
-;
-
-function toLookbackPeriodInDays(root: JSONValue): LookbackPeriodInDays | null {
-  return ( false
-    || root == "SEVEN_DAYS"
-    || root == "THIRTY_DAYS"
-    || root == "SIXTY_DAYS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type TermInYears =
 | "ONE_YEAR"
 | "THREE_YEARS"
-;
-
-function toTermInYears(root: JSONValue): TermInYears | null {
-  return ( false
-    || root == "ONE_YEAR"
-    || root == "THREE_YEARS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type PaymentOption =
@@ -1569,31 +1558,20 @@ export type PaymentOption =
 | "LIGHT_UTILIZATION"
 | "MEDIUM_UTILIZATION"
 | "HEAVY_UTILIZATION"
-;
-
-function toPaymentOption(root: JSONValue): PaymentOption | null {
-  return ( false
-    || root == "NO_UPFRONT"
-    || root == "PARTIAL_UPFRONT"
-    || root == "ALL_UPFRONT"
-    || root == "LIGHT_UTILIZATION"
-    || root == "MEDIUM_UTILIZATION"
-    || root == "HEAVY_UTILIZATION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface ServiceSpecification {
   EC2Specification?: EC2Specification | null;
 }
-function fromServiceSpecification(input?: ServiceSpecification | null): JSONValue {
+function fromServiceSpecification(input?: ServiceSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     EC2Specification: fromEC2Specification(input["EC2Specification"]),
   }
 }
-function toServiceSpecification(root: JSONValue): ServiceSpecification {
-  return prt.readObj({
+function toServiceSpecification(root: jsonP.JSONValue): ServiceSpecification {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EC2Specification": toEC2Specification,
@@ -1605,16 +1583,17 @@ function toServiceSpecification(root: JSONValue): ServiceSpecification {
 export interface EC2Specification {
   OfferingClass?: OfferingClass | null;
 }
-function fromEC2Specification(input?: EC2Specification | null): JSONValue {
+function fromEC2Specification(input?: EC2Specification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    OfferingClass: input["OfferingClass"],
   }
 }
-function toEC2Specification(root: JSONValue): EC2Specification {
-  return prt.readObj({
+function toEC2Specification(root: jsonP.JSONValue): EC2Specification {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "OfferingClass": toOfferingClass,
+      "OfferingClass": (x: jsonP.JSONValue) => cmnP.readEnum<OfferingClass>(x),
     },
   }, root);
 }
@@ -1623,29 +1602,24 @@ function toEC2Specification(root: JSONValue): EC2Specification {
 export type OfferingClass =
 | "STANDARD"
 | "CONVERTIBLE"
-;
-
-function toOfferingClass(root: JSONValue): OfferingClass | null {
-  return ( false
-    || root == "STANDARD"
-    || root == "CONVERTIBLE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface RightsizingRecommendationConfiguration {
   RecommendationTarget: RecommendationTarget;
   BenefitsConsidered: boolean;
 }
-function fromRightsizingRecommendationConfiguration(input?: RightsizingRecommendationConfiguration | null): JSONValue {
+function fromRightsizingRecommendationConfiguration(input?: RightsizingRecommendationConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RecommendationTarget: input["RecommendationTarget"],
+    BenefitsConsidered: input["BenefitsConsidered"],
   }
 }
-function toRightsizingRecommendationConfiguration(root: JSONValue): RightsizingRecommendationConfiguration {
-  return prt.readObj({
+function toRightsizingRecommendationConfiguration(root: jsonP.JSONValue): RightsizingRecommendationConfiguration {
+  return jsonP.readObj({
     required: {
-      "RecommendationTarget": toRecommendationTarget,
+      "RecommendationTarget": (x: jsonP.JSONValue) => cmnP.readEnum<RecommendationTarget>(x),
       "BenefitsConsidered": "b",
     },
     optional: {},
@@ -1656,27 +1630,13 @@ function toRightsizingRecommendationConfiguration(root: JSONValue): RightsizingR
 export type RecommendationTarget =
 | "SAME_INSTANCE_FAMILY"
 | "CROSS_INSTANCE_FAMILY"
-;
-
-function toRecommendationTarget(root: JSONValue): RecommendationTarget | null {
-  return ( false
-    || root == "SAME_INSTANCE_FAMILY"
-    || root == "CROSS_INSTANCE_FAMILY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type SupportedSavingsPlansType =
 | "COMPUTE_SP"
 | "EC2_INSTANCE_SP"
-;
-
-function toSupportedSavingsPlansType(root: JSONValue): SupportedSavingsPlansType | null {
-  return ( false
-    || root == "COMPUTE_SP"
-    || root == "EC2_INSTANCE_SP"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface CostCategory {
@@ -1688,13 +1648,13 @@ export interface CostCategory {
   Rules: CostCategoryRule[];
   ProcessingStatus?: CostCategoryProcessingStatus[] | null;
 }
-function toCostCategory(root: JSONValue): CostCategory {
-  return prt.readObj({
+function toCostCategory(root: jsonP.JSONValue): CostCategory {
+  return jsonP.readObj({
     required: {
       "CostCategoryArn": "s",
       "EffectiveStart": "s",
       "Name": "s",
-      "RuleVersion": toCostCategoryRuleVersion,
+      "RuleVersion": (x: jsonP.JSONValue) => cmnP.readEnum<CostCategoryRuleVersion>(x),
       "Rules": [toCostCategoryRule],
     },
     optional: {
@@ -1709,12 +1669,12 @@ export interface CostCategoryProcessingStatus {
   Component?: CostCategoryStatusComponent | null;
   Status?: CostCategoryStatus | null;
 }
-function toCostCategoryProcessingStatus(root: JSONValue): CostCategoryProcessingStatus {
-  return prt.readObj({
+function toCostCategoryProcessingStatus(root: jsonP.JSONValue): CostCategoryProcessingStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Component": toCostCategoryStatusComponent,
-      "Status": toCostCategoryStatus,
+      "Component": (x: jsonP.JSONValue) => cmnP.readEnum<CostCategoryStatusComponent>(x),
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<CostCategoryStatus>(x),
     },
   }, root);
 }
@@ -1722,24 +1682,13 @@ function toCostCategoryProcessingStatus(root: JSONValue): CostCategoryProcessing
 // refs: 2 - tags: output, named, enum
 export type CostCategoryStatusComponent =
 | "COST_EXPLORER"
-;
-function toCostCategoryStatusComponent(root: JSONValue): CostCategoryStatusComponent | null {
-  return ( false
-    || root == "COST_EXPLORER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type CostCategoryStatus =
 | "PROCESSING"
 | "APPLIED"
-;
-function toCostCategoryStatus(root: JSONValue): CostCategoryStatus | null {
-  return ( false
-    || root == "PROCESSING"
-    || root == "APPLIED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Anomaly {
@@ -1753,8 +1702,8 @@ export interface Anomaly {
   MonitorArn: string;
   Feedback?: AnomalyFeedbackType | null;
 }
-function toAnomaly(root: JSONValue): Anomaly {
-  return prt.readObj({
+function toAnomaly(root: jsonP.JSONValue): Anomaly {
+  return jsonP.readObj({
     required: {
       "AnomalyId": "s",
       "AnomalyScore": toAnomalyScore,
@@ -1766,7 +1715,7 @@ function toAnomaly(root: JSONValue): Anomaly {
       "AnomalyEndDate": "s",
       "DimensionValue": "s",
       "RootCauses": [toRootCause],
-      "Feedback": toAnomalyFeedbackType,
+      "Feedback": (x: jsonP.JSONValue) => cmnP.readEnum<AnomalyFeedbackType>(x),
     },
   }, root);
 }
@@ -1778,8 +1727,8 @@ export interface RootCause {
   LinkedAccount?: string | null;
   UsageType?: string | null;
 }
-function toRootCause(root: JSONValue): RootCause {
-  return prt.readObj({
+function toRootCause(root: jsonP.JSONValue): RootCause {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Service": "s",
@@ -1795,8 +1744,8 @@ export interface AnomalyScore {
   MaxScore: number;
   CurrentScore: number;
 }
-function toAnomalyScore(root: JSONValue): AnomalyScore {
-  return prt.readObj({
+function toAnomalyScore(root: jsonP.JSONValue): AnomalyScore {
+  return jsonP.readObj({
     required: {
       "MaxScore": "n",
       "CurrentScore": "n",
@@ -1810,8 +1759,8 @@ export interface Impact {
   MaxImpact: number;
   TotalImpact?: number | null;
 }
-function toImpact(root: JSONValue): Impact {
-  return prt.readObj({
+function toImpact(root: jsonP.JSONValue): Impact {
+  return jsonP.readObj({
     required: {
       "MaxImpact": "n",
     },
@@ -1824,16 +1773,16 @@ function toImpact(root: JSONValue): Impact {
 // refs: 2 - tags: output, named, interface
 export interface ResultByTime {
   TimePeriod?: DateInterval | null;
-  Total?: { [key: string]: MetricValue } | null;
+  Total?: { [key: string]: MetricValue | null | undefined } | null;
   Groups?: Group[] | null;
   Estimated?: boolean | null;
 }
-function toResultByTime(root: JSONValue): ResultByTime {
-  return prt.readObj({
+function toResultByTime(root: jsonP.JSONValue): ResultByTime {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TimePeriod": toDateInterval,
-      "Total": x => prt.readMap(String, toMetricValue, x),
+      "Total": x => jsonP.readMap(String, toMetricValue, x),
       "Groups": [toGroup],
       "Estimated": "b",
     },
@@ -1845,8 +1794,8 @@ export interface MetricValue {
   Amount?: string | null;
   Unit?: string | null;
 }
-function toMetricValue(root: JSONValue): MetricValue {
-  return prt.readObj({
+function toMetricValue(root: jsonP.JSONValue): MetricValue {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Amount": "s",
@@ -1858,14 +1807,14 @@ function toMetricValue(root: JSONValue): MetricValue {
 // refs: 2 - tags: output, named, interface
 export interface Group {
   Keys?: string[] | null;
-  Metrics?: { [key: string]: MetricValue } | null;
+  Metrics?: { [key: string]: MetricValue | null | undefined } | null;
 }
-function toGroup(root: JSONValue): Group {
-  return prt.readObj({
+function toGroup(root: jsonP.JSONValue): Group {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Keys": ["s"],
-      "Metrics": x => prt.readMap(String, toMetricValue, x),
+      "Metrics": x => jsonP.readMap(String, toMetricValue, x),
     },
   }, root);
 }
@@ -1877,8 +1826,8 @@ export interface ForecastResult {
   PredictionIntervalLowerBound?: string | null;
   PredictionIntervalUpperBound?: string | null;
 }
-function toForecastResult(root: JSONValue): ForecastResult {
-  return prt.readObj({
+function toForecastResult(root: jsonP.JSONValue): ForecastResult {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TimePeriod": toDateInterval,
@@ -1892,14 +1841,14 @@ function toForecastResult(root: JSONValue): ForecastResult {
 // refs: 1 - tags: output, named, interface
 export interface DimensionValuesWithAttributes {
   Value?: string | null;
-  Attributes?: { [key: string]: string } | null;
+  Attributes?: { [key: string]: string | null | undefined } | null;
 }
-function toDimensionValuesWithAttributes(root: JSONValue): DimensionValuesWithAttributes {
-  return prt.readObj({
+function toDimensionValuesWithAttributes(root: jsonP.JSONValue): DimensionValuesWithAttributes {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Value": "s",
-      "Attributes": x => prt.readMap(String, String, x),
+      "Attributes": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -1910,8 +1859,8 @@ export interface CoverageByTime {
   Groups?: ReservationCoverageGroup[] | null;
   Total?: Coverage | null;
 }
-function toCoverageByTime(root: JSONValue): CoverageByTime {
-  return prt.readObj({
+function toCoverageByTime(root: jsonP.JSONValue): CoverageByTime {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TimePeriod": toDateInterval,
@@ -1923,14 +1872,14 @@ function toCoverageByTime(root: JSONValue): CoverageByTime {
 
 // refs: 1 - tags: output, named, interface
 export interface ReservationCoverageGroup {
-  Attributes?: { [key: string]: string } | null;
+  Attributes?: { [key: string]: string | null | undefined } | null;
   Coverage?: Coverage | null;
 }
-function toReservationCoverageGroup(root: JSONValue): ReservationCoverageGroup {
-  return prt.readObj({
+function toReservationCoverageGroup(root: jsonP.JSONValue): ReservationCoverageGroup {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Attributes": x => prt.readMap(String, String, x),
+      "Attributes": x => jsonP.readMap(String, String, x),
       "Coverage": toCoverage,
     },
   }, root);
@@ -1942,8 +1891,8 @@ export interface Coverage {
   CoverageNormalizedUnits?: CoverageNormalizedUnits | null;
   CoverageCost?: CoverageCost | null;
 }
-function toCoverage(root: JSONValue): Coverage {
-  return prt.readObj({
+function toCoverage(root: jsonP.JSONValue): Coverage {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CoverageHours": toCoverageHours,
@@ -1960,8 +1909,8 @@ export interface CoverageHours {
   TotalRunningHours?: string | null;
   CoverageHoursPercentage?: string | null;
 }
-function toCoverageHours(root: JSONValue): CoverageHours {
-  return prt.readObj({
+function toCoverageHours(root: jsonP.JSONValue): CoverageHours {
+  return jsonP.readObj({
     required: {},
     optional: {
       "OnDemandHours": "s",
@@ -1979,8 +1928,8 @@ export interface CoverageNormalizedUnits {
   TotalRunningNormalizedUnits?: string | null;
   CoverageNormalizedUnitsPercentage?: string | null;
 }
-function toCoverageNormalizedUnits(root: JSONValue): CoverageNormalizedUnits {
-  return prt.readObj({
+function toCoverageNormalizedUnits(root: jsonP.JSONValue): CoverageNormalizedUnits {
+  return jsonP.readObj({
     required: {},
     optional: {
       "OnDemandNormalizedUnits": "s",
@@ -1995,8 +1944,8 @@ function toCoverageNormalizedUnits(root: JSONValue): CoverageNormalizedUnits {
 export interface CoverageCost {
   OnDemandCost?: string | null;
 }
-function toCoverageCost(root: JSONValue): CoverageCost {
-  return prt.readObj({
+function toCoverageCost(root: jsonP.JSONValue): CoverageCost {
+  return jsonP.readObj({
     required: {},
     optional: {
       "OnDemandCost": "s",
@@ -2009,8 +1958,8 @@ export interface ReservationPurchaseRecommendationMetadata {
   RecommendationId?: string | null;
   GenerationTimestamp?: string | null;
 }
-function toReservationPurchaseRecommendationMetadata(root: JSONValue): ReservationPurchaseRecommendationMetadata {
-  return prt.readObj({
+function toReservationPurchaseRecommendationMetadata(root: jsonP.JSONValue): ReservationPurchaseRecommendationMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RecommendationId": "s",
@@ -2029,14 +1978,14 @@ export interface ReservationPurchaseRecommendation {
   RecommendationDetails?: ReservationPurchaseRecommendationDetail[] | null;
   RecommendationSummary?: ReservationPurchaseRecommendationSummary | null;
 }
-function toReservationPurchaseRecommendation(root: JSONValue): ReservationPurchaseRecommendation {
-  return prt.readObj({
+function toReservationPurchaseRecommendation(root: jsonP.JSONValue): ReservationPurchaseRecommendation {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "AccountScope": toAccountScope,
-      "LookbackPeriodInDays": toLookbackPeriodInDays,
-      "TermInYears": toTermInYears,
-      "PaymentOption": toPaymentOption,
+      "AccountScope": (x: jsonP.JSONValue) => cmnP.readEnum<AccountScope>(x),
+      "LookbackPeriodInDays": (x: jsonP.JSONValue) => cmnP.readEnum<LookbackPeriodInDays>(x),
+      "TermInYears": (x: jsonP.JSONValue) => cmnP.readEnum<TermInYears>(x),
+      "PaymentOption": (x: jsonP.JSONValue) => cmnP.readEnum<PaymentOption>(x),
       "ServiceSpecification": toServiceSpecification,
       "RecommendationDetails": [toReservationPurchaseRecommendationDetail],
       "RecommendationSummary": toReservationPurchaseRecommendationSummary,
@@ -2066,8 +2015,8 @@ export interface ReservationPurchaseRecommendationDetail {
   UpfrontCost?: string | null;
   RecurringStandardMonthlyCost?: string | null;
 }
-function toReservationPurchaseRecommendationDetail(root: JSONValue): ReservationPurchaseRecommendationDetail {
-  return prt.readObj({
+function toReservationPurchaseRecommendationDetail(root: jsonP.JSONValue): ReservationPurchaseRecommendationDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AccountId": "s",
@@ -2101,8 +2050,8 @@ export interface InstanceDetails {
   ElastiCacheInstanceDetails?: ElastiCacheInstanceDetails | null;
   ESInstanceDetails?: ESInstanceDetails | null;
 }
-function toInstanceDetails(root: JSONValue): InstanceDetails {
-  return prt.readObj({
+function toInstanceDetails(root: jsonP.JSONValue): InstanceDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EC2InstanceDetails": toEC2InstanceDetails,
@@ -2125,8 +2074,8 @@ export interface EC2InstanceDetails {
   CurrentGeneration?: boolean | null;
   SizeFlexEligible?: boolean | null;
 }
-function toEC2InstanceDetails(root: JSONValue): EC2InstanceDetails {
-  return prt.readObj({
+function toEC2InstanceDetails(root: jsonP.JSONValue): EC2InstanceDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Family": "s",
@@ -2153,8 +2102,8 @@ export interface RDSInstanceDetails {
   CurrentGeneration?: boolean | null;
   SizeFlexEligible?: boolean | null;
 }
-function toRDSInstanceDetails(root: JSONValue): RDSInstanceDetails {
-  return prt.readObj({
+function toRDSInstanceDetails(root: jsonP.JSONValue): RDSInstanceDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Family": "s",
@@ -2178,8 +2127,8 @@ export interface RedshiftInstanceDetails {
   CurrentGeneration?: boolean | null;
   SizeFlexEligible?: boolean | null;
 }
-function toRedshiftInstanceDetails(root: JSONValue): RedshiftInstanceDetails {
-  return prt.readObj({
+function toRedshiftInstanceDetails(root: jsonP.JSONValue): RedshiftInstanceDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Family": "s",
@@ -2200,8 +2149,8 @@ export interface ElastiCacheInstanceDetails {
   CurrentGeneration?: boolean | null;
   SizeFlexEligible?: boolean | null;
 }
-function toElastiCacheInstanceDetails(root: JSONValue): ElastiCacheInstanceDetails {
-  return prt.readObj({
+function toElastiCacheInstanceDetails(root: jsonP.JSONValue): ElastiCacheInstanceDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Family": "s",
@@ -2222,8 +2171,8 @@ export interface ESInstanceDetails {
   CurrentGeneration?: boolean | null;
   SizeFlexEligible?: boolean | null;
 }
-function toESInstanceDetails(root: JSONValue): ESInstanceDetails {
-  return prt.readObj({
+function toESInstanceDetails(root: jsonP.JSONValue): ESInstanceDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "InstanceClass": "s",
@@ -2241,8 +2190,8 @@ export interface ReservationPurchaseRecommendationSummary {
   TotalEstimatedMonthlySavingsPercentage?: string | null;
   CurrencyCode?: string | null;
 }
-function toReservationPurchaseRecommendationSummary(root: JSONValue): ReservationPurchaseRecommendationSummary {
-  return prt.readObj({
+function toReservationPurchaseRecommendationSummary(root: jsonP.JSONValue): ReservationPurchaseRecommendationSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TotalEstimatedMonthlySavingsAmount": "s",
@@ -2258,8 +2207,8 @@ export interface UtilizationByTime {
   Groups?: ReservationUtilizationGroup[] | null;
   Total?: ReservationAggregates | null;
 }
-function toUtilizationByTime(root: JSONValue): UtilizationByTime {
-  return prt.readObj({
+function toUtilizationByTime(root: jsonP.JSONValue): UtilizationByTime {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TimePeriod": toDateInterval,
@@ -2273,16 +2222,16 @@ function toUtilizationByTime(root: JSONValue): UtilizationByTime {
 export interface ReservationUtilizationGroup {
   Key?: string | null;
   Value?: string | null;
-  Attributes?: { [key: string]: string } | null;
+  Attributes?: { [key: string]: string | null | undefined } | null;
   Utilization?: ReservationAggregates | null;
 }
-function toReservationUtilizationGroup(root: JSONValue): ReservationUtilizationGroup {
-  return prt.readObj({
+function toReservationUtilizationGroup(root: jsonP.JSONValue): ReservationUtilizationGroup {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Key": "s",
       "Value": "s",
-      "Attributes": x => prt.readMap(String, String, x),
+      "Attributes": x => jsonP.readMap(String, String, x),
       "Utilization": toReservationAggregates,
     },
   }, root);
@@ -2305,8 +2254,8 @@ export interface ReservationAggregates {
   AmortizedRecurringFee?: string | null;
   TotalAmortizedFee?: string | null;
 }
-function toReservationAggregates(root: JSONValue): ReservationAggregates {
-  return prt.readObj({
+function toReservationAggregates(root: jsonP.JSONValue): ReservationAggregates {
+  return jsonP.readObj({
     required: {},
     optional: {
       "UtilizationPercentage": "s",
@@ -2333,13 +2282,13 @@ export interface RightsizingRecommendationMetadata {
   GenerationTimestamp?: string | null;
   LookbackPeriodInDays?: LookbackPeriodInDays | null;
 }
-function toRightsizingRecommendationMetadata(root: JSONValue): RightsizingRecommendationMetadata {
-  return prt.readObj({
+function toRightsizingRecommendationMetadata(root: jsonP.JSONValue): RightsizingRecommendationMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RecommendationId": "s",
       "GenerationTimestamp": "s",
-      "LookbackPeriodInDays": toLookbackPeriodInDays,
+      "LookbackPeriodInDays": (x: jsonP.JSONValue) => cmnP.readEnum<LookbackPeriodInDays>(x),
     },
   }, root);
 }
@@ -2351,8 +2300,8 @@ export interface RightsizingRecommendationSummary {
   SavingsCurrencyCode?: string | null;
   SavingsPercentage?: string | null;
 }
-function toRightsizingRecommendationSummary(root: JSONValue): RightsizingRecommendationSummary {
-  return prt.readObj({
+function toRightsizingRecommendationSummary(root: jsonP.JSONValue): RightsizingRecommendationSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TotalRecommendationCount": "s",
@@ -2371,13 +2320,13 @@ export interface RightsizingRecommendation {
   ModifyRecommendationDetail?: ModifyRecommendationDetail | null;
   TerminateRecommendationDetail?: TerminateRecommendationDetail | null;
 }
-function toRightsizingRecommendation(root: JSONValue): RightsizingRecommendation {
-  return prt.readObj({
+function toRightsizingRecommendation(root: jsonP.JSONValue): RightsizingRecommendation {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AccountId": "s",
       "CurrentInstance": toCurrentInstance,
-      "RightsizingType": toRightsizingType,
+      "RightsizingType": (x: jsonP.JSONValue) => cmnP.readEnum<RightsizingType>(x),
       "ModifyRecommendationDetail": toModifyRecommendationDetail,
       "TerminateRecommendationDetail": toTerminateRecommendationDetail,
     },
@@ -2398,8 +2347,8 @@ export interface CurrentInstance {
   MonthlyCost?: string | null;
   CurrencyCode?: string | null;
 }
-function toCurrentInstance(root: JSONValue): CurrentInstance {
-  return prt.readObj({
+function toCurrentInstance(root: jsonP.JSONValue): CurrentInstance {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ResourceId": "s",
@@ -2421,8 +2370,8 @@ function toCurrentInstance(root: JSONValue): CurrentInstance {
 export interface ResourceDetails {
   EC2ResourceDetails?: EC2ResourceDetails | null;
 }
-function toResourceDetails(root: JSONValue): ResourceDetails {
-  return prt.readObj({
+function toResourceDetails(root: jsonP.JSONValue): ResourceDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EC2ResourceDetails": toEC2ResourceDetails,
@@ -2442,8 +2391,8 @@ export interface EC2ResourceDetails {
   Storage?: string | null;
   Vcpu?: string | null;
 }
-function toEC2ResourceDetails(root: JSONValue): EC2ResourceDetails {
-  return prt.readObj({
+function toEC2ResourceDetails(root: jsonP.JSONValue): EC2ResourceDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "HourlyOnDemandRate": "s",
@@ -2463,8 +2412,8 @@ function toEC2ResourceDetails(root: JSONValue): EC2ResourceDetails {
 export interface ResourceUtilization {
   EC2ResourceUtilization?: EC2ResourceUtilization | null;
 }
-function toResourceUtilization(root: JSONValue): ResourceUtilization {
-  return prt.readObj({
+function toResourceUtilization(root: jsonP.JSONValue): ResourceUtilization {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EC2ResourceUtilization": toEC2ResourceUtilization,
@@ -2479,8 +2428,8 @@ export interface EC2ResourceUtilization {
   MaxStorageUtilizationPercentage?: string | null;
   EBSResourceUtilization?: EBSResourceUtilization | null;
 }
-function toEC2ResourceUtilization(root: JSONValue): EC2ResourceUtilization {
-  return prt.readObj({
+function toEC2ResourceUtilization(root: jsonP.JSONValue): EC2ResourceUtilization {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MaxCpuUtilizationPercentage": "s",
@@ -2498,8 +2447,8 @@ export interface EBSResourceUtilization {
   EbsReadBytesPerSecond?: string | null;
   EbsWriteBytesPerSecond?: string | null;
 }
-function toEBSResourceUtilization(root: JSONValue): EBSResourceUtilization {
-  return prt.readObj({
+function toEBSResourceUtilization(root: jsonP.JSONValue): EBSResourceUtilization {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EbsReadOpsPerSecond": "s",
@@ -2514,20 +2463,14 @@ function toEBSResourceUtilization(root: JSONValue): EBSResourceUtilization {
 export type RightsizingType =
 | "TERMINATE"
 | "MODIFY"
-;
-function toRightsizingType(root: JSONValue): RightsizingType | null {
-  return ( false
-    || root == "TERMINATE"
-    || root == "MODIFY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ModifyRecommendationDetail {
   TargetInstances?: TargetInstance[] | null;
 }
-function toModifyRecommendationDetail(root: JSONValue): ModifyRecommendationDetail {
-  return prt.readObj({
+function toModifyRecommendationDetail(root: jsonP.JSONValue): ModifyRecommendationDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TargetInstances": [toTargetInstance],
@@ -2544,8 +2487,8 @@ export interface TargetInstance {
   ResourceDetails?: ResourceDetails | null;
   ExpectedResourceUtilization?: ResourceUtilization | null;
 }
-function toTargetInstance(root: JSONValue): TargetInstance {
-  return prt.readObj({
+function toTargetInstance(root: jsonP.JSONValue): TargetInstance {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EstimatedMonthlyCost": "s",
@@ -2563,8 +2506,8 @@ export interface TerminateRecommendationDetail {
   EstimatedMonthlySavings?: string | null;
   CurrencyCode?: string | null;
 }
-function toTerminateRecommendationDetail(root: JSONValue): TerminateRecommendationDetail {
-  return prt.readObj({
+function toTerminateRecommendationDetail(root: jsonP.JSONValue): TerminateRecommendationDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EstimatedMonthlySavings": "s",
@@ -2575,15 +2518,15 @@ function toTerminateRecommendationDetail(root: JSONValue): TerminateRecommendati
 
 // refs: 1 - tags: output, named, interface
 export interface SavingsPlansCoverage {
-  Attributes?: { [key: string]: string } | null;
+  Attributes?: { [key: string]: string | null | undefined } | null;
   Coverage?: SavingsPlansCoverageData | null;
   TimePeriod?: DateInterval | null;
 }
-function toSavingsPlansCoverage(root: JSONValue): SavingsPlansCoverage {
-  return prt.readObj({
+function toSavingsPlansCoverage(root: jsonP.JSONValue): SavingsPlansCoverage {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Attributes": x => prt.readMap(String, String, x),
+      "Attributes": x => jsonP.readMap(String, String, x),
       "Coverage": toSavingsPlansCoverageData,
       "TimePeriod": toDateInterval,
     },
@@ -2597,8 +2540,8 @@ export interface SavingsPlansCoverageData {
   TotalCost?: string | null;
   CoveragePercentage?: string | null;
 }
-function toSavingsPlansCoverageData(root: JSONValue): SavingsPlansCoverageData {
-  return prt.readObj({
+function toSavingsPlansCoverageData(root: jsonP.JSONValue): SavingsPlansCoverageData {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SpendCoveredBySavingsPlans": "s",
@@ -2614,8 +2557,8 @@ export interface SavingsPlansPurchaseRecommendationMetadata {
   RecommendationId?: string | null;
   GenerationTimestamp?: string | null;
 }
-function toSavingsPlansPurchaseRecommendationMetadata(root: JSONValue): SavingsPlansPurchaseRecommendationMetadata {
-  return prt.readObj({
+function toSavingsPlansPurchaseRecommendationMetadata(root: jsonP.JSONValue): SavingsPlansPurchaseRecommendationMetadata {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RecommendationId": "s",
@@ -2634,15 +2577,15 @@ export interface SavingsPlansPurchaseRecommendation {
   SavingsPlansPurchaseRecommendationDetails?: SavingsPlansPurchaseRecommendationDetail[] | null;
   SavingsPlansPurchaseRecommendationSummary?: SavingsPlansPurchaseRecommendationSummary | null;
 }
-function toSavingsPlansPurchaseRecommendation(root: JSONValue): SavingsPlansPurchaseRecommendation {
-  return prt.readObj({
+function toSavingsPlansPurchaseRecommendation(root: jsonP.JSONValue): SavingsPlansPurchaseRecommendation {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "AccountScope": toAccountScope,
-      "SavingsPlansType": toSupportedSavingsPlansType,
-      "TermInYears": toTermInYears,
-      "PaymentOption": toPaymentOption,
-      "LookbackPeriodInDays": toLookbackPeriodInDays,
+      "AccountScope": (x: jsonP.JSONValue) => cmnP.readEnum<AccountScope>(x),
+      "SavingsPlansType": (x: jsonP.JSONValue) => cmnP.readEnum<SupportedSavingsPlansType>(x),
+      "TermInYears": (x: jsonP.JSONValue) => cmnP.readEnum<TermInYears>(x),
+      "PaymentOption": (x: jsonP.JSONValue) => cmnP.readEnum<PaymentOption>(x),
+      "LookbackPeriodInDays": (x: jsonP.JSONValue) => cmnP.readEnum<LookbackPeriodInDays>(x),
       "SavingsPlansPurchaseRecommendationDetails": [toSavingsPlansPurchaseRecommendationDetail],
       "SavingsPlansPurchaseRecommendationSummary": toSavingsPlansPurchaseRecommendationSummary,
     },
@@ -2668,8 +2611,8 @@ export interface SavingsPlansPurchaseRecommendationDetail {
   CurrentMaximumHourlyOnDemandSpend?: string | null;
   CurrentAverageHourlyOnDemandSpend?: string | null;
 }
-function toSavingsPlansPurchaseRecommendationDetail(root: JSONValue): SavingsPlansPurchaseRecommendationDetail {
-  return prt.readObj({
+function toSavingsPlansPurchaseRecommendationDetail(root: jsonP.JSONValue): SavingsPlansPurchaseRecommendationDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SavingsPlansDetails": toSavingsPlansDetails,
@@ -2698,8 +2641,8 @@ export interface SavingsPlansDetails {
   InstanceFamily?: string | null;
   OfferingId?: string | null;
 }
-function toSavingsPlansDetails(root: JSONValue): SavingsPlansDetails {
-  return prt.readObj({
+function toSavingsPlansDetails(root: jsonP.JSONValue): SavingsPlansDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Region": "s",
@@ -2723,8 +2666,8 @@ export interface SavingsPlansPurchaseRecommendationSummary {
   EstimatedMonthlySavingsAmount?: string | null;
   EstimatedOnDemandCostWithCurrentCommitment?: string | null;
 }
-function toSavingsPlansPurchaseRecommendationSummary(root: JSONValue): SavingsPlansPurchaseRecommendationSummary {
-  return prt.readObj({
+function toSavingsPlansPurchaseRecommendationSummary(root: jsonP.JSONValue): SavingsPlansPurchaseRecommendationSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EstimatedROI": "s",
@@ -2749,8 +2692,8 @@ export interface SavingsPlansUtilizationByTime {
   Savings?: SavingsPlansSavings | null;
   AmortizedCommitment?: SavingsPlansAmortizedCommitment | null;
 }
-function toSavingsPlansUtilizationByTime(root: JSONValue): SavingsPlansUtilizationByTime {
-  return prt.readObj({
+function toSavingsPlansUtilizationByTime(root: jsonP.JSONValue): SavingsPlansUtilizationByTime {
+  return jsonP.readObj({
     required: {
       "TimePeriod": toDateInterval,
       "Utilization": toSavingsPlansUtilization,
@@ -2769,8 +2712,8 @@ export interface SavingsPlansUtilization {
   UnusedCommitment?: string | null;
   UtilizationPercentage?: string | null;
 }
-function toSavingsPlansUtilization(root: JSONValue): SavingsPlansUtilization {
-  return prt.readObj({
+function toSavingsPlansUtilization(root: jsonP.JSONValue): SavingsPlansUtilization {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TotalCommitment": "s",
@@ -2786,8 +2729,8 @@ export interface SavingsPlansSavings {
   NetSavings?: string | null;
   OnDemandCostEquivalent?: string | null;
 }
-function toSavingsPlansSavings(root: JSONValue): SavingsPlansSavings {
-  return prt.readObj({
+function toSavingsPlansSavings(root: jsonP.JSONValue): SavingsPlansSavings {
+  return jsonP.readObj({
     required: {},
     optional: {
       "NetSavings": "s",
@@ -2802,8 +2745,8 @@ export interface SavingsPlansAmortizedCommitment {
   AmortizedUpfrontCommitment?: string | null;
   TotalAmortizedCommitment?: string | null;
 }
-function toSavingsPlansAmortizedCommitment(root: JSONValue): SavingsPlansAmortizedCommitment {
-  return prt.readObj({
+function toSavingsPlansAmortizedCommitment(root: jsonP.JSONValue): SavingsPlansAmortizedCommitment {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AmortizedRecurringCommitment": "s",
@@ -2819,8 +2762,8 @@ export interface SavingsPlansUtilizationAggregates {
   Savings?: SavingsPlansSavings | null;
   AmortizedCommitment?: SavingsPlansAmortizedCommitment | null;
 }
-function toSavingsPlansUtilizationAggregates(root: JSONValue): SavingsPlansUtilizationAggregates {
-  return prt.readObj({
+function toSavingsPlansUtilizationAggregates(root: jsonP.JSONValue): SavingsPlansUtilizationAggregates {
+  return jsonP.readObj({
     required: {
       "Utilization": toSavingsPlansUtilization,
     },
@@ -2834,17 +2777,17 @@ function toSavingsPlansUtilizationAggregates(root: JSONValue): SavingsPlansUtili
 // refs: 1 - tags: output, named, interface
 export interface SavingsPlansUtilizationDetail {
   SavingsPlanArn?: string | null;
-  Attributes?: { [key: string]: string } | null;
+  Attributes?: { [key: string]: string | null | undefined } | null;
   Utilization?: SavingsPlansUtilization | null;
   Savings?: SavingsPlansSavings | null;
   AmortizedCommitment?: SavingsPlansAmortizedCommitment | null;
 }
-function toSavingsPlansUtilizationDetail(root: JSONValue): SavingsPlansUtilizationDetail {
-  return prt.readObj({
+function toSavingsPlansUtilizationDetail(root: jsonP.JSONValue): SavingsPlansUtilizationDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SavingsPlanArn": "s",
-      "Attributes": x => prt.readMap(String, String, x),
+      "Attributes": x => jsonP.readMap(String, String, x),
       "Utilization": toSavingsPlansUtilization,
       "Savings": toSavingsPlansSavings,
       "AmortizedCommitment": toSavingsPlansAmortizedCommitment,
@@ -2862,8 +2805,8 @@ export interface CostCategoryReference {
   ProcessingStatus?: CostCategoryProcessingStatus[] | null;
   Values?: string[] | null;
 }
-function toCostCategoryReference(root: JSONValue): CostCategoryReference {
-  return prt.readObj({
+function toCostCategoryReference(root: jsonP.JSONValue): CostCategoryReference {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CostCategoryArn": "s",

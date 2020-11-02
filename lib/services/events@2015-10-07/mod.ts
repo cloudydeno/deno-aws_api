@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class CloudWatchEvents {
   #client: ServiceClient;
@@ -29,8 +29,9 @@ export default class CloudWatchEvents {
   async activateEventSource(
     {abortSignal, ...params}: RequestConfig & ActivateEventSourceRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ActivateEventSource",
@@ -40,14 +41,16 @@ export default class CloudWatchEvents {
   async createEventBus(
     {abortSignal, ...params}: RequestConfig & CreateEventBusRequest,
   ): Promise<CreateEventBusResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      EventSourceName: params["EventSourceName"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEventBus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EventBusArn": "s",
@@ -58,13 +61,15 @@ export default class CloudWatchEvents {
   async createPartnerEventSource(
     {abortSignal, ...params}: RequestConfig & CreatePartnerEventSourceRequest,
   ): Promise<CreatePartnerEventSourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Account: params["Account"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePartnerEventSource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EventSourceArn": "s",
@@ -75,8 +80,9 @@ export default class CloudWatchEvents {
   async deactivateEventSource(
     {abortSignal, ...params}: RequestConfig & DeactivateEventSourceRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeactivateEventSource",
@@ -86,8 +92,9 @@ export default class CloudWatchEvents {
   async deleteEventBus(
     {abortSignal, ...params}: RequestConfig & DeleteEventBusRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEventBus",
@@ -97,8 +104,10 @@ export default class CloudWatchEvents {
   async deletePartnerEventSource(
     {abortSignal, ...params}: RequestConfig & DeletePartnerEventSourceRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      Account: params["Account"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePartnerEventSource",
@@ -108,8 +117,11 @@ export default class CloudWatchEvents {
   async deleteRule(
     {abortSignal, ...params}: RequestConfig & DeleteRuleRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      EventBusName: params["EventBusName"],
+      Force: params["Force"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRule",
@@ -119,13 +131,14 @@ export default class CloudWatchEvents {
   async describeEventBus(
     {abortSignal, ...params}: RequestConfig & DescribeEventBusRequest = {},
   ): Promise<DescribeEventBusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventBus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Name": "s",
@@ -138,13 +151,14 @@ export default class CloudWatchEvents {
   async describeEventSource(
     {abortSignal, ...params}: RequestConfig & DescribeEventSourceRequest,
   ): Promise<DescribeEventSourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventSource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Arn": "s",
@@ -152,7 +166,7 @@ export default class CloudWatchEvents {
         "CreationTime": "d",
         "ExpirationTime": "d",
         "Name": "s",
-        "State": toEventSourceState,
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<EventSourceState>(x),
       },
     }, await resp.json());
   }
@@ -160,13 +174,14 @@ export default class CloudWatchEvents {
   async describePartnerEventSource(
     {abortSignal, ...params}: RequestConfig & DescribePartnerEventSourceRequest,
   ): Promise<DescribePartnerEventSourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePartnerEventSource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Arn": "s",
@@ -178,20 +193,22 @@ export default class CloudWatchEvents {
   async describeRule(
     {abortSignal, ...params}: RequestConfig & DescribeRuleRequest,
   ): Promise<DescribeRuleResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      EventBusName: params["EventBusName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Name": "s",
         "Arn": "s",
         "EventPattern": "s",
         "ScheduleExpression": "s",
-        "State": toRuleState,
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<RuleState>(x),
         "Description": "s",
         "RoleArn": "s",
         "ManagedBy": "s",
@@ -203,8 +220,10 @@ export default class CloudWatchEvents {
   async disableRule(
     {abortSignal, ...params}: RequestConfig & DisableRuleRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      EventBusName: params["EventBusName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableRule",
@@ -214,8 +233,10 @@ export default class CloudWatchEvents {
   async enableRule(
     {abortSignal, ...params}: RequestConfig & EnableRuleRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      EventBusName: params["EventBusName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableRule",
@@ -225,13 +246,16 @@ export default class CloudWatchEvents {
   async listEventBuses(
     {abortSignal, ...params}: RequestConfig & ListEventBusesRequest = {},
   ): Promise<ListEventBusesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NamePrefix: params["NamePrefix"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEventBuses",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EventBuses": [toEventBus],
@@ -243,13 +267,16 @@ export default class CloudWatchEvents {
   async listEventSources(
     {abortSignal, ...params}: RequestConfig & ListEventSourcesRequest = {},
   ): Promise<ListEventSourcesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NamePrefix: params["NamePrefix"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEventSources",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "EventSources": [toEventSource],
@@ -261,13 +288,16 @@ export default class CloudWatchEvents {
   async listPartnerEventSourceAccounts(
     {abortSignal, ...params}: RequestConfig & ListPartnerEventSourceAccountsRequest,
   ): Promise<ListPartnerEventSourceAccountsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      EventSourceName: params["EventSourceName"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPartnerEventSourceAccounts",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PartnerEventSourceAccounts": [toPartnerEventSourceAccount],
@@ -279,13 +309,16 @@ export default class CloudWatchEvents {
   async listPartnerEventSources(
     {abortSignal, ...params}: RequestConfig & ListPartnerEventSourcesRequest,
   ): Promise<ListPartnerEventSourcesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NamePrefix: params["NamePrefix"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPartnerEventSources",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PartnerEventSources": [toPartnerEventSource],
@@ -297,13 +330,17 @@ export default class CloudWatchEvents {
   async listRuleNamesByTarget(
     {abortSignal, ...params}: RequestConfig & ListRuleNamesByTargetRequest,
   ): Promise<ListRuleNamesByTargetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TargetArn: params["TargetArn"],
+      EventBusName: params["EventBusName"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRuleNamesByTarget",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RuleNames": ["s"],
@@ -315,13 +352,17 @@ export default class CloudWatchEvents {
   async listRules(
     {abortSignal, ...params}: RequestConfig & ListRulesRequest = {},
   ): Promise<ListRulesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NamePrefix: params["NamePrefix"],
+      EventBusName: params["EventBusName"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRules",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Rules": [toRule],
@@ -333,13 +374,14 @@ export default class CloudWatchEvents {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Tags": [toTag],
@@ -350,13 +392,17 @@ export default class CloudWatchEvents {
   async listTargetsByRule(
     {abortSignal, ...params}: RequestConfig & ListTargetsByRuleRequest,
   ): Promise<ListTargetsByRuleResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Rule: params["Rule"],
+      EventBusName: params["EventBusName"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTargetsByRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Targets": [toTarget],
@@ -368,14 +414,14 @@ export default class CloudWatchEvents {
   async putEvents(
     {abortSignal, ...params}: RequestConfig & PutEventsRequest,
   ): Promise<PutEventsResponse> {
-    const body: JSONObject = {...params,
-    Entries: params["Entries"]?.map(x => fromPutEventsRequestEntry(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Entries: params["Entries"]?.map(x => fromPutEventsRequestEntry(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutEvents",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FailedEntryCount": "n",
@@ -387,14 +433,14 @@ export default class CloudWatchEvents {
   async putPartnerEvents(
     {abortSignal, ...params}: RequestConfig & PutPartnerEventsRequest,
   ): Promise<PutPartnerEventsResponse> {
-    const body: JSONObject = {...params,
-    Entries: params["Entries"]?.map(x => fromPutPartnerEventsRequestEntry(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Entries: params["Entries"]?.map(x => fromPutPartnerEventsRequestEntry(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutPartnerEvents",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FailedEntryCount": "n",
@@ -406,9 +452,13 @@ export default class CloudWatchEvents {
   async putPermission(
     {abortSignal, ...params}: RequestConfig & PutPermissionRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    Condition: fromCondition(params["Condition"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      EventBusName: params["EventBusName"],
+      Action: params["Action"],
+      Principal: params["Principal"],
+      StatementId: params["StatementId"],
+      Condition: fromCondition(params["Condition"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutPermission",
@@ -418,14 +468,21 @@ export default class CloudWatchEvents {
   async putRule(
     {abortSignal, ...params}: RequestConfig & PutRuleRequest,
   ): Promise<PutRuleResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      ScheduleExpression: params["ScheduleExpression"],
+      EventPattern: params["EventPattern"],
+      State: params["State"],
+      Description: params["Description"],
+      RoleArn: params["RoleArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      EventBusName: params["EventBusName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RuleArn": "s",
@@ -436,14 +493,16 @@ export default class CloudWatchEvents {
   async putTargets(
     {abortSignal, ...params}: RequestConfig & PutTargetsRequest,
   ): Promise<PutTargetsResponse> {
-    const body: JSONObject = {...params,
-    Targets: params["Targets"]?.map(x => fromTarget(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Rule: params["Rule"],
+      EventBusName: params["EventBusName"],
+      Targets: params["Targets"]?.map(x => fromTarget(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutTargets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FailedEntryCount": "n",
@@ -455,8 +514,10 @@ export default class CloudWatchEvents {
   async removePermission(
     {abortSignal, ...params}: RequestConfig & RemovePermissionRequest,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StatementId: params["StatementId"],
+      EventBusName: params["EventBusName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemovePermission",
@@ -466,13 +527,17 @@ export default class CloudWatchEvents {
   async removeTargets(
     {abortSignal, ...params}: RequestConfig & RemoveTargetsRequest,
   ): Promise<RemoveTargetsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Rule: params["Rule"],
+      EventBusName: params["EventBusName"],
+      Ids: params["Ids"],
+      Force: params["Force"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTargets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "FailedEntryCount": "n",
@@ -484,14 +549,15 @@ export default class CloudWatchEvents {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -500,13 +566,15 @@ export default class CloudWatchEvents {
   async testEventPattern(
     {abortSignal, ...params}: RequestConfig & TestEventPatternRequest,
   ): Promise<TestEventPatternResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      EventPattern: params["EventPattern"],
+      Event: params["Event"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TestEventPattern",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Result": "b",
@@ -517,13 +585,15 @@ export default class CloudWatchEvents {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -872,13 +942,15 @@ export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -896,10 +968,15 @@ export interface PutEventsRequestEntry {
   Detail?: string | null;
   EventBusName?: string | null;
 }
-function fromPutEventsRequestEntry(input?: PutEventsRequestEntry | null): JSONValue {
+function fromPutEventsRequestEntry(input?: PutEventsRequestEntry | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Time: prt.serializeDate_unixTimestamp(input["Time"]),
+  return {
+    Time: jsonP.serializeDate_unixTimestamp(input["Time"]),
+    Source: input["Source"],
+    Resources: input["Resources"],
+    DetailType: input["DetailType"],
+    Detail: input["Detail"],
+    EventBusName: input["EventBusName"],
   }
 }
 
@@ -911,10 +988,14 @@ export interface PutPartnerEventsRequestEntry {
   DetailType?: string | null;
   Detail?: string | null;
 }
-function fromPutPartnerEventsRequestEntry(input?: PutPartnerEventsRequestEntry | null): JSONValue {
+function fromPutPartnerEventsRequestEntry(input?: PutPartnerEventsRequestEntry | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Time: prt.serializeDate_unixTimestamp(input["Time"]),
+  return {
+    Time: jsonP.serializeDate_unixTimestamp(input["Time"]),
+    Source: input["Source"],
+    Resources: input["Resources"],
+    DetailType: input["DetailType"],
+    Detail: input["Detail"],
   }
 }
 
@@ -924,9 +1005,12 @@ export interface Condition {
   Key: string;
   Value: string;
 }
-function fromCondition(input?: Condition | null): JSONValue {
+function fromCondition(input?: Condition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Type: input["Type"],
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
 
@@ -934,14 +1018,7 @@ function fromCondition(input?: Condition | null): JSONValue {
 export type RuleState =
 | "ENABLED"
 | "DISABLED"
-;
-
-function toRuleState(root: JSONValue): RuleState | null {
-  return ( false
-    || root == "ENABLED"
-    || root == "DISABLED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface Target {
@@ -961,9 +1038,14 @@ export interface Target {
   DeadLetterConfig?: DeadLetterConfig | null;
   RetryPolicy?: RetryPolicy | null;
 }
-function fromTarget(input?: Target | null): JSONValue {
+function fromTarget(input?: Target | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Id: input["Id"],
+    Arn: input["Arn"],
+    RoleArn: input["RoleArn"],
+    Input: input["Input"],
+    InputPath: input["InputPath"],
     InputTransformer: fromInputTransformer(input["InputTransformer"]),
     KinesisParameters: fromKinesisParameters(input["KinesisParameters"]),
     RunCommandParameters: fromRunCommandParameters(input["RunCommandParameters"]),
@@ -976,8 +1058,8 @@ function fromTarget(input?: Target | null): JSONValue {
     RetryPolicy: fromRetryPolicy(input["RetryPolicy"]),
   }
 }
-function toTarget(root: JSONValue): Target {
-  return prt.readObj({
+function toTarget(root: jsonP.JSONValue): Target {
+  return jsonP.readObj({
     required: {
       "Id": "s",
       "Arn": "s",
@@ -1002,21 +1084,23 @@ function toTarget(root: JSONValue): Target {
 
 // refs: 2 - tags: input, named, interface, output
 export interface InputTransformer {
-  InputPathsMap?: { [key: string]: string } | null;
+  InputPathsMap?: { [key: string]: string | null | undefined } | null;
   InputTemplate: string;
 }
-function fromInputTransformer(input?: InputTransformer | null): JSONValue {
+function fromInputTransformer(input?: InputTransformer | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    InputPathsMap: input["InputPathsMap"],
+    InputTemplate: input["InputTemplate"],
   }
 }
-function toInputTransformer(root: JSONValue): InputTransformer {
-  return prt.readObj({
+function toInputTransformer(root: jsonP.JSONValue): InputTransformer {
+  return jsonP.readObj({
     required: {
       "InputTemplate": "s",
     },
     optional: {
-      "InputPathsMap": x => prt.readMap(String, String, x),
+      "InputPathsMap": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -1025,13 +1109,14 @@ function toInputTransformer(root: JSONValue): InputTransformer {
 export interface KinesisParameters {
   PartitionKeyPath: string;
 }
-function fromKinesisParameters(input?: KinesisParameters | null): JSONValue {
+function fromKinesisParameters(input?: KinesisParameters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    PartitionKeyPath: input["PartitionKeyPath"],
   }
 }
-function toKinesisParameters(root: JSONValue): KinesisParameters {
-  return prt.readObj({
+function toKinesisParameters(root: jsonP.JSONValue): KinesisParameters {
+  return jsonP.readObj({
     required: {
       "PartitionKeyPath": "s",
     },
@@ -1043,14 +1128,14 @@ function toKinesisParameters(root: JSONValue): KinesisParameters {
 export interface RunCommandParameters {
   RunCommandTargets: RunCommandTarget[];
 }
-function fromRunCommandParameters(input?: RunCommandParameters | null): JSONValue {
+function fromRunCommandParameters(input?: RunCommandParameters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     RunCommandTargets: input["RunCommandTargets"]?.map(x => fromRunCommandTarget(x)),
   }
 }
-function toRunCommandParameters(root: JSONValue): RunCommandParameters {
-  return prt.readObj({
+function toRunCommandParameters(root: jsonP.JSONValue): RunCommandParameters {
+  return jsonP.readObj({
     required: {
       "RunCommandTargets": [toRunCommandTarget],
     },
@@ -1063,13 +1148,15 @@ export interface RunCommandTarget {
   Key: string;
   Values: string[];
 }
-function fromRunCommandTarget(input?: RunCommandTarget | null): JSONValue {
+function fromRunCommandTarget(input?: RunCommandTarget | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
   }
 }
-function toRunCommandTarget(root: JSONValue): RunCommandTarget {
-  return prt.readObj({
+function toRunCommandTarget(root: jsonP.JSONValue): RunCommandTarget {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Values": ["s"],
@@ -1087,20 +1174,25 @@ export interface EcsParameters {
   PlatformVersion?: string | null;
   Group?: string | null;
 }
-function fromEcsParameters(input?: EcsParameters | null): JSONValue {
+function fromEcsParameters(input?: EcsParameters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    TaskDefinitionArn: input["TaskDefinitionArn"],
+    TaskCount: input["TaskCount"],
+    LaunchType: input["LaunchType"],
     NetworkConfiguration: fromNetworkConfiguration(input["NetworkConfiguration"]),
+    PlatformVersion: input["PlatformVersion"],
+    Group: input["Group"],
   }
 }
-function toEcsParameters(root: JSONValue): EcsParameters {
-  return prt.readObj({
+function toEcsParameters(root: jsonP.JSONValue): EcsParameters {
+  return jsonP.readObj({
     required: {
       "TaskDefinitionArn": "s",
     },
     optional: {
       "TaskCount": "n",
-      "LaunchType": toLaunchType,
+      "LaunchType": (x: jsonP.JSONValue) => cmnP.readEnum<LaunchType>(x),
       "NetworkConfiguration": toNetworkConfiguration,
       "PlatformVersion": "s",
       "Group": "s",
@@ -1112,27 +1204,20 @@ function toEcsParameters(root: JSONValue): EcsParameters {
 export type LaunchType =
 | "EC2"
 | "FARGATE"
-;
-
-function toLaunchType(root: JSONValue): LaunchType | null {
-  return ( false
-    || root == "EC2"
-    || root == "FARGATE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface NetworkConfiguration {
   awsvpcConfiguration?: AwsVpcConfiguration | null;
 }
-function fromNetworkConfiguration(input?: NetworkConfiguration | null): JSONValue {
+function fromNetworkConfiguration(input?: NetworkConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     awsvpcConfiguration: fromAwsVpcConfiguration(input["awsvpcConfiguration"]),
   }
 }
-function toNetworkConfiguration(root: JSONValue): NetworkConfiguration {
-  return prt.readObj({
+function toNetworkConfiguration(root: jsonP.JSONValue): NetworkConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "awsvpcConfiguration": toAwsVpcConfiguration,
@@ -1146,19 +1231,22 @@ export interface AwsVpcConfiguration {
   SecurityGroups?: string[] | null;
   AssignPublicIp?: AssignPublicIp | null;
 }
-function fromAwsVpcConfiguration(input?: AwsVpcConfiguration | null): JSONValue {
+function fromAwsVpcConfiguration(input?: AwsVpcConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Subnets: input["Subnets"],
+    SecurityGroups: input["SecurityGroups"],
+    AssignPublicIp: input["AssignPublicIp"],
   }
 }
-function toAwsVpcConfiguration(root: JSONValue): AwsVpcConfiguration {
-  return prt.readObj({
+function toAwsVpcConfiguration(root: jsonP.JSONValue): AwsVpcConfiguration {
+  return jsonP.readObj({
     required: {
       "Subnets": ["s"],
     },
     optional: {
       "SecurityGroups": ["s"],
-      "AssignPublicIp": toAssignPublicIp,
+      "AssignPublicIp": (x: jsonP.JSONValue) => cmnP.readEnum<AssignPublicIp>(x),
     },
   }, root);
 }
@@ -1167,14 +1255,7 @@ function toAwsVpcConfiguration(root: JSONValue): AwsVpcConfiguration {
 export type AssignPublicIp =
 | "ENABLED"
 | "DISABLED"
-;
-
-function toAssignPublicIp(root: JSONValue): AssignPublicIp | null {
-  return ( false
-    || root == "ENABLED"
-    || root == "DISABLED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface BatchParameters {
@@ -1183,15 +1264,17 @@ export interface BatchParameters {
   ArrayProperties?: BatchArrayProperties | null;
   RetryStrategy?: BatchRetryStrategy | null;
 }
-function fromBatchParameters(input?: BatchParameters | null): JSONValue {
+function fromBatchParameters(input?: BatchParameters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    JobDefinition: input["JobDefinition"],
+    JobName: input["JobName"],
     ArrayProperties: fromBatchArrayProperties(input["ArrayProperties"]),
     RetryStrategy: fromBatchRetryStrategy(input["RetryStrategy"]),
   }
 }
-function toBatchParameters(root: JSONValue): BatchParameters {
-  return prt.readObj({
+function toBatchParameters(root: jsonP.JSONValue): BatchParameters {
+  return jsonP.readObj({
     required: {
       "JobDefinition": "s",
       "JobName": "s",
@@ -1207,13 +1290,14 @@ function toBatchParameters(root: JSONValue): BatchParameters {
 export interface BatchArrayProperties {
   Size?: number | null;
 }
-function fromBatchArrayProperties(input?: BatchArrayProperties | null): JSONValue {
+function fromBatchArrayProperties(input?: BatchArrayProperties | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Size: input["Size"],
   }
 }
-function toBatchArrayProperties(root: JSONValue): BatchArrayProperties {
-  return prt.readObj({
+function toBatchArrayProperties(root: jsonP.JSONValue): BatchArrayProperties {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Size": "n",
@@ -1225,13 +1309,14 @@ function toBatchArrayProperties(root: JSONValue): BatchArrayProperties {
 export interface BatchRetryStrategy {
   Attempts?: number | null;
 }
-function fromBatchRetryStrategy(input?: BatchRetryStrategy | null): JSONValue {
+function fromBatchRetryStrategy(input?: BatchRetryStrategy | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Attempts: input["Attempts"],
   }
 }
-function toBatchRetryStrategy(root: JSONValue): BatchRetryStrategy {
-  return prt.readObj({
+function toBatchRetryStrategy(root: jsonP.JSONValue): BatchRetryStrategy {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Attempts": "n",
@@ -1243,13 +1328,14 @@ function toBatchRetryStrategy(root: JSONValue): BatchRetryStrategy {
 export interface SqsParameters {
   MessageGroupId?: string | null;
 }
-function fromSqsParameters(input?: SqsParameters | null): JSONValue {
+function fromSqsParameters(input?: SqsParameters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MessageGroupId: input["MessageGroupId"],
   }
 }
-function toSqsParameters(root: JSONValue): SqsParameters {
-  return prt.readObj({
+function toSqsParameters(root: jsonP.JSONValue): SqsParameters {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MessageGroupId": "s",
@@ -1260,21 +1346,24 @@ function toSqsParameters(root: JSONValue): SqsParameters {
 // refs: 2 - tags: input, named, interface, output
 export interface HttpParameters {
   PathParameterValues?: string[] | null;
-  HeaderParameters?: { [key: string]: string } | null;
-  QueryStringParameters?: { [key: string]: string } | null;
+  HeaderParameters?: { [key: string]: string | null | undefined } | null;
+  QueryStringParameters?: { [key: string]: string | null | undefined } | null;
 }
-function fromHttpParameters(input?: HttpParameters | null): JSONValue {
+function fromHttpParameters(input?: HttpParameters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    PathParameterValues: input["PathParameterValues"],
+    HeaderParameters: input["HeaderParameters"],
+    QueryStringParameters: input["QueryStringParameters"],
   }
 }
-function toHttpParameters(root: JSONValue): HttpParameters {
-  return prt.readObj({
+function toHttpParameters(root: jsonP.JSONValue): HttpParameters {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PathParameterValues": ["s"],
-      "HeaderParameters": x => prt.readMap(String, String, x),
-      "QueryStringParameters": x => prt.readMap(String, String, x),
+      "HeaderParameters": x => jsonP.readMap(String, String, x),
+      "QueryStringParameters": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -1288,13 +1377,19 @@ export interface RedshiftDataParameters {
   StatementName?: string | null;
   WithEvent?: boolean | null;
 }
-function fromRedshiftDataParameters(input?: RedshiftDataParameters | null): JSONValue {
+function fromRedshiftDataParameters(input?: RedshiftDataParameters | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SecretManagerArn: input["SecretManagerArn"],
+    Database: input["Database"],
+    DbUser: input["DbUser"],
+    Sql: input["Sql"],
+    StatementName: input["StatementName"],
+    WithEvent: input["WithEvent"],
   }
 }
-function toRedshiftDataParameters(root: JSONValue): RedshiftDataParameters {
-  return prt.readObj({
+function toRedshiftDataParameters(root: jsonP.JSONValue): RedshiftDataParameters {
+  return jsonP.readObj({
     required: {
       "Database": "s",
       "Sql": "s",
@@ -1312,13 +1407,14 @@ function toRedshiftDataParameters(root: JSONValue): RedshiftDataParameters {
 export interface DeadLetterConfig {
   Arn?: string | null;
 }
-function fromDeadLetterConfig(input?: DeadLetterConfig | null): JSONValue {
+function fromDeadLetterConfig(input?: DeadLetterConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Arn: input["Arn"],
   }
 }
-function toDeadLetterConfig(root: JSONValue): DeadLetterConfig {
-  return prt.readObj({
+function toDeadLetterConfig(root: jsonP.JSONValue): DeadLetterConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Arn": "s",
@@ -1331,13 +1427,15 @@ export interface RetryPolicy {
   MaximumRetryAttempts?: number | null;
   MaximumEventAgeInSeconds?: number | null;
 }
-function fromRetryPolicy(input?: RetryPolicy | null): JSONValue {
+function fromRetryPolicy(input?: RetryPolicy | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MaximumRetryAttempts: input["MaximumRetryAttempts"],
+    MaximumEventAgeInSeconds: input["MaximumEventAgeInSeconds"],
   }
 }
-function toRetryPolicy(root: JSONValue): RetryPolicy {
-  return prt.readObj({
+function toRetryPolicy(root: jsonP.JSONValue): RetryPolicy {
+  return jsonP.readObj({
     required: {},
     optional: {
       "MaximumRetryAttempts": "n",
@@ -1351,14 +1449,7 @@ export type EventSourceState =
 | "PENDING"
 | "ACTIVE"
 | "DELETED"
-;
-function toEventSourceState(root: JSONValue): EventSourceState | null {
-  return ( false
-    || root == "PENDING"
-    || root == "ACTIVE"
-    || root == "DELETED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface EventBus {
@@ -1366,8 +1457,8 @@ export interface EventBus {
   Arn?: string | null;
   Policy?: string | null;
 }
-function toEventBus(root: JSONValue): EventBus {
-  return prt.readObj({
+function toEventBus(root: jsonP.JSONValue): EventBus {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -1386,8 +1477,8 @@ export interface EventSource {
   Name?: string | null;
   State?: EventSourceState | null;
 }
-function toEventSource(root: JSONValue): EventSource {
-  return prt.readObj({
+function toEventSource(root: jsonP.JSONValue): EventSource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Arn": "s",
@@ -1395,7 +1486,7 @@ function toEventSource(root: JSONValue): EventSource {
       "CreationTime": "d",
       "ExpirationTime": "d",
       "Name": "s",
-      "State": toEventSourceState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<EventSourceState>(x),
     },
   }, root);
 }
@@ -1407,14 +1498,14 @@ export interface PartnerEventSourceAccount {
   ExpirationTime?: Date | number | null;
   State?: EventSourceState | null;
 }
-function toPartnerEventSourceAccount(root: JSONValue): PartnerEventSourceAccount {
-  return prt.readObj({
+function toPartnerEventSourceAccount(root: jsonP.JSONValue): PartnerEventSourceAccount {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Account": "s",
       "CreationTime": "d",
       "ExpirationTime": "d",
-      "State": toEventSourceState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<EventSourceState>(x),
     },
   }, root);
 }
@@ -1424,8 +1515,8 @@ export interface PartnerEventSource {
   Arn?: string | null;
   Name?: string | null;
 }
-function toPartnerEventSource(root: JSONValue): PartnerEventSource {
-  return prt.readObj({
+function toPartnerEventSource(root: jsonP.JSONValue): PartnerEventSource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Arn": "s",
@@ -1446,14 +1537,14 @@ export interface Rule {
   ManagedBy?: string | null;
   EventBusName?: string | null;
 }
-function toRule(root: JSONValue): Rule {
-  return prt.readObj({
+function toRule(root: jsonP.JSONValue): Rule {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
       "Arn": "s",
       "EventPattern": "s",
-      "State": toRuleState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<RuleState>(x),
       "Description": "s",
       "ScheduleExpression": "s",
       "RoleArn": "s",
@@ -1469,8 +1560,8 @@ export interface PutEventsResultEntry {
   ErrorCode?: string | null;
   ErrorMessage?: string | null;
 }
-function toPutEventsResultEntry(root: JSONValue): PutEventsResultEntry {
-  return prt.readObj({
+function toPutEventsResultEntry(root: jsonP.JSONValue): PutEventsResultEntry {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EventId": "s",
@@ -1486,8 +1577,8 @@ export interface PutPartnerEventsResultEntry {
   ErrorCode?: string | null;
   ErrorMessage?: string | null;
 }
-function toPutPartnerEventsResultEntry(root: JSONValue): PutPartnerEventsResultEntry {
-  return prt.readObj({
+function toPutPartnerEventsResultEntry(root: jsonP.JSONValue): PutPartnerEventsResultEntry {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EventId": "s",
@@ -1503,8 +1594,8 @@ export interface PutTargetsResultEntry {
   ErrorCode?: string | null;
   ErrorMessage?: string | null;
 }
-function toPutTargetsResultEntry(root: JSONValue): PutTargetsResultEntry {
-  return prt.readObj({
+function toPutTargetsResultEntry(root: jsonP.JSONValue): PutTargetsResultEntry {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TargetId": "s",
@@ -1520,8 +1611,8 @@ export interface RemoveTargetsResultEntry {
   ErrorCode?: string | null;
   ErrorMessage?: string | null;
 }
-function toRemoveTargetsResultEntry(root: JSONValue): RemoveTargetsResultEntry {
-  return prt.readObj({
+function toRemoveTargetsResultEntry(root: jsonP.JSONValue): RemoveTargetsResultEntry {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TargetId": "s",

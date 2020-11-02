@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class Support {
   #client: ServiceClient;
@@ -29,14 +29,15 @@ export default class Support {
   async addAttachmentsToSet(
     {abortSignal, ...params}: RequestConfig & AddAttachmentsToSetRequest,
   ): Promise<AddAttachmentsToSetResponse> {
-    const body: JSONObject = {...params,
-    attachments: params["attachments"]?.map(x => fromAttachment(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      attachmentSetId: params["attachmentSetId"],
+      attachments: params["attachments"]?.map(x => fromAttachment(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddAttachmentsToSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "attachmentSetId": "s",
@@ -48,13 +49,17 @@ export default class Support {
   async addCommunicationToCase(
     {abortSignal, ...params}: RequestConfig & AddCommunicationToCaseRequest,
   ): Promise<AddCommunicationToCaseResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      caseId: params["caseId"],
+      communicationBody: params["communicationBody"],
+      ccEmailAddresses: params["ccEmailAddresses"],
+      attachmentSetId: params["attachmentSetId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddCommunicationToCase",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "result": "b",
@@ -65,13 +70,22 @@ export default class Support {
   async createCase(
     {abortSignal, ...params}: RequestConfig & CreateCaseRequest,
   ): Promise<CreateCaseResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      subject: params["subject"],
+      serviceCode: params["serviceCode"],
+      severityCode: params["severityCode"],
+      categoryCode: params["categoryCode"],
+      communicationBody: params["communicationBody"],
+      ccEmailAddresses: params["ccEmailAddresses"],
+      language: params["language"],
+      issueType: params["issueType"],
+      attachmentSetId: params["attachmentSetId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCase",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "caseId": "s",
@@ -82,13 +96,14 @@ export default class Support {
   async describeAttachment(
     {abortSignal, ...params}: RequestConfig & DescribeAttachmentRequest,
   ): Promise<DescribeAttachmentResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      attachmentId: params["attachmentId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAttachment",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "attachment": toAttachment,
@@ -99,13 +114,22 @@ export default class Support {
   async describeCases(
     {abortSignal, ...params}: RequestConfig & DescribeCasesRequest = {},
   ): Promise<DescribeCasesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      caseIdList: params["caseIdList"],
+      displayId: params["displayId"],
+      afterTime: params["afterTime"],
+      beforeTime: params["beforeTime"],
+      includeResolvedCases: params["includeResolvedCases"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+      language: params["language"],
+      includeCommunications: params["includeCommunications"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCases",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "cases": [toCaseDetails],
@@ -117,13 +141,18 @@ export default class Support {
   async describeCommunications(
     {abortSignal, ...params}: RequestConfig & DescribeCommunicationsRequest,
   ): Promise<DescribeCommunicationsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      caseId: params["caseId"],
+      beforeTime: params["beforeTime"],
+      afterTime: params["afterTime"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCommunications",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "communications": [toCommunication],
@@ -135,13 +164,15 @@ export default class Support {
   async describeServices(
     {abortSignal, ...params}: RequestConfig & DescribeServicesRequest = {},
   ): Promise<DescribeServicesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      serviceCodeList: params["serviceCodeList"],
+      language: params["language"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeServices",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "services": [toService],
@@ -152,13 +183,14 @@ export default class Support {
   async describeSeverityLevels(
     {abortSignal, ...params}: RequestConfig & DescribeSeverityLevelsRequest = {},
   ): Promise<DescribeSeverityLevelsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      language: params["language"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSeverityLevels",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "severityLevels": [toSeverityLevel],
@@ -169,13 +201,14 @@ export default class Support {
   async describeTrustedAdvisorCheckRefreshStatuses(
     {abortSignal, ...params}: RequestConfig & DescribeTrustedAdvisorCheckRefreshStatusesRequest,
   ): Promise<DescribeTrustedAdvisorCheckRefreshStatusesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      checkIds: params["checkIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrustedAdvisorCheckRefreshStatuses",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "statuses": [toTrustedAdvisorCheckRefreshStatus],
       },
@@ -186,13 +219,15 @@ export default class Support {
   async describeTrustedAdvisorCheckResult(
     {abortSignal, ...params}: RequestConfig & DescribeTrustedAdvisorCheckResultRequest,
   ): Promise<DescribeTrustedAdvisorCheckResultResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      checkId: params["checkId"],
+      language: params["language"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrustedAdvisorCheckResult",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "result": toTrustedAdvisorCheckResult,
@@ -203,13 +238,14 @@ export default class Support {
   async describeTrustedAdvisorCheckSummaries(
     {abortSignal, ...params}: RequestConfig & DescribeTrustedAdvisorCheckSummariesRequest,
   ): Promise<DescribeTrustedAdvisorCheckSummariesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      checkIds: params["checkIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrustedAdvisorCheckSummaries",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "summaries": [toTrustedAdvisorCheckSummary],
       },
@@ -220,13 +256,14 @@ export default class Support {
   async describeTrustedAdvisorChecks(
     {abortSignal, ...params}: RequestConfig & DescribeTrustedAdvisorChecksRequest,
   ): Promise<DescribeTrustedAdvisorChecksResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      language: params["language"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrustedAdvisorChecks",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "checks": [toTrustedAdvisorCheckDescription],
       },
@@ -237,13 +274,14 @@ export default class Support {
   async refreshTrustedAdvisorCheck(
     {abortSignal, ...params}: RequestConfig & RefreshTrustedAdvisorCheckRequest,
   ): Promise<RefreshTrustedAdvisorCheckResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      checkId: params["checkId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RefreshTrustedAdvisorCheck",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "status": toTrustedAdvisorCheckRefreshStatus,
       },
@@ -254,13 +292,14 @@ export default class Support {
   async resolveCase(
     {abortSignal, ...params}: RequestConfig & ResolveCaseRequest = {},
   ): Promise<ResolveCaseResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      caseId: params["caseId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResolveCase",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "initialCaseStatus": "s",
@@ -446,14 +485,15 @@ export interface Attachment {
   fileName?: string | null;
   data?: Uint8Array | string | null;
 }
-function fromAttachment(input?: Attachment | null): JSONValue {
+function fromAttachment(input?: Attachment | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    data: prt.serializeBlob(input["data"]),
+  return {
+    fileName: input["fileName"],
+    data: jsonP.serializeBlob(input["data"]),
   }
 }
-function toAttachment(root: JSONValue): Attachment {
-  return prt.readObj({
+function toAttachment(root: jsonP.JSONValue): Attachment {
+  return jsonP.readObj({
     required: {},
     optional: {
       "fileName": "s",
@@ -477,8 +517,8 @@ export interface CaseDetails {
   ccEmailAddresses?: string[] | null;
   language?: string | null;
 }
-function toCaseDetails(root: JSONValue): CaseDetails {
-  return prt.readObj({
+function toCaseDetails(root: jsonP.JSONValue): CaseDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "caseId": "s",
@@ -502,8 +542,8 @@ export interface RecentCaseCommunications {
   communications?: Communication[] | null;
   nextToken?: string | null;
 }
-function toRecentCaseCommunications(root: JSONValue): RecentCaseCommunications {
-  return prt.readObj({
+function toRecentCaseCommunications(root: jsonP.JSONValue): RecentCaseCommunications {
+  return jsonP.readObj({
     required: {},
     optional: {
       "communications": [toCommunication],
@@ -520,8 +560,8 @@ export interface Communication {
   timeCreated?: string | null;
   attachmentSet?: AttachmentDetails[] | null;
 }
-function toCommunication(root: JSONValue): Communication {
-  return prt.readObj({
+function toCommunication(root: jsonP.JSONValue): Communication {
+  return jsonP.readObj({
     required: {},
     optional: {
       "caseId": "s",
@@ -538,8 +578,8 @@ export interface AttachmentDetails {
   attachmentId?: string | null;
   fileName?: string | null;
 }
-function toAttachmentDetails(root: JSONValue): AttachmentDetails {
-  return prt.readObj({
+function toAttachmentDetails(root: jsonP.JSONValue): AttachmentDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "attachmentId": "s",
@@ -554,8 +594,8 @@ export interface Service {
   name?: string | null;
   categories?: Category[] | null;
 }
-function toService(root: JSONValue): Service {
-  return prt.readObj({
+function toService(root: jsonP.JSONValue): Service {
+  return jsonP.readObj({
     required: {},
     optional: {
       "code": "s",
@@ -570,8 +610,8 @@ export interface Category {
   code?: string | null;
   name?: string | null;
 }
-function toCategory(root: JSONValue): Category {
-  return prt.readObj({
+function toCategory(root: jsonP.JSONValue): Category {
+  return jsonP.readObj({
     required: {},
     optional: {
       "code": "s",
@@ -585,8 +625,8 @@ export interface SeverityLevel {
   code?: string | null;
   name?: string | null;
 }
-function toSeverityLevel(root: JSONValue): SeverityLevel {
-  return prt.readObj({
+function toSeverityLevel(root: jsonP.JSONValue): SeverityLevel {
+  return jsonP.readObj({
     required: {},
     optional: {
       "code": "s",
@@ -601,8 +641,8 @@ export interface TrustedAdvisorCheckRefreshStatus {
   status: string;
   millisUntilNextRefreshable: number;
 }
-function toTrustedAdvisorCheckRefreshStatus(root: JSONValue): TrustedAdvisorCheckRefreshStatus {
-  return prt.readObj({
+function toTrustedAdvisorCheckRefreshStatus(root: jsonP.JSONValue): TrustedAdvisorCheckRefreshStatus {
+  return jsonP.readObj({
     required: {
       "checkId": "s",
       "status": "s",
@@ -621,8 +661,8 @@ export interface TrustedAdvisorCheckResult {
   categorySpecificSummary: TrustedAdvisorCategorySpecificSummary;
   flaggedResources: TrustedAdvisorResourceDetail[];
 }
-function toTrustedAdvisorCheckResult(root: JSONValue): TrustedAdvisorCheckResult {
-  return prt.readObj({
+function toTrustedAdvisorCheckResult(root: jsonP.JSONValue): TrustedAdvisorCheckResult {
+  return jsonP.readObj({
     required: {
       "checkId": "s",
       "timestamp": "s",
@@ -642,8 +682,8 @@ export interface TrustedAdvisorResourcesSummary {
   resourcesIgnored: number;
   resourcesSuppressed: number;
 }
-function toTrustedAdvisorResourcesSummary(root: JSONValue): TrustedAdvisorResourcesSummary {
-  return prt.readObj({
+function toTrustedAdvisorResourcesSummary(root: jsonP.JSONValue): TrustedAdvisorResourcesSummary {
+  return jsonP.readObj({
     required: {
       "resourcesProcessed": "n",
       "resourcesFlagged": "n",
@@ -658,8 +698,8 @@ function toTrustedAdvisorResourcesSummary(root: JSONValue): TrustedAdvisorResour
 export interface TrustedAdvisorCategorySpecificSummary {
   costOptimizing?: TrustedAdvisorCostOptimizingSummary | null;
 }
-function toTrustedAdvisorCategorySpecificSummary(root: JSONValue): TrustedAdvisorCategorySpecificSummary {
-  return prt.readObj({
+function toTrustedAdvisorCategorySpecificSummary(root: jsonP.JSONValue): TrustedAdvisorCategorySpecificSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "costOptimizing": toTrustedAdvisorCostOptimizingSummary,
@@ -672,8 +712,8 @@ export interface TrustedAdvisorCostOptimizingSummary {
   estimatedMonthlySavings: number;
   estimatedPercentMonthlySavings: number;
 }
-function toTrustedAdvisorCostOptimizingSummary(root: JSONValue): TrustedAdvisorCostOptimizingSummary {
-  return prt.readObj({
+function toTrustedAdvisorCostOptimizingSummary(root: jsonP.JSONValue): TrustedAdvisorCostOptimizingSummary {
+  return jsonP.readObj({
     required: {
       "estimatedMonthlySavings": "n",
       "estimatedPercentMonthlySavings": "n",
@@ -690,8 +730,8 @@ export interface TrustedAdvisorResourceDetail {
   isSuppressed?: boolean | null;
   metadata: string[];
 }
-function toTrustedAdvisorResourceDetail(root: JSONValue): TrustedAdvisorResourceDetail {
-  return prt.readObj({
+function toTrustedAdvisorResourceDetail(root: jsonP.JSONValue): TrustedAdvisorResourceDetail {
+  return jsonP.readObj({
     required: {
       "status": "s",
       "resourceId": "s",
@@ -713,8 +753,8 @@ export interface TrustedAdvisorCheckSummary {
   resourcesSummary: TrustedAdvisorResourcesSummary;
   categorySpecificSummary: TrustedAdvisorCategorySpecificSummary;
 }
-function toTrustedAdvisorCheckSummary(root: JSONValue): TrustedAdvisorCheckSummary {
-  return prt.readObj({
+function toTrustedAdvisorCheckSummary(root: jsonP.JSONValue): TrustedAdvisorCheckSummary {
+  return jsonP.readObj({
     required: {
       "checkId": "s",
       "timestamp": "s",
@@ -736,8 +776,8 @@ export interface TrustedAdvisorCheckDescription {
   category: string;
   metadata: string[];
 }
-function toTrustedAdvisorCheckDescription(root: JSONValue): TrustedAdvisorCheckDescription {
-  return prt.readObj({
+function toTrustedAdvisorCheckDescription(root: jsonP.JSONValue): TrustedAdvisorCheckDescription {
+  return jsonP.readObj({
     required: {
       "id": "s",
       "name": "s",

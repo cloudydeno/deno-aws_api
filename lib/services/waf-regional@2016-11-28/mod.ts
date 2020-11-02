@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class WAFRegional {
   #client: ServiceClient;
@@ -30,13 +30,15 @@ export default class WAFRegional {
   async associateWebACL(
     {abortSignal, ...params}: RequestConfig & AssociateWebACLRequest,
   ): Promise<AssociateWebACLResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WebACLId: params["WebACLId"],
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateWebACL",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -45,13 +47,15 @@ export default class WAFRegional {
   async createByteMatchSet(
     {abortSignal, ...params}: RequestConfig & CreateByteMatchSetRequest,
   ): Promise<CreateByteMatchSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateByteMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ByteMatchSet": toByteMatchSet,
@@ -63,13 +67,15 @@ export default class WAFRegional {
   async createGeoMatchSet(
     {abortSignal, ...params}: RequestConfig & CreateGeoMatchSetRequest,
   ): Promise<CreateGeoMatchSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGeoMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GeoMatchSet": toGeoMatchSet,
@@ -81,13 +87,15 @@ export default class WAFRegional {
   async createIPSet(
     {abortSignal, ...params}: RequestConfig & CreateIPSetRequest,
   ): Promise<CreateIPSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateIPSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "IPSet": toIPSet,
@@ -99,14 +107,19 @@ export default class WAFRegional {
   async createRateBasedRule(
     {abortSignal, ...params}: RequestConfig & CreateRateBasedRuleRequest,
   ): Promise<CreateRateBasedRuleResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      MetricName: params["MetricName"],
+      RateKey: params["RateKey"],
+      RateLimit: params["RateLimit"],
+      ChangeToken: params["ChangeToken"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRateBasedRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Rule": toRateBasedRule,
@@ -118,13 +131,15 @@ export default class WAFRegional {
   async createRegexMatchSet(
     {abortSignal, ...params}: RequestConfig & CreateRegexMatchSetRequest,
   ): Promise<CreateRegexMatchSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRegexMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RegexMatchSet": toRegexMatchSet,
@@ -136,13 +151,15 @@ export default class WAFRegional {
   async createRegexPatternSet(
     {abortSignal, ...params}: RequestConfig & CreateRegexPatternSetRequest,
   ): Promise<CreateRegexPatternSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRegexPatternSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RegexPatternSet": toRegexPatternSet,
@@ -154,14 +171,17 @@ export default class WAFRegional {
   async createRule(
     {abortSignal, ...params}: RequestConfig & CreateRuleRequest,
   ): Promise<CreateRuleResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      MetricName: params["MetricName"],
+      ChangeToken: params["ChangeToken"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Rule": toRule,
@@ -173,14 +193,17 @@ export default class WAFRegional {
   async createRuleGroup(
     {abortSignal, ...params}: RequestConfig & CreateRuleGroupRequest,
   ): Promise<CreateRuleGroupResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      MetricName: params["MetricName"],
+      ChangeToken: params["ChangeToken"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRuleGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RuleGroup": toRuleGroup,
@@ -192,13 +215,15 @@ export default class WAFRegional {
   async createSizeConstraintSet(
     {abortSignal, ...params}: RequestConfig & CreateSizeConstraintSetRequest,
   ): Promise<CreateSizeConstraintSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSizeConstraintSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SizeConstraintSet": toSizeConstraintSet,
@@ -210,13 +235,15 @@ export default class WAFRegional {
   async createSqlInjectionMatchSet(
     {abortSignal, ...params}: RequestConfig & CreateSqlInjectionMatchSetRequest,
   ): Promise<CreateSqlInjectionMatchSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSqlInjectionMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SqlInjectionMatchSet": toSqlInjectionMatchSet,
@@ -228,15 +255,18 @@ export default class WAFRegional {
   async createWebACL(
     {abortSignal, ...params}: RequestConfig & CreateWebACLRequest,
   ): Promise<CreateWebACLResponse> {
-    const body: JSONObject = {...params,
-    DefaultAction: fromWafAction(params["DefaultAction"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      MetricName: params["MetricName"],
+      DefaultAction: fromWafAction(params["DefaultAction"]),
+      ChangeToken: params["ChangeToken"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWebACL",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WebACL": toWebACL,
@@ -248,13 +278,16 @@ export default class WAFRegional {
   async createWebACLMigrationStack(
     {abortSignal, ...params}: RequestConfig & CreateWebACLMigrationStackRequest,
   ): Promise<CreateWebACLMigrationStackResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WebACLId: params["WebACLId"],
+      S3BucketName: params["S3BucketName"],
+      IgnoreUnsupportedType: params["IgnoreUnsupportedType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWebACLMigrationStack",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "S3ObjectUrl": "s",
       },
@@ -265,13 +298,15 @@ export default class WAFRegional {
   async createXssMatchSet(
     {abortSignal, ...params}: RequestConfig & CreateXssMatchSetRequest,
   ): Promise<CreateXssMatchSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateXssMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "XssMatchSet": toXssMatchSet,
@@ -283,13 +318,15 @@ export default class WAFRegional {
   async deleteByteMatchSet(
     {abortSignal, ...params}: RequestConfig & DeleteByteMatchSetRequest,
   ): Promise<DeleteByteMatchSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ByteMatchSetId: params["ByteMatchSetId"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteByteMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -300,13 +337,15 @@ export default class WAFRegional {
   async deleteGeoMatchSet(
     {abortSignal, ...params}: RequestConfig & DeleteGeoMatchSetRequest,
   ): Promise<DeleteGeoMatchSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GeoMatchSetId: params["GeoMatchSetId"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteGeoMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -317,13 +356,15 @@ export default class WAFRegional {
   async deleteIPSet(
     {abortSignal, ...params}: RequestConfig & DeleteIPSetRequest,
   ): Promise<DeleteIPSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      IPSetId: params["IPSetId"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteIPSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -334,13 +375,14 @@ export default class WAFRegional {
   async deleteLoggingConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteLoggingConfigurationRequest,
   ): Promise<DeleteLoggingConfigurationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLoggingConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -349,13 +391,14 @@ export default class WAFRegional {
   async deletePermissionPolicy(
     {abortSignal, ...params}: RequestConfig & DeletePermissionPolicyRequest,
   ): Promise<DeletePermissionPolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePermissionPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -364,13 +407,15 @@ export default class WAFRegional {
   async deleteRateBasedRule(
     {abortSignal, ...params}: RequestConfig & DeleteRateBasedRuleRequest,
   ): Promise<DeleteRateBasedRuleResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RuleId: params["RuleId"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRateBasedRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -381,13 +426,15 @@ export default class WAFRegional {
   async deleteRegexMatchSet(
     {abortSignal, ...params}: RequestConfig & DeleteRegexMatchSetRequest,
   ): Promise<DeleteRegexMatchSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RegexMatchSetId: params["RegexMatchSetId"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRegexMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -398,13 +445,15 @@ export default class WAFRegional {
   async deleteRegexPatternSet(
     {abortSignal, ...params}: RequestConfig & DeleteRegexPatternSetRequest,
   ): Promise<DeleteRegexPatternSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RegexPatternSetId: params["RegexPatternSetId"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRegexPatternSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -415,13 +464,15 @@ export default class WAFRegional {
   async deleteRule(
     {abortSignal, ...params}: RequestConfig & DeleteRuleRequest,
   ): Promise<DeleteRuleResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RuleId: params["RuleId"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -432,13 +483,15 @@ export default class WAFRegional {
   async deleteRuleGroup(
     {abortSignal, ...params}: RequestConfig & DeleteRuleGroupRequest,
   ): Promise<DeleteRuleGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RuleGroupId: params["RuleGroupId"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRuleGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -449,13 +502,15 @@ export default class WAFRegional {
   async deleteSizeConstraintSet(
     {abortSignal, ...params}: RequestConfig & DeleteSizeConstraintSetRequest,
   ): Promise<DeleteSizeConstraintSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SizeConstraintSetId: params["SizeConstraintSetId"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSizeConstraintSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -466,13 +521,15 @@ export default class WAFRegional {
   async deleteSqlInjectionMatchSet(
     {abortSignal, ...params}: RequestConfig & DeleteSqlInjectionMatchSetRequest,
   ): Promise<DeleteSqlInjectionMatchSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SqlInjectionMatchSetId: params["SqlInjectionMatchSetId"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSqlInjectionMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -483,13 +540,15 @@ export default class WAFRegional {
   async deleteWebACL(
     {abortSignal, ...params}: RequestConfig & DeleteWebACLRequest,
   ): Promise<DeleteWebACLResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WebACLId: params["WebACLId"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteWebACL",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -500,13 +559,15 @@ export default class WAFRegional {
   async deleteXssMatchSet(
     {abortSignal, ...params}: RequestConfig & DeleteXssMatchSetRequest,
   ): Promise<DeleteXssMatchSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      XssMatchSetId: params["XssMatchSetId"],
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteXssMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -517,13 +578,14 @@ export default class WAFRegional {
   async disassociateWebACL(
     {abortSignal, ...params}: RequestConfig & DisassociateWebACLRequest,
   ): Promise<DisassociateWebACLResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateWebACL",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -532,13 +594,14 @@ export default class WAFRegional {
   async getByteMatchSet(
     {abortSignal, ...params}: RequestConfig & GetByteMatchSetRequest,
   ): Promise<GetByteMatchSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ByteMatchSetId: params["ByteMatchSetId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetByteMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ByteMatchSet": toByteMatchSet,
@@ -549,13 +612,13 @@ export default class WAFRegional {
   async getChangeToken(
     {abortSignal, ...params}: RequestConfig & GetChangeTokenRequest = {},
   ): Promise<GetChangeTokenResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetChangeToken",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -566,16 +629,17 @@ export default class WAFRegional {
   async getChangeTokenStatus(
     {abortSignal, ...params}: RequestConfig & GetChangeTokenStatusRequest,
   ): Promise<GetChangeTokenStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetChangeTokenStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "ChangeTokenStatus": toChangeTokenStatus,
+        "ChangeTokenStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ChangeTokenStatus>(x),
       },
     }, await resp.json());
   }
@@ -583,13 +647,14 @@ export default class WAFRegional {
   async getGeoMatchSet(
     {abortSignal, ...params}: RequestConfig & GetGeoMatchSetRequest,
   ): Promise<GetGeoMatchSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      GeoMatchSetId: params["GeoMatchSetId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetGeoMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "GeoMatchSet": toGeoMatchSet,
@@ -600,13 +665,14 @@ export default class WAFRegional {
   async getIPSet(
     {abortSignal, ...params}: RequestConfig & GetIPSetRequest,
   ): Promise<GetIPSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      IPSetId: params["IPSetId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetIPSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "IPSet": toIPSet,
@@ -617,13 +683,14 @@ export default class WAFRegional {
   async getLoggingConfiguration(
     {abortSignal, ...params}: RequestConfig & GetLoggingConfigurationRequest,
   ): Promise<GetLoggingConfigurationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetLoggingConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LoggingConfiguration": toLoggingConfiguration,
@@ -634,13 +701,14 @@ export default class WAFRegional {
   async getPermissionPolicy(
     {abortSignal, ...params}: RequestConfig & GetPermissionPolicyRequest,
   ): Promise<GetPermissionPolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPermissionPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Policy": "s",
@@ -651,13 +719,14 @@ export default class WAFRegional {
   async getRateBasedRule(
     {abortSignal, ...params}: RequestConfig & GetRateBasedRuleRequest,
   ): Promise<GetRateBasedRuleResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RuleId: params["RuleId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRateBasedRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Rule": toRateBasedRule,
@@ -668,13 +737,15 @@ export default class WAFRegional {
   async getRateBasedRuleManagedKeys(
     {abortSignal, ...params}: RequestConfig & GetRateBasedRuleManagedKeysRequest,
   ): Promise<GetRateBasedRuleManagedKeysResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RuleId: params["RuleId"],
+      NextMarker: params["NextMarker"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRateBasedRuleManagedKeys",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ManagedKeys": ["s"],
@@ -686,13 +757,14 @@ export default class WAFRegional {
   async getRegexMatchSet(
     {abortSignal, ...params}: RequestConfig & GetRegexMatchSetRequest,
   ): Promise<GetRegexMatchSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RegexMatchSetId: params["RegexMatchSetId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRegexMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RegexMatchSet": toRegexMatchSet,
@@ -703,13 +775,14 @@ export default class WAFRegional {
   async getRegexPatternSet(
     {abortSignal, ...params}: RequestConfig & GetRegexPatternSetRequest,
   ): Promise<GetRegexPatternSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RegexPatternSetId: params["RegexPatternSetId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRegexPatternSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RegexPatternSet": toRegexPatternSet,
@@ -720,13 +793,14 @@ export default class WAFRegional {
   async getRule(
     {abortSignal, ...params}: RequestConfig & GetRuleRequest,
   ): Promise<GetRuleResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RuleId: params["RuleId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Rule": toRule,
@@ -737,13 +811,14 @@ export default class WAFRegional {
   async getRuleGroup(
     {abortSignal, ...params}: RequestConfig & GetRuleGroupRequest,
   ): Promise<GetRuleGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RuleGroupId: params["RuleGroupId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRuleGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RuleGroup": toRuleGroup,
@@ -754,14 +829,17 @@ export default class WAFRegional {
   async getSampledRequests(
     {abortSignal, ...params}: RequestConfig & GetSampledRequestsRequest,
   ): Promise<GetSampledRequestsResponse> {
-    const body: JSONObject = {...params,
-    TimeWindow: fromTimeWindow(params["TimeWindow"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      WebAclId: params["WebAclId"],
+      RuleId: params["RuleId"],
+      TimeWindow: fromTimeWindow(params["TimeWindow"]),
+      MaxItems: params["MaxItems"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSampledRequests",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SampledRequests": [toSampledHTTPRequest],
@@ -774,13 +852,14 @@ export default class WAFRegional {
   async getSizeConstraintSet(
     {abortSignal, ...params}: RequestConfig & GetSizeConstraintSetRequest,
   ): Promise<GetSizeConstraintSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SizeConstraintSetId: params["SizeConstraintSetId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSizeConstraintSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SizeConstraintSet": toSizeConstraintSet,
@@ -791,13 +870,14 @@ export default class WAFRegional {
   async getSqlInjectionMatchSet(
     {abortSignal, ...params}: RequestConfig & GetSqlInjectionMatchSetRequest,
   ): Promise<GetSqlInjectionMatchSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      SqlInjectionMatchSetId: params["SqlInjectionMatchSetId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSqlInjectionMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SqlInjectionMatchSet": toSqlInjectionMatchSet,
@@ -808,13 +888,14 @@ export default class WAFRegional {
   async getWebACL(
     {abortSignal, ...params}: RequestConfig & GetWebACLRequest,
   ): Promise<GetWebACLResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WebACLId: params["WebACLId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetWebACL",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WebACL": toWebACL,
@@ -825,13 +906,14 @@ export default class WAFRegional {
   async getWebACLForResource(
     {abortSignal, ...params}: RequestConfig & GetWebACLForResourceRequest,
   ): Promise<GetWebACLForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetWebACLForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "WebACLSummary": toWebACLSummary,
@@ -842,13 +924,14 @@ export default class WAFRegional {
   async getXssMatchSet(
     {abortSignal, ...params}: RequestConfig & GetXssMatchSetRequest,
   ): Promise<GetXssMatchSetResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      XssMatchSetId: params["XssMatchSetId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetXssMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "XssMatchSet": toXssMatchSet,
@@ -859,13 +942,16 @@ export default class WAFRegional {
   async listActivatedRulesInRuleGroup(
     {abortSignal, ...params}: RequestConfig & ListActivatedRulesInRuleGroupRequest = {},
   ): Promise<ListActivatedRulesInRuleGroupResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      RuleGroupId: params["RuleGroupId"],
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListActivatedRulesInRuleGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -877,13 +963,15 @@ export default class WAFRegional {
   async listByteMatchSets(
     {abortSignal, ...params}: RequestConfig & ListByteMatchSetsRequest = {},
   ): Promise<ListByteMatchSetsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListByteMatchSets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -895,13 +983,15 @@ export default class WAFRegional {
   async listGeoMatchSets(
     {abortSignal, ...params}: RequestConfig & ListGeoMatchSetsRequest = {},
   ): Promise<ListGeoMatchSetsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGeoMatchSets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -913,13 +1003,15 @@ export default class WAFRegional {
   async listIPSets(
     {abortSignal, ...params}: RequestConfig & ListIPSetsRequest = {},
   ): Promise<ListIPSetsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListIPSets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -931,13 +1023,15 @@ export default class WAFRegional {
   async listLoggingConfigurations(
     {abortSignal, ...params}: RequestConfig & ListLoggingConfigurationsRequest = {},
   ): Promise<ListLoggingConfigurationsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLoggingConfigurations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LoggingConfigurations": [toLoggingConfiguration],
@@ -949,13 +1043,15 @@ export default class WAFRegional {
   async listRateBasedRules(
     {abortSignal, ...params}: RequestConfig & ListRateBasedRulesRequest = {},
   ): Promise<ListRateBasedRulesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRateBasedRules",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -967,13 +1063,15 @@ export default class WAFRegional {
   async listRegexMatchSets(
     {abortSignal, ...params}: RequestConfig & ListRegexMatchSetsRequest = {},
   ): Promise<ListRegexMatchSetsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRegexMatchSets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -985,13 +1083,15 @@ export default class WAFRegional {
   async listRegexPatternSets(
     {abortSignal, ...params}: RequestConfig & ListRegexPatternSetsRequest = {},
   ): Promise<ListRegexPatternSetsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRegexPatternSets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -1003,13 +1103,15 @@ export default class WAFRegional {
   async listResourcesForWebACL(
     {abortSignal, ...params}: RequestConfig & ListResourcesForWebACLRequest,
   ): Promise<ListResourcesForWebACLResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      WebACLId: params["WebACLId"],
+      ResourceType: params["ResourceType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResourcesForWebACL",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResourceArns": ["s"],
@@ -1020,13 +1122,15 @@ export default class WAFRegional {
   async listRuleGroups(
     {abortSignal, ...params}: RequestConfig & ListRuleGroupsRequest = {},
   ): Promise<ListRuleGroupsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRuleGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -1038,13 +1142,15 @@ export default class WAFRegional {
   async listRules(
     {abortSignal, ...params}: RequestConfig & ListRulesRequest = {},
   ): Promise<ListRulesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRules",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -1056,13 +1162,15 @@ export default class WAFRegional {
   async listSizeConstraintSets(
     {abortSignal, ...params}: RequestConfig & ListSizeConstraintSetsRequest = {},
   ): Promise<ListSizeConstraintSetsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSizeConstraintSets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -1074,13 +1182,15 @@ export default class WAFRegional {
   async listSqlInjectionMatchSets(
     {abortSignal, ...params}: RequestConfig & ListSqlInjectionMatchSetsRequest = {},
   ): Promise<ListSqlInjectionMatchSetsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSqlInjectionMatchSets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -1092,13 +1202,15 @@ export default class WAFRegional {
   async listSubscribedRuleGroups(
     {abortSignal, ...params}: RequestConfig & ListSubscribedRuleGroupsRequest = {},
   ): Promise<ListSubscribedRuleGroupsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSubscribedRuleGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -1110,13 +1222,16 @@ export default class WAFRegional {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+      ResourceARN: params["ResourceARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -1128,13 +1243,15 @@ export default class WAFRegional {
   async listWebACLs(
     {abortSignal, ...params}: RequestConfig & ListWebACLsRequest = {},
   ): Promise<ListWebACLsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWebACLs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -1146,13 +1263,15 @@ export default class WAFRegional {
   async listXssMatchSets(
     {abortSignal, ...params}: RequestConfig & ListXssMatchSetsRequest = {},
   ): Promise<ListXssMatchSetsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextMarker: params["NextMarker"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListXssMatchSets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextMarker": "s",
@@ -1164,14 +1283,14 @@ export default class WAFRegional {
   async putLoggingConfiguration(
     {abortSignal, ...params}: RequestConfig & PutLoggingConfigurationRequest,
   ): Promise<PutLoggingConfigurationResponse> {
-    const body: JSONObject = {...params,
-    LoggingConfiguration: fromLoggingConfiguration(params["LoggingConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      LoggingConfiguration: fromLoggingConfiguration(params["LoggingConfiguration"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutLoggingConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "LoggingConfiguration": toLoggingConfiguration,
@@ -1182,13 +1301,15 @@ export default class WAFRegional {
   async putPermissionPolicy(
     {abortSignal, ...params}: RequestConfig & PutPermissionPolicyRequest,
   ): Promise<PutPermissionPolicyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceArn: params["ResourceArn"],
+      Policy: params["Policy"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutPermissionPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1197,14 +1318,15 @@ export default class WAFRegional {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1213,13 +1335,15 @@ export default class WAFRegional {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceARN: params["ResourceARN"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -1228,14 +1352,16 @@ export default class WAFRegional {
   async updateByteMatchSet(
     {abortSignal, ...params}: RequestConfig & UpdateByteMatchSetRequest,
   ): Promise<UpdateByteMatchSetResponse> {
-    const body: JSONObject = {...params,
-    Updates: params["Updates"]?.map(x => fromByteMatchSetUpdate(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ByteMatchSetId: params["ByteMatchSetId"],
+      ChangeToken: params["ChangeToken"],
+      Updates: params["Updates"]?.map(x => fromByteMatchSetUpdate(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateByteMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -1246,14 +1372,16 @@ export default class WAFRegional {
   async updateGeoMatchSet(
     {abortSignal, ...params}: RequestConfig & UpdateGeoMatchSetRequest,
   ): Promise<UpdateGeoMatchSetResponse> {
-    const body: JSONObject = {...params,
-    Updates: params["Updates"]?.map(x => fromGeoMatchSetUpdate(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      GeoMatchSetId: params["GeoMatchSetId"],
+      ChangeToken: params["ChangeToken"],
+      Updates: params["Updates"]?.map(x => fromGeoMatchSetUpdate(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGeoMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -1264,14 +1392,16 @@ export default class WAFRegional {
   async updateIPSet(
     {abortSignal, ...params}: RequestConfig & UpdateIPSetRequest,
   ): Promise<UpdateIPSetResponse> {
-    const body: JSONObject = {...params,
-    Updates: params["Updates"]?.map(x => fromIPSetUpdate(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      IPSetId: params["IPSetId"],
+      ChangeToken: params["ChangeToken"],
+      Updates: params["Updates"]?.map(x => fromIPSetUpdate(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateIPSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -1282,14 +1412,17 @@ export default class WAFRegional {
   async updateRateBasedRule(
     {abortSignal, ...params}: RequestConfig & UpdateRateBasedRuleRequest,
   ): Promise<UpdateRateBasedRuleResponse> {
-    const body: JSONObject = {...params,
-    Updates: params["Updates"]?.map(x => fromRuleUpdate(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      RuleId: params["RuleId"],
+      ChangeToken: params["ChangeToken"],
+      Updates: params["Updates"]?.map(x => fromRuleUpdate(x)),
+      RateLimit: params["RateLimit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRateBasedRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -1300,14 +1433,16 @@ export default class WAFRegional {
   async updateRegexMatchSet(
     {abortSignal, ...params}: RequestConfig & UpdateRegexMatchSetRequest,
   ): Promise<UpdateRegexMatchSetResponse> {
-    const body: JSONObject = {...params,
-    Updates: params["Updates"]?.map(x => fromRegexMatchSetUpdate(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      RegexMatchSetId: params["RegexMatchSetId"],
+      Updates: params["Updates"]?.map(x => fromRegexMatchSetUpdate(x)),
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRegexMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -1318,14 +1453,16 @@ export default class WAFRegional {
   async updateRegexPatternSet(
     {abortSignal, ...params}: RequestConfig & UpdateRegexPatternSetRequest,
   ): Promise<UpdateRegexPatternSetResponse> {
-    const body: JSONObject = {...params,
-    Updates: params["Updates"]?.map(x => fromRegexPatternSetUpdate(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      RegexPatternSetId: params["RegexPatternSetId"],
+      Updates: params["Updates"]?.map(x => fromRegexPatternSetUpdate(x)),
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRegexPatternSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -1336,14 +1473,16 @@ export default class WAFRegional {
   async updateRule(
     {abortSignal, ...params}: RequestConfig & UpdateRuleRequest,
   ): Promise<UpdateRuleResponse> {
-    const body: JSONObject = {...params,
-    Updates: params["Updates"]?.map(x => fromRuleUpdate(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      RuleId: params["RuleId"],
+      ChangeToken: params["ChangeToken"],
+      Updates: params["Updates"]?.map(x => fromRuleUpdate(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRule",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -1354,14 +1493,16 @@ export default class WAFRegional {
   async updateRuleGroup(
     {abortSignal, ...params}: RequestConfig & UpdateRuleGroupRequest,
   ): Promise<UpdateRuleGroupResponse> {
-    const body: JSONObject = {...params,
-    Updates: params["Updates"]?.map(x => fromRuleGroupUpdate(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      RuleGroupId: params["RuleGroupId"],
+      Updates: params["Updates"]?.map(x => fromRuleGroupUpdate(x)),
+      ChangeToken: params["ChangeToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRuleGroup",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -1372,14 +1513,16 @@ export default class WAFRegional {
   async updateSizeConstraintSet(
     {abortSignal, ...params}: RequestConfig & UpdateSizeConstraintSetRequest,
   ): Promise<UpdateSizeConstraintSetResponse> {
-    const body: JSONObject = {...params,
-    Updates: params["Updates"]?.map(x => fromSizeConstraintSetUpdate(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SizeConstraintSetId: params["SizeConstraintSetId"],
+      ChangeToken: params["ChangeToken"],
+      Updates: params["Updates"]?.map(x => fromSizeConstraintSetUpdate(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSizeConstraintSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -1390,14 +1533,16 @@ export default class WAFRegional {
   async updateSqlInjectionMatchSet(
     {abortSignal, ...params}: RequestConfig & UpdateSqlInjectionMatchSetRequest,
   ): Promise<UpdateSqlInjectionMatchSetResponse> {
-    const body: JSONObject = {...params,
-    Updates: params["Updates"]?.map(x => fromSqlInjectionMatchSetUpdate(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SqlInjectionMatchSetId: params["SqlInjectionMatchSetId"],
+      ChangeToken: params["ChangeToken"],
+      Updates: params["Updates"]?.map(x => fromSqlInjectionMatchSetUpdate(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSqlInjectionMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -1408,15 +1553,17 @@ export default class WAFRegional {
   async updateWebACL(
     {abortSignal, ...params}: RequestConfig & UpdateWebACLRequest,
   ): Promise<UpdateWebACLResponse> {
-    const body: JSONObject = {...params,
-    Updates: params["Updates"]?.map(x => fromWebACLUpdate(x)),
-    DefaultAction: fromWafAction(params["DefaultAction"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      WebACLId: params["WebACLId"],
+      ChangeToken: params["ChangeToken"],
+      Updates: params["Updates"]?.map(x => fromWebACLUpdate(x)),
+      DefaultAction: fromWafAction(params["DefaultAction"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateWebACL",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -1427,14 +1574,16 @@ export default class WAFRegional {
   async updateXssMatchSet(
     {abortSignal, ...params}: RequestConfig & UpdateXssMatchSetRequest,
   ): Promise<UpdateXssMatchSetResponse> {
-    const body: JSONObject = {...params,
-    Updates: params["Updates"]?.map(x => fromXssMatchSetUpdate(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      XssMatchSetId: params["XssMatchSetId"],
+      ChangeToken: params["ChangeToken"],
+      Updates: params["Updates"]?.map(x => fromXssMatchSetUpdate(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateXssMatchSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ChangeToken": "s",
@@ -2370,26 +2519,22 @@ export interface UpdateXssMatchSetResponse {
 // refs: 3 - tags: input, named, enum, output
 export type RateKey =
 | "IP"
-;
-
-function toRateKey(root: JSONValue): RateKey | null {
-  return ( false
-    || root == "IP"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
       "Value": "s",
@@ -2402,15 +2547,16 @@ function toTag(root: JSONValue): Tag {
 export interface WafAction {
   Type: WafActionType;
 }
-function fromWafAction(input?: WafAction | null): JSONValue {
+function fromWafAction(input?: WafAction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Type: input["Type"],
   }
 }
-function toWafAction(root: JSONValue): WafAction {
-  return prt.readObj({
+function toWafAction(root: jsonP.JSONValue): WafAction {
+  return jsonP.readObj({
     required: {
-      "Type": toWafActionType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<WafActionType>(x),
     },
     optional: {},
   }, root);
@@ -2421,30 +2567,22 @@ export type WafActionType =
 | "BLOCK"
 | "ALLOW"
 | "COUNT"
-;
-
-function toWafActionType(root: JSONValue): WafActionType | null {
-  return ( false
-    || root == "BLOCK"
-    || root == "ALLOW"
-    || root == "COUNT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface TimeWindow {
   StartTime: Date | number;
   EndTime: Date | number;
 }
-function fromTimeWindow(input?: TimeWindow | null): JSONValue {
+function fromTimeWindow(input?: TimeWindow | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    StartTime: prt.serializeDate_unixTimestamp(input["StartTime"]),
-    EndTime: prt.serializeDate_unixTimestamp(input["EndTime"]),
+  return {
+    StartTime: jsonP.serializeDate_unixTimestamp(input["StartTime"]),
+    EndTime: jsonP.serializeDate_unixTimestamp(input["EndTime"]),
   }
 }
-function toTimeWindow(root: JSONValue): TimeWindow {
-  return prt.readObj({
+function toTimeWindow(root: jsonP.JSONValue): TimeWindow {
+  return jsonP.readObj({
     required: {
       "StartTime": "d",
       "EndTime": "d",
@@ -2457,8 +2595,7 @@ function toTimeWindow(root: JSONValue): TimeWindow {
 export type ResourceType =
 | "APPLICATION_LOAD_BALANCER"
 | "API_GATEWAY"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface LoggingConfiguration {
@@ -2466,14 +2603,16 @@ export interface LoggingConfiguration {
   LogDestinationConfigs: string[];
   RedactedFields?: FieldToMatch[] | null;
 }
-function fromLoggingConfiguration(input?: LoggingConfiguration | null): JSONValue {
+function fromLoggingConfiguration(input?: LoggingConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ResourceArn: input["ResourceArn"],
+    LogDestinationConfigs: input["LogDestinationConfigs"],
     RedactedFields: input["RedactedFields"]?.map(x => fromFieldToMatch(x)),
   }
 }
-function toLoggingConfiguration(root: JSONValue): LoggingConfiguration {
-  return prt.readObj({
+function toLoggingConfiguration(root: jsonP.JSONValue): LoggingConfiguration {
+  return jsonP.readObj({
     required: {
       "ResourceArn": "s",
       "LogDestinationConfigs": ["s"],
@@ -2489,15 +2628,17 @@ export interface FieldToMatch {
   Type: MatchFieldType;
   Data?: string | null;
 }
-function fromFieldToMatch(input?: FieldToMatch | null): JSONValue {
+function fromFieldToMatch(input?: FieldToMatch | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Type: input["Type"],
+    Data: input["Data"],
   }
 }
-function toFieldToMatch(root: JSONValue): FieldToMatch {
-  return prt.readObj({
+function toFieldToMatch(root: jsonP.JSONValue): FieldToMatch {
+  return jsonP.readObj({
     required: {
-      "Type": toMatchFieldType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<MatchFieldType>(x),
     },
     optional: {
       "Data": "s",
@@ -2514,28 +2655,17 @@ export type MatchFieldType =
 | "BODY"
 | "SINGLE_QUERY_ARG"
 | "ALL_QUERY_ARGS"
-;
-
-function toMatchFieldType(root: JSONValue): MatchFieldType | null {
-  return ( false
-    || root == "URI"
-    || root == "QUERY_STRING"
-    || root == "HEADER"
-    || root == "METHOD"
-    || root == "BODY"
-    || root == "SINGLE_QUERY_ARG"
-    || root == "ALL_QUERY_ARGS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ByteMatchSetUpdate {
   Action: ChangeAction;
   ByteMatchTuple: ByteMatchTuple;
 }
-function fromByteMatchSetUpdate(input?: ByteMatchSetUpdate | null): JSONValue {
+function fromByteMatchSetUpdate(input?: ByteMatchSetUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Action: input["Action"],
     ByteMatchTuple: fromByteMatchTuple(input["ByteMatchTuple"]),
   }
 }
@@ -2544,8 +2674,7 @@ function fromByteMatchSetUpdate(input?: ByteMatchSetUpdate | null): JSONValue {
 export type ChangeAction =
 | "INSERT"
 | "DELETE"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface ByteMatchTuple {
@@ -2554,20 +2683,22 @@ export interface ByteMatchTuple {
   TextTransformation: TextTransformation;
   PositionalConstraint: PositionalConstraint;
 }
-function fromByteMatchTuple(input?: ByteMatchTuple | null): JSONValue {
+function fromByteMatchTuple(input?: ByteMatchTuple | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     FieldToMatch: fromFieldToMatch(input["FieldToMatch"]),
-    TargetString: prt.serializeBlob(input["TargetString"]),
+    TargetString: jsonP.serializeBlob(input["TargetString"]),
+    TextTransformation: input["TextTransformation"],
+    PositionalConstraint: input["PositionalConstraint"],
   }
 }
-function toByteMatchTuple(root: JSONValue): ByteMatchTuple {
-  return prt.readObj({
+function toByteMatchTuple(root: jsonP.JSONValue): ByteMatchTuple {
+  return jsonP.readObj({
     required: {
       "FieldToMatch": toFieldToMatch,
       "TargetString": "a",
-      "TextTransformation": toTextTransformation,
-      "PositionalConstraint": toPositionalConstraint,
+      "TextTransformation": (x: jsonP.JSONValue) => cmnP.readEnum<TextTransformation>(x),
+      "PositionalConstraint": (x: jsonP.JSONValue) => cmnP.readEnum<PositionalConstraint>(x),
     },
     optional: {},
   }, root);
@@ -2581,18 +2712,7 @@ export type TextTransformation =
 | "LOWERCASE"
 | "CMD_LINE"
 | "URL_DECODE"
-;
-
-function toTextTransformation(root: JSONValue): TextTransformation | null {
-  return ( false
-    || root == "NONE"
-    || root == "COMPRESS_WHITE_SPACE"
-    || root == "HTML_ENTITY_DECODE"
-    || root == "LOWERCASE"
-    || root == "CMD_LINE"
-    || root == "URL_DECODE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type PositionalConstraint =
@@ -2601,26 +2721,17 @@ export type PositionalConstraint =
 | "ENDS_WITH"
 | "CONTAINS"
 | "CONTAINS_WORD"
-;
-
-function toPositionalConstraint(root: JSONValue): PositionalConstraint | null {
-  return ( false
-    || root == "EXACTLY"
-    || root == "STARTS_WITH"
-    || root == "ENDS_WITH"
-    || root == "CONTAINS"
-    || root == "CONTAINS_WORD"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface GeoMatchSetUpdate {
   Action: ChangeAction;
   GeoMatchConstraint: GeoMatchConstraint;
 }
-function fromGeoMatchSetUpdate(input?: GeoMatchSetUpdate | null): JSONValue {
+function fromGeoMatchSetUpdate(input?: GeoMatchSetUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Action: input["Action"],
     GeoMatchConstraint: fromGeoMatchConstraint(input["GeoMatchConstraint"]),
   }
 }
@@ -2630,16 +2741,18 @@ export interface GeoMatchConstraint {
   Type: GeoMatchConstraintType;
   Value: GeoMatchConstraintValue;
 }
-function fromGeoMatchConstraint(input?: GeoMatchConstraint | null): JSONValue {
+function fromGeoMatchConstraint(input?: GeoMatchConstraint | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Type: input["Type"],
+    Value: input["Value"],
   }
 }
-function toGeoMatchConstraint(root: JSONValue): GeoMatchConstraint {
-  return prt.readObj({
+function toGeoMatchConstraint(root: jsonP.JSONValue): GeoMatchConstraint {
+  return jsonP.readObj({
     required: {
-      "Type": toGeoMatchConstraintType,
-      "Value": toGeoMatchConstraintValue,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<GeoMatchConstraintType>(x),
+      "Value": (x: jsonP.JSONValue) => cmnP.readEnum<GeoMatchConstraintValue>(x),
     },
     optional: {},
   }, root);
@@ -2648,13 +2761,7 @@ function toGeoMatchConstraint(root: JSONValue): GeoMatchConstraint {
 // refs: 3 - tags: input, named, enum, output
 export type GeoMatchConstraintType =
 | "Country"
-;
-
-function toGeoMatchConstraintType(root: JSONValue): GeoMatchConstraintType | null {
-  return ( false
-    || root == "Country"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type GeoMatchConstraintValue =
@@ -2907,270 +3014,17 @@ export type GeoMatchConstraintValue =
 | "YE"
 | "ZM"
 | "ZW"
-;
-
-function toGeoMatchConstraintValue(root: JSONValue): GeoMatchConstraintValue | null {
-  return ( false
-    || root == "AF"
-    || root == "AX"
-    || root == "AL"
-    || root == "DZ"
-    || root == "AS"
-    || root == "AD"
-    || root == "AO"
-    || root == "AI"
-    || root == "AQ"
-    || root == "AG"
-    || root == "AR"
-    || root == "AM"
-    || root == "AW"
-    || root == "AU"
-    || root == "AT"
-    || root == "AZ"
-    || root == "BS"
-    || root == "BH"
-    || root == "BD"
-    || root == "BB"
-    || root == "BY"
-    || root == "BE"
-    || root == "BZ"
-    || root == "BJ"
-    || root == "BM"
-    || root == "BT"
-    || root == "BO"
-    || root == "BQ"
-    || root == "BA"
-    || root == "BW"
-    || root == "BV"
-    || root == "BR"
-    || root == "IO"
-    || root == "BN"
-    || root == "BG"
-    || root == "BF"
-    || root == "BI"
-    || root == "KH"
-    || root == "CM"
-    || root == "CA"
-    || root == "CV"
-    || root == "KY"
-    || root == "CF"
-    || root == "TD"
-    || root == "CL"
-    || root == "CN"
-    || root == "CX"
-    || root == "CC"
-    || root == "CO"
-    || root == "KM"
-    || root == "CG"
-    || root == "CD"
-    || root == "CK"
-    || root == "CR"
-    || root == "CI"
-    || root == "HR"
-    || root == "CU"
-    || root == "CW"
-    || root == "CY"
-    || root == "CZ"
-    || root == "DK"
-    || root == "DJ"
-    || root == "DM"
-    || root == "DO"
-    || root == "EC"
-    || root == "EG"
-    || root == "SV"
-    || root == "GQ"
-    || root == "ER"
-    || root == "EE"
-    || root == "ET"
-    || root == "FK"
-    || root == "FO"
-    || root == "FJ"
-    || root == "FI"
-    || root == "FR"
-    || root == "GF"
-    || root == "PF"
-    || root == "TF"
-    || root == "GA"
-    || root == "GM"
-    || root == "GE"
-    || root == "DE"
-    || root == "GH"
-    || root == "GI"
-    || root == "GR"
-    || root == "GL"
-    || root == "GD"
-    || root == "GP"
-    || root == "GU"
-    || root == "GT"
-    || root == "GG"
-    || root == "GN"
-    || root == "GW"
-    || root == "GY"
-    || root == "HT"
-    || root == "HM"
-    || root == "VA"
-    || root == "HN"
-    || root == "HK"
-    || root == "HU"
-    || root == "IS"
-    || root == "IN"
-    || root == "ID"
-    || root == "IR"
-    || root == "IQ"
-    || root == "IE"
-    || root == "IM"
-    || root == "IL"
-    || root == "IT"
-    || root == "JM"
-    || root == "JP"
-    || root == "JE"
-    || root == "JO"
-    || root == "KZ"
-    || root == "KE"
-    || root == "KI"
-    || root == "KP"
-    || root == "KR"
-    || root == "KW"
-    || root == "KG"
-    || root == "LA"
-    || root == "LV"
-    || root == "LB"
-    || root == "LS"
-    || root == "LR"
-    || root == "LY"
-    || root == "LI"
-    || root == "LT"
-    || root == "LU"
-    || root == "MO"
-    || root == "MK"
-    || root == "MG"
-    || root == "MW"
-    || root == "MY"
-    || root == "MV"
-    || root == "ML"
-    || root == "MT"
-    || root == "MH"
-    || root == "MQ"
-    || root == "MR"
-    || root == "MU"
-    || root == "YT"
-    || root == "MX"
-    || root == "FM"
-    || root == "MD"
-    || root == "MC"
-    || root == "MN"
-    || root == "ME"
-    || root == "MS"
-    || root == "MA"
-    || root == "MZ"
-    || root == "MM"
-    || root == "NA"
-    || root == "NR"
-    || root == "NP"
-    || root == "NL"
-    || root == "NC"
-    || root == "NZ"
-    || root == "NI"
-    || root == "NE"
-    || root == "NG"
-    || root == "NU"
-    || root == "NF"
-    || root == "MP"
-    || root == "NO"
-    || root == "OM"
-    || root == "PK"
-    || root == "PW"
-    || root == "PS"
-    || root == "PA"
-    || root == "PG"
-    || root == "PY"
-    || root == "PE"
-    || root == "PH"
-    || root == "PN"
-    || root == "PL"
-    || root == "PT"
-    || root == "PR"
-    || root == "QA"
-    || root == "RE"
-    || root == "RO"
-    || root == "RU"
-    || root == "RW"
-    || root == "BL"
-    || root == "SH"
-    || root == "KN"
-    || root == "LC"
-    || root == "MF"
-    || root == "PM"
-    || root == "VC"
-    || root == "WS"
-    || root == "SM"
-    || root == "ST"
-    || root == "SA"
-    || root == "SN"
-    || root == "RS"
-    || root == "SC"
-    || root == "SL"
-    || root == "SG"
-    || root == "SX"
-    || root == "SK"
-    || root == "SI"
-    || root == "SB"
-    || root == "SO"
-    || root == "ZA"
-    || root == "GS"
-    || root == "SS"
-    || root == "ES"
-    || root == "LK"
-    || root == "SD"
-    || root == "SR"
-    || root == "SJ"
-    || root == "SZ"
-    || root == "SE"
-    || root == "CH"
-    || root == "SY"
-    || root == "TW"
-    || root == "TJ"
-    || root == "TZ"
-    || root == "TH"
-    || root == "TL"
-    || root == "TG"
-    || root == "TK"
-    || root == "TO"
-    || root == "TT"
-    || root == "TN"
-    || root == "TR"
-    || root == "TM"
-    || root == "TC"
-    || root == "TV"
-    || root == "UG"
-    || root == "UA"
-    || root == "AE"
-    || root == "GB"
-    || root == "US"
-    || root == "UM"
-    || root == "UY"
-    || root == "UZ"
-    || root == "VU"
-    || root == "VE"
-    || root == "VN"
-    || root == "VG"
-    || root == "VI"
-    || root == "WF"
-    || root == "EH"
-    || root == "YE"
-    || root == "ZM"
-    || root == "ZW"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface IPSetUpdate {
   Action: ChangeAction;
   IPSetDescriptor: IPSetDescriptor;
 }
-function fromIPSetUpdate(input?: IPSetUpdate | null): JSONValue {
+function fromIPSetUpdate(input?: IPSetUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Action: input["Action"],
     IPSetDescriptor: fromIPSetDescriptor(input["IPSetDescriptor"]),
   }
 }
@@ -3180,15 +3034,17 @@ export interface IPSetDescriptor {
   Type: IPSetDescriptorType;
   Value: string;
 }
-function fromIPSetDescriptor(input?: IPSetDescriptor | null): JSONValue {
+function fromIPSetDescriptor(input?: IPSetDescriptor | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Type: input["Type"],
+    Value: input["Value"],
   }
 }
-function toIPSetDescriptor(root: JSONValue): IPSetDescriptor {
-  return prt.readObj({
+function toIPSetDescriptor(root: jsonP.JSONValue): IPSetDescriptor {
+  return jsonP.readObj({
     required: {
-      "Type": toIPSetDescriptorType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<IPSetDescriptorType>(x),
       "Value": "s",
     },
     optional: {},
@@ -3199,23 +3055,17 @@ function toIPSetDescriptor(root: JSONValue): IPSetDescriptor {
 export type IPSetDescriptorType =
 | "IPV4"
 | "IPV6"
-;
-
-function toIPSetDescriptorType(root: JSONValue): IPSetDescriptorType | null {
-  return ( false
-    || root == "IPV4"
-    || root == "IPV6"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface RuleUpdate {
   Action: ChangeAction;
   Predicate: Predicate;
 }
-function fromRuleUpdate(input?: RuleUpdate | null): JSONValue {
+function fromRuleUpdate(input?: RuleUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Action: input["Action"],
     Predicate: fromPredicate(input["Predicate"]),
   }
 }
@@ -3226,16 +3076,19 @@ export interface Predicate {
   Type: PredicateType;
   DataId: string;
 }
-function fromPredicate(input?: Predicate | null): JSONValue {
+function fromPredicate(input?: Predicate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Negated: input["Negated"],
+    Type: input["Type"],
+    DataId: input["DataId"],
   }
 }
-function toPredicate(root: JSONValue): Predicate {
-  return prt.readObj({
+function toPredicate(root: jsonP.JSONValue): Predicate {
+  return jsonP.readObj({
     required: {
       "Negated": "b",
-      "Type": toPredicateType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<PredicateType>(x),
       "DataId": "s",
     },
     optional: {},
@@ -3251,28 +3104,17 @@ export type PredicateType =
 | "SizeConstraint"
 | "XssMatch"
 | "RegexMatch"
-;
-
-function toPredicateType(root: JSONValue): PredicateType | null {
-  return ( false
-    || root == "IPMatch"
-    || root == "ByteMatch"
-    || root == "SqlInjectionMatch"
-    || root == "GeoMatch"
-    || root == "SizeConstraint"
-    || root == "XssMatch"
-    || root == "RegexMatch"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface RegexMatchSetUpdate {
   Action: ChangeAction;
   RegexMatchTuple: RegexMatchTuple;
 }
-function fromRegexMatchSetUpdate(input?: RegexMatchSetUpdate | null): JSONValue {
+function fromRegexMatchSetUpdate(input?: RegexMatchSetUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Action: input["Action"],
     RegexMatchTuple: fromRegexMatchTuple(input["RegexMatchTuple"]),
   }
 }
@@ -3283,17 +3125,19 @@ export interface RegexMatchTuple {
   TextTransformation: TextTransformation;
   RegexPatternSetId: string;
 }
-function fromRegexMatchTuple(input?: RegexMatchTuple | null): JSONValue {
+function fromRegexMatchTuple(input?: RegexMatchTuple | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     FieldToMatch: fromFieldToMatch(input["FieldToMatch"]),
+    TextTransformation: input["TextTransformation"],
+    RegexPatternSetId: input["RegexPatternSetId"],
   }
 }
-function toRegexMatchTuple(root: JSONValue): RegexMatchTuple {
-  return prt.readObj({
+function toRegexMatchTuple(root: jsonP.JSONValue): RegexMatchTuple {
+  return jsonP.readObj({
     required: {
       "FieldToMatch": toFieldToMatch,
-      "TextTransformation": toTextTransformation,
+      "TextTransformation": (x: jsonP.JSONValue) => cmnP.readEnum<TextTransformation>(x),
       "RegexPatternSetId": "s",
     },
     optional: {},
@@ -3305,9 +3149,11 @@ export interface RegexPatternSetUpdate {
   Action: ChangeAction;
   RegexPatternString: string;
 }
-function fromRegexPatternSetUpdate(input?: RegexPatternSetUpdate | null): JSONValue {
+function fromRegexPatternSetUpdate(input?: RegexPatternSetUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Action: input["Action"],
+    RegexPatternString: input["RegexPatternString"],
   }
 }
 
@@ -3316,9 +3162,10 @@ export interface RuleGroupUpdate {
   Action: ChangeAction;
   ActivatedRule: ActivatedRule;
 }
-function fromRuleGroupUpdate(input?: RuleGroupUpdate | null): JSONValue {
+function fromRuleGroupUpdate(input?: RuleGroupUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Action: input["Action"],
     ActivatedRule: fromActivatedRule(input["ActivatedRule"]),
   }
 }
@@ -3332,16 +3179,19 @@ export interface ActivatedRule {
   Type?: WafRuleType | null;
   ExcludedRules?: ExcludedRule[] | null;
 }
-function fromActivatedRule(input?: ActivatedRule | null): JSONValue {
+function fromActivatedRule(input?: ActivatedRule | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Priority: input["Priority"],
+    RuleId: input["RuleId"],
     Action: fromWafAction(input["Action"]),
     OverrideAction: fromWafOverrideAction(input["OverrideAction"]),
+    Type: input["Type"],
     ExcludedRules: input["ExcludedRules"]?.map(x => fromExcludedRule(x)),
   }
 }
-function toActivatedRule(root: JSONValue): ActivatedRule {
-  return prt.readObj({
+function toActivatedRule(root: jsonP.JSONValue): ActivatedRule {
+  return jsonP.readObj({
     required: {
       "Priority": "n",
       "RuleId": "s",
@@ -3349,7 +3199,7 @@ function toActivatedRule(root: JSONValue): ActivatedRule {
     optional: {
       "Action": toWafAction,
       "OverrideAction": toWafOverrideAction,
-      "Type": toWafRuleType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<WafRuleType>(x),
       "ExcludedRules": [toExcludedRule],
     },
   }, root);
@@ -3359,15 +3209,16 @@ function toActivatedRule(root: JSONValue): ActivatedRule {
 export interface WafOverrideAction {
   Type: WafOverrideActionType;
 }
-function fromWafOverrideAction(input?: WafOverrideAction | null): JSONValue {
+function fromWafOverrideAction(input?: WafOverrideAction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Type: input["Type"],
   }
 }
-function toWafOverrideAction(root: JSONValue): WafOverrideAction {
-  return prt.readObj({
+function toWafOverrideAction(root: jsonP.JSONValue): WafOverrideAction {
+  return jsonP.readObj({
     required: {
-      "Type": toWafOverrideActionType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<WafOverrideActionType>(x),
     },
     optional: {},
   }, root);
@@ -3377,41 +3228,27 @@ function toWafOverrideAction(root: JSONValue): WafOverrideAction {
 export type WafOverrideActionType =
 | "NONE"
 | "COUNT"
-;
-
-function toWafOverrideActionType(root: JSONValue): WafOverrideActionType | null {
-  return ( false
-    || root == "NONE"
-    || root == "COUNT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type WafRuleType =
 | "REGULAR"
 | "RATE_BASED"
 | "GROUP"
-;
-
-function toWafRuleType(root: JSONValue): WafRuleType | null {
-  return ( false
-    || root == "REGULAR"
-    || root == "RATE_BASED"
-    || root == "GROUP"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface ExcludedRule {
   RuleId: string;
 }
-function fromExcludedRule(input?: ExcludedRule | null): JSONValue {
+function fromExcludedRule(input?: ExcludedRule | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RuleId: input["RuleId"],
   }
 }
-function toExcludedRule(root: JSONValue): ExcludedRule {
-  return prt.readObj({
+function toExcludedRule(root: jsonP.JSONValue): ExcludedRule {
+  return jsonP.readObj({
     required: {
       "RuleId": "s",
     },
@@ -3424,9 +3261,10 @@ export interface SizeConstraintSetUpdate {
   Action: ChangeAction;
   SizeConstraint: SizeConstraint;
 }
-function fromSizeConstraintSetUpdate(input?: SizeConstraintSetUpdate | null): JSONValue {
+function fromSizeConstraintSetUpdate(input?: SizeConstraintSetUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Action: input["Action"],
     SizeConstraint: fromSizeConstraint(input["SizeConstraint"]),
   }
 }
@@ -3438,18 +3276,21 @@ export interface SizeConstraint {
   ComparisonOperator: ComparisonOperator;
   Size: number;
 }
-function fromSizeConstraint(input?: SizeConstraint | null): JSONValue {
+function fromSizeConstraint(input?: SizeConstraint | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     FieldToMatch: fromFieldToMatch(input["FieldToMatch"]),
+    TextTransformation: input["TextTransformation"],
+    ComparisonOperator: input["ComparisonOperator"],
+    Size: input["Size"],
   }
 }
-function toSizeConstraint(root: JSONValue): SizeConstraint {
-  return prt.readObj({
+function toSizeConstraint(root: jsonP.JSONValue): SizeConstraint {
+  return jsonP.readObj({
     required: {
       "FieldToMatch": toFieldToMatch,
-      "TextTransformation": toTextTransformation,
-      "ComparisonOperator": toComparisonOperator,
+      "TextTransformation": (x: jsonP.JSONValue) => cmnP.readEnum<TextTransformation>(x),
+      "ComparisonOperator": (x: jsonP.JSONValue) => cmnP.readEnum<ComparisonOperator>(x),
       "Size": "n",
     },
     optional: {},
@@ -3464,27 +3305,17 @@ export type ComparisonOperator =
 | "LT"
 | "GE"
 | "GT"
-;
-
-function toComparisonOperator(root: JSONValue): ComparisonOperator | null {
-  return ( false
-    || root == "EQ"
-    || root == "NE"
-    || root == "LE"
-    || root == "LT"
-    || root == "GE"
-    || root == "GT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface SqlInjectionMatchSetUpdate {
   Action: ChangeAction;
   SqlInjectionMatchTuple: SqlInjectionMatchTuple;
 }
-function fromSqlInjectionMatchSetUpdate(input?: SqlInjectionMatchSetUpdate | null): JSONValue {
+function fromSqlInjectionMatchSetUpdate(input?: SqlInjectionMatchSetUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Action: input["Action"],
     SqlInjectionMatchTuple: fromSqlInjectionMatchTuple(input["SqlInjectionMatchTuple"]),
   }
 }
@@ -3494,17 +3325,18 @@ export interface SqlInjectionMatchTuple {
   FieldToMatch: FieldToMatch;
   TextTransformation: TextTransformation;
 }
-function fromSqlInjectionMatchTuple(input?: SqlInjectionMatchTuple | null): JSONValue {
+function fromSqlInjectionMatchTuple(input?: SqlInjectionMatchTuple | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     FieldToMatch: fromFieldToMatch(input["FieldToMatch"]),
+    TextTransformation: input["TextTransformation"],
   }
 }
-function toSqlInjectionMatchTuple(root: JSONValue): SqlInjectionMatchTuple {
-  return prt.readObj({
+function toSqlInjectionMatchTuple(root: jsonP.JSONValue): SqlInjectionMatchTuple {
+  return jsonP.readObj({
     required: {
       "FieldToMatch": toFieldToMatch,
-      "TextTransformation": toTextTransformation,
+      "TextTransformation": (x: jsonP.JSONValue) => cmnP.readEnum<TextTransformation>(x),
     },
     optional: {},
   }, root);
@@ -3515,9 +3347,10 @@ export interface WebACLUpdate {
   Action: ChangeAction;
   ActivatedRule: ActivatedRule;
 }
-function fromWebACLUpdate(input?: WebACLUpdate | null): JSONValue {
+function fromWebACLUpdate(input?: WebACLUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Action: input["Action"],
     ActivatedRule: fromActivatedRule(input["ActivatedRule"]),
   }
 }
@@ -3527,9 +3360,10 @@ export interface XssMatchSetUpdate {
   Action: ChangeAction;
   XssMatchTuple: XssMatchTuple;
 }
-function fromXssMatchSetUpdate(input?: XssMatchSetUpdate | null): JSONValue {
+function fromXssMatchSetUpdate(input?: XssMatchSetUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Action: input["Action"],
     XssMatchTuple: fromXssMatchTuple(input["XssMatchTuple"]),
   }
 }
@@ -3539,17 +3373,18 @@ export interface XssMatchTuple {
   FieldToMatch: FieldToMatch;
   TextTransformation: TextTransformation;
 }
-function fromXssMatchTuple(input?: XssMatchTuple | null): JSONValue {
+function fromXssMatchTuple(input?: XssMatchTuple | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     FieldToMatch: fromFieldToMatch(input["FieldToMatch"]),
+    TextTransformation: input["TextTransformation"],
   }
 }
-function toXssMatchTuple(root: JSONValue): XssMatchTuple {
-  return prt.readObj({
+function toXssMatchTuple(root: jsonP.JSONValue): XssMatchTuple {
+  return jsonP.readObj({
     required: {
       "FieldToMatch": toFieldToMatch,
-      "TextTransformation": toTextTransformation,
+      "TextTransformation": (x: jsonP.JSONValue) => cmnP.readEnum<TextTransformation>(x),
     },
     optional: {},
   }, root);
@@ -3561,8 +3396,8 @@ export interface ByteMatchSet {
   Name?: string | null;
   ByteMatchTuples: ByteMatchTuple[];
 }
-function toByteMatchSet(root: JSONValue): ByteMatchSet {
-  return prt.readObj({
+function toByteMatchSet(root: jsonP.JSONValue): ByteMatchSet {
+  return jsonP.readObj({
     required: {
       "ByteMatchSetId": "s",
       "ByteMatchTuples": [toByteMatchTuple],
@@ -3579,8 +3414,8 @@ export interface GeoMatchSet {
   Name?: string | null;
   GeoMatchConstraints: GeoMatchConstraint[];
 }
-function toGeoMatchSet(root: JSONValue): GeoMatchSet {
-  return prt.readObj({
+function toGeoMatchSet(root: jsonP.JSONValue): GeoMatchSet {
+  return jsonP.readObj({
     required: {
       "GeoMatchSetId": "s",
       "GeoMatchConstraints": [toGeoMatchConstraint],
@@ -3597,8 +3432,8 @@ export interface IPSet {
   Name?: string | null;
   IPSetDescriptors: IPSetDescriptor[];
 }
-function toIPSet(root: JSONValue): IPSet {
-  return prt.readObj({
+function toIPSet(root: jsonP.JSONValue): IPSet {
+  return jsonP.readObj({
     required: {
       "IPSetId": "s",
       "IPSetDescriptors": [toIPSetDescriptor],
@@ -3618,12 +3453,12 @@ export interface RateBasedRule {
   RateKey: RateKey;
   RateLimit: number;
 }
-function toRateBasedRule(root: JSONValue): RateBasedRule {
-  return prt.readObj({
+function toRateBasedRule(root: jsonP.JSONValue): RateBasedRule {
+  return jsonP.readObj({
     required: {
       "RuleId": "s",
       "MatchPredicates": [toPredicate],
-      "RateKey": toRateKey,
+      "RateKey": (x: jsonP.JSONValue) => cmnP.readEnum<RateKey>(x),
       "RateLimit": "n",
     },
     optional: {
@@ -3639,8 +3474,8 @@ export interface RegexMatchSet {
   Name?: string | null;
   RegexMatchTuples?: RegexMatchTuple[] | null;
 }
-function toRegexMatchSet(root: JSONValue): RegexMatchSet {
-  return prt.readObj({
+function toRegexMatchSet(root: jsonP.JSONValue): RegexMatchSet {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RegexMatchSetId": "s",
@@ -3656,8 +3491,8 @@ export interface RegexPatternSet {
   Name?: string | null;
   RegexPatternStrings: string[];
 }
-function toRegexPatternSet(root: JSONValue): RegexPatternSet {
-  return prt.readObj({
+function toRegexPatternSet(root: jsonP.JSONValue): RegexPatternSet {
+  return jsonP.readObj({
     required: {
       "RegexPatternSetId": "s",
       "RegexPatternStrings": ["s"],
@@ -3675,8 +3510,8 @@ export interface Rule {
   MetricName?: string | null;
   Predicates: Predicate[];
 }
-function toRule(root: JSONValue): Rule {
-  return prt.readObj({
+function toRule(root: jsonP.JSONValue): Rule {
+  return jsonP.readObj({
     required: {
       "RuleId": "s",
       "Predicates": [toPredicate],
@@ -3694,8 +3529,8 @@ export interface RuleGroup {
   Name?: string | null;
   MetricName?: string | null;
 }
-function toRuleGroup(root: JSONValue): RuleGroup {
-  return prt.readObj({
+function toRuleGroup(root: jsonP.JSONValue): RuleGroup {
+  return jsonP.readObj({
     required: {
       "RuleGroupId": "s",
     },
@@ -3712,8 +3547,8 @@ export interface SizeConstraintSet {
   Name?: string | null;
   SizeConstraints: SizeConstraint[];
 }
-function toSizeConstraintSet(root: JSONValue): SizeConstraintSet {
-  return prt.readObj({
+function toSizeConstraintSet(root: jsonP.JSONValue): SizeConstraintSet {
+  return jsonP.readObj({
     required: {
       "SizeConstraintSetId": "s",
       "SizeConstraints": [toSizeConstraint],
@@ -3730,8 +3565,8 @@ export interface SqlInjectionMatchSet {
   Name?: string | null;
   SqlInjectionMatchTuples: SqlInjectionMatchTuple[];
 }
-function toSqlInjectionMatchSet(root: JSONValue): SqlInjectionMatchSet {
-  return prt.readObj({
+function toSqlInjectionMatchSet(root: jsonP.JSONValue): SqlInjectionMatchSet {
+  return jsonP.readObj({
     required: {
       "SqlInjectionMatchSetId": "s",
       "SqlInjectionMatchTuples": [toSqlInjectionMatchTuple],
@@ -3751,8 +3586,8 @@ export interface WebACL {
   Rules: ActivatedRule[];
   WebACLArn?: string | null;
 }
-function toWebACL(root: JSONValue): WebACL {
-  return prt.readObj({
+function toWebACL(root: jsonP.JSONValue): WebACL {
+  return jsonP.readObj({
     required: {
       "WebACLId": "s",
       "DefaultAction": toWafAction,
@@ -3772,8 +3607,8 @@ export interface XssMatchSet {
   Name?: string | null;
   XssMatchTuples: XssMatchTuple[];
 }
-function toXssMatchSet(root: JSONValue): XssMatchSet {
-  return prt.readObj({
+function toXssMatchSet(root: jsonP.JSONValue): XssMatchSet {
+  return jsonP.readObj({
     required: {
       "XssMatchSetId": "s",
       "XssMatchTuples": [toXssMatchTuple],
@@ -3789,14 +3624,7 @@ export type ChangeTokenStatus =
 | "PROVISIONED"
 | "PENDING"
 | "INSYNC"
-;
-function toChangeTokenStatus(root: JSONValue): ChangeTokenStatus | null {
-  return ( false
-    || root == "PROVISIONED"
-    || root == "PENDING"
-    || root == "INSYNC"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface SampledHTTPRequest {
@@ -3806,8 +3634,8 @@ export interface SampledHTTPRequest {
   Action?: string | null;
   RuleWithinRuleGroup?: string | null;
 }
-function toSampledHTTPRequest(root: JSONValue): SampledHTTPRequest {
-  return prt.readObj({
+function toSampledHTTPRequest(root: jsonP.JSONValue): SampledHTTPRequest {
+  return jsonP.readObj({
     required: {
       "Request": toHTTPRequest,
       "Weight": "n",
@@ -3829,8 +3657,8 @@ export interface HTTPRequest {
   HTTPVersion?: string | null;
   Headers?: HTTPHeader[] | null;
 }
-function toHTTPRequest(root: JSONValue): HTTPRequest {
-  return prt.readObj({
+function toHTTPRequest(root: jsonP.JSONValue): HTTPRequest {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ClientIP": "s",
@@ -3848,8 +3676,8 @@ export interface HTTPHeader {
   Name?: string | null;
   Value?: string | null;
 }
-function toHTTPHeader(root: JSONValue): HTTPHeader {
-  return prt.readObj({
+function toHTTPHeader(root: jsonP.JSONValue): HTTPHeader {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -3863,8 +3691,8 @@ export interface WebACLSummary {
   WebACLId: string;
   Name: string;
 }
-function toWebACLSummary(root: JSONValue): WebACLSummary {
-  return prt.readObj({
+function toWebACLSummary(root: jsonP.JSONValue): WebACLSummary {
+  return jsonP.readObj({
     required: {
       "WebACLId": "s",
       "Name": "s",
@@ -3878,8 +3706,8 @@ export interface ByteMatchSetSummary {
   ByteMatchSetId: string;
   Name: string;
 }
-function toByteMatchSetSummary(root: JSONValue): ByteMatchSetSummary {
-  return prt.readObj({
+function toByteMatchSetSummary(root: jsonP.JSONValue): ByteMatchSetSummary {
+  return jsonP.readObj({
     required: {
       "ByteMatchSetId": "s",
       "Name": "s",
@@ -3893,8 +3721,8 @@ export interface GeoMatchSetSummary {
   GeoMatchSetId: string;
   Name: string;
 }
-function toGeoMatchSetSummary(root: JSONValue): GeoMatchSetSummary {
-  return prt.readObj({
+function toGeoMatchSetSummary(root: jsonP.JSONValue): GeoMatchSetSummary {
+  return jsonP.readObj({
     required: {
       "GeoMatchSetId": "s",
       "Name": "s",
@@ -3908,8 +3736,8 @@ export interface IPSetSummary {
   IPSetId: string;
   Name: string;
 }
-function toIPSetSummary(root: JSONValue): IPSetSummary {
-  return prt.readObj({
+function toIPSetSummary(root: jsonP.JSONValue): IPSetSummary {
+  return jsonP.readObj({
     required: {
       "IPSetId": "s",
       "Name": "s",
@@ -3923,8 +3751,8 @@ export interface RuleSummary {
   RuleId: string;
   Name: string;
 }
-function toRuleSummary(root: JSONValue): RuleSummary {
-  return prt.readObj({
+function toRuleSummary(root: jsonP.JSONValue): RuleSummary {
+  return jsonP.readObj({
     required: {
       "RuleId": "s",
       "Name": "s",
@@ -3938,8 +3766,8 @@ export interface RegexMatchSetSummary {
   RegexMatchSetId: string;
   Name: string;
 }
-function toRegexMatchSetSummary(root: JSONValue): RegexMatchSetSummary {
-  return prt.readObj({
+function toRegexMatchSetSummary(root: jsonP.JSONValue): RegexMatchSetSummary {
+  return jsonP.readObj({
     required: {
       "RegexMatchSetId": "s",
       "Name": "s",
@@ -3953,8 +3781,8 @@ export interface RegexPatternSetSummary {
   RegexPatternSetId: string;
   Name: string;
 }
-function toRegexPatternSetSummary(root: JSONValue): RegexPatternSetSummary {
-  return prt.readObj({
+function toRegexPatternSetSummary(root: jsonP.JSONValue): RegexPatternSetSummary {
+  return jsonP.readObj({
     required: {
       "RegexPatternSetId": "s",
       "Name": "s",
@@ -3968,8 +3796,8 @@ export interface RuleGroupSummary {
   RuleGroupId: string;
   Name: string;
 }
-function toRuleGroupSummary(root: JSONValue): RuleGroupSummary {
-  return prt.readObj({
+function toRuleGroupSummary(root: jsonP.JSONValue): RuleGroupSummary {
+  return jsonP.readObj({
     required: {
       "RuleGroupId": "s",
       "Name": "s",
@@ -3983,8 +3811,8 @@ export interface SizeConstraintSetSummary {
   SizeConstraintSetId: string;
   Name: string;
 }
-function toSizeConstraintSetSummary(root: JSONValue): SizeConstraintSetSummary {
-  return prt.readObj({
+function toSizeConstraintSetSummary(root: jsonP.JSONValue): SizeConstraintSetSummary {
+  return jsonP.readObj({
     required: {
       "SizeConstraintSetId": "s",
       "Name": "s",
@@ -3998,8 +3826,8 @@ export interface SqlInjectionMatchSetSummary {
   SqlInjectionMatchSetId: string;
   Name: string;
 }
-function toSqlInjectionMatchSetSummary(root: JSONValue): SqlInjectionMatchSetSummary {
-  return prt.readObj({
+function toSqlInjectionMatchSetSummary(root: jsonP.JSONValue): SqlInjectionMatchSetSummary {
+  return jsonP.readObj({
     required: {
       "SqlInjectionMatchSetId": "s",
       "Name": "s",
@@ -4014,8 +3842,8 @@ export interface SubscribedRuleGroupSummary {
   Name: string;
   MetricName: string;
 }
-function toSubscribedRuleGroupSummary(root: JSONValue): SubscribedRuleGroupSummary {
-  return prt.readObj({
+function toSubscribedRuleGroupSummary(root: jsonP.JSONValue): SubscribedRuleGroupSummary {
+  return jsonP.readObj({
     required: {
       "RuleGroupId": "s",
       "Name": "s",
@@ -4030,8 +3858,8 @@ export interface TagInfoForResource {
   ResourceARN?: string | null;
   TagList?: Tag[] | null;
 }
-function toTagInfoForResource(root: JSONValue): TagInfoForResource {
-  return prt.readObj({
+function toTagInfoForResource(root: jsonP.JSONValue): TagInfoForResource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ResourceARN": "s",
@@ -4045,8 +3873,8 @@ export interface XssMatchSetSummary {
   XssMatchSetId: string;
   Name: string;
 }
-function toXssMatchSetSummary(root: JSONValue): XssMatchSetSummary {
-  return prt.readObj({
+function toXssMatchSetSummary(root: jsonP.JSONValue): XssMatchSetSummary {
+  return jsonP.readObj({
     required: {
       "XssMatchSetId": "s",
       "Name": "s",

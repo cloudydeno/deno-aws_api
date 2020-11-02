@@ -5,10 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }
@@ -34,13 +33,15 @@ export default class Discovery {
   async associateConfigurationItemsToApplication(
     {abortSignal, ...params}: RequestConfig & AssociateConfigurationItemsToApplicationRequest,
   ): Promise<AssociateConfigurationItemsToApplicationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      applicationConfigurationId: params["applicationConfigurationId"],
+      configurationIds: params["configurationIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateConfigurationItemsToApplication",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -49,13 +50,14 @@ export default class Discovery {
   async batchDeleteImportData(
     {abortSignal, ...params}: RequestConfig & BatchDeleteImportDataRequest,
   ): Promise<BatchDeleteImportDataResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      importTaskIds: params["importTaskIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDeleteImportData",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "errors": [toBatchDeleteImportDataError],
@@ -66,13 +68,15 @@ export default class Discovery {
   async createApplication(
     {abortSignal, ...params}: RequestConfig & CreateApplicationRequest,
   ): Promise<CreateApplicationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      name: params["name"],
+      description: params["description"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApplication",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "configurationId": "s",
@@ -83,14 +87,15 @@ export default class Discovery {
   async createTags(
     {abortSignal, ...params}: RequestConfig & CreateTagsRequest,
   ): Promise<CreateTagsResponse> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      configurationIds: params["configurationIds"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -99,13 +104,14 @@ export default class Discovery {
   async deleteApplications(
     {abortSignal, ...params}: RequestConfig & DeleteApplicationsRequest,
   ): Promise<DeleteApplicationsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      configurationIds: params["configurationIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteApplications",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -114,14 +120,15 @@ export default class Discovery {
   async deleteTags(
     {abortSignal, ...params}: RequestConfig & DeleteTagsRequest,
   ): Promise<DeleteTagsResponse> {
-    const body: JSONObject = {...params,
-    tags: params["tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      configurationIds: params["configurationIds"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -130,14 +137,17 @@ export default class Discovery {
   async describeAgents(
     {abortSignal, ...params}: RequestConfig & DescribeAgentsRequest = {},
   ): Promise<DescribeAgentsResponse> {
-    const body: JSONObject = {...params,
-    filters: params["filters"]?.map(x => fromFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      agentIds: params["agentIds"],
+      filters: params["filters"]?.map(x => fromFilter(x)),
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAgents",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "agentsInfo": [toAgentInfo],
@@ -149,16 +159,17 @@ export default class Discovery {
   async describeConfigurations(
     {abortSignal, ...params}: RequestConfig & DescribeConfigurationsRequest,
   ): Promise<DescribeConfigurationsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      configurationIds: params["configurationIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConfigurations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "configurations": [x => prt.readMap(String, String, x)],
+        "configurations": [x => jsonP.readMap(String, String, x)],
       },
     }, await resp.json());
   }
@@ -166,13 +177,16 @@ export default class Discovery {
   async describeContinuousExports(
     {abortSignal, ...params}: RequestConfig & DescribeContinuousExportsRequest = {},
   ): Promise<DescribeContinuousExportsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      exportIds: params["exportIds"],
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeContinuousExports",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "descriptions": [toContinuousExportDescription],
@@ -184,13 +198,16 @@ export default class Discovery {
   async describeExportConfigurations(
     {abortSignal, ...params}: RequestConfig & DescribeExportConfigurationsRequest = {},
   ): Promise<DescribeExportConfigurationsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      exportIds: params["exportIds"],
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeExportConfigurations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "exportsInfo": [toExportInfo],
@@ -202,14 +219,17 @@ export default class Discovery {
   async describeExportTasks(
     {abortSignal, ...params}: RequestConfig & DescribeExportTasksRequest = {},
   ): Promise<DescribeExportTasksResponse> {
-    const body: JSONObject = {...params,
-    filters: params["filters"]?.map(x => fromExportFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      exportIds: params["exportIds"],
+      filters: params["filters"]?.map(x => fromExportFilter(x)),
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeExportTasks",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "exportsInfo": [toExportInfo],
@@ -221,14 +241,16 @@ export default class Discovery {
   async describeImportTasks(
     {abortSignal, ...params}: RequestConfig & DescribeImportTasksRequest = {},
   ): Promise<DescribeImportTasksResponse> {
-    const body: JSONObject = {...params,
-    filters: params["filters"]?.map(x => fromImportTaskFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      filters: params["filters"]?.map(x => fromImportTaskFilter(x)),
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeImportTasks",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "nextToken": "s",
@@ -240,14 +262,16 @@ export default class Discovery {
   async describeTags(
     {abortSignal, ...params}: RequestConfig & DescribeTagsRequest = {},
   ): Promise<DescribeTagsResponse> {
-    const body: JSONObject = {...params,
-    filters: params["filters"]?.map(x => fromTagFilter(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      filters: params["filters"]?.map(x => fromTagFilter(x)),
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "tags": [toConfigurationTag],
@@ -259,13 +283,15 @@ export default class Discovery {
   async disassociateConfigurationItemsFromApplication(
     {abortSignal, ...params}: RequestConfig & DisassociateConfigurationItemsFromApplicationRequest,
   ): Promise<DisassociateConfigurationItemsFromApplicationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      applicationConfigurationId: params["applicationConfigurationId"],
+      configurationIds: params["configurationIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateConfigurationItemsFromApplication",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -278,7 +304,7 @@ export default class Discovery {
       abortSignal,
       action: "ExportConfigurations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "exportId": "s",
@@ -289,13 +315,13 @@ export default class Discovery {
   async getDiscoverySummary(
     {abortSignal, ...params}: RequestConfig & GetDiscoverySummaryRequest = {},
   ): Promise<GetDiscoverySummaryResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDiscoverySummary",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "servers": "n",
@@ -311,18 +337,21 @@ export default class Discovery {
   async listConfigurations(
     {abortSignal, ...params}: RequestConfig & ListConfigurationsRequest,
   ): Promise<ListConfigurationsResponse> {
-    const body: JSONObject = {...params,
-    filters: params["filters"]?.map(x => fromFilter(x)),
-    orderBy: params["orderBy"]?.map(x => fromOrderByElement(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      configurationType: params["configurationType"],
+      filters: params["filters"]?.map(x => fromFilter(x)),
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+      orderBy: params["orderBy"]?.map(x => fromOrderByElement(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListConfigurations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
-        "configurations": [x => prt.readMap(String, String, x)],
+        "configurations": [x => jsonP.readMap(String, String, x)],
         "nextToken": "s",
       },
     }, await resp.json());
@@ -331,13 +360,18 @@ export default class Discovery {
   async listServerNeighbors(
     {abortSignal, ...params}: RequestConfig & ListServerNeighborsRequest,
   ): Promise<ListServerNeighborsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      configurationId: params["configurationId"],
+      portInformationNeeded: params["portInformationNeeded"],
+      neighborConfigurationIds: params["neighborConfigurationIds"],
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListServerNeighbors",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "neighbors": [toNeighborConnectionDetail],
       },
@@ -351,20 +385,20 @@ export default class Discovery {
   async startContinuousExport(
     {abortSignal, ...params}: RequestConfig & StartContinuousExportRequest = {},
   ): Promise<StartContinuousExportResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartContinuousExport",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "exportId": "s",
         "s3Bucket": "s",
         "startTime": "d",
-        "dataSource": toDataSource,
-        "schemaStorageConfig": x => prt.readMap(String, String, x),
+        "dataSource": (x: jsonP.JSONValue) => cmnP.readEnum<DataSource>(x),
+        "schemaStorageConfig": x => jsonP.readMap(String, String, x),
       },
     }, await resp.json());
   }
@@ -372,13 +406,14 @@ export default class Discovery {
   async startDataCollectionByAgentIds(
     {abortSignal, ...params}: RequestConfig & StartDataCollectionByAgentIdsRequest,
   ): Promise<StartDataCollectionByAgentIdsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      agentIds: params["agentIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartDataCollectionByAgentIds",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "agentsConfigurationStatus": [toAgentConfigurationStatus],
@@ -389,16 +424,17 @@ export default class Discovery {
   async startExportTask(
     {abortSignal, ...params}: RequestConfig & StartExportTaskRequest = {},
   ): Promise<StartExportTaskResponse> {
-    const body: JSONObject = {...params,
-    filters: params["filters"]?.map(x => fromExportFilter(x)),
-    startTime: prt.serializeDate_unixTimestamp(params["startTime"]),
-    endTime: prt.serializeDate_unixTimestamp(params["endTime"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      exportDataFormat: params["exportDataFormat"],
+      filters: params["filters"]?.map(x => fromExportFilter(x)),
+      startTime: jsonP.serializeDate_unixTimestamp(params["startTime"]),
+      endTime: jsonP.serializeDate_unixTimestamp(params["endTime"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartExportTask",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "exportId": "s",
@@ -409,14 +445,16 @@ export default class Discovery {
   async startImportTask(
     {abortSignal, ...params}: RequestConfig & StartImportTaskRequest,
   ): Promise<StartImportTaskResponse> {
-    const body: JSONObject = {...params,
-    clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
+      name: params["name"],
+      importUrl: params["importUrl"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartImportTask",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "task": toImportTask,
@@ -427,13 +465,14 @@ export default class Discovery {
   async stopContinuousExport(
     {abortSignal, ...params}: RequestConfig & StopContinuousExportRequest,
   ): Promise<StopContinuousExportResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      exportId: params["exportId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopContinuousExport",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "startTime": "d",
@@ -445,13 +484,14 @@ export default class Discovery {
   async stopDataCollectionByAgentIds(
     {abortSignal, ...params}: RequestConfig & StopDataCollectionByAgentIdsRequest,
   ): Promise<StopDataCollectionByAgentIdsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      agentIds: params["agentIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopDataCollectionByAgentIds",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "agentsConfigurationStatus": [toAgentConfigurationStatus],
@@ -462,13 +502,16 @@ export default class Discovery {
   async updateApplication(
     {abortSignal, ...params}: RequestConfig & UpdateApplicationRequest,
   ): Promise<UpdateApplicationResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      configurationId: params["configurationId"],
+      name: params["name"],
+      description: params["description"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApplication",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -662,7 +705,7 @@ export interface DescribeAgentsResponse {
 
 // refs: 1 - tags: named, output
 export interface DescribeConfigurationsResponse {
-  configurations?: ({ [key: string]: string })[] | null;
+  configurations?: ({ [key: string]: string | null | undefined })[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -716,7 +759,7 @@ export interface GetDiscoverySummaryResponse {
 
 // refs: 1 - tags: named, output
 export interface ListConfigurationsResponse {
-  configurations?: ({ [key: string]: string })[] | null;
+  configurations?: ({ [key: string]: string | null | undefined })[] | null;
   nextToken?: string | null;
 }
 
@@ -733,7 +776,7 @@ export interface StartContinuousExportResponse {
   s3Bucket?: string | null;
   startTime?: Date | number | null;
   dataSource?: DataSource | null;
-  schemaStorageConfig?: { [key: string]: string } | null;
+  schemaStorageConfig?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output
@@ -771,9 +814,11 @@ export interface Tag {
   key: string;
   value: string;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    key: input["key"],
+    value: input["value"],
   }
 }
 
@@ -783,9 +828,12 @@ export interface Filter {
   values: string[];
   condition: string;
 }
-function fromFilter(input?: Filter | null): JSONValue {
+function fromFilter(input?: Filter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    values: input["values"],
+    condition: input["condition"],
   }
 }
 
@@ -795,9 +843,12 @@ export interface ExportFilter {
   values: string[];
   condition: string;
 }
-function fromExportFilter(input?: ExportFilter | null): JSONValue {
+function fromExportFilter(input?: ExportFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    values: input["values"],
+    condition: input["condition"],
   }
 }
 
@@ -806,9 +857,11 @@ export interface ImportTaskFilter {
   name?: ImportTaskFilterName | null;
   values?: string[] | null;
 }
-function fromImportTaskFilter(input?: ImportTaskFilter | null): JSONValue {
+function fromImportTaskFilter(input?: ImportTaskFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    values: input["values"],
   }
 }
 
@@ -817,17 +870,18 @@ export type ImportTaskFilterName =
 | "IMPORT_TASK_ID"
 | "STATUS"
 | "NAME"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface TagFilter {
   name: string;
   values: string[];
 }
-function fromTagFilter(input?: TagFilter | null): JSONValue {
+function fromTagFilter(input?: TagFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    name: input["name"],
+    values: input["values"],
   }
 }
 
@@ -837,25 +891,18 @@ export type ConfigurationItemType =
 | "PROCESS"
 | "CONNECTION"
 | "APPLICATION"
-;
-
-function toConfigurationItemType(root: JSONValue): ConfigurationItemType | null {
-  return ( false
-    || root == "SERVER"
-    || root == "PROCESS"
-    || root == "CONNECTION"
-    || root == "APPLICATION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface OrderByElement {
   fieldName: string;
   sortOrder?: orderString | null;
 }
-function fromOrderByElement(input?: OrderByElement | null): JSONValue {
+function fromOrderByElement(input?: OrderByElement | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    fieldName: input["fieldName"],
+    sortOrder: input["sortOrder"],
   }
 }
 
@@ -863,15 +910,13 @@ function fromOrderByElement(input?: OrderByElement | null): JSONValue {
 export type orderString =
 | "ASC"
 | "DESC"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ExportDataFormat =
 | "CSV"
 | "GRAPHML"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface BatchDeleteImportDataError {
@@ -879,12 +924,12 @@ export interface BatchDeleteImportDataError {
   errorCode?: BatchDeleteImportDataErrorCode | null;
   errorDescription?: string | null;
 }
-function toBatchDeleteImportDataError(root: JSONValue): BatchDeleteImportDataError {
-  return prt.readObj({
+function toBatchDeleteImportDataError(root: jsonP.JSONValue): BatchDeleteImportDataError {
+  return jsonP.readObj({
     required: {},
     optional: {
       "importTaskId": "s",
-      "errorCode": toBatchDeleteImportDataErrorCode,
+      "errorCode": (x: jsonP.JSONValue) => cmnP.readEnum<BatchDeleteImportDataErrorCode>(x),
       "errorDescription": "s",
     },
   }, root);
@@ -895,14 +940,7 @@ export type BatchDeleteImportDataErrorCode =
 | "NOT_FOUND"
 | "INTERNAL_SERVER_ERROR"
 | "OVER_LIMIT"
-;
-function toBatchDeleteImportDataErrorCode(root: JSONValue): BatchDeleteImportDataErrorCode | null {
-  return ( false
-    || root == "NOT_FOUND"
-    || root == "INTERNAL_SERVER_ERROR"
-    || root == "OVER_LIMIT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AgentInfo {
@@ -917,8 +955,8 @@ export interface AgentInfo {
   agentType?: string | null;
   registeredTime?: string | null;
 }
-function toAgentInfo(root: JSONValue): AgentInfo {
-  return prt.readObj({
+function toAgentInfo(root: jsonP.JSONValue): AgentInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "agentId": "s",
@@ -926,7 +964,7 @@ function toAgentInfo(root: JSONValue): AgentInfo {
       "agentNetworkInfoList": [toAgentNetworkInfo],
       "connectorId": "s",
       "version": "s",
-      "health": toAgentStatus,
+      "health": (x: jsonP.JSONValue) => cmnP.readEnum<AgentStatus>(x),
       "lastHealthPingTime": "s",
       "collectionStatus": "s",
       "agentType": "s",
@@ -940,8 +978,8 @@ export interface AgentNetworkInfo {
   ipAddress?: string | null;
   macAddress?: string | null;
 }
-function toAgentNetworkInfo(root: JSONValue): AgentNetworkInfo {
-  return prt.readObj({
+function toAgentNetworkInfo(root: jsonP.JSONValue): AgentNetworkInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ipAddress": "s",
@@ -958,17 +996,7 @@ export type AgentStatus =
 | "UNKNOWN"
 | "BLACKLISTED"
 | "SHUTDOWN"
-;
-function toAgentStatus(root: JSONValue): AgentStatus | null {
-  return ( false
-    || root == "HEALTHY"
-    || root == "UNHEALTHY"
-    || root == "RUNNING"
-    || root == "UNKNOWN"
-    || root == "BLACKLISTED"
-    || root == "SHUTDOWN"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ContinuousExportDescription {
@@ -979,20 +1007,20 @@ export interface ContinuousExportDescription {
   startTime?: Date | number | null;
   stopTime?: Date | number | null;
   dataSource?: DataSource | null;
-  schemaStorageConfig?: { [key: string]: string } | null;
+  schemaStorageConfig?: { [key: string]: string | null | undefined } | null;
 }
-function toContinuousExportDescription(root: JSONValue): ContinuousExportDescription {
-  return prt.readObj({
+function toContinuousExportDescription(root: jsonP.JSONValue): ContinuousExportDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "exportId": "s",
-      "status": toContinuousExportStatus,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<ContinuousExportStatus>(x),
       "statusDetail": "s",
       "s3Bucket": "s",
       "startTime": "d",
       "stopTime": "d",
-      "dataSource": toDataSource,
-      "schemaStorageConfig": x => prt.readMap(String, String, x),
+      "dataSource": (x: jsonP.JSONValue) => cmnP.readEnum<DataSource>(x),
+      "schemaStorageConfig": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -1006,28 +1034,12 @@ export type ContinuousExportStatus =
 | "STOP_IN_PROGRESS"
 | "STOP_FAILED"
 | "INACTIVE"
-;
-function toContinuousExportStatus(root: JSONValue): ContinuousExportStatus | null {
-  return ( false
-    || root == "START_IN_PROGRESS"
-    || root == "START_FAILED"
-    || root == "ACTIVE"
-    || root == "ERROR"
-    || root == "STOP_IN_PROGRESS"
-    || root == "STOP_FAILED"
-    || root == "INACTIVE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type DataSource =
 | "AGENT"
-;
-function toDataSource(root: JSONValue): DataSource | null {
-  return ( false
-    || root == "AGENT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ExportInfo {
@@ -1040,11 +1052,11 @@ export interface ExportInfo {
   requestedStartTime?: Date | number | null;
   requestedEndTime?: Date | number | null;
 }
-function toExportInfo(root: JSONValue): ExportInfo {
-  return prt.readObj({
+function toExportInfo(root: jsonP.JSONValue): ExportInfo {
+  return jsonP.readObj({
     required: {
       "exportId": "s",
-      "exportStatus": toExportStatus,
+      "exportStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ExportStatus>(x),
       "statusMessage": "s",
       "exportRequestTime": "d",
     },
@@ -1062,14 +1074,7 @@ export type ExportStatus =
 | "FAILED"
 | "SUCCEEDED"
 | "IN_PROGRESS"
-;
-function toExportStatus(root: JSONValue): ExportStatus | null {
-  return ( false
-    || root == "FAILED"
-    || root == "SUCCEEDED"
-    || root == "IN_PROGRESS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ImportTask {
@@ -1087,15 +1092,15 @@ export interface ImportTask {
   applicationImportFailure?: number | null;
   errorsAndFailedEntriesZip?: string | null;
 }
-function toImportTask(root: JSONValue): ImportTask {
-  return prt.readObj({
+function toImportTask(root: jsonP.JSONValue): ImportTask {
+  return jsonP.readObj({
     required: {},
     optional: {
       "importTaskId": "s",
       "clientRequestToken": "s",
       "name": "s",
       "importUrl": "s",
-      "status": toImportStatus,
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<ImportStatus>(x),
       "importRequestTime": "d",
       "importCompletionTime": "d",
       "importDeletedTime": "d",
@@ -1121,22 +1126,7 @@ export type ImportStatus =
 | "DELETE_FAILED"
 | "DELETE_FAILED_LIMIT_EXCEEDED"
 | "INTERNAL_ERROR"
-;
-function toImportStatus(root: JSONValue): ImportStatus | null {
-  return ( false
-    || root == "IMPORT_IN_PROGRESS"
-    || root == "IMPORT_COMPLETE"
-    || root == "IMPORT_COMPLETE_WITH_ERRORS"
-    || root == "IMPORT_FAILED"
-    || root == "IMPORT_FAILED_SERVER_LIMIT_EXCEEDED"
-    || root == "IMPORT_FAILED_RECORD_LIMIT_EXCEEDED"
-    || root == "DELETE_IN_PROGRESS"
-    || root == "DELETE_COMPLETE"
-    || root == "DELETE_FAILED"
-    || root == "DELETE_FAILED_LIMIT_EXCEEDED"
-    || root == "INTERNAL_ERROR"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ConfigurationTag {
@@ -1146,11 +1136,11 @@ export interface ConfigurationTag {
   value?: string | null;
   timeOfCreation?: Date | number | null;
 }
-function toConfigurationTag(root: JSONValue): ConfigurationTag {
-  return prt.readObj({
+function toConfigurationTag(root: jsonP.JSONValue): ConfigurationTag {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "configurationType": toConfigurationItemType,
+      "configurationType": (x: jsonP.JSONValue) => cmnP.readEnum<ConfigurationItemType>(x),
       "configurationId": "s",
       "key": "s",
       "value": "s",
@@ -1169,8 +1159,8 @@ export interface CustomerAgentInfo {
   totalAgents: number;
   unknownAgents: number;
 }
-function toCustomerAgentInfo(root: JSONValue): CustomerAgentInfo {
-  return prt.readObj({
+function toCustomerAgentInfo(root: jsonP.JSONValue): CustomerAgentInfo {
+  return jsonP.readObj({
     required: {
       "activeAgents": "n",
       "healthyAgents": "n",
@@ -1194,8 +1184,8 @@ export interface CustomerConnectorInfo {
   totalConnectors: number;
   unknownConnectors: number;
 }
-function toCustomerConnectorInfo(root: JSONValue): CustomerConnectorInfo {
-  return prt.readObj({
+function toCustomerConnectorInfo(root: jsonP.JSONValue): CustomerConnectorInfo {
+  return jsonP.readObj({
     required: {
       "activeConnectors": "n",
       "healthyConnectors": "n",
@@ -1217,8 +1207,8 @@ export interface NeighborConnectionDetail {
   transportProtocol?: string | null;
   connectionsCount: number;
 }
-function toNeighborConnectionDetail(root: JSONValue): NeighborConnectionDetail {
-  return prt.readObj({
+function toNeighborConnectionDetail(root: jsonP.JSONValue): NeighborConnectionDetail {
+  return jsonP.readObj({
     required: {
       "sourceServerId": "s",
       "destinationServerId": "s",
@@ -1237,8 +1227,8 @@ export interface AgentConfigurationStatus {
   operationSucceeded?: boolean | null;
   description?: string | null;
 }
-function toAgentConfigurationStatus(root: JSONValue): AgentConfigurationStatus {
-  return prt.readObj({
+function toAgentConfigurationStatus(root: jsonP.JSONValue): AgentConfigurationStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
       "agentId": "s",

@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class MarketplaceCommerceAnalytics {
   #client: ServiceClient;
@@ -30,14 +30,20 @@ export default class MarketplaceCommerceAnalytics {
   async generateDataSet(
     {abortSignal, ...params}: RequestConfig & GenerateDataSetRequest,
   ): Promise<GenerateDataSetResult> {
-    const body: JSONObject = {...params,
-    dataSetPublicationDate: prt.serializeDate_unixTimestamp(params["dataSetPublicationDate"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      dataSetType: params["dataSetType"],
+      dataSetPublicationDate: jsonP.serializeDate_unixTimestamp(params["dataSetPublicationDate"]),
+      roleNameArn: params["roleNameArn"],
+      destinationS3BucketName: params["destinationS3BucketName"],
+      destinationS3Prefix: params["destinationS3Prefix"],
+      snsTopicArn: params["snsTopicArn"],
+      customerDefinedValues: params["customerDefinedValues"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GenerateDataSet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "dataSetRequestId": "s",
@@ -48,14 +54,20 @@ export default class MarketplaceCommerceAnalytics {
   async startSupportDataExport(
     {abortSignal, ...params}: RequestConfig & StartSupportDataExportRequest,
   ): Promise<StartSupportDataExportResult> {
-    const body: JSONObject = {...params,
-    fromDate: prt.serializeDate_unixTimestamp(params["fromDate"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      dataSetType: params["dataSetType"],
+      fromDate: jsonP.serializeDate_unixTimestamp(params["fromDate"]),
+      roleNameArn: params["roleNameArn"],
+      destinationS3BucketName: params["destinationS3BucketName"],
+      destinationS3Prefix: params["destinationS3Prefix"],
+      snsTopicArn: params["snsTopicArn"],
+      customerDefinedValues: params["customerDefinedValues"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartSupportDataExport",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "dataSetRequestId": "s",
@@ -73,7 +85,7 @@ export interface GenerateDataSetRequest {
   destinationS3BucketName: string;
   destinationS3Prefix?: string | null;
   snsTopicArn: string;
-  customerDefinedValues?: { [key: string]: string } | null;
+  customerDefinedValues?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -84,7 +96,7 @@ export interface StartSupportDataExportRequest {
   destinationS3BucketName: string;
   destinationS3Prefix?: string | null;
   snsTopicArn: string;
-  customerDefinedValues?: { [key: string]: string } | null;
+  customerDefinedValues?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output
@@ -124,12 +136,10 @@ export type DataSetType =
 | "customer_profile_by_geography"
 | "sales_compensation_billed_revenue"
 | "us_sales_and_use_tax_records"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type SupportDataSetType =
 | "customer_support_contacts_data"
 | "test_customer_support_contacts_data"
-;
-
+| cmnP.UnexpectedEnumValue;

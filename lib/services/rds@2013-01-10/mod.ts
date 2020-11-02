@@ -5,8 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 
 export default class RDS {
   #client: ServiceClient;
@@ -37,7 +38,7 @@ export default class RDS {
       abortSignal, body,
       action: "AddSourceIdentifierToSubscription",
     });
-    const xml = readXmlResult(await resp.text(), "AddSourceIdentifierToSubscriptionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "AddSourceIdentifierToSubscriptionResult");
     return {
       EventSubscription: xml.first("EventSubscription", false, EventSubscription_Parse),
     };
@@ -49,7 +50,7 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceName", (params["ResourceName"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTagsToResource",
@@ -70,7 +71,7 @@ export default class RDS {
       abortSignal, body,
       action: "AuthorizeDBSecurityGroupIngress",
     });
-    const xml = readXmlResult(await resp.text(), "AuthorizeDBSecurityGroupIngressResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "AuthorizeDBSecurityGroupIngressResult");
     return {
       DBSecurityGroup: xml.first("DBSecurityGroup", false, DBSecurityGroup_Parse),
     };
@@ -87,7 +88,7 @@ export default class RDS {
       abortSignal, body,
       action: "CopyDBSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "CopyDBSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CopyDBSnapshotResult");
     return {
       DBSnapshot: xml.first("DBSnapshot", false, DBSnapshot_Parse),
     };
@@ -105,8 +106,8 @@ export default class RDS {
     body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
     body.append(prefix+"MasterUsername", (params["MasterUsername"] ?? '').toString());
     body.append(prefix+"MasterUserPassword", (params["MasterUserPassword"] ?? '').toString());
-    if (params["DBSecurityGroups"]) prt.appendList(body, prefix+"DBSecurityGroups", params["DBSecurityGroups"], {"entryPrefix":".DBSecurityGroupName."})
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["DBSecurityGroups"]) qsP.appendList(body, prefix+"DBSecurityGroups", params["DBSecurityGroups"], {"entryPrefix":".DBSecurityGroupName."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("AvailabilityZone" in params) body.append(prefix+"AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     if ("PreferredMaintenanceWindow" in params) body.append(prefix+"PreferredMaintenanceWindow", (params["PreferredMaintenanceWindow"] ?? '').toString());
@@ -126,7 +127,7 @@ export default class RDS {
       abortSignal, body,
       action: "CreateDBInstance",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBInstanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBInstanceResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -150,7 +151,7 @@ export default class RDS {
       abortSignal, body,
       action: "CreateDBInstanceReadReplica",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBInstanceReadReplicaResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBInstanceReadReplicaResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -168,7 +169,7 @@ export default class RDS {
       abortSignal, body,
       action: "CreateDBParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBParameterGroupResult");
     return {
       DBParameterGroup: xml.first("DBParameterGroup", false, DBParameterGroup_Parse),
     };
@@ -185,7 +186,7 @@ export default class RDS {
       abortSignal, body,
       action: "CreateDBSecurityGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBSecurityGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBSecurityGroupResult");
     return {
       DBSecurityGroup: xml.first("DBSecurityGroup", false, DBSecurityGroup_Parse),
     };
@@ -202,7 +203,7 @@ export default class RDS {
       abortSignal, body,
       action: "CreateDBSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBSnapshotResult");
     return {
       DBSnapshot: xml.first("DBSnapshot", false, DBSnapshot_Parse),
     };
@@ -215,12 +216,12 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     body.append(prefix+"DBSubnetGroupDescription", (params["DBSubnetGroupDescription"] ?? '').toString());
-    if (params["SubnetIds"]) prt.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
+    if (params["SubnetIds"]) qsP.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBSubnetGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBSubnetGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBSubnetGroupResult");
     return {
       DBSubnetGroup: xml.first("DBSubnetGroup", false, DBSubnetGroup_Parse),
     };
@@ -234,14 +235,14 @@ export default class RDS {
     body.append(prefix+"SubscriptionName", (params["SubscriptionName"] ?? '').toString());
     body.append(prefix+"SnsTopicArn", (params["SnsTopicArn"] ?? '').toString());
     if ("SourceType" in params) body.append(prefix+"SourceType", (params["SourceType"] ?? '').toString());
-    if (params["EventCategories"]) prt.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
-    if (params["SourceIds"]) prt.appendList(body, prefix+"SourceIds", params["SourceIds"], {"entryPrefix":".SourceId."})
+    if (params["EventCategories"]) qsP.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
+    if (params["SourceIds"]) qsP.appendList(body, prefix+"SourceIds", params["SourceIds"], {"entryPrefix":".SourceId."})
     if ("Enabled" in params) body.append(prefix+"Enabled", (params["Enabled"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEventSubscription",
     });
-    const xml = readXmlResult(await resp.text(), "CreateEventSubscriptionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateEventSubscriptionResult");
     return {
       EventSubscription: xml.first("EventSubscription", false, EventSubscription_Parse),
     };
@@ -260,7 +261,7 @@ export default class RDS {
       abortSignal, body,
       action: "CreateOptionGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateOptionGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateOptionGroupResult");
     return {
       OptionGroup: xml.first("OptionGroup", false, OptionGroup_Parse),
     };
@@ -278,7 +279,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBInstance",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteDBInstanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDBInstanceResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -318,7 +319,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteDBSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDBSnapshotResult");
     return {
       DBSnapshot: xml.first("DBSnapshot", false, DBSnapshot_Parse),
     };
@@ -346,7 +347,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteEventSubscription",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteEventSubscriptionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteEventSubscriptionResult");
     return {
       EventSubscription: xml.first("EventSubscription", false, EventSubscription_Parse),
     };
@@ -380,7 +381,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeDBEngineVersions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBEngineVersionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBEngineVersionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -401,7 +402,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeDBInstances",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBInstancesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBInstancesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -422,7 +423,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeDBParameterGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBParameterGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBParameterGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -444,7 +445,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeDBParameters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBParametersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBParametersResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -465,7 +466,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeDBSecurityGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBSecurityGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBSecurityGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -488,7 +489,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeDBSnapshots",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBSnapshotsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBSnapshotsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -509,7 +510,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeDBSubnetGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBSubnetGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBSubnetGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -530,7 +531,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeEngineDefaultParameters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEngineDefaultParametersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEngineDefaultParametersResult");
     return {
       EngineDefaults: xml.first("EngineDefaults", false, EngineDefaults_Parse),
     };
@@ -546,7 +547,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeEventCategories",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEventCategoriesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEventCategoriesResult");
     return {
       EventCategoriesMapList: xml.getList("EventCategoriesMapList", "EventCategoriesMap").map(EventCategoriesMap_Parse),
     };
@@ -564,7 +565,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeEventSubscriptions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEventSubscriptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEventSubscriptionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -580,17 +581,17 @@ export default class RDS {
     const prefix = '';
     if ("SourceIdentifier" in params) body.append(prefix+"SourceIdentifier", (params["SourceIdentifier"] ?? '').toString());
     if ("SourceType" in params) body.append(prefix+"SourceType", (params["SourceType"] ?? '').toString());
-    if ("StartTime" in params) body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
-    if ("EndTime" in params) body.append(prefix+"EndTime", prt.encodeDate_iso8601(params["EndTime"]));
+    if ("StartTime" in params) body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+    if ("EndTime" in params) body.append(prefix+"EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
     if ("Duration" in params) body.append(prefix+"Duration", (params["Duration"] ?? '').toString());
-    if (params["EventCategories"]) prt.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
+    if (params["EventCategories"]) qsP.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEvents",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEventsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEventsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -612,7 +613,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeOptionGroupOptions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeOptionGroupOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeOptionGroupOptionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -635,7 +636,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeOptionGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeOptionGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeOptionGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -660,7 +661,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeOrderableDBInstanceOptions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeOrderableDBInstanceOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeOrderableDBInstanceOptionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -687,7 +688,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeReservedDBInstances",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeReservedDBInstancesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeReservedDBInstancesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -713,7 +714,7 @@ export default class RDS {
       abortSignal, body,
       action: "DescribeReservedDBInstancesOfferings",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeReservedDBInstancesOfferingsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeReservedDBInstancesOfferingsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -732,7 +733,7 @@ export default class RDS {
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    const xml = readXmlResult(await resp.text(), "ListTagsForResourceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListTagsForResourceResult");
     return {
       TagList: xml.getList("TagList", "Tag").map(Tag_Parse),
     };
@@ -746,8 +747,8 @@ export default class RDS {
     body.append(prefix+"DBInstanceIdentifier", (params["DBInstanceIdentifier"] ?? '').toString());
     if ("AllocatedStorage" in params) body.append(prefix+"AllocatedStorage", (params["AllocatedStorage"] ?? '').toString());
     if ("DBInstanceClass" in params) body.append(prefix+"DBInstanceClass", (params["DBInstanceClass"] ?? '').toString());
-    if (params["DBSecurityGroups"]) prt.appendList(body, prefix+"DBSecurityGroups", params["DBSecurityGroups"], {"entryPrefix":".DBSecurityGroupName."})
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["DBSecurityGroups"]) qsP.appendList(body, prefix+"DBSecurityGroups", params["DBSecurityGroups"], {"entryPrefix":".DBSecurityGroupName."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("ApplyImmediately" in params) body.append(prefix+"ApplyImmediately", (params["ApplyImmediately"] ?? '').toString());
     if ("MasterUserPassword" in params) body.append(prefix+"MasterUserPassword", (params["MasterUserPassword"] ?? '').toString());
     if ("DBParameterGroupName" in params) body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
@@ -765,7 +766,7 @@ export default class RDS {
       abortSignal, body,
       action: "ModifyDBInstance",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBInstanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBInstanceResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -777,12 +778,12 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDBParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBParameterGroupResult");
     return xml.strings({
       optional: {"DBParameterGroupName":true},
     });
@@ -795,12 +796,12 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     if ("DBSubnetGroupDescription" in params) body.append(prefix+"DBSubnetGroupDescription", (params["DBSubnetGroupDescription"] ?? '').toString());
-    if (params["SubnetIds"]) prt.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
+    if (params["SubnetIds"]) qsP.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDBSubnetGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBSubnetGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBSubnetGroupResult");
     return {
       DBSubnetGroup: xml.first("DBSubnetGroup", false, DBSubnetGroup_Parse),
     };
@@ -814,13 +815,13 @@ export default class RDS {
     body.append(prefix+"SubscriptionName", (params["SubscriptionName"] ?? '').toString());
     if ("SnsTopicArn" in params) body.append(prefix+"SnsTopicArn", (params["SnsTopicArn"] ?? '').toString());
     if ("SourceType" in params) body.append(prefix+"SourceType", (params["SourceType"] ?? '').toString());
-    if (params["EventCategories"]) prt.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
+    if (params["EventCategories"]) qsP.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
     if ("Enabled" in params) body.append(prefix+"Enabled", (params["Enabled"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyEventSubscription",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyEventSubscriptionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyEventSubscriptionResult");
     return {
       EventSubscription: xml.first("EventSubscription", false, EventSubscription_Parse),
     };
@@ -832,14 +833,14 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"OptionGroupName", (params["OptionGroupName"] ?? '').toString());
-    if (params["OptionsToInclude"]) prt.appendList(body, prefix+"OptionsToInclude", params["OptionsToInclude"], {"appender":OptionConfiguration_Serialize,"entryPrefix":".OptionConfiguration."})
-    if (params["OptionsToRemove"]) prt.appendList(body, prefix+"OptionsToRemove", params["OptionsToRemove"], {"entryPrefix":".member."})
+    if (params["OptionsToInclude"]) qsP.appendList(body, prefix+"OptionsToInclude", params["OptionsToInclude"], {"appender":OptionConfiguration_Serialize,"entryPrefix":".OptionConfiguration."})
+    if (params["OptionsToRemove"]) qsP.appendList(body, prefix+"OptionsToRemove", params["OptionsToRemove"], {"entryPrefix":".member."})
     if ("ApplyImmediately" in params) body.append(prefix+"ApplyImmediately", (params["ApplyImmediately"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyOptionGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyOptionGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyOptionGroupResult");
     return {
       OptionGroup: xml.first("OptionGroup", false, OptionGroup_Parse),
     };
@@ -857,7 +858,7 @@ export default class RDS {
       abortSignal, body,
       action: "PromoteReadReplica",
     });
-    const xml = readXmlResult(await resp.text(), "PromoteReadReplicaResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "PromoteReadReplicaResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -875,7 +876,7 @@ export default class RDS {
       abortSignal, body,
       action: "PurchaseReservedDBInstancesOffering",
     });
-    const xml = readXmlResult(await resp.text(), "PurchaseReservedDBInstancesOfferingResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "PurchaseReservedDBInstancesOfferingResult");
     return {
       ReservedDBInstance: xml.first("ReservedDBInstance", false, ReservedDBInstance_Parse),
     };
@@ -892,7 +893,7 @@ export default class RDS {
       abortSignal, body,
       action: "RebootDBInstance",
     });
-    const xml = readXmlResult(await resp.text(), "RebootDBInstanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RebootDBInstanceResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -909,7 +910,7 @@ export default class RDS {
       abortSignal, body,
       action: "RemoveSourceIdentifierFromSubscription",
     });
-    const xml = readXmlResult(await resp.text(), "RemoveSourceIdentifierFromSubscriptionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RemoveSourceIdentifierFromSubscriptionResult");
     return {
       EventSubscription: xml.first("EventSubscription", false, EventSubscription_Parse),
     };
@@ -921,7 +922,7 @@ export default class RDS {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceName", (params["ResourceName"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTagsFromResource",
@@ -935,12 +936,12 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
     if ("ResetAllParameters" in params) body.append(prefix+"ResetAllParameters", (params["ResetAllParameters"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResetDBParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ResetDBParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ResetDBParameterGroupResult");
     return xml.strings({
       optional: {"DBParameterGroupName":true},
     });
@@ -969,7 +970,7 @@ export default class RDS {
       abortSignal, body,
       action: "RestoreDBInstanceFromDBSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "RestoreDBInstanceFromDBSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RestoreDBInstanceFromDBSnapshotResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -982,7 +983,7 @@ export default class RDS {
     const prefix = '';
     body.append(prefix+"SourceDBInstanceIdentifier", (params["SourceDBInstanceIdentifier"] ?? '').toString());
     body.append(prefix+"TargetDBInstanceIdentifier", (params["TargetDBInstanceIdentifier"] ?? '').toString());
-    if ("RestoreTime" in params) body.append(prefix+"RestoreTime", prt.encodeDate_iso8601(params["RestoreTime"]));
+    if ("RestoreTime" in params) body.append(prefix+"RestoreTime", qsP.encodeDate_iso8601(params["RestoreTime"]));
     if ("UseLatestRestorableTime" in params) body.append(prefix+"UseLatestRestorableTime", (params["UseLatestRestorableTime"] ?? '').toString());
     if ("DBInstanceClass" in params) body.append(prefix+"DBInstanceClass", (params["DBInstanceClass"] ?? '').toString());
     if ("Port" in params) body.append(prefix+"Port", (params["Port"] ?? '').toString());
@@ -1000,7 +1001,7 @@ export default class RDS {
       abortSignal, body,
       action: "RestoreDBInstanceToPointInTime",
     });
-    const xml = readXmlResult(await resp.text(), "RestoreDBInstanceToPointInTimeResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RestoreDBInstanceToPointInTimeResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -1020,7 +1021,7 @@ export default class RDS {
       abortSignal, body,
       action: "RevokeDBSecurityGroupIngress",
     });
-    const xml = readXmlResult(await resp.text(), "RevokeDBSecurityGroupIngressResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RevokeDBSecurityGroupIngressResult");
     return {
       DBSecurityGroup: xml.first("DBSecurityGroup", false, DBSecurityGroup_Parse),
     };
@@ -1698,7 +1699,7 @@ function Tag_Serialize(body: URLSearchParams, prefix: string, params: Tag) {
     if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
     if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function Tag_Parse(node: XmlNode): Tag {
+function Tag_Parse(node: xmlP.XmlNode): Tag {
   return node.strings({
     optional: {"Key":true,"Value":true},
   });
@@ -1710,9 +1711,7 @@ export type SourceType =
 | "db-parameter-group"
 | "db-security-group"
 | "db-snapshot"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface Parameter {
@@ -1739,7 +1738,7 @@ function Parameter_Serialize(body: URLSearchParams, prefix: string, params: Para
     if ("MinimumEngineVersion" in params) body.append(prefix+".MinimumEngineVersion", (params["MinimumEngineVersion"] ?? '').toString());
     if ("ApplyMethod" in params) body.append(prefix+".ApplyMethod", (params["ApplyMethod"] ?? '').toString());
 }
-function Parameter_Parse(node: XmlNode): Parameter {
+function Parameter_Parse(node: xmlP.XmlNode): Parameter {
   return {
     ...node.strings({
       optional: {"ParameterName":true,"ParameterValue":true,"Description":true,"Source":true,"ApplyType":true,"DataType":true,"AllowedValues":true,"MinimumEngineVersion":true},
@@ -1753,9 +1752,7 @@ function Parameter_Parse(node: XmlNode): Parameter {
 export type ApplyMethod =
 | "immediate"
 | "pending-reboot"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface OptionConfiguration {
@@ -1767,8 +1764,8 @@ export interface OptionConfiguration {
 function OptionConfiguration_Serialize(body: URLSearchParams, prefix: string, params: OptionConfiguration) {
     body.append(prefix+".OptionName", (params["OptionName"] ?? '').toString());
     if ("Port" in params) body.append(prefix+".Port", (params["Port"] ?? '').toString());
-    if (params["DBSecurityGroupMemberships"]) prt.appendList(body, prefix+".DBSecurityGroupMemberships", params["DBSecurityGroupMemberships"], {"entryPrefix":".DBSecurityGroupName."})
-    if (params["VpcSecurityGroupMemberships"]) prt.appendList(body, prefix+".VpcSecurityGroupMemberships", params["VpcSecurityGroupMemberships"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["DBSecurityGroupMemberships"]) qsP.appendList(body, prefix+".DBSecurityGroupMemberships", params["DBSecurityGroupMemberships"], {"entryPrefix":".DBSecurityGroupName."})
+    if (params["VpcSecurityGroupMemberships"]) qsP.appendList(body, prefix+".VpcSecurityGroupMemberships", params["VpcSecurityGroupMemberships"], {"entryPrefix":".VpcSecurityGroupId."})
 }
 
 // refs: 6 - tags: output, named, interface
@@ -1784,7 +1781,7 @@ export interface EventSubscription {
   EventCategoriesList: string[];
   Enabled?: boolean | null;
 }
-function EventSubscription_Parse(node: XmlNode): EventSubscription {
+function EventSubscription_Parse(node: xmlP.XmlNode): EventSubscription {
   return {
     ...node.strings({
       optional: {"Id":true,"CustomerAwsId":true,"CustSubscriptionId":true,"SnsTopicArn":true,"Status":true,"SubscriptionCreationTime":true,"SourceType":true},
@@ -1804,7 +1801,7 @@ export interface DBSecurityGroup {
   EC2SecurityGroups: EC2SecurityGroup[];
   IPRanges: IPRange[];
 }
-function DBSecurityGroup_Parse(node: XmlNode): DBSecurityGroup {
+function DBSecurityGroup_Parse(node: xmlP.XmlNode): DBSecurityGroup {
   return {
     ...node.strings({
       optional: {"OwnerId":true,"DBSecurityGroupName":true,"DBSecurityGroupDescription":true,"VpcId":true},
@@ -1821,7 +1818,7 @@ export interface EC2SecurityGroup {
   EC2SecurityGroupId?: string | null;
   EC2SecurityGroupOwnerId?: string | null;
 }
-function EC2SecurityGroup_Parse(node: XmlNode): EC2SecurityGroup {
+function EC2SecurityGroup_Parse(node: xmlP.XmlNode): EC2SecurityGroup {
   return node.strings({
     optional: {"Status":true,"EC2SecurityGroupName":true,"EC2SecurityGroupId":true,"EC2SecurityGroupOwnerId":true},
   });
@@ -1832,7 +1829,7 @@ export interface IPRange {
   Status?: string | null;
   CIDRIP?: string | null;
 }
-function IPRange_Parse(node: XmlNode): IPRange {
+function IPRange_Parse(node: xmlP.XmlNode): IPRange {
   return node.strings({
     optional: {"Status":true,"CIDRIP":true},
   });
@@ -1856,15 +1853,15 @@ export interface DBSnapshot {
   SnapshotType?: string | null;
   Iops?: number | null;
 }
-function DBSnapshot_Parse(node: XmlNode): DBSnapshot {
+function DBSnapshot_Parse(node: xmlP.XmlNode): DBSnapshot {
   return {
     ...node.strings({
       optional: {"DBSnapshotIdentifier":true,"DBInstanceIdentifier":true,"Engine":true,"Status":true,"AvailabilityZone":true,"VpcId":true,"MasterUsername":true,"EngineVersion":true,"LicenseModel":true,"SnapshotType":true},
     }),
-    SnapshotCreateTime: node.first("SnapshotCreateTime", false, x => parseTimestamp(x.content)),
+    SnapshotCreateTime: node.first("SnapshotCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     AllocatedStorage: node.first("AllocatedStorage", false, x => parseInt(x.content ?? '0')),
     Port: node.first("Port", false, x => parseInt(x.content ?? '0')),
-    InstanceCreateTime: node.first("InstanceCreateTime", false, x => parseTimestamp(x.content)),
+    InstanceCreateTime: node.first("InstanceCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     Iops: node.first("Iops", false, x => parseInt(x.content ?? '0')),
   };
 }
@@ -1902,21 +1899,21 @@ export interface DBInstance {
   SecondaryAvailabilityZone?: string | null;
   PubliclyAccessible?: boolean | null;
 }
-function DBInstance_Parse(node: XmlNode): DBInstance {
+function DBInstance_Parse(node: xmlP.XmlNode): DBInstance {
   return {
     ...node.strings({
       optional: {"DBInstanceIdentifier":true,"DBInstanceClass":true,"Engine":true,"DBInstanceStatus":true,"MasterUsername":true,"DBName":true,"PreferredBackupWindow":true,"AvailabilityZone":true,"PreferredMaintenanceWindow":true,"EngineVersion":true,"ReadReplicaSourceDBInstanceIdentifier":true,"LicenseModel":true,"CharacterSetName":true,"SecondaryAvailabilityZone":true},
     }),
     Endpoint: node.first("Endpoint", false, Endpoint_Parse),
     AllocatedStorage: node.first("AllocatedStorage", false, x => parseInt(x.content ?? '0')),
-    InstanceCreateTime: node.first("InstanceCreateTime", false, x => parseTimestamp(x.content)),
+    InstanceCreateTime: node.first("InstanceCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     BackupRetentionPeriod: node.first("BackupRetentionPeriod", false, x => parseInt(x.content ?? '0')),
     DBSecurityGroups: node.getList("DBSecurityGroups", "DBSecurityGroup").map(DBSecurityGroupMembership_Parse),
     VpcSecurityGroups: node.getList("VpcSecurityGroups", "VpcSecurityGroupMembership").map(VpcSecurityGroupMembership_Parse),
     DBParameterGroups: node.getList("DBParameterGroups", "DBParameterGroup").map(DBParameterGroupStatus_Parse),
     DBSubnetGroup: node.first("DBSubnetGroup", false, DBSubnetGroup_Parse),
     PendingModifiedValues: node.first("PendingModifiedValues", false, PendingModifiedValues_Parse),
-    LatestRestorableTime: node.first("LatestRestorableTime", false, x => parseTimestamp(x.content)),
+    LatestRestorableTime: node.first("LatestRestorableTime", false, x => xmlP.parseTimestamp(x.content)),
     MultiAZ: node.first("MultiAZ", false, x => x.content === 'true'),
     AutoMinorVersionUpgrade: node.first("AutoMinorVersionUpgrade", false, x => x.content === 'true'),
     ReadReplicaDBInstanceIdentifiers: node.getList("ReadReplicaDBInstanceIdentifiers", "ReadReplicaDBInstanceIdentifier").map(x => x.content ?? ''),
@@ -1931,7 +1928,7 @@ export interface Endpoint {
   Address?: string | null;
   Port?: number | null;
 }
-function Endpoint_Parse(node: XmlNode): Endpoint {
+function Endpoint_Parse(node: xmlP.XmlNode): Endpoint {
   return {
     ...node.strings({
       optional: {"Address":true},
@@ -1945,7 +1942,7 @@ export interface DBSecurityGroupMembership {
   DBSecurityGroupName?: string | null;
   Status?: string | null;
 }
-function DBSecurityGroupMembership_Parse(node: XmlNode): DBSecurityGroupMembership {
+function DBSecurityGroupMembership_Parse(node: xmlP.XmlNode): DBSecurityGroupMembership {
   return node.strings({
     optional: {"DBSecurityGroupName":true,"Status":true},
   });
@@ -1956,7 +1953,7 @@ export interface VpcSecurityGroupMembership {
   VpcSecurityGroupId?: string | null;
   Status?: string | null;
 }
-function VpcSecurityGroupMembership_Parse(node: XmlNode): VpcSecurityGroupMembership {
+function VpcSecurityGroupMembership_Parse(node: xmlP.XmlNode): VpcSecurityGroupMembership {
   return node.strings({
     optional: {"VpcSecurityGroupId":true,"Status":true},
   });
@@ -1967,7 +1964,7 @@ export interface DBParameterGroupStatus {
   DBParameterGroupName?: string | null;
   ParameterApplyStatus?: string | null;
 }
-function DBParameterGroupStatus_Parse(node: XmlNode): DBParameterGroupStatus {
+function DBParameterGroupStatus_Parse(node: xmlP.XmlNode): DBParameterGroupStatus {
   return node.strings({
     optional: {"DBParameterGroupName":true,"ParameterApplyStatus":true},
   });
@@ -1981,7 +1978,7 @@ export interface DBSubnetGroup {
   SubnetGroupStatus?: string | null;
   Subnets: Subnet[];
 }
-function DBSubnetGroup_Parse(node: XmlNode): DBSubnetGroup {
+function DBSubnetGroup_Parse(node: xmlP.XmlNode): DBSubnetGroup {
   return {
     ...node.strings({
       optional: {"DBSubnetGroupName":true,"DBSubnetGroupDescription":true,"VpcId":true,"SubnetGroupStatus":true},
@@ -1996,7 +1993,7 @@ export interface Subnet {
   SubnetAvailabilityZone?: AvailabilityZone | null;
   SubnetStatus?: string | null;
 }
-function Subnet_Parse(node: XmlNode): Subnet {
+function Subnet_Parse(node: xmlP.XmlNode): Subnet {
   return {
     ...node.strings({
       optional: {"SubnetIdentifier":true,"SubnetStatus":true},
@@ -2010,7 +2007,7 @@ export interface AvailabilityZone {
   Name?: string | null;
   ProvisionedIopsCapable?: boolean | null;
 }
-function AvailabilityZone_Parse(node: XmlNode): AvailabilityZone {
+function AvailabilityZone_Parse(node: xmlP.XmlNode): AvailabilityZone {
   return {
     ...node.strings({
       optional: {"Name":true},
@@ -2031,7 +2028,7 @@ export interface PendingModifiedValues {
   Iops?: number | null;
   DBInstanceIdentifier?: string | null;
 }
-function PendingModifiedValues_Parse(node: XmlNode): PendingModifiedValues {
+function PendingModifiedValues_Parse(node: xmlP.XmlNode): PendingModifiedValues {
   return {
     ...node.strings({
       optional: {"DBInstanceClass":true,"MasterUserPassword":true,"EngineVersion":true,"DBInstanceIdentifier":true},
@@ -2049,7 +2046,7 @@ export interface OptionGroupMembership {
   OptionGroupName?: string | null;
   Status?: string | null;
 }
-function OptionGroupMembership_Parse(node: XmlNode): OptionGroupMembership {
+function OptionGroupMembership_Parse(node: xmlP.XmlNode): OptionGroupMembership {
   return node.strings({
     optional: {"OptionGroupName":true,"Status":true},
   });
@@ -2061,7 +2058,7 @@ export interface DBParameterGroup {
   DBParameterGroupFamily?: string | null;
   Description?: string | null;
 }
-function DBParameterGroup_Parse(node: XmlNode): DBParameterGroup {
+function DBParameterGroup_Parse(node: xmlP.XmlNode): DBParameterGroup {
   return node.strings({
     optional: {"DBParameterGroupName":true,"DBParameterGroupFamily":true,"Description":true},
   });
@@ -2077,7 +2074,7 @@ export interface OptionGroup {
   AllowsVpcAndNonVpcInstanceMemberships?: boolean | null;
   VpcId?: string | null;
 }
-function OptionGroup_Parse(node: XmlNode): OptionGroup {
+function OptionGroup_Parse(node: xmlP.XmlNode): OptionGroup {
   return {
     ...node.strings({
       optional: {"OptionGroupName":true,"OptionGroupDescription":true,"EngineName":true,"MajorEngineVersion":true,"VpcId":true},
@@ -2095,7 +2092,7 @@ export interface Option {
   DBSecurityGroupMemberships: DBSecurityGroupMembership[];
   VpcSecurityGroupMemberships: VpcSecurityGroupMembership[];
 }
-function Option_Parse(node: XmlNode): Option {
+function Option_Parse(node: xmlP.XmlNode): Option {
   return {
     ...node.strings({
       optional: {"OptionName":true,"OptionDescription":true},
@@ -2116,7 +2113,7 @@ export interface DBEngineVersion {
   DefaultCharacterSet?: CharacterSet | null;
   SupportedCharacterSets: CharacterSet[];
 }
-function DBEngineVersion_Parse(node: XmlNode): DBEngineVersion {
+function DBEngineVersion_Parse(node: xmlP.XmlNode): DBEngineVersion {
   return {
     ...node.strings({
       optional: {"Engine":true,"EngineVersion":true,"DBParameterGroupFamily":true,"DBEngineDescription":true,"DBEngineVersionDescription":true},
@@ -2131,7 +2128,7 @@ export interface CharacterSet {
   CharacterSetName?: string | null;
   CharacterSetDescription?: string | null;
 }
-function CharacterSet_Parse(node: XmlNode): CharacterSet {
+function CharacterSet_Parse(node: xmlP.XmlNode): CharacterSet {
   return node.strings({
     optional: {"CharacterSetName":true,"CharacterSetDescription":true},
   });
@@ -2143,7 +2140,7 @@ export interface EngineDefaults {
   Marker?: string | null;
   Parameters: Parameter[];
 }
-function EngineDefaults_Parse(node: XmlNode): EngineDefaults {
+function EngineDefaults_Parse(node: xmlP.XmlNode): EngineDefaults {
   return {
     ...node.strings({
       optional: {"DBParameterGroupFamily":true,"Marker":true},
@@ -2157,7 +2154,7 @@ export interface EventCategoriesMap {
   SourceType?: string | null;
   EventCategories: string[];
 }
-function EventCategoriesMap_Parse(node: XmlNode): EventCategoriesMap {
+function EventCategoriesMap_Parse(node: xmlP.XmlNode): EventCategoriesMap {
   return {
     ...node.strings({
       optional: {"SourceType":true},
@@ -2174,14 +2171,14 @@ export interface Event {
   EventCategories: string[];
   Date?: Date | number | null;
 }
-function Event_Parse(node: XmlNode): Event {
+function Event_Parse(node: xmlP.XmlNode): Event {
   return {
     ...node.strings({
       optional: {"SourceIdentifier":true,"Message":true},
     }),
     SourceType: node.first("SourceType", false, x => (x.content ?? '') as SourceType),
     EventCategories: node.getList("EventCategories", "EventCategory").map(x => x.content ?? ''),
-    Date: node.first("Date", false, x => parseTimestamp(x.content)),
+    Date: node.first("Date", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -2196,7 +2193,7 @@ export interface OptionGroupOption {
   DefaultPort?: number | null;
   OptionsDependedOn: string[];
 }
-function OptionGroupOption_Parse(node: XmlNode): OptionGroupOption {
+function OptionGroupOption_Parse(node: xmlP.XmlNode): OptionGroupOption {
   return {
     ...node.strings({
       optional: {"Name":true,"Description":true,"EngineName":true,"MajorEngineVersion":true,"MinimumRequiredMinorEngineVersion":true},
@@ -2218,7 +2215,7 @@ export interface OrderableDBInstanceOption {
   ReadReplicaCapable?: boolean | null;
   Vpc?: boolean | null;
 }
-function OrderableDBInstanceOption_Parse(node: XmlNode): OrderableDBInstanceOption {
+function OrderableDBInstanceOption_Parse(node: xmlP.XmlNode): OrderableDBInstanceOption {
   return {
     ...node.strings({
       optional: {"Engine":true,"EngineVersion":true,"DBInstanceClass":true,"LicenseModel":true},
@@ -2247,12 +2244,12 @@ export interface ReservedDBInstance {
   State?: string | null;
   RecurringCharges: RecurringCharge[];
 }
-function ReservedDBInstance_Parse(node: XmlNode): ReservedDBInstance {
+function ReservedDBInstance_Parse(node: xmlP.XmlNode): ReservedDBInstance {
   return {
     ...node.strings({
       optional: {"ReservedDBInstanceId":true,"ReservedDBInstancesOfferingId":true,"DBInstanceClass":true,"CurrencyCode":true,"ProductDescription":true,"OfferingType":true,"State":true},
     }),
-    StartTime: node.first("StartTime", false, x => parseTimestamp(x.content)),
+    StartTime: node.first("StartTime", false, x => xmlP.parseTimestamp(x.content)),
     Duration: node.first("Duration", false, x => parseInt(x.content ?? '0')),
     FixedPrice: node.first("FixedPrice", false, x => parseFloat(x.content ?? '0')),
     UsagePrice: node.first("UsagePrice", false, x => parseFloat(x.content ?? '0')),
@@ -2267,7 +2264,7 @@ export interface RecurringCharge {
   RecurringChargeAmount?: number | null;
   RecurringChargeFrequency?: string | null;
 }
-function RecurringCharge_Parse(node: XmlNode): RecurringCharge {
+function RecurringCharge_Parse(node: xmlP.XmlNode): RecurringCharge {
   return {
     ...node.strings({
       optional: {"RecurringChargeFrequency":true},
@@ -2289,7 +2286,7 @@ export interface ReservedDBInstancesOffering {
   MultiAZ?: boolean | null;
   RecurringCharges: RecurringCharge[];
 }
-function ReservedDBInstancesOffering_Parse(node: XmlNode): ReservedDBInstancesOffering {
+function ReservedDBInstancesOffering_Parse(node: xmlP.XmlNode): ReservedDBInstancesOffering {
   return {
     ...node.strings({
       optional: {"ReservedDBInstancesOfferingId":true,"DBInstanceClass":true,"CurrencyCode":true,"ProductDescription":true,"OfferingType":true},

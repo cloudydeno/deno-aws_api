@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class Firehose {
   #client: ServiceClient;
@@ -30,22 +30,24 @@ export default class Firehose {
   async createDeliveryStream(
     {abortSignal, ...params}: RequestConfig & CreateDeliveryStreamInput,
   ): Promise<CreateDeliveryStreamOutput> {
-    const body: JSONObject = {...params,
-    KinesisStreamSourceConfiguration: fromKinesisStreamSourceConfiguration(params["KinesisStreamSourceConfiguration"]),
-    DeliveryStreamEncryptionConfigurationInput: fromDeliveryStreamEncryptionConfigurationInput(params["DeliveryStreamEncryptionConfigurationInput"]),
-    S3DestinationConfiguration: fromS3DestinationConfiguration(params["S3DestinationConfiguration"]),
-    ExtendedS3DestinationConfiguration: fromExtendedS3DestinationConfiguration(params["ExtendedS3DestinationConfiguration"]),
-    RedshiftDestinationConfiguration: fromRedshiftDestinationConfiguration(params["RedshiftDestinationConfiguration"]),
-    ElasticsearchDestinationConfiguration: fromElasticsearchDestinationConfiguration(params["ElasticsearchDestinationConfiguration"]),
-    SplunkDestinationConfiguration: fromSplunkDestinationConfiguration(params["SplunkDestinationConfiguration"]),
-    HttpEndpointDestinationConfiguration: fromHttpEndpointDestinationConfiguration(params["HttpEndpointDestinationConfiguration"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeliveryStreamName: params["DeliveryStreamName"],
+      DeliveryStreamType: params["DeliveryStreamType"],
+      KinesisStreamSourceConfiguration: fromKinesisStreamSourceConfiguration(params["KinesisStreamSourceConfiguration"]),
+      DeliveryStreamEncryptionConfigurationInput: fromDeliveryStreamEncryptionConfigurationInput(params["DeliveryStreamEncryptionConfigurationInput"]),
+      S3DestinationConfiguration: fromS3DestinationConfiguration(params["S3DestinationConfiguration"]),
+      ExtendedS3DestinationConfiguration: fromExtendedS3DestinationConfiguration(params["ExtendedS3DestinationConfiguration"]),
+      RedshiftDestinationConfiguration: fromRedshiftDestinationConfiguration(params["RedshiftDestinationConfiguration"]),
+      ElasticsearchDestinationConfiguration: fromElasticsearchDestinationConfiguration(params["ElasticsearchDestinationConfiguration"]),
+      SplunkDestinationConfiguration: fromSplunkDestinationConfiguration(params["SplunkDestinationConfiguration"]),
+      HttpEndpointDestinationConfiguration: fromHttpEndpointDestinationConfiguration(params["HttpEndpointDestinationConfiguration"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDeliveryStream",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "DeliveryStreamARN": "s",
@@ -56,13 +58,15 @@ export default class Firehose {
   async deleteDeliveryStream(
     {abortSignal, ...params}: RequestConfig & DeleteDeliveryStreamInput,
   ): Promise<DeleteDeliveryStreamOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeliveryStreamName: params["DeliveryStreamName"],
+      AllowForceDelete: params["AllowForceDelete"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDeliveryStream",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -71,13 +75,16 @@ export default class Firehose {
   async describeDeliveryStream(
     {abortSignal, ...params}: RequestConfig & DescribeDeliveryStreamInput,
   ): Promise<DescribeDeliveryStreamOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeliveryStreamName: params["DeliveryStreamName"],
+      Limit: params["Limit"],
+      ExclusiveStartDestinationId: params["ExclusiveStartDestinationId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDeliveryStream",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "DeliveryStreamDescription": toDeliveryStreamDescription,
       },
@@ -88,13 +95,16 @@ export default class Firehose {
   async listDeliveryStreams(
     {abortSignal, ...params}: RequestConfig & ListDeliveryStreamsInput = {},
   ): Promise<ListDeliveryStreamsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Limit: params["Limit"],
+      DeliveryStreamType: params["DeliveryStreamType"],
+      ExclusiveStartDeliveryStreamName: params["ExclusiveStartDeliveryStreamName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDeliveryStreams",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "DeliveryStreamNames": ["s"],
         "HasMoreDeliveryStreams": "b",
@@ -106,13 +116,16 @@ export default class Firehose {
   async listTagsForDeliveryStream(
     {abortSignal, ...params}: RequestConfig & ListTagsForDeliveryStreamInput,
   ): Promise<ListTagsForDeliveryStreamOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeliveryStreamName: params["DeliveryStreamName"],
+      ExclusiveStartTagKey: params["ExclusiveStartTagKey"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForDeliveryStream",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Tags": [toTag],
         "HasMoreTags": "b",
@@ -124,14 +137,15 @@ export default class Firehose {
   async putRecord(
     {abortSignal, ...params}: RequestConfig & PutRecordInput,
   ): Promise<PutRecordOutput> {
-    const body: JSONObject = {...params,
-    Record: fromRecord(params["Record"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeliveryStreamName: params["DeliveryStreamName"],
+      Record: fromRecord(params["Record"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRecord",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "RecordId": "s",
       },
@@ -144,14 +158,15 @@ export default class Firehose {
   async putRecordBatch(
     {abortSignal, ...params}: RequestConfig & PutRecordBatchInput,
   ): Promise<PutRecordBatchOutput> {
-    const body: JSONObject = {...params,
-    Records: params["Records"]?.map(x => fromRecord(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeliveryStreamName: params["DeliveryStreamName"],
+      Records: params["Records"]?.map(x => fromRecord(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRecordBatch",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "FailedPutCount": "n",
         "RequestResponses": [toPutRecordBatchResponseEntry],
@@ -165,14 +180,15 @@ export default class Firehose {
   async startDeliveryStreamEncryption(
     {abortSignal, ...params}: RequestConfig & StartDeliveryStreamEncryptionInput,
   ): Promise<StartDeliveryStreamEncryptionOutput> {
-    const body: JSONObject = {...params,
-    DeliveryStreamEncryptionConfigurationInput: fromDeliveryStreamEncryptionConfigurationInput(params["DeliveryStreamEncryptionConfigurationInput"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeliveryStreamName: params["DeliveryStreamName"],
+      DeliveryStreamEncryptionConfigurationInput: fromDeliveryStreamEncryptionConfigurationInput(params["DeliveryStreamEncryptionConfigurationInput"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartDeliveryStreamEncryption",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -181,13 +197,14 @@ export default class Firehose {
   async stopDeliveryStreamEncryption(
     {abortSignal, ...params}: RequestConfig & StopDeliveryStreamEncryptionInput,
   ): Promise<StopDeliveryStreamEncryptionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeliveryStreamName: params["DeliveryStreamName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopDeliveryStreamEncryption",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -196,14 +213,15 @@ export default class Firehose {
   async tagDeliveryStream(
     {abortSignal, ...params}: RequestConfig & TagDeliveryStreamInput,
   ): Promise<TagDeliveryStreamOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeliveryStreamName: params["DeliveryStreamName"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagDeliveryStream",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -212,13 +230,15 @@ export default class Firehose {
   async untagDeliveryStream(
     {abortSignal, ...params}: RequestConfig & UntagDeliveryStreamInput,
   ): Promise<UntagDeliveryStreamOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeliveryStreamName: params["DeliveryStreamName"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagDeliveryStream",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -227,19 +247,22 @@ export default class Firehose {
   async updateDestination(
     {abortSignal, ...params}: RequestConfig & UpdateDestinationInput,
   ): Promise<UpdateDestinationOutput> {
-    const body: JSONObject = {...params,
-    S3DestinationUpdate: fromS3DestinationUpdate(params["S3DestinationUpdate"]),
-    ExtendedS3DestinationUpdate: fromExtendedS3DestinationUpdate(params["ExtendedS3DestinationUpdate"]),
-    RedshiftDestinationUpdate: fromRedshiftDestinationUpdate(params["RedshiftDestinationUpdate"]),
-    ElasticsearchDestinationUpdate: fromElasticsearchDestinationUpdate(params["ElasticsearchDestinationUpdate"]),
-    SplunkDestinationUpdate: fromSplunkDestinationUpdate(params["SplunkDestinationUpdate"]),
-    HttpEndpointDestinationUpdate: fromHttpEndpointDestinationUpdate(params["HttpEndpointDestinationUpdate"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DeliveryStreamName: params["DeliveryStreamName"],
+      CurrentDeliveryStreamVersionId: params["CurrentDeliveryStreamVersionId"],
+      DestinationId: params["DestinationId"],
+      S3DestinationUpdate: fromS3DestinationUpdate(params["S3DestinationUpdate"]),
+      ExtendedS3DestinationUpdate: fromExtendedS3DestinationUpdate(params["ExtendedS3DestinationUpdate"]),
+      RedshiftDestinationUpdate: fromRedshiftDestinationUpdate(params["RedshiftDestinationUpdate"]),
+      ElasticsearchDestinationUpdate: fromElasticsearchDestinationUpdate(params["ElasticsearchDestinationUpdate"]),
+      SplunkDestinationUpdate: fromSplunkDestinationUpdate(params["SplunkDestinationUpdate"]),
+      HttpEndpointDestinationUpdate: fromHttpEndpointDestinationUpdate(params["HttpEndpointDestinationUpdate"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDestination",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -400,23 +423,18 @@ export interface UpdateDestinationOutput {
 export type DeliveryStreamType =
 | "DirectPut"
 | "KinesisStreamAsSource"
-;
-
-function toDeliveryStreamType(root: JSONValue): DeliveryStreamType | null {
-  return ( false
-    || root == "DirectPut"
-    || root == "KinesisStreamAsSource"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface KinesisStreamSourceConfiguration {
   KinesisStreamARN: string;
   RoleARN: string;
 }
-function fromKinesisStreamSourceConfiguration(input?: KinesisStreamSourceConfiguration | null): JSONValue {
+function fromKinesisStreamSourceConfiguration(input?: KinesisStreamSourceConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    KinesisStreamARN: input["KinesisStreamARN"],
+    RoleARN: input["RoleARN"],
   }
 }
 
@@ -425,9 +443,11 @@ export interface DeliveryStreamEncryptionConfigurationInput {
   KeyARN?: string | null;
   KeyType: KeyType;
 }
-function fromDeliveryStreamEncryptionConfigurationInput(input?: DeliveryStreamEncryptionConfigurationInput | null): JSONValue {
+function fromDeliveryStreamEncryptionConfigurationInput(input?: DeliveryStreamEncryptionConfigurationInput | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    KeyARN: input["KeyARN"],
+    KeyType: input["KeyType"],
   }
 }
 
@@ -435,14 +455,7 @@ function fromDeliveryStreamEncryptionConfigurationInput(input?: DeliveryStreamEn
 export type KeyType =
 | "AWS_OWNED_CMK"
 | "CUSTOMER_MANAGED_CMK"
-;
-
-function toKeyType(root: JSONValue): KeyType | null {
-  return ( false
-    || root == "AWS_OWNED_CMK"
-    || root == "CUSTOMER_MANAGED_CMK"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 7 - tags: input, named, interface
 export interface S3DestinationConfiguration {
@@ -455,10 +468,15 @@ export interface S3DestinationConfiguration {
   EncryptionConfiguration?: EncryptionConfiguration | null;
   CloudWatchLoggingOptions?: CloudWatchLoggingOptions | null;
 }
-function fromS3DestinationConfiguration(input?: S3DestinationConfiguration | null): JSONValue {
+function fromS3DestinationConfiguration(input?: S3DestinationConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RoleARN: input["RoleARN"],
+    BucketARN: input["BucketARN"],
+    Prefix: input["Prefix"],
+    ErrorOutputPrefix: input["ErrorOutputPrefix"],
     BufferingHints: fromBufferingHints(input["BufferingHints"]),
+    CompressionFormat: input["CompressionFormat"],
     EncryptionConfiguration: fromEncryptionConfiguration(input["EncryptionConfiguration"]),
     CloudWatchLoggingOptions: fromCloudWatchLoggingOptions(input["CloudWatchLoggingOptions"]),
   }
@@ -469,13 +487,15 @@ export interface BufferingHints {
   SizeInMBs?: number | null;
   IntervalInSeconds?: number | null;
 }
-function fromBufferingHints(input?: BufferingHints | null): JSONValue {
+function fromBufferingHints(input?: BufferingHints | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SizeInMBs: input["SizeInMBs"],
+    IntervalInSeconds: input["IntervalInSeconds"],
   }
 }
-function toBufferingHints(root: JSONValue): BufferingHints {
-  return prt.readObj({
+function toBufferingHints(root: jsonP.JSONValue): BufferingHints {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SizeInMBs": "n",
@@ -491,34 +511,25 @@ export type CompressionFormat =
 | "ZIP"
 | "Snappy"
 | "HADOOP_SNAPPY"
-;
-
-function toCompressionFormat(root: JSONValue): CompressionFormat | null {
-  return ( false
-    || root == "UNCOMPRESSED"
-    || root == "GZIP"
-    || root == "ZIP"
-    || root == "Snappy"
-    || root == "HADOOP_SNAPPY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 24 - tags: input, named, interface, output
 export interface EncryptionConfiguration {
   NoEncryptionConfig?: NoEncryptionConfig | null;
   KMSEncryptionConfig?: KMSEncryptionConfig | null;
 }
-function fromEncryptionConfiguration(input?: EncryptionConfiguration | null): JSONValue {
+function fromEncryptionConfiguration(input?: EncryptionConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    NoEncryptionConfig: input["NoEncryptionConfig"],
     KMSEncryptionConfig: fromKMSEncryptionConfig(input["KMSEncryptionConfig"]),
   }
 }
-function toEncryptionConfiguration(root: JSONValue): EncryptionConfiguration {
-  return prt.readObj({
+function toEncryptionConfiguration(root: jsonP.JSONValue): EncryptionConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "NoEncryptionConfig": toNoEncryptionConfig,
+      "NoEncryptionConfig": (x: jsonP.JSONValue) => cmnP.readEnum<NoEncryptionConfig>(x),
       "KMSEncryptionConfig": toKMSEncryptionConfig,
     },
   }, root);
@@ -527,25 +538,20 @@ function toEncryptionConfiguration(root: JSONValue): EncryptionConfiguration {
 // refs: 24 - tags: input, named, enum, output
 export type NoEncryptionConfig =
 | "NoEncryption"
-;
-
-function toNoEncryptionConfig(root: JSONValue): NoEncryptionConfig | null {
-  return ( false
-    || root == "NoEncryption"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 24 - tags: input, named, interface, output
 export interface KMSEncryptionConfig {
   AWSKMSKeyARN: string;
 }
-function fromKMSEncryptionConfig(input?: KMSEncryptionConfig | null): JSONValue {
+function fromKMSEncryptionConfig(input?: KMSEncryptionConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AWSKMSKeyARN: input["AWSKMSKeyARN"],
   }
 }
-function toKMSEncryptionConfig(root: JSONValue): KMSEncryptionConfig {
-  return prt.readObj({
+function toKMSEncryptionConfig(root: jsonP.JSONValue): KMSEncryptionConfig {
+  return jsonP.readObj({
     required: {
       "AWSKMSKeyARN": "s",
     },
@@ -559,13 +565,16 @@ export interface CloudWatchLoggingOptions {
   LogGroupName?: string | null;
   LogStreamName?: string | null;
 }
-function fromCloudWatchLoggingOptions(input?: CloudWatchLoggingOptions | null): JSONValue {
+function fromCloudWatchLoggingOptions(input?: CloudWatchLoggingOptions | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Enabled: input["Enabled"],
+    LogGroupName: input["LogGroupName"],
+    LogStreamName: input["LogStreamName"],
   }
 }
-function toCloudWatchLoggingOptions(root: JSONValue): CloudWatchLoggingOptions {
-  return prt.readObj({
+function toCloudWatchLoggingOptions(root: jsonP.JSONValue): CloudWatchLoggingOptions {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Enabled": "b",
@@ -590,13 +599,19 @@ export interface ExtendedS3DestinationConfiguration {
   S3BackupConfiguration?: S3DestinationConfiguration | null;
   DataFormatConversionConfiguration?: DataFormatConversionConfiguration | null;
 }
-function fromExtendedS3DestinationConfiguration(input?: ExtendedS3DestinationConfiguration | null): JSONValue {
+function fromExtendedS3DestinationConfiguration(input?: ExtendedS3DestinationConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RoleARN: input["RoleARN"],
+    BucketARN: input["BucketARN"],
+    Prefix: input["Prefix"],
+    ErrorOutputPrefix: input["ErrorOutputPrefix"],
     BufferingHints: fromBufferingHints(input["BufferingHints"]),
+    CompressionFormat: input["CompressionFormat"],
     EncryptionConfiguration: fromEncryptionConfiguration(input["EncryptionConfiguration"]),
     CloudWatchLoggingOptions: fromCloudWatchLoggingOptions(input["CloudWatchLoggingOptions"]),
     ProcessingConfiguration: fromProcessingConfiguration(input["ProcessingConfiguration"]),
+    S3BackupMode: input["S3BackupMode"],
     S3BackupConfiguration: fromS3DestinationConfiguration(input["S3BackupConfiguration"]),
     DataFormatConversionConfiguration: fromDataFormatConversionConfiguration(input["DataFormatConversionConfiguration"]),
   }
@@ -607,14 +622,15 @@ export interface ProcessingConfiguration {
   Enabled?: boolean | null;
   Processors?: Processor[] | null;
 }
-function fromProcessingConfiguration(input?: ProcessingConfiguration | null): JSONValue {
+function fromProcessingConfiguration(input?: ProcessingConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Enabled: input["Enabled"],
     Processors: input["Processors"]?.map(x => fromProcessor(x)),
   }
 }
-function toProcessingConfiguration(root: JSONValue): ProcessingConfiguration {
-  return prt.readObj({
+function toProcessingConfiguration(root: jsonP.JSONValue): ProcessingConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Enabled": "b",
@@ -628,16 +644,17 @@ export interface Processor {
   Type: ProcessorType;
   Parameters?: ProcessorParameter[] | null;
 }
-function fromProcessor(input?: Processor | null): JSONValue {
+function fromProcessor(input?: Processor | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Type: input["Type"],
     Parameters: input["Parameters"]?.map(x => fromProcessorParameter(x)),
   }
 }
-function toProcessor(root: JSONValue): Processor {
-  return prt.readObj({
+function toProcessor(root: jsonP.JSONValue): Processor {
+  return jsonP.readObj({
     required: {
-      "Type": toProcessorType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<ProcessorType>(x),
     },
     optional: {
       "Parameters": [toProcessorParameter],
@@ -648,28 +665,24 @@ function toProcessor(root: JSONValue): Processor {
 // refs: 15 - tags: input, named, enum, output
 export type ProcessorType =
 | "Lambda"
-;
-
-function toProcessorType(root: JSONValue): ProcessorType | null {
-  return ( false
-    || root == "Lambda"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 15 - tags: input, named, interface, output
 export interface ProcessorParameter {
   ParameterName: ProcessorParameterName;
   ParameterValue: string;
 }
-function fromProcessorParameter(input?: ProcessorParameter | null): JSONValue {
+function fromProcessorParameter(input?: ProcessorParameter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ParameterName: input["ParameterName"],
+    ParameterValue: input["ParameterValue"],
   }
 }
-function toProcessorParameter(root: JSONValue): ProcessorParameter {
-  return prt.readObj({
+function toProcessorParameter(root: jsonP.JSONValue): ProcessorParameter {
+  return jsonP.readObj({
     required: {
-      "ParameterName": toProcessorParameterName,
+      "ParameterName": (x: jsonP.JSONValue) => cmnP.readEnum<ProcessorParameterName>(x),
       "ParameterValue": "s",
     },
     optional: {},
@@ -683,30 +696,13 @@ export type ProcessorParameterName =
 | "RoleArn"
 | "BufferSizeInMBs"
 | "BufferIntervalInSeconds"
-;
-
-function toProcessorParameterName(root: JSONValue): ProcessorParameterName | null {
-  return ( false
-    || root == "LambdaArn"
-    || root == "NumberOfRetries"
-    || root == "RoleArn"
-    || root == "BufferSizeInMBs"
-    || root == "BufferIntervalInSeconds"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type S3BackupMode =
 | "Disabled"
 | "Enabled"
-;
-
-function toS3BackupMode(root: JSONValue): S3BackupMode | null {
-  return ( false
-    || root == "Disabled"
-    || root == "Enabled"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface DataFormatConversionConfiguration {
@@ -715,16 +711,17 @@ export interface DataFormatConversionConfiguration {
   OutputFormatConfiguration?: OutputFormatConfiguration | null;
   Enabled?: boolean | null;
 }
-function fromDataFormatConversionConfiguration(input?: DataFormatConversionConfiguration | null): JSONValue {
+function fromDataFormatConversionConfiguration(input?: DataFormatConversionConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     SchemaConfiguration: fromSchemaConfiguration(input["SchemaConfiguration"]),
     InputFormatConfiguration: fromInputFormatConfiguration(input["InputFormatConfiguration"]),
     OutputFormatConfiguration: fromOutputFormatConfiguration(input["OutputFormatConfiguration"]),
+    Enabled: input["Enabled"],
   }
 }
-function toDataFormatConversionConfiguration(root: JSONValue): DataFormatConversionConfiguration {
-  return prt.readObj({
+function toDataFormatConversionConfiguration(root: jsonP.JSONValue): DataFormatConversionConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SchemaConfiguration": toSchemaConfiguration,
@@ -744,13 +741,19 @@ export interface SchemaConfiguration {
   Region?: string | null;
   VersionId?: string | null;
 }
-function fromSchemaConfiguration(input?: SchemaConfiguration | null): JSONValue {
+function fromSchemaConfiguration(input?: SchemaConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RoleARN: input["RoleARN"],
+    CatalogId: input["CatalogId"],
+    DatabaseName: input["DatabaseName"],
+    TableName: input["TableName"],
+    Region: input["Region"],
+    VersionId: input["VersionId"],
   }
 }
-function toSchemaConfiguration(root: JSONValue): SchemaConfiguration {
-  return prt.readObj({
+function toSchemaConfiguration(root: jsonP.JSONValue): SchemaConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RoleARN": "s",
@@ -767,14 +770,14 @@ function toSchemaConfiguration(root: JSONValue): SchemaConfiguration {
 export interface InputFormatConfiguration {
   Deserializer?: Deserializer | null;
 }
-function fromInputFormatConfiguration(input?: InputFormatConfiguration | null): JSONValue {
+function fromInputFormatConfiguration(input?: InputFormatConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Deserializer: fromDeserializer(input["Deserializer"]),
   }
 }
-function toInputFormatConfiguration(root: JSONValue): InputFormatConfiguration {
-  return prt.readObj({
+function toInputFormatConfiguration(root: jsonP.JSONValue): InputFormatConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Deserializer": toDeserializer,
@@ -787,15 +790,15 @@ export interface Deserializer {
   OpenXJsonSerDe?: OpenXJsonSerDe | null;
   HiveJsonSerDe?: HiveJsonSerDe | null;
 }
-function fromDeserializer(input?: Deserializer | null): JSONValue {
+function fromDeserializer(input?: Deserializer | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     OpenXJsonSerDe: fromOpenXJsonSerDe(input["OpenXJsonSerDe"]),
     HiveJsonSerDe: fromHiveJsonSerDe(input["HiveJsonSerDe"]),
   }
 }
-function toDeserializer(root: JSONValue): Deserializer {
-  return prt.readObj({
+function toDeserializer(root: jsonP.JSONValue): Deserializer {
+  return jsonP.readObj({
     required: {},
     optional: {
       "OpenXJsonSerDe": toOpenXJsonSerDe,
@@ -808,20 +811,23 @@ function toDeserializer(root: JSONValue): Deserializer {
 export interface OpenXJsonSerDe {
   ConvertDotsInJsonKeysToUnderscores?: boolean | null;
   CaseInsensitive?: boolean | null;
-  ColumnToJsonKeyMappings?: { [key: string]: string } | null;
+  ColumnToJsonKeyMappings?: { [key: string]: string | null | undefined } | null;
 }
-function fromOpenXJsonSerDe(input?: OpenXJsonSerDe | null): JSONValue {
+function fromOpenXJsonSerDe(input?: OpenXJsonSerDe | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ConvertDotsInJsonKeysToUnderscores: input["ConvertDotsInJsonKeysToUnderscores"],
+    CaseInsensitive: input["CaseInsensitive"],
+    ColumnToJsonKeyMappings: input["ColumnToJsonKeyMappings"],
   }
 }
-function toOpenXJsonSerDe(root: JSONValue): OpenXJsonSerDe {
-  return prt.readObj({
+function toOpenXJsonSerDe(root: jsonP.JSONValue): OpenXJsonSerDe {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ConvertDotsInJsonKeysToUnderscores": "b",
       "CaseInsensitive": "b",
-      "ColumnToJsonKeyMappings": x => prt.readMap(String, String, x),
+      "ColumnToJsonKeyMappings": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -830,13 +836,14 @@ function toOpenXJsonSerDe(root: JSONValue): OpenXJsonSerDe {
 export interface HiveJsonSerDe {
   TimestampFormats?: string[] | null;
 }
-function fromHiveJsonSerDe(input?: HiveJsonSerDe | null): JSONValue {
+function fromHiveJsonSerDe(input?: HiveJsonSerDe | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    TimestampFormats: input["TimestampFormats"],
   }
 }
-function toHiveJsonSerDe(root: JSONValue): HiveJsonSerDe {
-  return prt.readObj({
+function toHiveJsonSerDe(root: jsonP.JSONValue): HiveJsonSerDe {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TimestampFormats": ["s"],
@@ -848,14 +855,14 @@ function toHiveJsonSerDe(root: JSONValue): HiveJsonSerDe {
 export interface OutputFormatConfiguration {
   Serializer?: Serializer | null;
 }
-function fromOutputFormatConfiguration(input?: OutputFormatConfiguration | null): JSONValue {
+function fromOutputFormatConfiguration(input?: OutputFormatConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Serializer: fromSerializer(input["Serializer"]),
   }
 }
-function toOutputFormatConfiguration(root: JSONValue): OutputFormatConfiguration {
-  return prt.readObj({
+function toOutputFormatConfiguration(root: jsonP.JSONValue): OutputFormatConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Serializer": toSerializer,
@@ -868,15 +875,15 @@ export interface Serializer {
   ParquetSerDe?: ParquetSerDe | null;
   OrcSerDe?: OrcSerDe | null;
 }
-function fromSerializer(input?: Serializer | null): JSONValue {
+function fromSerializer(input?: Serializer | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     ParquetSerDe: fromParquetSerDe(input["ParquetSerDe"]),
     OrcSerDe: fromOrcSerDe(input["OrcSerDe"]),
   }
 }
-function toSerializer(root: JSONValue): Serializer {
-  return prt.readObj({
+function toSerializer(root: jsonP.JSONValue): Serializer {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ParquetSerDe": toParquetSerDe,
@@ -894,21 +901,27 @@ export interface ParquetSerDe {
   MaxPaddingBytes?: number | null;
   WriterVersion?: ParquetWriterVersion | null;
 }
-function fromParquetSerDe(input?: ParquetSerDe | null): JSONValue {
+function fromParquetSerDe(input?: ParquetSerDe | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    BlockSizeBytes: input["BlockSizeBytes"],
+    PageSizeBytes: input["PageSizeBytes"],
+    Compression: input["Compression"],
+    EnableDictionaryCompression: input["EnableDictionaryCompression"],
+    MaxPaddingBytes: input["MaxPaddingBytes"],
+    WriterVersion: input["WriterVersion"],
   }
 }
-function toParquetSerDe(root: JSONValue): ParquetSerDe {
-  return prt.readObj({
+function toParquetSerDe(root: jsonP.JSONValue): ParquetSerDe {
+  return jsonP.readObj({
     required: {},
     optional: {
       "BlockSizeBytes": "n",
       "PageSizeBytes": "n",
-      "Compression": toParquetCompression,
+      "Compression": (x: jsonP.JSONValue) => cmnP.readEnum<ParquetCompression>(x),
       "EnableDictionaryCompression": "b",
       "MaxPaddingBytes": "n",
-      "WriterVersion": toParquetWriterVersion,
+      "WriterVersion": (x: jsonP.JSONValue) => cmnP.readEnum<ParquetWriterVersion>(x),
     },
   }, root);
 }
@@ -918,28 +931,13 @@ export type ParquetCompression =
 | "UNCOMPRESSED"
 | "GZIP"
 | "SNAPPY"
-;
-
-function toParquetCompression(root: JSONValue): ParquetCompression | null {
-  return ( false
-    || root == "UNCOMPRESSED"
-    || root == "GZIP"
-    || root == "SNAPPY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type ParquetWriterVersion =
 | "V1"
 | "V2"
-;
-
-function toParquetWriterVersion(root: JSONValue): ParquetWriterVersion | null {
-  return ( false
-    || root == "V1"
-    || root == "V2"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface OrcSerDe {
@@ -954,13 +952,23 @@ export interface OrcSerDe {
   DictionaryKeyThreshold?: number | null;
   FormatVersion?: OrcFormatVersion | null;
 }
-function fromOrcSerDe(input?: OrcSerDe | null): JSONValue {
+function fromOrcSerDe(input?: OrcSerDe | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    StripeSizeBytes: input["StripeSizeBytes"],
+    BlockSizeBytes: input["BlockSizeBytes"],
+    RowIndexStride: input["RowIndexStride"],
+    EnablePadding: input["EnablePadding"],
+    PaddingTolerance: input["PaddingTolerance"],
+    Compression: input["Compression"],
+    BloomFilterColumns: input["BloomFilterColumns"],
+    BloomFilterFalsePositiveProbability: input["BloomFilterFalsePositiveProbability"],
+    DictionaryKeyThreshold: input["DictionaryKeyThreshold"],
+    FormatVersion: input["FormatVersion"],
   }
 }
-function toOrcSerDe(root: JSONValue): OrcSerDe {
-  return prt.readObj({
+function toOrcSerDe(root: jsonP.JSONValue): OrcSerDe {
+  return jsonP.readObj({
     required: {},
     optional: {
       "StripeSizeBytes": "n",
@@ -968,11 +976,11 @@ function toOrcSerDe(root: JSONValue): OrcSerDe {
       "RowIndexStride": "n",
       "EnablePadding": "b",
       "PaddingTolerance": "n",
-      "Compression": toOrcCompression,
+      "Compression": (x: jsonP.JSONValue) => cmnP.readEnum<OrcCompression>(x),
       "BloomFilterColumns": ["s"],
       "BloomFilterFalsePositiveProbability": "n",
       "DictionaryKeyThreshold": "n",
-      "FormatVersion": toOrcFormatVersion,
+      "FormatVersion": (x: jsonP.JSONValue) => cmnP.readEnum<OrcFormatVersion>(x),
     },
   }, root);
 }
@@ -982,28 +990,13 @@ export type OrcCompression =
 | "NONE"
 | "ZLIB"
 | "SNAPPY"
-;
-
-function toOrcCompression(root: JSONValue): OrcCompression | null {
-  return ( false
-    || root == "NONE"
-    || root == "ZLIB"
-    || root == "SNAPPY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type OrcFormatVersion =
 | "V0_11"
 | "V0_12"
-;
-
-function toOrcFormatVersion(root: JSONValue): OrcFormatVersion | null {
-  return ( false
-    || root == "V0_11"
-    || root == "V0_12"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface RedshiftDestinationConfiguration {
@@ -1019,13 +1012,18 @@ export interface RedshiftDestinationConfiguration {
   S3BackupConfiguration?: S3DestinationConfiguration | null;
   CloudWatchLoggingOptions?: CloudWatchLoggingOptions | null;
 }
-function fromRedshiftDestinationConfiguration(input?: RedshiftDestinationConfiguration | null): JSONValue {
+function fromRedshiftDestinationConfiguration(input?: RedshiftDestinationConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RoleARN: input["RoleARN"],
+    ClusterJDBCURL: input["ClusterJDBCURL"],
     CopyCommand: fromCopyCommand(input["CopyCommand"]),
+    Username: input["Username"],
+    Password: input["Password"],
     RetryOptions: fromRedshiftRetryOptions(input["RetryOptions"]),
     S3Configuration: fromS3DestinationConfiguration(input["S3Configuration"]),
     ProcessingConfiguration: fromProcessingConfiguration(input["ProcessingConfiguration"]),
+    S3BackupMode: input["S3BackupMode"],
     S3BackupConfiguration: fromS3DestinationConfiguration(input["S3BackupConfiguration"]),
     CloudWatchLoggingOptions: fromCloudWatchLoggingOptions(input["CloudWatchLoggingOptions"]),
   }
@@ -1037,13 +1035,16 @@ export interface CopyCommand {
   DataTableColumns?: string | null;
   CopyOptions?: string | null;
 }
-function fromCopyCommand(input?: CopyCommand | null): JSONValue {
+function fromCopyCommand(input?: CopyCommand | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DataTableName: input["DataTableName"],
+    DataTableColumns: input["DataTableColumns"],
+    CopyOptions: input["CopyOptions"],
   }
 }
-function toCopyCommand(root: JSONValue): CopyCommand {
-  return prt.readObj({
+function toCopyCommand(root: jsonP.JSONValue): CopyCommand {
+  return jsonP.readObj({
     required: {
       "DataTableName": "s",
     },
@@ -1058,13 +1059,14 @@ function toCopyCommand(root: JSONValue): CopyCommand {
 export interface RedshiftRetryOptions {
   DurationInSeconds?: number | null;
 }
-function fromRedshiftRetryOptions(input?: RedshiftRetryOptions | null): JSONValue {
+function fromRedshiftRetryOptions(input?: RedshiftRetryOptions | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DurationInSeconds: input["DurationInSeconds"],
   }
 }
-function toRedshiftRetryOptions(root: JSONValue): RedshiftRetryOptions {
-  return prt.readObj({
+function toRedshiftRetryOptions(root: jsonP.JSONValue): RedshiftRetryOptions {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DurationInSeconds": "n",
@@ -1076,14 +1078,7 @@ function toRedshiftRetryOptions(root: JSONValue): RedshiftRetryOptions {
 export type RedshiftS3BackupMode =
 | "Disabled"
 | "Enabled"
-;
-
-function toRedshiftS3BackupMode(root: JSONValue): RedshiftS3BackupMode | null {
-  return ( false
-    || root == "Disabled"
-    || root == "Enabled"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ElasticsearchDestinationConfiguration {
@@ -1101,11 +1096,18 @@ export interface ElasticsearchDestinationConfiguration {
   CloudWatchLoggingOptions?: CloudWatchLoggingOptions | null;
   VpcConfiguration?: VpcConfiguration | null;
 }
-function fromElasticsearchDestinationConfiguration(input?: ElasticsearchDestinationConfiguration | null): JSONValue {
+function fromElasticsearchDestinationConfiguration(input?: ElasticsearchDestinationConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RoleARN: input["RoleARN"],
+    DomainARN: input["DomainARN"],
+    ClusterEndpoint: input["ClusterEndpoint"],
+    IndexName: input["IndexName"],
+    TypeName: input["TypeName"],
+    IndexRotationPeriod: input["IndexRotationPeriod"],
     BufferingHints: fromElasticsearchBufferingHints(input["BufferingHints"]),
     RetryOptions: fromElasticsearchRetryOptions(input["RetryOptions"]),
+    S3BackupMode: input["S3BackupMode"],
     S3Configuration: fromS3DestinationConfiguration(input["S3Configuration"]),
     ProcessingConfiguration: fromProcessingConfiguration(input["ProcessingConfiguration"]),
     CloudWatchLoggingOptions: fromCloudWatchLoggingOptions(input["CloudWatchLoggingOptions"]),
@@ -1120,30 +1122,22 @@ export type ElasticsearchIndexRotationPeriod =
 | "OneDay"
 | "OneWeek"
 | "OneMonth"
-;
-
-function toElasticsearchIndexRotationPeriod(root: JSONValue): ElasticsearchIndexRotationPeriod | null {
-  return ( false
-    || root == "NoRotation"
-    || root == "OneHour"
-    || root == "OneDay"
-    || root == "OneWeek"
-    || root == "OneMonth"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface ElasticsearchBufferingHints {
   IntervalInSeconds?: number | null;
   SizeInMBs?: number | null;
 }
-function fromElasticsearchBufferingHints(input?: ElasticsearchBufferingHints | null): JSONValue {
+function fromElasticsearchBufferingHints(input?: ElasticsearchBufferingHints | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    IntervalInSeconds: input["IntervalInSeconds"],
+    SizeInMBs: input["SizeInMBs"],
   }
 }
-function toElasticsearchBufferingHints(root: JSONValue): ElasticsearchBufferingHints {
-  return prt.readObj({
+function toElasticsearchBufferingHints(root: jsonP.JSONValue): ElasticsearchBufferingHints {
+  return jsonP.readObj({
     required: {},
     optional: {
       "IntervalInSeconds": "n",
@@ -1156,13 +1150,14 @@ function toElasticsearchBufferingHints(root: JSONValue): ElasticsearchBufferingH
 export interface ElasticsearchRetryOptions {
   DurationInSeconds?: number | null;
 }
-function fromElasticsearchRetryOptions(input?: ElasticsearchRetryOptions | null): JSONValue {
+function fromElasticsearchRetryOptions(input?: ElasticsearchRetryOptions | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DurationInSeconds: input["DurationInSeconds"],
   }
 }
-function toElasticsearchRetryOptions(root: JSONValue): ElasticsearchRetryOptions {
-  return prt.readObj({
+function toElasticsearchRetryOptions(root: jsonP.JSONValue): ElasticsearchRetryOptions {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DurationInSeconds": "n",
@@ -1174,14 +1169,7 @@ function toElasticsearchRetryOptions(root: JSONValue): ElasticsearchRetryOptions
 export type ElasticsearchS3BackupMode =
 | "FailedDocumentsOnly"
 | "AllDocuments"
-;
-
-function toElasticsearchS3BackupMode(root: JSONValue): ElasticsearchS3BackupMode | null {
-  return ( false
-    || root == "FailedDocumentsOnly"
-    || root == "AllDocuments"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface VpcConfiguration {
@@ -1189,9 +1177,12 @@ export interface VpcConfiguration {
   RoleARN: string;
   SecurityGroupIds: string[];
 }
-function fromVpcConfiguration(input?: VpcConfiguration | null): JSONValue {
+function fromVpcConfiguration(input?: VpcConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SubnetIds: input["SubnetIds"],
+    RoleARN: input["RoleARN"],
+    SecurityGroupIds: input["SecurityGroupIds"],
   }
 }
 
@@ -1207,10 +1198,15 @@ export interface SplunkDestinationConfiguration {
   ProcessingConfiguration?: ProcessingConfiguration | null;
   CloudWatchLoggingOptions?: CloudWatchLoggingOptions | null;
 }
-function fromSplunkDestinationConfiguration(input?: SplunkDestinationConfiguration | null): JSONValue {
+function fromSplunkDestinationConfiguration(input?: SplunkDestinationConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    HECEndpoint: input["HECEndpoint"],
+    HECEndpointType: input["HECEndpointType"],
+    HECToken: input["HECToken"],
+    HECAcknowledgmentTimeoutInSeconds: input["HECAcknowledgmentTimeoutInSeconds"],
     RetryOptions: fromSplunkRetryOptions(input["RetryOptions"]),
+    S3BackupMode: input["S3BackupMode"],
     S3Configuration: fromS3DestinationConfiguration(input["S3Configuration"]),
     ProcessingConfiguration: fromProcessingConfiguration(input["ProcessingConfiguration"]),
     CloudWatchLoggingOptions: fromCloudWatchLoggingOptions(input["CloudWatchLoggingOptions"]),
@@ -1221,26 +1217,20 @@ function fromSplunkDestinationConfiguration(input?: SplunkDestinationConfigurati
 export type HECEndpointType =
 | "Raw"
 | "Event"
-;
-
-function toHECEndpointType(root: JSONValue): HECEndpointType | null {
-  return ( false
-    || root == "Raw"
-    || root == "Event"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface SplunkRetryOptions {
   DurationInSeconds?: number | null;
 }
-function fromSplunkRetryOptions(input?: SplunkRetryOptions | null): JSONValue {
+function fromSplunkRetryOptions(input?: SplunkRetryOptions | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DurationInSeconds: input["DurationInSeconds"],
   }
 }
-function toSplunkRetryOptions(root: JSONValue): SplunkRetryOptions {
-  return prt.readObj({
+function toSplunkRetryOptions(root: jsonP.JSONValue): SplunkRetryOptions {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DurationInSeconds": "n",
@@ -1252,14 +1242,7 @@ function toSplunkRetryOptions(root: JSONValue): SplunkRetryOptions {
 export type SplunkS3BackupMode =
 | "FailedEventsOnly"
 | "AllEvents"
-;
-
-function toSplunkS3BackupMode(root: JSONValue): SplunkS3BackupMode | null {
-  return ( false
-    || root == "FailedEventsOnly"
-    || root == "AllEvents"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface HttpEndpointDestinationConfiguration {
@@ -1273,15 +1256,17 @@ export interface HttpEndpointDestinationConfiguration {
   S3BackupMode?: HttpEndpointS3BackupMode | null;
   S3Configuration: S3DestinationConfiguration;
 }
-function fromHttpEndpointDestinationConfiguration(input?: HttpEndpointDestinationConfiguration | null): JSONValue {
+function fromHttpEndpointDestinationConfiguration(input?: HttpEndpointDestinationConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     EndpointConfiguration: fromHttpEndpointConfiguration(input["EndpointConfiguration"]),
     BufferingHints: fromHttpEndpointBufferingHints(input["BufferingHints"]),
     CloudWatchLoggingOptions: fromCloudWatchLoggingOptions(input["CloudWatchLoggingOptions"]),
     RequestConfiguration: fromHttpEndpointRequestConfiguration(input["RequestConfiguration"]),
     ProcessingConfiguration: fromProcessingConfiguration(input["ProcessingConfiguration"]),
+    RoleARN: input["RoleARN"],
     RetryOptions: fromHttpEndpointRetryOptions(input["RetryOptions"]),
+    S3BackupMode: input["S3BackupMode"],
     S3Configuration: fromS3DestinationConfiguration(input["S3Configuration"]),
   }
 }
@@ -1292,9 +1277,12 @@ export interface HttpEndpointConfiguration {
   Name?: string | null;
   AccessKey?: string | null;
 }
-function fromHttpEndpointConfiguration(input?: HttpEndpointConfiguration | null): JSONValue {
+function fromHttpEndpointConfiguration(input?: HttpEndpointConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Url: input["Url"],
+    Name: input["Name"],
+    AccessKey: input["AccessKey"],
   }
 }
 
@@ -1303,13 +1291,15 @@ export interface HttpEndpointBufferingHints {
   SizeInMBs?: number | null;
   IntervalInSeconds?: number | null;
 }
-function fromHttpEndpointBufferingHints(input?: HttpEndpointBufferingHints | null): JSONValue {
+function fromHttpEndpointBufferingHints(input?: HttpEndpointBufferingHints | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    SizeInMBs: input["SizeInMBs"],
+    IntervalInSeconds: input["IntervalInSeconds"],
   }
 }
-function toHttpEndpointBufferingHints(root: JSONValue): HttpEndpointBufferingHints {
-  return prt.readObj({
+function toHttpEndpointBufferingHints(root: jsonP.JSONValue): HttpEndpointBufferingHints {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SizeInMBs": "n",
@@ -1323,17 +1313,18 @@ export interface HttpEndpointRequestConfiguration {
   ContentEncoding?: ContentEncoding | null;
   CommonAttributes?: HttpEndpointCommonAttribute[] | null;
 }
-function fromHttpEndpointRequestConfiguration(input?: HttpEndpointRequestConfiguration | null): JSONValue {
+function fromHttpEndpointRequestConfiguration(input?: HttpEndpointRequestConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ContentEncoding: input["ContentEncoding"],
     CommonAttributes: input["CommonAttributes"]?.map(x => fromHttpEndpointCommonAttribute(x)),
   }
 }
-function toHttpEndpointRequestConfiguration(root: JSONValue): HttpEndpointRequestConfiguration {
-  return prt.readObj({
+function toHttpEndpointRequestConfiguration(root: jsonP.JSONValue): HttpEndpointRequestConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "ContentEncoding": toContentEncoding,
+      "ContentEncoding": (x: jsonP.JSONValue) => cmnP.readEnum<ContentEncoding>(x),
       "CommonAttributes": [toHttpEndpointCommonAttribute],
     },
   }, root);
@@ -1343,27 +1334,22 @@ function toHttpEndpointRequestConfiguration(root: JSONValue): HttpEndpointReques
 export type ContentEncoding =
 | "NONE"
 | "GZIP"
-;
-
-function toContentEncoding(root: JSONValue): ContentEncoding | null {
-  return ( false
-    || root == "NONE"
-    || root == "GZIP"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface HttpEndpointCommonAttribute {
   AttributeName: string;
   AttributeValue: string;
 }
-function fromHttpEndpointCommonAttribute(input?: HttpEndpointCommonAttribute | null): JSONValue {
+function fromHttpEndpointCommonAttribute(input?: HttpEndpointCommonAttribute | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AttributeName: input["AttributeName"],
+    AttributeValue: input["AttributeValue"],
   }
 }
-function toHttpEndpointCommonAttribute(root: JSONValue): HttpEndpointCommonAttribute {
-  return prt.readObj({
+function toHttpEndpointCommonAttribute(root: jsonP.JSONValue): HttpEndpointCommonAttribute {
+  return jsonP.readObj({
     required: {
       "AttributeName": "s",
       "AttributeValue": "s",
@@ -1376,13 +1362,14 @@ function toHttpEndpointCommonAttribute(root: JSONValue): HttpEndpointCommonAttri
 export interface HttpEndpointRetryOptions {
   DurationInSeconds?: number | null;
 }
-function fromHttpEndpointRetryOptions(input?: HttpEndpointRetryOptions | null): JSONValue {
+function fromHttpEndpointRetryOptions(input?: HttpEndpointRetryOptions | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DurationInSeconds: input["DurationInSeconds"],
   }
 }
-function toHttpEndpointRetryOptions(root: JSONValue): HttpEndpointRetryOptions {
-  return prt.readObj({
+function toHttpEndpointRetryOptions(root: jsonP.JSONValue): HttpEndpointRetryOptions {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DurationInSeconds": "n",
@@ -1394,27 +1381,22 @@ function toHttpEndpointRetryOptions(root: JSONValue): HttpEndpointRetryOptions {
 export type HttpEndpointS3BackupMode =
 | "FailedDataOnly"
 | "AllData"
-;
-
-function toHttpEndpointS3BackupMode(root: JSONValue): HttpEndpointS3BackupMode | null {
-  return ( false
-    || root == "FailedDataOnly"
-    || root == "AllData"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value?: string | null;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
     },
@@ -1428,10 +1410,10 @@ function toTag(root: JSONValue): Tag {
 export interface Record {
   Data: Uint8Array | string;
 }
-function fromRecord(input?: Record | null): JSONValue {
+function fromRecord(input?: Record | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Data: prt.serializeBlob(input["Data"]),
+  return {
+    Data: jsonP.serializeBlob(input["Data"]),
   }
 }
 
@@ -1446,10 +1428,15 @@ export interface S3DestinationUpdate {
   EncryptionConfiguration?: EncryptionConfiguration | null;
   CloudWatchLoggingOptions?: CloudWatchLoggingOptions | null;
 }
-function fromS3DestinationUpdate(input?: S3DestinationUpdate | null): JSONValue {
+function fromS3DestinationUpdate(input?: S3DestinationUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RoleARN: input["RoleARN"],
+    BucketARN: input["BucketARN"],
+    Prefix: input["Prefix"],
+    ErrorOutputPrefix: input["ErrorOutputPrefix"],
     BufferingHints: fromBufferingHints(input["BufferingHints"]),
+    CompressionFormat: input["CompressionFormat"],
     EncryptionConfiguration: fromEncryptionConfiguration(input["EncryptionConfiguration"]),
     CloudWatchLoggingOptions: fromCloudWatchLoggingOptions(input["CloudWatchLoggingOptions"]),
   }
@@ -1470,13 +1457,19 @@ export interface ExtendedS3DestinationUpdate {
   S3BackupUpdate?: S3DestinationUpdate | null;
   DataFormatConversionConfiguration?: DataFormatConversionConfiguration | null;
 }
-function fromExtendedS3DestinationUpdate(input?: ExtendedS3DestinationUpdate | null): JSONValue {
+function fromExtendedS3DestinationUpdate(input?: ExtendedS3DestinationUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RoleARN: input["RoleARN"],
+    BucketARN: input["BucketARN"],
+    Prefix: input["Prefix"],
+    ErrorOutputPrefix: input["ErrorOutputPrefix"],
     BufferingHints: fromBufferingHints(input["BufferingHints"]),
+    CompressionFormat: input["CompressionFormat"],
     EncryptionConfiguration: fromEncryptionConfiguration(input["EncryptionConfiguration"]),
     CloudWatchLoggingOptions: fromCloudWatchLoggingOptions(input["CloudWatchLoggingOptions"]),
     ProcessingConfiguration: fromProcessingConfiguration(input["ProcessingConfiguration"]),
+    S3BackupMode: input["S3BackupMode"],
     S3BackupUpdate: fromS3DestinationUpdate(input["S3BackupUpdate"]),
     DataFormatConversionConfiguration: fromDataFormatConversionConfiguration(input["DataFormatConversionConfiguration"]),
   }
@@ -1496,13 +1489,18 @@ export interface RedshiftDestinationUpdate {
   S3BackupUpdate?: S3DestinationUpdate | null;
   CloudWatchLoggingOptions?: CloudWatchLoggingOptions | null;
 }
-function fromRedshiftDestinationUpdate(input?: RedshiftDestinationUpdate | null): JSONValue {
+function fromRedshiftDestinationUpdate(input?: RedshiftDestinationUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RoleARN: input["RoleARN"],
+    ClusterJDBCURL: input["ClusterJDBCURL"],
     CopyCommand: fromCopyCommand(input["CopyCommand"]),
+    Username: input["Username"],
+    Password: input["Password"],
     RetryOptions: fromRedshiftRetryOptions(input["RetryOptions"]),
     S3Update: fromS3DestinationUpdate(input["S3Update"]),
     ProcessingConfiguration: fromProcessingConfiguration(input["ProcessingConfiguration"]),
+    S3BackupMode: input["S3BackupMode"],
     S3BackupUpdate: fromS3DestinationUpdate(input["S3BackupUpdate"]),
     CloudWatchLoggingOptions: fromCloudWatchLoggingOptions(input["CloudWatchLoggingOptions"]),
   }
@@ -1522,9 +1520,15 @@ export interface ElasticsearchDestinationUpdate {
   ProcessingConfiguration?: ProcessingConfiguration | null;
   CloudWatchLoggingOptions?: CloudWatchLoggingOptions | null;
 }
-function fromElasticsearchDestinationUpdate(input?: ElasticsearchDestinationUpdate | null): JSONValue {
+function fromElasticsearchDestinationUpdate(input?: ElasticsearchDestinationUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    RoleARN: input["RoleARN"],
+    DomainARN: input["DomainARN"],
+    ClusterEndpoint: input["ClusterEndpoint"],
+    IndexName: input["IndexName"],
+    TypeName: input["TypeName"],
+    IndexRotationPeriod: input["IndexRotationPeriod"],
     BufferingHints: fromElasticsearchBufferingHints(input["BufferingHints"]),
     RetryOptions: fromElasticsearchRetryOptions(input["RetryOptions"]),
     S3Update: fromS3DestinationUpdate(input["S3Update"]),
@@ -1545,10 +1549,15 @@ export interface SplunkDestinationUpdate {
   ProcessingConfiguration?: ProcessingConfiguration | null;
   CloudWatchLoggingOptions?: CloudWatchLoggingOptions | null;
 }
-function fromSplunkDestinationUpdate(input?: SplunkDestinationUpdate | null): JSONValue {
+function fromSplunkDestinationUpdate(input?: SplunkDestinationUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    HECEndpoint: input["HECEndpoint"],
+    HECEndpointType: input["HECEndpointType"],
+    HECToken: input["HECToken"],
+    HECAcknowledgmentTimeoutInSeconds: input["HECAcknowledgmentTimeoutInSeconds"],
     RetryOptions: fromSplunkRetryOptions(input["RetryOptions"]),
+    S3BackupMode: input["S3BackupMode"],
     S3Update: fromS3DestinationUpdate(input["S3Update"]),
     ProcessingConfiguration: fromProcessingConfiguration(input["ProcessingConfiguration"]),
     CloudWatchLoggingOptions: fromCloudWatchLoggingOptions(input["CloudWatchLoggingOptions"]),
@@ -1567,15 +1576,17 @@ export interface HttpEndpointDestinationUpdate {
   S3BackupMode?: HttpEndpointS3BackupMode | null;
   S3Update?: S3DestinationUpdate | null;
 }
-function fromHttpEndpointDestinationUpdate(input?: HttpEndpointDestinationUpdate | null): JSONValue {
+function fromHttpEndpointDestinationUpdate(input?: HttpEndpointDestinationUpdate | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     EndpointConfiguration: fromHttpEndpointConfiguration(input["EndpointConfiguration"]),
     BufferingHints: fromHttpEndpointBufferingHints(input["BufferingHints"]),
     CloudWatchLoggingOptions: fromCloudWatchLoggingOptions(input["CloudWatchLoggingOptions"]),
     RequestConfiguration: fromHttpEndpointRequestConfiguration(input["RequestConfiguration"]),
     ProcessingConfiguration: fromProcessingConfiguration(input["ProcessingConfiguration"]),
+    RoleARN: input["RoleARN"],
     RetryOptions: fromHttpEndpointRetryOptions(input["RetryOptions"]),
+    S3BackupMode: input["S3BackupMode"],
     S3Update: fromS3DestinationUpdate(input["S3Update"]),
   }
 }
@@ -1595,13 +1606,13 @@ export interface DeliveryStreamDescription {
   Destinations: DestinationDescription[];
   HasMoreDestinations: boolean;
 }
-function toDeliveryStreamDescription(root: JSONValue): DeliveryStreamDescription {
-  return prt.readObj({
+function toDeliveryStreamDescription(root: jsonP.JSONValue): DeliveryStreamDescription {
+  return jsonP.readObj({
     required: {
       "DeliveryStreamName": "s",
       "DeliveryStreamARN": "s",
-      "DeliveryStreamStatus": toDeliveryStreamStatus,
-      "DeliveryStreamType": toDeliveryStreamType,
+      "DeliveryStreamStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeliveryStreamStatus>(x),
+      "DeliveryStreamType": (x: jsonP.JSONValue) => cmnP.readEnum<DeliveryStreamType>(x),
       "VersionId": "s",
       "Destinations": [toDestinationDescription],
       "HasMoreDestinations": "b",
@@ -1623,26 +1634,17 @@ export type DeliveryStreamStatus =
 | "DELETING"
 | "DELETING_FAILED"
 | "ACTIVE"
-;
-function toDeliveryStreamStatus(root: JSONValue): DeliveryStreamStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "CREATING_FAILED"
-    || root == "DELETING"
-    || root == "DELETING_FAILED"
-    || root == "ACTIVE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface FailureDescription {
   Type: DeliveryStreamFailureType;
   Details: string;
 }
-function toFailureDescription(root: JSONValue): FailureDescription {
-  return prt.readObj({
+function toFailureDescription(root: jsonP.JSONValue): FailureDescription {
+  return jsonP.readObj({
     required: {
-      "Type": toDeliveryStreamFailureType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<DeliveryStreamFailureType>(x),
       "Details": "s",
     },
     optional: {},
@@ -1666,26 +1668,7 @@ export type DeliveryStreamFailureType =
 | "SUBNET_ACCESS_DENIED"
 | "SECURITY_GROUP_ACCESS_DENIED"
 | "UNKNOWN_ERROR"
-;
-function toDeliveryStreamFailureType(root: JSONValue): DeliveryStreamFailureType | null {
-  return ( false
-    || root == "RETIRE_KMS_GRANT_FAILED"
-    || root == "CREATE_KMS_GRANT_FAILED"
-    || root == "KMS_ACCESS_DENIED"
-    || root == "DISABLED_KMS_KEY"
-    || root == "INVALID_KMS_KEY"
-    || root == "KMS_KEY_NOT_FOUND"
-    || root == "KMS_OPT_IN_REQUIRED"
-    || root == "CREATE_ENI_FAILED"
-    || root == "DELETE_ENI_FAILED"
-    || root == "SUBNET_NOT_FOUND"
-    || root == "SECURITY_GROUP_NOT_FOUND"
-    || root == "ENI_ACCESS_DENIED"
-    || root == "SUBNET_ACCESS_DENIED"
-    || root == "SECURITY_GROUP_ACCESS_DENIED"
-    || root == "UNKNOWN_ERROR"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface DeliveryStreamEncryptionConfiguration {
@@ -1694,13 +1677,13 @@ export interface DeliveryStreamEncryptionConfiguration {
   Status?: DeliveryStreamEncryptionStatus | null;
   FailureDescription?: FailureDescription | null;
 }
-function toDeliveryStreamEncryptionConfiguration(root: JSONValue): DeliveryStreamEncryptionConfiguration {
-  return prt.readObj({
+function toDeliveryStreamEncryptionConfiguration(root: jsonP.JSONValue): DeliveryStreamEncryptionConfiguration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "KeyARN": "s",
-      "KeyType": toKeyType,
-      "Status": toDeliveryStreamEncryptionStatus,
+      "KeyType": (x: jsonP.JSONValue) => cmnP.readEnum<KeyType>(x),
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<DeliveryStreamEncryptionStatus>(x),
       "FailureDescription": toFailureDescription,
     },
   }, root);
@@ -1714,24 +1697,14 @@ export type DeliveryStreamEncryptionStatus =
 | "DISABLED"
 | "DISABLING"
 | "DISABLING_FAILED"
-;
-function toDeliveryStreamEncryptionStatus(root: JSONValue): DeliveryStreamEncryptionStatus | null {
-  return ( false
-    || root == "ENABLED"
-    || root == "ENABLING"
-    || root == "ENABLING_FAILED"
-    || root == "DISABLED"
-    || root == "DISABLING"
-    || root == "DISABLING_FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface SourceDescription {
   KinesisStreamSourceDescription?: KinesisStreamSourceDescription | null;
 }
-function toSourceDescription(root: JSONValue): SourceDescription {
-  return prt.readObj({
+function toSourceDescription(root: jsonP.JSONValue): SourceDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "KinesisStreamSourceDescription": toKinesisStreamSourceDescription,
@@ -1745,8 +1718,8 @@ export interface KinesisStreamSourceDescription {
   RoleARN?: string | null;
   DeliveryStartTimestamp?: Date | number | null;
 }
-function toKinesisStreamSourceDescription(root: JSONValue): KinesisStreamSourceDescription {
-  return prt.readObj({
+function toKinesisStreamSourceDescription(root: jsonP.JSONValue): KinesisStreamSourceDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "KinesisStreamARN": "s",
@@ -1766,8 +1739,8 @@ export interface DestinationDescription {
   SplunkDestinationDescription?: SplunkDestinationDescription | null;
   HttpEndpointDestinationDescription?: HttpEndpointDestinationDescription | null;
 }
-function toDestinationDescription(root: JSONValue): DestinationDescription {
-  return prt.readObj({
+function toDestinationDescription(root: jsonP.JSONValue): DestinationDescription {
+  return jsonP.readObj({
     required: {
       "DestinationId": "s",
     },
@@ -1793,13 +1766,13 @@ export interface S3DestinationDescription {
   EncryptionConfiguration: EncryptionConfiguration;
   CloudWatchLoggingOptions?: CloudWatchLoggingOptions | null;
 }
-function toS3DestinationDescription(root: JSONValue): S3DestinationDescription {
-  return prt.readObj({
+function toS3DestinationDescription(root: jsonP.JSONValue): S3DestinationDescription {
+  return jsonP.readObj({
     required: {
       "RoleARN": "s",
       "BucketARN": "s",
       "BufferingHints": toBufferingHints,
-      "CompressionFormat": toCompressionFormat,
+      "CompressionFormat": (x: jsonP.JSONValue) => cmnP.readEnum<CompressionFormat>(x),
       "EncryptionConfiguration": toEncryptionConfiguration,
     },
     optional: {
@@ -1825,13 +1798,13 @@ export interface ExtendedS3DestinationDescription {
   S3BackupDescription?: S3DestinationDescription | null;
   DataFormatConversionConfiguration?: DataFormatConversionConfiguration | null;
 }
-function toExtendedS3DestinationDescription(root: JSONValue): ExtendedS3DestinationDescription {
-  return prt.readObj({
+function toExtendedS3DestinationDescription(root: jsonP.JSONValue): ExtendedS3DestinationDescription {
+  return jsonP.readObj({
     required: {
       "RoleARN": "s",
       "BucketARN": "s",
       "BufferingHints": toBufferingHints,
-      "CompressionFormat": toCompressionFormat,
+      "CompressionFormat": (x: jsonP.JSONValue) => cmnP.readEnum<CompressionFormat>(x),
       "EncryptionConfiguration": toEncryptionConfiguration,
     },
     optional: {
@@ -1839,7 +1812,7 @@ function toExtendedS3DestinationDescription(root: JSONValue): ExtendedS3Destinat
       "ErrorOutputPrefix": "s",
       "CloudWatchLoggingOptions": toCloudWatchLoggingOptions,
       "ProcessingConfiguration": toProcessingConfiguration,
-      "S3BackupMode": toS3BackupMode,
+      "S3BackupMode": (x: jsonP.JSONValue) => cmnP.readEnum<S3BackupMode>(x),
       "S3BackupDescription": toS3DestinationDescription,
       "DataFormatConversionConfiguration": toDataFormatConversionConfiguration,
     },
@@ -1859,8 +1832,8 @@ export interface RedshiftDestinationDescription {
   S3BackupDescription?: S3DestinationDescription | null;
   CloudWatchLoggingOptions?: CloudWatchLoggingOptions | null;
 }
-function toRedshiftDestinationDescription(root: JSONValue): RedshiftDestinationDescription {
-  return prt.readObj({
+function toRedshiftDestinationDescription(root: jsonP.JSONValue): RedshiftDestinationDescription {
+  return jsonP.readObj({
     required: {
       "RoleARN": "s",
       "ClusterJDBCURL": "s",
@@ -1871,7 +1844,7 @@ function toRedshiftDestinationDescription(root: JSONValue): RedshiftDestinationD
     optional: {
       "RetryOptions": toRedshiftRetryOptions,
       "ProcessingConfiguration": toProcessingConfiguration,
-      "S3BackupMode": toRedshiftS3BackupMode,
+      "S3BackupMode": (x: jsonP.JSONValue) => cmnP.readEnum<RedshiftS3BackupMode>(x),
       "S3BackupDescription": toS3DestinationDescription,
       "CloudWatchLoggingOptions": toCloudWatchLoggingOptions,
     },
@@ -1894,8 +1867,8 @@ export interface ElasticsearchDestinationDescription {
   CloudWatchLoggingOptions?: CloudWatchLoggingOptions | null;
   VpcConfigurationDescription?: VpcConfigurationDescription | null;
 }
-function toElasticsearchDestinationDescription(root: JSONValue): ElasticsearchDestinationDescription {
-  return prt.readObj({
+function toElasticsearchDestinationDescription(root: jsonP.JSONValue): ElasticsearchDestinationDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RoleARN": "s",
@@ -1903,10 +1876,10 @@ function toElasticsearchDestinationDescription(root: JSONValue): ElasticsearchDe
       "ClusterEndpoint": "s",
       "IndexName": "s",
       "TypeName": "s",
-      "IndexRotationPeriod": toElasticsearchIndexRotationPeriod,
+      "IndexRotationPeriod": (x: jsonP.JSONValue) => cmnP.readEnum<ElasticsearchIndexRotationPeriod>(x),
       "BufferingHints": toElasticsearchBufferingHints,
       "RetryOptions": toElasticsearchRetryOptions,
-      "S3BackupMode": toElasticsearchS3BackupMode,
+      "S3BackupMode": (x: jsonP.JSONValue) => cmnP.readEnum<ElasticsearchS3BackupMode>(x),
       "S3DestinationDescription": toS3DestinationDescription,
       "ProcessingConfiguration": toProcessingConfiguration,
       "CloudWatchLoggingOptions": toCloudWatchLoggingOptions,
@@ -1922,8 +1895,8 @@ export interface VpcConfigurationDescription {
   SecurityGroupIds: string[];
   VpcId: string;
 }
-function toVpcConfigurationDescription(root: JSONValue): VpcConfigurationDescription {
-  return prt.readObj({
+function toVpcConfigurationDescription(root: jsonP.JSONValue): VpcConfigurationDescription {
+  return jsonP.readObj({
     required: {
       "SubnetIds": ["s"],
       "RoleARN": "s",
@@ -1946,16 +1919,16 @@ export interface SplunkDestinationDescription {
   ProcessingConfiguration?: ProcessingConfiguration | null;
   CloudWatchLoggingOptions?: CloudWatchLoggingOptions | null;
 }
-function toSplunkDestinationDescription(root: JSONValue): SplunkDestinationDescription {
-  return prt.readObj({
+function toSplunkDestinationDescription(root: jsonP.JSONValue): SplunkDestinationDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "HECEndpoint": "s",
-      "HECEndpointType": toHECEndpointType,
+      "HECEndpointType": (x: jsonP.JSONValue) => cmnP.readEnum<HECEndpointType>(x),
       "HECToken": "s",
       "HECAcknowledgmentTimeoutInSeconds": "n",
       "RetryOptions": toSplunkRetryOptions,
-      "S3BackupMode": toSplunkS3BackupMode,
+      "S3BackupMode": (x: jsonP.JSONValue) => cmnP.readEnum<SplunkS3BackupMode>(x),
       "S3DestinationDescription": toS3DestinationDescription,
       "ProcessingConfiguration": toProcessingConfiguration,
       "CloudWatchLoggingOptions": toCloudWatchLoggingOptions,
@@ -1975,8 +1948,8 @@ export interface HttpEndpointDestinationDescription {
   S3BackupMode?: HttpEndpointS3BackupMode | null;
   S3DestinationDescription?: S3DestinationDescription | null;
 }
-function toHttpEndpointDestinationDescription(root: JSONValue): HttpEndpointDestinationDescription {
-  return prt.readObj({
+function toHttpEndpointDestinationDescription(root: jsonP.JSONValue): HttpEndpointDestinationDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EndpointConfiguration": toHttpEndpointDescription,
@@ -1986,7 +1959,7 @@ function toHttpEndpointDestinationDescription(root: JSONValue): HttpEndpointDest
       "ProcessingConfiguration": toProcessingConfiguration,
       "RoleARN": "s",
       "RetryOptions": toHttpEndpointRetryOptions,
-      "S3BackupMode": toHttpEndpointS3BackupMode,
+      "S3BackupMode": (x: jsonP.JSONValue) => cmnP.readEnum<HttpEndpointS3BackupMode>(x),
       "S3DestinationDescription": toS3DestinationDescription,
     },
   }, root);
@@ -1997,8 +1970,8 @@ export interface HttpEndpointDescription {
   Url?: string | null;
   Name?: string | null;
 }
-function toHttpEndpointDescription(root: JSONValue): HttpEndpointDescription {
-  return prt.readObj({
+function toHttpEndpointDescription(root: jsonP.JSONValue): HttpEndpointDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Url": "s",
@@ -2013,8 +1986,8 @@ export interface PutRecordBatchResponseEntry {
   ErrorCode?: string | null;
   ErrorMessage?: string | null;
 }
-function toPutRecordBatchResponseEntry(root: JSONValue): PutRecordBatchResponseEntry {
-  return prt.readObj({
+function toPutRecordBatchResponseEntry(root: jsonP.JSONValue): PutRecordBatchResponseEntry {
+  return jsonP.readObj({
     required: {},
     optional: {
       "RecordId": "s",

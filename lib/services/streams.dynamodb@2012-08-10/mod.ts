@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class DynamoDBStreams {
   #client: ServiceClient;
@@ -30,13 +30,16 @@ export default class DynamoDBStreams {
   async describeStream(
     {abortSignal, ...params}: RequestConfig & DescribeStreamInput,
   ): Promise<DescribeStreamOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamArn: params["StreamArn"],
+      Limit: params["Limit"],
+      ExclusiveStartShardId: params["ExclusiveStartShardId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStream",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "StreamDescription": toStreamDescription,
@@ -47,13 +50,15 @@ export default class DynamoDBStreams {
   async getRecords(
     {abortSignal, ...params}: RequestConfig & GetRecordsInput,
   ): Promise<GetRecordsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ShardIterator: params["ShardIterator"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRecords",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Records": [toRecord],
@@ -65,13 +70,17 @@ export default class DynamoDBStreams {
   async getShardIterator(
     {abortSignal, ...params}: RequestConfig & GetShardIteratorInput,
   ): Promise<GetShardIteratorOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamArn: params["StreamArn"],
+      ShardId: params["ShardId"],
+      ShardIteratorType: params["ShardIteratorType"],
+      SequenceNumber: params["SequenceNumber"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetShardIterator",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ShardIterator": "s",
@@ -82,13 +91,16 @@ export default class DynamoDBStreams {
   async listStreams(
     {abortSignal, ...params}: RequestConfig & ListStreamsInput = {},
   ): Promise<ListStreamsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TableName: params["TableName"],
+      Limit: params["Limit"],
+      ExclusiveStartStreamArn: params["ExclusiveStartStreamArn"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListStreams",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Streams": [toStream],
@@ -155,8 +167,7 @@ export type ShardIteratorType =
 | "LATEST"
 | "AT_SEQUENCE_NUMBER"
 | "AFTER_SEQUENCE_NUMBER"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface StreamDescription {
@@ -170,14 +181,14 @@ export interface StreamDescription {
   Shards?: Shard[] | null;
   LastEvaluatedShardId?: string | null;
 }
-function toStreamDescription(root: JSONValue): StreamDescription {
-  return prt.readObj({
+function toStreamDescription(root: jsonP.JSONValue): StreamDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "StreamArn": "s",
       "StreamLabel": "s",
-      "StreamStatus": toStreamStatus,
-      "StreamViewType": toStreamViewType,
+      "StreamStatus": (x: jsonP.JSONValue) => cmnP.readEnum<StreamStatus>(x),
+      "StreamViewType": (x: jsonP.JSONValue) => cmnP.readEnum<StreamViewType>(x),
       "CreationRequestDateTime": "d",
       "TableName": "s",
       "KeySchema": [toKeySchemaElement],
@@ -193,15 +204,7 @@ export type StreamStatus =
 | "ENABLED"
 | "DISABLING"
 | "DISABLED"
-;
-function toStreamStatus(root: JSONValue): StreamStatus | null {
-  return ( false
-    || root == "ENABLING"
-    || root == "ENABLED"
-    || root == "DISABLING"
-    || root == "DISABLED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type StreamViewType =
@@ -209,26 +212,18 @@ export type StreamViewType =
 | "OLD_IMAGE"
 | "NEW_AND_OLD_IMAGES"
 | "KEYS_ONLY"
-;
-function toStreamViewType(root: JSONValue): StreamViewType | null {
-  return ( false
-    || root == "NEW_IMAGE"
-    || root == "OLD_IMAGE"
-    || root == "NEW_AND_OLD_IMAGES"
-    || root == "KEYS_ONLY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface KeySchemaElement {
   AttributeName: string;
   KeyType: KeyType;
 }
-function toKeySchemaElement(root: JSONValue): KeySchemaElement {
-  return prt.readObj({
+function toKeySchemaElement(root: jsonP.JSONValue): KeySchemaElement {
+  return jsonP.readObj({
     required: {
       "AttributeName": "s",
-      "KeyType": toKeyType,
+      "KeyType": (x: jsonP.JSONValue) => cmnP.readEnum<KeyType>(x),
     },
     optional: {},
   }, root);
@@ -238,13 +233,7 @@ function toKeySchemaElement(root: JSONValue): KeySchemaElement {
 export type KeyType =
 | "HASH"
 | "RANGE"
-;
-function toKeyType(root: JSONValue): KeyType | null {
-  return ( false
-    || root == "HASH"
-    || root == "RANGE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Shard {
@@ -252,8 +241,8 @@ export interface Shard {
   SequenceNumberRange?: SequenceNumberRange | null;
   ParentShardId?: string | null;
 }
-function toShard(root: JSONValue): Shard {
-  return prt.readObj({
+function toShard(root: jsonP.JSONValue): Shard {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ShardId": "s",
@@ -268,8 +257,8 @@ export interface SequenceNumberRange {
   StartingSequenceNumber?: string | null;
   EndingSequenceNumber?: string | null;
 }
-function toSequenceNumberRange(root: JSONValue): SequenceNumberRange {
-  return prt.readObj({
+function toSequenceNumberRange(root: jsonP.JSONValue): SequenceNumberRange {
+  return jsonP.readObj({
     required: {},
     optional: {
       "StartingSequenceNumber": "s",
@@ -288,12 +277,12 @@ export interface Record {
   dynamodb?: StreamRecord | null;
   userIdentity?: Identity | null;
 }
-function toRecord(root: JSONValue): Record {
-  return prt.readObj({
+function toRecord(root: jsonP.JSONValue): Record {
+  return jsonP.readObj({
     required: {},
     optional: {
       "eventID": "s",
-      "eventName": toOperationType,
+      "eventName": (x: jsonP.JSONValue) => cmnP.readEnum<OperationType>(x),
       "eventVersion": "s",
       "eventSource": "s",
       "awsRegion": "s",
@@ -308,36 +297,29 @@ export type OperationType =
 | "INSERT"
 | "MODIFY"
 | "REMOVE"
-;
-function toOperationType(root: JSONValue): OperationType | null {
-  return ( false
-    || root == "INSERT"
-    || root == "MODIFY"
-    || root == "REMOVE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface StreamRecord {
   ApproximateCreationDateTime?: Date | number | null;
-  Keys?: { [key: string]: AttributeValue } | null;
-  NewImage?: { [key: string]: AttributeValue } | null;
-  OldImage?: { [key: string]: AttributeValue } | null;
+  Keys?: { [key: string]: AttributeValue | null | undefined } | null;
+  NewImage?: { [key: string]: AttributeValue | null | undefined } | null;
+  OldImage?: { [key: string]: AttributeValue | null | undefined } | null;
   SequenceNumber?: string | null;
   SizeBytes?: number | null;
   StreamViewType?: StreamViewType | null;
 }
-function toStreamRecord(root: JSONValue): StreamRecord {
-  return prt.readObj({
+function toStreamRecord(root: jsonP.JSONValue): StreamRecord {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ApproximateCreationDateTime": "d",
-      "Keys": x => prt.readMap(String, toAttributeValue, x),
-      "NewImage": x => prt.readMap(String, toAttributeValue, x),
-      "OldImage": x => prt.readMap(String, toAttributeValue, x),
+      "Keys": x => jsonP.readMap(String, toAttributeValue, x),
+      "NewImage": x => jsonP.readMap(String, toAttributeValue, x),
+      "OldImage": x => jsonP.readMap(String, toAttributeValue, x),
       "SequenceNumber": "s",
       "SizeBytes": "n",
-      "StreamViewType": toStreamViewType,
+      "StreamViewType": (x: jsonP.JSONValue) => cmnP.readEnum<StreamViewType>(x),
     },
   }, root);
 }
@@ -350,13 +332,13 @@ export interface AttributeValue {
   SS?: string[] | null;
   NS?: string[] | null;
   BS?: (Uint8Array | string)[] | null;
-  M?: { [key: string]: AttributeValue } | null;
+  M?: { [key: string]: AttributeValue | null | undefined } | null;
   L?: AttributeValue[] | null;
   NULL?: boolean | null;
   BOOL?: boolean | null;
 }
-function toAttributeValue(root: JSONValue): AttributeValue {
-  return prt.readObj({
+function toAttributeValue(root: jsonP.JSONValue): AttributeValue {
+  return jsonP.readObj({
     required: {},
     optional: {
       "S": "s",
@@ -365,7 +347,7 @@ function toAttributeValue(root: JSONValue): AttributeValue {
       "SS": ["s"],
       "NS": ["s"],
       "BS": ["a"],
-      "M": x => prt.readMap(String, toAttributeValue, x),
+      "M": x => jsonP.readMap(String, toAttributeValue, x),
       "L": [toAttributeValue],
       "NULL": "b",
       "BOOL": "b",
@@ -378,8 +360,8 @@ export interface Identity {
   PrincipalId?: string | null;
   Type?: string | null;
 }
-function toIdentity(root: JSONValue): Identity {
-  return prt.readObj({
+function toIdentity(root: jsonP.JSONValue): Identity {
+  return jsonP.readObj({
     required: {},
     optional: {
       "PrincipalId": "s",
@@ -394,8 +376,8 @@ export interface Stream {
   TableName?: string | null;
   StreamLabel?: string | null;
 }
-function toStream(root: JSONValue): Stream {
-  return prt.readObj({
+function toStream(root: jsonP.JSONValue): Stream {
+  return jsonP.readObj({
     required: {},
     optional: {
       "StreamArn": "s",

@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class CloudTrail {
   #client: ServiceClient;
@@ -30,14 +30,15 @@ export default class CloudTrail {
   async addTags(
     {abortSignal, ...params}: RequestConfig & AddTagsRequest,
   ): Promise<AddTagsResponse> {
-    const body: JSONObject = {...params,
-    TagsList: params["TagsList"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      TagsList: params["TagsList"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -46,14 +47,25 @@ export default class CloudTrail {
   async createTrail(
     {abortSignal, ...params}: RequestConfig & CreateTrailRequest,
   ): Promise<CreateTrailResponse> {
-    const body: JSONObject = {...params,
-    TagsList: params["TagsList"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      S3BucketName: params["S3BucketName"],
+      S3KeyPrefix: params["S3KeyPrefix"],
+      SnsTopicName: params["SnsTopicName"],
+      IncludeGlobalServiceEvents: params["IncludeGlobalServiceEvents"],
+      IsMultiRegionTrail: params["IsMultiRegionTrail"],
+      EnableLogFileValidation: params["EnableLogFileValidation"],
+      CloudWatchLogsLogGroupArn: params["CloudWatchLogsLogGroupArn"],
+      CloudWatchLogsRoleArn: params["CloudWatchLogsRoleArn"],
+      KmsKeyId: params["KmsKeyId"],
+      IsOrganizationTrail: params["IsOrganizationTrail"],
+      TagsList: params["TagsList"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTrail",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Name": "s",
@@ -76,13 +88,14 @@ export default class CloudTrail {
   async deleteTrail(
     {abortSignal, ...params}: RequestConfig & DeleteTrailRequest,
   ): Promise<DeleteTrailResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTrail",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -91,13 +104,15 @@ export default class CloudTrail {
   async describeTrails(
     {abortSignal, ...params}: RequestConfig & DescribeTrailsRequest = {},
   ): Promise<DescribeTrailsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      trailNameList: params["trailNameList"],
+      includeShadowTrails: params["includeShadowTrails"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrails",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "trailList": [toTrail],
@@ -108,13 +123,14 @@ export default class CloudTrail {
   async getEventSelectors(
     {abortSignal, ...params}: RequestConfig & GetEventSelectorsRequest,
   ): Promise<GetEventSelectorsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrailName: params["TrailName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEventSelectors",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TrailARN": "s",
@@ -126,13 +142,14 @@ export default class CloudTrail {
   async getInsightSelectors(
     {abortSignal, ...params}: RequestConfig & GetInsightSelectorsRequest,
   ): Promise<GetInsightSelectorsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrailName: params["TrailName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInsightSelectors",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TrailARN": "s",
@@ -144,13 +161,14 @@ export default class CloudTrail {
   async getTrail(
     {abortSignal, ...params}: RequestConfig & GetTrailRequest,
   ): Promise<GetTrailResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTrail",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Trail": toTrail,
@@ -161,13 +179,14 @@ export default class CloudTrail {
   async getTrailStatus(
     {abortSignal, ...params}: RequestConfig & GetTrailStatusRequest,
   ): Promise<GetTrailStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTrailStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "IsLogging": "b",
@@ -194,15 +213,16 @@ export default class CloudTrail {
   async listPublicKeys(
     {abortSignal, ...params}: RequestConfig & ListPublicKeysRequest = {},
   ): Promise<ListPublicKeysResponse> {
-    const body: JSONObject = {...params,
-    StartTime: prt.serializeDate_unixTimestamp(params["StartTime"]),
-    EndTime: prt.serializeDate_unixTimestamp(params["EndTime"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
+      EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPublicKeys",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "PublicKeyList": [toPublicKey],
@@ -214,13 +234,15 @@ export default class CloudTrail {
   async listTags(
     {abortSignal, ...params}: RequestConfig & ListTagsRequest,
   ): Promise<ListTagsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceIdList: params["ResourceIdList"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ResourceTagList": [toResourceTag],
@@ -232,13 +254,14 @@ export default class CloudTrail {
   async listTrails(
     {abortSignal, ...params}: RequestConfig & ListTrailsRequest = {},
   ): Promise<ListTrailsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTrails",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Trails": [toTrailInfo],
@@ -250,16 +273,19 @@ export default class CloudTrail {
   async lookupEvents(
     {abortSignal, ...params}: RequestConfig & LookupEventsRequest = {},
   ): Promise<LookupEventsResponse> {
-    const body: JSONObject = {...params,
-    LookupAttributes: params["LookupAttributes"]?.map(x => fromLookupAttribute(x)),
-    StartTime: prt.serializeDate_unixTimestamp(params["StartTime"]),
-    EndTime: prt.serializeDate_unixTimestamp(params["EndTime"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      LookupAttributes: params["LookupAttributes"]?.map(x => fromLookupAttribute(x)),
+      StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
+      EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
+      EventCategory: params["EventCategory"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "LookupEvents",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Events": [toEvent],
@@ -271,14 +297,15 @@ export default class CloudTrail {
   async putEventSelectors(
     {abortSignal, ...params}: RequestConfig & PutEventSelectorsRequest,
   ): Promise<PutEventSelectorsResponse> {
-    const body: JSONObject = {...params,
-    EventSelectors: params["EventSelectors"]?.map(x => fromEventSelector(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrailName: params["TrailName"],
+      EventSelectors: params["EventSelectors"]?.map(x => fromEventSelector(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutEventSelectors",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TrailARN": "s",
@@ -290,14 +317,15 @@ export default class CloudTrail {
   async putInsightSelectors(
     {abortSignal, ...params}: RequestConfig & PutInsightSelectorsRequest,
   ): Promise<PutInsightSelectorsResponse> {
-    const body: JSONObject = {...params,
-    InsightSelectors: params["InsightSelectors"]?.map(x => fromInsightSelector(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      TrailName: params["TrailName"],
+      InsightSelectors: params["InsightSelectors"]?.map(x => fromInsightSelector(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutInsightSelectors",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "TrailARN": "s",
@@ -309,14 +337,15 @@ export default class CloudTrail {
   async removeTags(
     {abortSignal, ...params}: RequestConfig & RemoveTagsRequest,
   ): Promise<RemoveTagsResponse> {
-    const body: JSONObject = {...params,
-    TagsList: params["TagsList"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      TagsList: params["TagsList"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -325,13 +354,14 @@ export default class CloudTrail {
   async startLogging(
     {abortSignal, ...params}: RequestConfig & StartLoggingRequest,
   ): Promise<StartLoggingResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartLogging",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -340,13 +370,14 @@ export default class CloudTrail {
   async stopLogging(
     {abortSignal, ...params}: RequestConfig & StopLoggingRequest,
   ): Promise<StopLoggingResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopLogging",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -355,13 +386,24 @@ export default class CloudTrail {
   async updateTrail(
     {abortSignal, ...params}: RequestConfig & UpdateTrailRequest,
   ): Promise<UpdateTrailResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      S3BucketName: params["S3BucketName"],
+      S3KeyPrefix: params["S3KeyPrefix"],
+      SnsTopicName: params["SnsTopicName"],
+      IncludeGlobalServiceEvents: params["IncludeGlobalServiceEvents"],
+      IsMultiRegionTrail: params["IsMultiRegionTrail"],
+      EnableLogFileValidation: params["EnableLogFileValidation"],
+      CloudWatchLogsLogGroupArn: params["CloudWatchLogsLogGroupArn"],
+      CloudWatchLogsRoleArn: params["CloudWatchLogsRoleArn"],
+      KmsKeyId: params["KmsKeyId"],
+      IsOrganizationTrail: params["IsOrganizationTrail"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTrail",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Name": "s",
@@ -645,13 +687,15 @@ export interface Tag {
   Key: string;
   Value?: string | null;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
     },
@@ -666,9 +710,11 @@ export interface LookupAttribute {
   AttributeKey: LookupAttributeKey;
   AttributeValue: string;
 }
-function fromLookupAttribute(input?: LookupAttribute | null): JSONValue {
+function fromLookupAttribute(input?: LookupAttribute | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AttributeKey: input["AttributeKey"],
+    AttributeValue: input["AttributeValue"],
   }
 }
 
@@ -682,14 +728,12 @@ export type LookupAttributeKey =
 | "ResourceName"
 | "EventSource"
 | "AccessKeyId"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type EventCategory =
 | "insight"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface EventSelector {
@@ -698,17 +742,20 @@ export interface EventSelector {
   DataResources?: DataResource[] | null;
   ExcludeManagementEventSources?: string[] | null;
 }
-function fromEventSelector(input?: EventSelector | null): JSONValue {
+function fromEventSelector(input?: EventSelector | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ReadWriteType: input["ReadWriteType"],
+    IncludeManagementEvents: input["IncludeManagementEvents"],
     DataResources: input["DataResources"]?.map(x => fromDataResource(x)),
+    ExcludeManagementEventSources: input["ExcludeManagementEventSources"],
   }
 }
-function toEventSelector(root: JSONValue): EventSelector {
-  return prt.readObj({
+function toEventSelector(root: jsonP.JSONValue): EventSelector {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "ReadWriteType": toReadWriteType,
+      "ReadWriteType": (x: jsonP.JSONValue) => cmnP.readEnum<ReadWriteType>(x),
       "IncludeManagementEvents": "b",
       "DataResources": [toDataResource],
       "ExcludeManagementEventSources": ["s"],
@@ -721,28 +768,22 @@ export type ReadWriteType =
 | "ReadOnly"
 | "WriteOnly"
 | "All"
-;
-
-function toReadWriteType(root: JSONValue): ReadWriteType | null {
-  return ( false
-    || root == "ReadOnly"
-    || root == "WriteOnly"
-    || root == "All"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface DataResource {
   Type?: string | null;
   Values?: string[] | null;
 }
-function fromDataResource(input?: DataResource | null): JSONValue {
+function fromDataResource(input?: DataResource | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Type: input["Type"],
+    Values: input["Values"],
   }
 }
-function toDataResource(root: JSONValue): DataResource {
-  return prt.readObj({
+function toDataResource(root: jsonP.JSONValue): DataResource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Type": "s",
@@ -755,16 +796,17 @@ function toDataResource(root: JSONValue): DataResource {
 export interface InsightSelector {
   InsightType?: InsightType | null;
 }
-function fromInsightSelector(input?: InsightSelector | null): JSONValue {
+function fromInsightSelector(input?: InsightSelector | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    InsightType: input["InsightType"],
   }
 }
-function toInsightSelector(root: JSONValue): InsightSelector {
-  return prt.readObj({
+function toInsightSelector(root: jsonP.JSONValue): InsightSelector {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "InsightType": toInsightType,
+      "InsightType": (x: jsonP.JSONValue) => cmnP.readEnum<InsightType>(x),
     },
   }, root);
 }
@@ -772,13 +814,7 @@ function toInsightSelector(root: JSONValue): InsightSelector {
 // refs: 3 - tags: input, named, enum, output
 export type InsightType =
 | "ApiCallRateInsight"
-;
-
-function toInsightType(root: JSONValue): InsightType | null {
-  return ( false
-    || root == "ApiCallRateInsight"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface Trail {
@@ -799,8 +835,8 @@ export interface Trail {
   HasInsightSelectors?: boolean | null;
   IsOrganizationTrail?: boolean | null;
 }
-function toTrail(root: JSONValue): Trail {
-  return prt.readObj({
+function toTrail(root: jsonP.JSONValue): Trail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -830,8 +866,8 @@ export interface PublicKey {
   ValidityEndTime?: Date | number | null;
   Fingerprint?: string | null;
 }
-function toPublicKey(root: JSONValue): PublicKey {
-  return prt.readObj({
+function toPublicKey(root: jsonP.JSONValue): PublicKey {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Value": "a",
@@ -847,8 +883,8 @@ export interface ResourceTag {
   ResourceId?: string | null;
   TagsList?: Tag[] | null;
 }
-function toResourceTag(root: JSONValue): ResourceTag {
-  return prt.readObj({
+function toResourceTag(root: jsonP.JSONValue): ResourceTag {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ResourceId": "s",
@@ -863,8 +899,8 @@ export interface TrailInfo {
   Name?: string | null;
   HomeRegion?: string | null;
 }
-function toTrailInfo(root: JSONValue): TrailInfo {
-  return prt.readObj({
+function toTrailInfo(root: jsonP.JSONValue): TrailInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "TrailARN": "s",
@@ -886,8 +922,8 @@ export interface Event {
   Resources?: Resource[] | null;
   CloudTrailEvent?: string | null;
 }
-function toEvent(root: JSONValue): Event {
-  return prt.readObj({
+function toEvent(root: jsonP.JSONValue): Event {
+  return jsonP.readObj({
     required: {},
     optional: {
       "EventId": "s",
@@ -908,8 +944,8 @@ export interface Resource {
   ResourceType?: string | null;
   ResourceName?: string | null;
 }
-function toResource(root: JSONValue): Resource {
-  return prt.readObj({
+function toResource(root: jsonP.JSONValue): Resource {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ResourceType": "s",

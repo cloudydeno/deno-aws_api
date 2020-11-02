@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class ForecastQueryService {
   #client: ServiceClient;
@@ -30,13 +30,18 @@ export default class ForecastQueryService {
   async queryForecast(
     {abortSignal, ...params}: RequestConfig & QueryForecastRequest,
   ): Promise<QueryForecastResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ForecastArn: params["ForecastArn"],
+      StartDate: params["StartDate"],
+      EndDate: params["EndDate"],
+      Filters: params["Filters"],
+      NextToken: params["NextToken"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "QueryForecast",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Forecast": toForecast,
@@ -51,7 +56,7 @@ export interface QueryForecastRequest {
   ForecastArn: string;
   StartDate?: string | null;
   EndDate?: string | null;
-  Filters: { [key: string]: string };
+  Filters: { [key: string]: string | null | undefined };
   NextToken?: string | null;
 }
 
@@ -62,13 +67,13 @@ export interface QueryForecastResponse {
 
 // refs: 1 - tags: output, named, interface
 export interface Forecast {
-  Predictions?: { [key: string]: DataPoint[] } | null;
+  Predictions?: { [key: string]: DataPoint[] | null | undefined } | null;
 }
-function toForecast(root: JSONValue): Forecast {
-  return prt.readObj({
+function toForecast(root: jsonP.JSONValue): Forecast {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Predictions": x => prt.readMap(String, l => Array.isArray(l) ? l.map(toDataPoint) : [], x),
+      "Predictions": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(toDataPoint) : [], x),
     },
   }, root);
 }
@@ -78,8 +83,8 @@ export interface DataPoint {
   Timestamp?: string | null;
   Value?: number | null;
 }
-function toDataPoint(root: JSONValue): DataPoint {
-  return prt.readObj({
+function toDataPoint(root: jsonP.JSONValue): DataPoint {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Timestamp": "s",

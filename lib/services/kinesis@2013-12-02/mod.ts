@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class Kinesis {
   #client: ServiceClient;
@@ -33,8 +33,10 @@ export default class Kinesis {
   async addTagsToStream(
     {abortSignal, ...params}: RequestConfig & AddTagsToStreamInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamName: params["StreamName"],
+      Tags: params["Tags"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTagsToStream",
@@ -44,8 +46,10 @@ export default class Kinesis {
   async createStream(
     {abortSignal, ...params}: RequestConfig & CreateStreamInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamName: params["StreamName"],
+      ShardCount: params["ShardCount"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateStream",
@@ -55,8 +59,10 @@ export default class Kinesis {
   async decreaseStreamRetentionPeriod(
     {abortSignal, ...params}: RequestConfig & DecreaseStreamRetentionPeriodInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamName: params["StreamName"],
+      RetentionPeriodHours: params["RetentionPeriodHours"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DecreaseStreamRetentionPeriod",
@@ -66,8 +72,10 @@ export default class Kinesis {
   async deleteStream(
     {abortSignal, ...params}: RequestConfig & DeleteStreamInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamName: params["StreamName"],
+      EnforceConsumerDeletion: params["EnforceConsumerDeletion"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteStream",
@@ -77,8 +85,11 @@ export default class Kinesis {
   async deregisterStreamConsumer(
     {abortSignal, ...params}: RequestConfig & DeregisterStreamConsumerInput = {},
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamARN: params["StreamARN"],
+      ConsumerName: params["ConsumerName"],
+      ConsumerARN: params["ConsumerARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterStreamConsumer",
@@ -88,13 +99,13 @@ export default class Kinesis {
   async describeLimits(
     {abortSignal, ...params}: RequestConfig & DescribeLimitsInput = {},
   ): Promise<DescribeLimitsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLimits",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ShardLimit": "n",
         "OpenShardCount": "n",
@@ -106,13 +117,16 @@ export default class Kinesis {
   async describeStream(
     {abortSignal, ...params}: RequestConfig & DescribeStreamInput,
   ): Promise<DescribeStreamOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamName: params["StreamName"],
+      Limit: params["Limit"],
+      ExclusiveStartShardId: params["ExclusiveStartShardId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStream",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "StreamDescription": toStreamDescription,
       },
@@ -123,13 +137,16 @@ export default class Kinesis {
   async describeStreamConsumer(
     {abortSignal, ...params}: RequestConfig & DescribeStreamConsumerInput = {},
   ): Promise<DescribeStreamConsumerOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamARN: params["StreamARN"],
+      ConsumerName: params["ConsumerName"],
+      ConsumerARN: params["ConsumerARN"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStreamConsumer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ConsumerDescription": toConsumerDescription,
       },
@@ -140,13 +157,14 @@ export default class Kinesis {
   async describeStreamSummary(
     {abortSignal, ...params}: RequestConfig & DescribeStreamSummaryInput,
   ): Promise<DescribeStreamSummaryOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamName: params["StreamName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStreamSummary",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "StreamDescriptionSummary": toStreamDescriptionSummary,
       },
@@ -157,18 +175,20 @@ export default class Kinesis {
   async disableEnhancedMonitoring(
     {abortSignal, ...params}: RequestConfig & DisableEnhancedMonitoringInput,
   ): Promise<EnhancedMonitoringOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamName: params["StreamName"],
+      ShardLevelMetrics: params["ShardLevelMetrics"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableEnhancedMonitoring",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "StreamName": "s",
-        "CurrentShardLevelMetrics": [toMetricsName],
-        "DesiredShardLevelMetrics": [toMetricsName],
+        "CurrentShardLevelMetrics": [(x: jsonP.JSONValue) => cmnP.readEnum<MetricsName>(x)],
+        "DesiredShardLevelMetrics": [(x: jsonP.JSONValue) => cmnP.readEnum<MetricsName>(x)],
       },
     }, await resp.json());
   }
@@ -176,18 +196,20 @@ export default class Kinesis {
   async enableEnhancedMonitoring(
     {abortSignal, ...params}: RequestConfig & EnableEnhancedMonitoringInput,
   ): Promise<EnhancedMonitoringOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamName: params["StreamName"],
+      ShardLevelMetrics: params["ShardLevelMetrics"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableEnhancedMonitoring",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "StreamName": "s",
-        "CurrentShardLevelMetrics": [toMetricsName],
-        "DesiredShardLevelMetrics": [toMetricsName],
+        "CurrentShardLevelMetrics": [(x: jsonP.JSONValue) => cmnP.readEnum<MetricsName>(x)],
+        "DesiredShardLevelMetrics": [(x: jsonP.JSONValue) => cmnP.readEnum<MetricsName>(x)],
       },
     }, await resp.json());
   }
@@ -195,13 +217,15 @@ export default class Kinesis {
   async getRecords(
     {abortSignal, ...params}: RequestConfig & GetRecordsInput,
   ): Promise<GetRecordsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ShardIterator: params["ShardIterator"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRecords",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Records": [toRecord],
       },
@@ -216,14 +240,18 @@ export default class Kinesis {
   async getShardIterator(
     {abortSignal, ...params}: RequestConfig & GetShardIteratorInput,
   ): Promise<GetShardIteratorOutput> {
-    const body: JSONObject = {...params,
-    Timestamp: prt.serializeDate_unixTimestamp(params["Timestamp"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamName: params["StreamName"],
+      ShardId: params["ShardId"],
+      ShardIteratorType: params["ShardIteratorType"],
+      StartingSequenceNumber: params["StartingSequenceNumber"],
+      Timestamp: jsonP.serializeDate_unixTimestamp(params["Timestamp"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetShardIterator",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ShardIterator": "s",
@@ -234,8 +262,10 @@ export default class Kinesis {
   async increaseStreamRetentionPeriod(
     {abortSignal, ...params}: RequestConfig & IncreaseStreamRetentionPeriodInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamName: params["StreamName"],
+      RetentionPeriodHours: params["RetentionPeriodHours"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "IncreaseStreamRetentionPeriod",
@@ -245,15 +275,19 @@ export default class Kinesis {
   async listShards(
     {abortSignal, ...params}: RequestConfig & ListShardsInput = {},
   ): Promise<ListShardsOutput> {
-    const body: JSONObject = {...params,
-    StreamCreationTimestamp: prt.serializeDate_unixTimestamp(params["StreamCreationTimestamp"]),
-    ShardFilter: fromShardFilter(params["ShardFilter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamName: params["StreamName"],
+      NextToken: params["NextToken"],
+      ExclusiveStartShardId: params["ExclusiveStartShardId"],
+      MaxResults: params["MaxResults"],
+      StreamCreationTimestamp: jsonP.serializeDate_unixTimestamp(params["StreamCreationTimestamp"]),
+      ShardFilter: fromShardFilter(params["ShardFilter"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListShards",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Shards": [toShard],
@@ -265,14 +299,17 @@ export default class Kinesis {
   async listStreamConsumers(
     {abortSignal, ...params}: RequestConfig & ListStreamConsumersInput,
   ): Promise<ListStreamConsumersOutput> {
-    const body: JSONObject = {...params,
-    StreamCreationTimestamp: prt.serializeDate_unixTimestamp(params["StreamCreationTimestamp"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamARN: params["StreamARN"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      StreamCreationTimestamp: jsonP.serializeDate_unixTimestamp(params["StreamCreationTimestamp"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListStreamConsumers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Consumers": [toConsumer],
@@ -284,13 +321,15 @@ export default class Kinesis {
   async listStreams(
     {abortSignal, ...params}: RequestConfig & ListStreamsInput = {},
   ): Promise<ListStreamsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Limit: params["Limit"],
+      ExclusiveStartStreamName: params["ExclusiveStartStreamName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListStreams",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "StreamNames": ["s"],
         "HasMoreStreams": "b",
@@ -302,13 +341,16 @@ export default class Kinesis {
   async listTagsForStream(
     {abortSignal, ...params}: RequestConfig & ListTagsForStreamInput,
   ): Promise<ListTagsForStreamOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamName: params["StreamName"],
+      ExclusiveStartTagKey: params["ExclusiveStartTagKey"],
+      Limit: params["Limit"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForStream",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Tags": [toTag],
         "HasMoreTags": "b",
@@ -320,8 +362,11 @@ export default class Kinesis {
   async mergeShards(
     {abortSignal, ...params}: RequestConfig & MergeShardsInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamName: params["StreamName"],
+      ShardToMerge: params["ShardToMerge"],
+      AdjacentShardToMerge: params["AdjacentShardToMerge"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MergeShards",
@@ -331,20 +376,24 @@ export default class Kinesis {
   async putRecord(
     {abortSignal, ...params}: RequestConfig & PutRecordInput,
   ): Promise<PutRecordOutput> {
-    const body: JSONObject = {...params,
-    Data: prt.serializeBlob(params["Data"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamName: params["StreamName"],
+      Data: jsonP.serializeBlob(params["Data"]),
+      PartitionKey: params["PartitionKey"],
+      ExplicitHashKey: params["ExplicitHashKey"],
+      SequenceNumberForOrdering: params["SequenceNumberForOrdering"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRecord",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "ShardId": "s",
         "SequenceNumber": "s",
       },
       optional: {
-        "EncryptionType": toEncryptionType,
+        "EncryptionType": (x: jsonP.JSONValue) => cmnP.readEnum<EncryptionType>(x),
       },
     }, await resp.json());
   }
@@ -352,20 +401,21 @@ export default class Kinesis {
   async putRecords(
     {abortSignal, ...params}: RequestConfig & PutRecordsInput,
   ): Promise<PutRecordsOutput> {
-    const body: JSONObject = {...params,
-    Records: params["Records"]?.map(x => fromPutRecordsRequestEntry(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Records: params["Records"]?.map(x => fromPutRecordsRequestEntry(x)),
+      StreamName: params["StreamName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRecords",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Records": [toPutRecordsResultEntry],
       },
       optional: {
         "FailedRecordCount": "n",
-        "EncryptionType": toEncryptionType,
+        "EncryptionType": (x: jsonP.JSONValue) => cmnP.readEnum<EncryptionType>(x),
       },
     }, await resp.json());
   }
@@ -373,13 +423,15 @@ export default class Kinesis {
   async registerStreamConsumer(
     {abortSignal, ...params}: RequestConfig & RegisterStreamConsumerInput,
   ): Promise<RegisterStreamConsumerOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamARN: params["StreamARN"],
+      ConsumerName: params["ConsumerName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterStreamConsumer",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Consumer": toConsumer,
       },
@@ -390,8 +442,10 @@ export default class Kinesis {
   async removeTagsFromStream(
     {abortSignal, ...params}: RequestConfig & RemoveTagsFromStreamInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamName: params["StreamName"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTagsFromStream",
@@ -401,8 +455,11 @@ export default class Kinesis {
   async splitShard(
     {abortSignal, ...params}: RequestConfig & SplitShardInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamName: params["StreamName"],
+      ShardToSplit: params["ShardToSplit"],
+      NewStartingHashKey: params["NewStartingHashKey"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SplitShard",
@@ -412,8 +469,11 @@ export default class Kinesis {
   async startStreamEncryption(
     {abortSignal, ...params}: RequestConfig & StartStreamEncryptionInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamName: params["StreamName"],
+      EncryptionType: params["EncryptionType"],
+      KeyId: params["KeyId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartStreamEncryption",
@@ -423,8 +483,11 @@ export default class Kinesis {
   async stopStreamEncryption(
     {abortSignal, ...params}: RequestConfig & StopStreamEncryptionInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamName: params["StreamName"],
+      EncryptionType: params["EncryptionType"],
+      KeyId: params["KeyId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopStreamEncryption",
@@ -434,13 +497,16 @@ export default class Kinesis {
   async updateShardCount(
     {abortSignal, ...params}: RequestConfig & UpdateShardCountInput,
   ): Promise<UpdateShardCountOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      StreamName: params["StreamName"],
+      TargetShardCount: params["TargetShardCount"],
+      ScalingType: params["ScalingType"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateShardCount",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "StreamName": "s",
@@ -459,7 +525,7 @@ export default class Kinesis {
     const errMessage = 'ResourceNotReady: Resource is not in the state StreamExists';
     for (let i = 0; i < 18; i++) {
       const resp = await this.describeStream(params);
-      if (resp["StreamDescription"]?.["StreamStatus"] === "ACTIVE") return resp;
+      if (resp?.StreamDescription?.StreamStatus === "ACTIVE") return resp;
       await new Promise(r => setTimeout(r, 10000));
     }
     throw new Error(errMessage);
@@ -487,7 +553,7 @@ export default class Kinesis {
 // refs: 1 - tags: named, input
 export interface AddTagsToStreamInput {
   StreamName: string;
-  Tags: { [key: string]: string };
+  Tags: { [key: string]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, input
@@ -765,20 +831,7 @@ export type MetricsName =
 | "ReadProvisionedThroughputExceeded"
 | "IteratorAgeMilliseconds"
 | "ALL"
-;
-
-function toMetricsName(root: JSONValue): MetricsName | null {
-  return ( false
-    || root == "IncomingBytes"
-    || root == "IncomingRecords"
-    || root == "OutgoingBytes"
-    || root == "OutgoingRecords"
-    || root == "WriteProvisionedThroughputExceeded"
-    || root == "ReadProvisionedThroughputExceeded"
-    || root == "IteratorAgeMilliseconds"
-    || root == "ALL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ShardIteratorType =
@@ -787,8 +840,7 @@ export type ShardIteratorType =
 | "TRIM_HORIZON"
 | "LATEST"
 | "AT_TIMESTAMP"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ShardFilter {
@@ -796,10 +848,12 @@ export interface ShardFilter {
   ShardId?: string | null;
   Timestamp?: Date | number | null;
 }
-function fromShardFilter(input?: ShardFilter | null): JSONValue {
+function fromShardFilter(input?: ShardFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Timestamp: prt.serializeDate_unixTimestamp(input["Timestamp"]),
+  return {
+    Type: input["Type"],
+    ShardId: input["ShardId"],
+    Timestamp: jsonP.serializeDate_unixTimestamp(input["Timestamp"]),
   }
 }
 
@@ -811,8 +865,7 @@ export type ShardFilterType =
 | "AT_LATEST"
 | "AT_TIMESTAMP"
 | "FROM_TIMESTAMP"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface PutRecordsRequestEntry {
@@ -820,10 +873,12 @@ export interface PutRecordsRequestEntry {
   ExplicitHashKey?: string | null;
   PartitionKey: string;
 }
-function fromPutRecordsRequestEntry(input?: PutRecordsRequestEntry | null): JSONValue {
+function fromPutRecordsRequestEntry(input?: PutRecordsRequestEntry | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    Data: prt.serializeBlob(input["Data"]),
+  return {
+    Data: jsonP.serializeBlob(input["Data"]),
+    ExplicitHashKey: input["ExplicitHashKey"],
+    PartitionKey: input["PartitionKey"],
   }
 }
 
@@ -831,20 +886,12 @@ function fromPutRecordsRequestEntry(input?: PutRecordsRequestEntry | null): JSON
 export type EncryptionType =
 | "NONE"
 | "KMS"
-;
-
-function toEncryptionType(root: JSONValue): EncryptionType | null {
-  return ( false
-    || root == "NONE"
-    || root == "KMS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ScalingType =
 | "UNIFORM_SCALING"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface StreamDescription {
@@ -859,12 +906,12 @@ export interface StreamDescription {
   EncryptionType?: EncryptionType | null;
   KeyId?: string | null;
 }
-function toStreamDescription(root: JSONValue): StreamDescription {
-  return prt.readObj({
+function toStreamDescription(root: jsonP.JSONValue): StreamDescription {
+  return jsonP.readObj({
     required: {
       "StreamName": "s",
       "StreamARN": "s",
-      "StreamStatus": toStreamStatus,
+      "StreamStatus": (x: jsonP.JSONValue) => cmnP.readEnum<StreamStatus>(x),
       "Shards": [toShard],
       "HasMoreShards": "b",
       "RetentionPeriodHours": "n",
@@ -872,7 +919,7 @@ function toStreamDescription(root: JSONValue): StreamDescription {
       "EnhancedMonitoring": [toEnhancedMetrics],
     },
     optional: {
-      "EncryptionType": toEncryptionType,
+      "EncryptionType": (x: jsonP.JSONValue) => cmnP.readEnum<EncryptionType>(x),
       "KeyId": "s",
     },
   }, root);
@@ -884,15 +931,7 @@ export type StreamStatus =
 | "DELETING"
 | "ACTIVE"
 | "UPDATING"
-;
-function toStreamStatus(root: JSONValue): StreamStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "DELETING"
-    || root == "ACTIVE"
-    || root == "UPDATING"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface Shard {
@@ -902,8 +941,8 @@ export interface Shard {
   HashKeyRange: HashKeyRange;
   SequenceNumberRange: SequenceNumberRange;
 }
-function toShard(root: JSONValue): Shard {
-  return prt.readObj({
+function toShard(root: jsonP.JSONValue): Shard {
+  return jsonP.readObj({
     required: {
       "ShardId": "s",
       "HashKeyRange": toHashKeyRange,
@@ -921,8 +960,8 @@ export interface HashKeyRange {
   StartingHashKey: string;
   EndingHashKey: string;
 }
-function toHashKeyRange(root: JSONValue): HashKeyRange {
-  return prt.readObj({
+function toHashKeyRange(root: jsonP.JSONValue): HashKeyRange {
+  return jsonP.readObj({
     required: {
       "StartingHashKey": "s",
       "EndingHashKey": "s",
@@ -936,8 +975,8 @@ export interface SequenceNumberRange {
   StartingSequenceNumber: string;
   EndingSequenceNumber?: string | null;
 }
-function toSequenceNumberRange(root: JSONValue): SequenceNumberRange {
-  return prt.readObj({
+function toSequenceNumberRange(root: jsonP.JSONValue): SequenceNumberRange {
+  return jsonP.readObj({
     required: {
       "StartingSequenceNumber": "s",
     },
@@ -951,11 +990,11 @@ function toSequenceNumberRange(root: JSONValue): SequenceNumberRange {
 export interface EnhancedMetrics {
   ShardLevelMetrics?: MetricsName[] | null;
 }
-function toEnhancedMetrics(root: JSONValue): EnhancedMetrics {
-  return prt.readObj({
+function toEnhancedMetrics(root: jsonP.JSONValue): EnhancedMetrics {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "ShardLevelMetrics": [toMetricsName],
+      "ShardLevelMetrics": [(x: jsonP.JSONValue) => cmnP.readEnum<MetricsName>(x)],
     },
   }, root);
 }
@@ -968,12 +1007,12 @@ export interface ConsumerDescription {
   ConsumerCreationTimestamp: Date | number;
   StreamARN: string;
 }
-function toConsumerDescription(root: JSONValue): ConsumerDescription {
-  return prt.readObj({
+function toConsumerDescription(root: jsonP.JSONValue): ConsumerDescription {
+  return jsonP.readObj({
     required: {
       "ConsumerName": "s",
       "ConsumerARN": "s",
-      "ConsumerStatus": toConsumerStatus,
+      "ConsumerStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ConsumerStatus>(x),
       "ConsumerCreationTimestamp": "d",
       "StreamARN": "s",
     },
@@ -986,14 +1025,7 @@ export type ConsumerStatus =
 | "CREATING"
 | "DELETING"
 | "ACTIVE"
-;
-function toConsumerStatus(root: JSONValue): ConsumerStatus | null {
-  return ( false
-    || root == "CREATING"
-    || root == "DELETING"
-    || root == "ACTIVE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface StreamDescriptionSummary {
@@ -1008,19 +1040,19 @@ export interface StreamDescriptionSummary {
   OpenShardCount: number;
   ConsumerCount?: number | null;
 }
-function toStreamDescriptionSummary(root: JSONValue): StreamDescriptionSummary {
-  return prt.readObj({
+function toStreamDescriptionSummary(root: jsonP.JSONValue): StreamDescriptionSummary {
+  return jsonP.readObj({
     required: {
       "StreamName": "s",
       "StreamARN": "s",
-      "StreamStatus": toStreamStatus,
+      "StreamStatus": (x: jsonP.JSONValue) => cmnP.readEnum<StreamStatus>(x),
       "RetentionPeriodHours": "n",
       "StreamCreationTimestamp": "d",
       "EnhancedMonitoring": [toEnhancedMetrics],
       "OpenShardCount": "n",
     },
     optional: {
-      "EncryptionType": toEncryptionType,
+      "EncryptionType": (x: jsonP.JSONValue) => cmnP.readEnum<EncryptionType>(x),
       "KeyId": "s",
       "ConsumerCount": "n",
     },
@@ -1035,8 +1067,8 @@ export interface Record {
   PartitionKey: string;
   EncryptionType?: EncryptionType | null;
 }
-function toRecord(root: JSONValue): Record {
-  return prt.readObj({
+function toRecord(root: jsonP.JSONValue): Record {
+  return jsonP.readObj({
     required: {
       "SequenceNumber": "s",
       "Data": "a",
@@ -1044,7 +1076,7 @@ function toRecord(root: JSONValue): Record {
     },
     optional: {
       "ApproximateArrivalTimestamp": "d",
-      "EncryptionType": toEncryptionType,
+      "EncryptionType": (x: jsonP.JSONValue) => cmnP.readEnum<EncryptionType>(x),
     },
   }, root);
 }
@@ -1055,8 +1087,8 @@ export interface ChildShard {
   ParentShards: string[];
   HashKeyRange: HashKeyRange;
 }
-function toChildShard(root: JSONValue): ChildShard {
-  return prt.readObj({
+function toChildShard(root: jsonP.JSONValue): ChildShard {
+  return jsonP.readObj({
     required: {
       "ShardId": "s",
       "ParentShards": ["s"],
@@ -1073,12 +1105,12 @@ export interface Consumer {
   ConsumerStatus: ConsumerStatus;
   ConsumerCreationTimestamp: Date | number;
 }
-function toConsumer(root: JSONValue): Consumer {
-  return prt.readObj({
+function toConsumer(root: jsonP.JSONValue): Consumer {
+  return jsonP.readObj({
     required: {
       "ConsumerName": "s",
       "ConsumerARN": "s",
-      "ConsumerStatus": toConsumerStatus,
+      "ConsumerStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ConsumerStatus>(x),
       "ConsumerCreationTimestamp": "d",
     },
     optional: {},
@@ -1090,8 +1122,8 @@ export interface Tag {
   Key: string;
   Value?: string | null;
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {
       "Key": "s",
     },
@@ -1108,8 +1140,8 @@ export interface PutRecordsResultEntry {
   ErrorCode?: string | null;
   ErrorMessage?: string | null;
 }
-function toPutRecordsResultEntry(root: JSONValue): PutRecordsResultEntry {
-  return prt.readObj({
+function toPutRecordsResultEntry(root: jsonP.JSONValue): PutRecordsResultEntry {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SequenceNumber": "s",

@@ -5,10 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }
@@ -36,13 +35,14 @@ export default class ComprehendMedical {
   async describeEntitiesDetectionV2Job(
     {abortSignal, ...params}: RequestConfig & DescribeEntitiesDetectionV2JobRequest,
   ): Promise<DescribeEntitiesDetectionV2JobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEntitiesDetectionV2Job",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ComprehendMedicalAsyncJobProperties": toComprehendMedicalAsyncJobProperties,
@@ -53,13 +53,14 @@ export default class ComprehendMedical {
   async describeICD10CMInferenceJob(
     {abortSignal, ...params}: RequestConfig & DescribeICD10CMInferenceJobRequest,
   ): Promise<DescribeICD10CMInferenceJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeICD10CMInferenceJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ComprehendMedicalAsyncJobProperties": toComprehendMedicalAsyncJobProperties,
@@ -70,13 +71,14 @@ export default class ComprehendMedical {
   async describePHIDetectionJob(
     {abortSignal, ...params}: RequestConfig & DescribePHIDetectionJobRequest,
   ): Promise<DescribePHIDetectionJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePHIDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ComprehendMedicalAsyncJobProperties": toComprehendMedicalAsyncJobProperties,
@@ -87,13 +89,14 @@ export default class ComprehendMedical {
   async describeRxNormInferenceJob(
     {abortSignal, ...params}: RequestConfig & DescribeRxNormInferenceJobRequest,
   ): Promise<DescribeRxNormInferenceJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRxNormInferenceJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ComprehendMedicalAsyncJobProperties": toComprehendMedicalAsyncJobProperties,
@@ -104,13 +107,14 @@ export default class ComprehendMedical {
   async detectEntities(
     {abortSignal, ...params}: RequestConfig & DetectEntitiesRequest,
   ): Promise<DetectEntitiesResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Text: params["Text"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectEntities",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Entities": [toEntity],
         "ModelVersion": "s",
@@ -125,13 +129,14 @@ export default class ComprehendMedical {
   async detectEntitiesV2(
     {abortSignal, ...params}: RequestConfig & DetectEntitiesV2Request,
   ): Promise<DetectEntitiesV2Response> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Text: params["Text"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectEntitiesV2",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Entities": [toEntity],
         "ModelVersion": "s",
@@ -146,13 +151,14 @@ export default class ComprehendMedical {
   async detectPHI(
     {abortSignal, ...params}: RequestConfig & DetectPHIRequest,
   ): Promise<DetectPHIResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Text: params["Text"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectPHI",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Entities": [toEntity],
         "ModelVersion": "s",
@@ -166,13 +172,14 @@ export default class ComprehendMedical {
   async inferICD10CM(
     {abortSignal, ...params}: RequestConfig & InferICD10CMRequest,
   ): Promise<InferICD10CMResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Text: params["Text"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "InferICD10CM",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Entities": [toICD10CMEntity],
       },
@@ -186,13 +193,14 @@ export default class ComprehendMedical {
   async inferRxNorm(
     {abortSignal, ...params}: RequestConfig & InferRxNormRequest,
   ): Promise<InferRxNormResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Text: params["Text"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "InferRxNorm",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Entities": [toRxNormEntity],
       },
@@ -206,14 +214,16 @@ export default class ComprehendMedical {
   async listEntitiesDetectionV2Jobs(
     {abortSignal, ...params}: RequestConfig & ListEntitiesDetectionV2JobsRequest = {},
   ): Promise<ListEntitiesDetectionV2JobsResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromComprehendMedicalAsyncJobFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filter: fromComprehendMedicalAsyncJobFilter(params["Filter"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEntitiesDetectionV2Jobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ComprehendMedicalAsyncJobPropertiesList": [toComprehendMedicalAsyncJobProperties],
@@ -225,14 +235,16 @@ export default class ComprehendMedical {
   async listICD10CMInferenceJobs(
     {abortSignal, ...params}: RequestConfig & ListICD10CMInferenceJobsRequest = {},
   ): Promise<ListICD10CMInferenceJobsResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromComprehendMedicalAsyncJobFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filter: fromComprehendMedicalAsyncJobFilter(params["Filter"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListICD10CMInferenceJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ComprehendMedicalAsyncJobPropertiesList": [toComprehendMedicalAsyncJobProperties],
@@ -244,14 +256,16 @@ export default class ComprehendMedical {
   async listPHIDetectionJobs(
     {abortSignal, ...params}: RequestConfig & ListPHIDetectionJobsRequest = {},
   ): Promise<ListPHIDetectionJobsResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromComprehendMedicalAsyncJobFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filter: fromComprehendMedicalAsyncJobFilter(params["Filter"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPHIDetectionJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ComprehendMedicalAsyncJobPropertiesList": [toComprehendMedicalAsyncJobProperties],
@@ -263,14 +277,16 @@ export default class ComprehendMedical {
   async listRxNormInferenceJobs(
     {abortSignal, ...params}: RequestConfig & ListRxNormInferenceJobsRequest = {},
   ): Promise<ListRxNormInferenceJobsResponse> {
-    const body: JSONObject = {...params,
-    Filter: fromComprehendMedicalAsyncJobFilter(params["Filter"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Filter: fromComprehendMedicalAsyncJobFilter(params["Filter"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRxNormInferenceJobs",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ComprehendMedicalAsyncJobPropertiesList": [toComprehendMedicalAsyncJobProperties],
@@ -282,16 +298,20 @@ export default class ComprehendMedical {
   async startEntitiesDetectionV2Job(
     {abortSignal, ...params}: RequestConfig & StartEntitiesDetectionV2JobRequest,
   ): Promise<StartEntitiesDetectionV2JobResponse> {
-    const body: JSONObject = {...params,
-    InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
-    OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
+      OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
+      DataAccessRoleArn: params["DataAccessRoleArn"],
+      JobName: params["JobName"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      KMSKey: params["KMSKey"],
+      LanguageCode: params["LanguageCode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartEntitiesDetectionV2Job",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
@@ -302,16 +322,20 @@ export default class ComprehendMedical {
   async startICD10CMInferenceJob(
     {abortSignal, ...params}: RequestConfig & StartICD10CMInferenceJobRequest,
   ): Promise<StartICD10CMInferenceJobResponse> {
-    const body: JSONObject = {...params,
-    InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
-    OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
+      OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
+      DataAccessRoleArn: params["DataAccessRoleArn"],
+      JobName: params["JobName"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      KMSKey: params["KMSKey"],
+      LanguageCode: params["LanguageCode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartICD10CMInferenceJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
@@ -322,16 +346,20 @@ export default class ComprehendMedical {
   async startPHIDetectionJob(
     {abortSignal, ...params}: RequestConfig & StartPHIDetectionJobRequest,
   ): Promise<StartPHIDetectionJobResponse> {
-    const body: JSONObject = {...params,
-    InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
-    OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
+      OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
+      DataAccessRoleArn: params["DataAccessRoleArn"],
+      JobName: params["JobName"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      KMSKey: params["KMSKey"],
+      LanguageCode: params["LanguageCode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartPHIDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
@@ -342,16 +370,20 @@ export default class ComprehendMedical {
   async startRxNormInferenceJob(
     {abortSignal, ...params}: RequestConfig & StartRxNormInferenceJobRequest,
   ): Promise<StartRxNormInferenceJobResponse> {
-    const body: JSONObject = {...params,
-    InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
-    OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
-    ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
+      OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
+      DataAccessRoleArn: params["DataAccessRoleArn"],
+      JobName: params["JobName"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      KMSKey: params["KMSKey"],
+      LanguageCode: params["LanguageCode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartRxNormInferenceJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
@@ -362,13 +394,14 @@ export default class ComprehendMedical {
   async stopEntitiesDetectionV2Job(
     {abortSignal, ...params}: RequestConfig & StopEntitiesDetectionV2JobRequest,
   ): Promise<StopEntitiesDetectionV2JobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopEntitiesDetectionV2Job",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
@@ -379,13 +412,14 @@ export default class ComprehendMedical {
   async stopICD10CMInferenceJob(
     {abortSignal, ...params}: RequestConfig & StopICD10CMInferenceJobRequest,
   ): Promise<StopICD10CMInferenceJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopICD10CMInferenceJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
@@ -396,13 +430,14 @@ export default class ComprehendMedical {
   async stopPHIDetectionJob(
     {abortSignal, ...params}: RequestConfig & StopPHIDetectionJobRequest,
   ): Promise<StopPHIDetectionJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopPHIDetectionJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
@@ -413,13 +448,14 @@ export default class ComprehendMedical {
   async stopRxNormInferenceJob(
     {abortSignal, ...params}: RequestConfig & StopRxNormInferenceJobRequest,
   ): Promise<StopRxNormInferenceJobResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobId: params["JobId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopRxNormInferenceJob",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobId": "s",
@@ -694,11 +730,13 @@ export interface ComprehendMedicalAsyncJobFilter {
   SubmitTimeBefore?: Date | number | null;
   SubmitTimeAfter?: Date | number | null;
 }
-function fromComprehendMedicalAsyncJobFilter(input?: ComprehendMedicalAsyncJobFilter | null): JSONValue {
+function fromComprehendMedicalAsyncJobFilter(input?: ComprehendMedicalAsyncJobFilter | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
-    SubmitTimeBefore: prt.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
-    SubmitTimeAfter: prt.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
+  return {
+    JobName: input["JobName"],
+    JobStatus: input["JobStatus"],
+    SubmitTimeBefore: jsonP.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
+    SubmitTimeAfter: jsonP.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
   }
 }
 
@@ -711,32 +749,22 @@ export type JobStatus =
 | "FAILED"
 | "STOP_REQUESTED"
 | "STOPPED"
-;
-
-function toJobStatus(root: JSONValue): JobStatus | null {
-  return ( false
-    || root == "SUBMITTED"
-    || root == "IN_PROGRESS"
-    || root == "COMPLETED"
-    || root == "PARTIAL_SUCCESS"
-    || root == "FAILED"
-    || root == "STOP_REQUESTED"
-    || root == "STOPPED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 12 - tags: input, named, interface, output
 export interface InputDataConfig {
   S3Bucket: string;
   S3Key?: string | null;
 }
-function fromInputDataConfig(input?: InputDataConfig | null): JSONValue {
+function fromInputDataConfig(input?: InputDataConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Bucket: input["S3Bucket"],
+    S3Key: input["S3Key"],
   }
 }
-function toInputDataConfig(root: JSONValue): InputDataConfig {
-  return prt.readObj({
+function toInputDataConfig(root: jsonP.JSONValue): InputDataConfig {
+  return jsonP.readObj({
     required: {
       "S3Bucket": "s",
     },
@@ -751,13 +779,15 @@ export interface OutputDataConfig {
   S3Bucket: string;
   S3Key?: string | null;
 }
-function fromOutputDataConfig(input?: OutputDataConfig | null): JSONValue {
+function fromOutputDataConfig(input?: OutputDataConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    S3Bucket: input["S3Bucket"],
+    S3Key: input["S3Key"],
   }
 }
-function toOutputDataConfig(root: JSONValue): OutputDataConfig {
-  return prt.readObj({
+function toOutputDataConfig(root: jsonP.JSONValue): OutputDataConfig {
+  return jsonP.readObj({
     required: {
       "S3Bucket": "s",
     },
@@ -770,13 +800,7 @@ function toOutputDataConfig(root: JSONValue): OutputDataConfig {
 // refs: 12 - tags: input, named, enum, output
 export type LanguageCode =
 | "en"
-;
-
-function toLanguageCode(root: JSONValue): LanguageCode | null {
-  return ( false
-    || root == "en"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: output, named, interface
 export interface ComprehendMedicalAsyncJobProperties {
@@ -795,20 +819,20 @@ export interface ComprehendMedicalAsyncJobProperties {
   KMSKey?: string | null;
   ModelVersion?: string | null;
 }
-function toComprehendMedicalAsyncJobProperties(root: JSONValue): ComprehendMedicalAsyncJobProperties {
-  return prt.readObj({
+function toComprehendMedicalAsyncJobProperties(root: jsonP.JSONValue): ComprehendMedicalAsyncJobProperties {
+  return jsonP.readObj({
     required: {},
     optional: {
       "JobId": "s",
       "JobName": "s",
-      "JobStatus": toJobStatus,
+      "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       "Message": "s",
       "SubmitTime": "d",
       "EndTime": "d",
       "ExpirationTime": "d",
       "InputDataConfig": toInputDataConfig,
       "OutputDataConfig": toOutputDataConfig,
-      "LanguageCode": toLanguageCode,
+      "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
       "DataAccessRoleArn": "s",
       "ManifestFilePath": "s",
       "KMSKey": "s",
@@ -829,8 +853,8 @@ export interface Entity {
   Traits?: Trait[] | null;
   Attributes?: Attribute[] | null;
 }
-function toEntity(root: JSONValue): Entity {
-  return prt.readObj({
+function toEntity(root: jsonP.JSONValue): Entity {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "n",
@@ -838,8 +862,8 @@ function toEntity(root: JSONValue): Entity {
       "EndOffset": "n",
       "Score": "n",
       "Text": "s",
-      "Category": toEntityType,
-      "Type": toEntitySubType,
+      "Category": (x: jsonP.JSONValue) => cmnP.readEnum<EntityType>(x),
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<EntitySubType>(x),
       "Traits": [toTrait],
       "Attributes": [toAttribute],
     },
@@ -854,17 +878,7 @@ export type EntityType =
 | "TEST_TREATMENT_PROCEDURE"
 | "ANATOMY"
 | "TIME_EXPRESSION"
-;
-function toEntityType(root: JSONValue): EntityType | null {
-  return ( false
-    || root == "MEDICATION"
-    || root == "MEDICAL_CONDITION"
-    || root == "PROTECTED_HEALTH_INFORMATION"
-    || root == "TEST_TREATMENT_PROCEDURE"
-    || root == "ANATOMY"
-    || root == "TIME_EXPRESSION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: output, named, enum
 export type EntitySubType =
@@ -902,56 +916,18 @@ export type EntitySubType =
 | "TIME_TO_TEST_NAME"
 | "TIME_TO_PROCEDURE_NAME"
 | "TIME_TO_TREATMENT_NAME"
-;
-function toEntitySubType(root: JSONValue): EntitySubType | null {
-  return ( false
-    || root == "NAME"
-    || root == "DOSAGE"
-    || root == "ROUTE_OR_MODE"
-    || root == "FORM"
-    || root == "FREQUENCY"
-    || root == "DURATION"
-    || root == "GENERIC_NAME"
-    || root == "BRAND_NAME"
-    || root == "STRENGTH"
-    || root == "RATE"
-    || root == "ACUITY"
-    || root == "TEST_NAME"
-    || root == "TEST_VALUE"
-    || root == "TEST_UNITS"
-    || root == "PROCEDURE_NAME"
-    || root == "TREATMENT_NAME"
-    || root == "DATE"
-    || root == "AGE"
-    || root == "CONTACT_POINT"
-    || root == "EMAIL"
-    || root == "IDENTIFIER"
-    || root == "URL"
-    || root == "ADDRESS"
-    || root == "PROFESSION"
-    || root == "SYSTEM_ORGAN_SITE"
-    || root == "DIRECTION"
-    || root == "QUALITY"
-    || root == "QUANTITY"
-    || root == "TIME_EXPRESSION"
-    || root == "TIME_TO_MEDICATION_NAME"
-    || root == "TIME_TO_DX_NAME"
-    || root == "TIME_TO_TEST_NAME"
-    || root == "TIME_TO_PROCEDURE_NAME"
-    || root == "TIME_TO_TREATMENT_NAME"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: output, named, interface
 export interface Trait {
   Name?: AttributeName | null;
   Score?: number | null;
 }
-function toTrait(root: JSONValue): Trait {
-  return prt.readObj({
+function toTrait(root: jsonP.JSONValue): Trait {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Name": toAttributeName,
+      "Name": (x: jsonP.JSONValue) => cmnP.readEnum<AttributeName>(x),
       "Score": "n",
     },
   }, root);
@@ -963,15 +939,7 @@ export type AttributeName =
 | "SYMPTOM"
 | "DIAGNOSIS"
 | "NEGATION"
-;
-function toAttributeName(root: JSONValue): AttributeName | null {
-  return ( false
-    || root == "SIGN"
-    || root == "SYMPTOM"
-    || root == "DIAGNOSIS"
-    || root == "NEGATION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, interface
 export interface Attribute {
@@ -986,19 +954,19 @@ export interface Attribute {
   Category?: EntityType | null;
   Traits?: Trait[] | null;
 }
-function toAttribute(root: JSONValue): Attribute {
-  return prt.readObj({
+function toAttribute(root: jsonP.JSONValue): Attribute {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Type": toEntitySubType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<EntitySubType>(x),
       "Score": "n",
       "RelationshipScore": "n",
-      "RelationshipType": toRelationshipType,
+      "RelationshipType": (x: jsonP.JSONValue) => cmnP.readEnum<RelationshipType>(x),
       "Id": "n",
       "BeginOffset": "n",
       "EndOffset": "n",
       "Text": "s",
-      "Category": toEntityType,
+      "Category": (x: jsonP.JSONValue) => cmnP.readEnum<EntityType>(x),
       "Traits": [toTrait],
     },
   }, root);
@@ -1024,40 +992,18 @@ export type RelationshipType =
 | "TEST_UNITS"
 | "DIRECTION"
 | "SYSTEM_ORGAN_SITE"
-;
-function toRelationshipType(root: JSONValue): RelationshipType | null {
-  return ( false
-    || root == "EVERY"
-    || root == "WITH_DOSAGE"
-    || root == "ADMINISTERED_VIA"
-    || root == "FOR"
-    || root == "NEGATIVE"
-    || root == "OVERLAP"
-    || root == "DOSAGE"
-    || root == "ROUTE_OR_MODE"
-    || root == "FORM"
-    || root == "FREQUENCY"
-    || root == "DURATION"
-    || root == "STRENGTH"
-    || root == "RATE"
-    || root == "ACUITY"
-    || root == "TEST_VALUE"
-    || root == "TEST_UNITS"
-    || root == "DIRECTION"
-    || root == "SYSTEM_ORGAN_SITE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface UnmappedAttribute {
   Type?: EntityType | null;
   Attribute?: Attribute | null;
 }
-function toUnmappedAttribute(root: JSONValue): UnmappedAttribute {
-  return prt.readObj({
+function toUnmappedAttribute(root: jsonP.JSONValue): UnmappedAttribute {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Type": toEntityType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<EntityType>(x),
       "Attribute": toAttribute,
     },
   }, root);
@@ -1076,14 +1022,14 @@ export interface ICD10CMEntity {
   Traits?: ICD10CMTrait[] | null;
   ICD10CMConcepts?: ICD10CMConcept[] | null;
 }
-function toICD10CMEntity(root: JSONValue): ICD10CMEntity {
-  return prt.readObj({
+function toICD10CMEntity(root: jsonP.JSONValue): ICD10CMEntity {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "n",
       "Text": "s",
-      "Category": toICD10CMEntityCategory,
-      "Type": toICD10CMEntityType,
+      "Category": (x: jsonP.JSONValue) => cmnP.readEnum<ICD10CMEntityCategory>(x),
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<ICD10CMEntityType>(x),
       "Score": "n",
       "BeginOffset": "n",
       "EndOffset": "n",
@@ -1097,22 +1043,12 @@ function toICD10CMEntity(root: JSONValue): ICD10CMEntity {
 // refs: 1 - tags: output, named, enum
 export type ICD10CMEntityCategory =
 | "MEDICAL_CONDITION"
-;
-function toICD10CMEntityCategory(root: JSONValue): ICD10CMEntityCategory | null {
-  return ( false
-    || root == "MEDICAL_CONDITION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type ICD10CMEntityType =
 | "DX_NAME"
-;
-function toICD10CMEntityType(root: JSONValue): ICD10CMEntityType | null {
-  return ( false
-    || root == "DX_NAME"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ICD10CMAttribute {
@@ -1125,11 +1061,11 @@ export interface ICD10CMAttribute {
   Text?: string | null;
   Traits?: ICD10CMTrait[] | null;
 }
-function toICD10CMAttribute(root: JSONValue): ICD10CMAttribute {
-  return prt.readObj({
+function toICD10CMAttribute(root: jsonP.JSONValue): ICD10CMAttribute {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Type": toICD10CMAttributeType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<ICD10CMAttributeType>(x),
       "Score": "n",
       "RelationshipScore": "n",
       "Id": "n",
@@ -1148,27 +1084,18 @@ export type ICD10CMAttributeType =
 | "SYSTEM_ORGAN_SITE"
 | "QUALITY"
 | "QUANTITY"
-;
-function toICD10CMAttributeType(root: JSONValue): ICD10CMAttributeType | null {
-  return ( false
-    || root == "ACUITY"
-    || root == "DIRECTION"
-    || root == "SYSTEM_ORGAN_SITE"
-    || root == "QUALITY"
-    || root == "QUANTITY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ICD10CMTrait {
   Name?: ICD10CMTraitName | null;
   Score?: number | null;
 }
-function toICD10CMTrait(root: JSONValue): ICD10CMTrait {
-  return prt.readObj({
+function toICD10CMTrait(root: jsonP.JSONValue): ICD10CMTrait {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Name": toICD10CMTraitName,
+      "Name": (x: jsonP.JSONValue) => cmnP.readEnum<ICD10CMTraitName>(x),
       "Score": "n",
     },
   }, root);
@@ -1180,15 +1107,7 @@ export type ICD10CMTraitName =
 | "DIAGNOSIS"
 | "SIGN"
 | "SYMPTOM"
-;
-function toICD10CMTraitName(root: JSONValue): ICD10CMTraitName | null {
-  return ( false
-    || root == "NEGATION"
-    || root == "DIAGNOSIS"
-    || root == "SIGN"
-    || root == "SYMPTOM"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ICD10CMConcept {
@@ -1196,8 +1115,8 @@ export interface ICD10CMConcept {
   Code?: string | null;
   Score?: number | null;
 }
-function toICD10CMConcept(root: JSONValue): ICD10CMConcept {
-  return prt.readObj({
+function toICD10CMConcept(root: jsonP.JSONValue): ICD10CMConcept {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Description": "s",
@@ -1220,14 +1139,14 @@ export interface RxNormEntity {
   Traits?: RxNormTrait[] | null;
   RxNormConcepts?: RxNormConcept[] | null;
 }
-function toRxNormEntity(root: JSONValue): RxNormEntity {
-  return prt.readObj({
+function toRxNormEntity(root: jsonP.JSONValue): RxNormEntity {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "n",
       "Text": "s",
-      "Category": toRxNormEntityCategory,
-      "Type": toRxNormEntityType,
+      "Category": (x: jsonP.JSONValue) => cmnP.readEnum<RxNormEntityCategory>(x),
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<RxNormEntityType>(x),
       "Score": "n",
       "BeginOffset": "n",
       "EndOffset": "n",
@@ -1241,24 +1160,13 @@ function toRxNormEntity(root: JSONValue): RxNormEntity {
 // refs: 1 - tags: output, named, enum
 export type RxNormEntityCategory =
 | "MEDICATION"
-;
-function toRxNormEntityCategory(root: JSONValue): RxNormEntityCategory | null {
-  return ( false
-    || root == "MEDICATION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type RxNormEntityType =
 | "BRAND_NAME"
 | "GENERIC_NAME"
-;
-function toRxNormEntityType(root: JSONValue): RxNormEntityType | null {
-  return ( false
-    || root == "BRAND_NAME"
-    || root == "GENERIC_NAME"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface RxNormAttribute {
@@ -1271,11 +1179,11 @@ export interface RxNormAttribute {
   Text?: string | null;
   Traits?: RxNormTrait[] | null;
 }
-function toRxNormAttribute(root: JSONValue): RxNormAttribute {
-  return prt.readObj({
+function toRxNormAttribute(root: jsonP.JSONValue): RxNormAttribute {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Type": toRxNormAttributeType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<RxNormAttributeType>(x),
       "Score": "n",
       "RelationshipScore": "n",
       "Id": "n",
@@ -1296,29 +1204,18 @@ export type RxNormAttributeType =
 | "RATE"
 | "ROUTE_OR_MODE"
 | "STRENGTH"
-;
-function toRxNormAttributeType(root: JSONValue): RxNormAttributeType | null {
-  return ( false
-    || root == "DOSAGE"
-    || root == "DURATION"
-    || root == "FORM"
-    || root == "FREQUENCY"
-    || root == "RATE"
-    || root == "ROUTE_OR_MODE"
-    || root == "STRENGTH"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface RxNormTrait {
   Name?: RxNormTraitName | null;
   Score?: number | null;
 }
-function toRxNormTrait(root: JSONValue): RxNormTrait {
-  return prt.readObj({
+function toRxNormTrait(root: jsonP.JSONValue): RxNormTrait {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Name": toRxNormTraitName,
+      "Name": (x: jsonP.JSONValue) => cmnP.readEnum<RxNormTraitName>(x),
       "Score": "n",
     },
   }, root);
@@ -1327,12 +1224,7 @@ function toRxNormTrait(root: JSONValue): RxNormTrait {
 // refs: 2 - tags: output, named, enum
 export type RxNormTraitName =
 | "NEGATION"
-;
-function toRxNormTraitName(root: JSONValue): RxNormTraitName | null {
-  return ( false
-    || root == "NEGATION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface RxNormConcept {
@@ -1340,8 +1232,8 @@ export interface RxNormConcept {
   Code?: string | null;
   Score?: number | null;
 }
-function toRxNormConcept(root: JSONValue): RxNormConcept {
-  return prt.readObj({
+function toRxNormConcept(root: jsonP.JSONValue): RxNormConcept {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Description": "s",

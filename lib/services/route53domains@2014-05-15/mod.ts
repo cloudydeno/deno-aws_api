@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class Route53Domains {
   #client: ServiceClient;
@@ -29,13 +29,15 @@ export default class Route53Domains {
   async acceptDomainTransferFromAnotherAwsAccount(
     {abortSignal, ...params}: RequestConfig & AcceptDomainTransferFromAnotherAwsAccountRequest,
   ): Promise<AcceptDomainTransferFromAnotherAwsAccountResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+      Password: params["Password"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcceptDomainTransferFromAnotherAwsAccount",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OperationId": "s",
@@ -46,13 +48,14 @@ export default class Route53Domains {
   async cancelDomainTransferToAnotherAwsAccount(
     {abortSignal, ...params}: RequestConfig & CancelDomainTransferToAnotherAwsAccountRequest,
   ): Promise<CancelDomainTransferToAnotherAwsAccountResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelDomainTransferToAnotherAwsAccount",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OperationId": "s",
@@ -63,15 +66,17 @@ export default class Route53Domains {
   async checkDomainAvailability(
     {abortSignal, ...params}: RequestConfig & CheckDomainAvailabilityRequest,
   ): Promise<CheckDomainAvailabilityResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+      IdnLangCode: params["IdnLangCode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CheckDomainAvailability",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
-        "Availability": toDomainAvailability,
+        "Availability": (x: jsonP.JSONValue) => cmnP.readEnum<DomainAvailability>(x),
       },
       optional: {},
     }, await resp.json());
@@ -80,13 +85,15 @@ export default class Route53Domains {
   async checkDomainTransferability(
     {abortSignal, ...params}: RequestConfig & CheckDomainTransferabilityRequest,
   ): Promise<CheckDomainTransferabilityResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+      AuthCode: params["AuthCode"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CheckDomainTransferability",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Transferability": toDomainTransferability,
       },
@@ -97,13 +104,15 @@ export default class Route53Domains {
   async deleteTagsForDomain(
     {abortSignal, ...params}: RequestConfig & DeleteTagsForDomainRequest,
   ): Promise<DeleteTagsForDomainResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+      TagsToDelete: params["TagsToDelete"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTagsForDomain",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -112,13 +121,14 @@ export default class Route53Domains {
   async disableDomainAutoRenew(
     {abortSignal, ...params}: RequestConfig & DisableDomainAutoRenewRequest,
   ): Promise<DisableDomainAutoRenewResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableDomainAutoRenew",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -127,13 +137,14 @@ export default class Route53Domains {
   async disableDomainTransferLock(
     {abortSignal, ...params}: RequestConfig & DisableDomainTransferLockRequest,
   ): Promise<DisableDomainTransferLockResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableDomainTransferLock",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "OperationId": "s",
       },
@@ -144,13 +155,14 @@ export default class Route53Domains {
   async enableDomainAutoRenew(
     {abortSignal, ...params}: RequestConfig & EnableDomainAutoRenewRequest,
   ): Promise<EnableDomainAutoRenewResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableDomainAutoRenew",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -159,13 +171,14 @@ export default class Route53Domains {
   async enableDomainTransferLock(
     {abortSignal, ...params}: RequestConfig & EnableDomainTransferLockRequest,
   ): Promise<EnableDomainTransferLockResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableDomainTransferLock",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "OperationId": "s",
       },
@@ -176,17 +189,18 @@ export default class Route53Domains {
   async getContactReachabilityStatus(
     {abortSignal, ...params}: RequestConfig & GetContactReachabilityStatusRequest = {},
   ): Promise<GetContactReachabilityStatusResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      domainName: params["domainName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetContactReachabilityStatus",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "domainName": "s",
-        "status": toReachabilityStatus,
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<ReachabilityStatus>(x),
       },
     }, await resp.json());
   }
@@ -194,13 +208,14 @@ export default class Route53Domains {
   async getDomainDetail(
     {abortSignal, ...params}: RequestConfig & GetDomainDetailRequest,
   ): Promise<GetDomainDetailResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDomainDetail",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "DomainName": "s",
         "Nameservers": [toNameserver],
@@ -232,13 +247,16 @@ export default class Route53Domains {
   async getDomainSuggestions(
     {abortSignal, ...params}: RequestConfig & GetDomainSuggestionsRequest,
   ): Promise<GetDomainSuggestionsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+      SuggestionCount: params["SuggestionCount"],
+      OnlyAvailable: params["OnlyAvailable"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDomainSuggestions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SuggestionsList": [toDomainSuggestion],
@@ -249,20 +267,21 @@ export default class Route53Domains {
   async getOperationDetail(
     {abortSignal, ...params}: RequestConfig & GetOperationDetailRequest,
   ): Promise<GetOperationDetailResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      OperationId: params["OperationId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetOperationDetail",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OperationId": "s",
-        "Status": toOperationStatus,
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<OperationStatus>(x),
         "Message": "s",
         "DomainName": "s",
-        "Type": toOperationType,
+        "Type": (x: jsonP.JSONValue) => cmnP.readEnum<OperationType>(x),
         "SubmittedDate": "d",
       },
     }, await resp.json());
@@ -271,13 +290,15 @@ export default class Route53Domains {
   async listDomains(
     {abortSignal, ...params}: RequestConfig & ListDomainsRequest = {},
   ): Promise<ListDomainsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Marker: params["Marker"],
+      MaxItems: params["MaxItems"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDomains",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Domains": [toDomainSummary],
       },
@@ -290,14 +311,16 @@ export default class Route53Domains {
   async listOperations(
     {abortSignal, ...params}: RequestConfig & ListOperationsRequest = {},
   ): Promise<ListOperationsResponse> {
-    const body: JSONObject = {...params,
-    SubmittedSince: prt.serializeDate_unixTimestamp(params["SubmittedSince"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      SubmittedSince: jsonP.serializeDate_unixTimestamp(params["SubmittedSince"]),
+      Marker: params["Marker"],
+      MaxItems: params["MaxItems"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListOperations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Operations": [toOperationSummary],
       },
@@ -310,13 +333,14 @@ export default class Route53Domains {
   async listTagsForDomain(
     {abortSignal, ...params}: RequestConfig & ListTagsForDomainRequest,
   ): Promise<ListTagsForDomainResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForDomain",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "TagList": [toTag],
       },
@@ -327,16 +351,23 @@ export default class Route53Domains {
   async registerDomain(
     {abortSignal, ...params}: RequestConfig & RegisterDomainRequest,
   ): Promise<RegisterDomainResponse> {
-    const body: JSONObject = {...params,
-    AdminContact: fromContactDetail(params["AdminContact"]),
-    RegistrantContact: fromContactDetail(params["RegistrantContact"]),
-    TechContact: fromContactDetail(params["TechContact"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+      IdnLangCode: params["IdnLangCode"],
+      DurationInYears: params["DurationInYears"],
+      AutoRenew: params["AutoRenew"],
+      AdminContact: fromContactDetail(params["AdminContact"]),
+      RegistrantContact: fromContactDetail(params["RegistrantContact"]),
+      TechContact: fromContactDetail(params["TechContact"]),
+      PrivacyProtectAdminContact: params["PrivacyProtectAdminContact"],
+      PrivacyProtectRegistrantContact: params["PrivacyProtectRegistrantContact"],
+      PrivacyProtectTechContact: params["PrivacyProtectTechContact"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterDomain",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "OperationId": "s",
       },
@@ -347,13 +378,14 @@ export default class Route53Domains {
   async rejectDomainTransferFromAnotherAwsAccount(
     {abortSignal, ...params}: RequestConfig & RejectDomainTransferFromAnotherAwsAccountRequest,
   ): Promise<RejectDomainTransferFromAnotherAwsAccountResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RejectDomainTransferFromAnotherAwsAccount",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OperationId": "s",
@@ -364,13 +396,16 @@ export default class Route53Domains {
   async renewDomain(
     {abortSignal, ...params}: RequestConfig & RenewDomainRequest,
   ): Promise<RenewDomainResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+      DurationInYears: params["DurationInYears"],
+      CurrentExpiryYear: params["CurrentExpiryYear"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RenewDomain",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "OperationId": "s",
       },
@@ -381,13 +416,14 @@ export default class Route53Domains {
   async resendContactReachabilityEmail(
     {abortSignal, ...params}: RequestConfig & ResendContactReachabilityEmailRequest = {},
   ): Promise<ResendContactReachabilityEmailResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      domainName: params["domainName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResendContactReachabilityEmail",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "domainName": "s",
@@ -400,13 +436,14 @@ export default class Route53Domains {
   async retrieveDomainAuthCode(
     {abortSignal, ...params}: RequestConfig & RetrieveDomainAuthCodeRequest,
   ): Promise<RetrieveDomainAuthCodeResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RetrieveDomainAuthCode",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "AuthCode": "s",
       },
@@ -417,17 +454,25 @@ export default class Route53Domains {
   async transferDomain(
     {abortSignal, ...params}: RequestConfig & TransferDomainRequest,
   ): Promise<TransferDomainResponse> {
-    const body: JSONObject = {...params,
-    Nameservers: params["Nameservers"]?.map(x => fromNameserver(x)),
-    AdminContact: fromContactDetail(params["AdminContact"]),
-    RegistrantContact: fromContactDetail(params["RegistrantContact"]),
-    TechContact: fromContactDetail(params["TechContact"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+      IdnLangCode: params["IdnLangCode"],
+      DurationInYears: params["DurationInYears"],
+      Nameservers: params["Nameservers"]?.map(x => fromNameserver(x)),
+      AuthCode: params["AuthCode"],
+      AutoRenew: params["AutoRenew"],
+      AdminContact: fromContactDetail(params["AdminContact"]),
+      RegistrantContact: fromContactDetail(params["RegistrantContact"]),
+      TechContact: fromContactDetail(params["TechContact"]),
+      PrivacyProtectAdminContact: params["PrivacyProtectAdminContact"],
+      PrivacyProtectRegistrantContact: params["PrivacyProtectRegistrantContact"],
+      PrivacyProtectTechContact: params["PrivacyProtectTechContact"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TransferDomain",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "OperationId": "s",
       },
@@ -438,13 +483,15 @@ export default class Route53Domains {
   async transferDomainToAnotherAwsAccount(
     {abortSignal, ...params}: RequestConfig & TransferDomainToAnotherAwsAccountRequest,
   ): Promise<TransferDomainToAnotherAwsAccountResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+      AccountId: params["AccountId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TransferDomainToAnotherAwsAccount",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "OperationId": "s",
@@ -456,16 +503,17 @@ export default class Route53Domains {
   async updateDomainContact(
     {abortSignal, ...params}: RequestConfig & UpdateDomainContactRequest,
   ): Promise<UpdateDomainContactResponse> {
-    const body: JSONObject = {...params,
-    AdminContact: fromContactDetail(params["AdminContact"]),
-    RegistrantContact: fromContactDetail(params["RegistrantContact"]),
-    TechContact: fromContactDetail(params["TechContact"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+      AdminContact: fromContactDetail(params["AdminContact"]),
+      RegistrantContact: fromContactDetail(params["RegistrantContact"]),
+      TechContact: fromContactDetail(params["TechContact"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDomainContact",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "OperationId": "s",
       },
@@ -476,13 +524,17 @@ export default class Route53Domains {
   async updateDomainContactPrivacy(
     {abortSignal, ...params}: RequestConfig & UpdateDomainContactPrivacyRequest,
   ): Promise<UpdateDomainContactPrivacyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+      AdminPrivacy: params["AdminPrivacy"],
+      RegistrantPrivacy: params["RegistrantPrivacy"],
+      TechPrivacy: params["TechPrivacy"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDomainContactPrivacy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "OperationId": "s",
       },
@@ -493,14 +545,16 @@ export default class Route53Domains {
   async updateDomainNameservers(
     {abortSignal, ...params}: RequestConfig & UpdateDomainNameserversRequest,
   ): Promise<UpdateDomainNameserversResponse> {
-    const body: JSONObject = {...params,
-    Nameservers: params["Nameservers"]?.map(x => fromNameserver(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+      FIAuthKey: params["FIAuthKey"],
+      Nameservers: params["Nameservers"]?.map(x => fromNameserver(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDomainNameservers",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "OperationId": "s",
       },
@@ -511,14 +565,15 @@ export default class Route53Domains {
   async updateTagsForDomain(
     {abortSignal, ...params}: RequestConfig & UpdateTagsForDomainRequest,
   ): Promise<UpdateTagsForDomainResponse> {
-    const body: JSONObject = {...params,
-    TagsToUpdate: params["TagsToUpdate"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      DomainName: params["DomainName"],
+      TagsToUpdate: params["TagsToUpdate"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTagsForDomain",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -527,15 +582,17 @@ export default class Route53Domains {
   async viewBilling(
     {abortSignal, ...params}: RequestConfig & ViewBillingRequest = {},
   ): Promise<ViewBillingResponse> {
-    const body: JSONObject = {...params,
-    Start: prt.serializeDate_unixTimestamp(params["Start"]),
-    End: prt.serializeDate_unixTimestamp(params["End"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Start: jsonP.serializeDate_unixTimestamp(params["Start"]),
+      End: jsonP.serializeDate_unixTimestamp(params["End"]),
+      Marker: params["Marker"],
+      MaxItems: params["MaxItems"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ViewBilling",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NextPageMarker": "s",
@@ -915,25 +972,38 @@ export interface ContactDetail {
   Fax?: string | null;
   ExtraParams?: ExtraParam[] | null;
 }
-function fromContactDetail(input?: ContactDetail | null): JSONValue {
+function fromContactDetail(input?: ContactDetail | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    FirstName: input["FirstName"],
+    LastName: input["LastName"],
+    ContactType: input["ContactType"],
+    OrganizationName: input["OrganizationName"],
+    AddressLine1: input["AddressLine1"],
+    AddressLine2: input["AddressLine2"],
+    City: input["City"],
+    State: input["State"],
+    CountryCode: input["CountryCode"],
+    ZipCode: input["ZipCode"],
+    PhoneNumber: input["PhoneNumber"],
+    Email: input["Email"],
+    Fax: input["Fax"],
     ExtraParams: input["ExtraParams"]?.map(x => fromExtraParam(x)),
   }
 }
-function toContactDetail(root: JSONValue): ContactDetail {
-  return prt.readObj({
+function toContactDetail(root: jsonP.JSONValue): ContactDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "FirstName": "s",
       "LastName": "s",
-      "ContactType": toContactType,
+      "ContactType": (x: jsonP.JSONValue) => cmnP.readEnum<ContactType>(x),
       "OrganizationName": "s",
       "AddressLine1": "s",
       "AddressLine2": "s",
       "City": "s",
       "State": "s",
-      "CountryCode": toCountryCode,
+      "CountryCode": (x: jsonP.JSONValue) => cmnP.readEnum<CountryCode>(x),
       "ZipCode": "s",
       "PhoneNumber": "s",
       "Email": "s",
@@ -950,17 +1020,7 @@ export type ContactType =
 | "ASSOCIATION"
 | "PUBLIC_BODY"
 | "RESELLER"
-;
-
-function toContactType(root: JSONValue): ContactType | null {
-  return ( false
-    || root == "PERSON"
-    || root == "COMPANY"
-    || root == "ASSOCIATION"
-    || root == "PUBLIC_BODY"
-    || root == "RESELLER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 12 - tags: input, named, enum, output
 export type CountryCode =
@@ -1193,256 +1253,24 @@ export type CountryCode =
 | "ZA"
 | "ZM"
 | "ZW"
-;
-
-function toCountryCode(root: JSONValue): CountryCode | null {
-  return ( false
-    || root == "AD"
-    || root == "AE"
-    || root == "AF"
-    || root == "AG"
-    || root == "AI"
-    || root == "AL"
-    || root == "AM"
-    || root == "AN"
-    || root == "AO"
-    || root == "AQ"
-    || root == "AR"
-    || root == "AS"
-    || root == "AT"
-    || root == "AU"
-    || root == "AW"
-    || root == "AZ"
-    || root == "BA"
-    || root == "BB"
-    || root == "BD"
-    || root == "BE"
-    || root == "BF"
-    || root == "BG"
-    || root == "BH"
-    || root == "BI"
-    || root == "BJ"
-    || root == "BL"
-    || root == "BM"
-    || root == "BN"
-    || root == "BO"
-    || root == "BR"
-    || root == "BS"
-    || root == "BT"
-    || root == "BW"
-    || root == "BY"
-    || root == "BZ"
-    || root == "CA"
-    || root == "CC"
-    || root == "CD"
-    || root == "CF"
-    || root == "CG"
-    || root == "CH"
-    || root == "CI"
-    || root == "CK"
-    || root == "CL"
-    || root == "CM"
-    || root == "CN"
-    || root == "CO"
-    || root == "CR"
-    || root == "CU"
-    || root == "CV"
-    || root == "CX"
-    || root == "CY"
-    || root == "CZ"
-    || root == "DE"
-    || root == "DJ"
-    || root == "DK"
-    || root == "DM"
-    || root == "DO"
-    || root == "DZ"
-    || root == "EC"
-    || root == "EE"
-    || root == "EG"
-    || root == "ER"
-    || root == "ES"
-    || root == "ET"
-    || root == "FI"
-    || root == "FJ"
-    || root == "FK"
-    || root == "FM"
-    || root == "FO"
-    || root == "FR"
-    || root == "GA"
-    || root == "GB"
-    || root == "GD"
-    || root == "GE"
-    || root == "GH"
-    || root == "GI"
-    || root == "GL"
-    || root == "GM"
-    || root == "GN"
-    || root == "GQ"
-    || root == "GR"
-    || root == "GT"
-    || root == "GU"
-    || root == "GW"
-    || root == "GY"
-    || root == "HK"
-    || root == "HN"
-    || root == "HR"
-    || root == "HT"
-    || root == "HU"
-    || root == "ID"
-    || root == "IE"
-    || root == "IL"
-    || root == "IM"
-    || root == "IN"
-    || root == "IQ"
-    || root == "IR"
-    || root == "IS"
-    || root == "IT"
-    || root == "JM"
-    || root == "JO"
-    || root == "JP"
-    || root == "KE"
-    || root == "KG"
-    || root == "KH"
-    || root == "KI"
-    || root == "KM"
-    || root == "KN"
-    || root == "KP"
-    || root == "KR"
-    || root == "KW"
-    || root == "KY"
-    || root == "KZ"
-    || root == "LA"
-    || root == "LB"
-    || root == "LC"
-    || root == "LI"
-    || root == "LK"
-    || root == "LR"
-    || root == "LS"
-    || root == "LT"
-    || root == "LU"
-    || root == "LV"
-    || root == "LY"
-    || root == "MA"
-    || root == "MC"
-    || root == "MD"
-    || root == "ME"
-    || root == "MF"
-    || root == "MG"
-    || root == "MH"
-    || root == "MK"
-    || root == "ML"
-    || root == "MM"
-    || root == "MN"
-    || root == "MO"
-    || root == "MP"
-    || root == "MR"
-    || root == "MS"
-    || root == "MT"
-    || root == "MU"
-    || root == "MV"
-    || root == "MW"
-    || root == "MX"
-    || root == "MY"
-    || root == "MZ"
-    || root == "NA"
-    || root == "NC"
-    || root == "NE"
-    || root == "NG"
-    || root == "NI"
-    || root == "NL"
-    || root == "NO"
-    || root == "NP"
-    || root == "NR"
-    || root == "NU"
-    || root == "NZ"
-    || root == "OM"
-    || root == "PA"
-    || root == "PE"
-    || root == "PF"
-    || root == "PG"
-    || root == "PH"
-    || root == "PK"
-    || root == "PL"
-    || root == "PM"
-    || root == "PN"
-    || root == "PR"
-    || root == "PT"
-    || root == "PW"
-    || root == "PY"
-    || root == "QA"
-    || root == "RO"
-    || root == "RS"
-    || root == "RU"
-    || root == "RW"
-    || root == "SA"
-    || root == "SB"
-    || root == "SC"
-    || root == "SD"
-    || root == "SE"
-    || root == "SG"
-    || root == "SH"
-    || root == "SI"
-    || root == "SK"
-    || root == "SL"
-    || root == "SM"
-    || root == "SN"
-    || root == "SO"
-    || root == "SR"
-    || root == "ST"
-    || root == "SV"
-    || root == "SY"
-    || root == "SZ"
-    || root == "TC"
-    || root == "TD"
-    || root == "TG"
-    || root == "TH"
-    || root == "TJ"
-    || root == "TK"
-    || root == "TL"
-    || root == "TM"
-    || root == "TN"
-    || root == "TO"
-    || root == "TR"
-    || root == "TT"
-    || root == "TV"
-    || root == "TW"
-    || root == "TZ"
-    || root == "UA"
-    || root == "UG"
-    || root == "US"
-    || root == "UY"
-    || root == "UZ"
-    || root == "VA"
-    || root == "VC"
-    || root == "VE"
-    || root == "VG"
-    || root == "VI"
-    || root == "VN"
-    || root == "VU"
-    || root == "WF"
-    || root == "WS"
-    || root == "YE"
-    || root == "YT"
-    || root == "ZA"
-    || root == "ZM"
-    || root == "ZW"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 12 - tags: input, named, interface, output
 export interface ExtraParam {
   Name: ExtraParamName;
   Value: string;
 }
-function fromExtraParam(input?: ExtraParam | null): JSONValue {
+function fromExtraParam(input?: ExtraParam | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Value: input["Value"],
   }
 }
-function toExtraParam(root: JSONValue): ExtraParam {
-  return prt.readObj({
+function toExtraParam(root: jsonP.JSONValue): ExtraParam {
+  return jsonP.readObj({
     required: {
-      "Name": toExtraParamName,
+      "Name": (x: jsonP.JSONValue) => cmnP.readEnum<ExtraParamName>(x),
       "Value": "s",
     },
     optional: {},
@@ -1480,54 +1308,22 @@ export type ExtraParamName =
 | "VAT_NUMBER"
 | "UK_CONTACT_TYPE"
 | "UK_COMPANY_NUMBER"
-;
-
-function toExtraParamName(root: JSONValue): ExtraParamName | null {
-  return ( false
-    || root == "DUNS_NUMBER"
-    || root == "BRAND_NUMBER"
-    || root == "BIRTH_DEPARTMENT"
-    || root == "BIRTH_DATE_IN_YYYY_MM_DD"
-    || root == "BIRTH_COUNTRY"
-    || root == "BIRTH_CITY"
-    || root == "DOCUMENT_NUMBER"
-    || root == "AU_ID_NUMBER"
-    || root == "AU_ID_TYPE"
-    || root == "CA_LEGAL_TYPE"
-    || root == "CA_BUSINESS_ENTITY_TYPE"
-    || root == "CA_LEGAL_REPRESENTATIVE"
-    || root == "CA_LEGAL_REPRESENTATIVE_CAPACITY"
-    || root == "ES_IDENTIFICATION"
-    || root == "ES_IDENTIFICATION_TYPE"
-    || root == "ES_LEGAL_FORM"
-    || root == "FI_BUSINESS_NUMBER"
-    || root == "FI_ID_NUMBER"
-    || root == "FI_NATIONALITY"
-    || root == "FI_ORGANIZATION_TYPE"
-    || root == "IT_NATIONALITY"
-    || root == "IT_PIN"
-    || root == "IT_REGISTRANT_ENTITY_TYPE"
-    || root == "RU_PASSPORT_DATA"
-    || root == "SE_ID_NUMBER"
-    || root == "SG_ID_NUMBER"
-    || root == "VAT_NUMBER"
-    || root == "UK_CONTACT_TYPE"
-    || root == "UK_COMPANY_NUMBER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface Nameserver {
   Name: string;
   GlueIps?: string[] | null;
 }
-function fromNameserver(input?: Nameserver | null): JSONValue {
+function fromNameserver(input?: Nameserver | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    GlueIps: input["GlueIps"],
   }
 }
-function toNameserver(root: JSONValue): Nameserver {
-  return prt.readObj({
+function toNameserver(root: jsonP.JSONValue): Nameserver {
+  return jsonP.readObj({
     required: {
       "Name": "s",
     },
@@ -1542,13 +1338,15 @@ export interface Tag {
   Key?: string | null;
   Value?: string | null;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Key": "s",
@@ -1567,29 +1365,17 @@ export type DomainAvailability =
 | "UNAVAILABLE_RESTRICTED"
 | "RESERVED"
 | "DONT_KNOW"
-;
-function toDomainAvailability(root: JSONValue): DomainAvailability | null {
-  return ( false
-    || root == "AVAILABLE"
-    || root == "AVAILABLE_RESERVED"
-    || root == "AVAILABLE_PREORDER"
-    || root == "UNAVAILABLE"
-    || root == "UNAVAILABLE_PREMIUM"
-    || root == "UNAVAILABLE_RESTRICTED"
-    || root == "RESERVED"
-    || root == "DONT_KNOW"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface DomainTransferability {
   Transferable?: Transferable | null;
 }
-function toDomainTransferability(root: JSONValue): DomainTransferability {
-  return prt.readObj({
+function toDomainTransferability(root: jsonP.JSONValue): DomainTransferability {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Transferable": toTransferable,
+      "Transferable": (x: jsonP.JSONValue) => cmnP.readEnum<Transferable>(x),
     },
   }, root);
 }
@@ -1599,36 +1385,22 @@ export type Transferable =
 | "TRANSFERABLE"
 | "UNTRANSFERABLE"
 | "DONT_KNOW"
-;
-function toTransferable(root: JSONValue): Transferable | null {
-  return ( false
-    || root == "TRANSFERABLE"
-    || root == "UNTRANSFERABLE"
-    || root == "DONT_KNOW"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type ReachabilityStatus =
 | "PENDING"
 | "DONE"
 | "EXPIRED"
-;
-function toReachabilityStatus(root: JSONValue): ReachabilityStatus | null {
-  return ( false
-    || root == "PENDING"
-    || root == "DONE"
-    || root == "EXPIRED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface DomainSuggestion {
   DomainName?: string | null;
   Availability?: string | null;
 }
-function toDomainSuggestion(root: JSONValue): DomainSuggestion {
-  return prt.readObj({
+function toDomainSuggestion(root: jsonP.JSONValue): DomainSuggestion {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DomainName": "s",
@@ -1644,16 +1416,7 @@ export type OperationStatus =
 | "ERROR"
 | "SUCCESSFUL"
 | "FAILED"
-;
-function toOperationStatus(root: JSONValue): OperationStatus | null {
-  return ( false
-    || root == "SUBMITTED"
-    || root == "IN_PROGRESS"
-    || root == "ERROR"
-    || root == "SUCCESSFUL"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, enum
 export type OperationType =
@@ -1675,29 +1438,7 @@ export type OperationType =
 | "PUSH_DOMAIN"
 | "INTERNAL_TRANSFER_OUT_DOMAIN"
 | "INTERNAL_TRANSFER_IN_DOMAIN"
-;
-function toOperationType(root: JSONValue): OperationType | null {
-  return ( false
-    || root == "REGISTER_DOMAIN"
-    || root == "DELETE_DOMAIN"
-    || root == "TRANSFER_IN_DOMAIN"
-    || root == "UPDATE_DOMAIN_CONTACT"
-    || root == "UPDATE_NAMESERVER"
-    || root == "CHANGE_PRIVACY_PROTECTION"
-    || root == "DOMAIN_LOCK"
-    || root == "ENABLE_AUTORENEW"
-    || root == "DISABLE_AUTORENEW"
-    || root == "ADD_DNSSEC"
-    || root == "REMOVE_DNSSEC"
-    || root == "EXPIRE_DOMAIN"
-    || root == "TRANSFER_OUT_DOMAIN"
-    || root == "CHANGE_DOMAIN_OWNER"
-    || root == "RENEW_DOMAIN"
-    || root == "PUSH_DOMAIN"
-    || root == "INTERNAL_TRANSFER_OUT_DOMAIN"
-    || root == "INTERNAL_TRANSFER_IN_DOMAIN"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface DomainSummary {
@@ -1706,8 +1447,8 @@ export interface DomainSummary {
   TransferLock?: boolean | null;
   Expiry?: Date | number | null;
 }
-function toDomainSummary(root: JSONValue): DomainSummary {
-  return prt.readObj({
+function toDomainSummary(root: jsonP.JSONValue): DomainSummary {
+  return jsonP.readObj({
     required: {
       "DomainName": "s",
     },
@@ -1726,12 +1467,12 @@ export interface OperationSummary {
   Type: OperationType;
   SubmittedDate: Date | number;
 }
-function toOperationSummary(root: JSONValue): OperationSummary {
-  return prt.readObj({
+function toOperationSummary(root: jsonP.JSONValue): OperationSummary {
+  return jsonP.readObj({
     required: {
       "OperationId": "s",
-      "Status": toOperationStatus,
-      "Type": toOperationType,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<OperationStatus>(x),
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<OperationType>(x),
       "SubmittedDate": "d",
     },
     optional: {},
@@ -1746,12 +1487,12 @@ export interface BillingRecord {
   BillDate?: Date | number | null;
   Price?: number | null;
 }
-function toBillingRecord(root: JSONValue): BillingRecord {
-  return prt.readObj({
+function toBillingRecord(root: jsonP.JSONValue): BillingRecord {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DomainName": "s",
-      "Operation": toOperationType,
+      "Operation": (x: jsonP.JSONValue) => cmnP.readEnum<OperationType>(x),
       "InvoiceId": "s",
       "BillDate": "d",
       "Price": "n",

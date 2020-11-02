@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class MarketplaceEntitlementService {
   #client: ServiceClient;
@@ -30,13 +30,17 @@ export default class MarketplaceEntitlementService {
   async getEntitlements(
     {abortSignal, ...params}: RequestConfig & GetEntitlementsRequest,
   ): Promise<GetEntitlementsResult> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ProductCode: params["ProductCode"],
+      Filter: params["Filter"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEntitlements",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Entitlements": [toEntitlement],
@@ -50,7 +54,7 @@ export default class MarketplaceEntitlementService {
 // refs: 1 - tags: named, input
 export interface GetEntitlementsRequest {
   ProductCode: string;
-  Filter?: { [key in GetEntitlementFilterName]: string[] } | null;
+  Filter?: { [key in GetEntitlementFilterName]: string[] | null | undefined } | null;
   NextToken?: string | null;
   MaxResults?: number | null;
 }
@@ -65,8 +69,7 @@ export interface GetEntitlementsResult {
 export type GetEntitlementFilterName =
 | "CUSTOMER_IDENTIFIER"
 | "DIMENSION"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Entitlement {
@@ -76,8 +79,8 @@ export interface Entitlement {
   Value?: EntitlementValue | null;
   ExpirationDate?: Date | number | null;
 }
-function toEntitlement(root: JSONValue): Entitlement {
-  return prt.readObj({
+function toEntitlement(root: jsonP.JSONValue): Entitlement {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ProductCode": "s",
@@ -96,8 +99,8 @@ export interface EntitlementValue {
   BooleanValue?: boolean | null;
   StringValue?: string | null;
 }
-function toEntitlementValue(root: JSONValue): EntitlementValue {
-  return prt.readObj({
+function toEntitlementValue(root: jsonP.JSONValue): EntitlementValue {
+  return jsonP.readObj({
     required: {},
     optional: {
       "IntegerValue": "n",

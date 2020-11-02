@@ -5,8 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 
 export default class SES {
   #client: ServiceClient;
@@ -38,7 +39,7 @@ export default class SES {
       abortSignal, body,
       action: "CloneReceiptRuleSet",
     });
-    const xml = readXmlResult(await resp.text(), "CloneReceiptRuleSetResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CloneReceiptRuleSetResult");
     return {};
   }
 
@@ -52,7 +53,7 @@ export default class SES {
       abortSignal, body,
       action: "CreateConfigurationSet",
     });
-    const xml = readXmlResult(await resp.text(), "CreateConfigurationSetResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateConfigurationSetResult");
     return {};
   }
 
@@ -67,7 +68,7 @@ export default class SES {
       abortSignal, body,
       action: "CreateConfigurationSetEventDestination",
     });
-    const xml = readXmlResult(await resp.text(), "CreateConfigurationSetEventDestinationResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateConfigurationSetEventDestinationResult");
     return {};
   }
 
@@ -82,7 +83,7 @@ export default class SES {
       abortSignal, body,
       action: "CreateConfigurationSetTrackingOptions",
     });
-    const xml = readXmlResult(await resp.text(), "CreateConfigurationSetTrackingOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateConfigurationSetTrackingOptionsResult");
     return {};
   }
 
@@ -113,7 +114,7 @@ export default class SES {
       abortSignal, body,
       action: "CreateReceiptFilter",
     });
-    const xml = readXmlResult(await resp.text(), "CreateReceiptFilterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateReceiptFilterResult");
     return {};
   }
 
@@ -129,7 +130,7 @@ export default class SES {
       abortSignal, body,
       action: "CreateReceiptRule",
     });
-    const xml = readXmlResult(await resp.text(), "CreateReceiptRuleResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateReceiptRuleResult");
     return {};
   }
 
@@ -143,7 +144,7 @@ export default class SES {
       abortSignal, body,
       action: "CreateReceiptRuleSet",
     });
-    const xml = readXmlResult(await resp.text(), "CreateReceiptRuleSetResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateReceiptRuleSetResult");
     return {};
   }
 
@@ -157,7 +158,7 @@ export default class SES {
       abortSignal, body,
       action: "CreateTemplate",
     });
-    const xml = readXmlResult(await resp.text(), "CreateTemplateResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateTemplateResult");
     return {};
   }
 
@@ -171,7 +172,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteConfigurationSet",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteConfigurationSetResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteConfigurationSetResult");
     return {};
   }
 
@@ -186,7 +187,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteConfigurationSetEventDestination",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteConfigurationSetEventDestinationResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteConfigurationSetEventDestinationResult");
     return {};
   }
 
@@ -200,7 +201,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteConfigurationSetTrackingOptions",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteConfigurationSetTrackingOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteConfigurationSetTrackingOptionsResult");
     return {};
   }
 
@@ -226,7 +227,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteIdentity",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteIdentityResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteIdentityResult");
     return {};
   }
 
@@ -241,7 +242,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteIdentityPolicy",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteIdentityPolicyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteIdentityPolicyResult");
     return {};
   }
 
@@ -255,7 +256,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteReceiptFilter",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteReceiptFilterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteReceiptFilterResult");
     return {};
   }
 
@@ -270,7 +271,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteReceiptRule",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteReceiptRuleResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteReceiptRuleResult");
     return {};
   }
 
@@ -284,7 +285,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteReceiptRuleSet",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteReceiptRuleSetResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteReceiptRuleSetResult");
     return {};
   }
 
@@ -298,7 +299,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteTemplate",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteTemplateResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteTemplateResult");
     return {};
   }
 
@@ -324,7 +325,7 @@ export default class SES {
       abortSignal, body,
       action: "DescribeActiveReceiptRuleSet",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeActiveReceiptRuleSetResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeActiveReceiptRuleSetResult");
     return {
       Metadata: xml.first("Metadata", false, ReceiptRuleSetMetadata_Parse),
       Rules: xml.getList("Rules", "member").map(ReceiptRule_Parse),
@@ -337,12 +338,12 @@ export default class SES {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ConfigurationSetName", (params["ConfigurationSetName"] ?? '').toString());
-    if (params["ConfigurationSetAttributeNames"]) prt.appendList(body, prefix+"ConfigurationSetAttributeNames", params["ConfigurationSetAttributeNames"], {"entryPrefix":".member."})
+    if (params["ConfigurationSetAttributeNames"]) qsP.appendList(body, prefix+"ConfigurationSetAttributeNames", params["ConfigurationSetAttributeNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConfigurationSet",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeConfigurationSetResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeConfigurationSetResult");
     return {
       ConfigurationSet: xml.first("ConfigurationSet", false, ConfigurationSet_Parse),
       EventDestinations: xml.getList("EventDestinations", "member").map(EventDestination_Parse),
@@ -363,7 +364,7 @@ export default class SES {
       abortSignal, body,
       action: "DescribeReceiptRule",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeReceiptRuleResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeReceiptRuleResult");
     return {
       Rule: xml.first("Rule", false, ReceiptRule_Parse),
     };
@@ -379,7 +380,7 @@ export default class SES {
       abortSignal, body,
       action: "DescribeReceiptRuleSet",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeReceiptRuleSetResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeReceiptRuleSetResult");
     return {
       Metadata: xml.first("Metadata", false, ReceiptRuleSetMetadata_Parse),
       Rules: xml.getList("Rules", "member").map(ReceiptRule_Parse),
@@ -393,7 +394,7 @@ export default class SES {
       abortSignal,
       action: "GetAccountSendingEnabled",
     });
-    const xml = readXmlResult(await resp.text(), "GetAccountSendingEnabledResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetAccountSendingEnabledResult");
     return {
       Enabled: xml.first("Enabled", false, x => x.content === 'true'),
     };
@@ -409,7 +410,7 @@ export default class SES {
       abortSignal, body,
       action: "GetCustomVerificationEmailTemplate",
     });
-    const xml = readXmlResult(await resp.text(), "GetCustomVerificationEmailTemplateResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetCustomVerificationEmailTemplateResult");
     return xml.strings({
       optional: {"TemplateName":true,"FromEmailAddress":true,"TemplateSubject":true,"TemplateContent":true,"SuccessRedirectionURL":true,"FailureRedirectionURL":true},
     });
@@ -420,14 +421,14 @@ export default class SES {
   ): Promise<GetIdentityDkimAttributesResponse> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Identities"]) prt.appendList(body, prefix+"Identities", params["Identities"], {"entryPrefix":".member."})
+    if (params["Identities"]) qsP.appendList(body, prefix+"Identities", params["Identities"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetIdentityDkimAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "GetIdentityDkimAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetIdentityDkimAttributesResult");
     return {
-      DkimAttributes: readXmlMap(xml.getList("DkimAttributes", "entry"), IdentityDkimAttributes_Parse, {}),
+      DkimAttributes: xmlP.readXmlMap(xml.getList("DkimAttributes", "entry"), IdentityDkimAttributes_Parse, {}),
     };
   }
 
@@ -436,14 +437,14 @@ export default class SES {
   ): Promise<GetIdentityMailFromDomainAttributesResponse> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Identities"]) prt.appendList(body, prefix+"Identities", params["Identities"], {"entryPrefix":".member."})
+    if (params["Identities"]) qsP.appendList(body, prefix+"Identities", params["Identities"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetIdentityMailFromDomainAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "GetIdentityMailFromDomainAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetIdentityMailFromDomainAttributesResult");
     return {
-      MailFromDomainAttributes: readXmlMap(xml.getList("MailFromDomainAttributes", "entry"), IdentityMailFromDomainAttributes_Parse, {}),
+      MailFromDomainAttributes: xmlP.readXmlMap(xml.getList("MailFromDomainAttributes", "entry"), IdentityMailFromDomainAttributes_Parse, {}),
     };
   }
 
@@ -452,14 +453,14 @@ export default class SES {
   ): Promise<GetIdentityNotificationAttributesResponse> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Identities"]) prt.appendList(body, prefix+"Identities", params["Identities"], {"entryPrefix":".member."})
+    if (params["Identities"]) qsP.appendList(body, prefix+"Identities", params["Identities"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetIdentityNotificationAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "GetIdentityNotificationAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetIdentityNotificationAttributesResult");
     return {
-      NotificationAttributes: readXmlMap(xml.getList("NotificationAttributes", "entry"), IdentityNotificationAttributes_Parse, {}),
+      NotificationAttributes: xmlP.readXmlMap(xml.getList("NotificationAttributes", "entry"), IdentityNotificationAttributes_Parse, {}),
     };
   }
 
@@ -469,14 +470,14 @@ export default class SES {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"Identity", (params["Identity"] ?? '').toString());
-    if (params["PolicyNames"]) prt.appendList(body, prefix+"PolicyNames", params["PolicyNames"], {"entryPrefix":".member."})
+    if (params["PolicyNames"]) qsP.appendList(body, prefix+"PolicyNames", params["PolicyNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetIdentityPolicies",
     });
-    const xml = readXmlResult(await resp.text(), "GetIdentityPoliciesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetIdentityPoliciesResult");
     return {
-      Policies: readXmlMap(xml.getList("Policies", "entry"), x => x.content ?? '', {}),
+      Policies: xmlP.readXmlMap(xml.getList("Policies", "entry"), x => x.content ?? '', {}),
     };
   }
 
@@ -485,14 +486,14 @@ export default class SES {
   ): Promise<GetIdentityVerificationAttributesResponse> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Identities"]) prt.appendList(body, prefix+"Identities", params["Identities"], {"entryPrefix":".member."})
+    if (params["Identities"]) qsP.appendList(body, prefix+"Identities", params["Identities"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetIdentityVerificationAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "GetIdentityVerificationAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetIdentityVerificationAttributesResult");
     return {
-      VerificationAttributes: readXmlMap(xml.getList("VerificationAttributes", "entry"), IdentityVerificationAttributes_Parse, {}),
+      VerificationAttributes: xmlP.readXmlMap(xml.getList("VerificationAttributes", "entry"), IdentityVerificationAttributes_Parse, {}),
     };
   }
 
@@ -503,7 +504,7 @@ export default class SES {
       abortSignal,
       action: "GetSendQuota",
     });
-    const xml = readXmlResult(await resp.text(), "GetSendQuotaResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetSendQuotaResult");
     return {
       Max24HourSend: xml.first("Max24HourSend", false, x => parseFloat(x.content ?? '0')),
       MaxSendRate: xml.first("MaxSendRate", false, x => parseFloat(x.content ?? '0')),
@@ -518,7 +519,7 @@ export default class SES {
       abortSignal,
       action: "GetSendStatistics",
     });
-    const xml = readXmlResult(await resp.text(), "GetSendStatisticsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetSendStatisticsResult");
     return {
       SendDataPoints: xml.getList("SendDataPoints", "member").map(SendDataPoint_Parse),
     };
@@ -534,7 +535,7 @@ export default class SES {
       abortSignal, body,
       action: "GetTemplate",
     });
-    const xml = readXmlResult(await resp.text(), "GetTemplateResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetTemplateResult");
     return {
       Template: xml.first("Template", false, Template_Parse),
     };
@@ -551,7 +552,7 @@ export default class SES {
       abortSignal, body,
       action: "ListConfigurationSets",
     });
-    const xml = readXmlResult(await resp.text(), "ListConfigurationSetsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListConfigurationSetsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -571,7 +572,7 @@ export default class SES {
       abortSignal, body,
       action: "ListCustomVerificationEmailTemplates",
     });
-    const xml = readXmlResult(await resp.text(), "ListCustomVerificationEmailTemplatesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListCustomVerificationEmailTemplatesResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -592,7 +593,7 @@ export default class SES {
       abortSignal, body,
       action: "ListIdentities",
     });
-    const xml = readXmlResult(await resp.text(), "ListIdentitiesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListIdentitiesResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -611,7 +612,7 @@ export default class SES {
       abortSignal, body,
       action: "ListIdentityPolicies",
     });
-    const xml = readXmlResult(await resp.text(), "ListIdentityPoliciesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListIdentityPoliciesResult");
     return {
       PolicyNames: xml.getList("PolicyNames", "member").map(x => x.content ?? ''),
     };
@@ -627,7 +628,7 @@ export default class SES {
       abortSignal, body,
       action: "ListReceiptFilters",
     });
-    const xml = readXmlResult(await resp.text(), "ListReceiptFiltersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListReceiptFiltersResult");
     return {
       Filters: xml.getList("Filters", "member").map(ReceiptFilter_Parse),
     };
@@ -643,7 +644,7 @@ export default class SES {
       abortSignal, body,
       action: "ListReceiptRuleSets",
     });
-    const xml = readXmlResult(await resp.text(), "ListReceiptRuleSetsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListReceiptRuleSetsResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -663,7 +664,7 @@ export default class SES {
       abortSignal, body,
       action: "ListTemplates",
     });
-    const xml = readXmlResult(await resp.text(), "ListTemplatesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListTemplatesResult");
     return {
       ...xml.strings({
         optional: {"NextToken":true},
@@ -679,7 +680,7 @@ export default class SES {
       abortSignal,
       action: "ListVerifiedEmailAddresses",
     });
-    const xml = readXmlResult(await resp.text(), "ListVerifiedEmailAddressesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListVerifiedEmailAddressesResult");
     return {
       VerifiedEmailAddresses: xml.getList("VerifiedEmailAddresses", "member").map(x => x.content ?? ''),
     };
@@ -696,7 +697,7 @@ export default class SES {
       abortSignal, body,
       action: "PutConfigurationSetDeliveryOptions",
     });
-    const xml = readXmlResult(await resp.text(), "PutConfigurationSetDeliveryOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "PutConfigurationSetDeliveryOptionsResult");
     return {};
   }
 
@@ -712,7 +713,7 @@ export default class SES {
       abortSignal, body,
       action: "PutIdentityPolicy",
     });
-    const xml = readXmlResult(await resp.text(), "PutIdentityPolicyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "PutIdentityPolicyResult");
     return {};
   }
 
@@ -722,12 +723,12 @@ export default class SES {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"RuleSetName", (params["RuleSetName"] ?? '').toString());
-    if (params["RuleNames"]) prt.appendList(body, prefix+"RuleNames", params["RuleNames"], {"entryPrefix":".member."})
+    if (params["RuleNames"]) qsP.appendList(body, prefix+"RuleNames", params["RuleNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ReorderReceiptRuleSet",
     });
-    const xml = readXmlResult(await resp.text(), "ReorderReceiptRuleSetResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ReorderReceiptRuleSetResult");
     return {};
   }
 
@@ -740,13 +741,13 @@ export default class SES {
     body.append(prefix+"BounceSender", (params["BounceSender"] ?? '').toString());
     if ("Explanation" in params) body.append(prefix+"Explanation", (params["Explanation"] ?? '').toString());
     if (params["MessageDsn"] != null) MessageDsn_Serialize(body, prefix+"MessageDsn", params["MessageDsn"]);
-    if (params["BouncedRecipientInfoList"]) prt.appendList(body, prefix+"BouncedRecipientInfoList", params["BouncedRecipientInfoList"], {"appender":BouncedRecipientInfo_Serialize,"entryPrefix":".member."})
+    if (params["BouncedRecipientInfoList"]) qsP.appendList(body, prefix+"BouncedRecipientInfoList", params["BouncedRecipientInfoList"], {"appender":BouncedRecipientInfo_Serialize,"entryPrefix":".member."})
     if ("BounceSenderArn" in params) body.append(prefix+"BounceSenderArn", (params["BounceSenderArn"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendBounce",
     });
-    const xml = readXmlResult(await resp.text(), "SendBounceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SendBounceResult");
     return xml.strings({
       optional: {"MessageId":true},
     });
@@ -759,20 +760,20 @@ export default class SES {
     const prefix = '';
     body.append(prefix+"Source", (params["Source"] ?? '').toString());
     if ("SourceArn" in params) body.append(prefix+"SourceArn", (params["SourceArn"] ?? '').toString());
-    if (params["ReplyToAddresses"]) prt.appendList(body, prefix+"ReplyToAddresses", params["ReplyToAddresses"], {"entryPrefix":".member."})
+    if (params["ReplyToAddresses"]) qsP.appendList(body, prefix+"ReplyToAddresses", params["ReplyToAddresses"], {"entryPrefix":".member."})
     if ("ReturnPath" in params) body.append(prefix+"ReturnPath", (params["ReturnPath"] ?? '').toString());
     if ("ReturnPathArn" in params) body.append(prefix+"ReturnPathArn", (params["ReturnPathArn"] ?? '').toString());
     if ("ConfigurationSetName" in params) body.append(prefix+"ConfigurationSetName", (params["ConfigurationSetName"] ?? '').toString());
-    if (params["DefaultTags"]) prt.appendList(body, prefix+"DefaultTags", params["DefaultTags"], {"appender":MessageTag_Serialize,"entryPrefix":".member."})
+    if (params["DefaultTags"]) qsP.appendList(body, prefix+"DefaultTags", params["DefaultTags"], {"appender":MessageTag_Serialize,"entryPrefix":".member."})
     body.append(prefix+"Template", (params["Template"] ?? '').toString());
     if ("TemplateArn" in params) body.append(prefix+"TemplateArn", (params["TemplateArn"] ?? '').toString());
     if ("DefaultTemplateData" in params) body.append(prefix+"DefaultTemplateData", (params["DefaultTemplateData"] ?? '').toString());
-    if (params["Destinations"]) prt.appendList(body, prefix+"Destinations", params["Destinations"], {"appender":BulkEmailDestination_Serialize,"entryPrefix":".member."})
+    if (params["Destinations"]) qsP.appendList(body, prefix+"Destinations", params["Destinations"], {"appender":BulkEmailDestination_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendBulkTemplatedEmail",
     });
-    const xml = readXmlResult(await resp.text(), "SendBulkTemplatedEmailResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SendBulkTemplatedEmailResult");
     return {
       Status: xml.getList("Status", "member").map(BulkEmailDestinationStatus_Parse),
     };
@@ -790,7 +791,7 @@ export default class SES {
       abortSignal, body,
       action: "SendCustomVerificationEmail",
     });
-    const xml = readXmlResult(await resp.text(), "SendCustomVerificationEmailResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SendCustomVerificationEmailResult");
     return xml.strings({
       optional: {"MessageId":true},
     });
@@ -804,17 +805,17 @@ export default class SES {
     body.append(prefix+"Source", (params["Source"] ?? '').toString());
     Destination_Serialize(body, prefix+"Destination", params["Destination"]);
     Message_Serialize(body, prefix+"Message", params["Message"]);
-    if (params["ReplyToAddresses"]) prt.appendList(body, prefix+"ReplyToAddresses", params["ReplyToAddresses"], {"entryPrefix":".member."})
+    if (params["ReplyToAddresses"]) qsP.appendList(body, prefix+"ReplyToAddresses", params["ReplyToAddresses"], {"entryPrefix":".member."})
     if ("ReturnPath" in params) body.append(prefix+"ReturnPath", (params["ReturnPath"] ?? '').toString());
     if ("SourceArn" in params) body.append(prefix+"SourceArn", (params["SourceArn"] ?? '').toString());
     if ("ReturnPathArn" in params) body.append(prefix+"ReturnPathArn", (params["ReturnPathArn"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":MessageTag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":MessageTag_Serialize,"entryPrefix":".member."})
     if ("ConfigurationSetName" in params) body.append(prefix+"ConfigurationSetName", (params["ConfigurationSetName"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendEmail",
     });
-    const xml = readXmlResult(await resp.text(), "SendEmailResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SendEmailResult");
     return xml.strings({
       required: {"MessageId":true},
     });
@@ -826,18 +827,18 @@ export default class SES {
     const body = new URLSearchParams;
     const prefix = '';
     if ("Source" in params) body.append(prefix+"Source", (params["Source"] ?? '').toString());
-    if (params["Destinations"]) prt.appendList(body, prefix+"Destinations", params["Destinations"], {"entryPrefix":".member."})
+    if (params["Destinations"]) qsP.appendList(body, prefix+"Destinations", params["Destinations"], {"entryPrefix":".member."})
     RawMessage_Serialize(body, prefix+"RawMessage", params["RawMessage"]);
     if ("FromArn" in params) body.append(prefix+"FromArn", (params["FromArn"] ?? '').toString());
     if ("SourceArn" in params) body.append(prefix+"SourceArn", (params["SourceArn"] ?? '').toString());
     if ("ReturnPathArn" in params) body.append(prefix+"ReturnPathArn", (params["ReturnPathArn"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":MessageTag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":MessageTag_Serialize,"entryPrefix":".member."})
     if ("ConfigurationSetName" in params) body.append(prefix+"ConfigurationSetName", (params["ConfigurationSetName"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendRawEmail",
     });
-    const xml = readXmlResult(await resp.text(), "SendRawEmailResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SendRawEmailResult");
     return xml.strings({
       required: {"MessageId":true},
     });
@@ -850,11 +851,11 @@ export default class SES {
     const prefix = '';
     body.append(prefix+"Source", (params["Source"] ?? '').toString());
     Destination_Serialize(body, prefix+"Destination", params["Destination"]);
-    if (params["ReplyToAddresses"]) prt.appendList(body, prefix+"ReplyToAddresses", params["ReplyToAddresses"], {"entryPrefix":".member."})
+    if (params["ReplyToAddresses"]) qsP.appendList(body, prefix+"ReplyToAddresses", params["ReplyToAddresses"], {"entryPrefix":".member."})
     if ("ReturnPath" in params) body.append(prefix+"ReturnPath", (params["ReturnPath"] ?? '').toString());
     if ("SourceArn" in params) body.append(prefix+"SourceArn", (params["SourceArn"] ?? '').toString());
     if ("ReturnPathArn" in params) body.append(prefix+"ReturnPathArn", (params["ReturnPathArn"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":MessageTag_Serialize,"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":MessageTag_Serialize,"entryPrefix":".member."})
     if ("ConfigurationSetName" in params) body.append(prefix+"ConfigurationSetName", (params["ConfigurationSetName"] ?? '').toString());
     body.append(prefix+"Template", (params["Template"] ?? '').toString());
     if ("TemplateArn" in params) body.append(prefix+"TemplateArn", (params["TemplateArn"] ?? '').toString());
@@ -863,7 +864,7 @@ export default class SES {
       abortSignal, body,
       action: "SendTemplatedEmail",
     });
-    const xml = readXmlResult(await resp.text(), "SendTemplatedEmailResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SendTemplatedEmailResult");
     return xml.strings({
       required: {"MessageId":true},
     });
@@ -879,7 +880,7 @@ export default class SES {
       abortSignal, body,
       action: "SetActiveReceiptRuleSet",
     });
-    const xml = readXmlResult(await resp.text(), "SetActiveReceiptRuleSetResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SetActiveReceiptRuleSetResult");
     return {};
   }
 
@@ -894,7 +895,7 @@ export default class SES {
       abortSignal, body,
       action: "SetIdentityDkimEnabled",
     });
-    const xml = readXmlResult(await resp.text(), "SetIdentityDkimEnabledResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SetIdentityDkimEnabledResult");
     return {};
   }
 
@@ -909,7 +910,7 @@ export default class SES {
       abortSignal, body,
       action: "SetIdentityFeedbackForwardingEnabled",
     });
-    const xml = readXmlResult(await resp.text(), "SetIdentityFeedbackForwardingEnabledResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SetIdentityFeedbackForwardingEnabledResult");
     return {};
   }
 
@@ -925,7 +926,7 @@ export default class SES {
       abortSignal, body,
       action: "SetIdentityHeadersInNotificationsEnabled",
     });
-    const xml = readXmlResult(await resp.text(), "SetIdentityHeadersInNotificationsEnabledResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SetIdentityHeadersInNotificationsEnabledResult");
     return {};
   }
 
@@ -941,7 +942,7 @@ export default class SES {
       abortSignal, body,
       action: "SetIdentityMailFromDomain",
     });
-    const xml = readXmlResult(await resp.text(), "SetIdentityMailFromDomainResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SetIdentityMailFromDomainResult");
     return {};
   }
 
@@ -957,7 +958,7 @@ export default class SES {
       abortSignal, body,
       action: "SetIdentityNotificationTopic",
     });
-    const xml = readXmlResult(await resp.text(), "SetIdentityNotificationTopicResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SetIdentityNotificationTopicResult");
     return {};
   }
 
@@ -973,7 +974,7 @@ export default class SES {
       abortSignal, body,
       action: "SetReceiptRulePosition",
     });
-    const xml = readXmlResult(await resp.text(), "SetReceiptRulePositionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "SetReceiptRulePositionResult");
     return {};
   }
 
@@ -988,7 +989,7 @@ export default class SES {
       abortSignal, body,
       action: "TestRenderTemplate",
     });
-    const xml = readXmlResult(await resp.text(), "TestRenderTemplateResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "TestRenderTemplateResult");
     return xml.strings({
       optional: {"RenderedTemplate":true},
     });
@@ -1017,7 +1018,7 @@ export default class SES {
       abortSignal, body,
       action: "UpdateConfigurationSetEventDestination",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateConfigurationSetEventDestinationResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateConfigurationSetEventDestinationResult");
     return {};
   }
 
@@ -1058,7 +1059,7 @@ export default class SES {
       abortSignal, body,
       action: "UpdateConfigurationSetTrackingOptions",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateConfigurationSetTrackingOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateConfigurationSetTrackingOptionsResult");
     return {};
   }
 
@@ -1090,7 +1091,7 @@ export default class SES {
       abortSignal, body,
       action: "UpdateReceiptRule",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateReceiptRuleResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateReceiptRuleResult");
     return {};
   }
 
@@ -1104,7 +1105,7 @@ export default class SES {
       abortSignal, body,
       action: "UpdateTemplate",
     });
-    const xml = readXmlResult(await resp.text(), "UpdateTemplateResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "UpdateTemplateResult");
     return {};
   }
 
@@ -1118,7 +1119,7 @@ export default class SES {
       abortSignal, body,
       action: "VerifyDomainDkim",
     });
-    const xml = readXmlResult(await resp.text(), "VerifyDomainDkimResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "VerifyDomainDkimResult");
     return {
       DkimTokens: xml.getList("DkimTokens", "member").map(x => x.content ?? ''),
     };
@@ -1134,7 +1135,7 @@ export default class SES {
       abortSignal, body,
       action: "VerifyDomainIdentity",
     });
-    const xml = readXmlResult(await resp.text(), "VerifyDomainIdentityResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "VerifyDomainIdentityResult");
     return xml.strings({
       required: {"VerificationToken":true},
     });
@@ -1162,7 +1163,7 @@ export default class SES {
       abortSignal, body,
       action: "VerifyEmailIdentity",
     });
-    const xml = readXmlResult(await resp.text(), "VerifyEmailIdentityResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "VerifyEmailIdentityResult");
     return {};
   }
 
@@ -1175,7 +1176,7 @@ export default class SES {
     const errMessage = 'ResourceNotReady: Resource is not in the state IdentityExists';
     for (let i = 0; i < 20; i++) {
       const resp = await this.getIdentityVerificationAttributes(params);
-      if (Object.values(resp["VerificationAttributes"]).map(x => x["VerificationStatus"]).every(x => x === "Success")) return resp;
+      if (Object.values(resp?.VerificationAttributes).map(x => x?.VerificationStatus).every(x => x === "Success")) return resp;
       await new Promise(r => setTimeout(r, 3000));
     }
     throw new Error(errMessage);
@@ -1715,27 +1716,27 @@ export interface GetCustomVerificationEmailTemplateResponse {
 
 // refs: 1 - tags: named, output
 export interface GetIdentityDkimAttributesResponse {
-  DkimAttributes: { [key: string]: IdentityDkimAttributes };
+  DkimAttributes: { [key: string]: IdentityDkimAttributes | null | undefined };
 }
 
 // refs: 1 - tags: named, output
 export interface GetIdentityMailFromDomainAttributesResponse {
-  MailFromDomainAttributes: { [key: string]: IdentityMailFromDomainAttributes };
+  MailFromDomainAttributes: { [key: string]: IdentityMailFromDomainAttributes | null | undefined };
 }
 
 // refs: 1 - tags: named, output
 export interface GetIdentityNotificationAttributesResponse {
-  NotificationAttributes: { [key: string]: IdentityNotificationAttributes };
+  NotificationAttributes: { [key: string]: IdentityNotificationAttributes | null | undefined };
 }
 
 // refs: 1 - tags: named, output
 export interface GetIdentityPoliciesResponse {
-  Policies: { [key: string]: string };
+  Policies: { [key: string]: string | null | undefined };
 }
 
 // refs: 1 - tags: named, output
 export interface GetIdentityVerificationAttributesResponse {
-  VerificationAttributes: { [key: string]: IdentityVerificationAttributes };
+  VerificationAttributes: { [key: string]: IdentityVerificationAttributes | null | undefined };
 }
 
 // refs: 1 - tags: named, output
@@ -1912,7 +1913,7 @@ export interface ConfigurationSet {
 function ConfigurationSet_Serialize(body: URLSearchParams, prefix: string, params: ConfigurationSet) {
     body.append(prefix+".Name", (params["Name"] ?? '').toString());
 }
-function ConfigurationSet_Parse(node: XmlNode): ConfigurationSet {
+function ConfigurationSet_Parse(node: xmlP.XmlNode): ConfigurationSet {
   return node.strings({
     required: {"Name":true},
   });
@@ -1930,12 +1931,12 @@ export interface EventDestination {
 function EventDestination_Serialize(body: URLSearchParams, prefix: string, params: EventDestination) {
     body.append(prefix+".Name", (params["Name"] ?? '').toString());
     if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
-    if (params["MatchingEventTypes"]) prt.appendList(body, prefix+".MatchingEventTypes", params["MatchingEventTypes"], {"entryPrefix":".member."})
+    if (params["MatchingEventTypes"]) qsP.appendList(body, prefix+".MatchingEventTypes", params["MatchingEventTypes"], {"entryPrefix":".member."})
     if (params["KinesisFirehoseDestination"] != null) KinesisFirehoseDestination_Serialize(body, prefix+".KinesisFirehoseDestination", params["KinesisFirehoseDestination"]);
     if (params["CloudWatchDestination"] != null) CloudWatchDestination_Serialize(body, prefix+".CloudWatchDestination", params["CloudWatchDestination"]);
     if (params["SNSDestination"] != null) SNSDestination_Serialize(body, prefix+".SNSDestination", params["SNSDestination"]);
 }
-function EventDestination_Parse(node: XmlNode): EventDestination {
+function EventDestination_Parse(node: xmlP.XmlNode): EventDestination {
   return {
     ...node.strings({
       required: {"Name":true},
@@ -1958,9 +1959,7 @@ export type EventType =
 | "open"
 | "click"
 | "renderingFailure"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface KinesisFirehoseDestination {
@@ -1971,7 +1970,7 @@ function KinesisFirehoseDestination_Serialize(body: URLSearchParams, prefix: str
     body.append(prefix+".IAMRoleARN", (params["IAMRoleARN"] ?? '').toString());
     body.append(prefix+".DeliveryStreamARN", (params["DeliveryStreamARN"] ?? '').toString());
 }
-function KinesisFirehoseDestination_Parse(node: XmlNode): KinesisFirehoseDestination {
+function KinesisFirehoseDestination_Parse(node: xmlP.XmlNode): KinesisFirehoseDestination {
   return node.strings({
     required: {"IAMRoleARN":true,"DeliveryStreamARN":true},
   });
@@ -1982,9 +1981,9 @@ export interface CloudWatchDestination {
   DimensionConfigurations: CloudWatchDimensionConfiguration[];
 }
 function CloudWatchDestination_Serialize(body: URLSearchParams, prefix: string, params: CloudWatchDestination) {
-    if (params["DimensionConfigurations"]) prt.appendList(body, prefix+".DimensionConfigurations", params["DimensionConfigurations"], {"appender":CloudWatchDimensionConfiguration_Serialize,"entryPrefix":".member."})
+    if (params["DimensionConfigurations"]) qsP.appendList(body, prefix+".DimensionConfigurations", params["DimensionConfigurations"], {"appender":CloudWatchDimensionConfiguration_Serialize,"entryPrefix":".member."})
 }
-function CloudWatchDestination_Parse(node: XmlNode): CloudWatchDestination {
+function CloudWatchDestination_Parse(node: xmlP.XmlNode): CloudWatchDestination {
   return {
     DimensionConfigurations: node.getList("DimensionConfigurations", "member").map(CloudWatchDimensionConfiguration_Parse),
   };
@@ -2001,7 +2000,7 @@ function CloudWatchDimensionConfiguration_Serialize(body: URLSearchParams, prefi
     body.append(prefix+".DimensionValueSource", (params["DimensionValueSource"] ?? '').toString());
     body.append(prefix+".DefaultDimensionValue", (params["DefaultDimensionValue"] ?? '').toString());
 }
-function CloudWatchDimensionConfiguration_Parse(node: XmlNode): CloudWatchDimensionConfiguration {
+function CloudWatchDimensionConfiguration_Parse(node: xmlP.XmlNode): CloudWatchDimensionConfiguration {
   return {
     ...node.strings({
       required: {"DimensionName":true,"DefaultDimensionValue":true},
@@ -2015,9 +2014,7 @@ export type DimensionValueSource =
 | "messageTag"
 | "emailHeader"
 | "linkTag"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface SNSDestination {
@@ -2026,7 +2023,7 @@ export interface SNSDestination {
 function SNSDestination_Serialize(body: URLSearchParams, prefix: string, params: SNSDestination) {
     body.append(prefix+".TopicARN", (params["TopicARN"] ?? '').toString());
 }
-function SNSDestination_Parse(node: XmlNode): SNSDestination {
+function SNSDestination_Parse(node: xmlP.XmlNode): SNSDestination {
   return node.strings({
     required: {"TopicARN":true},
   });
@@ -2039,7 +2036,7 @@ export interface TrackingOptions {
 function TrackingOptions_Serialize(body: URLSearchParams, prefix: string, params: TrackingOptions) {
     if ("CustomRedirectDomain" in params) body.append(prefix+".CustomRedirectDomain", (params["CustomRedirectDomain"] ?? '').toString());
 }
-function TrackingOptions_Parse(node: XmlNode): TrackingOptions {
+function TrackingOptions_Parse(node: xmlP.XmlNode): TrackingOptions {
   return node.strings({
     optional: {"CustomRedirectDomain":true},
   });
@@ -2054,7 +2051,7 @@ function ReceiptFilter_Serialize(body: URLSearchParams, prefix: string, params: 
     body.append(prefix+".Name", (params["Name"] ?? '').toString());
     ReceiptIpFilter_Serialize(body, prefix+".IpFilter", params["IpFilter"]);
 }
-function ReceiptFilter_Parse(node: XmlNode): ReceiptFilter {
+function ReceiptFilter_Parse(node: xmlP.XmlNode): ReceiptFilter {
   return {
     ...node.strings({
       required: {"Name":true},
@@ -2072,7 +2069,7 @@ function ReceiptIpFilter_Serialize(body: URLSearchParams, prefix: string, params
     body.append(prefix+".Policy", (params["Policy"] ?? '').toString());
     body.append(prefix+".Cidr", (params["Cidr"] ?? '').toString());
 }
-function ReceiptIpFilter_Parse(node: XmlNode): ReceiptIpFilter {
+function ReceiptIpFilter_Parse(node: xmlP.XmlNode): ReceiptIpFilter {
   return {
     ...node.strings({
       required: {"Cidr":true},
@@ -2085,9 +2082,7 @@ function ReceiptIpFilter_Parse(node: XmlNode): ReceiptIpFilter {
 export type ReceiptFilterPolicy =
 | "Block"
 | "Allow"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface ReceiptRule {
@@ -2102,11 +2097,11 @@ function ReceiptRule_Serialize(body: URLSearchParams, prefix: string, params: Re
     body.append(prefix+".Name", (params["Name"] ?? '').toString());
     if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
     if ("TlsPolicy" in params) body.append(prefix+".TlsPolicy", (params["TlsPolicy"] ?? '').toString());
-    if (params["Recipients"]) prt.appendList(body, prefix+".Recipients", params["Recipients"], {"entryPrefix":".member."})
-    if (params["Actions"]) prt.appendList(body, prefix+".Actions", params["Actions"], {"appender":ReceiptAction_Serialize,"entryPrefix":".member."})
+    if (params["Recipients"]) qsP.appendList(body, prefix+".Recipients", params["Recipients"], {"entryPrefix":".member."})
+    if (params["Actions"]) qsP.appendList(body, prefix+".Actions", params["Actions"], {"appender":ReceiptAction_Serialize,"entryPrefix":".member."})
     if ("ScanEnabled" in params) body.append(prefix+".ScanEnabled", (params["ScanEnabled"] ?? '').toString());
 }
-function ReceiptRule_Parse(node: XmlNode): ReceiptRule {
+function ReceiptRule_Parse(node: xmlP.XmlNode): ReceiptRule {
   return {
     ...node.strings({
       required: {"Name":true},
@@ -2123,9 +2118,7 @@ function ReceiptRule_Parse(node: XmlNode): ReceiptRule {
 export type TlsPolicy =
 | "Require"
 | "Optional"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface ReceiptAction {
@@ -2146,7 +2139,7 @@ function ReceiptAction_Serialize(body: URLSearchParams, prefix: string, params: 
     if (params["AddHeaderAction"] != null) AddHeaderAction_Serialize(body, prefix+".AddHeaderAction", params["AddHeaderAction"]);
     if (params["SNSAction"] != null) SNSAction_Serialize(body, prefix+".SNSAction", params["SNSAction"]);
 }
-function ReceiptAction_Parse(node: XmlNode): ReceiptAction {
+function ReceiptAction_Parse(node: xmlP.XmlNode): ReceiptAction {
   return {
     S3Action: node.first("S3Action", false, S3Action_Parse),
     BounceAction: node.first("BounceAction", false, BounceAction_Parse),
@@ -2171,7 +2164,7 @@ function S3Action_Serialize(body: URLSearchParams, prefix: string, params: S3Act
     if ("ObjectKeyPrefix" in params) body.append(prefix+".ObjectKeyPrefix", (params["ObjectKeyPrefix"] ?? '').toString());
     if ("KmsKeyArn" in params) body.append(prefix+".KmsKeyArn", (params["KmsKeyArn"] ?? '').toString());
 }
-function S3Action_Parse(node: XmlNode): S3Action {
+function S3Action_Parse(node: xmlP.XmlNode): S3Action {
   return node.strings({
     required: {"BucketName":true},
     optional: {"TopicArn":true,"ObjectKeyPrefix":true,"KmsKeyArn":true},
@@ -2193,7 +2186,7 @@ function BounceAction_Serialize(body: URLSearchParams, prefix: string, params: B
     body.append(prefix+".Message", (params["Message"] ?? '').toString());
     body.append(prefix+".Sender", (params["Sender"] ?? '').toString());
 }
-function BounceAction_Parse(node: XmlNode): BounceAction {
+function BounceAction_Parse(node: xmlP.XmlNode): BounceAction {
   return node.strings({
     required: {"SmtpReplyCode":true,"Message":true,"Sender":true},
     optional: {"TopicArn":true,"StatusCode":true},
@@ -2209,7 +2202,7 @@ function WorkmailAction_Serialize(body: URLSearchParams, prefix: string, params:
     if ("TopicArn" in params) body.append(prefix+".TopicArn", (params["TopicArn"] ?? '').toString());
     body.append(prefix+".OrganizationArn", (params["OrganizationArn"] ?? '').toString());
 }
-function WorkmailAction_Parse(node: XmlNode): WorkmailAction {
+function WorkmailAction_Parse(node: xmlP.XmlNode): WorkmailAction {
   return node.strings({
     required: {"OrganizationArn":true},
     optional: {"TopicArn":true},
@@ -2227,7 +2220,7 @@ function LambdaAction_Serialize(body: URLSearchParams, prefix: string, params: L
     body.append(prefix+".FunctionArn", (params["FunctionArn"] ?? '').toString());
     if ("InvocationType" in params) body.append(prefix+".InvocationType", (params["InvocationType"] ?? '').toString());
 }
-function LambdaAction_Parse(node: XmlNode): LambdaAction {
+function LambdaAction_Parse(node: xmlP.XmlNode): LambdaAction {
   return {
     ...node.strings({
       required: {"FunctionArn":true},
@@ -2241,9 +2234,7 @@ function LambdaAction_Parse(node: XmlNode): LambdaAction {
 export type InvocationType =
 | "Event"
 | "RequestResponse"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface StopAction {
@@ -2254,7 +2245,7 @@ function StopAction_Serialize(body: URLSearchParams, prefix: string, params: Sto
     body.append(prefix+".Scope", (params["Scope"] ?? '').toString());
     if ("TopicArn" in params) body.append(prefix+".TopicArn", (params["TopicArn"] ?? '').toString());
 }
-function StopAction_Parse(node: XmlNode): StopAction {
+function StopAction_Parse(node: xmlP.XmlNode): StopAction {
   return {
     ...node.strings({
       optional: {"TopicArn":true},
@@ -2266,9 +2257,7 @@ function StopAction_Parse(node: XmlNode): StopAction {
 // refs: 5 - tags: input, named, enum, output
 export type StopScope =
 | "RuleSet"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface AddHeaderAction {
@@ -2279,7 +2268,7 @@ function AddHeaderAction_Serialize(body: URLSearchParams, prefix: string, params
     body.append(prefix+".HeaderName", (params["HeaderName"] ?? '').toString());
     body.append(prefix+".HeaderValue", (params["HeaderValue"] ?? '').toString());
 }
-function AddHeaderAction_Parse(node: XmlNode): AddHeaderAction {
+function AddHeaderAction_Parse(node: xmlP.XmlNode): AddHeaderAction {
   return node.strings({
     required: {"HeaderName":true,"HeaderValue":true},
   });
@@ -2294,7 +2283,7 @@ function SNSAction_Serialize(body: URLSearchParams, prefix: string, params: SNSA
     body.append(prefix+".TopicArn", (params["TopicArn"] ?? '').toString());
     if ("Encoding" in params) body.append(prefix+".Encoding", (params["Encoding"] ?? '').toString());
 }
-function SNSAction_Parse(node: XmlNode): SNSAction {
+function SNSAction_Parse(node: xmlP.XmlNode): SNSAction {
   return {
     ...node.strings({
       required: {"TopicArn":true},
@@ -2307,9 +2296,7 @@ function SNSAction_Parse(node: XmlNode): SNSAction {
 export type SNSActionEncoding =
 | "UTF-8"
 | "Base64"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface Template {
@@ -2324,7 +2311,7 @@ function Template_Serialize(body: URLSearchParams, prefix: string, params: Templ
     if ("TextPart" in params) body.append(prefix+".TextPart", (params["TextPart"] ?? '').toString());
     if ("HtmlPart" in params) body.append(prefix+".HtmlPart", (params["HtmlPart"] ?? '').toString());
 }
-function Template_Parse(node: XmlNode): Template {
+function Template_Parse(node: xmlP.XmlNode): Template {
   return node.strings({
     required: {"TemplateName":true},
     optional: {"SubjectPart":true,"TextPart":true,"HtmlPart":true},
@@ -2337,15 +2324,13 @@ export type ConfigurationSetAttribute =
 | "trackingOptions"
 | "deliveryOptions"
 | "reputationOptions"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type IdentityType =
 | "EmailAddress"
 | "Domain"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface DeliveryOptions {
@@ -2354,7 +2339,7 @@ export interface DeliveryOptions {
 function DeliveryOptions_Serialize(body: URLSearchParams, prefix: string, params: DeliveryOptions) {
     if ("TlsPolicy" in params) body.append(prefix+".TlsPolicy", (params["TlsPolicy"] ?? '').toString());
 }
-function DeliveryOptions_Parse(node: XmlNode): DeliveryOptions {
+function DeliveryOptions_Parse(node: xmlP.XmlNode): DeliveryOptions {
   return {
     TlsPolicy: node.first("TlsPolicy", false, x => (x.content ?? '') as TlsPolicy),
   };
@@ -2368,8 +2353,8 @@ export interface MessageDsn {
 }
 function MessageDsn_Serialize(body: URLSearchParams, prefix: string, params: MessageDsn) {
     body.append(prefix+".ReportingMta", (params["ReportingMta"] ?? '').toString());
-    if ("ArrivalDate" in params) body.append(prefix+".ArrivalDate", prt.encodeDate_iso8601(params["ArrivalDate"]));
-    if (params["ExtensionFields"]) prt.appendList(body, prefix+".ExtensionFields", params["ExtensionFields"], {"appender":ExtensionField_Serialize,"entryPrefix":".member."})
+    if ("ArrivalDate" in params) body.append(prefix+".ArrivalDate", qsP.encodeDate_iso8601(params["ArrivalDate"]));
+    if (params["ExtensionFields"]) qsP.appendList(body, prefix+".ExtensionFields", params["ExtensionFields"], {"appender":ExtensionField_Serialize,"entryPrefix":".member."})
 }
 
 // refs: 2 - tags: input, named, interface
@@ -2404,8 +2389,7 @@ export type BounceType =
 | "ContentRejected"
 | "Undefined"
 | "TemporaryFailure"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface RecipientDsnFields {
@@ -2423,8 +2407,8 @@ function RecipientDsnFields_Serialize(body: URLSearchParams, prefix: string, par
     if ("RemoteMta" in params) body.append(prefix+".RemoteMta", (params["RemoteMta"] ?? '').toString());
     body.append(prefix+".Status", (params["Status"] ?? '').toString());
     if ("DiagnosticCode" in params) body.append(prefix+".DiagnosticCode", (params["DiagnosticCode"] ?? '').toString());
-    if ("LastAttemptDate" in params) body.append(prefix+".LastAttemptDate", prt.encodeDate_iso8601(params["LastAttemptDate"]));
-    if (params["ExtensionFields"]) prt.appendList(body, prefix+".ExtensionFields", params["ExtensionFields"], {"appender":ExtensionField_Serialize,"entryPrefix":".member."})
+    if ("LastAttemptDate" in params) body.append(prefix+".LastAttemptDate", qsP.encodeDate_iso8601(params["LastAttemptDate"]));
+    if (params["ExtensionFields"]) qsP.appendList(body, prefix+".ExtensionFields", params["ExtensionFields"], {"appender":ExtensionField_Serialize,"entryPrefix":".member."})
 }
 
 // refs: 1 - tags: input, named, enum
@@ -2434,8 +2418,7 @@ export type DsnAction =
 | "delivered"
 | "relayed"
 | "expanded"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface
 export interface MessageTag {
@@ -2455,7 +2438,7 @@ export interface BulkEmailDestination {
 }
 function BulkEmailDestination_Serialize(body: URLSearchParams, prefix: string, params: BulkEmailDestination) {
     Destination_Serialize(body, prefix+".Destination", params["Destination"]);
-    if (params["ReplacementTags"]) prt.appendList(body, prefix+".ReplacementTags", params["ReplacementTags"], {"appender":MessageTag_Serialize,"entryPrefix":".member."})
+    if (params["ReplacementTags"]) qsP.appendList(body, prefix+".ReplacementTags", params["ReplacementTags"], {"appender":MessageTag_Serialize,"entryPrefix":".member."})
     if ("ReplacementTemplateData" in params) body.append(prefix+".ReplacementTemplateData", (params["ReplacementTemplateData"] ?? '').toString());
 }
 
@@ -2466,9 +2449,9 @@ export interface Destination {
   BccAddresses?: string[] | null;
 }
 function Destination_Serialize(body: URLSearchParams, prefix: string, params: Destination) {
-    if (params["ToAddresses"]) prt.appendList(body, prefix+".ToAddresses", params["ToAddresses"], {"entryPrefix":".member."})
-    if (params["CcAddresses"]) prt.appendList(body, prefix+".CcAddresses", params["CcAddresses"], {"entryPrefix":".member."})
-    if (params["BccAddresses"]) prt.appendList(body, prefix+".BccAddresses", params["BccAddresses"], {"entryPrefix":".member."})
+    if (params["ToAddresses"]) qsP.appendList(body, prefix+".ToAddresses", params["ToAddresses"], {"entryPrefix":".member."})
+    if (params["CcAddresses"]) qsP.appendList(body, prefix+".CcAddresses", params["CcAddresses"], {"entryPrefix":".member."})
+    if (params["BccAddresses"]) qsP.appendList(body, prefix+".BccAddresses", params["BccAddresses"], {"entryPrefix":".member."})
 }
 
 // refs: 1 - tags: input, named, interface
@@ -2506,7 +2489,7 @@ export interface RawMessage {
   Data: Uint8Array | string;
 }
 function RawMessage_Serialize(body: URLSearchParams, prefix: string, params: RawMessage) {
-    body.append(prefix+".Data", prt.encodeBlob(params["Data"]));
+    body.append(prefix+".Data", qsP.encodeBlob(params["Data"]));
 }
 
 // refs: 2 - tags: input, named, enum
@@ -2514,28 +2497,25 @@ export type NotificationType =
 | "Bounce"
 | "Complaint"
 | "Delivery"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type BehaviorOnMXFailure =
 | "UseDefaultValue"
 | "RejectMessage"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface ReceiptRuleSetMetadata {
   Name?: string | null;
   CreatedTimestamp?: Date | number | null;
 }
-function ReceiptRuleSetMetadata_Parse(node: XmlNode): ReceiptRuleSetMetadata {
+function ReceiptRuleSetMetadata_Parse(node: xmlP.XmlNode): ReceiptRuleSetMetadata {
   return {
     ...node.strings({
       optional: {"Name":true},
     }),
-    CreatedTimestamp: node.first("CreatedTimestamp", false, x => parseTimestamp(x.content)),
+    CreatedTimestamp: node.first("CreatedTimestamp", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -2545,11 +2525,11 @@ export interface ReputationOptions {
   ReputationMetricsEnabled?: boolean | null;
   LastFreshStart?: Date | number | null;
 }
-function ReputationOptions_Parse(node: XmlNode): ReputationOptions {
+function ReputationOptions_Parse(node: xmlP.XmlNode): ReputationOptions {
   return {
     SendingEnabled: node.first("SendingEnabled", false, x => x.content === 'true'),
     ReputationMetricsEnabled: node.first("ReputationMetricsEnabled", false, x => x.content === 'true'),
-    LastFreshStart: node.first("LastFreshStart", false, x => parseTimestamp(x.content)),
+    LastFreshStart: node.first("LastFreshStart", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -2559,7 +2539,7 @@ export interface IdentityDkimAttributes {
   DkimVerificationStatus: VerificationStatus;
   DkimTokens: string[];
 }
-function IdentityDkimAttributes_Parse(node: XmlNode): IdentityDkimAttributes {
+function IdentityDkimAttributes_Parse(node: xmlP.XmlNode): IdentityDkimAttributes {
   return {
     DkimEnabled: node.first("DkimEnabled", true, x => x.content === 'true'),
     DkimVerificationStatus: node.first("DkimVerificationStatus", true, x => (x.content ?? '') as VerificationStatus),
@@ -2574,8 +2554,7 @@ export type VerificationStatus =
 | "Failed"
 | "TemporaryFailure"
 | "NotStarted"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface IdentityMailFromDomainAttributes {
@@ -2583,7 +2562,7 @@ export interface IdentityMailFromDomainAttributes {
   MailFromDomainStatus: CustomMailFromStatus;
   BehaviorOnMXFailure: BehaviorOnMXFailure;
 }
-function IdentityMailFromDomainAttributes_Parse(node: XmlNode): IdentityMailFromDomainAttributes {
+function IdentityMailFromDomainAttributes_Parse(node: xmlP.XmlNode): IdentityMailFromDomainAttributes {
   return {
     ...node.strings({
       required: {"MailFromDomain":true},
@@ -2599,8 +2578,7 @@ export type CustomMailFromStatus =
 | "Success"
 | "Failed"
 | "TemporaryFailure"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface IdentityNotificationAttributes {
@@ -2612,7 +2590,7 @@ export interface IdentityNotificationAttributes {
   HeadersInComplaintNotificationsEnabled?: boolean | null;
   HeadersInDeliveryNotificationsEnabled?: boolean | null;
 }
-function IdentityNotificationAttributes_Parse(node: XmlNode): IdentityNotificationAttributes {
+function IdentityNotificationAttributes_Parse(node: xmlP.XmlNode): IdentityNotificationAttributes {
   return {
     ...node.strings({
       required: {"BounceTopic":true,"ComplaintTopic":true,"DeliveryTopic":true},
@@ -2629,7 +2607,7 @@ export interface IdentityVerificationAttributes {
   VerificationStatus: VerificationStatus;
   VerificationToken?: string | null;
 }
-function IdentityVerificationAttributes_Parse(node: XmlNode): IdentityVerificationAttributes {
+function IdentityVerificationAttributes_Parse(node: xmlP.XmlNode): IdentityVerificationAttributes {
   return {
     ...node.strings({
       optional: {"VerificationToken":true},
@@ -2646,9 +2624,9 @@ export interface SendDataPoint {
   Complaints?: number | null;
   Rejects?: number | null;
 }
-function SendDataPoint_Parse(node: XmlNode): SendDataPoint {
+function SendDataPoint_Parse(node: xmlP.XmlNode): SendDataPoint {
   return {
-    Timestamp: node.first("Timestamp", false, x => parseTimestamp(x.content)),
+    Timestamp: node.first("Timestamp", false, x => xmlP.parseTimestamp(x.content)),
     DeliveryAttempts: node.first("DeliveryAttempts", false, x => parseInt(x.content ?? '0')),
     Bounces: node.first("Bounces", false, x => parseInt(x.content ?? '0')),
     Complaints: node.first("Complaints", false, x => parseInt(x.content ?? '0')),
@@ -2664,7 +2642,7 @@ export interface CustomVerificationEmailTemplate {
   SuccessRedirectionURL?: string | null;
   FailureRedirectionURL?: string | null;
 }
-function CustomVerificationEmailTemplate_Parse(node: XmlNode): CustomVerificationEmailTemplate {
+function CustomVerificationEmailTemplate_Parse(node: xmlP.XmlNode): CustomVerificationEmailTemplate {
   return node.strings({
     optional: {"TemplateName":true,"FromEmailAddress":true,"TemplateSubject":true,"SuccessRedirectionURL":true,"FailureRedirectionURL":true},
   });
@@ -2675,12 +2653,12 @@ export interface TemplateMetadata {
   Name?: string | null;
   CreatedTimestamp?: Date | number | null;
 }
-function TemplateMetadata_Parse(node: XmlNode): TemplateMetadata {
+function TemplateMetadata_Parse(node: xmlP.XmlNode): TemplateMetadata {
   return {
     ...node.strings({
       optional: {"Name":true},
     }),
-    CreatedTimestamp: node.first("CreatedTimestamp", false, x => parseTimestamp(x.content)),
+    CreatedTimestamp: node.first("CreatedTimestamp", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -2690,7 +2668,7 @@ export interface BulkEmailDestinationStatus {
   Error?: string | null;
   MessageId?: string | null;
 }
-function BulkEmailDestinationStatus_Parse(node: XmlNode): BulkEmailDestinationStatus {
+function BulkEmailDestinationStatus_Parse(node: xmlP.XmlNode): BulkEmailDestinationStatus {
   return {
     ...node.strings({
       optional: {"Error":true,"MessageId":true},
@@ -2715,5 +2693,4 @@ export type BulkEmailStatus =
 | "InvalidParameterValue"
 | "TransientFailure"
 | "Failed"
-;
-
+| cmnP.UnexpectedEnumValue;

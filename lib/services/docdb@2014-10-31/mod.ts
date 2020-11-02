@@ -5,8 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 
 export default class DocDB {
   #client: ServiceClient;
@@ -33,7 +34,7 @@ export default class DocDB {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceName", (params["ResourceName"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTagsToResource",
@@ -52,7 +53,7 @@ export default class DocDB {
       abortSignal, body,
       action: "ApplyPendingMaintenanceAction",
     });
-    const xml = readXmlResult(await resp.text(), "ApplyPendingMaintenanceActionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ApplyPendingMaintenanceActionResult");
     return {
       ResourcePendingMaintenanceActions: xml.first("ResourcePendingMaintenanceActions", false, ResourcePendingMaintenanceActions_Parse),
     };
@@ -66,12 +67,12 @@ export default class DocDB {
     body.append(prefix+"SourceDBClusterParameterGroupIdentifier", (params["SourceDBClusterParameterGroupIdentifier"] ?? '').toString());
     body.append(prefix+"TargetDBClusterParameterGroupIdentifier", (params["TargetDBClusterParameterGroupIdentifier"] ?? '').toString());
     body.append(prefix+"TargetDBClusterParameterGroupDescription", (params["TargetDBClusterParameterGroupDescription"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CopyDBClusterParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CopyDBClusterParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CopyDBClusterParameterGroupResult");
     return {
       DBClusterParameterGroup: xml.first("DBClusterParameterGroup", false, DBClusterParameterGroup_Parse),
     };
@@ -87,12 +88,12 @@ export default class DocDB {
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
     if ("PreSignedUrl" in params) body.append(prefix+"PreSignedUrl", (params["PreSignedUrl"] ?? '').toString());
     if ("CopyTags" in params) body.append(prefix+"CopyTags", (params["CopyTags"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CopyDBClusterSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "CopyDBClusterSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CopyDBClusterSnapshotResult");
     return {
       DBClusterSnapshot: xml.first("DBClusterSnapshot", false, DBClusterSnapshot_Parse),
     };
@@ -103,11 +104,11 @@ export default class DocDB {
   ): Promise<CreateDBClusterResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["AvailabilityZones"]) prt.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".AvailabilityZone."})
+    if (params["AvailabilityZones"]) qsP.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".AvailabilityZone."})
     if ("BackupRetentionPeriod" in params) body.append(prefix+"BackupRetentionPeriod", (params["BackupRetentionPeriod"] ?? '').toString());
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     if ("DBClusterParameterGroupName" in params) body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
     if ("EngineVersion" in params) body.append(prefix+"EngineVersion", (params["EngineVersion"] ?? '').toString());
@@ -116,17 +117,17 @@ export default class DocDB {
     body.append(prefix+"MasterUserPassword", (params["MasterUserPassword"] ?? '').toString());
     if ("PreferredBackupWindow" in params) body.append(prefix+"PreferredBackupWindow", (params["PreferredBackupWindow"] ?? '').toString());
     if ("PreferredMaintenanceWindow" in params) body.append(prefix+"PreferredMaintenanceWindow", (params["PreferredMaintenanceWindow"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("StorageEncrypted" in params) body.append(prefix+"StorageEncrypted", (params["StorageEncrypted"] ?? '').toString());
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
     if ("PreSignedUrl" in params) body.append(prefix+"PreSignedUrl", (params["PreSignedUrl"] ?? '').toString());
-    if (params["EnableCloudwatchLogsExports"]) prt.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
+    if (params["EnableCloudwatchLogsExports"]) qsP.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -140,12 +141,12 @@ export default class DocDB {
     body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
     body.append(prefix+"DBParameterGroupFamily", (params["DBParameterGroupFamily"] ?? '').toString());
     body.append(prefix+"Description", (params["Description"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBClusterParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBClusterParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBClusterParameterGroupResult");
     return {
       DBClusterParameterGroup: xml.first("DBClusterParameterGroup", false, DBClusterParameterGroup_Parse),
     };
@@ -158,12 +159,12 @@ export default class DocDB {
     const prefix = '';
     body.append(prefix+"DBClusterSnapshotIdentifier", (params["DBClusterSnapshotIdentifier"] ?? '').toString());
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBClusterSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBClusterSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBClusterSnapshotResult");
     return {
       DBClusterSnapshot: xml.first("DBClusterSnapshot", false, DBClusterSnapshot_Parse),
     };
@@ -180,14 +181,14 @@ export default class DocDB {
     if ("AvailabilityZone" in params) body.append(prefix+"AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
     if ("PreferredMaintenanceWindow" in params) body.append(prefix+"PreferredMaintenanceWindow", (params["PreferredMaintenanceWindow"] ?? '').toString());
     if ("AutoMinorVersionUpgrade" in params) body.append(prefix+"AutoMinorVersionUpgrade", (params["AutoMinorVersionUpgrade"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     if ("PromotionTier" in params) body.append(prefix+"PromotionTier", (params["PromotionTier"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBInstance",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBInstanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBInstanceResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -200,13 +201,13 @@ export default class DocDB {
     const prefix = '';
     body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     body.append(prefix+"DBSubnetGroupDescription", (params["DBSubnetGroupDescription"] ?? '').toString());
-    if (params["SubnetIds"]) prt.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["SubnetIds"]) qsP.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBSubnetGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateDBSubnetGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBSubnetGroupResult");
     return {
       DBSubnetGroup: xml.first("DBSubnetGroup", false, DBSubnetGroup_Parse),
     };
@@ -224,7 +225,7 @@ export default class DocDB {
       abortSignal, body,
       action: "DeleteDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -252,7 +253,7 @@ export default class DocDB {
       abortSignal, body,
       action: "DeleteDBClusterSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteDBClusterSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDBClusterSnapshotResult");
     return {
       DBClusterSnapshot: xml.first("DBClusterSnapshot", false, DBClusterSnapshot_Parse),
     };
@@ -268,7 +269,7 @@ export default class DocDB {
       abortSignal, body,
       action: "DeleteDBInstance",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteDBInstanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDBInstanceResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -292,14 +293,14 @@ export default class DocDB {
     const body = new URLSearchParams;
     const prefix = '';
     if ("CertificateIdentifier" in params) body.append(prefix+"CertificateIdentifier", (params["CertificateIdentifier"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCertificates",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeCertificatesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeCertificatesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -314,14 +315,14 @@ export default class DocDB {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DBClusterParameterGroupName" in params) body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBClusterParameterGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBClusterParameterGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBClusterParameterGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -337,14 +338,14 @@ export default class DocDB {
     const prefix = '';
     body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
     if ("Source" in params) body.append(prefix+"Source", (params["Source"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBClusterParameters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBClusterParametersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBClusterParametersResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -363,7 +364,7 @@ export default class DocDB {
       abortSignal, body,
       action: "DescribeDBClusterSnapshotAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBClusterSnapshotAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBClusterSnapshotAttributesResult");
     return {
       DBClusterSnapshotAttributesResult: xml.first("DBClusterSnapshotAttributesResult", false, DBClusterSnapshotAttributesResult_Parse),
     };
@@ -377,7 +378,7 @@ export default class DocDB {
     if ("DBClusterIdentifier" in params) body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     if ("DBClusterSnapshotIdentifier" in params) body.append(prefix+"DBClusterSnapshotIdentifier", (params["DBClusterSnapshotIdentifier"] ?? '').toString());
     if ("SnapshotType" in params) body.append(prefix+"SnapshotType", (params["SnapshotType"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("IncludeShared" in params) body.append(prefix+"IncludeShared", (params["IncludeShared"] ?? '').toString());
@@ -386,7 +387,7 @@ export default class DocDB {
       abortSignal, body,
       action: "DescribeDBClusterSnapshots",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBClusterSnapshotsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBClusterSnapshotsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -401,14 +402,14 @@ export default class DocDB {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DBClusterIdentifier" in params) body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBClusters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBClustersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBClustersResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -425,7 +426,7 @@ export default class DocDB {
     if ("Engine" in params) body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
     if ("EngineVersion" in params) body.append(prefix+"EngineVersion", (params["EngineVersion"] ?? '').toString());
     if ("DBParameterGroupFamily" in params) body.append(prefix+"DBParameterGroupFamily", (params["DBParameterGroupFamily"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("DefaultOnly" in params) body.append(prefix+"DefaultOnly", (params["DefaultOnly"] ?? '').toString());
@@ -435,7 +436,7 @@ export default class DocDB {
       abortSignal, body,
       action: "DescribeDBEngineVersions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBEngineVersionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBEngineVersionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -450,14 +451,14 @@ export default class DocDB {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DBInstanceIdentifier" in params) body.append(prefix+"DBInstanceIdentifier", (params["DBInstanceIdentifier"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBInstances",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBInstancesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBInstancesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -472,14 +473,14 @@ export default class DocDB {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBSubnetGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDBSubnetGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBSubnetGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -494,14 +495,14 @@ export default class DocDB {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DBParameterGroupFamily", (params["DBParameterGroupFamily"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEngineDefaultClusterParameters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEngineDefaultClusterParametersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEngineDefaultClusterParametersResult");
     return {
       EngineDefaults: xml.first("EngineDefaults", false, EngineDefaults_Parse),
     };
@@ -513,12 +514,12 @@ export default class DocDB {
     const body = new URLSearchParams;
     const prefix = '';
     if ("SourceType" in params) body.append(prefix+"SourceType", (params["SourceType"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventCategories",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEventCategoriesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEventCategoriesResult");
     return {
       EventCategoriesMapList: xml.getList("EventCategoriesMapList", "EventCategoriesMap").map(EventCategoriesMap_Parse),
     };
@@ -531,18 +532,18 @@ export default class DocDB {
     const prefix = '';
     if ("SourceIdentifier" in params) body.append(prefix+"SourceIdentifier", (params["SourceIdentifier"] ?? '').toString());
     if ("SourceType" in params) body.append(prefix+"SourceType", (params["SourceType"] ?? '').toString());
-    if ("StartTime" in params) body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
-    if ("EndTime" in params) body.append(prefix+"EndTime", prt.encodeDate_iso8601(params["EndTime"]));
+    if ("StartTime" in params) body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+    if ("EndTime" in params) body.append(prefix+"EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
     if ("Duration" in params) body.append(prefix+"Duration", (params["Duration"] ?? '').toString());
-    if (params["EventCategories"]) prt.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["EventCategories"]) qsP.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEvents",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEventsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEventsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -561,14 +562,14 @@ export default class DocDB {
     if ("DBInstanceClass" in params) body.append(prefix+"DBInstanceClass", (params["DBInstanceClass"] ?? '').toString());
     if ("LicenseModel" in params) body.append(prefix+"LicenseModel", (params["LicenseModel"] ?? '').toString());
     if ("Vpc" in params) body.append(prefix+"Vpc", (params["Vpc"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOrderableDBInstanceOptions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeOrderableDBInstanceOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeOrderableDBInstanceOptionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -583,14 +584,14 @@ export default class DocDB {
     const body = new URLSearchParams;
     const prefix = '';
     if ("ResourceIdentifier" in params) body.append(prefix+"ResourceIdentifier", (params["ResourceIdentifier"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePendingMaintenanceActions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribePendingMaintenanceActionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribePendingMaintenanceActionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -610,7 +611,7 @@ export default class DocDB {
       abortSignal, body,
       action: "FailoverDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "FailoverDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "FailoverDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -622,12 +623,12 @@ export default class DocDB {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceName", (params["ResourceName"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
     });
-    const xml = readXmlResult(await resp.text(), "ListTagsForResourceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ListTagsForResourceResult");
     return {
       TagList: xml.getList("TagList", "Tag").map(Tag_Parse),
     };
@@ -643,7 +644,7 @@ export default class DocDB {
     if ("ApplyImmediately" in params) body.append(prefix+"ApplyImmediately", (params["ApplyImmediately"] ?? '').toString());
     if ("BackupRetentionPeriod" in params) body.append(prefix+"BackupRetentionPeriod", (params["BackupRetentionPeriod"] ?? '').toString());
     if ("DBClusterParameterGroupName" in params) body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("Port" in params) body.append(prefix+"Port", (params["Port"] ?? '').toString());
     if ("MasterUserPassword" in params) body.append(prefix+"MasterUserPassword", (params["MasterUserPassword"] ?? '').toString());
     if ("PreferredBackupWindow" in params) body.append(prefix+"PreferredBackupWindow", (params["PreferredBackupWindow"] ?? '').toString());
@@ -655,7 +656,7 @@ export default class DocDB {
       abortSignal, body,
       action: "ModifyDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -667,12 +668,12 @@ export default class DocDB {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDBClusterParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBClusterParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBClusterParameterGroupResult");
     return xml.strings({
       optional: {"DBClusterParameterGroupName":true},
     });
@@ -685,13 +686,13 @@ export default class DocDB {
     const prefix = '';
     body.append(prefix+"DBClusterSnapshotIdentifier", (params["DBClusterSnapshotIdentifier"] ?? '').toString());
     body.append(prefix+"AttributeName", (params["AttributeName"] ?? '').toString());
-    if (params["ValuesToAdd"]) prt.appendList(body, prefix+"ValuesToAdd", params["ValuesToAdd"], {"entryPrefix":".AttributeValue."})
-    if (params["ValuesToRemove"]) prt.appendList(body, prefix+"ValuesToRemove", params["ValuesToRemove"], {"entryPrefix":".AttributeValue."})
+    if (params["ValuesToAdd"]) qsP.appendList(body, prefix+"ValuesToAdd", params["ValuesToAdd"], {"entryPrefix":".AttributeValue."})
+    if (params["ValuesToRemove"]) qsP.appendList(body, prefix+"ValuesToRemove", params["ValuesToRemove"], {"entryPrefix":".AttributeValue."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDBClusterSnapshotAttribute",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBClusterSnapshotAttributeResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBClusterSnapshotAttributeResult");
     return {
       DBClusterSnapshotAttributesResult: xml.first("DBClusterSnapshotAttributesResult", false, DBClusterSnapshotAttributesResult_Parse),
     };
@@ -714,7 +715,7 @@ export default class DocDB {
       abortSignal, body,
       action: "ModifyDBInstance",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBInstanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBInstanceResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -727,12 +728,12 @@ export default class DocDB {
     const prefix = '';
     body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
     if ("DBSubnetGroupDescription" in params) body.append(prefix+"DBSubnetGroupDescription", (params["DBSubnetGroupDescription"] ?? '').toString());
-    if (params["SubnetIds"]) prt.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
+    if (params["SubnetIds"]) qsP.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDBSubnetGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyDBSubnetGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBSubnetGroupResult");
     return {
       DBSubnetGroup: xml.first("DBSubnetGroup", false, DBSubnetGroup_Parse),
     };
@@ -749,7 +750,7 @@ export default class DocDB {
       abortSignal, body,
       action: "RebootDBInstance",
     });
-    const xml = readXmlResult(await resp.text(), "RebootDBInstanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RebootDBInstanceResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
     };
@@ -761,7 +762,7 @@ export default class DocDB {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceName", (params["ResourceName"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTagsFromResource",
@@ -775,12 +776,12 @@ export default class DocDB {
     const prefix = '';
     body.append(prefix+"DBClusterParameterGroupName", (params["DBClusterParameterGroupName"] ?? '').toString());
     if ("ResetAllParameters" in params) body.append(prefix+"ResetAllParameters", (params["ResetAllParameters"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResetDBClusterParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ResetDBClusterParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ResetDBClusterParameterGroupResult");
     return xml.strings({
       optional: {"DBClusterParameterGroupName":true},
     });
@@ -791,23 +792,23 @@ export default class DocDB {
   ): Promise<RestoreDBClusterFromSnapshotResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["AvailabilityZones"]) prt.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".AvailabilityZone."})
+    if (params["AvailabilityZones"]) qsP.appendList(body, prefix+"AvailabilityZones", params["AvailabilityZones"], {"entryPrefix":".AvailabilityZone."})
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     body.append(prefix+"SnapshotIdentifier", (params["SnapshotIdentifier"] ?? '').toString());
     body.append(prefix+"Engine", (params["Engine"] ?? '').toString());
     if ("EngineVersion" in params) body.append(prefix+"EngineVersion", (params["EngineVersion"] ?? '').toString());
     if ("Port" in params) body.append(prefix+"Port", (params["Port"] ?? '').toString());
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
-    if (params["EnableCloudwatchLogsExports"]) prt.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
+    if (params["EnableCloudwatchLogsExports"]) qsP.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreDBClusterFromSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "RestoreDBClusterFromSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RestoreDBClusterFromSnapshotResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -820,20 +821,20 @@ export default class DocDB {
     const prefix = '';
     body.append(prefix+"DBClusterIdentifier", (params["DBClusterIdentifier"] ?? '').toString());
     body.append(prefix+"SourceDBClusterIdentifier", (params["SourceDBClusterIdentifier"] ?? '').toString());
-    if ("RestoreToTime" in params) body.append(prefix+"RestoreToTime", prt.encodeDate_iso8601(params["RestoreToTime"]));
+    if ("RestoreToTime" in params) body.append(prefix+"RestoreToTime", qsP.encodeDate_iso8601(params["RestoreToTime"]));
     if ("UseLatestRestorableTime" in params) body.append(prefix+"UseLatestRestorableTime", (params["UseLatestRestorableTime"] ?? '').toString());
     if ("Port" in params) body.append(prefix+"Port", (params["Port"] ?? '').toString());
     if ("DBSubnetGroupName" in params) body.append(prefix+"DBSubnetGroupName", (params["DBSubnetGroupName"] ?? '').toString());
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
-    if (params["EnableCloudwatchLogsExports"]) prt.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
+    if (params["EnableCloudwatchLogsExports"]) qsP.appendList(body, prefix+"EnableCloudwatchLogsExports", params["EnableCloudwatchLogsExports"], {"entryPrefix":".member."})
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreDBClusterToPointInTime",
     });
-    const xml = readXmlResult(await resp.text(), "RestoreDBClusterToPointInTimeResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RestoreDBClusterToPointInTimeResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -849,7 +850,7 @@ export default class DocDB {
       abortSignal, body,
       action: "StartDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "StartDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "StartDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -865,7 +866,7 @@ export default class DocDB {
       abortSignal, body,
       action: "StopDBCluster",
     });
-    const xml = readXmlResult(await resp.text(), "StopDBClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "StopDBClusterResult");
     return {
       DBCluster: xml.first("DBCluster", false, DBCluster_Parse),
     };
@@ -880,7 +881,7 @@ export default class DocDB {
     const errMessage = 'ResourceNotReady: Resource is not in the state DBInstanceAvailable';
     for (let i = 0; i < 60; i++) {
       const resp = await this.describeDBInstances(params);
-      const field = resp["DBInstances"].flatMap(x => x["DBInstanceStatus"]);
+      const field = resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus);
       if (field.every(x => x === "available")) return resp;
       if (field.some(x => x === "deleted")) throw new Error(errMessage);
       if (field.some(x => x === "deleting")) throw new Error(errMessage);
@@ -900,7 +901,7 @@ export default class DocDB {
     for (let i = 0; i < 60; i++) {
       try {
         const resp = await this.describeDBInstances(params);
-        const field = resp["DBInstances"].flatMap(x => x["DBInstanceStatus"]);
+        const field = resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus);
         if (field.every(x => x === "deleted")) return resp;
         if (field.some(x => x === "creating")) throw new Error(errMessage);
         if (field.some(x => x === "modifying")) throw new Error(errMessage);
@@ -1487,7 +1488,7 @@ function Tag_Serialize(body: URLSearchParams, prefix: string, params: Tag) {
     if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
     if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function Tag_Parse(node: XmlNode): Tag {
+function Tag_Parse(node: xmlP.XmlNode): Tag {
   return node.strings({
     optional: {"Key":true,"Value":true},
   });
@@ -1500,7 +1501,7 @@ export interface Filter {
 }
 function Filter_Serialize(body: URLSearchParams, prefix: string, params: Filter) {
     body.append(prefix+".Name", (params["Name"] ?? '').toString());
-    if (params["Values"]) prt.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".Value."})
+    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".Value."})
 }
 
 // refs: 2 - tags: input, named, enum, output
@@ -1511,9 +1512,7 @@ export type SourceType =
 | "db-snapshot"
 | "db-cluster"
 | "db-cluster-snapshot"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface CloudwatchLogsExportConfiguration {
@@ -1521,8 +1520,8 @@ export interface CloudwatchLogsExportConfiguration {
   DisableLogTypes?: string[] | null;
 }
 function CloudwatchLogsExportConfiguration_Serialize(body: URLSearchParams, prefix: string, params: CloudwatchLogsExportConfiguration) {
-    if (params["EnableLogTypes"]) prt.appendList(body, prefix+".EnableLogTypes", params["EnableLogTypes"], {"entryPrefix":".member."})
-    if (params["DisableLogTypes"]) prt.appendList(body, prefix+".DisableLogTypes", params["DisableLogTypes"], {"entryPrefix":".member."})
+    if (params["EnableLogTypes"]) qsP.appendList(body, prefix+".EnableLogTypes", params["EnableLogTypes"], {"entryPrefix":".member."})
+    if (params["DisableLogTypes"]) qsP.appendList(body, prefix+".DisableLogTypes", params["DisableLogTypes"], {"entryPrefix":".member."})
 }
 
 // refs: 4 - tags: input, named, interface, output
@@ -1550,7 +1549,7 @@ function Parameter_Serialize(body: URLSearchParams, prefix: string, params: Para
     if ("MinimumEngineVersion" in params) body.append(prefix+".MinimumEngineVersion", (params["MinimumEngineVersion"] ?? '').toString());
     if ("ApplyMethod" in params) body.append(prefix+".ApplyMethod", (params["ApplyMethod"] ?? '').toString());
 }
-function Parameter_Parse(node: XmlNode): Parameter {
+function Parameter_Parse(node: xmlP.XmlNode): Parameter {
   return {
     ...node.strings({
       optional: {"ParameterName":true,"ParameterValue":true,"Description":true,"Source":true,"ApplyType":true,"DataType":true,"AllowedValues":true,"MinimumEngineVersion":true},
@@ -1564,16 +1563,14 @@ function Parameter_Parse(node: XmlNode): Parameter {
 export type ApplyMethod =
 | "immediate"
 | "pending-reboot"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ResourcePendingMaintenanceActions {
   ResourceIdentifier?: string | null;
   PendingMaintenanceActionDetails: PendingMaintenanceAction[];
 }
-function ResourcePendingMaintenanceActions_Parse(node: XmlNode): ResourcePendingMaintenanceActions {
+function ResourcePendingMaintenanceActions_Parse(node: xmlP.XmlNode): ResourcePendingMaintenanceActions {
   return {
     ...node.strings({
       optional: {"ResourceIdentifier":true},
@@ -1591,14 +1588,14 @@ export interface PendingMaintenanceAction {
   CurrentApplyDate?: Date | number | null;
   Description?: string | null;
 }
-function PendingMaintenanceAction_Parse(node: XmlNode): PendingMaintenanceAction {
+function PendingMaintenanceAction_Parse(node: xmlP.XmlNode): PendingMaintenanceAction {
   return {
     ...node.strings({
       optional: {"Action":true,"OptInStatus":true,"Description":true},
     }),
-    AutoAppliedAfterDate: node.first("AutoAppliedAfterDate", false, x => parseTimestamp(x.content)),
-    ForcedApplyDate: node.first("ForcedApplyDate", false, x => parseTimestamp(x.content)),
-    CurrentApplyDate: node.first("CurrentApplyDate", false, x => parseTimestamp(x.content)),
+    AutoAppliedAfterDate: node.first("AutoAppliedAfterDate", false, x => xmlP.parseTimestamp(x.content)),
+    ForcedApplyDate: node.first("ForcedApplyDate", false, x => xmlP.parseTimestamp(x.content)),
+    CurrentApplyDate: node.first("CurrentApplyDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -1609,7 +1606,7 @@ export interface DBClusterParameterGroup {
   Description?: string | null;
   DBClusterParameterGroupArn?: string | null;
 }
-function DBClusterParameterGroup_Parse(node: XmlNode): DBClusterParameterGroup {
+function DBClusterParameterGroup_Parse(node: xmlP.XmlNode): DBClusterParameterGroup {
   return node.strings({
     optional: {"DBClusterParameterGroupName":true,"DBParameterGroupFamily":true,"Description":true,"DBClusterParameterGroupArn":true},
   });
@@ -1635,15 +1632,15 @@ export interface DBClusterSnapshot {
   DBClusterSnapshotArn?: string | null;
   SourceDBClusterSnapshotArn?: string | null;
 }
-function DBClusterSnapshot_Parse(node: XmlNode): DBClusterSnapshot {
+function DBClusterSnapshot_Parse(node: xmlP.XmlNode): DBClusterSnapshot {
   return {
     ...node.strings({
       optional: {"DBClusterSnapshotIdentifier":true,"DBClusterIdentifier":true,"Engine":true,"Status":true,"VpcId":true,"MasterUsername":true,"EngineVersion":true,"SnapshotType":true,"KmsKeyId":true,"DBClusterSnapshotArn":true,"SourceDBClusterSnapshotArn":true},
     }),
     AvailabilityZones: node.getList("AvailabilityZones", "AvailabilityZone").map(x => x.content ?? ''),
-    SnapshotCreateTime: node.first("SnapshotCreateTime", false, x => parseTimestamp(x.content)),
+    SnapshotCreateTime: node.first("SnapshotCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     Port: node.first("Port", false, x => parseInt(x.content ?? '0')),
-    ClusterCreateTime: node.first("ClusterCreateTime", false, x => parseTimestamp(x.content)),
+    ClusterCreateTime: node.first("ClusterCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     PercentProgress: node.first("PercentProgress", false, x => parseInt(x.content ?? '0')),
     StorageEncrypted: node.first("StorageEncrypted", false, x => x.content === 'true'),
   };
@@ -1681,22 +1678,22 @@ export interface DBCluster {
   EnabledCloudwatchLogsExports: string[];
   DeletionProtection?: boolean | null;
 }
-function DBCluster_Parse(node: XmlNode): DBCluster {
+function DBCluster_Parse(node: xmlP.XmlNode): DBCluster {
   return {
     ...node.strings({
       optional: {"DBClusterIdentifier":true,"DBClusterParameterGroup":true,"DBSubnetGroup":true,"Status":true,"PercentProgress":true,"Endpoint":true,"ReaderEndpoint":true,"Engine":true,"EngineVersion":true,"MasterUsername":true,"PreferredBackupWindow":true,"PreferredMaintenanceWindow":true,"HostedZoneId":true,"KmsKeyId":true,"DbClusterResourceId":true,"DBClusterArn":true},
     }),
     AvailabilityZones: node.getList("AvailabilityZones", "AvailabilityZone").map(x => x.content ?? ''),
     BackupRetentionPeriod: node.first("BackupRetentionPeriod", false, x => parseInt(x.content ?? '0')),
-    EarliestRestorableTime: node.first("EarliestRestorableTime", false, x => parseTimestamp(x.content)),
+    EarliestRestorableTime: node.first("EarliestRestorableTime", false, x => xmlP.parseTimestamp(x.content)),
     MultiAZ: node.first("MultiAZ", false, x => x.content === 'true'),
-    LatestRestorableTime: node.first("LatestRestorableTime", false, x => parseTimestamp(x.content)),
+    LatestRestorableTime: node.first("LatestRestorableTime", false, x => xmlP.parseTimestamp(x.content)),
     Port: node.first("Port", false, x => parseInt(x.content ?? '0')),
     DBClusterMembers: node.getList("DBClusterMembers", "DBClusterMember").map(DBClusterMember_Parse),
     VpcSecurityGroups: node.getList("VpcSecurityGroups", "VpcSecurityGroupMembership").map(VpcSecurityGroupMembership_Parse),
     StorageEncrypted: node.first("StorageEncrypted", false, x => x.content === 'true'),
     AssociatedRoles: node.getList("AssociatedRoles", "DBClusterRole").map(DBClusterRole_Parse),
-    ClusterCreateTime: node.first("ClusterCreateTime", false, x => parseTimestamp(x.content)),
+    ClusterCreateTime: node.first("ClusterCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     EnabledCloudwatchLogsExports: node.getList("EnabledCloudwatchLogsExports", "member").map(x => x.content ?? ''),
     DeletionProtection: node.first("DeletionProtection", false, x => x.content === 'true'),
   };
@@ -1709,7 +1706,7 @@ export interface DBClusterMember {
   DBClusterParameterGroupStatus?: string | null;
   PromotionTier?: number | null;
 }
-function DBClusterMember_Parse(node: XmlNode): DBClusterMember {
+function DBClusterMember_Parse(node: xmlP.XmlNode): DBClusterMember {
   return {
     ...node.strings({
       optional: {"DBInstanceIdentifier":true,"DBClusterParameterGroupStatus":true},
@@ -1724,7 +1721,7 @@ export interface VpcSecurityGroupMembership {
   VpcSecurityGroupId?: string | null;
   Status?: string | null;
 }
-function VpcSecurityGroupMembership_Parse(node: XmlNode): VpcSecurityGroupMembership {
+function VpcSecurityGroupMembership_Parse(node: xmlP.XmlNode): VpcSecurityGroupMembership {
   return node.strings({
     optional: {"VpcSecurityGroupId":true,"Status":true},
   });
@@ -1735,7 +1732,7 @@ export interface DBClusterRole {
   RoleArn?: string | null;
   Status?: string | null;
 }
-function DBClusterRole_Parse(node: XmlNode): DBClusterRole {
+function DBClusterRole_Parse(node: xmlP.XmlNode): DBClusterRole {
   return node.strings({
     optional: {"RoleArn":true,"Status":true},
   });
@@ -1770,18 +1767,18 @@ export interface DBInstance {
   DBInstanceArn?: string | null;
   EnabledCloudwatchLogsExports: string[];
 }
-function DBInstance_Parse(node: XmlNode): DBInstance {
+function DBInstance_Parse(node: xmlP.XmlNode): DBInstance {
   return {
     ...node.strings({
       optional: {"DBInstanceIdentifier":true,"DBInstanceClass":true,"Engine":true,"DBInstanceStatus":true,"PreferredBackupWindow":true,"AvailabilityZone":true,"PreferredMaintenanceWindow":true,"EngineVersion":true,"DBClusterIdentifier":true,"KmsKeyId":true,"DbiResourceId":true,"CACertificateIdentifier":true,"DBInstanceArn":true},
     }),
     Endpoint: node.first("Endpoint", false, Endpoint_Parse),
-    InstanceCreateTime: node.first("InstanceCreateTime", false, x => parseTimestamp(x.content)),
+    InstanceCreateTime: node.first("InstanceCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     BackupRetentionPeriod: node.first("BackupRetentionPeriod", false, x => parseInt(x.content ?? '0')),
     VpcSecurityGroups: node.getList("VpcSecurityGroups", "VpcSecurityGroupMembership").map(VpcSecurityGroupMembership_Parse),
     DBSubnetGroup: node.first("DBSubnetGroup", false, DBSubnetGroup_Parse),
     PendingModifiedValues: node.first("PendingModifiedValues", false, PendingModifiedValues_Parse),
-    LatestRestorableTime: node.first("LatestRestorableTime", false, x => parseTimestamp(x.content)),
+    LatestRestorableTime: node.first("LatestRestorableTime", false, x => xmlP.parseTimestamp(x.content)),
     AutoMinorVersionUpgrade: node.first("AutoMinorVersionUpgrade", false, x => x.content === 'true'),
     PubliclyAccessible: node.first("PubliclyAccessible", false, x => x.content === 'true'),
     StatusInfos: node.getList("StatusInfos", "DBInstanceStatusInfo").map(DBInstanceStatusInfo_Parse),
@@ -1797,7 +1794,7 @@ export interface Endpoint {
   Port?: number | null;
   HostedZoneId?: string | null;
 }
-function Endpoint_Parse(node: XmlNode): Endpoint {
+function Endpoint_Parse(node: xmlP.XmlNode): Endpoint {
   return {
     ...node.strings({
       optional: {"Address":true,"HostedZoneId":true},
@@ -1815,7 +1812,7 @@ export interface DBSubnetGroup {
   Subnets: Subnet[];
   DBSubnetGroupArn?: string | null;
 }
-function DBSubnetGroup_Parse(node: XmlNode): DBSubnetGroup {
+function DBSubnetGroup_Parse(node: xmlP.XmlNode): DBSubnetGroup {
   return {
     ...node.strings({
       optional: {"DBSubnetGroupName":true,"DBSubnetGroupDescription":true,"VpcId":true,"SubnetGroupStatus":true,"DBSubnetGroupArn":true},
@@ -1830,7 +1827,7 @@ export interface Subnet {
   SubnetAvailabilityZone?: AvailabilityZone | null;
   SubnetStatus?: string | null;
 }
-function Subnet_Parse(node: XmlNode): Subnet {
+function Subnet_Parse(node: xmlP.XmlNode): Subnet {
   return {
     ...node.strings({
       optional: {"SubnetIdentifier":true,"SubnetStatus":true},
@@ -1843,7 +1840,7 @@ function Subnet_Parse(node: XmlNode): Subnet {
 export interface AvailabilityZone {
   Name?: string | null;
 }
-function AvailabilityZone_Parse(node: XmlNode): AvailabilityZone {
+function AvailabilityZone_Parse(node: xmlP.XmlNode): AvailabilityZone {
   return node.strings({
     optional: {"Name":true},
   });
@@ -1866,7 +1863,7 @@ export interface PendingModifiedValues {
   DBSubnetGroupName?: string | null;
   PendingCloudwatchLogsExports?: PendingCloudwatchLogsExports | null;
 }
-function PendingModifiedValues_Parse(node: XmlNode): PendingModifiedValues {
+function PendingModifiedValues_Parse(node: xmlP.XmlNode): PendingModifiedValues {
   return {
     ...node.strings({
       optional: {"DBInstanceClass":true,"MasterUserPassword":true,"EngineVersion":true,"LicenseModel":true,"DBInstanceIdentifier":true,"StorageType":true,"CACertificateIdentifier":true,"DBSubnetGroupName":true},
@@ -1885,7 +1882,7 @@ export interface PendingCloudwatchLogsExports {
   LogTypesToEnable: string[];
   LogTypesToDisable: string[];
 }
-function PendingCloudwatchLogsExports_Parse(node: XmlNode): PendingCloudwatchLogsExports {
+function PendingCloudwatchLogsExports_Parse(node: xmlP.XmlNode): PendingCloudwatchLogsExports {
   return {
     LogTypesToEnable: node.getList("LogTypesToEnable", "member").map(x => x.content ?? ''),
     LogTypesToDisable: node.getList("LogTypesToDisable", "member").map(x => x.content ?? ''),
@@ -1899,7 +1896,7 @@ export interface DBInstanceStatusInfo {
   Status?: string | null;
   Message?: string | null;
 }
-function DBInstanceStatusInfo_Parse(node: XmlNode): DBInstanceStatusInfo {
+function DBInstanceStatusInfo_Parse(node: xmlP.XmlNode): DBInstanceStatusInfo {
   return {
     ...node.strings({
       optional: {"StatusType":true,"Status":true,"Message":true},
@@ -1917,13 +1914,13 @@ export interface Certificate {
   ValidTill?: Date | number | null;
   CertificateArn?: string | null;
 }
-function Certificate_Parse(node: XmlNode): Certificate {
+function Certificate_Parse(node: xmlP.XmlNode): Certificate {
   return {
     ...node.strings({
       optional: {"CertificateIdentifier":true,"CertificateType":true,"Thumbprint":true,"CertificateArn":true},
     }),
-    ValidFrom: node.first("ValidFrom", false, x => parseTimestamp(x.content)),
-    ValidTill: node.first("ValidTill", false, x => parseTimestamp(x.content)),
+    ValidFrom: node.first("ValidFrom", false, x => xmlP.parseTimestamp(x.content)),
+    ValidTill: node.first("ValidTill", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -1932,7 +1929,7 @@ export interface DBClusterSnapshotAttributesResult {
   DBClusterSnapshotIdentifier?: string | null;
   DBClusterSnapshotAttributes: DBClusterSnapshotAttribute[];
 }
-function DBClusterSnapshotAttributesResult_Parse(node: XmlNode): DBClusterSnapshotAttributesResult {
+function DBClusterSnapshotAttributesResult_Parse(node: xmlP.XmlNode): DBClusterSnapshotAttributesResult {
   return {
     ...node.strings({
       optional: {"DBClusterSnapshotIdentifier":true},
@@ -1946,7 +1943,7 @@ export interface DBClusterSnapshotAttribute {
   AttributeName?: string | null;
   AttributeValues: string[];
 }
-function DBClusterSnapshotAttribute_Parse(node: XmlNode): DBClusterSnapshotAttribute {
+function DBClusterSnapshotAttribute_Parse(node: xmlP.XmlNode): DBClusterSnapshotAttribute {
   return {
     ...node.strings({
       optional: {"AttributeName":true},
@@ -1966,7 +1963,7 @@ export interface DBEngineVersion {
   ExportableLogTypes: string[];
   SupportsLogExportsToCloudwatchLogs?: boolean | null;
 }
-function DBEngineVersion_Parse(node: XmlNode): DBEngineVersion {
+function DBEngineVersion_Parse(node: xmlP.XmlNode): DBEngineVersion {
   return {
     ...node.strings({
       optional: {"Engine":true,"EngineVersion":true,"DBParameterGroupFamily":true,"DBEngineDescription":true,"DBEngineVersionDescription":true},
@@ -1985,7 +1982,7 @@ export interface UpgradeTarget {
   AutoUpgrade?: boolean | null;
   IsMajorVersionUpgrade?: boolean | null;
 }
-function UpgradeTarget_Parse(node: XmlNode): UpgradeTarget {
+function UpgradeTarget_Parse(node: xmlP.XmlNode): UpgradeTarget {
   return {
     ...node.strings({
       optional: {"Engine":true,"EngineVersion":true,"Description":true},
@@ -2001,7 +1998,7 @@ export interface EngineDefaults {
   Marker?: string | null;
   Parameters: Parameter[];
 }
-function EngineDefaults_Parse(node: XmlNode): EngineDefaults {
+function EngineDefaults_Parse(node: xmlP.XmlNode): EngineDefaults {
   return {
     ...node.strings({
       optional: {"DBParameterGroupFamily":true,"Marker":true},
@@ -2015,7 +2012,7 @@ export interface EventCategoriesMap {
   SourceType?: string | null;
   EventCategories: string[];
 }
-function EventCategoriesMap_Parse(node: XmlNode): EventCategoriesMap {
+function EventCategoriesMap_Parse(node: xmlP.XmlNode): EventCategoriesMap {
   return {
     ...node.strings({
       optional: {"SourceType":true},
@@ -2033,14 +2030,14 @@ export interface Event {
   Date?: Date | number | null;
   SourceArn?: string | null;
 }
-function Event_Parse(node: XmlNode): Event {
+function Event_Parse(node: xmlP.XmlNode): Event {
   return {
     ...node.strings({
       optional: {"SourceIdentifier":true,"Message":true,"SourceArn":true},
     }),
     SourceType: node.first("SourceType", false, x => (x.content ?? '') as SourceType),
     EventCategories: node.getList("EventCategories", "EventCategory").map(x => x.content ?? ''),
-    Date: node.first("Date", false, x => parseTimestamp(x.content)),
+    Date: node.first("Date", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -2053,7 +2050,7 @@ export interface OrderableDBInstanceOption {
   AvailabilityZones: AvailabilityZone[];
   Vpc?: boolean | null;
 }
-function OrderableDBInstanceOption_Parse(node: XmlNode): OrderableDBInstanceOption {
+function OrderableDBInstanceOption_Parse(node: xmlP.XmlNode): OrderableDBInstanceOption {
   return {
     ...node.strings({
       optional: {"Engine":true,"EngineVersion":true,"DBInstanceClass":true,"LicenseModel":true},

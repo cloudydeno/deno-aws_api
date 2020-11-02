@@ -5,10 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
-
 import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }
@@ -36,13 +35,14 @@ export default class TimestreamQuery {
   async cancelQuery(
     {abortSignal, ...params}: RequestConfig & CancelQueryRequest,
   ): Promise<CancelQueryResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      QueryId: params["QueryId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelQuery",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CancellationMessage": "s",
@@ -53,13 +53,13 @@ export default class TimestreamQuery {
   async describeEndpoints(
     {abortSignal, ...params}: RequestConfig & DescribeEndpointsRequest = {},
   ): Promise<DescribeEndpointsResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEndpoints",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Endpoints": [toEndpoint],
       },
@@ -70,14 +70,17 @@ export default class TimestreamQuery {
   async query(
     {abortSignal, ...params}: RequestConfig & QueryRequest,
   ): Promise<QueryResponse> {
-    const body: JSONObject = {...params,
-    ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-  };
+    const body: jsonP.JSONObject = params ? {
+      QueryString: params["QueryString"],
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+      NextToken: params["NextToken"],
+      MaxRows: params["MaxRows"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Query",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "QueryId": "s",
         "Rows": [toRow],
@@ -131,8 +134,8 @@ export interface Endpoint {
   Address: string;
   CachePeriodInMinutes: number;
 }
-function toEndpoint(root: JSONValue): Endpoint {
-  return prt.readObj({
+function toEndpoint(root: jsonP.JSONValue): Endpoint {
+  return jsonP.readObj({
     required: {
       "Address": "s",
       "CachePeriodInMinutes": "n",
@@ -145,8 +148,8 @@ function toEndpoint(root: JSONValue): Endpoint {
 export interface Row {
   Data: Datum[];
 }
-function toRow(root: JSONValue): Row {
-  return prt.readObj({
+function toRow(root: jsonP.JSONValue): Row {
+  return jsonP.readObj({
     required: {
       "Data": [toDatum],
     },
@@ -162,8 +165,8 @@ export interface Datum {
   RowValue?: Row | null;
   NullValue?: boolean | null;
 }
-function toDatum(root: JSONValue): Datum {
-  return prt.readObj({
+function toDatum(root: jsonP.JSONValue): Datum {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ScalarValue": "s",
@@ -180,8 +183,8 @@ export interface TimeSeriesDataPoint {
   Time: string;
   Value: Datum;
 }
-function toTimeSeriesDataPoint(root: JSONValue): TimeSeriesDataPoint {
-  return prt.readObj({
+function toTimeSeriesDataPoint(root: jsonP.JSONValue): TimeSeriesDataPoint {
+  return jsonP.readObj({
     required: {
       "Time": "s",
       "Value": toDatum,
@@ -195,8 +198,8 @@ export interface ColumnInfo {
   Name?: string | null;
   Type: Type;
 }
-function toColumnInfo(root: JSONValue): ColumnInfo {
-  return prt.readObj({
+function toColumnInfo(root: jsonP.JSONValue): ColumnInfo {
+  return jsonP.readObj({
     required: {
       "Type": toType,
     },
@@ -213,11 +216,11 @@ export interface Type {
   TimeSeriesMeasureValueColumnInfo?: ColumnInfo | null;
   RowColumnInfo?: ColumnInfo[] | null;
 }
-function toType(root: JSONValue): Type {
-  return prt.readObj({
+function toType(root: jsonP.JSONValue): Type {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "ScalarType": toScalarType,
+      "ScalarType": (x: jsonP.JSONValue) => cmnP.readEnum<ScalarType>(x),
       "ArrayColumnInfo": toColumnInfo,
       "TimeSeriesMeasureValueColumnInfo": toColumnInfo,
       "RowColumnInfo": [toColumnInfo],
@@ -238,19 +241,4 @@ export type ScalarType =
 | "INTERVAL_YEAR_TO_MONTH"
 | "UNKNOWN"
 | "INTEGER"
-;
-function toScalarType(root: JSONValue): ScalarType | null {
-  return ( false
-    || root == "VARCHAR"
-    || root == "BOOLEAN"
-    || root == "BIGINT"
-    || root == "DOUBLE"
-    || root == "TIMESTAMP"
-    || root == "DATE"
-    || root == "TIME"
-    || root == "INTERVAL_DAY_TO_SECOND"
-    || root == "INTERVAL_YEAR_TO_MONTH"
-    || root == "UNKNOWN"
-    || root == "INTEGER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;

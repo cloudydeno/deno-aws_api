@@ -5,8 +5,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { readXmlResult, readXmlMap, parseTimestamp, XmlNode } from '../../encoding/xml.ts';
-import * as prt from "../../encoding/querystring.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
+import * as qsP from "../../encoding/querystring.ts";
 
 export default class Redshift {
   #client: ServiceClient;
@@ -36,7 +37,7 @@ export default class Redshift {
       abortSignal, body,
       action: "AcceptReservedNodeExchange",
     });
-    const xml = readXmlResult(await resp.text(), "AcceptReservedNodeExchangeResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "AcceptReservedNodeExchangeResult");
     return {
       ExchangedReservedNode: xml.first("ExchangedReservedNode", false, ReservedNode_Parse),
     };
@@ -55,7 +56,7 @@ export default class Redshift {
       abortSignal, body,
       action: "AuthorizeClusterSecurityGroupIngress",
     });
-    const xml = readXmlResult(await resp.text(), "AuthorizeClusterSecurityGroupIngressResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "AuthorizeClusterSecurityGroupIngressResult");
     return {
       ClusterSecurityGroup: xml.first("ClusterSecurityGroup", false, ClusterSecurityGroup_Parse),
     };
@@ -73,7 +74,7 @@ export default class Redshift {
       abortSignal, body,
       action: "AuthorizeSnapshotAccess",
     });
-    const xml = readXmlResult(await resp.text(), "AuthorizeSnapshotAccessResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "AuthorizeSnapshotAccessResult");
     return {
       Snapshot: xml.first("Snapshot", false, Snapshot_Parse),
     };
@@ -84,12 +85,12 @@ export default class Redshift {
   ): Promise<BatchDeleteClusterSnapshotsResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["Identifiers"]) prt.appendList(body, prefix+"Identifiers", params["Identifiers"], {"appender":DeleteClusterSnapshotMessage_Serialize,"entryPrefix":".DeleteClusterSnapshotMessage."})
+    if (params["Identifiers"]) qsP.appendList(body, prefix+"Identifiers", params["Identifiers"], {"appender":DeleteClusterSnapshotMessage_Serialize,"entryPrefix":".DeleteClusterSnapshotMessage."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDeleteClusterSnapshots",
     });
-    const xml = readXmlResult(await resp.text(), "BatchDeleteClusterSnapshotsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "BatchDeleteClusterSnapshotsResult");
     return {
       Resources: xml.getList("Resources", "String").map(x => x.content ?? ''),
       Errors: xml.getList("Errors", "SnapshotErrorMessage").map(SnapshotErrorMessage_Parse),
@@ -101,14 +102,14 @@ export default class Redshift {
   ): Promise<BatchModifyClusterSnapshotsOutputMessage> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["SnapshotIdentifierList"]) prt.appendList(body, prefix+"SnapshotIdentifierList", params["SnapshotIdentifierList"], {"entryPrefix":".String."})
+    if (params["SnapshotIdentifierList"]) qsP.appendList(body, prefix+"SnapshotIdentifierList", params["SnapshotIdentifierList"], {"entryPrefix":".String."})
     if ("ManualSnapshotRetentionPeriod" in params) body.append(prefix+"ManualSnapshotRetentionPeriod", (params["ManualSnapshotRetentionPeriod"] ?? '').toString());
     if ("Force" in params) body.append(prefix+"Force", (params["Force"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchModifyClusterSnapshots",
     });
-    const xml = readXmlResult(await resp.text(), "BatchModifyClusterSnapshotsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "BatchModifyClusterSnapshotsResult");
     return {
       Resources: xml.getList("Resources", "String").map(x => x.content ?? ''),
       Errors: xml.getList("Errors", "SnapshotErrorMessage").map(SnapshotErrorMessage_Parse),
@@ -125,7 +126,7 @@ export default class Redshift {
       abortSignal, body,
       action: "CancelResize",
     });
-    const xml = readXmlResult(await resp.text(), "CancelResizeResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CancelResizeResult");
     return {
       ...xml.strings({
         optional: {"TargetNodeType":true,"TargetClusterType":true,"Status":true,"ResizeType":true,"Message":true,"TargetEncryptionType":true},
@@ -156,7 +157,7 @@ export default class Redshift {
       abortSignal, body,
       action: "CopyClusterSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "CopyClusterSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CopyClusterSnapshotResult");
     return {
       Snapshot: xml.first("Snapshot", false, Snapshot_Parse),
     };
@@ -173,8 +174,8 @@ export default class Redshift {
     body.append(prefix+"NodeType", (params["NodeType"] ?? '').toString());
     body.append(prefix+"MasterUsername", (params["MasterUsername"] ?? '').toString());
     body.append(prefix+"MasterUserPassword", (params["MasterUserPassword"] ?? '').toString());
-    if (params["ClusterSecurityGroups"]) prt.appendList(body, prefix+"ClusterSecurityGroups", params["ClusterSecurityGroups"], {"entryPrefix":".ClusterSecurityGroupName."})
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["ClusterSecurityGroups"]) qsP.appendList(body, prefix+"ClusterSecurityGroups", params["ClusterSecurityGroups"], {"entryPrefix":".ClusterSecurityGroupName."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("ClusterSubnetGroupName" in params) body.append(prefix+"ClusterSubnetGroupName", (params["ClusterSubnetGroupName"] ?? '').toString());
     if ("AvailabilityZone" in params) body.append(prefix+"AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
     if ("PreferredMaintenanceWindow" in params) body.append(prefix+"PreferredMaintenanceWindow", (params["PreferredMaintenanceWindow"] ?? '').toString());
@@ -190,18 +191,18 @@ export default class Redshift {
     if ("HsmClientCertificateIdentifier" in params) body.append(prefix+"HsmClientCertificateIdentifier", (params["HsmClientCertificateIdentifier"] ?? '').toString());
     if ("HsmConfigurationIdentifier" in params) body.append(prefix+"HsmConfigurationIdentifier", (params["HsmConfigurationIdentifier"] ?? '').toString());
     if ("ElasticIp" in params) body.append(prefix+"ElasticIp", (params["ElasticIp"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
     if ("EnhancedVpcRouting" in params) body.append(prefix+"EnhancedVpcRouting", (params["EnhancedVpcRouting"] ?? '').toString());
     if ("AdditionalInfo" in params) body.append(prefix+"AdditionalInfo", (params["AdditionalInfo"] ?? '').toString());
-    if (params["IamRoles"]) prt.appendList(body, prefix+"IamRoles", params["IamRoles"], {"entryPrefix":".IamRoleArn."})
+    if (params["IamRoles"]) qsP.appendList(body, prefix+"IamRoles", params["IamRoles"], {"entryPrefix":".IamRoleArn."})
     if ("MaintenanceTrackName" in params) body.append(prefix+"MaintenanceTrackName", (params["MaintenanceTrackName"] ?? '').toString());
     if ("SnapshotScheduleIdentifier" in params) body.append(prefix+"SnapshotScheduleIdentifier", (params["SnapshotScheduleIdentifier"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCluster",
     });
-    const xml = readXmlResult(await resp.text(), "CreateClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateClusterResult");
     return {
       Cluster: xml.first("Cluster", false, Cluster_Parse),
     };
@@ -215,12 +216,12 @@ export default class Redshift {
     body.append(prefix+"ParameterGroupName", (params["ParameterGroupName"] ?? '').toString());
     body.append(prefix+"ParameterGroupFamily", (params["ParameterGroupFamily"] ?? '').toString());
     body.append(prefix+"Description", (params["Description"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateClusterParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateClusterParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateClusterParameterGroupResult");
     return {
       ClusterParameterGroup: xml.first("ClusterParameterGroup", false, ClusterParameterGroup_Parse),
     };
@@ -233,12 +234,12 @@ export default class Redshift {
     const prefix = '';
     body.append(prefix+"ClusterSecurityGroupName", (params["ClusterSecurityGroupName"] ?? '').toString());
     body.append(prefix+"Description", (params["Description"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateClusterSecurityGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateClusterSecurityGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateClusterSecurityGroupResult");
     return {
       ClusterSecurityGroup: xml.first("ClusterSecurityGroup", false, ClusterSecurityGroup_Parse),
     };
@@ -252,12 +253,12 @@ export default class Redshift {
     body.append(prefix+"SnapshotIdentifier", (params["SnapshotIdentifier"] ?? '').toString());
     body.append(prefix+"ClusterIdentifier", (params["ClusterIdentifier"] ?? '').toString());
     if ("ManualSnapshotRetentionPeriod" in params) body.append(prefix+"ManualSnapshotRetentionPeriod", (params["ManualSnapshotRetentionPeriod"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateClusterSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "CreateClusterSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateClusterSnapshotResult");
     return {
       Snapshot: xml.first("Snapshot", false, Snapshot_Parse),
     };
@@ -270,13 +271,13 @@ export default class Redshift {
     const prefix = '';
     body.append(prefix+"ClusterSubnetGroupName", (params["ClusterSubnetGroupName"] ?? '').toString());
     body.append(prefix+"Description", (params["Description"] ?? '').toString());
-    if (params["SubnetIds"]) prt.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["SubnetIds"]) qsP.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateClusterSubnetGroup",
     });
-    const xml = readXmlResult(await resp.text(), "CreateClusterSubnetGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateClusterSubnetGroupResult");
     return {
       ClusterSubnetGroup: xml.first("ClusterSubnetGroup", false, ClusterSubnetGroup_Parse),
     };
@@ -290,16 +291,16 @@ export default class Redshift {
     body.append(prefix+"SubscriptionName", (params["SubscriptionName"] ?? '').toString());
     body.append(prefix+"SnsTopicArn", (params["SnsTopicArn"] ?? '').toString());
     if ("SourceType" in params) body.append(prefix+"SourceType", (params["SourceType"] ?? '').toString());
-    if (params["SourceIds"]) prt.appendList(body, prefix+"SourceIds", params["SourceIds"], {"entryPrefix":".SourceId."})
-    if (params["EventCategories"]) prt.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
+    if (params["SourceIds"]) qsP.appendList(body, prefix+"SourceIds", params["SourceIds"], {"entryPrefix":".SourceId."})
+    if (params["EventCategories"]) qsP.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
     if ("Severity" in params) body.append(prefix+"Severity", (params["Severity"] ?? '').toString());
     if ("Enabled" in params) body.append(prefix+"Enabled", (params["Enabled"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEventSubscription",
     });
-    const xml = readXmlResult(await resp.text(), "CreateEventSubscriptionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateEventSubscriptionResult");
     return {
       EventSubscription: xml.first("EventSubscription", false, EventSubscription_Parse),
     };
@@ -311,12 +312,12 @@ export default class Redshift {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"HsmClientCertificateIdentifier", (params["HsmClientCertificateIdentifier"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHsmClientCertificate",
     });
-    const xml = readXmlResult(await resp.text(), "CreateHsmClientCertificateResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateHsmClientCertificateResult");
     return {
       HsmClientCertificate: xml.first("HsmClientCertificate", false, HsmClientCertificate_Parse),
     };
@@ -333,12 +334,12 @@ export default class Redshift {
     body.append(prefix+"HsmPartitionName", (params["HsmPartitionName"] ?? '').toString());
     body.append(prefix+"HsmPartitionPassword", (params["HsmPartitionPassword"] ?? '').toString());
     body.append(prefix+"HsmServerPublicCertificate", (params["HsmServerPublicCertificate"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHsmConfiguration",
     });
-    const xml = readXmlResult(await resp.text(), "CreateHsmConfigurationResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateHsmConfigurationResult");
     return {
       HsmConfiguration: xml.first("HsmConfiguration", false, HsmConfiguration_Parse),
     };
@@ -354,14 +355,14 @@ export default class Redshift {
     body.append(prefix+"Schedule", (params["Schedule"] ?? '').toString());
     body.append(prefix+"IamRole", (params["IamRole"] ?? '').toString());
     if ("ScheduledActionDescription" in params) body.append(prefix+"ScheduledActionDescription", (params["ScheduledActionDescription"] ?? '').toString());
-    if ("StartTime" in params) body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
-    if ("EndTime" in params) body.append(prefix+"EndTime", prt.encodeDate_iso8601(params["EndTime"]));
+    if ("StartTime" in params) body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+    if ("EndTime" in params) body.append(prefix+"EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
     if ("Enable" in params) body.append(prefix+"Enable", (params["Enable"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateScheduledAction",
     });
-    const xml = readXmlResult(await resp.text(), "CreateScheduledActionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateScheduledActionResult");
     return ScheduledAction_Parse(xml);
   }
 
@@ -372,12 +373,12 @@ export default class Redshift {
     const prefix = '';
     body.append(prefix+"SnapshotCopyGrantName", (params["SnapshotCopyGrantName"] ?? '').toString());
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSnapshotCopyGrant",
     });
-    const xml = readXmlResult(await resp.text(), "CreateSnapshotCopyGrantResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateSnapshotCopyGrantResult");
     return {
       SnapshotCopyGrant: xml.first("SnapshotCopyGrant", false, SnapshotCopyGrant_Parse),
     };
@@ -388,17 +389,17 @@ export default class Redshift {
   ): Promise<SnapshotSchedule> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["ScheduleDefinitions"]) prt.appendList(body, prefix+"ScheduleDefinitions", params["ScheduleDefinitions"], {"entryPrefix":".ScheduleDefinition."})
+    if (params["ScheduleDefinitions"]) qsP.appendList(body, prefix+"ScheduleDefinitions", params["ScheduleDefinitions"], {"entryPrefix":".ScheduleDefinition."})
     if ("ScheduleIdentifier" in params) body.append(prefix+"ScheduleIdentifier", (params["ScheduleIdentifier"] ?? '').toString());
     if ("ScheduleDescription" in params) body.append(prefix+"ScheduleDescription", (params["ScheduleDescription"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("NextInvocations" in params) body.append(prefix+"NextInvocations", (params["NextInvocations"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSnapshotSchedule",
     });
-    const xml = readXmlResult(await resp.text(), "CreateSnapshotScheduleResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateSnapshotScheduleResult");
     return SnapshotSchedule_Parse(xml);
   }
 
@@ -408,7 +409,7 @@ export default class Redshift {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceName", (params["ResourceName"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTags",
@@ -426,12 +427,12 @@ export default class Redshift {
     body.append(prefix+"Amount", (params["Amount"] ?? '').toString());
     if ("Period" in params) body.append(prefix+"Period", (params["Period"] ?? '').toString());
     if ("BreachAction" in params) body.append(prefix+"BreachAction", (params["BreachAction"] ?? '').toString());
-    if (params["Tags"]) prt.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUsageLimit",
     });
-    const xml = readXmlResult(await resp.text(), "CreateUsageLimitResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateUsageLimitResult");
     return UsageLimit_Parse(xml);
   }
 
@@ -448,7 +449,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DeleteCluster",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteClusterResult");
     return {
       Cluster: xml.first("Cluster", false, Cluster_Parse),
     };
@@ -489,7 +490,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DeleteClusterSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "DeleteClusterSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteClusterSnapshotResult");
     return {
       Snapshot: xml.first("Snapshot", false, Snapshot_Parse),
     };
@@ -585,7 +586,7 @@ export default class Redshift {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceName", (params["ResourceName"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTags",
@@ -609,12 +610,12 @@ export default class Redshift {
   ): Promise<AccountAttributeList> {
     const body = new URLSearchParams;
     const prefix = '';
-    if (params["AttributeNames"]) prt.appendList(body, prefix+"AttributeNames", params["AttributeNames"], {"entryPrefix":".AttributeName."})
+    if (params["AttributeNames"]) qsP.appendList(body, prefix+"AttributeNames", params["AttributeNames"], {"entryPrefix":".AttributeName."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccountAttributes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeAccountAttributesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeAccountAttributesResult");
     return {
       AccountAttributes: xml.getList("AccountAttributes", "AccountAttribute").map(AccountAttribute_Parse),
     };
@@ -632,7 +633,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DescribeClusterDbRevisions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeClusterDbRevisionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeClusterDbRevisionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -649,13 +650,13 @@ export default class Redshift {
     if ("ParameterGroupName" in params) body.append(prefix+"ParameterGroupName", (params["ParameterGroupName"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
-    if (params["TagValues"]) prt.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
+    if (params["TagValues"]) qsP.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeClusterParameterGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeClusterParameterGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeClusterParameterGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -677,7 +678,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DescribeClusterParameters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeClusterParametersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeClusterParametersResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -694,13 +695,13 @@ export default class Redshift {
     if ("ClusterSecurityGroupName" in params) body.append(prefix+"ClusterSecurityGroupName", (params["ClusterSecurityGroupName"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
-    if (params["TagValues"]) prt.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
+    if (params["TagValues"]) qsP.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeClusterSecurityGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeClusterSecurityGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeClusterSecurityGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -717,20 +718,20 @@ export default class Redshift {
     if ("ClusterIdentifier" in params) body.append(prefix+"ClusterIdentifier", (params["ClusterIdentifier"] ?? '').toString());
     if ("SnapshotIdentifier" in params) body.append(prefix+"SnapshotIdentifier", (params["SnapshotIdentifier"] ?? '').toString());
     if ("SnapshotType" in params) body.append(prefix+"SnapshotType", (params["SnapshotType"] ?? '').toString());
-    if ("StartTime" in params) body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
-    if ("EndTime" in params) body.append(prefix+"EndTime", prt.encodeDate_iso8601(params["EndTime"]));
+    if ("StartTime" in params) body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+    if ("EndTime" in params) body.append(prefix+"EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("OwnerAccount" in params) body.append(prefix+"OwnerAccount", (params["OwnerAccount"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
-    if (params["TagValues"]) prt.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
+    if (params["TagValues"]) qsP.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
     if ("ClusterExists" in params) body.append(prefix+"ClusterExists", (params["ClusterExists"] ?? '').toString());
-    if (params["SortingEntities"]) prt.appendList(body, prefix+"SortingEntities", params["SortingEntities"], {"appender":SnapshotSortingEntity_Serialize,"entryPrefix":".SnapshotSortingEntity."})
+    if (params["SortingEntities"]) qsP.appendList(body, prefix+"SortingEntities", params["SortingEntities"], {"appender":SnapshotSortingEntity_Serialize,"entryPrefix":".SnapshotSortingEntity."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeClusterSnapshots",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeClusterSnapshotsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeClusterSnapshotsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -747,13 +748,13 @@ export default class Redshift {
     if ("ClusterSubnetGroupName" in params) body.append(prefix+"ClusterSubnetGroupName", (params["ClusterSubnetGroupName"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
-    if (params["TagValues"]) prt.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
+    if (params["TagValues"]) qsP.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeClusterSubnetGroups",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeClusterSubnetGroupsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeClusterSubnetGroupsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -774,7 +775,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DescribeClusterTracks",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeClusterTracksResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeClusterTracksResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -796,7 +797,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DescribeClusterVersions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeClusterVersionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeClusterVersionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -813,13 +814,13 @@ export default class Redshift {
     if ("ClusterIdentifier" in params) body.append(prefix+"ClusterIdentifier", (params["ClusterIdentifier"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
-    if (params["TagValues"]) prt.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
+    if (params["TagValues"]) qsP.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeClusters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeClustersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeClustersResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -840,7 +841,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DescribeDefaultClusterParameters",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeDefaultClusterParametersResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDefaultClusterParametersResult");
     return {
       DefaultClusterParameters: xml.first("DefaultClusterParameters", false, DefaultClusterParameters_Parse),
     };
@@ -856,7 +857,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DescribeEventCategories",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEventCategoriesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEventCategoriesResult");
     return {
       EventCategoriesMapList: xml.getList("EventCategoriesMapList", "EventCategoriesMap").map(EventCategoriesMap_Parse),
     };
@@ -870,13 +871,13 @@ export default class Redshift {
     if ("SubscriptionName" in params) body.append(prefix+"SubscriptionName", (params["SubscriptionName"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
-    if (params["TagValues"]) prt.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
+    if (params["TagValues"]) qsP.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventSubscriptions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEventSubscriptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEventSubscriptionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -892,8 +893,8 @@ export default class Redshift {
     const prefix = '';
     if ("SourceIdentifier" in params) body.append(prefix+"SourceIdentifier", (params["SourceIdentifier"] ?? '').toString());
     if ("SourceType" in params) body.append(prefix+"SourceType", (params["SourceType"] ?? '').toString());
-    if ("StartTime" in params) body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
-    if ("EndTime" in params) body.append(prefix+"EndTime", prt.encodeDate_iso8601(params["EndTime"]));
+    if ("StartTime" in params) body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+    if ("EndTime" in params) body.append(prefix+"EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
     if ("Duration" in params) body.append(prefix+"Duration", (params["Duration"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
@@ -901,7 +902,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DescribeEvents",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeEventsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeEventsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -918,13 +919,13 @@ export default class Redshift {
     if ("HsmClientCertificateIdentifier" in params) body.append(prefix+"HsmClientCertificateIdentifier", (params["HsmClientCertificateIdentifier"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
-    if (params["TagValues"]) prt.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
+    if (params["TagValues"]) qsP.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeHsmClientCertificates",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeHsmClientCertificatesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeHsmClientCertificatesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -941,13 +942,13 @@ export default class Redshift {
     if ("HsmConfigurationIdentifier" in params) body.append(prefix+"HsmConfigurationIdentifier", (params["HsmConfigurationIdentifier"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
-    if (params["TagValues"]) prt.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
+    if (params["TagValues"]) qsP.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeHsmConfigurations",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeHsmConfigurationsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeHsmConfigurationsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -966,14 +967,14 @@ export default class Redshift {
       abortSignal, body,
       action: "DescribeLoggingStatus",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeLoggingStatusResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeLoggingStatusResult");
     return {
       ...xml.strings({
         optional: {"BucketName":true,"S3KeyPrefix":true,"LastFailureMessage":true},
       }),
       LoggingEnabled: xml.first("LoggingEnabled", false, x => x.content === 'true'),
-      LastSuccessfulDeliveryTime: xml.first("LastSuccessfulDeliveryTime", false, x => parseTimestamp(x.content)),
-      LastFailureTime: xml.first("LastFailureTime", false, x => parseTimestamp(x.content)),
+      LastSuccessfulDeliveryTime: xml.first("LastSuccessfulDeliveryTime", false, x => xmlP.parseTimestamp(x.content)),
+      LastFailureTime: xml.first("LastFailureTime", false, x => xmlP.parseTimestamp(x.content)),
     };
   }
 
@@ -986,14 +987,14 @@ export default class Redshift {
     if ("ClusterIdentifier" in params) body.append(prefix+"ClusterIdentifier", (params["ClusterIdentifier"] ?? '').toString());
     if ("SnapshotIdentifier" in params) body.append(prefix+"SnapshotIdentifier", (params["SnapshotIdentifier"] ?? '').toString());
     if ("OwnerAccount" in params) body.append(prefix+"OwnerAccount", (params["OwnerAccount"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filter", params["Filters"], {"appender":NodeConfigurationOptionsFilter_Serialize,"entryPrefix":".NodeConfigurationOptionsFilter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":NodeConfigurationOptionsFilter_Serialize,"entryPrefix":".NodeConfigurationOptionsFilter."})
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNodeConfigurationOptions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeNodeConfigurationOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeNodeConfigurationOptionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1015,7 +1016,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DescribeOrderableClusterOptions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeOrderableClusterOptionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeOrderableClusterOptionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1036,7 +1037,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DescribeReservedNodeOfferings",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeReservedNodeOfferingsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeReservedNodeOfferingsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1057,7 +1058,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DescribeReservedNodes",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeReservedNodesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeReservedNodesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1076,7 +1077,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DescribeResize",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeResizeResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeResizeResult");
     return {
       ...xml.strings({
         optional: {"TargetNodeType":true,"TargetClusterType":true,"Status":true,"ResizeType":true,"Message":true,"TargetEncryptionType":true},
@@ -1101,17 +1102,17 @@ export default class Redshift {
     const prefix = '';
     if ("ScheduledActionName" in params) body.append(prefix+"ScheduledActionName", (params["ScheduledActionName"] ?? '').toString());
     if ("TargetActionType" in params) body.append(prefix+"TargetActionType", (params["TargetActionType"] ?? '').toString());
-    if ("StartTime" in params) body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
-    if ("EndTime" in params) body.append(prefix+"EndTime", prt.encodeDate_iso8601(params["EndTime"]));
+    if ("StartTime" in params) body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+    if ("EndTime" in params) body.append(prefix+"EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
     if ("Active" in params) body.append(prefix+"Active", (params["Active"] ?? '').toString());
-    if (params["Filters"]) prt.appendList(body, prefix+"Filters", params["Filters"], {"appender":ScheduledActionFilter_Serialize,"entryPrefix":".ScheduledActionFilter."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":ScheduledActionFilter_Serialize,"entryPrefix":".ScheduledActionFilter."})
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeScheduledActions",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeScheduledActionsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeScheduledActionsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1128,13 +1129,13 @@ export default class Redshift {
     if ("SnapshotCopyGrantName" in params) body.append(prefix+"SnapshotCopyGrantName", (params["SnapshotCopyGrantName"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
-    if (params["TagValues"]) prt.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
+    if (params["TagValues"]) qsP.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSnapshotCopyGrants",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeSnapshotCopyGrantsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeSnapshotCopyGrantsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1150,15 +1151,15 @@ export default class Redshift {
     const prefix = '';
     if ("ClusterIdentifier" in params) body.append(prefix+"ClusterIdentifier", (params["ClusterIdentifier"] ?? '').toString());
     if ("ScheduleIdentifier" in params) body.append(prefix+"ScheduleIdentifier", (params["ScheduleIdentifier"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
-    if (params["TagValues"]) prt.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
+    if (params["TagValues"]) qsP.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSnapshotSchedules",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeSnapshotSchedulesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeSnapshotSchedulesResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1174,7 +1175,7 @@ export default class Redshift {
       abortSignal,
       action: "DescribeStorage",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeStorageResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeStorageResult");
     return {
       TotalBackupSizeInMegaBytes: xml.first("TotalBackupSizeInMegaBytes", false, x => parseFloat(x.content ?? '0')),
       TotalProvisionedStorageInMegaBytes: xml.first("TotalProvisionedStorageInMegaBytes", false, x => parseFloat(x.content ?? '0')),
@@ -1194,7 +1195,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DescribeTableRestoreStatus",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeTableRestoreStatusResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeTableRestoreStatusResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1212,13 +1213,13 @@ export default class Redshift {
     if ("ResourceType" in params) body.append(prefix+"ResourceType", (params["ResourceType"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
-    if (params["TagValues"]) prt.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
+    if (params["TagValues"]) qsP.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTags",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeTagsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeTagsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1237,13 +1238,13 @@ export default class Redshift {
     if ("FeatureType" in params) body.append(prefix+"FeatureType", (params["FeatureType"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
-    if (params["TagKeys"]) prt.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
-    if (params["TagValues"]) prt.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".TagKey."})
+    if (params["TagValues"]) qsP.appendList(body, prefix+"TagValues", params["TagValues"], {"entryPrefix":".TagValue."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUsageLimits",
     });
-    const xml = readXmlResult(await resp.text(), "DescribeUsageLimitsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeUsageLimitsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1262,14 +1263,14 @@ export default class Redshift {
       abortSignal, body,
       action: "DisableLogging",
     });
-    const xml = readXmlResult(await resp.text(), "DisableLoggingResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DisableLoggingResult");
     return {
       ...xml.strings({
         optional: {"BucketName":true,"S3KeyPrefix":true,"LastFailureMessage":true},
       }),
       LoggingEnabled: xml.first("LoggingEnabled", false, x => x.content === 'true'),
-      LastSuccessfulDeliveryTime: xml.first("LastSuccessfulDeliveryTime", false, x => parseTimestamp(x.content)),
-      LastFailureTime: xml.first("LastFailureTime", false, x => parseTimestamp(x.content)),
+      LastSuccessfulDeliveryTime: xml.first("LastSuccessfulDeliveryTime", false, x => xmlP.parseTimestamp(x.content)),
+      LastFailureTime: xml.first("LastFailureTime", false, x => xmlP.parseTimestamp(x.content)),
     };
   }
 
@@ -1283,7 +1284,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DisableSnapshotCopy",
     });
-    const xml = readXmlResult(await resp.text(), "DisableSnapshotCopyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "DisableSnapshotCopyResult");
     return {
       Cluster: xml.first("Cluster", false, Cluster_Parse),
     };
@@ -1301,14 +1302,14 @@ export default class Redshift {
       abortSignal, body,
       action: "EnableLogging",
     });
-    const xml = readXmlResult(await resp.text(), "EnableLoggingResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "EnableLoggingResult");
     return {
       ...xml.strings({
         optional: {"BucketName":true,"S3KeyPrefix":true,"LastFailureMessage":true},
       }),
       LoggingEnabled: xml.first("LoggingEnabled", false, x => x.content === 'true'),
-      LastSuccessfulDeliveryTime: xml.first("LastSuccessfulDeliveryTime", false, x => parseTimestamp(x.content)),
-      LastFailureTime: xml.first("LastFailureTime", false, x => parseTimestamp(x.content)),
+      LastSuccessfulDeliveryTime: xml.first("LastSuccessfulDeliveryTime", false, x => xmlP.parseTimestamp(x.content)),
+      LastFailureTime: xml.first("LastFailureTime", false, x => xmlP.parseTimestamp(x.content)),
     };
   }
 
@@ -1326,7 +1327,7 @@ export default class Redshift {
       abortSignal, body,
       action: "EnableSnapshotCopy",
     });
-    const xml = readXmlResult(await resp.text(), "EnableSnapshotCopyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "EnableSnapshotCopyResult");
     return {
       Cluster: xml.first("Cluster", false, Cluster_Parse),
     };
@@ -1342,17 +1343,17 @@ export default class Redshift {
     body.append(prefix+"ClusterIdentifier", (params["ClusterIdentifier"] ?? '').toString());
     if ("DurationSeconds" in params) body.append(prefix+"DurationSeconds", (params["DurationSeconds"] ?? '').toString());
     if ("AutoCreate" in params) body.append(prefix+"AutoCreate", (params["AutoCreate"] ?? '').toString());
-    if (params["DbGroups"]) prt.appendList(body, prefix+"DbGroups", params["DbGroups"], {"entryPrefix":".DbGroup."})
+    if (params["DbGroups"]) qsP.appendList(body, prefix+"DbGroups", params["DbGroups"], {"entryPrefix":".DbGroup."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetClusterCredentials",
     });
-    const xml = readXmlResult(await resp.text(), "GetClusterCredentialsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetClusterCredentialsResult");
     return {
       ...xml.strings({
         optional: {"DbUser":true,"DbPassword":true},
       }),
-      Expiration: xml.first("Expiration", false, x => parseTimestamp(x.content)),
+      Expiration: xml.first("Expiration", false, x => xmlP.parseTimestamp(x.content)),
     };
   }
 
@@ -1368,7 +1369,7 @@ export default class Redshift {
       abortSignal, body,
       action: "GetReservedNodeExchangeOfferings",
     });
-    const xml = readXmlResult(await resp.text(), "GetReservedNodeExchangeOfferingsResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "GetReservedNodeExchangeOfferingsResult");
     return {
       ...xml.strings({
         optional: {"Marker":true},
@@ -1386,8 +1387,8 @@ export default class Redshift {
     if ("ClusterType" in params) body.append(prefix+"ClusterType", (params["ClusterType"] ?? '').toString());
     if ("NodeType" in params) body.append(prefix+"NodeType", (params["NodeType"] ?? '').toString());
     if ("NumberOfNodes" in params) body.append(prefix+"NumberOfNodes", (params["NumberOfNodes"] ?? '').toString());
-    if (params["ClusterSecurityGroups"]) prt.appendList(body, prefix+"ClusterSecurityGroups", params["ClusterSecurityGroups"], {"entryPrefix":".ClusterSecurityGroupName."})
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["ClusterSecurityGroups"]) qsP.appendList(body, prefix+"ClusterSecurityGroups", params["ClusterSecurityGroups"], {"entryPrefix":".ClusterSecurityGroupName."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("MasterUserPassword" in params) body.append(prefix+"MasterUserPassword", (params["MasterUserPassword"] ?? '').toString());
     if ("ClusterParameterGroupName" in params) body.append(prefix+"ClusterParameterGroupName", (params["ClusterParameterGroupName"] ?? '').toString());
     if ("AutomatedSnapshotRetentionPeriod" in params) body.append(prefix+"AutomatedSnapshotRetentionPeriod", (params["AutomatedSnapshotRetentionPeriod"] ?? '').toString());
@@ -1408,7 +1409,7 @@ export default class Redshift {
       abortSignal, body,
       action: "ModifyCluster",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyClusterResult");
     return {
       Cluster: xml.first("Cluster", false, Cluster_Parse),
     };
@@ -1425,7 +1426,7 @@ export default class Redshift {
       abortSignal, body,
       action: "ModifyClusterDbRevision",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyClusterDbRevisionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyClusterDbRevisionResult");
     return {
       Cluster: xml.first("Cluster", false, Cluster_Parse),
     };
@@ -1437,13 +1438,13 @@ export default class Redshift {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ClusterIdentifier", (params["ClusterIdentifier"] ?? '').toString());
-    if (params["AddIamRoles"]) prt.appendList(body, prefix+"AddIamRoles", params["AddIamRoles"], {"entryPrefix":".IamRoleArn."})
-    if (params["RemoveIamRoles"]) prt.appendList(body, prefix+"RemoveIamRoles", params["RemoveIamRoles"], {"entryPrefix":".IamRoleArn."})
+    if (params["AddIamRoles"]) qsP.appendList(body, prefix+"AddIamRoles", params["AddIamRoles"], {"entryPrefix":".IamRoleArn."})
+    if (params["RemoveIamRoles"]) qsP.appendList(body, prefix+"RemoveIamRoles", params["RemoveIamRoles"], {"entryPrefix":".IamRoleArn."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyClusterIamRoles",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyClusterIamRolesResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyClusterIamRolesResult");
     return {
       Cluster: xml.first("Cluster", false, Cluster_Parse),
     };
@@ -1457,14 +1458,14 @@ export default class Redshift {
     body.append(prefix+"ClusterIdentifier", (params["ClusterIdentifier"] ?? '').toString());
     if ("DeferMaintenance" in params) body.append(prefix+"DeferMaintenance", (params["DeferMaintenance"] ?? '').toString());
     if ("DeferMaintenanceIdentifier" in params) body.append(prefix+"DeferMaintenanceIdentifier", (params["DeferMaintenanceIdentifier"] ?? '').toString());
-    if ("DeferMaintenanceStartTime" in params) body.append(prefix+"DeferMaintenanceStartTime", prt.encodeDate_iso8601(params["DeferMaintenanceStartTime"]));
-    if ("DeferMaintenanceEndTime" in params) body.append(prefix+"DeferMaintenanceEndTime", prt.encodeDate_iso8601(params["DeferMaintenanceEndTime"]));
+    if ("DeferMaintenanceStartTime" in params) body.append(prefix+"DeferMaintenanceStartTime", qsP.encodeDate_iso8601(params["DeferMaintenanceStartTime"]));
+    if ("DeferMaintenanceEndTime" in params) body.append(prefix+"DeferMaintenanceEndTime", qsP.encodeDate_iso8601(params["DeferMaintenanceEndTime"]));
     if ("DeferMaintenanceDuration" in params) body.append(prefix+"DeferMaintenanceDuration", (params["DeferMaintenanceDuration"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyClusterMaintenance",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyClusterMaintenanceResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyClusterMaintenanceResult");
     return {
       Cluster: xml.first("Cluster", false, Cluster_Parse),
     };
@@ -1476,12 +1477,12 @@ export default class Redshift {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ParameterGroupName", (params["ParameterGroupName"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyClusterParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyClusterParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyClusterParameterGroupResult");
     return xml.strings({
       optional: {"ParameterGroupName":true,"ParameterGroupStatus":true},
     });
@@ -1499,7 +1500,7 @@ export default class Redshift {
       abortSignal, body,
       action: "ModifyClusterSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyClusterSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyClusterSnapshotResult");
     return {
       Snapshot: xml.first("Snapshot", false, Snapshot_Parse),
     };
@@ -1526,12 +1527,12 @@ export default class Redshift {
     const prefix = '';
     body.append(prefix+"ClusterSubnetGroupName", (params["ClusterSubnetGroupName"] ?? '').toString());
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
-    if (params["SubnetIds"]) prt.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
+    if (params["SubnetIds"]) qsP.appendList(body, prefix+"SubnetIds", params["SubnetIds"], {"entryPrefix":".SubnetIdentifier."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyClusterSubnetGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyClusterSubnetGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyClusterSubnetGroupResult");
     return {
       ClusterSubnetGroup: xml.first("ClusterSubnetGroup", false, ClusterSubnetGroup_Parse),
     };
@@ -1545,15 +1546,15 @@ export default class Redshift {
     body.append(prefix+"SubscriptionName", (params["SubscriptionName"] ?? '').toString());
     if ("SnsTopicArn" in params) body.append(prefix+"SnsTopicArn", (params["SnsTopicArn"] ?? '').toString());
     if ("SourceType" in params) body.append(prefix+"SourceType", (params["SourceType"] ?? '').toString());
-    if (params["SourceIds"]) prt.appendList(body, prefix+"SourceIds", params["SourceIds"], {"entryPrefix":".SourceId."})
-    if (params["EventCategories"]) prt.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
+    if (params["SourceIds"]) qsP.appendList(body, prefix+"SourceIds", params["SourceIds"], {"entryPrefix":".SourceId."})
+    if (params["EventCategories"]) qsP.appendList(body, prefix+"EventCategories", params["EventCategories"], {"entryPrefix":".EventCategory."})
     if ("Severity" in params) body.append(prefix+"Severity", (params["Severity"] ?? '').toString());
     if ("Enabled" in params) body.append(prefix+"Enabled", (params["Enabled"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyEventSubscription",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyEventSubscriptionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyEventSubscriptionResult");
     return {
       EventSubscription: xml.first("EventSubscription", false, EventSubscription_Parse),
     };
@@ -1569,14 +1570,14 @@ export default class Redshift {
     if ("Schedule" in params) body.append(prefix+"Schedule", (params["Schedule"] ?? '').toString());
     if ("IamRole" in params) body.append(prefix+"IamRole", (params["IamRole"] ?? '').toString());
     if ("ScheduledActionDescription" in params) body.append(prefix+"ScheduledActionDescription", (params["ScheduledActionDescription"] ?? '').toString());
-    if ("StartTime" in params) body.append(prefix+"StartTime", prt.encodeDate_iso8601(params["StartTime"]));
-    if ("EndTime" in params) body.append(prefix+"EndTime", prt.encodeDate_iso8601(params["EndTime"]));
+    if ("StartTime" in params) body.append(prefix+"StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+    if ("EndTime" in params) body.append(prefix+"EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
     if ("Enable" in params) body.append(prefix+"Enable", (params["Enable"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyScheduledAction",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyScheduledActionResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyScheduledActionResult");
     return ScheduledAction_Parse(xml);
   }
 
@@ -1592,7 +1593,7 @@ export default class Redshift {
       abortSignal, body,
       action: "ModifySnapshotCopyRetentionPeriod",
     });
-    const xml = readXmlResult(await resp.text(), "ModifySnapshotCopyRetentionPeriodResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifySnapshotCopyRetentionPeriodResult");
     return {
       Cluster: xml.first("Cluster", false, Cluster_Parse),
     };
@@ -1604,12 +1605,12 @@ export default class Redshift {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ScheduleIdentifier", (params["ScheduleIdentifier"] ?? '').toString());
-    if (params["ScheduleDefinitions"]) prt.appendList(body, prefix+"ScheduleDefinitions", params["ScheduleDefinitions"], {"entryPrefix":".ScheduleDefinition."})
+    if (params["ScheduleDefinitions"]) qsP.appendList(body, prefix+"ScheduleDefinitions", params["ScheduleDefinitions"], {"entryPrefix":".ScheduleDefinition."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifySnapshotSchedule",
     });
-    const xml = readXmlResult(await resp.text(), "ModifySnapshotScheduleResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifySnapshotScheduleResult");
     return SnapshotSchedule_Parse(xml);
   }
 
@@ -1625,7 +1626,7 @@ export default class Redshift {
       abortSignal, body,
       action: "ModifyUsageLimit",
     });
-    const xml = readXmlResult(await resp.text(), "ModifyUsageLimitResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyUsageLimitResult");
     return UsageLimit_Parse(xml);
   }
 
@@ -1639,7 +1640,7 @@ export default class Redshift {
       abortSignal, body,
       action: "PauseCluster",
     });
-    const xml = readXmlResult(await resp.text(), "PauseClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "PauseClusterResult");
     return {
       Cluster: xml.first("Cluster", false, Cluster_Parse),
     };
@@ -1656,7 +1657,7 @@ export default class Redshift {
       abortSignal, body,
       action: "PurchaseReservedNodeOffering",
     });
-    const xml = readXmlResult(await resp.text(), "PurchaseReservedNodeOfferingResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "PurchaseReservedNodeOfferingResult");
     return {
       ReservedNode: xml.first("ReservedNode", false, ReservedNode_Parse),
     };
@@ -1672,7 +1673,7 @@ export default class Redshift {
       abortSignal, body,
       action: "RebootCluster",
     });
-    const xml = readXmlResult(await resp.text(), "RebootClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RebootClusterResult");
     return {
       Cluster: xml.first("Cluster", false, Cluster_Parse),
     };
@@ -1685,12 +1686,12 @@ export default class Redshift {
     const prefix = '';
     body.append(prefix+"ParameterGroupName", (params["ParameterGroupName"] ?? '').toString());
     if ("ResetAllParameters" in params) body.append(prefix+"ResetAllParameters", (params["ResetAllParameters"] ?? '').toString());
-    if (params["Parameters"]) prt.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
+    if (params["Parameters"]) qsP.appendList(body, prefix+"Parameters", params["Parameters"], {"appender":Parameter_Serialize,"entryPrefix":".Parameter."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResetClusterParameterGroup",
     });
-    const xml = readXmlResult(await resp.text(), "ResetClusterParameterGroupResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ResetClusterParameterGroupResult");
     return xml.strings({
       optional: {"ParameterGroupName":true,"ParameterGroupStatus":true},
     });
@@ -1710,7 +1711,7 @@ export default class Redshift {
       abortSignal, body,
       action: "ResizeCluster",
     });
-    const xml = readXmlResult(await resp.text(), "ResizeClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ResizeClusterResult");
     return {
       Cluster: xml.first("Cluster", false, Cluster_Parse),
     };
@@ -1734,8 +1735,8 @@ export default class Redshift {
     if ("HsmConfigurationIdentifier" in params) body.append(prefix+"HsmConfigurationIdentifier", (params["HsmConfigurationIdentifier"] ?? '').toString());
     if ("ElasticIp" in params) body.append(prefix+"ElasticIp", (params["ElasticIp"] ?? '').toString());
     if ("ClusterParameterGroupName" in params) body.append(prefix+"ClusterParameterGroupName", (params["ClusterParameterGroupName"] ?? '').toString());
-    if (params["ClusterSecurityGroups"]) prt.appendList(body, prefix+"ClusterSecurityGroups", params["ClusterSecurityGroups"], {"entryPrefix":".ClusterSecurityGroupName."})
-    if (params["VpcSecurityGroupIds"]) prt.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
+    if (params["ClusterSecurityGroups"]) qsP.appendList(body, prefix+"ClusterSecurityGroups", params["ClusterSecurityGroups"], {"entryPrefix":".ClusterSecurityGroupName."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".VpcSecurityGroupId."})
     if ("PreferredMaintenanceWindow" in params) body.append(prefix+"PreferredMaintenanceWindow", (params["PreferredMaintenanceWindow"] ?? '').toString());
     if ("AutomatedSnapshotRetentionPeriod" in params) body.append(prefix+"AutomatedSnapshotRetentionPeriod", (params["AutomatedSnapshotRetentionPeriod"] ?? '').toString());
     if ("ManualSnapshotRetentionPeriod" in params) body.append(prefix+"ManualSnapshotRetentionPeriod", (params["ManualSnapshotRetentionPeriod"] ?? '').toString());
@@ -1743,7 +1744,7 @@ export default class Redshift {
     if ("NodeType" in params) body.append(prefix+"NodeType", (params["NodeType"] ?? '').toString());
     if ("EnhancedVpcRouting" in params) body.append(prefix+"EnhancedVpcRouting", (params["EnhancedVpcRouting"] ?? '').toString());
     if ("AdditionalInfo" in params) body.append(prefix+"AdditionalInfo", (params["AdditionalInfo"] ?? '').toString());
-    if (params["IamRoles"]) prt.appendList(body, prefix+"IamRoles", params["IamRoles"], {"entryPrefix":".IamRoleArn."})
+    if (params["IamRoles"]) qsP.appendList(body, prefix+"IamRoles", params["IamRoles"], {"entryPrefix":".IamRoleArn."})
     if ("MaintenanceTrackName" in params) body.append(prefix+"MaintenanceTrackName", (params["MaintenanceTrackName"] ?? '').toString());
     if ("SnapshotScheduleIdentifier" in params) body.append(prefix+"SnapshotScheduleIdentifier", (params["SnapshotScheduleIdentifier"] ?? '').toString());
     if ("NumberOfNodes" in params) body.append(prefix+"NumberOfNodes", (params["NumberOfNodes"] ?? '').toString());
@@ -1751,7 +1752,7 @@ export default class Redshift {
       abortSignal, body,
       action: "RestoreFromClusterSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "RestoreFromClusterSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RestoreFromClusterSnapshotResult");
     return {
       Cluster: xml.first("Cluster", false, Cluster_Parse),
     };
@@ -1774,7 +1775,7 @@ export default class Redshift {
       abortSignal, body,
       action: "RestoreTableFromClusterSnapshot",
     });
-    const xml = readXmlResult(await resp.text(), "RestoreTableFromClusterSnapshotResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RestoreTableFromClusterSnapshotResult");
     return {
       TableRestoreStatus: xml.first("TableRestoreStatus", false, TableRestoreStatus_Parse),
     };
@@ -1790,7 +1791,7 @@ export default class Redshift {
       abortSignal, body,
       action: "ResumeCluster",
     });
-    const xml = readXmlResult(await resp.text(), "ResumeClusterResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "ResumeClusterResult");
     return {
       Cluster: xml.first("Cluster", false, Cluster_Parse),
     };
@@ -1809,7 +1810,7 @@ export default class Redshift {
       abortSignal, body,
       action: "RevokeClusterSecurityGroupIngress",
     });
-    const xml = readXmlResult(await resp.text(), "RevokeClusterSecurityGroupIngressResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RevokeClusterSecurityGroupIngressResult");
     return {
       ClusterSecurityGroup: xml.first("ClusterSecurityGroup", false, ClusterSecurityGroup_Parse),
     };
@@ -1827,7 +1828,7 @@ export default class Redshift {
       abortSignal, body,
       action: "RevokeSnapshotAccess",
     });
-    const xml = readXmlResult(await resp.text(), "RevokeSnapshotAccessResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RevokeSnapshotAccessResult");
     return {
       Snapshot: xml.first("Snapshot", false, Snapshot_Parse),
     };
@@ -1843,7 +1844,7 @@ export default class Redshift {
       abortSignal, body,
       action: "RotateEncryptionKey",
     });
-    const xml = readXmlResult(await resp.text(), "RotateEncryptionKeyResult");
+    const xml = xmlP.readXmlResult(await resp.text(), "RotateEncryptionKeyResult");
     return {
       Cluster: xml.first("Cluster", false, Cluster_Parse),
     };
@@ -1859,7 +1860,7 @@ export default class Redshift {
     for (let i = 0; i < 30; i++) {
       try {
         const resp = await this.describeClusters(params);
-        const field = resp["Clusters"].flatMap(x => x["ClusterStatus"]);
+        const field = resp?.Clusters?.flatMap(x => x?.ClusterStatus);
         if (field.every(x => x === "available")) return resp;
         if (field.some(x => x === "deleting")) throw new Error(errMessage);
       } catch (err) {
@@ -1878,7 +1879,7 @@ export default class Redshift {
     for (let i = 0; i < 30; i++) {
       try {
         const resp = await this.describeClusters(params);
-        const field = resp["Clusters"].flatMap(x => x["ClusterStatus"]);
+        const field = resp?.Clusters?.flatMap(x => x?.ClusterStatus);
         if (field.some(x => x === "creating")) throw new Error(errMessage);
         if (field.some(x => x === "modifying")) throw new Error(errMessage);
       } catch (err) {
@@ -1897,8 +1898,8 @@ export default class Redshift {
     const errMessage = 'ResourceNotReady: Resource is not in the state ClusterRestored';
     for (let i = 0; i < 30; i++) {
       const resp = await this.describeClusters(params);
-      if (resp["Clusters"].flatMap(x => x["RestoreStatus"]?.["Status"]).every(x => x === "completed")) return resp;
-      if (resp["Clusters"].flatMap(x => x["ClusterStatus"]).some(x => x === "deleting")) throw new Error(errMessage);
+      if (resp?.Clusters?.flatMap(x => x?.RestoreStatus?.Status).every(x => x === "completed")) return resp;
+      if (resp?.Clusters?.flatMap(x => x?.ClusterStatus).some(x => x === "deleting")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 60000));
     }
     throw new Error(errMessage);
@@ -1911,7 +1912,7 @@ export default class Redshift {
     const errMessage = 'ResourceNotReady: Resource is not in the state SnapshotAvailable';
     for (let i = 0; i < 20; i++) {
       const resp = await this.describeClusterSnapshots(params);
-      const field = resp["Snapshots"].flatMap(x => x["Status"]);
+      const field = resp?.Snapshots?.flatMap(x => x?.Status);
       if (field.every(x => x === "available")) return resp;
       if (field.some(x => x === "failed")) throw new Error(errMessage);
       if (field.some(x => x === "deleted")) throw new Error(errMessage);
@@ -2591,7 +2592,7 @@ export interface PauseClusterMessage {
 function PauseClusterMessage_Serialize(body: URLSearchParams, prefix: string, params: PauseClusterMessage) {
     body.append(prefix+".ClusterIdentifier", (params["ClusterIdentifier"] ?? '').toString());
 }
-function PauseClusterMessage_Parse(node: XmlNode): PauseClusterMessage {
+function PauseClusterMessage_Parse(node: xmlP.XmlNode): PauseClusterMessage {
   return node.strings({
     required: {"ClusterIdentifier":true},
   });
@@ -2630,7 +2631,7 @@ function ResizeClusterMessage_Serialize(body: URLSearchParams, prefix: string, p
     if ("NumberOfNodes" in params) body.append(prefix+".NumberOfNodes", (params["NumberOfNodes"] ?? '').toString());
     if ("Classic" in params) body.append(prefix+".Classic", (params["Classic"] ?? '').toString());
 }
-function ResizeClusterMessage_Parse(node: XmlNode): ResizeClusterMessage {
+function ResizeClusterMessage_Parse(node: xmlP.XmlNode): ResizeClusterMessage {
   return {
     ...node.strings({
       required: {"ClusterIdentifier":true},
@@ -2690,7 +2691,7 @@ export interface ResumeClusterMessage {
 function ResumeClusterMessage_Serialize(body: URLSearchParams, prefix: string, params: ResumeClusterMessage) {
     body.append(prefix+".ClusterIdentifier", (params["ClusterIdentifier"] ?? '').toString());
 }
-function ResumeClusterMessage_Parse(node: XmlNode): ResumeClusterMessage {
+function ResumeClusterMessage_Parse(node: xmlP.XmlNode): ResumeClusterMessage {
   return node.strings({
     required: {"ClusterIdentifier":true},
   });
@@ -2820,16 +2821,16 @@ export interface ScheduledAction {
   StartTime?: Date | number | null;
   EndTime?: Date | number | null;
 }
-function ScheduledAction_Parse(node: XmlNode): ScheduledAction {
+function ScheduledAction_Parse(node: xmlP.XmlNode): ScheduledAction {
   return {
     ...node.strings({
       optional: {"ScheduledActionName":true,"Schedule":true,"IamRole":true,"ScheduledActionDescription":true},
     }),
     TargetAction: node.first("TargetAction", false, ScheduledActionType_Parse),
     State: node.first("State", false, x => (x.content ?? '') as ScheduledActionState),
-    NextInvocations: node.getList("NextInvocations", "ScheduledActionTime").map(x => parseTimestamp(x.content)),
-    StartTime: node.first("StartTime", false, x => parseTimestamp(x.content)),
-    EndTime: node.first("EndTime", false, x => parseTimestamp(x.content)),
+    NextInvocations: node.getList("NextInvocations", "ScheduledActionTime").map(x => xmlP.parseTimestamp(x.content)),
+    StartTime: node.first("StartTime", false, x => xmlP.parseTimestamp(x.content)),
+    EndTime: node.first("EndTime", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -2848,14 +2849,14 @@ export interface SnapshotSchedule {
   AssociatedClusterCount?: number | null;
   AssociatedClusters: ClusterAssociatedToSchedule[];
 }
-function SnapshotSchedule_Parse(node: XmlNode): SnapshotSchedule {
+function SnapshotSchedule_Parse(node: xmlP.XmlNode): SnapshotSchedule {
   return {
     ...node.strings({
       optional: {"ScheduleIdentifier":true,"ScheduleDescription":true},
     }),
     ScheduleDefinitions: node.getList("ScheduleDefinitions", "ScheduleDefinition").map(x => x.content ?? ''),
     Tags: node.getList("Tags", "Tag").map(Tag_Parse),
-    NextInvocations: node.getList("NextInvocations", "SnapshotTime").map(x => parseTimestamp(x.content)),
+    NextInvocations: node.getList("NextInvocations", "SnapshotTime").map(x => xmlP.parseTimestamp(x.content)),
     AssociatedClusterCount: node.first("AssociatedClusterCount", false, x => parseInt(x.content ?? '0')),
     AssociatedClusters: node.getList("AssociatedClusters", "ClusterAssociatedToSchedule").map(ClusterAssociatedToSchedule_Parse),
   };
@@ -2872,7 +2873,7 @@ export interface UsageLimit {
   BreachAction?: UsageLimitBreachAction | null;
   Tags: Tag[];
 }
-function UsageLimit_Parse(node: XmlNode): UsageLimit {
+function UsageLimit_Parse(node: xmlP.XmlNode): UsageLimit {
   return {
     ...node.strings({
       optional: {"UsageLimitId":true,"ClusterIdentifier":true},
@@ -3193,7 +3194,7 @@ function Tag_Serialize(body: URLSearchParams, prefix: string, params: Tag) {
     if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
     if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
-function Tag_Parse(node: XmlNode): Tag {
+function Tag_Parse(node: xmlP.XmlNode): Tag {
   return node.strings({
     optional: {"Key":true,"Value":true},
   });
@@ -3210,7 +3211,7 @@ function ScheduledActionType_Serialize(body: URLSearchParams, prefix: string, pa
     if (params["PauseCluster"] != null) PauseClusterMessage_Serialize(body, prefix+".PauseCluster", params["PauseCluster"]);
     if (params["ResumeCluster"] != null) ResumeClusterMessage_Serialize(body, prefix+".ResumeCluster", params["ResumeCluster"]);
 }
-function ScheduledActionType_Parse(node: XmlNode): ScheduledActionType {
+function ScheduledActionType_Parse(node: xmlP.XmlNode): ScheduledActionType {
   return {
     ResizeCluster: node.first("ResizeCluster", false, ResizeClusterMessage_Parse),
     PauseCluster: node.first("PauseCluster", false, PauseClusterMessage_Parse),
@@ -3222,35 +3223,27 @@ function ScheduledActionType_Parse(node: XmlNode): ScheduledActionType {
 export type UsageLimitFeatureType =
 | "spectrum"
 | "concurrency-scaling"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type UsageLimitLimitType =
 | "time"
 | "data-scanned"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type UsageLimitPeriod =
 | "daily"
 | "weekly"
 | "monthly"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type UsageLimitBreachAction =
 | "log"
 | "emit-metric"
 | "disable"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface SnapshotSortingEntity {
@@ -3267,15 +3260,13 @@ export type SnapshotAttributeToSortBy =
 | "SOURCE_TYPE"
 | "TOTAL_SIZE"
 | "CREATE_TIME"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type SortByOrder =
 | "ASC"
 | "DESC"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type SourceType =
@@ -3284,17 +3275,14 @@ export type SourceType =
 | "cluster-security-group"
 | "cluster-snapshot"
 | "scheduled-action"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ActionType =
 | "restore-cluster"
 | "recommend-node-config"
 | "resize-cluster"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface NodeConfigurationOptionsFilter {
@@ -3305,7 +3293,7 @@ export interface NodeConfigurationOptionsFilter {
 function NodeConfigurationOptionsFilter_Serialize(body: URLSearchParams, prefix: string, params: NodeConfigurationOptionsFilter) {
     if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
     if ("Operator" in params) body.append(prefix+".Operator", (params["Operator"] ?? '').toString());
-    if (params["Values"]) prt.appendList(body, prefix+".Value", params["Values"], {"entryPrefix":".item."})
+    if (params["Values"]) qsP.appendList(body, prefix+".Value", params["Values"], {"entryPrefix":".item."})
 }
 
 // refs: 1 - tags: input, named, enum
@@ -3314,8 +3302,7 @@ export type NodeConfigurationOptionsFilterName =
 | "NumberOfNodes"
 | "EstimatedDiskUtilizationPercent"
 | "Mode"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type OperatorType =
@@ -3326,16 +3313,14 @@ export type OperatorType =
 | "ge"
 | "in"
 | "between"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type ScheduledActionTypeValues =
 | "ResizeCluster"
 | "PauseCluster"
 | "ResumeCluster"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface ScheduledActionFilter {
@@ -3344,15 +3329,14 @@ export interface ScheduledActionFilter {
 }
 function ScheduledActionFilter_Serialize(body: URLSearchParams, prefix: string, params: ScheduledActionFilter) {
     body.append(prefix+".Name", (params["Name"] ?? '').toString());
-    if (params["Values"]) prt.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".item."})
+    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".item."})
 }
 
 // refs: 1 - tags: input, named, enum
 export type ScheduledActionFilterName =
 | "cluster-identifier"
 | "iam-role"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface Parameter {
@@ -3377,7 +3361,7 @@ function Parameter_Serialize(body: URLSearchParams, prefix: string, params: Para
     if ("IsModifiable" in params) body.append(prefix+".IsModifiable", (params["IsModifiable"] ?? '').toString());
     if ("MinimumEngineVersion" in params) body.append(prefix+".MinimumEngineVersion", (params["MinimumEngineVersion"] ?? '').toString());
 }
-function Parameter_Parse(node: XmlNode): Parameter {
+function Parameter_Parse(node: xmlP.XmlNode): Parameter {
   return {
     ...node.strings({
       optional: {"ParameterName":true,"ParameterValue":true,"Description":true,"Source":true,"DataType":true,"AllowedValues":true,"MinimumEngineVersion":true},
@@ -3391,9 +3375,7 @@ function Parameter_Parse(node: XmlNode): Parameter {
 export type ParameterApplyType =
 | "static"
 | "dynamic"
-;
-
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface ReservedNode {
@@ -3411,12 +3393,12 @@ export interface ReservedNode {
   RecurringCharges: RecurringCharge[];
   ReservedNodeOfferingType?: ReservedNodeOfferingType | null;
 }
-function ReservedNode_Parse(node: XmlNode): ReservedNode {
+function ReservedNode_Parse(node: xmlP.XmlNode): ReservedNode {
   return {
     ...node.strings({
       optional: {"ReservedNodeId":true,"ReservedNodeOfferingId":true,"NodeType":true,"CurrencyCode":true,"State":true,"OfferingType":true},
     }),
-    StartTime: node.first("StartTime", false, x => parseTimestamp(x.content)),
+    StartTime: node.first("StartTime", false, x => xmlP.parseTimestamp(x.content)),
     Duration: node.first("Duration", false, x => parseInt(x.content ?? '0')),
     FixedPrice: node.first("FixedPrice", false, x => parseFloat(x.content ?? '0')),
     UsagePrice: node.first("UsagePrice", false, x => parseFloat(x.content ?? '0')),
@@ -3431,7 +3413,7 @@ export interface RecurringCharge {
   RecurringChargeAmount?: number | null;
   RecurringChargeFrequency?: string | null;
 }
-function RecurringCharge_Parse(node: XmlNode): RecurringCharge {
+function RecurringCharge_Parse(node: xmlP.XmlNode): RecurringCharge {
   return {
     ...node.strings({
       optional: {"RecurringChargeFrequency":true},
@@ -3444,8 +3426,7 @@ function RecurringCharge_Parse(node: XmlNode): RecurringCharge {
 export type ReservedNodeOfferingType =
 | "Regular"
 | "Upgradable"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface ClusterSecurityGroup {
@@ -3455,7 +3436,7 @@ export interface ClusterSecurityGroup {
   IPRanges: IPRange[];
   Tags: Tag[];
 }
-function ClusterSecurityGroup_Parse(node: XmlNode): ClusterSecurityGroup {
+function ClusterSecurityGroup_Parse(node: xmlP.XmlNode): ClusterSecurityGroup {
   return {
     ...node.strings({
       optional: {"ClusterSecurityGroupName":true,"Description":true},
@@ -3473,7 +3454,7 @@ export interface EC2SecurityGroup {
   EC2SecurityGroupOwnerId?: string | null;
   Tags: Tag[];
 }
-function EC2SecurityGroup_Parse(node: XmlNode): EC2SecurityGroup {
+function EC2SecurityGroup_Parse(node: xmlP.XmlNode): EC2SecurityGroup {
   return {
     ...node.strings({
       optional: {"Status":true,"EC2SecurityGroupName":true,"EC2SecurityGroupOwnerId":true},
@@ -3488,7 +3469,7 @@ export interface IPRange {
   CIDRIP?: string | null;
   Tags: Tag[];
 }
-function IPRange_Parse(node: XmlNode): IPRange {
+function IPRange_Parse(node: xmlP.XmlNode): IPRange {
   return {
     ...node.strings({
       optional: {"Status":true,"CIDRIP":true},
@@ -3533,14 +3514,14 @@ export interface Snapshot {
   ManualSnapshotRemainingDays?: number | null;
   SnapshotRetentionStartTime?: Date | number | null;
 }
-function Snapshot_Parse(node: XmlNode): Snapshot {
+function Snapshot_Parse(node: xmlP.XmlNode): Snapshot {
   return {
     ...node.strings({
       optional: {"SnapshotIdentifier":true,"ClusterIdentifier":true,"Status":true,"AvailabilityZone":true,"MasterUsername":true,"ClusterVersion":true,"SnapshotType":true,"NodeType":true,"DBName":true,"VpcId":true,"KmsKeyId":true,"OwnerAccount":true,"SourceRegion":true,"MaintenanceTrackName":true},
     }),
-    SnapshotCreateTime: node.first("SnapshotCreateTime", false, x => parseTimestamp(x.content)),
+    SnapshotCreateTime: node.first("SnapshotCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     Port: node.first("Port", false, x => parseInt(x.content ?? '0')),
-    ClusterCreateTime: node.first("ClusterCreateTime", false, x => parseTimestamp(x.content)),
+    ClusterCreateTime: node.first("ClusterCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     NumberOfNodes: node.first("NumberOfNodes", false, x => parseInt(x.content ?? '0')),
     Encrypted: node.first("Encrypted", false, x => x.content === 'true'),
     EncryptedWithHSM: node.first("EncryptedWithHSM", false, x => x.content === 'true'),
@@ -3556,7 +3537,7 @@ function Snapshot_Parse(node: XmlNode): Snapshot {
     EnhancedVpcRouting: node.first("EnhancedVpcRouting", false, x => x.content === 'true'),
     ManualSnapshotRetentionPeriod: node.first("ManualSnapshotRetentionPeriod", false, x => parseInt(x.content ?? '0')),
     ManualSnapshotRemainingDays: node.first("ManualSnapshotRemainingDays", false, x => parseInt(x.content ?? '0')),
-    SnapshotRetentionStartTime: node.first("SnapshotRetentionStartTime", false, x => parseTimestamp(x.content)),
+    SnapshotRetentionStartTime: node.first("SnapshotRetentionStartTime", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -3565,7 +3546,7 @@ export interface AccountWithRestoreAccess {
   AccountId?: string | null;
   AccountAlias?: string | null;
 }
-function AccountWithRestoreAccess_Parse(node: XmlNode): AccountWithRestoreAccess {
+function AccountWithRestoreAccess_Parse(node: xmlP.XmlNode): AccountWithRestoreAccess {
   return node.strings({
     optional: {"AccountId":true,"AccountAlias":true},
   });
@@ -3578,7 +3559,7 @@ export interface SnapshotErrorMessage {
   FailureCode?: string | null;
   FailureReason?: string | null;
 }
-function SnapshotErrorMessage_Parse(node: XmlNode): SnapshotErrorMessage {
+function SnapshotErrorMessage_Parse(node: xmlP.XmlNode): SnapshotErrorMessage {
   return node.strings({
     optional: {"SnapshotIdentifier":true,"SnapshotClusterIdentifier":true,"FailureCode":true,"FailureReason":true},
   });
@@ -3633,13 +3614,13 @@ export interface Cluster {
   NextMaintenanceWindowStartTime?: Date | number | null;
   ResizeInfo?: ResizeInfo | null;
 }
-function Cluster_Parse(node: XmlNode): Cluster {
+function Cluster_Parse(node: xmlP.XmlNode): Cluster {
   return {
     ...node.strings({
       optional: {"ClusterIdentifier":true,"NodeType":true,"ClusterStatus":true,"ClusterAvailabilityStatus":true,"ModifyStatus":true,"MasterUsername":true,"DBName":true,"ClusterSubnetGroupName":true,"VpcId":true,"AvailabilityZone":true,"PreferredMaintenanceWindow":true,"ClusterVersion":true,"ClusterPublicKey":true,"ClusterRevisionNumber":true,"KmsKeyId":true,"MaintenanceTrackName":true,"ElasticResizeNumberOfNodeOptions":true,"SnapshotScheduleIdentifier":true,"ExpectedNextSnapshotScheduleTimeStatus":true},
     }),
     Endpoint: node.first("Endpoint", false, Endpoint_Parse),
-    ClusterCreateTime: node.first("ClusterCreateTime", false, x => parseTimestamp(x.content)),
+    ClusterCreateTime: node.first("ClusterCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     AutomatedSnapshotRetentionPeriod: node.first("AutomatedSnapshotRetentionPeriod", false, x => parseInt(x.content ?? '0')),
     ManualSnapshotRetentionPeriod: node.first("ManualSnapshotRetentionPeriod", false, x => parseInt(x.content ?? '0')),
     ClusterSecurityGroups: node.getList("ClusterSecurityGroups", "ClusterSecurityGroup").map(ClusterSecurityGroupMembership_Parse),
@@ -3662,8 +3643,8 @@ function Cluster_Parse(node: XmlNode): Cluster {
     PendingActions: node.getList("PendingActions", "member").map(x => x.content ?? ''),
     DeferredMaintenanceWindows: node.getList("DeferredMaintenanceWindows", "DeferredMaintenanceWindow").map(DeferredMaintenanceWindow_Parse),
     SnapshotScheduleState: node.first("SnapshotScheduleState", false, x => (x.content ?? '') as ScheduleState),
-    ExpectedNextSnapshotScheduleTime: node.first("ExpectedNextSnapshotScheduleTime", false, x => parseTimestamp(x.content)),
-    NextMaintenanceWindowStartTime: node.first("NextMaintenanceWindowStartTime", false, x => parseTimestamp(x.content)),
+    ExpectedNextSnapshotScheduleTime: node.first("ExpectedNextSnapshotScheduleTime", false, x => xmlP.parseTimestamp(x.content)),
+    NextMaintenanceWindowStartTime: node.first("NextMaintenanceWindowStartTime", false, x => xmlP.parseTimestamp(x.content)),
     ResizeInfo: node.first("ResizeInfo", false, ResizeInfo_Parse),
   };
 }
@@ -3673,7 +3654,7 @@ export interface Endpoint {
   Address?: string | null;
   Port?: number | null;
 }
-function Endpoint_Parse(node: XmlNode): Endpoint {
+function Endpoint_Parse(node: xmlP.XmlNode): Endpoint {
   return {
     ...node.strings({
       optional: {"Address":true},
@@ -3687,7 +3668,7 @@ export interface ClusterSecurityGroupMembership {
   ClusterSecurityGroupName?: string | null;
   Status?: string | null;
 }
-function ClusterSecurityGroupMembership_Parse(node: XmlNode): ClusterSecurityGroupMembership {
+function ClusterSecurityGroupMembership_Parse(node: xmlP.XmlNode): ClusterSecurityGroupMembership {
   return node.strings({
     optional: {"ClusterSecurityGroupName":true,"Status":true},
   });
@@ -3698,7 +3679,7 @@ export interface VpcSecurityGroupMembership {
   VpcSecurityGroupId?: string | null;
   Status?: string | null;
 }
-function VpcSecurityGroupMembership_Parse(node: XmlNode): VpcSecurityGroupMembership {
+function VpcSecurityGroupMembership_Parse(node: xmlP.XmlNode): VpcSecurityGroupMembership {
   return node.strings({
     optional: {"VpcSecurityGroupId":true,"Status":true},
   });
@@ -3710,7 +3691,7 @@ export interface ClusterParameterGroupStatus {
   ParameterApplyStatus?: string | null;
   ClusterParameterStatusList: ClusterParameterStatus[];
 }
-function ClusterParameterGroupStatus_Parse(node: XmlNode): ClusterParameterGroupStatus {
+function ClusterParameterGroupStatus_Parse(node: xmlP.XmlNode): ClusterParameterGroupStatus {
   return {
     ...node.strings({
       optional: {"ParameterGroupName":true,"ParameterApplyStatus":true},
@@ -3725,7 +3706,7 @@ export interface ClusterParameterStatus {
   ParameterApplyStatus?: string | null;
   ParameterApplyErrorDescription?: string | null;
 }
-function ClusterParameterStatus_Parse(node: XmlNode): ClusterParameterStatus {
+function ClusterParameterStatus_Parse(node: xmlP.XmlNode): ClusterParameterStatus {
   return node.strings({
     optional: {"ParameterName":true,"ParameterApplyStatus":true,"ParameterApplyErrorDescription":true},
   });
@@ -3745,7 +3726,7 @@ export interface PendingModifiedValues {
   MaintenanceTrackName?: string | null;
   EncryptionType?: string | null;
 }
-function PendingModifiedValues_Parse(node: XmlNode): PendingModifiedValues {
+function PendingModifiedValues_Parse(node: xmlP.XmlNode): PendingModifiedValues {
   return {
     ...node.strings({
       optional: {"MasterUserPassword":true,"NodeType":true,"ClusterType":true,"ClusterVersion":true,"ClusterIdentifier":true,"MaintenanceTrackName":true,"EncryptionType":true},
@@ -3766,7 +3747,7 @@ export interface RestoreStatus {
   ElapsedTimeInSeconds?: number | null;
   EstimatedTimeToCompletionInSeconds?: number | null;
 }
-function RestoreStatus_Parse(node: XmlNode): RestoreStatus {
+function RestoreStatus_Parse(node: xmlP.XmlNode): RestoreStatus {
   return {
     ...node.strings({
       optional: {"Status":true},
@@ -3788,7 +3769,7 @@ export interface DataTransferProgress {
   EstimatedTimeToCompletionInSeconds?: number | null;
   ElapsedTimeInSeconds?: number | null;
 }
-function DataTransferProgress_Parse(node: XmlNode): DataTransferProgress {
+function DataTransferProgress_Parse(node: xmlP.XmlNode): DataTransferProgress {
   return {
     ...node.strings({
       optional: {"Status":true},
@@ -3807,7 +3788,7 @@ export interface HsmStatus {
   HsmConfigurationIdentifier?: string | null;
   Status?: string | null;
 }
-function HsmStatus_Parse(node: XmlNode): HsmStatus {
+function HsmStatus_Parse(node: xmlP.XmlNode): HsmStatus {
   return node.strings({
     optional: {"HsmClientCertificateIdentifier":true,"HsmConfigurationIdentifier":true,"Status":true},
   });
@@ -3820,7 +3801,7 @@ export interface ClusterSnapshotCopyStatus {
   ManualSnapshotRetentionPeriod?: number | null;
   SnapshotCopyGrantName?: string | null;
 }
-function ClusterSnapshotCopyStatus_Parse(node: XmlNode): ClusterSnapshotCopyStatus {
+function ClusterSnapshotCopyStatus_Parse(node: xmlP.XmlNode): ClusterSnapshotCopyStatus {
   return {
     ...node.strings({
       optional: {"DestinationRegion":true,"SnapshotCopyGrantName":true},
@@ -3836,7 +3817,7 @@ export interface ClusterNode {
   PrivateIPAddress?: string | null;
   PublicIPAddress?: string | null;
 }
-function ClusterNode_Parse(node: XmlNode): ClusterNode {
+function ClusterNode_Parse(node: xmlP.XmlNode): ClusterNode {
   return node.strings({
     optional: {"NodeRole":true,"PrivateIPAddress":true,"PublicIPAddress":true},
   });
@@ -3847,7 +3828,7 @@ export interface ElasticIpStatus {
   ElasticIp?: string | null;
   Status?: string | null;
 }
-function ElasticIpStatus_Parse(node: XmlNode): ElasticIpStatus {
+function ElasticIpStatus_Parse(node: xmlP.XmlNode): ElasticIpStatus {
   return node.strings({
     optional: {"ElasticIp":true,"Status":true},
   });
@@ -3858,7 +3839,7 @@ export interface ClusterIamRole {
   IamRoleArn?: string | null;
   ApplyStatus?: string | null;
 }
-function ClusterIamRole_Parse(node: XmlNode): ClusterIamRole {
+function ClusterIamRole_Parse(node: xmlP.XmlNode): ClusterIamRole {
   return node.strings({
     optional: {"IamRoleArn":true,"ApplyStatus":true},
   });
@@ -3870,13 +3851,13 @@ export interface DeferredMaintenanceWindow {
   DeferMaintenanceStartTime?: Date | number | null;
   DeferMaintenanceEndTime?: Date | number | null;
 }
-function DeferredMaintenanceWindow_Parse(node: XmlNode): DeferredMaintenanceWindow {
+function DeferredMaintenanceWindow_Parse(node: xmlP.XmlNode): DeferredMaintenanceWindow {
   return {
     ...node.strings({
       optional: {"DeferMaintenanceIdentifier":true},
     }),
-    DeferMaintenanceStartTime: node.first("DeferMaintenanceStartTime", false, x => parseTimestamp(x.content)),
-    DeferMaintenanceEndTime: node.first("DeferMaintenanceEndTime", false, x => parseTimestamp(x.content)),
+    DeferMaintenanceStartTime: node.first("DeferMaintenanceStartTime", false, x => xmlP.parseTimestamp(x.content)),
+    DeferMaintenanceEndTime: node.first("DeferMaintenanceEndTime", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -3885,15 +3866,14 @@ export type ScheduleState =
 | "MODIFYING"
 | "ACTIVE"
 | "FAILED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 16 - tags: output, named, interface
 export interface ResizeInfo {
   ResizeType?: string | null;
   AllowCancelResize?: boolean | null;
 }
-function ResizeInfo_Parse(node: XmlNode): ResizeInfo {
+function ResizeInfo_Parse(node: xmlP.XmlNode): ResizeInfo {
   return {
     ...node.strings({
       optional: {"ResizeType":true},
@@ -3909,7 +3889,7 @@ export interface ClusterParameterGroup {
   Description?: string | null;
   Tags: Tag[];
 }
-function ClusterParameterGroup_Parse(node: XmlNode): ClusterParameterGroup {
+function ClusterParameterGroup_Parse(node: xmlP.XmlNode): ClusterParameterGroup {
   return {
     ...node.strings({
       optional: {"ParameterGroupName":true,"ParameterGroupFamily":true,"Description":true},
@@ -3927,7 +3907,7 @@ export interface ClusterSubnetGroup {
   Subnets: Subnet[];
   Tags: Tag[];
 }
-function ClusterSubnetGroup_Parse(node: XmlNode): ClusterSubnetGroup {
+function ClusterSubnetGroup_Parse(node: xmlP.XmlNode): ClusterSubnetGroup {
   return {
     ...node.strings({
       optional: {"ClusterSubnetGroupName":true,"Description":true,"VpcId":true,"SubnetGroupStatus":true},
@@ -3943,7 +3923,7 @@ export interface Subnet {
   SubnetAvailabilityZone?: AvailabilityZone | null;
   SubnetStatus?: string | null;
 }
-function Subnet_Parse(node: XmlNode): Subnet {
+function Subnet_Parse(node: xmlP.XmlNode): Subnet {
   return {
     ...node.strings({
       optional: {"SubnetIdentifier":true,"SubnetStatus":true},
@@ -3957,7 +3937,7 @@ export interface AvailabilityZone {
   Name?: string | null;
   SupportedPlatforms: SupportedPlatform[];
 }
-function AvailabilityZone_Parse(node: XmlNode): AvailabilityZone {
+function AvailabilityZone_Parse(node: xmlP.XmlNode): AvailabilityZone {
   return {
     ...node.strings({
       optional: {"Name":true},
@@ -3970,7 +3950,7 @@ function AvailabilityZone_Parse(node: XmlNode): AvailabilityZone {
 export interface SupportedPlatform {
   Name?: string | null;
 }
-function SupportedPlatform_Parse(node: XmlNode): SupportedPlatform {
+function SupportedPlatform_Parse(node: xmlP.XmlNode): SupportedPlatform {
   return node.strings({
     optional: {"Name":true},
   });
@@ -3990,12 +3970,12 @@ export interface EventSubscription {
   Enabled?: boolean | null;
   Tags: Tag[];
 }
-function EventSubscription_Parse(node: XmlNode): EventSubscription {
+function EventSubscription_Parse(node: xmlP.XmlNode): EventSubscription {
   return {
     ...node.strings({
       optional: {"CustomerAwsId":true,"CustSubscriptionId":true,"SnsTopicArn":true,"Status":true,"SourceType":true,"Severity":true},
     }),
-    SubscriptionCreationTime: node.first("SubscriptionCreationTime", false, x => parseTimestamp(x.content)),
+    SubscriptionCreationTime: node.first("SubscriptionCreationTime", false, x => xmlP.parseTimestamp(x.content)),
     SourceIdsList: node.getList("SourceIdsList", "SourceId").map(x => x.content ?? ''),
     EventCategoriesList: node.getList("EventCategoriesList", "EventCategory").map(x => x.content ?? ''),
     Enabled: node.first("Enabled", false, x => x.content === 'true'),
@@ -4009,7 +3989,7 @@ export interface HsmClientCertificate {
   HsmClientCertificatePublicKey?: string | null;
   Tags: Tag[];
 }
-function HsmClientCertificate_Parse(node: XmlNode): HsmClientCertificate {
+function HsmClientCertificate_Parse(node: xmlP.XmlNode): HsmClientCertificate {
   return {
     ...node.strings({
       optional: {"HsmClientCertificateIdentifier":true,"HsmClientCertificatePublicKey":true},
@@ -4026,7 +4006,7 @@ export interface HsmConfiguration {
   HsmPartitionName?: string | null;
   Tags: Tag[];
 }
-function HsmConfiguration_Parse(node: XmlNode): HsmConfiguration {
+function HsmConfiguration_Parse(node: xmlP.XmlNode): HsmConfiguration {
   return {
     ...node.strings({
       optional: {"HsmConfigurationIdentifier":true,"Description":true,"HsmIpAddress":true,"HsmPartitionName":true},
@@ -4039,8 +4019,7 @@ function HsmConfiguration_Parse(node: XmlNode): HsmConfiguration {
 export type ScheduledActionState =
 | "ACTIVE"
 | "DISABLED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface SnapshotCopyGrant {
@@ -4048,7 +4027,7 @@ export interface SnapshotCopyGrant {
   KmsKeyId?: string | null;
   Tags: Tag[];
 }
-function SnapshotCopyGrant_Parse(node: XmlNode): SnapshotCopyGrant {
+function SnapshotCopyGrant_Parse(node: xmlP.XmlNode): SnapshotCopyGrant {
   return {
     ...node.strings({
       optional: {"SnapshotCopyGrantName":true,"KmsKeyId":true},
@@ -4062,7 +4041,7 @@ export interface ClusterAssociatedToSchedule {
   ClusterIdentifier?: string | null;
   ScheduleAssociationState?: ScheduleState | null;
 }
-function ClusterAssociatedToSchedule_Parse(node: XmlNode): ClusterAssociatedToSchedule {
+function ClusterAssociatedToSchedule_Parse(node: xmlP.XmlNode): ClusterAssociatedToSchedule {
   return {
     ...node.strings({
       optional: {"ClusterIdentifier":true},
@@ -4076,7 +4055,7 @@ export interface AccountAttribute {
   AttributeName?: string | null;
   AttributeValues: AttributeValueTarget[];
 }
-function AccountAttribute_Parse(node: XmlNode): AccountAttribute {
+function AccountAttribute_Parse(node: xmlP.XmlNode): AccountAttribute {
   return {
     ...node.strings({
       optional: {"AttributeName":true},
@@ -4089,7 +4068,7 @@ function AccountAttribute_Parse(node: XmlNode): AccountAttribute {
 export interface AttributeValueTarget {
   AttributeValue?: string | null;
 }
-function AttributeValueTarget_Parse(node: XmlNode): AttributeValueTarget {
+function AttributeValueTarget_Parse(node: xmlP.XmlNode): AttributeValueTarget {
   return node.strings({
     optional: {"AttributeValue":true},
   });
@@ -4102,12 +4081,12 @@ export interface ClusterDbRevision {
   DatabaseRevisionReleaseDate?: Date | number | null;
   RevisionTargets: RevisionTarget[];
 }
-function ClusterDbRevision_Parse(node: XmlNode): ClusterDbRevision {
+function ClusterDbRevision_Parse(node: xmlP.XmlNode): ClusterDbRevision {
   return {
     ...node.strings({
       optional: {"ClusterIdentifier":true,"CurrentDatabaseRevision":true},
     }),
-    DatabaseRevisionReleaseDate: node.first("DatabaseRevisionReleaseDate", false, x => parseTimestamp(x.content)),
+    DatabaseRevisionReleaseDate: node.first("DatabaseRevisionReleaseDate", false, x => xmlP.parseTimestamp(x.content)),
     RevisionTargets: node.getList("RevisionTargets", "RevisionTarget").map(RevisionTarget_Parse),
   };
 }
@@ -4118,12 +4097,12 @@ export interface RevisionTarget {
   Description?: string | null;
   DatabaseRevisionReleaseDate?: Date | number | null;
 }
-function RevisionTarget_Parse(node: XmlNode): RevisionTarget {
+function RevisionTarget_Parse(node: xmlP.XmlNode): RevisionTarget {
   return {
     ...node.strings({
       optional: {"DatabaseRevision":true,"Description":true},
     }),
-    DatabaseRevisionReleaseDate: node.first("DatabaseRevisionReleaseDate", false, x => parseTimestamp(x.content)),
+    DatabaseRevisionReleaseDate: node.first("DatabaseRevisionReleaseDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4133,7 +4112,7 @@ export interface MaintenanceTrack {
   DatabaseVersion?: string | null;
   UpdateTargets: UpdateTarget[];
 }
-function MaintenanceTrack_Parse(node: XmlNode): MaintenanceTrack {
+function MaintenanceTrack_Parse(node: xmlP.XmlNode): MaintenanceTrack {
   return {
     ...node.strings({
       optional: {"MaintenanceTrackName":true,"DatabaseVersion":true},
@@ -4148,7 +4127,7 @@ export interface UpdateTarget {
   DatabaseVersion?: string | null;
   SupportedOperations: SupportedOperation[];
 }
-function UpdateTarget_Parse(node: XmlNode): UpdateTarget {
+function UpdateTarget_Parse(node: xmlP.XmlNode): UpdateTarget {
   return {
     ...node.strings({
       optional: {"MaintenanceTrackName":true,"DatabaseVersion":true},
@@ -4161,7 +4140,7 @@ function UpdateTarget_Parse(node: XmlNode): UpdateTarget {
 export interface SupportedOperation {
   OperationName?: string | null;
 }
-function SupportedOperation_Parse(node: XmlNode): SupportedOperation {
+function SupportedOperation_Parse(node: xmlP.XmlNode): SupportedOperation {
   return node.strings({
     optional: {"OperationName":true},
   });
@@ -4173,7 +4152,7 @@ export interface ClusterVersion {
   ClusterParameterGroupFamily?: string | null;
   Description?: string | null;
 }
-function ClusterVersion_Parse(node: XmlNode): ClusterVersion {
+function ClusterVersion_Parse(node: xmlP.XmlNode): ClusterVersion {
   return node.strings({
     optional: {"ClusterVersion":true,"ClusterParameterGroupFamily":true,"Description":true},
   });
@@ -4185,7 +4164,7 @@ export interface DefaultClusterParameters {
   Marker?: string | null;
   Parameters: Parameter[];
 }
-function DefaultClusterParameters_Parse(node: XmlNode): DefaultClusterParameters {
+function DefaultClusterParameters_Parse(node: xmlP.XmlNode): DefaultClusterParameters {
   return {
     ...node.strings({
       optional: {"ParameterGroupFamily":true,"Marker":true},
@@ -4199,7 +4178,7 @@ export interface EventCategoriesMap {
   SourceType?: string | null;
   Events: EventInfoMap[];
 }
-function EventCategoriesMap_Parse(node: XmlNode): EventCategoriesMap {
+function EventCategoriesMap_Parse(node: xmlP.XmlNode): EventCategoriesMap {
   return {
     ...node.strings({
       optional: {"SourceType":true},
@@ -4215,7 +4194,7 @@ export interface EventInfoMap {
   EventDescription?: string | null;
   Severity?: string | null;
 }
-function EventInfoMap_Parse(node: XmlNode): EventInfoMap {
+function EventInfoMap_Parse(node: xmlP.XmlNode): EventInfoMap {
   return {
     ...node.strings({
       optional: {"EventId":true,"EventDescription":true,"Severity":true},
@@ -4234,14 +4213,14 @@ export interface Event {
   Date?: Date | number | null;
   EventId?: string | null;
 }
-function Event_Parse(node: XmlNode): Event {
+function Event_Parse(node: xmlP.XmlNode): Event {
   return {
     ...node.strings({
       optional: {"SourceIdentifier":true,"Message":true,"Severity":true,"EventId":true},
     }),
     SourceType: node.first("SourceType", false, x => (x.content ?? '') as SourceType),
     EventCategories: node.getList("EventCategories", "EventCategory").map(x => x.content ?? ''),
-    Date: node.first("Date", false, x => parseTimestamp(x.content)),
+    Date: node.first("Date", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4252,7 +4231,7 @@ export interface NodeConfigurationOption {
   EstimatedDiskUtilizationPercent?: number | null;
   Mode?: Mode | null;
 }
-function NodeConfigurationOption_Parse(node: XmlNode): NodeConfigurationOption {
+function NodeConfigurationOption_Parse(node: xmlP.XmlNode): NodeConfigurationOption {
   return {
     ...node.strings({
       optional: {"NodeType":true},
@@ -4267,8 +4246,7 @@ function NodeConfigurationOption_Parse(node: XmlNode): NodeConfigurationOption {
 export type Mode =
 | "standard"
 | "high-performance"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface OrderableClusterOption {
@@ -4277,7 +4255,7 @@ export interface OrderableClusterOption {
   NodeType?: string | null;
   AvailabilityZones: AvailabilityZone[];
 }
-function OrderableClusterOption_Parse(node: XmlNode): OrderableClusterOption {
+function OrderableClusterOption_Parse(node: xmlP.XmlNode): OrderableClusterOption {
   return {
     ...node.strings({
       optional: {"ClusterVersion":true,"ClusterType":true,"NodeType":true},
@@ -4298,7 +4276,7 @@ export interface ReservedNodeOffering {
   RecurringCharges: RecurringCharge[];
   ReservedNodeOfferingType?: ReservedNodeOfferingType | null;
 }
-function ReservedNodeOffering_Parse(node: XmlNode): ReservedNodeOffering {
+function ReservedNodeOffering_Parse(node: xmlP.XmlNode): ReservedNodeOffering {
   return {
     ...node.strings({
       optional: {"ReservedNodeOfferingId":true,"NodeType":true,"CurrencyCode":true,"OfferingType":true},
@@ -4328,13 +4306,13 @@ export interface TableRestoreStatus {
   TargetSchemaName?: string | null;
   NewTableName?: string | null;
 }
-function TableRestoreStatus_Parse(node: XmlNode): TableRestoreStatus {
+function TableRestoreStatus_Parse(node: xmlP.XmlNode): TableRestoreStatus {
   return {
     ...node.strings({
       optional: {"TableRestoreRequestId":true,"Message":true,"ClusterIdentifier":true,"SnapshotIdentifier":true,"SourceDatabaseName":true,"SourceSchemaName":true,"SourceTableName":true,"TargetDatabaseName":true,"TargetSchemaName":true,"NewTableName":true},
     }),
     Status: node.first("Status", false, x => (x.content ?? '') as TableRestoreStatusType),
-    RequestTime: node.first("RequestTime", false, x => parseTimestamp(x.content)),
+    RequestTime: node.first("RequestTime", false, x => xmlP.parseTimestamp(x.content)),
     ProgressInMegaBytes: node.first("ProgressInMegaBytes", false, x => parseInt(x.content ?? '0')),
     TotalDataInMegaBytes: node.first("TotalDataInMegaBytes", false, x => parseInt(x.content ?? '0')),
   };
@@ -4347,8 +4325,7 @@ export type TableRestoreStatusType =
 | "SUCCEEDED"
 | "FAILED"
 | "CANCELED"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface TaggedResource {
@@ -4356,7 +4333,7 @@ export interface TaggedResource {
   ResourceName?: string | null;
   ResourceType?: string | null;
 }
-function TaggedResource_Parse(node: XmlNode): TaggedResource {
+function TaggedResource_Parse(node: xmlP.XmlNode): TaggedResource {
   return {
     ...node.strings({
       optional: {"ResourceName":true,"ResourceType":true},

@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class EC2InstanceConnect {
   #client: ServiceClient;
@@ -30,13 +30,17 @@ export default class EC2InstanceConnect {
   async sendSSHPublicKey(
     {abortSignal, ...params}: RequestConfig & SendSSHPublicKeyRequest,
   ): Promise<SendSSHPublicKeyResponse> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceId: params["InstanceId"],
+      InstanceOSUser: params["InstanceOSUser"],
+      SSHPublicKey: params["SSHPublicKey"],
+      AvailabilityZone: params["AvailabilityZone"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendSSHPublicKey",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "RequestId": "s",

@@ -5,8 +5,8 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import { JSONObject, JSONValue } from '../../encoding/json.ts';
-import * as prt from "../../encoding/json.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 
 export default class EMR {
   #client: ServiceClient;
@@ -30,14 +30,15 @@ export default class EMR {
   async addInstanceFleet(
     {abortSignal, ...params}: RequestConfig & AddInstanceFleetInput,
   ): Promise<AddInstanceFleetOutput> {
-    const body: JSONObject = {...params,
-    InstanceFleet: fromInstanceFleetConfig(params["InstanceFleet"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+      InstanceFleet: fromInstanceFleetConfig(params["InstanceFleet"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddInstanceFleet",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ClusterId": "s",
@@ -50,14 +51,15 @@ export default class EMR {
   async addInstanceGroups(
     {abortSignal, ...params}: RequestConfig & AddInstanceGroupsInput,
   ): Promise<AddInstanceGroupsOutput> {
-    const body: JSONObject = {...params,
-    InstanceGroups: params["InstanceGroups"]?.map(x => fromInstanceGroupConfig(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      InstanceGroups: params["InstanceGroups"]?.map(x => fromInstanceGroupConfig(x)),
+      JobFlowId: params["JobFlowId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddInstanceGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobFlowId": "s",
@@ -70,14 +72,15 @@ export default class EMR {
   async addJobFlowSteps(
     {abortSignal, ...params}: RequestConfig & AddJobFlowStepsInput,
   ): Promise<AddJobFlowStepsOutput> {
-    const body: JSONObject = {...params,
-    Steps: params["Steps"]?.map(x => fromStepConfig(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobFlowId: params["JobFlowId"],
+      Steps: params["Steps"]?.map(x => fromStepConfig(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddJobFlowSteps",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "StepIds": ["s"],
@@ -88,14 +91,15 @@ export default class EMR {
   async addTags(
     {abortSignal, ...params}: RequestConfig & AddTagsInput,
   ): Promise<AddTagsOutput> {
-    const body: JSONObject = {...params,
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -104,13 +108,16 @@ export default class EMR {
   async cancelSteps(
     {abortSignal, ...params}: RequestConfig & CancelStepsInput,
   ): Promise<CancelStepsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+      StepIds: params["StepIds"],
+      StepCancellationOption: params["StepCancellationOption"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelSteps",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "CancelStepsInfoList": [toCancelStepsInfo],
@@ -121,13 +128,15 @@ export default class EMR {
   async createSecurityConfiguration(
     {abortSignal, ...params}: RequestConfig & CreateSecurityConfigurationInput,
   ): Promise<CreateSecurityConfigurationOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      SecurityConfiguration: params["SecurityConfiguration"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSecurityConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "Name": "s",
         "CreationDateTime": "d",
@@ -139,13 +148,14 @@ export default class EMR {
   async deleteSecurityConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteSecurityConfigurationInput,
   ): Promise<DeleteSecurityConfigurationOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSecurityConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -154,13 +164,14 @@ export default class EMR {
   async describeCluster(
     {abortSignal, ...params}: RequestConfig & DescribeClusterInput,
   ): Promise<DescribeClusterOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCluster",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Cluster": toCluster,
@@ -171,15 +182,17 @@ export default class EMR {
   async describeJobFlows(
     {abortSignal, ...params}: RequestConfig & DescribeJobFlowsInput = {},
   ): Promise<DescribeJobFlowsOutput> {
-    const body: JSONObject = {...params,
-    CreatedAfter: prt.serializeDate_unixTimestamp(params["CreatedAfter"]),
-    CreatedBefore: prt.serializeDate_unixTimestamp(params["CreatedBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CreatedAfter: jsonP.serializeDate_unixTimestamp(params["CreatedAfter"]),
+      CreatedBefore: jsonP.serializeDate_unixTimestamp(params["CreatedBefore"]),
+      JobFlowIds: params["JobFlowIds"],
+      JobFlowStates: params["JobFlowStates"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeJobFlows",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobFlows": [toJobFlowDetail],
@@ -190,13 +203,14 @@ export default class EMR {
   async describeNotebookExecution(
     {abortSignal, ...params}: RequestConfig & DescribeNotebookExecutionInput,
   ): Promise<DescribeNotebookExecutionOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NotebookExecutionId: params["NotebookExecutionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNotebookExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NotebookExecution": toNotebookExecution,
@@ -207,13 +221,14 @@ export default class EMR {
   async describeSecurityConfiguration(
     {abortSignal, ...params}: RequestConfig & DescribeSecurityConfigurationInput,
   ): Promise<DescribeSecurityConfigurationOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSecurityConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Name": "s",
@@ -226,13 +241,15 @@ export default class EMR {
   async describeStep(
     {abortSignal, ...params}: RequestConfig & DescribeStepInput,
   ): Promise<DescribeStepOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+      StepId: params["StepId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStep",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Step": toStep,
@@ -243,13 +260,13 @@ export default class EMR {
   async getBlockPublicAccessConfiguration(
     {abortSignal, ...params}: RequestConfig & GetBlockPublicAccessConfigurationInput = {},
   ): Promise<GetBlockPublicAccessConfigurationOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetBlockPublicAccessConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {
         "BlockPublicAccessConfiguration": toBlockPublicAccessConfiguration,
         "BlockPublicAccessConfigurationMetadata": toBlockPublicAccessConfigurationMetadata,
@@ -261,13 +278,14 @@ export default class EMR {
   async getManagedScalingPolicy(
     {abortSignal, ...params}: RequestConfig & GetManagedScalingPolicyInput,
   ): Promise<GetManagedScalingPolicyOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetManagedScalingPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ManagedScalingPolicy": toManagedScalingPolicy,
@@ -278,13 +296,15 @@ export default class EMR {
   async listBootstrapActions(
     {abortSignal, ...params}: RequestConfig & ListBootstrapActionsInput,
   ): Promise<ListBootstrapActionsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+      Marker: params["Marker"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListBootstrapActions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "BootstrapActions": [toCommand],
@@ -296,15 +316,17 @@ export default class EMR {
   async listClusters(
     {abortSignal, ...params}: RequestConfig & ListClustersInput = {},
   ): Promise<ListClustersOutput> {
-    const body: JSONObject = {...params,
-    CreatedAfter: prt.serializeDate_unixTimestamp(params["CreatedAfter"]),
-    CreatedBefore: prt.serializeDate_unixTimestamp(params["CreatedBefore"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      CreatedAfter: jsonP.serializeDate_unixTimestamp(params["CreatedAfter"]),
+      CreatedBefore: jsonP.serializeDate_unixTimestamp(params["CreatedBefore"]),
+      ClusterStates: params["ClusterStates"],
+      Marker: params["Marker"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListClusters",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Clusters": [toClusterSummary],
@@ -316,13 +338,15 @@ export default class EMR {
   async listInstanceFleets(
     {abortSignal, ...params}: RequestConfig & ListInstanceFleetsInput,
   ): Promise<ListInstanceFleetsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+      Marker: params["Marker"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListInstanceFleets",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "InstanceFleets": [toInstanceFleet],
@@ -334,13 +358,15 @@ export default class EMR {
   async listInstanceGroups(
     {abortSignal, ...params}: RequestConfig & ListInstanceGroupsInput,
   ): Promise<ListInstanceGroupsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+      Marker: params["Marker"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListInstanceGroups",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "InstanceGroups": [toInstanceGroup],
@@ -352,13 +378,20 @@ export default class EMR {
   async listInstances(
     {abortSignal, ...params}: RequestConfig & ListInstancesInput,
   ): Promise<ListInstancesOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+      InstanceGroupId: params["InstanceGroupId"],
+      InstanceGroupTypes: params["InstanceGroupTypes"],
+      InstanceFleetId: params["InstanceFleetId"],
+      InstanceFleetType: params["InstanceFleetType"],
+      InstanceStates: params["InstanceStates"],
+      Marker: params["Marker"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListInstances",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Instances": [toInstance],
@@ -370,15 +403,18 @@ export default class EMR {
   async listNotebookExecutions(
     {abortSignal, ...params}: RequestConfig & ListNotebookExecutionsInput = {},
   ): Promise<ListNotebookExecutionsOutput> {
-    const body: JSONObject = {...params,
-    From: prt.serializeDate_unixTimestamp(params["From"]),
-    To: prt.serializeDate_unixTimestamp(params["To"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      EditorId: params["EditorId"],
+      Status: params["Status"],
+      From: jsonP.serializeDate_unixTimestamp(params["From"]),
+      To: jsonP.serializeDate_unixTimestamp(params["To"]),
+      Marker: params["Marker"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListNotebookExecutions",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NotebookExecutions": [toNotebookExecutionSummary],
@@ -390,13 +426,14 @@ export default class EMR {
   async listSecurityConfigurations(
     {abortSignal, ...params}: RequestConfig & ListSecurityConfigurationsInput = {},
   ): Promise<ListSecurityConfigurationsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      Marker: params["Marker"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSecurityConfigurations",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "SecurityConfigurations": [toSecurityConfigurationSummary],
@@ -408,13 +445,17 @@ export default class EMR {
   async listSteps(
     {abortSignal, ...params}: RequestConfig & ListStepsInput,
   ): Promise<ListStepsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+      StepStates: params["StepStates"],
+      StepIds: params["StepIds"],
+      Marker: params["Marker"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSteps",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "Steps": [toStepSummary],
@@ -426,13 +467,15 @@ export default class EMR {
   async modifyCluster(
     {abortSignal, ...params}: RequestConfig & ModifyClusterInput,
   ): Promise<ModifyClusterOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+      StepConcurrencyLevel: params["StepConcurrencyLevel"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyCluster",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "StepConcurrencyLevel": "n",
@@ -443,9 +486,10 @@ export default class EMR {
   async modifyInstanceFleet(
     {abortSignal, ...params}: RequestConfig & ModifyInstanceFleetInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    InstanceFleet: fromInstanceFleetModifyConfig(params["InstanceFleet"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+      InstanceFleet: fromInstanceFleetModifyConfig(params["InstanceFleet"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyInstanceFleet",
@@ -455,9 +499,10 @@ export default class EMR {
   async modifyInstanceGroups(
     {abortSignal, ...params}: RequestConfig & ModifyInstanceGroupsInput = {},
   ): Promise<void> {
-    const body: JSONObject = {...params,
-    InstanceGroups: params["InstanceGroups"]?.map(x => fromInstanceGroupModifyConfig(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+      InstanceGroups: params["InstanceGroups"]?.map(x => fromInstanceGroupModifyConfig(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyInstanceGroups",
@@ -467,14 +512,16 @@ export default class EMR {
   async putAutoScalingPolicy(
     {abortSignal, ...params}: RequestConfig & PutAutoScalingPolicyInput,
   ): Promise<PutAutoScalingPolicyOutput> {
-    const body: JSONObject = {...params,
-    AutoScalingPolicy: fromAutoScalingPolicy(params["AutoScalingPolicy"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+      InstanceGroupId: params["InstanceGroupId"],
+      AutoScalingPolicy: fromAutoScalingPolicy(params["AutoScalingPolicy"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAutoScalingPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "ClusterId": "s",
@@ -488,14 +535,14 @@ export default class EMR {
   async putBlockPublicAccessConfiguration(
     {abortSignal, ...params}: RequestConfig & PutBlockPublicAccessConfigurationInput,
   ): Promise<PutBlockPublicAccessConfigurationOutput> {
-    const body: JSONObject = {...params,
-    BlockPublicAccessConfiguration: fromBlockPublicAccessConfiguration(params["BlockPublicAccessConfiguration"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      BlockPublicAccessConfiguration: fromBlockPublicAccessConfiguration(params["BlockPublicAccessConfiguration"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutBlockPublicAccessConfiguration",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -504,14 +551,15 @@ export default class EMR {
   async putManagedScalingPolicy(
     {abortSignal, ...params}: RequestConfig & PutManagedScalingPolicyInput,
   ): Promise<PutManagedScalingPolicyOutput> {
-    const body: JSONObject = {...params,
-    ManagedScalingPolicy: fromManagedScalingPolicy(params["ManagedScalingPolicy"]),
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+      ManagedScalingPolicy: fromManagedScalingPolicy(params["ManagedScalingPolicy"]),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutManagedScalingPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -520,13 +568,15 @@ export default class EMR {
   async removeAutoScalingPolicy(
     {abortSignal, ...params}: RequestConfig & RemoveAutoScalingPolicyInput,
   ): Promise<RemoveAutoScalingPolicyOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+      InstanceGroupId: params["InstanceGroupId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveAutoScalingPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -535,13 +585,14 @@ export default class EMR {
   async removeManagedScalingPolicy(
     {abortSignal, ...params}: RequestConfig & RemoveManagedScalingPolicyInput,
   ): Promise<RemoveManagedScalingPolicyOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ClusterId: params["ClusterId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveManagedScalingPolicy",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -550,13 +601,15 @@ export default class EMR {
   async removeTags(
     {abortSignal, ...params}: RequestConfig & RemoveTagsInput,
   ): Promise<RemoveTagsOutput> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      ResourceId: params["ResourceId"],
+      TagKeys: params["TagKeys"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTags",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {},
     }, await resp.json());
@@ -565,23 +618,40 @@ export default class EMR {
   async runJobFlow(
     {abortSignal, ...params}: RequestConfig & RunJobFlowInput,
   ): Promise<RunJobFlowOutput> {
-    const body: JSONObject = {...params,
-    Instances: fromJobFlowInstancesConfig(params["Instances"]),
-    Steps: params["Steps"]?.map(x => fromStepConfig(x)),
-    BootstrapActions: params["BootstrapActions"]?.map(x => fromBootstrapActionConfig(x)),
-    NewSupportedProducts: params["NewSupportedProducts"]?.map(x => fromSupportedProductConfig(x)),
-    Applications: params["Applications"]?.map(x => fromApplication(x)),
-    Configurations: params["Configurations"]?.map(x => fromConfiguration(x)),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-    KerberosAttributes: fromKerberosAttributes(params["KerberosAttributes"]),
-    ManagedScalingPolicy: fromManagedScalingPolicy(params["ManagedScalingPolicy"]),
-    PlacementGroupConfigs: params["PlacementGroupConfigs"]?.map(x => fromPlacementGroupConfig(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      Name: params["Name"],
+      LogUri: params["LogUri"],
+      LogEncryptionKmsKeyId: params["LogEncryptionKmsKeyId"],
+      AdditionalInfo: params["AdditionalInfo"],
+      AmiVersion: params["AmiVersion"],
+      ReleaseLabel: params["ReleaseLabel"],
+      Instances: fromJobFlowInstancesConfig(params["Instances"]),
+      Steps: params["Steps"]?.map(x => fromStepConfig(x)),
+      BootstrapActions: params["BootstrapActions"]?.map(x => fromBootstrapActionConfig(x)),
+      SupportedProducts: params["SupportedProducts"],
+      NewSupportedProducts: params["NewSupportedProducts"]?.map(x => fromSupportedProductConfig(x)),
+      Applications: params["Applications"]?.map(x => fromApplication(x)),
+      Configurations: params["Configurations"]?.map(x => fromConfiguration(x)),
+      VisibleToAllUsers: params["VisibleToAllUsers"],
+      JobFlowRole: params["JobFlowRole"],
+      ServiceRole: params["ServiceRole"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      SecurityConfiguration: params["SecurityConfiguration"],
+      AutoScalingRole: params["AutoScalingRole"],
+      ScaleDownBehavior: params["ScaleDownBehavior"],
+      CustomAmiId: params["CustomAmiId"],
+      EbsRootVolumeSize: params["EbsRootVolumeSize"],
+      RepoUpgradeOnBoot: params["RepoUpgradeOnBoot"],
+      KerberosAttributes: fromKerberosAttributes(params["KerberosAttributes"]),
+      StepConcurrencyLevel: params["StepConcurrencyLevel"],
+      ManagedScalingPolicy: fromManagedScalingPolicy(params["ManagedScalingPolicy"]),
+      PlacementGroupConfigs: params["PlacementGroupConfigs"]?.map(x => fromPlacementGroupConfig(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RunJobFlow",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "JobFlowId": "s",
@@ -593,8 +663,10 @@ export default class EMR {
   async setTerminationProtection(
     {abortSignal, ...params}: RequestConfig & SetTerminationProtectionInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobFlowIds: params["JobFlowIds"],
+      TerminationProtected: params["TerminationProtected"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetTerminationProtection",
@@ -604,8 +676,10 @@ export default class EMR {
   async setVisibleToAllUsers(
     {abortSignal, ...params}: RequestConfig & SetVisibleToAllUsersInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobFlowIds: params["JobFlowIds"],
+      VisibleToAllUsers: params["VisibleToAllUsers"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetVisibleToAllUsers",
@@ -615,15 +689,21 @@ export default class EMR {
   async startNotebookExecution(
     {abortSignal, ...params}: RequestConfig & StartNotebookExecutionInput,
   ): Promise<StartNotebookExecutionOutput> {
-    const body: JSONObject = {...params,
-    ExecutionEngine: fromExecutionEngineConfig(params["ExecutionEngine"]),
-    Tags: params["Tags"]?.map(x => fromTag(x)),
-  };
+    const body: jsonP.JSONObject = params ? {
+      EditorId: params["EditorId"],
+      RelativePath: params["RelativePath"],
+      NotebookExecutionName: params["NotebookExecutionName"],
+      NotebookParams: params["NotebookParams"],
+      ExecutionEngine: fromExecutionEngineConfig(params["ExecutionEngine"]),
+      ServiceRole: params["ServiceRole"],
+      NotebookInstanceSecurityGroupId: params["NotebookInstanceSecurityGroupId"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartNotebookExecution",
     });
-    return prt.readObj({
+    return jsonP.readObj({
       required: {},
       optional: {
         "NotebookExecutionId": "s",
@@ -634,8 +714,9 @@ export default class EMR {
   async stopNotebookExecution(
     {abortSignal, ...params}: RequestConfig & StopNotebookExecutionInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      NotebookExecutionId: params["NotebookExecutionId"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopNotebookExecution",
@@ -645,8 +726,9 @@ export default class EMR {
   async terminateJobFlows(
     {abortSignal, ...params}: RequestConfig & TerminateJobFlowsInput,
   ): Promise<void> {
-    const body: JSONObject = {...params,
-  };
+    const body: jsonP.JSONObject = params ? {
+      JobFlowIds: params["JobFlowIds"],
+    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TerminateJobFlows",
@@ -662,7 +744,7 @@ export default class EMR {
     const errMessage = 'ResourceNotReady: Resource is not in the state ClusterRunning';
     for (let i = 0; i < 60; i++) {
       const resp = await this.describeCluster(params);
-      const field = resp["Cluster"]?.["Status"]?.["State"];
+      const field = resp?.Cluster?.Status?.State;
       if (field === "RUNNING") return resp;
       if (field === "WAITING") return resp;
       if (field === "TERMINATING") throw new Error(errMessage);
@@ -680,7 +762,7 @@ export default class EMR {
     const errMessage = 'ResourceNotReady: Resource is not in the state StepComplete';
     for (let i = 0; i < 60; i++) {
       const resp = await this.describeStep(params);
-      const field = resp["Step"]?.["Status"]?.["State"];
+      const field = resp?.Step?.Status?.State;
       if (field === "COMPLETED") return resp;
       if (field === "FAILED") throw new Error(errMessage);
       if (field === "CANCELLED") throw new Error(errMessage);
@@ -696,7 +778,7 @@ export default class EMR {
     const errMessage = 'ResourceNotReady: Resource is not in the state ClusterTerminated';
     for (let i = 0; i < 60; i++) {
       const resp = await this.describeCluster(params);
-      const field = resp["Cluster"]?.["Status"]?.["State"];
+      const field = resp?.Cluster?.Status?.State;
       if (field === "TERMINATED") return resp;
       if (field === "TERMINATED_WITH_ERRORS") throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 30000));
@@ -1140,9 +1222,13 @@ export interface InstanceFleetConfig {
   InstanceTypeConfigs?: InstanceTypeConfig[] | null;
   LaunchSpecifications?: InstanceFleetProvisioningSpecifications | null;
 }
-function fromInstanceFleetConfig(input?: InstanceFleetConfig | null): JSONValue {
+function fromInstanceFleetConfig(input?: InstanceFleetConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    InstanceFleetType: input["InstanceFleetType"],
+    TargetOnDemandCapacity: input["TargetOnDemandCapacity"],
+    TargetSpotCapacity: input["TargetSpotCapacity"],
     InstanceTypeConfigs: input["InstanceTypeConfigs"]?.map(x => fromInstanceTypeConfig(x)),
     LaunchSpecifications: fromInstanceFleetProvisioningSpecifications(input["LaunchSpecifications"]),
   }
@@ -1153,15 +1239,7 @@ export type InstanceFleetType =
 | "MASTER"
 | "CORE"
 | "TASK"
-;
-
-function toInstanceFleetType(root: JSONValue): InstanceFleetType | null {
-  return ( false
-    || root == "MASTER"
-    || root == "CORE"
-    || root == "TASK"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface InstanceTypeConfig {
@@ -1172,9 +1250,13 @@ export interface InstanceTypeConfig {
   EbsConfiguration?: EbsConfiguration | null;
   Configurations?: Configuration[] | null;
 }
-function fromInstanceTypeConfig(input?: InstanceTypeConfig | null): JSONValue {
+function fromInstanceTypeConfig(input?: InstanceTypeConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    InstanceType: input["InstanceType"],
+    WeightedCapacity: input["WeightedCapacity"],
+    BidPrice: input["BidPrice"],
+    BidPriceAsPercentageOfOnDemandPrice: input["BidPriceAsPercentageOfOnDemandPrice"],
     EbsConfiguration: fromEbsConfiguration(input["EbsConfiguration"]),
     Configurations: input["Configurations"]?.map(x => fromConfiguration(x)),
   }
@@ -1185,10 +1267,11 @@ export interface EbsConfiguration {
   EbsBlockDeviceConfigs?: EbsBlockDeviceConfig[] | null;
   EbsOptimized?: boolean | null;
 }
-function fromEbsConfiguration(input?: EbsConfiguration | null): JSONValue {
+function fromEbsConfiguration(input?: EbsConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     EbsBlockDeviceConfigs: input["EbsBlockDeviceConfigs"]?.map(x => fromEbsBlockDeviceConfig(x)),
+    EbsOptimized: input["EbsOptimized"],
   }
 }
 
@@ -1197,10 +1280,11 @@ export interface EbsBlockDeviceConfig {
   VolumeSpecification: VolumeSpecification;
   VolumesPerInstance?: number | null;
 }
-function fromEbsBlockDeviceConfig(input?: EbsBlockDeviceConfig | null): JSONValue {
+function fromEbsBlockDeviceConfig(input?: EbsBlockDeviceConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     VolumeSpecification: fromVolumeSpecification(input["VolumeSpecification"]),
+    VolumesPerInstance: input["VolumesPerInstance"],
   }
 }
 
@@ -1210,13 +1294,16 @@ export interface VolumeSpecification {
   Iops?: number | null;
   SizeInGB: number;
 }
-function fromVolumeSpecification(input?: VolumeSpecification | null): JSONValue {
+function fromVolumeSpecification(input?: VolumeSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    VolumeType: input["VolumeType"],
+    Iops: input["Iops"],
+    SizeInGB: input["SizeInGB"],
   }
 }
-function toVolumeSpecification(root: JSONValue): VolumeSpecification {
-  return prt.readObj({
+function toVolumeSpecification(root: jsonP.JSONValue): VolumeSpecification {
+  return jsonP.readObj({
     required: {
       "VolumeType": "s",
       "SizeInGB": "n",
@@ -1231,21 +1318,23 @@ function toVolumeSpecification(root: JSONValue): VolumeSpecification {
 export interface Configuration {
   Classification?: string | null;
   Configurations?: Configuration[] | null;
-  Properties?: { [key: string]: string } | null;
+  Properties?: { [key: string]: string | null | undefined } | null;
 }
-function fromConfiguration(input?: Configuration | null): JSONValue {
+function fromConfiguration(input?: Configuration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Classification: input["Classification"],
     Configurations: input["Configurations"]?.map(x => fromConfiguration(x)),
+    Properties: input["Properties"],
   }
 }
-function toConfiguration(root: JSONValue): Configuration {
-  return prt.readObj({
+function toConfiguration(root: jsonP.JSONValue): Configuration {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Classification": "s",
       "Configurations": [toConfiguration],
-      "Properties": x => prt.readMap(String, String, x),
+      "Properties": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -1255,15 +1344,15 @@ export interface InstanceFleetProvisioningSpecifications {
   SpotSpecification?: SpotProvisioningSpecification | null;
   OnDemandSpecification?: OnDemandProvisioningSpecification | null;
 }
-function fromInstanceFleetProvisioningSpecifications(input?: InstanceFleetProvisioningSpecifications | null): JSONValue {
+function fromInstanceFleetProvisioningSpecifications(input?: InstanceFleetProvisioningSpecifications | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     SpotSpecification: fromSpotProvisioningSpecification(input["SpotSpecification"]),
     OnDemandSpecification: fromOnDemandProvisioningSpecification(input["OnDemandSpecification"]),
   }
 }
-function toInstanceFleetProvisioningSpecifications(root: JSONValue): InstanceFleetProvisioningSpecifications {
-  return prt.readObj({
+function toInstanceFleetProvisioningSpecifications(root: jsonP.JSONValue): InstanceFleetProvisioningSpecifications {
+  return jsonP.readObj({
     required: {},
     optional: {
       "SpotSpecification": toSpotProvisioningSpecification,
@@ -1279,20 +1368,24 @@ export interface SpotProvisioningSpecification {
   BlockDurationMinutes?: number | null;
   AllocationStrategy?: SpotProvisioningAllocationStrategy | null;
 }
-function fromSpotProvisioningSpecification(input?: SpotProvisioningSpecification | null): JSONValue {
+function fromSpotProvisioningSpecification(input?: SpotProvisioningSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    TimeoutDurationMinutes: input["TimeoutDurationMinutes"],
+    TimeoutAction: input["TimeoutAction"],
+    BlockDurationMinutes: input["BlockDurationMinutes"],
+    AllocationStrategy: input["AllocationStrategy"],
   }
 }
-function toSpotProvisioningSpecification(root: JSONValue): SpotProvisioningSpecification {
-  return prt.readObj({
+function toSpotProvisioningSpecification(root: jsonP.JSONValue): SpotProvisioningSpecification {
+  return jsonP.readObj({
     required: {
       "TimeoutDurationMinutes": "n",
-      "TimeoutAction": toSpotProvisioningTimeoutAction,
+      "TimeoutAction": (x: jsonP.JSONValue) => cmnP.readEnum<SpotProvisioningTimeoutAction>(x),
     },
     optional: {
       "BlockDurationMinutes": "n",
-      "AllocationStrategy": toSpotProvisioningAllocationStrategy,
+      "AllocationStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<SpotProvisioningAllocationStrategy>(x),
     },
   }, root);
 }
@@ -1301,39 +1394,27 @@ function toSpotProvisioningSpecification(root: JSONValue): SpotProvisioningSpeci
 export type SpotProvisioningTimeoutAction =
 | "SWITCH_TO_ON_DEMAND"
 | "TERMINATE_CLUSTER"
-;
-
-function toSpotProvisioningTimeoutAction(root: JSONValue): SpotProvisioningTimeoutAction | null {
-  return ( false
-    || root == "SWITCH_TO_ON_DEMAND"
-    || root == "TERMINATE_CLUSTER"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type SpotProvisioningAllocationStrategy =
 | "capacity-optimized"
-;
-
-function toSpotProvisioningAllocationStrategy(root: JSONValue): SpotProvisioningAllocationStrategy | null {
-  return ( false
-    || root == "capacity-optimized"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface OnDemandProvisioningSpecification {
   AllocationStrategy: OnDemandProvisioningAllocationStrategy;
 }
-function fromOnDemandProvisioningSpecification(input?: OnDemandProvisioningSpecification | null): JSONValue {
+function fromOnDemandProvisioningSpecification(input?: OnDemandProvisioningSpecification | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AllocationStrategy: input["AllocationStrategy"],
   }
 }
-function toOnDemandProvisioningSpecification(root: JSONValue): OnDemandProvisioningSpecification {
-  return prt.readObj({
+function toOnDemandProvisioningSpecification(root: jsonP.JSONValue): OnDemandProvisioningSpecification {
+  return jsonP.readObj({
     required: {
-      "AllocationStrategy": toOnDemandProvisioningAllocationStrategy,
+      "AllocationStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<OnDemandProvisioningAllocationStrategy>(x),
     },
     optional: {},
   }, root);
@@ -1342,13 +1423,7 @@ function toOnDemandProvisioningSpecification(root: JSONValue): OnDemandProvision
 // refs: 3 - tags: input, named, enum, output
 export type OnDemandProvisioningAllocationStrategy =
 | "lowest-price"
-;
-
-function toOnDemandProvisioningAllocationStrategy(root: JSONValue): OnDemandProvisioningAllocationStrategy | null {
-  return ( false
-    || root == "lowest-price"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface InstanceGroupConfig {
@@ -1362,9 +1437,15 @@ export interface InstanceGroupConfig {
   EbsConfiguration?: EbsConfiguration | null;
   AutoScalingPolicy?: AutoScalingPolicy | null;
 }
-function fromInstanceGroupConfig(input?: InstanceGroupConfig | null): JSONValue {
+function fromInstanceGroupConfig(input?: InstanceGroupConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Market: input["Market"],
+    InstanceRole: input["InstanceRole"],
+    BidPrice: input["BidPrice"],
+    InstanceType: input["InstanceType"],
+    InstanceCount: input["InstanceCount"],
     Configurations: input["Configurations"]?.map(x => fromConfiguration(x)),
     EbsConfiguration: fromEbsConfiguration(input["EbsConfiguration"]),
     AutoScalingPolicy: fromAutoScalingPolicy(input["AutoScalingPolicy"]),
@@ -1375,38 +1456,23 @@ function fromInstanceGroupConfig(input?: InstanceGroupConfig | null): JSONValue 
 export type MarketType =
 | "ON_DEMAND"
 | "SPOT"
-;
-
-function toMarketType(root: JSONValue): MarketType | null {
-  return ( false
-    || root == "ON_DEMAND"
-    || root == "SPOT"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type InstanceRoleType =
 | "MASTER"
 | "CORE"
 | "TASK"
-;
-
-function toInstanceRoleType(root: JSONValue): InstanceRoleType | null {
-  return ( false
-    || root == "MASTER"
-    || root == "CORE"
-    || root == "TASK"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface
 export interface AutoScalingPolicy {
   Constraints: ScalingConstraints;
   Rules: ScalingRule[];
 }
-function fromAutoScalingPolicy(input?: AutoScalingPolicy | null): JSONValue {
+function fromAutoScalingPolicy(input?: AutoScalingPolicy | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Constraints: fromScalingConstraints(input["Constraints"]),
     Rules: input["Rules"]?.map(x => fromScalingRule(x)),
   }
@@ -1417,13 +1483,15 @@ export interface ScalingConstraints {
   MinCapacity: number;
   MaxCapacity: number;
 }
-function fromScalingConstraints(input?: ScalingConstraints | null): JSONValue {
+function fromScalingConstraints(input?: ScalingConstraints | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MinCapacity: input["MinCapacity"],
+    MaxCapacity: input["MaxCapacity"],
   }
 }
-function toScalingConstraints(root: JSONValue): ScalingConstraints {
-  return prt.readObj({
+function toScalingConstraints(root: jsonP.JSONValue): ScalingConstraints {
+  return jsonP.readObj({
     required: {
       "MinCapacity": "n",
       "MaxCapacity": "n",
@@ -1439,15 +1507,17 @@ export interface ScalingRule {
   Action: ScalingAction;
   Trigger: ScalingTrigger;
 }
-function fromScalingRule(input?: ScalingRule | null): JSONValue {
+function fromScalingRule(input?: ScalingRule | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Description: input["Description"],
     Action: fromScalingAction(input["Action"]),
     Trigger: fromScalingTrigger(input["Trigger"]),
   }
 }
-function toScalingRule(root: JSONValue): ScalingRule {
-  return prt.readObj({
+function toScalingRule(root: jsonP.JSONValue): ScalingRule {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "Action": toScalingAction,
@@ -1464,19 +1534,20 @@ export interface ScalingAction {
   Market?: MarketType | null;
   SimpleScalingPolicyConfiguration: SimpleScalingPolicyConfiguration;
 }
-function fromScalingAction(input?: ScalingAction | null): JSONValue {
+function fromScalingAction(input?: ScalingAction | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Market: input["Market"],
     SimpleScalingPolicyConfiguration: fromSimpleScalingPolicyConfiguration(input["SimpleScalingPolicyConfiguration"]),
   }
 }
-function toScalingAction(root: JSONValue): ScalingAction {
-  return prt.readObj({
+function toScalingAction(root: jsonP.JSONValue): ScalingAction {
+  return jsonP.readObj({
     required: {
       "SimpleScalingPolicyConfiguration": toSimpleScalingPolicyConfiguration,
     },
     optional: {
-      "Market": toMarketType,
+      "Market": (x: jsonP.JSONValue) => cmnP.readEnum<MarketType>(x),
     },
   }, root);
 }
@@ -1487,18 +1558,21 @@ export interface SimpleScalingPolicyConfiguration {
   ScalingAdjustment: number;
   CoolDown?: number | null;
 }
-function fromSimpleScalingPolicyConfiguration(input?: SimpleScalingPolicyConfiguration | null): JSONValue {
+function fromSimpleScalingPolicyConfiguration(input?: SimpleScalingPolicyConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AdjustmentType: input["AdjustmentType"],
+    ScalingAdjustment: input["ScalingAdjustment"],
+    CoolDown: input["CoolDown"],
   }
 }
-function toSimpleScalingPolicyConfiguration(root: JSONValue): SimpleScalingPolicyConfiguration {
-  return prt.readObj({
+function toSimpleScalingPolicyConfiguration(root: jsonP.JSONValue): SimpleScalingPolicyConfiguration {
+  return jsonP.readObj({
     required: {
       "ScalingAdjustment": "n",
     },
     optional: {
-      "AdjustmentType": toAdjustmentType,
+      "AdjustmentType": (x: jsonP.JSONValue) => cmnP.readEnum<AdjustmentType>(x),
       "CoolDown": "n",
     },
   }, root);
@@ -1509,28 +1583,20 @@ export type AdjustmentType =
 | "CHANGE_IN_CAPACITY"
 | "PERCENT_CHANGE_IN_CAPACITY"
 | "EXACT_CAPACITY"
-;
-
-function toAdjustmentType(root: JSONValue): AdjustmentType | null {
-  return ( false
-    || root == "CHANGE_IN_CAPACITY"
-    || root == "PERCENT_CHANGE_IN_CAPACITY"
-    || root == "EXACT_CAPACITY"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface ScalingTrigger {
   CloudWatchAlarmDefinition: CloudWatchAlarmDefinition;
 }
-function fromScalingTrigger(input?: ScalingTrigger | null): JSONValue {
+function fromScalingTrigger(input?: ScalingTrigger | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     CloudWatchAlarmDefinition: fromCloudWatchAlarmDefinition(input["CloudWatchAlarmDefinition"]),
   }
 }
-function toScalingTrigger(root: JSONValue): ScalingTrigger {
-  return prt.readObj({
+function toScalingTrigger(root: jsonP.JSONValue): ScalingTrigger {
+  return jsonP.readObj({
     required: {
       "CloudWatchAlarmDefinition": toCloudWatchAlarmDefinition,
     },
@@ -1550,16 +1616,24 @@ export interface CloudWatchAlarmDefinition {
   Unit?: Unit | null;
   Dimensions?: MetricDimension[] | null;
 }
-function fromCloudWatchAlarmDefinition(input?: CloudWatchAlarmDefinition | null): JSONValue {
+function fromCloudWatchAlarmDefinition(input?: CloudWatchAlarmDefinition | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    ComparisonOperator: input["ComparisonOperator"],
+    EvaluationPeriods: input["EvaluationPeriods"],
+    MetricName: input["MetricName"],
+    Namespace: input["Namespace"],
+    Period: input["Period"],
+    Statistic: input["Statistic"],
+    Threshold: input["Threshold"],
+    Unit: input["Unit"],
     Dimensions: input["Dimensions"]?.map(x => fromMetricDimension(x)),
   }
 }
-function toCloudWatchAlarmDefinition(root: JSONValue): CloudWatchAlarmDefinition {
-  return prt.readObj({
+function toCloudWatchAlarmDefinition(root: jsonP.JSONValue): CloudWatchAlarmDefinition {
+  return jsonP.readObj({
     required: {
-      "ComparisonOperator": toComparisonOperator,
+      "ComparisonOperator": (x: jsonP.JSONValue) => cmnP.readEnum<ComparisonOperator>(x),
       "MetricName": "s",
       "Period": "n",
       "Threshold": "n",
@@ -1567,8 +1641,8 @@ function toCloudWatchAlarmDefinition(root: JSONValue): CloudWatchAlarmDefinition
     optional: {
       "EvaluationPeriods": "n",
       "Namespace": "s",
-      "Statistic": toStatistic,
-      "Unit": toUnit,
+      "Statistic": (x: jsonP.JSONValue) => cmnP.readEnum<Statistic>(x),
+      "Unit": (x: jsonP.JSONValue) => cmnP.readEnum<Unit>(x),
       "Dimensions": [toMetricDimension],
     },
   }, root);
@@ -1580,16 +1654,7 @@ export type ComparisonOperator =
 | "GREATER_THAN"
 | "LESS_THAN"
 | "LESS_THAN_OR_EQUAL"
-;
-
-function toComparisonOperator(root: JSONValue): ComparisonOperator | null {
-  return ( false
-    || root == "GREATER_THAN_OR_EQUAL"
-    || root == "GREATER_THAN"
-    || root == "LESS_THAN"
-    || root == "LESS_THAN_OR_EQUAL"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type Statistic =
@@ -1598,17 +1663,7 @@ export type Statistic =
 | "SUM"
 | "MINIMUM"
 | "MAXIMUM"
-;
-
-function toStatistic(root: JSONValue): Statistic | null {
-  return ( false
-    || root == "SAMPLE_COUNT"
-    || root == "AVERAGE"
-    || root == "SUM"
-    || root == "MINIMUM"
-    || root == "MAXIMUM"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type Unit =
@@ -1639,52 +1694,22 @@ export type Unit =
 | "GIGA_BITS_PER_SECOND"
 | "TERA_BITS_PER_SECOND"
 | "COUNT_PER_SECOND"
-;
-
-function toUnit(root: JSONValue): Unit | null {
-  return ( false
-    || root == "NONE"
-    || root == "SECONDS"
-    || root == "MICRO_SECONDS"
-    || root == "MILLI_SECONDS"
-    || root == "BYTES"
-    || root == "KILO_BYTES"
-    || root == "MEGA_BYTES"
-    || root == "GIGA_BYTES"
-    || root == "TERA_BYTES"
-    || root == "BITS"
-    || root == "KILO_BITS"
-    || root == "MEGA_BITS"
-    || root == "GIGA_BITS"
-    || root == "TERA_BITS"
-    || root == "PERCENT"
-    || root == "COUNT"
-    || root == "BYTES_PER_SECOND"
-    || root == "KILO_BYTES_PER_SECOND"
-    || root == "MEGA_BYTES_PER_SECOND"
-    || root == "GIGA_BYTES_PER_SECOND"
-    || root == "TERA_BYTES_PER_SECOND"
-    || root == "BITS_PER_SECOND"
-    || root == "KILO_BITS_PER_SECOND"
-    || root == "MEGA_BITS_PER_SECOND"
-    || root == "GIGA_BITS_PER_SECOND"
-    || root == "TERA_BITS_PER_SECOND"
-    || root == "COUNT_PER_SECOND"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
 export interface MetricDimension {
   Key?: string | null;
   Value?: string | null;
 }
-function fromMetricDimension(input?: MetricDimension | null): JSONValue {
+function fromMetricDimension(input?: MetricDimension | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toMetricDimension(root: JSONValue): MetricDimension {
-  return prt.readObj({
+function toMetricDimension(root: jsonP.JSONValue): MetricDimension {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Key": "s",
@@ -1699,20 +1724,22 @@ export interface StepConfig {
   ActionOnFailure?: ActionOnFailure | null;
   HadoopJarStep: HadoopJarStepConfig;
 }
-function fromStepConfig(input?: StepConfig | null): JSONValue {
+function fromStepConfig(input?: StepConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    ActionOnFailure: input["ActionOnFailure"],
     HadoopJarStep: fromHadoopJarStepConfig(input["HadoopJarStep"]),
   }
 }
-function toStepConfig(root: JSONValue): StepConfig {
-  return prt.readObj({
+function toStepConfig(root: jsonP.JSONValue): StepConfig {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "HadoopJarStep": toHadoopJarStepConfig,
     },
     optional: {
-      "ActionOnFailure": toActionOnFailure,
+      "ActionOnFailure": (x: jsonP.JSONValue) => cmnP.readEnum<ActionOnFailure>(x),
     },
   }, root);
 }
@@ -1723,16 +1750,7 @@ export type ActionOnFailure =
 | "TERMINATE_CLUSTER"
 | "CANCEL_AND_WAIT"
 | "CONTINUE"
-;
-
-function toActionOnFailure(root: JSONValue): ActionOnFailure | null {
-  return ( false
-    || root == "TERMINATE_JOB_FLOW"
-    || root == "TERMINATE_CLUSTER"
-    || root == "CANCEL_AND_WAIT"
-    || root == "CONTINUE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface HadoopJarStepConfig {
@@ -1741,14 +1759,17 @@ export interface HadoopJarStepConfig {
   MainClass?: string | null;
   Args?: string[] | null;
 }
-function fromHadoopJarStepConfig(input?: HadoopJarStepConfig | null): JSONValue {
+function fromHadoopJarStepConfig(input?: HadoopJarStepConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     Properties: input["Properties"]?.map(x => fromKeyValue(x)),
+    Jar: input["Jar"],
+    MainClass: input["MainClass"],
+    Args: input["Args"],
   }
 }
-function toHadoopJarStepConfig(root: JSONValue): HadoopJarStepConfig {
-  return prt.readObj({
+function toHadoopJarStepConfig(root: jsonP.JSONValue): HadoopJarStepConfig {
+  return jsonP.readObj({
     required: {
       "Jar": "s",
     },
@@ -1765,13 +1786,15 @@ export interface KeyValue {
   Key?: string | null;
   Value?: string | null;
 }
-function fromKeyValue(input?: KeyValue | null): JSONValue {
+function fromKeyValue(input?: KeyValue | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toKeyValue(root: JSONValue): KeyValue {
-  return prt.readObj({
+function toKeyValue(root: jsonP.JSONValue): KeyValue {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Key": "s",
@@ -1785,13 +1808,15 @@ export interface Tag {
   Key?: string | null;
   Value?: string | null;
 }
-function fromTag(input?: Tag | null): JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toTag(root: JSONValue): Tag {
-  return prt.readObj({
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Key": "s",
@@ -1804,8 +1829,7 @@ function toTag(root: JSONValue): Tag {
 export type StepCancellationOption =
 | "SEND_INTERRUPT"
 | "TERMINATE_PROCESS"
-;
-
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type JobFlowExecutionState =
@@ -1817,20 +1841,7 @@ export type JobFlowExecutionState =
 | "TERMINATED"
 | "COMPLETED"
 | "FAILED"
-;
-
-function toJobFlowExecutionState(root: JSONValue): JobFlowExecutionState | null {
-  return ( false
-    || root == "STARTING"
-    || root == "BOOTSTRAPPING"
-    || root == "RUNNING"
-    || root == "WAITING"
-    || root == "SHUTTING_DOWN"
-    || root == "TERMINATED"
-    || root == "COMPLETED"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type ClusterState =
@@ -1841,34 +1852,14 @@ export type ClusterState =
 | "TERMINATING"
 | "TERMINATED"
 | "TERMINATED_WITH_ERRORS"
-;
-
-function toClusterState(root: JSONValue): ClusterState | null {
-  return ( false
-    || root == "STARTING"
-    || root == "BOOTSTRAPPING"
-    || root == "RUNNING"
-    || root == "WAITING"
-    || root == "TERMINATING"
-    || root == "TERMINATED"
-    || root == "TERMINATED_WITH_ERRORS"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type InstanceGroupType =
 | "MASTER"
 | "CORE"
 | "TASK"
-;
-
-function toInstanceGroupType(root: JSONValue): InstanceGroupType | null {
-  return ( false
-    || root == "MASTER"
-    || root == "CORE"
-    || root == "TASK"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type InstanceState =
@@ -1877,17 +1868,7 @@ export type InstanceState =
 | "BOOTSTRAPPING"
 | "RUNNING"
 | "TERMINATED"
-;
-
-function toInstanceState(root: JSONValue): InstanceState | null {
-  return ( false
-    || root == "AWAITING_FULFILLMENT"
-    || root == "PROVISIONING"
-    || root == "BOOTSTRAPPING"
-    || root == "RUNNING"
-    || root == "TERMINATED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type NotebookExecutionStatus =
@@ -1901,22 +1882,7 @@ export type NotebookExecutionStatus =
 | "STOP_PENDING"
 | "STOPPING"
 | "STOPPED"
-;
-
-function toNotebookExecutionStatus(root: JSONValue): NotebookExecutionStatus | null {
-  return ( false
-    || root == "START_PENDING"
-    || root == "STARTING"
-    || root == "RUNNING"
-    || root == "FINISHING"
-    || root == "FINISHED"
-    || root == "FAILING"
-    || root == "FAILED"
-    || root == "STOP_PENDING"
-    || root == "STOPPING"
-    || root == "STOPPED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type StepState =
@@ -1927,19 +1893,7 @@ export type StepState =
 | "CANCELLED"
 | "FAILED"
 | "INTERRUPTED"
-;
-
-function toStepState(root: JSONValue): StepState | null {
-  return ( false
-    || root == "PENDING"
-    || root == "CANCEL_PENDING"
-    || root == "RUNNING"
-    || root == "COMPLETED"
-    || root == "CANCELLED"
-    || root == "FAILED"
-    || root == "INTERRUPTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface InstanceFleetModifyConfig {
@@ -1947,9 +1901,12 @@ export interface InstanceFleetModifyConfig {
   TargetOnDemandCapacity?: number | null;
   TargetSpotCapacity?: number | null;
 }
-function fromInstanceFleetModifyConfig(input?: InstanceFleetModifyConfig | null): JSONValue {
+function fromInstanceFleetModifyConfig(input?: InstanceFleetModifyConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    InstanceFleetId: input["InstanceFleetId"],
+    TargetOnDemandCapacity: input["TargetOnDemandCapacity"],
+    TargetSpotCapacity: input["TargetSpotCapacity"],
   }
 }
 
@@ -1961,9 +1918,12 @@ export interface InstanceGroupModifyConfig {
   ShrinkPolicy?: ShrinkPolicy | null;
   Configurations?: Configuration[] | null;
 }
-function fromInstanceGroupModifyConfig(input?: InstanceGroupModifyConfig | null): JSONValue {
+function fromInstanceGroupModifyConfig(input?: InstanceGroupModifyConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    InstanceGroupId: input["InstanceGroupId"],
+    InstanceCount: input["InstanceCount"],
+    EC2InstanceIdsToTerminate: input["EC2InstanceIdsToTerminate"],
     ShrinkPolicy: fromShrinkPolicy(input["ShrinkPolicy"]),
     Configurations: input["Configurations"]?.map(x => fromConfiguration(x)),
   }
@@ -1974,14 +1934,15 @@ export interface ShrinkPolicy {
   DecommissionTimeout?: number | null;
   InstanceResizePolicy?: InstanceResizePolicy | null;
 }
-function fromShrinkPolicy(input?: ShrinkPolicy | null): JSONValue {
+function fromShrinkPolicy(input?: ShrinkPolicy | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    DecommissionTimeout: input["DecommissionTimeout"],
     InstanceResizePolicy: fromInstanceResizePolicy(input["InstanceResizePolicy"]),
   }
 }
-function toShrinkPolicy(root: JSONValue): ShrinkPolicy {
-  return prt.readObj({
+function toShrinkPolicy(root: jsonP.JSONValue): ShrinkPolicy {
+  return jsonP.readObj({
     required: {},
     optional: {
       "DecommissionTimeout": "n",
@@ -1996,13 +1957,16 @@ export interface InstanceResizePolicy {
   InstancesToProtect?: string[] | null;
   InstanceTerminationTimeout?: number | null;
 }
-function fromInstanceResizePolicy(input?: InstanceResizePolicy | null): JSONValue {
+function fromInstanceResizePolicy(input?: InstanceResizePolicy | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    InstancesToTerminate: input["InstancesToTerminate"],
+    InstancesToProtect: input["InstancesToProtect"],
+    InstanceTerminationTimeout: input["InstanceTerminationTimeout"],
   }
 }
-function toInstanceResizePolicy(root: JSONValue): InstanceResizePolicy {
-  return prt.readObj({
+function toInstanceResizePolicy(root: jsonP.JSONValue): InstanceResizePolicy {
+  return jsonP.readObj({
     required: {},
     optional: {
       "InstancesToTerminate": ["s"],
@@ -2017,14 +1981,15 @@ export interface BlockPublicAccessConfiguration {
   BlockPublicSecurityGroupRules: boolean;
   PermittedPublicSecurityGroupRuleRanges?: PortRange[] | null;
 }
-function fromBlockPublicAccessConfiguration(input?: BlockPublicAccessConfiguration | null): JSONValue {
+function fromBlockPublicAccessConfiguration(input?: BlockPublicAccessConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    BlockPublicSecurityGroupRules: input["BlockPublicSecurityGroupRules"],
     PermittedPublicSecurityGroupRuleRanges: input["PermittedPublicSecurityGroupRuleRanges"]?.map(x => fromPortRange(x)),
   }
 }
-function toBlockPublicAccessConfiguration(root: JSONValue): BlockPublicAccessConfiguration {
-  return prt.readObj({
+function toBlockPublicAccessConfiguration(root: jsonP.JSONValue): BlockPublicAccessConfiguration {
+  return jsonP.readObj({
     required: {
       "BlockPublicSecurityGroupRules": "b",
     },
@@ -2039,13 +2004,15 @@ export interface PortRange {
   MinRange: number;
   MaxRange?: number | null;
 }
-function fromPortRange(input?: PortRange | null): JSONValue {
+function fromPortRange(input?: PortRange | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MinRange: input["MinRange"],
+    MaxRange: input["MaxRange"],
   }
 }
-function toPortRange(root: JSONValue): PortRange {
-  return prt.readObj({
+function toPortRange(root: jsonP.JSONValue): PortRange {
+  return jsonP.readObj({
     required: {
       "MinRange": "n",
     },
@@ -2059,14 +2026,14 @@ function toPortRange(root: JSONValue): PortRange {
 export interface ManagedScalingPolicy {
   ComputeLimits?: ComputeLimits | null;
 }
-function fromManagedScalingPolicy(input?: ManagedScalingPolicy | null): JSONValue {
+function fromManagedScalingPolicy(input?: ManagedScalingPolicy | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
     ComputeLimits: fromComputeLimits(input["ComputeLimits"]),
   }
 }
-function toManagedScalingPolicy(root: JSONValue): ManagedScalingPolicy {
-  return prt.readObj({
+function toManagedScalingPolicy(root: jsonP.JSONValue): ManagedScalingPolicy {
+  return jsonP.readObj({
     required: {},
     optional: {
       "ComputeLimits": toComputeLimits,
@@ -2082,15 +2049,20 @@ export interface ComputeLimits {
   MaximumOnDemandCapacityUnits?: number | null;
   MaximumCoreCapacityUnits?: number | null;
 }
-function fromComputeLimits(input?: ComputeLimits | null): JSONValue {
+function fromComputeLimits(input?: ComputeLimits | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    UnitType: input["UnitType"],
+    MinimumCapacityUnits: input["MinimumCapacityUnits"],
+    MaximumCapacityUnits: input["MaximumCapacityUnits"],
+    MaximumOnDemandCapacityUnits: input["MaximumOnDemandCapacityUnits"],
+    MaximumCoreCapacityUnits: input["MaximumCoreCapacityUnits"],
   }
 }
-function toComputeLimits(root: JSONValue): ComputeLimits {
-  return prt.readObj({
+function toComputeLimits(root: jsonP.JSONValue): ComputeLimits {
+  return jsonP.readObj({
     required: {
-      "UnitType": toComputeLimitsUnitType,
+      "UnitType": (x: jsonP.JSONValue) => cmnP.readEnum<ComputeLimitsUnitType>(x),
       "MinimumCapacityUnits": "n",
       "MaximumCapacityUnits": "n",
     },
@@ -2106,15 +2078,7 @@ export type ComputeLimitsUnitType =
 | "InstanceFleetUnits"
 | "Instances"
 | "VCPU"
-;
-
-function toComputeLimitsUnitType(root: JSONValue): ComputeLimitsUnitType | null {
-  return ( false
-    || root == "InstanceFleetUnits"
-    || root == "Instances"
-    || root == "VCPU"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface JobFlowInstancesConfig {
@@ -2136,12 +2100,26 @@ export interface JobFlowInstancesConfig {
   AdditionalMasterSecurityGroups?: string[] | null;
   AdditionalSlaveSecurityGroups?: string[] | null;
 }
-function fromJobFlowInstancesConfig(input?: JobFlowInstancesConfig | null): JSONValue {
+function fromJobFlowInstancesConfig(input?: JobFlowInstancesConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    MasterInstanceType: input["MasterInstanceType"],
+    SlaveInstanceType: input["SlaveInstanceType"],
+    InstanceCount: input["InstanceCount"],
     InstanceGroups: input["InstanceGroups"]?.map(x => fromInstanceGroupConfig(x)),
     InstanceFleets: input["InstanceFleets"]?.map(x => fromInstanceFleetConfig(x)),
+    Ec2KeyName: input["Ec2KeyName"],
     Placement: fromPlacementType(input["Placement"]),
+    KeepJobFlowAliveWhenNoSteps: input["KeepJobFlowAliveWhenNoSteps"],
+    TerminationProtected: input["TerminationProtected"],
+    HadoopVersion: input["HadoopVersion"],
+    Ec2SubnetId: input["Ec2SubnetId"],
+    Ec2SubnetIds: input["Ec2SubnetIds"],
+    EmrManagedMasterSecurityGroup: input["EmrManagedMasterSecurityGroup"],
+    EmrManagedSlaveSecurityGroup: input["EmrManagedSlaveSecurityGroup"],
+    ServiceAccessSecurityGroup: input["ServiceAccessSecurityGroup"],
+    AdditionalMasterSecurityGroups: input["AdditionalMasterSecurityGroups"],
+    AdditionalSlaveSecurityGroups: input["AdditionalSlaveSecurityGroups"],
   }
 }
 
@@ -2150,13 +2128,15 @@ export interface PlacementType {
   AvailabilityZone?: string | null;
   AvailabilityZones?: string[] | null;
 }
-function fromPlacementType(input?: PlacementType | null): JSONValue {
+function fromPlacementType(input?: PlacementType | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    AvailabilityZone: input["AvailabilityZone"],
+    AvailabilityZones: input["AvailabilityZones"],
   }
 }
-function toPlacementType(root: JSONValue): PlacementType {
-  return prt.readObj({
+function toPlacementType(root: jsonP.JSONValue): PlacementType {
+  return jsonP.readObj({
     required: {},
     optional: {
       "AvailabilityZone": "s",
@@ -2170,14 +2150,15 @@ export interface BootstrapActionConfig {
   Name: string;
   ScriptBootstrapAction: ScriptBootstrapActionConfig;
 }
-function fromBootstrapActionConfig(input?: BootstrapActionConfig | null): JSONValue {
+function fromBootstrapActionConfig(input?: BootstrapActionConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
     ScriptBootstrapAction: fromScriptBootstrapActionConfig(input["ScriptBootstrapAction"]),
   }
 }
-function toBootstrapActionConfig(root: JSONValue): BootstrapActionConfig {
-  return prt.readObj({
+function toBootstrapActionConfig(root: jsonP.JSONValue): BootstrapActionConfig {
+  return jsonP.readObj({
     required: {
       "Name": "s",
       "ScriptBootstrapAction": toScriptBootstrapActionConfig,
@@ -2191,13 +2172,15 @@ export interface ScriptBootstrapActionConfig {
   Path: string;
   Args?: string[] | null;
 }
-function fromScriptBootstrapActionConfig(input?: ScriptBootstrapActionConfig | null): JSONValue {
+function fromScriptBootstrapActionConfig(input?: ScriptBootstrapActionConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Path: input["Path"],
+    Args: input["Args"],
   }
 }
-function toScriptBootstrapActionConfig(root: JSONValue): ScriptBootstrapActionConfig {
-  return prt.readObj({
+function toScriptBootstrapActionConfig(root: jsonP.JSONValue): ScriptBootstrapActionConfig {
+  return jsonP.readObj({
     required: {
       "Path": "s",
     },
@@ -2212,9 +2195,11 @@ export interface SupportedProductConfig {
   Name?: string | null;
   Args?: string[] | null;
 }
-function fromSupportedProductConfig(input?: SupportedProductConfig | null): JSONValue {
+function fromSupportedProductConfig(input?: SupportedProductConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Args: input["Args"],
   }
 }
 
@@ -2223,21 +2208,25 @@ export interface Application {
   Name?: string | null;
   Version?: string | null;
   Args?: string[] | null;
-  AdditionalInfo?: { [key: string]: string } | null;
+  AdditionalInfo?: { [key: string]: string | null | undefined } | null;
 }
-function fromApplication(input?: Application | null): JSONValue {
+function fromApplication(input?: Application | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Name: input["Name"],
+    Version: input["Version"],
+    Args: input["Args"],
+    AdditionalInfo: input["AdditionalInfo"],
   }
 }
-function toApplication(root: JSONValue): Application {
-  return prt.readObj({
+function toApplication(root: jsonP.JSONValue): Application {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
       "Version": "s",
       "Args": ["s"],
-      "AdditionalInfo": x => prt.readMap(String, String, x),
+      "AdditionalInfo": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -2246,27 +2235,13 @@ function toApplication(root: JSONValue): Application {
 export type ScaleDownBehavior =
 | "TERMINATE_AT_INSTANCE_HOUR"
 | "TERMINATE_AT_TASK_COMPLETION"
-;
-
-function toScaleDownBehavior(root: JSONValue): ScaleDownBehavior | null {
-  return ( false
-    || root == "TERMINATE_AT_INSTANCE_HOUR"
-    || root == "TERMINATE_AT_TASK_COMPLETION"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type RepoUpgradeOnBoot =
 | "SECURITY"
 | "NONE"
-;
-
-function toRepoUpgradeOnBoot(root: JSONValue): RepoUpgradeOnBoot | null {
-  return ( false
-    || root == "SECURITY"
-    || root == "NONE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface KerberosAttributes {
@@ -2276,13 +2251,18 @@ export interface KerberosAttributes {
   ADDomainJoinUser?: string | null;
   ADDomainJoinPassword?: string | null;
 }
-function fromKerberosAttributes(input?: KerberosAttributes | null): JSONValue {
+function fromKerberosAttributes(input?: KerberosAttributes | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Realm: input["Realm"],
+    KdcAdminPassword: input["KdcAdminPassword"],
+    CrossRealmTrustPrincipalPassword: input["CrossRealmTrustPrincipalPassword"],
+    ADDomainJoinUser: input["ADDomainJoinUser"],
+    ADDomainJoinPassword: input["ADDomainJoinPassword"],
   }
 }
-function toKerberosAttributes(root: JSONValue): KerberosAttributes {
-  return prt.readObj({
+function toKerberosAttributes(root: jsonP.JSONValue): KerberosAttributes {
+  return jsonP.readObj({
     required: {
       "Realm": "s",
       "KdcAdminPassword": "s",
@@ -2300,18 +2280,20 @@ export interface PlacementGroupConfig {
   InstanceRole: InstanceRoleType;
   PlacementStrategy?: PlacementGroupStrategy | null;
 }
-function fromPlacementGroupConfig(input?: PlacementGroupConfig | null): JSONValue {
+function fromPlacementGroupConfig(input?: PlacementGroupConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    InstanceRole: input["InstanceRole"],
+    PlacementStrategy: input["PlacementStrategy"],
   }
 }
-function toPlacementGroupConfig(root: JSONValue): PlacementGroupConfig {
-  return prt.readObj({
+function toPlacementGroupConfig(root: jsonP.JSONValue): PlacementGroupConfig {
+  return jsonP.readObj({
     required: {
-      "InstanceRole": toInstanceRoleType,
+      "InstanceRole": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceRoleType>(x),
     },
     optional: {
-      "PlacementStrategy": toPlacementGroupStrategy,
+      "PlacementStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<PlacementGroupStrategy>(x),
     },
   }, root);
 }
@@ -2322,16 +2304,7 @@ export type PlacementGroupStrategy =
 | "PARTITION"
 | "CLUSTER"
 | "NONE"
-;
-
-function toPlacementGroupStrategy(root: JSONValue): PlacementGroupStrategy | null {
-  return ( false
-    || root == "SPREAD"
-    || root == "PARTITION"
-    || root == "CLUSTER"
-    || root == "NONE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface ExecutionEngineConfig {
@@ -2339,18 +2312,21 @@ export interface ExecutionEngineConfig {
   Type?: ExecutionEngineType | null;
   MasterInstanceSecurityGroupId?: string | null;
 }
-function fromExecutionEngineConfig(input?: ExecutionEngineConfig | null): JSONValue {
+function fromExecutionEngineConfig(input?: ExecutionEngineConfig | null): jsonP.JSONValue {
   if (!input) return input;
-  return {...input,
+  return {
+    Id: input["Id"],
+    Type: input["Type"],
+    MasterInstanceSecurityGroupId: input["MasterInstanceSecurityGroupId"],
   }
 }
-function toExecutionEngineConfig(root: JSONValue): ExecutionEngineConfig {
-  return prt.readObj({
+function toExecutionEngineConfig(root: jsonP.JSONValue): ExecutionEngineConfig {
+  return jsonP.readObj({
     required: {
       "Id": "s",
     },
     optional: {
-      "Type": toExecutionEngineType,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<ExecutionEngineType>(x),
       "MasterInstanceSecurityGroupId": "s",
     },
   }, root);
@@ -2359,13 +2335,7 @@ function toExecutionEngineConfig(root: JSONValue): ExecutionEngineConfig {
 // refs: 2 - tags: input, named, enum, output
 export type ExecutionEngineType =
 | "EMR"
-;
-
-function toExecutionEngineType(root: JSONValue): ExecutionEngineType | null {
-  return ( false
-    || root == "EMR"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface CancelStepsInfo {
@@ -2373,12 +2343,12 @@ export interface CancelStepsInfo {
   Status?: CancelStepsRequestStatus | null;
   Reason?: string | null;
 }
-function toCancelStepsInfo(root: JSONValue): CancelStepsInfo {
-  return prt.readObj({
+function toCancelStepsInfo(root: jsonP.JSONValue): CancelStepsInfo {
+  return jsonP.readObj({
     required: {},
     optional: {
       "StepId": "s",
-      "Status": toCancelStepsRequestStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<CancelStepsRequestStatus>(x),
       "Reason": "s",
     },
   }, root);
@@ -2388,13 +2358,7 @@ function toCancelStepsInfo(root: JSONValue): CancelStepsInfo {
 export type CancelStepsRequestStatus =
 | "SUBMITTED"
 | "FAILED"
-;
-function toCancelStepsRequestStatus(root: JSONValue): CancelStepsRequestStatus | null {
-  return ( false
-    || root == "SUBMITTED"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Cluster {
@@ -2429,15 +2393,15 @@ export interface Cluster {
   StepConcurrencyLevel?: number | null;
   PlacementGroups?: PlacementGroupConfig[] | null;
 }
-function toCluster(root: JSONValue): Cluster {
-  return prt.readObj({
+function toCluster(root: jsonP.JSONValue): Cluster {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "Name": "s",
       "Status": toClusterStatus,
       "Ec2InstanceAttributes": toEc2InstanceAttributes,
-      "InstanceCollectionType": toInstanceCollectionType,
+      "InstanceCollectionType": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceCollectionType>(x),
       "LogUri": "s",
       "LogEncryptionKmsKeyId": "s",
       "RequestedAmiVersion": "s",
@@ -2454,10 +2418,10 @@ function toCluster(root: JSONValue): Cluster {
       "Configurations": [toConfiguration],
       "SecurityConfiguration": "s",
       "AutoScalingRole": "s",
-      "ScaleDownBehavior": toScaleDownBehavior,
+      "ScaleDownBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<ScaleDownBehavior>(x),
       "CustomAmiId": "s",
       "EbsRootVolumeSize": "n",
-      "RepoUpgradeOnBoot": toRepoUpgradeOnBoot,
+      "RepoUpgradeOnBoot": (x: jsonP.JSONValue) => cmnP.readEnum<RepoUpgradeOnBoot>(x),
       "KerberosAttributes": toKerberosAttributes,
       "ClusterArn": "s",
       "OutpostArn": "s",
@@ -2473,11 +2437,11 @@ export interface ClusterStatus {
   StateChangeReason?: ClusterStateChangeReason | null;
   Timeline?: ClusterTimeline | null;
 }
-function toClusterStatus(root: JSONValue): ClusterStatus {
-  return prt.readObj({
+function toClusterStatus(root: jsonP.JSONValue): ClusterStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "State": toClusterState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<ClusterState>(x),
       "StateChangeReason": toClusterStateChangeReason,
       "Timeline": toClusterTimeline,
     },
@@ -2489,11 +2453,11 @@ export interface ClusterStateChangeReason {
   Code?: ClusterStateChangeReasonCode | null;
   Message?: string | null;
 }
-function toClusterStateChangeReason(root: JSONValue): ClusterStateChangeReason {
-  return prt.readObj({
+function toClusterStateChangeReason(root: jsonP.JSONValue): ClusterStateChangeReason {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Code": toClusterStateChangeReasonCode,
+      "Code": (x: jsonP.JSONValue) => cmnP.readEnum<ClusterStateChangeReasonCode>(x),
       "Message": "s",
     },
   }, root);
@@ -2509,19 +2473,7 @@ export type ClusterStateChangeReasonCode =
 | "USER_REQUEST"
 | "STEP_FAILURE"
 | "ALL_STEPS_COMPLETED"
-;
-function toClusterStateChangeReasonCode(root: JSONValue): ClusterStateChangeReasonCode | null {
-  return ( false
-    || root == "INTERNAL_ERROR"
-    || root == "VALIDATION_ERROR"
-    || root == "INSTANCE_FAILURE"
-    || root == "INSTANCE_FLEET_TIMEOUT"
-    || root == "BOOTSTRAP_FAILURE"
-    || root == "USER_REQUEST"
-    || root == "STEP_FAILURE"
-    || root == "ALL_STEPS_COMPLETED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface ClusterTimeline {
@@ -2529,8 +2481,8 @@ export interface ClusterTimeline {
   ReadyDateTime?: Date | number | null;
   EndDateTime?: Date | number | null;
 }
-function toClusterTimeline(root: JSONValue): ClusterTimeline {
-  return prt.readObj({
+function toClusterTimeline(root: jsonP.JSONValue): ClusterTimeline {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CreationDateTime": "d",
@@ -2554,8 +2506,8 @@ export interface Ec2InstanceAttributes {
   AdditionalMasterSecurityGroups?: string[] | null;
   AdditionalSlaveSecurityGroups?: string[] | null;
 }
-function toEc2InstanceAttributes(root: JSONValue): Ec2InstanceAttributes {
-  return prt.readObj({
+function toEc2InstanceAttributes(root: jsonP.JSONValue): Ec2InstanceAttributes {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Ec2KeyName": "s",
@@ -2577,13 +2529,7 @@ function toEc2InstanceAttributes(root: JSONValue): Ec2InstanceAttributes {
 export type InstanceCollectionType =
 | "INSTANCE_FLEET"
 | "INSTANCE_GROUP"
-;
-function toInstanceCollectionType(root: JSONValue): InstanceCollectionType | null {
-  return ( false
-    || root == "INSTANCE_FLEET"
-    || root == "INSTANCE_GROUP"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface JobFlowDetail {
@@ -2603,8 +2549,8 @@ export interface JobFlowDetail {
   AutoScalingRole?: string | null;
   ScaleDownBehavior?: ScaleDownBehavior | null;
 }
-function toJobFlowDetail(root: JSONValue): JobFlowDetail {
-  return prt.readObj({
+function toJobFlowDetail(root: jsonP.JSONValue): JobFlowDetail {
+  return jsonP.readObj({
     required: {
       "JobFlowId": "s",
       "Name": "s",
@@ -2622,7 +2568,7 @@ function toJobFlowDetail(root: JSONValue): JobFlowDetail {
       "JobFlowRole": "s",
       "ServiceRole": "s",
       "AutoScalingRole": "s",
-      "ScaleDownBehavior": toScaleDownBehavior,
+      "ScaleDownBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<ScaleDownBehavior>(x),
     },
   }, root);
 }
@@ -2636,10 +2582,10 @@ export interface JobFlowExecutionStatusDetail {
   EndDateTime?: Date | number | null;
   LastStateChangeReason?: string | null;
 }
-function toJobFlowExecutionStatusDetail(root: JSONValue): JobFlowExecutionStatusDetail {
-  return prt.readObj({
+function toJobFlowExecutionStatusDetail(root: jsonP.JSONValue): JobFlowExecutionStatusDetail {
+  return jsonP.readObj({
     required: {
-      "State": toJobFlowExecutionState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<JobFlowExecutionState>(x),
       "CreationDateTime": "d",
     },
     optional: {
@@ -2667,8 +2613,8 @@ export interface JobFlowInstancesDetail {
   TerminationProtected?: boolean | null;
   HadoopVersion?: string | null;
 }
-function toJobFlowInstancesDetail(root: JSONValue): JobFlowInstancesDetail {
-  return prt.readObj({
+function toJobFlowInstancesDetail(root: jsonP.JSONValue): JobFlowInstancesDetail {
+  return jsonP.readObj({
     required: {
       "MasterInstanceType": "s",
       "SlaveInstanceType": "s",
@@ -2706,15 +2652,15 @@ export interface InstanceGroupDetail {
   ReadyDateTime?: Date | number | null;
   EndDateTime?: Date | number | null;
 }
-function toInstanceGroupDetail(root: JSONValue): InstanceGroupDetail {
-  return prt.readObj({
+function toInstanceGroupDetail(root: jsonP.JSONValue): InstanceGroupDetail {
+  return jsonP.readObj({
     required: {
-      "Market": toMarketType,
-      "InstanceRole": toInstanceRoleType,
+      "Market": (x: jsonP.JSONValue) => cmnP.readEnum<MarketType>(x),
+      "InstanceRole": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceRoleType>(x),
       "InstanceType": "s",
       "InstanceRequestCount": "n",
       "InstanceRunningCount": "n",
-      "State": toInstanceGroupState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceGroupState>(x),
       "CreationDateTime": "d",
     },
     optional: {
@@ -2742,30 +2688,15 @@ export type InstanceGroupState =
 | "ARRESTED"
 | "SHUTTING_DOWN"
 | "ENDED"
-;
-function toInstanceGroupState(root: JSONValue): InstanceGroupState | null {
-  return ( false
-    || root == "PROVISIONING"
-    || root == "BOOTSTRAPPING"
-    || root == "RUNNING"
-    || root == "RECONFIGURING"
-    || root == "RESIZING"
-    || root == "SUSPENDED"
-    || root == "TERMINATING"
-    || root == "TERMINATED"
-    || root == "ARRESTED"
-    || root == "SHUTTING_DOWN"
-    || root == "ENDED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface StepDetail {
   StepConfig: StepConfig;
   ExecutionStatusDetail: StepExecutionStatusDetail;
 }
-function toStepDetail(root: JSONValue): StepDetail {
-  return prt.readObj({
+function toStepDetail(root: jsonP.JSONValue): StepDetail {
+  return jsonP.readObj({
     required: {
       "StepConfig": toStepConfig,
       "ExecutionStatusDetail": toStepExecutionStatusDetail,
@@ -2782,10 +2713,10 @@ export interface StepExecutionStatusDetail {
   EndDateTime?: Date | number | null;
   LastStateChangeReason?: string | null;
 }
-function toStepExecutionStatusDetail(root: JSONValue): StepExecutionStatusDetail {
-  return prt.readObj({
+function toStepExecutionStatusDetail(root: jsonP.JSONValue): StepExecutionStatusDetail {
+  return jsonP.readObj({
     required: {
-      "State": toStepExecutionState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<StepExecutionState>(x),
       "CreationDateTime": "d",
     },
     optional: {
@@ -2805,25 +2736,14 @@ export type StepExecutionState =
 | "CANCELLED"
 | "FAILED"
 | "INTERRUPTED"
-;
-function toStepExecutionState(root: JSONValue): StepExecutionState | null {
-  return ( false
-    || root == "PENDING"
-    || root == "RUNNING"
-    || root == "CONTINUE"
-    || root == "COMPLETED"
-    || root == "CANCELLED"
-    || root == "FAILED"
-    || root == "INTERRUPTED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface BootstrapActionDetail {
   BootstrapActionConfig?: BootstrapActionConfig | null;
 }
-function toBootstrapActionDetail(root: JSONValue): BootstrapActionDetail {
-  return prt.readObj({
+function toBootstrapActionDetail(root: jsonP.JSONValue): BootstrapActionDetail {
+  return jsonP.readObj({
     required: {},
     optional: {
       "BootstrapActionConfig": toBootstrapActionConfig,
@@ -2847,8 +2767,8 @@ export interface NotebookExecution {
   NotebookInstanceSecurityGroupId?: string | null;
   Tags?: Tag[] | null;
 }
-function toNotebookExecution(root: JSONValue): NotebookExecution {
-  return prt.readObj({
+function toNotebookExecution(root: jsonP.JSONValue): NotebookExecution {
+  return jsonP.readObj({
     required: {},
     optional: {
       "NotebookExecutionId": "s",
@@ -2856,7 +2776,7 @@ function toNotebookExecution(root: JSONValue): NotebookExecution {
       "ExecutionEngine": toExecutionEngineConfig,
       "NotebookExecutionName": "s",
       "NotebookParams": "s",
-      "Status": toNotebookExecutionStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<NotebookExecutionStatus>(x),
       "StartTime": "d",
       "EndTime": "d",
       "Arn": "s",
@@ -2876,14 +2796,14 @@ export interface Step {
   ActionOnFailure?: ActionOnFailure | null;
   Status?: StepStatus | null;
 }
-function toStep(root: JSONValue): Step {
-  return prt.readObj({
+function toStep(root: jsonP.JSONValue): Step {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "Name": "s",
       "Config": toHadoopStepConfig,
-      "ActionOnFailure": toActionOnFailure,
+      "ActionOnFailure": (x: jsonP.JSONValue) => cmnP.readEnum<ActionOnFailure>(x),
       "Status": toStepStatus,
     },
   }, root);
@@ -2892,16 +2812,16 @@ function toStep(root: JSONValue): Step {
 // refs: 2 - tags: output, named, interface
 export interface HadoopStepConfig {
   Jar?: string | null;
-  Properties?: { [key: string]: string } | null;
+  Properties?: { [key: string]: string | null | undefined } | null;
   MainClass?: string | null;
   Args?: string[] | null;
 }
-function toHadoopStepConfig(root: JSONValue): HadoopStepConfig {
-  return prt.readObj({
+function toHadoopStepConfig(root: jsonP.JSONValue): HadoopStepConfig {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Jar": "s",
-      "Properties": x => prt.readMap(String, String, x),
+      "Properties": x => jsonP.readMap(String, String, x),
       "MainClass": "s",
       "Args": ["s"],
     },
@@ -2915,11 +2835,11 @@ export interface StepStatus {
   FailureDetails?: FailureDetails | null;
   Timeline?: StepTimeline | null;
 }
-function toStepStatus(root: JSONValue): StepStatus {
-  return prt.readObj({
+function toStepStatus(root: jsonP.JSONValue): StepStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "State": toStepState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<StepState>(x),
       "StateChangeReason": toStepStateChangeReason,
       "FailureDetails": toFailureDetails,
       "Timeline": toStepTimeline,
@@ -2932,11 +2852,11 @@ export interface StepStateChangeReason {
   Code?: StepStateChangeReasonCode | null;
   Message?: string | null;
 }
-function toStepStateChangeReason(root: JSONValue): StepStateChangeReason {
-  return prt.readObj({
+function toStepStateChangeReason(root: jsonP.JSONValue): StepStateChangeReason {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Code": toStepStateChangeReasonCode,
+      "Code": (x: jsonP.JSONValue) => cmnP.readEnum<StepStateChangeReasonCode>(x),
       "Message": "s",
     },
   }, root);
@@ -2945,12 +2865,7 @@ function toStepStateChangeReason(root: JSONValue): StepStateChangeReason {
 // refs: 2 - tags: output, named, enum
 export type StepStateChangeReasonCode =
 | "NONE"
-;
-function toStepStateChangeReasonCode(root: JSONValue): StepStateChangeReasonCode | null {
-  return ( false
-    || root == "NONE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface FailureDetails {
@@ -2958,8 +2873,8 @@ export interface FailureDetails {
   Message?: string | null;
   LogFile?: string | null;
 }
-function toFailureDetails(root: JSONValue): FailureDetails {
-  return prt.readObj({
+function toFailureDetails(root: jsonP.JSONValue): FailureDetails {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Reason": "s",
@@ -2975,8 +2890,8 @@ export interface StepTimeline {
   StartDateTime?: Date | number | null;
   EndDateTime?: Date | number | null;
 }
-function toStepTimeline(root: JSONValue): StepTimeline {
-  return prt.readObj({
+function toStepTimeline(root: jsonP.JSONValue): StepTimeline {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CreationDateTime": "d",
@@ -2991,8 +2906,8 @@ export interface BlockPublicAccessConfigurationMetadata {
   CreationDateTime: Date | number;
   CreatedByArn: string;
 }
-function toBlockPublicAccessConfigurationMetadata(root: JSONValue): BlockPublicAccessConfigurationMetadata {
-  return prt.readObj({
+function toBlockPublicAccessConfigurationMetadata(root: jsonP.JSONValue): BlockPublicAccessConfigurationMetadata {
+  return jsonP.readObj({
     required: {
       "CreationDateTime": "d",
       "CreatedByArn": "s",
@@ -3007,8 +2922,8 @@ export interface Command {
   ScriptPath?: string | null;
   Args?: string[] | null;
 }
-function toCommand(root: JSONValue): Command {
-  return prt.readObj({
+function toCommand(root: jsonP.JSONValue): Command {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -3027,8 +2942,8 @@ export interface ClusterSummary {
   ClusterArn?: string | null;
   OutpostArn?: string | null;
 }
-function toClusterSummary(root: JSONValue): ClusterSummary {
-  return prt.readObj({
+function toClusterSummary(root: jsonP.JSONValue): ClusterSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
@@ -3054,14 +2969,14 @@ export interface InstanceFleet {
   InstanceTypeSpecifications?: InstanceTypeSpecification[] | null;
   LaunchSpecifications?: InstanceFleetProvisioningSpecifications | null;
 }
-function toInstanceFleet(root: JSONValue): InstanceFleet {
-  return prt.readObj({
+function toInstanceFleet(root: jsonP.JSONValue): InstanceFleet {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "Name": "s",
       "Status": toInstanceFleetStatus,
-      "InstanceFleetType": toInstanceFleetType,
+      "InstanceFleetType": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceFleetType>(x),
       "TargetOnDemandCapacity": "n",
       "TargetSpotCapacity": "n",
       "ProvisionedOnDemandCapacity": "n",
@@ -3078,11 +2993,11 @@ export interface InstanceFleetStatus {
   StateChangeReason?: InstanceFleetStateChangeReason | null;
   Timeline?: InstanceFleetTimeline | null;
 }
-function toInstanceFleetStatus(root: JSONValue): InstanceFleetStatus {
-  return prt.readObj({
+function toInstanceFleetStatus(root: jsonP.JSONValue): InstanceFleetStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "State": toInstanceFleetState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceFleetState>(x),
       "StateChangeReason": toInstanceFleetStateChangeReason,
       "Timeline": toInstanceFleetTimeline,
     },
@@ -3098,29 +3013,18 @@ export type InstanceFleetState =
 | "SUSPENDED"
 | "TERMINATING"
 | "TERMINATED"
-;
-function toInstanceFleetState(root: JSONValue): InstanceFleetState | null {
-  return ( false
-    || root == "PROVISIONING"
-    || root == "BOOTSTRAPPING"
-    || root == "RUNNING"
-    || root == "RESIZING"
-    || root == "SUSPENDED"
-    || root == "TERMINATING"
-    || root == "TERMINATED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface InstanceFleetStateChangeReason {
   Code?: InstanceFleetStateChangeReasonCode | null;
   Message?: string | null;
 }
-function toInstanceFleetStateChangeReason(root: JSONValue): InstanceFleetStateChangeReason {
-  return prt.readObj({
+function toInstanceFleetStateChangeReason(root: jsonP.JSONValue): InstanceFleetStateChangeReason {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Code": toInstanceFleetStateChangeReasonCode,
+      "Code": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceFleetStateChangeReasonCode>(x),
       "Message": "s",
     },
   }, root);
@@ -3132,15 +3036,7 @@ export type InstanceFleetStateChangeReasonCode =
 | "VALIDATION_ERROR"
 | "INSTANCE_FAILURE"
 | "CLUSTER_TERMINATED"
-;
-function toInstanceFleetStateChangeReasonCode(root: JSONValue): InstanceFleetStateChangeReasonCode | null {
-  return ( false
-    || root == "INTERNAL_ERROR"
-    || root == "VALIDATION_ERROR"
-    || root == "INSTANCE_FAILURE"
-    || root == "CLUSTER_TERMINATED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface InstanceFleetTimeline {
@@ -3148,8 +3044,8 @@ export interface InstanceFleetTimeline {
   ReadyDateTime?: Date | number | null;
   EndDateTime?: Date | number | null;
 }
-function toInstanceFleetTimeline(root: JSONValue): InstanceFleetTimeline {
-  return prt.readObj({
+function toInstanceFleetTimeline(root: jsonP.JSONValue): InstanceFleetTimeline {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CreationDateTime": "d",
@@ -3169,8 +3065,8 @@ export interface InstanceTypeSpecification {
   EbsBlockDevices?: EbsBlockDevice[] | null;
   EbsOptimized?: boolean | null;
 }
-function toInstanceTypeSpecification(root: JSONValue): InstanceTypeSpecification {
-  return prt.readObj({
+function toInstanceTypeSpecification(root: jsonP.JSONValue): InstanceTypeSpecification {
+  return jsonP.readObj({
     required: {},
     optional: {
       "InstanceType": "s",
@@ -3189,8 +3085,8 @@ export interface EbsBlockDevice {
   VolumeSpecification?: VolumeSpecification | null;
   Device?: string | null;
 }
-function toEbsBlockDevice(root: JSONValue): EbsBlockDevice {
-  return prt.readObj({
+function toEbsBlockDevice(root: jsonP.JSONValue): EbsBlockDevice {
+  return jsonP.readObj({
     required: {},
     optional: {
       "VolumeSpecification": toVolumeSpecification,
@@ -3219,14 +3115,14 @@ export interface InstanceGroup {
   ShrinkPolicy?: ShrinkPolicy | null;
   AutoScalingPolicy?: AutoScalingPolicyDescription | null;
 }
-function toInstanceGroup(root: JSONValue): InstanceGroup {
-  return prt.readObj({
+function toInstanceGroup(root: jsonP.JSONValue): InstanceGroup {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "Name": "s",
-      "Market": toMarketType,
-      "InstanceGroupType": toInstanceGroupType,
+      "Market": (x: jsonP.JSONValue) => cmnP.readEnum<MarketType>(x),
+      "InstanceGroupType": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceGroupType>(x),
       "BidPrice": "s",
       "InstanceType": "s",
       "RequestedInstanceCount": "n",
@@ -3250,11 +3146,11 @@ export interface InstanceGroupStatus {
   StateChangeReason?: InstanceGroupStateChangeReason | null;
   Timeline?: InstanceGroupTimeline | null;
 }
-function toInstanceGroupStatus(root: JSONValue): InstanceGroupStatus {
-  return prt.readObj({
+function toInstanceGroupStatus(root: jsonP.JSONValue): InstanceGroupStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "State": toInstanceGroupState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceGroupState>(x),
       "StateChangeReason": toInstanceGroupStateChangeReason,
       "Timeline": toInstanceGroupTimeline,
     },
@@ -3266,11 +3162,11 @@ export interface InstanceGroupStateChangeReason {
   Code?: InstanceGroupStateChangeReasonCode | null;
   Message?: string | null;
 }
-function toInstanceGroupStateChangeReason(root: JSONValue): InstanceGroupStateChangeReason {
-  return prt.readObj({
+function toInstanceGroupStateChangeReason(root: jsonP.JSONValue): InstanceGroupStateChangeReason {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Code": toInstanceGroupStateChangeReasonCode,
+      "Code": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceGroupStateChangeReasonCode>(x),
       "Message": "s",
     },
   }, root);
@@ -3282,15 +3178,7 @@ export type InstanceGroupStateChangeReasonCode =
 | "VALIDATION_ERROR"
 | "INSTANCE_FAILURE"
 | "CLUSTER_TERMINATED"
-;
-function toInstanceGroupStateChangeReasonCode(root: JSONValue): InstanceGroupStateChangeReasonCode | null {
-  return ( false
-    || root == "INTERNAL_ERROR"
-    || root == "VALIDATION_ERROR"
-    || root == "INSTANCE_FAILURE"
-    || root == "CLUSTER_TERMINATED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface InstanceGroupTimeline {
@@ -3298,8 +3186,8 @@ export interface InstanceGroupTimeline {
   ReadyDateTime?: Date | number | null;
   EndDateTime?: Date | number | null;
 }
-function toInstanceGroupTimeline(root: JSONValue): InstanceGroupTimeline {
-  return prt.readObj({
+function toInstanceGroupTimeline(root: jsonP.JSONValue): InstanceGroupTimeline {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CreationDateTime": "d",
@@ -3315,8 +3203,8 @@ export interface AutoScalingPolicyDescription {
   Constraints?: ScalingConstraints | null;
   Rules?: ScalingRule[] | null;
 }
-function toAutoScalingPolicyDescription(root: JSONValue): AutoScalingPolicyDescription {
-  return prt.readObj({
+function toAutoScalingPolicyDescription(root: jsonP.JSONValue): AutoScalingPolicyDescription {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Status": toAutoScalingPolicyStatus,
@@ -3331,11 +3219,11 @@ export interface AutoScalingPolicyStatus {
   State?: AutoScalingPolicyState | null;
   StateChangeReason?: AutoScalingPolicyStateChangeReason | null;
 }
-function toAutoScalingPolicyStatus(root: JSONValue): AutoScalingPolicyStatus {
-  return prt.readObj({
+function toAutoScalingPolicyStatus(root: jsonP.JSONValue): AutoScalingPolicyStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "State": toAutoScalingPolicyState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<AutoScalingPolicyState>(x),
       "StateChangeReason": toAutoScalingPolicyStateChangeReason,
     },
   }, root);
@@ -3349,28 +3237,18 @@ export type AutoScalingPolicyState =
 | "DETACHING"
 | "DETACHED"
 | "FAILED"
-;
-function toAutoScalingPolicyState(root: JSONValue): AutoScalingPolicyState | null {
-  return ( false
-    || root == "PENDING"
-    || root == "ATTACHING"
-    || root == "ATTACHED"
-    || root == "DETACHING"
-    || root == "DETACHED"
-    || root == "FAILED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface AutoScalingPolicyStateChangeReason {
   Code?: AutoScalingPolicyStateChangeReasonCode | null;
   Message?: string | null;
 }
-function toAutoScalingPolicyStateChangeReason(root: JSONValue): AutoScalingPolicyStateChangeReason {
-  return prt.readObj({
+function toAutoScalingPolicyStateChangeReason(root: jsonP.JSONValue): AutoScalingPolicyStateChangeReason {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Code": toAutoScalingPolicyStateChangeReasonCode,
+      "Code": (x: jsonP.JSONValue) => cmnP.readEnum<AutoScalingPolicyStateChangeReasonCode>(x),
       "Message": "s",
     },
   }, root);
@@ -3381,14 +3259,7 @@ export type AutoScalingPolicyStateChangeReasonCode =
 | "USER_REQUEST"
 | "PROVISION_FAILURE"
 | "CLEANUP_FAILURE"
-;
-function toAutoScalingPolicyStateChangeReasonCode(root: JSONValue): AutoScalingPolicyStateChangeReasonCode | null {
-  return ( false
-    || root == "USER_REQUEST"
-    || root == "PROVISION_FAILURE"
-    || root == "CLEANUP_FAILURE"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Instance {
@@ -3405,8 +3276,8 @@ export interface Instance {
   InstanceType?: string | null;
   EbsVolumes?: EbsVolume[] | null;
 }
-function toInstance(root: JSONValue): Instance {
-  return prt.readObj({
+function toInstance(root: jsonP.JSONValue): Instance {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
@@ -3418,7 +3289,7 @@ function toInstance(root: JSONValue): Instance {
       "Status": toInstanceStatus,
       "InstanceGroupId": "s",
       "InstanceFleetId": "s",
-      "Market": toMarketType,
+      "Market": (x: jsonP.JSONValue) => cmnP.readEnum<MarketType>(x),
       "InstanceType": "s",
       "EbsVolumes": [toEbsVolume],
     },
@@ -3431,11 +3302,11 @@ export interface InstanceStatus {
   StateChangeReason?: InstanceStateChangeReason | null;
   Timeline?: InstanceTimeline | null;
 }
-function toInstanceStatus(root: JSONValue): InstanceStatus {
-  return prt.readObj({
+function toInstanceStatus(root: jsonP.JSONValue): InstanceStatus {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "State": toInstanceState,
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceState>(x),
       "StateChangeReason": toInstanceStateChangeReason,
       "Timeline": toInstanceTimeline,
     },
@@ -3447,11 +3318,11 @@ export interface InstanceStateChangeReason {
   Code?: InstanceStateChangeReasonCode | null;
   Message?: string | null;
 }
-function toInstanceStateChangeReason(root: JSONValue): InstanceStateChangeReason {
-  return prt.readObj({
+function toInstanceStateChangeReason(root: jsonP.JSONValue): InstanceStateChangeReason {
+  return jsonP.readObj({
     required: {},
     optional: {
-      "Code": toInstanceStateChangeReasonCode,
+      "Code": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceStateChangeReasonCode>(x),
       "Message": "s",
     },
   }, root);
@@ -3464,16 +3335,7 @@ export type InstanceStateChangeReasonCode =
 | "INSTANCE_FAILURE"
 | "BOOTSTRAP_FAILURE"
 | "CLUSTER_TERMINATED"
-;
-function toInstanceStateChangeReasonCode(root: JSONValue): InstanceStateChangeReasonCode | null {
-  return ( false
-    || root == "INTERNAL_ERROR"
-    || root == "VALIDATION_ERROR"
-    || root == "INSTANCE_FAILURE"
-    || root == "BOOTSTRAP_FAILURE"
-    || root == "CLUSTER_TERMINATED"
-  ) ? root : null;
-}
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface InstanceTimeline {
@@ -3481,8 +3343,8 @@ export interface InstanceTimeline {
   ReadyDateTime?: Date | number | null;
   EndDateTime?: Date | number | null;
 }
-function toInstanceTimeline(root: JSONValue): InstanceTimeline {
-  return prt.readObj({
+function toInstanceTimeline(root: jsonP.JSONValue): InstanceTimeline {
+  return jsonP.readObj({
     required: {},
     optional: {
       "CreationDateTime": "d",
@@ -3497,8 +3359,8 @@ export interface EbsVolume {
   Device?: string | null;
   VolumeId?: string | null;
 }
-function toEbsVolume(root: JSONValue): EbsVolume {
-  return prt.readObj({
+function toEbsVolume(root: jsonP.JSONValue): EbsVolume {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Device": "s",
@@ -3516,14 +3378,14 @@ export interface NotebookExecutionSummary {
   StartTime?: Date | number | null;
   EndTime?: Date | number | null;
 }
-function toNotebookExecutionSummary(root: JSONValue): NotebookExecutionSummary {
-  return prt.readObj({
+function toNotebookExecutionSummary(root: jsonP.JSONValue): NotebookExecutionSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "NotebookExecutionId": "s",
       "EditorId": "s",
       "NotebookExecutionName": "s",
-      "Status": toNotebookExecutionStatus,
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<NotebookExecutionStatus>(x),
       "StartTime": "d",
       "EndTime": "d",
     },
@@ -3535,8 +3397,8 @@ export interface SecurityConfigurationSummary {
   Name?: string | null;
   CreationDateTime?: Date | number | null;
 }
-function toSecurityConfigurationSummary(root: JSONValue): SecurityConfigurationSummary {
-  return prt.readObj({
+function toSecurityConfigurationSummary(root: jsonP.JSONValue): SecurityConfigurationSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Name": "s",
@@ -3553,14 +3415,14 @@ export interface StepSummary {
   ActionOnFailure?: ActionOnFailure | null;
   Status?: StepStatus | null;
 }
-function toStepSummary(root: JSONValue): StepSummary {
-  return prt.readObj({
+function toStepSummary(root: jsonP.JSONValue): StepSummary {
+  return jsonP.readObj({
     required: {},
     optional: {
       "Id": "s",
       "Name": "s",
       "Config": toHadoopStepConfig,
-      "ActionOnFailure": toActionOnFailure,
+      "ActionOnFailure": (x: jsonP.JSONValue) => cmnP.readEnum<ActionOnFailure>(x),
       "Status": toStepStatus,
     },
   }, root);
