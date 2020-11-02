@@ -20,7 +20,7 @@ export function readEnum<T extends string>(raw: unknown): T | null {
 }
 
 
-export function readNum(raw: string | undefined): number | undefined {
+export function readNum(raw: string | null | undefined): number | null | undefined {
   if (raw == null) return raw;
   const num = parseFloat(raw);
   if (isNaN(num)) throw new Error(`readNum gave NaN on ${raw}`);
@@ -28,7 +28,7 @@ export function readNum(raw: string | undefined): number | undefined {
 }
 
 
-export function readBool(raw: string | undefined): boolean | undefined {
+export function readBool(raw: string | null | undefined): boolean | null | undefined {
   if (raw == null) return raw;
   if (raw === 'true') return true;
   if (raw === 'false') return false;

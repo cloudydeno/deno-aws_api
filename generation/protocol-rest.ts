@@ -270,13 +270,13 @@ export default class ProtocolRestCodegen {
       const payloadShape = this.shapes.get(payloadSpec);
 
       let payloadChunk = '';
-      let payloadHeader = '';
+      let payloadHeader = new Array<string>();
       if (payloadShape.spec.type === 'structure') {
         const bodyGen = this.innerProtocol.generateOperationOutputParsingTypescript(payloadShape, resultWrapper);
         const bodyGenLines = bodyGen.outputParsingCode.split('\n');
         const retLine = bodyGenLines.findIndex(x => x.match(/^ +return +/));
         const bodyGenReturns = bodyGenLines.slice(retLine).join('\n');
-        payloadHeader = bodyGenLines.slice(0, retLine).join('\n');
+        payloadHeader = bodyGenLines.slice(0, retLine);
         payloadChunk = `${shape.spec.payload}: `+bodyGenReturns.replace(/^ +return +/, '').replace(/;$/, '').replace(/\n/g, '\n  ');
       } else if (payloadShape.spec.type === 'blob') {
         payloadChunk = `${shape.spec.payload}: await resp.text(), // TODO: maybe allow proper body streaming`;
@@ -300,7 +300,7 @@ export default class ProtocolRestCodegen {
       chunks.push(`    ${payloadChunk},`);
       chunks.push(`  };`);
       return {
-        outputParsingCode: chunks.join('\n'),
+        outputParsingCode: [...payloadHeader, ...chunks].join('\n'),
         outputVariables: ['body'],
       };
 
@@ -325,6 +325,8 @@ export default class ProtocolRestCodegen {
               case 'string':
                 if (fieldShape.spec.enum) {
                   chunks.push(`    ${field}: cmnP.readEnum<${fieldShape.censoredName}>(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`);
+                } else if (spec.jsonvalue) {
+                  chunks.push(`    ${field}: jsonP.readJsonValueBase64(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`);
                 } else {
                   chunks.push(`    ${field}: resp.headers.get(${JSON.stringify(spec.locationName || field)}),`);
                 }

@@ -169,6 +169,11 @@ export function readJsonValue(input: JSONValue): JSONValue {
   if (typeof input !== 'string') throw new Error(`Server's JSON Value was ${typeof input} instead of string`);
   return JSON.parse(input);
 }
+export function readJsonValueBase64(input: JSONValue): JSONValue {
+  if (input == null) return undefined;
+  if (typeof input !== 'string') throw new Error(`Server's JSON Value was ${typeof input} instead of string`);
+  return JSON.parse(atob(input));
+}
 
 export function readMap<K extends string,V>(keyEncoder: (x: string) => K, valEncoder: (x: JSONValue) => V, input: JSONValue): Record<K,V> | null {
   if (input == null) return null;
