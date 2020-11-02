@@ -76,7 +76,7 @@ export default class ProtocolJsonCodegen {
         // if (innerShape.spec.member.jsonvalue) {
         //   encoder = `x.map(jsonP.serializeJsonValue)`;
         if (memShape.spec.type === 'structure' && memShape.tags.has('named')) {
-          encoder = `x.map(from${memShape.censoredName})`;
+          encoder = `x?.map(from${memShape.censoredName})`;
         }
       } else if (innerShape.spec.type === 'map') {
         const valShape = this.shapes.get(innerShape.spec.value);
@@ -206,6 +206,11 @@ export default class ProtocolJsonCodegen {
         typeSpec = 'd';
       } else if (innerShape.spec.type == 'character') {
         typeSpec = 's'; /// only used in test fixtures
+      } else if (innerShape.spec.type == 'list') {
+        const valShape = this.shapes.get(innerShape.spec.member);
+        if (valShape.spec.type !== 'structure') throw new Error(
+          `TODO: json struct output list member ${valShape.spec.type}`);
+        typeSpec = Symbol.for(`x => jsonP.readList(to${valShape.censoredName}, x)`);
       } else if (innerShape.spec.type == 'map') {
         const keyShape = this.shapes.get(innerShape.spec.key);
         const valShape = this.shapes.get(innerShape.spec.value);

@@ -195,6 +195,14 @@ export default class ProtocolXmlCodegen {
               // }
               break;
 
+            case 'integer':
+            case 'float':
+            case 'double':
+            case 'long':
+              childField = 'content: ';
+              childExpr = `x.toString()`;
+              break;
+
             default:
               throw new Error(`TODO: protocol-xml.ts lacks input shape list generator for ${innerShape.spec.type}`);
           }

@@ -183,3 +183,10 @@ export function readMap<K extends string,V>(keyEncoder: (x: string) => K, valEnc
   }
   return map;
 }
+
+export function readList<V>(encoder: (x: JSONValue) => V, raw: JSONValue): V[] | null {
+  if (Array.isArray(raw)) {
+    return raw.map(encoder);
+  }
+  return null;
+}

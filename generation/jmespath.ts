@@ -22,7 +22,7 @@ export function compileJMESPath(pathstr: string, rootRef: string): string {
 function postProcess(code: string): string {
   return code
     .replace(/\.flat\(\)\.map/g, '.flatMap')
-    .replace(/\.flat\(\)/g, '')
+    .replace(/\?\.flat\(\)/g, '')
   ;
 }
 
@@ -36,16 +36,16 @@ function compilePath(root: ASTNode, rootRef: string): string {
   switch (root.type) {
 
     case 'Field':
-      return `${rootRef}[${JSON.stringify(root.name)}]`;
+      return `${rootRef}?.${root.name}`;
 
     case 'Subexpression': {
       let expr = rootRef;
       for (const child of root.children) {
         if (!child || typeof child !== 'object') throw new Error(
           `BUG: Subexpression child wasn't an ASTNode`);
-        if (child !== root.children[0]) {
-          expr += '?.';
-        }
+        // if (child !== root.children[0]) {
+        //   expr += '?.';
+        // }
         expr = compilePath(child, expr);
       }
       return expr;
@@ -89,7 +89,7 @@ function compilePath(root: ASTNode, rootRef: string): string {
         case 'length':
           if (root.children.length !== 1) throw new Error(
             `BUG: Function 'length' had ${root.children.length} children`);
-          return `${compilePath(root.children[0], rootRef)}.length`;
+          return `(${compilePath(root.children[0], rootRef).replace(/\?$/, '')} || '').length`;
 
       }
       break;
@@ -101,7 +101,7 @@ function compilePath(root: ASTNode, rootRef: string): string {
       if (!source || typeof source !== 'object') throw new Error(
         `BUG: Projection base wasn't an ASTNode`);
       // TODO: not sure this is even necesary??
-      return `${compilePath(source, rootRef)}.flat()`;
+      return `${compilePath(source, rootRef)}?.flat()`;
       // return compilePath(source, rootRef);
     }
 
