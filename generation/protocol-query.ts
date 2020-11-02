@@ -124,7 +124,8 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
           }
           break;
         default:
-          chunks.push(`    // TODO: appending for ${(shape as KnownShape).spec.type}`);
+          throw new Error(`TODO: query input appending for ${(shape as KnownShape).spec.type}`);
+          // chunks.push(`    // TODO: appending for ${(shape as KnownShape).spec.type}`);
       }
     }
 

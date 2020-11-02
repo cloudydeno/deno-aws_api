@@ -74,23 +74,23 @@ export default class ServiceCodeGen {
       case 'ec2':
         this.protocol = new ProtocolQueryCodegen(this.shapes, this.helpers, {ec2: true});
         break;
-        case 'query':
-          this.protocol = new ProtocolQueryCodegen(this.shapes, this.helpers);
-          break;
-        case 'json':
-          this.protocol = new ProtocolJsonCodegen(this.shapes, this.helpers);
-          break;
-        case 'rest-xml': {
-          const inner = new ProtocolXmlCodegen(this.shapes, this.helpers);
-          this.protocol = new ProtocolRestCodegen(inner);
-          break;
-        }
-        case 'rest-json': {
-          const inner = new ProtocolJsonCodegen(this.shapes, this.helpers);
-          this.protocol = new ProtocolRestCodegen(inner);
-          break;
-        }
-        default: throw new Error(
+      case 'query':
+        this.protocol = new ProtocolQueryCodegen(this.shapes, this.helpers);
+        break;
+      case 'json':
+        this.protocol = new ProtocolJsonCodegen(this.shapes, this.helpers);
+        break;
+      case 'rest-xml': {
+        const inner = new ProtocolXmlCodegen(this.shapes, this.helpers);
+        this.protocol = new ProtocolRestCodegen(inner);
+        break;
+      }
+      case 'rest-json': {
+        const inner = new ProtocolJsonCodegen(this.shapes, this.helpers);
+        this.protocol = new ProtocolRestCodegen(inner);
+        break;
+      }
+      default: throw new Error(
         `TODO: unimpl protocol ${specs.api.metadata.protocol}`);
     }
 

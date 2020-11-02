@@ -104,14 +104,14 @@ export default class GenWaiter {
         case 'pathAny': {
           const [evaluator, comparision] = this.compilePathWaiter(acceptor);
           const evalSource = collapsePathEval ? 'field' : evaluator;
-          const condition = `${evalSource}.some(x => x${comparision})`;
+          const condition = `${evalSource}?.some(x => x${comparision})`;
           innerChunks.push(`      ${commented}if (${condition}) ${statement}`);
           break;
         }
         case 'pathAll': {
           const [evaluator, comparision] = this.compilePathWaiter(acceptor);
           const evalSource = collapsePathEval ? 'field' : evaluator;
-          const condition = `${evalSource}.every(x => x${comparision})`;
+          const condition = `${evalSource}?.every(x => x${comparision})`;
           innerChunks.push(`      ${commented}if (${condition}) ${statement}`);
           break;
         }

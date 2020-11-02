@@ -574,7 +574,8 @@ export default class ProtocolXmlCodegen {
       case 'timestamp':
         return `x => xmlP.parseTimestamp(x.content)`;
       case 'map':
-        return `() => ({}) /* TODO: map output */`; // TODO
+        throw new Error(`TODO: xml output map ${innerShape.spec.value.shape}`);
+        // return `() => ({}) /* TODO: map output */`; // TODO
       case 'structure':
         if (innerShape.tags.has('named')) {
           return `${innerShape.censoredName}_Parse`;
@@ -583,6 +584,7 @@ export default class ProtocolXmlCodegen {
         }
     }
     // sue me
+    throw new Error(`TODO: xml output field ${innerShape.spec.type}`);
     return `x => x /* TODO: ${innerShape.spec.type} output*/`;
     // return '{' + confExtras + JSON.stringify(extraConfig).slice(1);
   }

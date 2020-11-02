@@ -190,3 +190,8 @@ export function readList<V>(encoder: (x: JSONValue) => V, raw: JSONValue): V[] |
   }
   return null;
 }
+
+export function readNum(raw: JSONValue): number {
+  if (typeof raw === 'number') return raw;
+  throw new Error(`readNum wanted a number, got a ${typeof raw}`);
+}

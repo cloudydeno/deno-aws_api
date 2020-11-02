@@ -115,7 +115,7 @@ export default class ProtocolJsonCodegen {
     const chunks = new Array<string>();
     // chunks.push(`    const xml = await resp.xml(${resultWrapper ? JSON.stringify(resultWrapper) : ''});`);
     if (shape.refCount > 1) {
-      chunks.push(`    return from${shape.censoredName}(await resp.json());`);
+      chunks.push(`    return to${shape.censoredName}(await resp.json());`);
     } else {
       chunks.push('  '+this.generateStructureOutputTypescript(shape.spec, 'await resp.json()')
         .replace(/\n/g, '\n  '));
@@ -173,7 +173,7 @@ export default class ProtocolJsonCodegen {
 
     for (const [field, spec] of Object.entries(outputStruct.members)) {
       const isRequired = outputStruct.required?.includes(field);
-      let typeSpec: string | Symbol = Symbol.for('TODO');
+      let typeSpec: string | Symbol | undefined;
 
       const fieldShape = this.shapes.get(spec);
       const defaultName = this.ucfirst(field) ?? field;
@@ -208,22 +208,36 @@ export default class ProtocolJsonCodegen {
         typeSpec = 's'; /// only used in test fixtures
       } else if (innerShape.spec.type == 'list') {
         const valShape = this.shapes.get(innerShape.spec.member);
-        if (valShape.spec.type !== 'structure') throw new Error(
-          `TODO: json struct output list member ${valShape.spec.type}`);
-        typeSpec = Symbol.for(`x => jsonP.readList(to${valShape.censoredName}, x)`);
+        switch (valShape.spec.type) {
+          case 'structure':
+            typeSpec = Symbol.for(`x => jsonP.readList(to${valShape.censoredName}, x)`);
+            break;
+          case 'string':
+            if (valShape.spec.enum) throw new Error(`TODO: json struct output list of enums`);
+            typeSpec = Symbol.for(`x => jsonP.readList(String, x)`);
+            break;
+          default: throw new Error(
+            `TODO: json struct output list member ${valShape.spec.type}`);
+        }
       } else if (innerShape.spec.type == 'map') {
         const keyShape = this.shapes.get(innerShape.spec.key);
         const valShape = this.shapes.get(innerShape.spec.value);
-        const readKey = keyShape.tags.has('named')
-          ? 'to'+keyShape.censoredName
+        const readKey = !keyShape.tags.has('named')
+          ? 'String'
+          : keyShape.spec.type === 'string'
+          ? `x => cmnP.readEnumReq<${keyShape.censoredName}>(x)`
           : 'String';
         const readVal = this.exprReadOutput(valShape);
         typeSpec = Symbol.for(`x => jsonP.readMap(${readKey}, ${readVal}, x)`);
       } else {
+        throw new Error(`TODO: json output unknown field ${innerShape.spec.type}`);
         typeSpec = 'TODO_'+innerShape.spec.type;
         // specials.push([field, spec, fieldShape]);
       }
 
+      if (!typeSpec) {
+        throw new Error(`TODO: json output missed field ${innerShape.spec.type}`);
+      }
       if (isRequired) {
         required[field] = typeSpec;
         hasRequired = true;
@@ -279,23 +293,38 @@ export default class ProtocolJsonCodegen {
 
     let expr = 'TODO';
     if (innerShape.tags.has('named')) {
-      expr = 'to'+innerShape.censoredName;
+      if (innerShape.spec.type === 'string') {
+        expr = `y => cmnP.readEnum<${innerShape.censoredName}>(y)`;
+      } else {
+        expr = 'to'+innerShape.censoredName;
+      }
     } else if (innerShape.isNumberType) {
       expr = 'Number';
     } else if (innerShape.spec.type === 'string') {
       expr = 'String';
     } else if (innerShape.spec.type === 'timestamp') {
       expr = 'jsonP.readDate';
+    } else if (innerShape.spec.type === 'boolean') {
+      expr = 'y => typeof y === "boolean" ? y : null';
     } else if (innerShape.spec.type === 'map') {
       const valShape = this.shapes.get(innerShape.spec.value);
       if (valShape.tags.has('named')) {
-        // TODO: is this safe? when would an array have a null?
+        // TODO: is this safe? when would a map have a null?
         expr = `y => jsonP.readMap(String, to${valShape.censoredName}, y)!`;
       } else if (valShape.spec.type === 'timestamp') {
         expr = `y => jsonP.readMap(String, jsonP.readDate, y)!`;
       }
+    } else if (innerShape.spec.type === 'list') {
+      const valShape = this.shapes.get(innerShape.spec.member);
+      if (valShape.tags.has('named')) {
+        // TODO: is this safe? when would an array have a null?
+        expr = `y => jsonP.readList(to${valShape.censoredName}, y)!`;
+      } else if (['long', 'integer'].includes(valShape.spec.type)) {
+        expr = `y => jsonP.readList(jsonP.readNum, y)!`;
+      } else throw new Error(`TODO: json output list ${valShape.spec.type}`);
     }
 
+    if (expr.includes('TODO')) throw new Error(`TODO: json output ${shape.spec.type}`);
     if (isList) {
       return `l => Array.isArray(l) ? l.map(${expr}) : []`;
     } else {

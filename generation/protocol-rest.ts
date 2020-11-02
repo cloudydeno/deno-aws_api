@@ -383,7 +383,7 @@ export default class ProtocolRestCodegen {
             } else if (spec.jsonvalue) {
               return `    ${field}: jsonP.readJsonValueBase64(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`;
             } else {
-              return `    ${field}: resp.headers.get(${JSON.stringify(spec.locationName || field)}),`;
+              return `    ${field}: resp.headers.get(${JSON.stringify(spec.locationName || field)})${isRequired ? ' ?? ""' : ''},`;
             }
           case 'character':
             return `    ${field}: resp.headers.get(${JSON.stringify(spec.locationName || field)}),`;
