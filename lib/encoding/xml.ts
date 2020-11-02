@@ -253,16 +253,17 @@ export function readXmlMap<K extends string,T>(entries: XmlNode[], valMapper: (n
   return obj;
 }
 
-export function emitMap<K extends string,V>(obj: Record<K,V>, entryName: string, valEncoder: (val: V) => Node): Node[] | undefined {
-  if (obj == null) return undefined;
+export function emitMap<K extends string,V>(obj: Record<K,V> | null | undefined, entryName: string, keyName: string, valEncoder: (val: V) => Node): Partial<Node> {
+  if (obj == null) return {};
   if (typeof obj !== 'object') throw new Error(`emitMap got type ${typeof obj}`);
   const pairs = new Array<Node>();
   for (const [key, val] of Object.entries<V>(obj)) {
-    pairs.push({name: key, children: [
-      {name: 'key', content: key},
+    pairs.push({name: entryName, children: [
+      {name: keyName, content: key},
       valEncoder(val),
     ]});
   }
+  return {children: pairs};
 }
 
 export function parseTimestamp(str: string | undefined): Date {

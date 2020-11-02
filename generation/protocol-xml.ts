@@ -23,7 +23,7 @@ export default class ProtocolXmlCodegen {
     const chunks = new Array<string>();
 
     chunks.push(`    const body = xmlP.stringify({`);
-    chunks.push(`      name: ${JSON.stringify(meta.locationName ?? inputShape.spec.locationName)},`);
+    chunks.push(`      name: ${JSON.stringify(meta.locationName ?? inputShape.spec.locationName ?? inputShape.name)},`);
     chunks.push(`      attributes: ${JSON.stringify({xmlns: meta.xmlNamespace?.uri})},`);
     chunks.push(`      children: ${meta.paramRef === 'inner' ? 'inner ? ' : ''}[`);
     chunks.push(this.generateStructureInputTypescript(inputShape.spec, meta.paramRef ?? 'params').replace(/^/gm,'    '));
@@ -121,6 +121,11 @@ export default class ProtocolXmlCodegen {
       switch (shape.spec.type) {
 
         case 'string':
+          if (spec.idempotencyToken) {
+            this.helpers.useHelper('generateIdemptToken');
+            chunks.push(`    {name: ${JSON.stringify(locationName)}, content: (${paramRef} ?? generateIdemptToken()).toString()},`);
+            break;
+          } // fallthrough
         case 'boolean':
         case 'integer':
         case 'float':
@@ -185,7 +190,7 @@ export default class ProtocolXmlCodegen {
           switch (valShape.spec.type) {
 
             case 'structure':
-              valEncoder = `x => ({name: ${JSON.stringify(shape.spec.key.locationName ?? 'value')}, ...to${valShape.censoredName}(x)})`;
+              valEncoder = `x => ({name: ${JSON.stringify(shape.spec.key.locationName ?? 'value')}, ...${valShape.censoredName}_Serialize(x)})`;
               // chunks.push(`    {name: ${JSON.stringify(locationName)}, children: ${paramRef}?.flatMap(${innerShape.censoredName}_Serialize)},`);
               break;
 
@@ -197,7 +202,13 @@ export default class ProtocolXmlCodegen {
               throw new Error(`TODO: protocol-xml.ts lacks input shape map value generator for ${valShape.spec.type}`);
           }
 
-          chunks.push(`    {name: ${JSON.stringify(locationName)}, children: xmlP.emitMap(${paramRef}, ${JSON.stringify(shape.spec.key.locationName ?? 'key')}, ${valEncoder})},`);
+          if (isFlattened) {
+            throw new Error(`TODO: xml output map flattened`);
+            // chunks.push(`    ...(${paramRef}?.map(x => ({name: ${JSON.stringify(locationName)}, ${childField}${childExpr}})) ?? []),`);
+          } else {
+            chunks.push(`    {name: ${JSON.stringify(locationName)}, ...xmlP.emitMap(${paramRef}, ${JSON.stringify(shape.spec.locationName ?? 'entry')}, ${JSON.stringify(shape.spec.key.locationName ?? 'key')}, ${valEncoder})},`);
+          }
+
           break;
         }
 

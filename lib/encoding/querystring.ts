@@ -1,4 +1,4 @@
-export function appendMap<T>(body: URLSearchParams, prefix: string, raw: {[k:string]:T | undefined}, {
+export function appendMap<T>(body: URLSearchParams, prefix: string, raw: {[k:string]:T | null | undefined}, {
   keyName = '.key',
   valName = '.value',
   entryPrefix,
