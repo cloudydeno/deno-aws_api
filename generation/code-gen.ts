@@ -282,7 +282,8 @@ export default class ServiceCodeGen {
         this.writeStructureType(shape)}`);
 
       // TODO: other types might want a helper func... enums??
-      if (shape.tags.has('interface')) {
+      // TODO QUIRK: IdentityPool isn't tagged right, out of the entire API surface
+      if (shape.tags.has('interface') || shape.censoredName === 'IdentityPool') {
         // Maybe include input reading (prep for wire)
         if (!(this.shapes.inputShapes.includes(shape) && shape.refCount === 1) && shape.tags.has('input')) {
           chunks.push(this.protocol.generateShapeInputParsingTypescript(shape).inputParsingFunction);

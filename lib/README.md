@@ -177,6 +177,7 @@ All API definitions are current as of aws-sdk-js `v2.780.0`.
 | CodeStar | `codestar@2017-04-19` | 22 KiB | 1.3 sec |
 | CodeStarconnections | `codestar-connections@2019-12-01` | 12 KiB | 1.2 sec |
 | CodeStarNotifications | `codestar-notifications@2019-10-15` | 17 KiB | 1.4 sec |
+| CognitoIdentity | `cognito-identity@2014-06-30` | 25 KiB | 1.4 sec |
 | CognitoIdentityServiceProvider | `cognito-idp@2016-04-18` | 148 KiB | 2.6 sec |
 | CognitoSync | `cognito-sync@2014-06-30` | 22 KiB | 1.4 sec |
 | Comprehend | `comprehend@2017-11-27` | 93 KiB | 2.1 sec |
@@ -204,6 +205,7 @@ All API definitions are current as of aws-sdk-js `v2.780.0`.
 | EC2 | `ec2@2016-11-15` | 1034 KiB | 14.5 sec |
 | EC2InstanceConnect | `ec2-instance-connect@2018-04-02` | 2 KiB | 2.5 sec |
 | ECR | `ecr@2015-09-21` | 44 KiB | 1.6 sec |
+| ECS | `ecs@2014-11-13` | 118 KiB | 2.1 sec |
 | EKS | `eks@2017-11-01` | 42 KiB | 1.7 sec |
 | ElasticInference | `elastic-inference@2017-07-25` | 9 KiB | 2.7 sec |
 | ElastiCache | `elasticache@2015-02-02` | 147 KiB | 5.5 sec |
@@ -252,7 +254,7 @@ All API definitions are current as of aws-sdk-js `v2.780.0`.
 | IVS | `ivs@2020-07-14` | 23 KiB | 1.5 sec |
 | Kafka | `kafka@2018-11-14` | 53 KiB | 1.9 sec |
 | Kendra | `kendra@2019-02-03` | 82 KiB | 2.0 sec |
-| Kinesis | `kinesis@2013-12-02` | 31 KiB | 1.2 sec |
+| Kinesis | `kinesis@2013-12-02` | 31 KiB | 1.4 sec |
 | KinesisVideoArchivedMedia | `kinesis-video-archived-media@2017-09-30` | 12 KiB | 1.3 sec |
 | KinesisVideoMedia | `kinesis-video-media@2017-09-30` | 3 KiB | 1.2 sec |
 | KinesisVideoSignalingChannels | `kinesis-video-signaling@2019-12-04` | 3 KiB | 1.2 sec |
@@ -285,7 +287,7 @@ All API definitions are current as of aws-sdk-js `v2.780.0`.
 | MigrationHubConfig | `migrationhub-config@2019-06-30` | 5 KiB | 1.1 sec |
 | Mobile | `mobile@2017-07-01` | 11 KiB | 1.3 sec |
 | MobileAnalytics | `mobileanalytics@2014-06-05` | 3 KiB | 1.2 sec |
-| CloudWatch | `monitoring@2010-08-01` | 59 KiB | 1.3 sec |
+| CloudWatch | `monitoring@2010-08-01` | 59 KiB | 1.7 sec |
 | MQ | `mq@2017-11-27` | 41 KiB | 1.7 sec |
 | MTurk | `mturk-requester@2017-01-17` | 52 KiB | 1.7 sec |
 | Neptune | `neptune@2014-10-31` | 138 KiB | 2.7 sec |

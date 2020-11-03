@@ -59,7 +59,7 @@ All API definitions are current as of aws-sdk-js `v2.780.0`.
 | `codestar@2017-04-19` | json | ✔️ | 22 KiB | ✔️ | 1.3 sec |
 | `codestar-connections@2019-12-01` | json | ✔️ | 12 KiB | ✔️ | 1.2 sec |
 | `codestar-notifications@2019-10-15` | rest-json | ✔️ | 17 KiB | ✔️ | 1.4 sec |
-| `cognito-identity@2014-06-30` | json | ✔️ | 24 KiB | 🚫 |  |
+| `cognito-identity@2014-06-30` | json | ✔️ | 25 KiB | ✔️ | 1.4 sec |
 | `cognito-idp@2016-04-18` | json | ✔️ | 148 KiB | ✔️ | 2.6 sec |
 | `cognito-sync@2014-06-30` | rest-json | ✔️ | 22 KiB | ✔️ | 1.4 sec |
 | `comprehend@2017-11-27` | json | ✔️ | 93 KiB | ✔️ | 2.1 sec |
@@ -87,7 +87,7 @@ All API definitions are current as of aws-sdk-js `v2.780.0`.
 | `ec2@2016-11-15` | ec2 | ✔️ | 1034 KiB | ✔️ | 14.5 sec |
 | `ec2-instance-connect@2018-04-02` | json | ✔️ | 2 KiB | ✔️ | 2.5 sec |
 | `ecr@2015-09-21` | json | ✔️ | 44 KiB | ✔️ | 1.6 sec |
-| `ecs@2014-11-13` | json | ✔️ | 118 KiB | 🚫 |  |
+| `ecs@2014-11-13` | json | ✔️ | 118 KiB | ✔️ | 2.1 sec |
 | `eks@2017-11-01` | rest-json | ✔️ | 42 KiB | ✔️ | 1.7 sec |
 | `elastic-inference@2017-07-25` | rest-json | ✔️ | 9 KiB | ✔️ | 2.7 sec |
 | `elasticache@2015-02-02` | query | ✔️ | 147 KiB | ✔️ | 5.5 sec |
@@ -136,7 +136,7 @@ All API definitions are current as of aws-sdk-js `v2.780.0`.
 | `ivs@2020-07-14` | rest-json | ✔️ | 23 KiB | ✔️ | 1.5 sec |
 | `kafka@2018-11-14` | rest-json | ✔️ | 53 KiB | ✔️ | 1.9 sec |
 | `kendra@2019-02-03` | json | ✔️ | 82 KiB | ✔️ | 2.0 sec |
-| `kinesis@2013-12-02` | json | ✔️ | 31 KiB | ✔️ | 1.2 sec |
+| `kinesis@2013-12-02` | json | ✔️ | 31 KiB | ✔️ | 1.4 sec |
 | `kinesis-video-archived-media@2017-09-30` | rest-json | ✔️ | 12 KiB | ✔️ | 1.3 sec |
 | `kinesis-video-media@2017-09-30` | rest-json | ✔️ | 3 KiB | ✔️ | 1.2 sec |
 | `kinesis-video-signaling@2019-12-04` | rest-json | ✔️ | 3 KiB | ✔️ | 1.2 sec |
@@ -169,7 +169,7 @@ All API definitions are current as of aws-sdk-js `v2.780.0`.
 | `migrationhub-config@2019-06-30` | json | ✔️ | 5 KiB | ✔️ | 1.1 sec |
 | `mobile@2017-07-01` | rest-json | ✔️ | 11 KiB | ✔️ | 1.3 sec |
 | `mobileanalytics@2014-06-05` | rest-json | ✔️ | 3 KiB | ✔️ | 1.2 sec |
-| `monitoring@2010-08-01` | query | ✔️ | 59 KiB | ✔️ | 1.3 sec |
+| `monitoring@2010-08-01` | query | ✔️ | 59 KiB | ✔️ | 1.7 sec |
 | `mq@2017-11-27` | rest-json | ✔️ | 41 KiB | ✔️ | 1.7 sec |
 | `mturk-requester@2017-01-17` | json | ✔️ | 52 KiB | ✔️ | 1.7 sec |
 | `neptune@2014-10-31` | query | ✔️ | 138 KiB | ✔️ | 2.7 sec |

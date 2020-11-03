@@ -52,7 +52,7 @@ codepipeline,2015-07-09,AWS CodePipeline,CodePipeline,CodePipeline,json,ok,ok,66
 codestar-connections,2019-12-01,AWS CodeStar connections,CodeStar connections,CodeStarconnections,json,ok,ok,12366,1213
 codestar-notifications,2019-10-15,AWS CodeStar Notifications,codestar notifications,CodeStarNotifications,rest-json,ok,ok,17111,1406
 codestar,2017-04-19,AWS CodeStar,CodeStar,CodeStar,json,ok,ok,22305,1334
-cognito-identity,2014-06-30,Amazon Cognito Identity,Cognito Identity,CognitoIdentity,json,ok,fail,24481,
+cognito-identity,2014-06-30,Amazon Cognito Identity,Cognito Identity,CognitoIdentity,json,ok,ok,25809,1387
 cognito-idp,2016-04-18,Amazon Cognito Identity Provider,Cognito Identity Provider,CognitoIdentityServiceProvider,json,ok,ok,151191,2564
 cognito-sync,2014-06-30,Amazon Cognito Sync,Cognito Sync,CognitoSync,rest-json,ok,ok,22708,1414
 comprehend,2017-11-27,Amazon Comprehend,Comprehend,Comprehend,json,ok,ok,95015,2079
@@ -80,7 +80,7 @@ ebs,2019-11-02,Amazon Elastic Block Store,EBS,EBS,rest-json,ok,ok,11603,1301
 ec2-instance-connect,2018-04-02,AWS EC2 Instance Connect,EC2 Instance Connect,EC2InstanceConnect,json,ok,ok,1913,2512
 ec2,2016-11-15,Amazon Elastic Compute Cloud,EC2,EC2,ec2,ok,ok,1059195,14461
 ecr,2015-09-21,Amazon EC2 Container Registry,ECR,ECR,json,ok,ok,45308,1611
-ecs,2014-11-13,Amazon EC2 Container Service,ECS,ECS,json,ok,fail,120526,
+ecs,2014-11-13,Amazon EC2 Container Service,ECS,ECS,json,ok,ok,120527,2112
 eks,2017-11-01,Amazon Elastic Kubernetes Service,EKS,EKS,rest-json,ok,ok,42676,1715
 elastic-inference,2017-07-25,Amazon Elastic  Inference,Elastic Inference,ElasticInference,rest-json,ok,ok,9119,2739
 elasticache,2015-02-02,Amazon ElastiCache,ElastiCache,ElastiCache,query,ok,ok,150334,5525
@@ -132,7 +132,7 @@ kendra,2019-02-03,AWSKendraFrontendService,kendra,Kendra,json,ok,ok,84348,2017
 kinesis-video-archived-media,2017-09-30,Amazon Kinesis Video Streams Archived Media,Kinesis Video Archived Media,KinesisVideoArchivedMedia,rest-json,ok,ok,12686,1304
 kinesis-video-media,2017-09-30,Amazon Kinesis Video Streams Media,Kinesis Video Media,KinesisVideoMedia,rest-json,ok,ok,2579,1234
 kinesis-video-signaling,2019-12-04,Amazon Kinesis Video Signaling Channels,Kinesis Video Signaling,KinesisVideoSignalingChannels,rest-json,ok,ok,3379,1180
-kinesis,2013-12-02,Amazon Kinesis,Kinesis,Kinesis,json,ok,ok,31848,1208
+kinesis,2013-12-02,Amazon Kinesis,Kinesis,Kinesis,json,ok,ok,31848,1401
 kinesisanalytics,2015-08-14,Amazon Kinesis Analytics,Kinesis Analytics,KinesisAnalytics,json,ok,ok,48351,1272
 kinesisanalyticsv2,2018-05-23,Amazon Kinesis Analytics,Kinesis Analytics V2,KinesisAnalyticsV2,json,ok,ok,82831,1554
 kinesisvideo,2017-09-30,Amazon Kinesis Video Streams,Kinesis Video,KinesisVideo,rest-json,ok,ok,23455,1404
@@ -162,7 +162,7 @@ meteringmarketplace,2016-01-14,AWSMarketplace Metering,Marketplace Metering,Mark
 migrationhub-config,2019-06-30,AWS Migration Hub Config,MigrationHub Config,MigrationHubConfig,json,ok,ok,4656,1117
 mobile,2017-07-01,AWS Mobile,Mobile,Mobile,rest-json,ok,ok,11588,1336
 mobileanalytics,2014-06-05,Amazon Mobile Analytics,Mobile Analytics,MobileAnalytics,rest-json,ok,ok,2651,1160
-monitoring,2010-08-01,Amazon CloudWatch,CloudWatch,CloudWatch,query,ok,ok,60878,1323
+monitoring,2010-08-01,Amazon CloudWatch,CloudWatch,CloudWatch,query,ok,ok,60878,1651
 mq,2017-11-27,AmazonMQ,mq,MQ,rest-json,ok,ok,41908,1678
 mturk-requester,2017-01-17,Amazon Mechanical Turk,MTurk,MTurk,json,ok,ok,53114,1689
 neptune,2014-10-31,Amazon Neptune,Neptune,Neptune,query,ok,ok,141596,2695

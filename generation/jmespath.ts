@@ -159,11 +159,11 @@ function compilePath(root: ASTNode, rootRef: string): string {
       let expr = compilePath(base, rootRef);
 
       if (filter.type !== 'Identity') {
-        expr += `.filter(x => ${compilePath(filter, 'x')})`;
+        expr += `?.filter(x => ${compilePath(filter, 'x')})`;
       }
 
       if (mapper.type !== 'Identity') {
-        expr += `.map(x => ${compilePath(mapper, 'x')}).filter(x => x)`;
+        expr += `?.map(x => ${compilePath(mapper, 'x')}).filter(x => x)`;
       }
 
       return expr;
