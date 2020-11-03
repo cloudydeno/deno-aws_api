@@ -4,7 +4,8 @@ From-scratch Typescript AWS API client built for Deno.
 
 A leading focus of this library is to be as lean as possible
 on the number of files downloaded to use a specific service.
-There's no single entrypoint; you'll need to make an `ApiFactory`
+Each service has its own isolated `mod.ts`;
+you'll need to make an `ApiFactory` from `client/mod.ts`
 and then pass it to the service you want to use.
 
 Package layout:
@@ -16,13 +17,12 @@ Package layout:
 * `examples/`: Several full examples of using individual services
 * `SERVICES.md`: A complete list of all AWS APIs and their build status
 
-Only some services have completed clients at this time.
-Please reach out on Github Issues about missing clients or API issues,
+Please reach out on Github Issues about missing features, weird exceptions, or API issues,
 or ping `dantheman#8546` in the Deno Discord if you just wanna chat about this effort.
 
 ## Usage
 
-Basic example: (see `demo.ts` for several more services)
+Basic example: (a subset of `demo.ts`)
 
 ```typescript
 import {ApiFactory} from 'https://deno.land/x/aws_api/client/mod.ts';
@@ -40,11 +40,20 @@ A couple more-detailed examples are in `examples/` and show concepts such as
 managing an EC2 instance's lifecycle, redriving SQS messages,
 and working directly with a Kinesis stream.
 
+## Changelog
+
+* `v0.1.0` on `2020-10-15`: Initial publication with about half of the services bound.
+  * Using definitions from `aws-sdk-js@2.768.0`
+* `v0.1.1` on `2020-11-02`: Generation improvements, most services have been generated.
+  * Using definitions from `aws-sdk-js@2.780.0`
+* `v0.2.0` (future): Completed bindings for all API services.
+
 ## Disclaimer
 
 **This is NOT a port of the official AWS SDK JS.**
-Lots of services are still not bound,
-and the services that are bound might have issues.
+Though every AWS service has an API module here,
+most have not actually been used yet
+and the bindings might make bad assumptions about the API contracts.
 
 Do not use this module in mission critical stuff.
 It's supposed to be for automation scripts,
@@ -55,29 +64,35 @@ If you just want the real, full-fat AWS SDK,
 a port of it has been uploaded at
 [/x/aws_sdk](https://deno.land/x/aws_sdk).
 
+The generated source code is still pretty messy.
+I used this project to learn more about the practicallity of API codegen.
+I'll be going through and neatening up the services/ source
+which shouldn't affect the published APIs.
+
 Finally, the APIs within `client/` and `encoding/` are liable to change.
 For best upgradability, stick to making an `ApiFactory` object
 and passing it to the services.
-At some point (around 1.0.0?) the APIs should be ready to lock in.
+At some point (before 1.0.0) the APIs should be ready to lock in.
 
 ## Methodology
 
 All of the clients are compiled from `aws-sdk-js`'s JSON data files.
 The code to generate clients isn't uploaded to `/x/`,
-so if you want to read through it, make sure you're in the Git repo.
+so if you want to read through it, make sure you're in the source Git repo.
 
 "Most" of the heavy lifting (such as compiling waiter JMESPaths)
 runs in the generation step so that the modules on /x/ are ready to run.
 
 ## Completeness
 
-The following clients have been successfully used in scripts
+The following clients have been used in actual scripts
 and should work quite well:
 
 * SQS
 * STS
 * EC2
 * Kinesis
+* DynamoDB
 
 The following credential sources are supported:
 
