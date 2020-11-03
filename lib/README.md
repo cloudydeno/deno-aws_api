@@ -120,7 +120,7 @@ Multiple bits are *missing*:
 
 [//]: # (Generated Content Barrier)
 
-All API definitions are current as of aws-sdk-js `v2.780.0`.
+All API definitions are current as of aws-sdk-js `v2.784.0`.
 
 | Class | Module | File size | Approx check time |
 | --- | --- | ---: | ---: |
@@ -130,7 +130,7 @@ All API definitions are current as of aws-sdk-js `v2.780.0`.
 | ACMPCA | `acm-pca@2017-08-22` | 29 KiB | 1.1 sec |
 | AlexaForBusiness | `alexaforbusiness@2017-11-09` | 116 KiB | 1.9 sec |
 | Amplify | `amplify@2017-07-25` | 51 KiB | 1.8 sec |
-| APIGateway | `apigateway@2015-07-09` | 152 KiB | 1.8 sec |
+| APIGateway | `apigateway@2015-07-09` | 152 KiB | 2.6 sec |
 | ApiGatewayManagementApi | `apigatewaymanagementapi@2018-11-29` | 3 KiB | 1.0 sec |
 | ApiGatewayV2 | `apigatewayv2@2018-11-29` | 121 KiB | 2.1 sec |
 | AppConfig | `appconfig@2019-10-09` | 43 KiB | 1.3 sec |
@@ -146,7 +146,7 @@ All API definitions are current as of aws-sdk-js `v2.780.0`.
 | AutoScalingPlans | `autoscaling-plans@2018-01-06` | 22 KiB | 1.7 sec |
 | Backup | `backup@2018-11-15` | 69 KiB | 4.2 sec |
 | Batch | `batch@2016-08-10` | 50 KiB | 2.0 sec |
-| Braket | `braket@2019-09-01` | 10 KiB | 1.5 sec |
+| Braket | `braket@2019-09-01` | 13 KiB | 1.0 sec |
 | Budgets | `budgets@2016-10-20` | 38 KiB | 1.6 sec |
 | CostExplorer | `ce@2017-10-25` | 82 KiB | 2.2 sec |
 | Chime | `chime@2018-05-01` | 139 KiB | 2.8 sec |
@@ -167,7 +167,7 @@ All API definitions are current as of aws-sdk-js `v2.780.0`.
 | CloudSearch | `cloudsearch@2013-01-01` | 58 KiB | 1.7 sec |
 | CloudSearchDomain | `cloudsearchdomain@2013-01-01` | 10 KiB | 1.3 sec |
 | CloudTrail | `cloudtrail@2013-11-01` | 26 KiB | 1.4 sec |
-| CodeArtifact | `codeartifact@2018-09-22` | 53 KiB | 2.0 sec |
+| CodeArtifact | `codeartifact@2018-09-22` | 56 KiB | 1.5 sec |
 | CodeBuild | `codebuild@2016-10-06` | 87 KiB | 1.8 sec |
 | CodeCommit | `codecommit@2015-04-13` | 109 KiB | 2.3 sec |
 | CodeDeploy | `codedeploy@2014-10-06` | 85 KiB | 2.0 sec |
@@ -196,13 +196,13 @@ All API definitions are current as of aws-sdk-js `v2.780.0`.
 | DirectConnect | `directconnect@2012-10-25` | 71 KiB | 3.4 sec |
 | Discovery | `discovery@2015-11-01` | 34 KiB | 3.2 sec |
 | DLM | `dlm@2018-01-12` | 17 KiB | 2.1 sec |
-| DMS | `dms@2016-01-01` | 120 KiB | 3.1 sec |
+| DMS | `dms@2016-01-01` | 122 KiB | 2.1 sec |
 | DocDB | `docdb@2014-10-31` | 86 KiB | 3.1 sec |
 | DirectoryService | `ds@2015-04-16` | 68 KiB | 3.9 sec |
 | DynamoDB | `dynamodb@2011-12-05` | 25 KiB | 1.4 sec |
 | DynamoDB | `dynamodb@2012-08-10` | 110 KiB | 2.8 sec |
 | EBS | `ebs@2019-11-02` | 11 KiB | 1.3 sec |
-| EC2 | `ec2@2016-11-15` | 1034 KiB | 14.5 sec |
+| EC2 | `ec2@2016-11-15` | 1043 KiB | 6.7 sec |
 | EC2InstanceConnect | `ec2-instance-connect@2018-04-02` | 2 KiB | 2.5 sec |
 | ECR | `ecr@2015-09-21` | 44 KiB | 1.6 sec |
 | ECS | `ecs@2014-11-13` | 118 KiB | 2.1 sec |
@@ -212,7 +212,7 @@ All API definitions are current as of aws-sdk-js `v2.780.0`.
 | ElasticBeanstalk | `elasticbeanstalk@2010-12-01` | 100 KiB | 3.6 sec |
 | EFS | `elasticfilesystem@2015-02-01` | 31 KiB | 3.0 sec |
 | ELB | `elasticloadbalancing@2012-06-01` | 48 KiB | 2.0 sec |
-| ELBv2 | `elasticloadbalancingv2@2015-12-01` | 77 KiB | 2.3 sec |
+| ELBv2 | `elasticloadbalancingv2@2015-12-01` | 77 KiB | 1.7 sec |
 | EMR | `elasticmapreduce@2009-03-31` | 98 KiB | 2.2 sec |
 | ElasticTranscoder | `elastictranscoder@2012-09-25` | 42 KiB | 1.6 sec |
 | SES | `email@2010-12-01` | 98 KiB | 5.1 sec |
@@ -240,7 +240,7 @@ All API definitions are current as of aws-sdk-js `v2.780.0`.
 | Imagebuilder | `imagebuilder@2019-12-02` | 71 KiB | 2.0 sec |
 | ImportExport | `importexport@2010-06-01` | 11 KiB | 1.3 sec |
 | Inspector | `inspector@2016-02-16` | 51 KiB | 1.6 sec |
-| Iot | `iot@2015-05-28` | 331 KiB | 4.0 sec |
+| Iot | `iot@2015-05-28` | 332 KiB | 4.6 sec |
 | IotData | `iot-data@2015-05-28` | 5 KiB | 1.2 sec |
 | IoTJobsDataPlane | `iot-jobs-data@2017-09-29` | 8 KiB | 1.2 sec |
 | IoT1ClickDevicesService | `iot1click-devices@2018-05-14` | 14 KiB | 1.3 sec |
@@ -271,13 +271,13 @@ All API definitions are current as of aws-sdk-js `v2.780.0`.
 | CloudWatchLogs | `logs@2014-03-28` | 44 KiB | 1.5 sec |
 | MachineLearning | `machinelearning@2014-12-12` | 48 KiB | 3.5 sec |
 | Macie | `macie@2017-12-19` | 10 KiB | 1.1 sec |
-| Macie2 | `macie2@2020-01-01` | 103 KiB | 2.4 sec |
+| Macie2 | `macie2@2020-01-01` | 103 KiB | 3.4 sec |
 | ManagedBlockchain | `managedblockchain@2018-09-24` | 40 KiB | 1.6 sec |
 | MarketplaceCatalog | `marketplace-catalog@2018-09-17` | 12 KiB | 1.3 sec |
 | MarketplaceCommerceAnalytics | `marketplacecommerceanalytics@2015-07-01` | 5 KiB | 1.0 sec |
 | MediaConnect | `mediaconnect@2018-11-14` | 42 KiB | 1.8 sec |
 | MediaConvert | `mediaconvert@2017-08-29` | 244 KiB | 3.3 sec |
-| MediaLive | `medialive@2017-10-14` | 297 KiB | 3.5 sec |
+| MediaLive | `medialive@2017-10-14` | 299 KiB | 4.4 sec |
 | MediaPackage | `mediapackage@2017-10-12` | 46 KiB | 1.7 sec |
 | MediaPackageVod | `mediapackage-vod@2018-11-07` | 32 KiB | 1.5 sec |
 | MediaStore | `mediastore@2017-09-01` | 19 KiB | 1.4 sec |
@@ -339,7 +339,7 @@ All API definitions are current as of aws-sdk-js `v2.780.0`.
 | ServiceQuotas | `service-quotas@2019-06-24` | 21 KiB | 1.3 sec |
 | ServiceCatalog | `servicecatalog@2015-12-10` | 124 KiB | 2.3 sec |
 | ServiceDiscovery | `servicediscovery@2017-03-14` | 34 KiB | 1.5 sec |
-| SESV2 | `sesv2@2019-09-27` | 104 KiB | 2.2 sec |
+| SESV2 | `sesv2@2019-09-27` | 118 KiB | 2.5 sec |
 | Shield | `shield@2016-06-02` | 25 KiB | 1.4 sec |
 | Signer | `signer@2017-08-25` | 24 KiB | 1.5 sec |
 | SMS | `sms@2016-10-24` | 57 KiB | 1.8 sec |
@@ -352,7 +352,7 @@ All API definitions are current as of aws-sdk-js `v2.780.0`.
 | SSOAdmin | `sso-admin@2020-07-20` | 33 KiB | 1.4 sec |
 | SSOOIDC | `sso-oidc@2019-06-10` | 5 KiB | 1.2 sec |
 | StepFunctions | `states@2016-11-23` | 44 KiB | 1.6 sec |
-| StorageGateway | `storagegateway@2013-06-30` | 96 KiB | 2.1 sec |
+| StorageGateway | `storagegateway@2013-06-30` | 97 KiB | 2.2 sec |
 | DynamoDBStreams | `streams.dynamodb@2012-08-10` | 10 KiB | 1.2 sec |
 | STS | `sts@2011-06-15` | 14 KiB | 1.3 sec |
 | Support | `support@2013-04-15` | 21 KiB | 1.3 sec |

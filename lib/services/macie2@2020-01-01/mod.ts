@@ -2187,6 +2187,7 @@ function toFindingCriteria(root: jsonP.JSONValue): FindingCriteria {
 // refs: 5 - tags: input, named, interface, output
 export interface CriterionAdditionalProperties {
   eq?: string[] | null;
+  eqExactMatch?: string[] | null;
   gt?: number | null;
   gte?: number | null;
   lt?: number | null;
@@ -2197,6 +2198,7 @@ function fromCriterionAdditionalProperties(input?: CriterionAdditionalProperties
   if (!input) return input;
   return {
     eq: input["eq"],
+    eqExactMatch: input["eqExactMatch"],
     gt: input["gt"],
     gte: input["gte"],
     lt: input["lt"],
@@ -2209,6 +2211,7 @@ function toCriterionAdditionalProperties(root: jsonP.JSONValue): CriterionAdditi
     required: {},
     optional: {
       "eq": ["s"],
+      "eqExactMatch": ["s"],
       "gt": "n",
       "gte": "n",
       "lt": "n",

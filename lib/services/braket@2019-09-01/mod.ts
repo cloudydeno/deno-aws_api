@@ -65,6 +65,7 @@ export default class Braket {
       outputS3Bucket: params["outputS3Bucket"],
       outputS3KeyPrefix: params["outputS3KeyPrefix"],
       shots: params["shots"],
+      tags: params["tags"],
     } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -134,6 +135,28 @@ export default class Braket {
         optional: {
           "endedAt": "d",
           "failureReason": "s",
+          "tags": x => jsonP.readMap(String, String, x),
+        },
+      }, await resp.json()),
+  };
+  }
+
+  async listTagsForResource(
+    {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
+  ): Promise<ListTagsForResourceResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "ListTagsForResource",
+      method: "GET",
+      requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
+      responseCode: 200,
+    });
+  return {
+    ...jsonP.readObj({
+        required: {},
+        optional: {
+          "tags": x => jsonP.readMap(String, String, x),
         },
       }, await resp.json()),
   };
@@ -191,6 +214,48 @@ export default class Braket {
   };
   }
 
+  async tagResource(
+    {abortSignal, ...params}: RequestConfig & TagResourceRequest,
+  ): Promise<TagResourceResponse> {
+    const body: jsonP.JSONObject = params ? {
+      tags: params["tags"],
+    } : {};
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "TagResource",
+      requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
+      responseCode: 200,
+    });
+  return {
+    ...jsonP.readObj({
+        required: {},
+        optional: {},
+      }, await resp.json()),
+  };
+  }
+
+  async untagResource(
+    {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
+  ): Promise<UntagResourceResponse> {
+    const query = new URLSearchParams;
+    for (const item of params["tagKeys"]) {
+      query.append("tagKeys", item?.toString() ?? "");
+    }
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "UntagResource",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
+      responseCode: 200,
+    });
+  return {
+    ...jsonP.readObj({
+        required: {},
+        optional: {},
+      }, await resp.json()),
+  };
+  }
+
 }
 
 // refs: 1 - tags: named, input
@@ -208,6 +273,7 @@ export interface CreateQuantumTaskRequest {
   outputS3Bucket: string;
   outputS3KeyPrefix: string;
   shots: number;
+  tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -218,6 +284,11 @@ export interface GetDeviceRequest {
 // refs: 1 - tags: named, input
 export interface GetQuantumTaskRequest {
   quantumTaskArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface ListTagsForResourceRequest {
+  resourceArn: string;
 }
 
 // refs: 1 - tags: named, input
@@ -232,6 +303,18 @@ export interface SearchQuantumTasksRequest {
   filters: SearchQuantumTasksFilter[];
   maxResults?: number | null;
   nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface TagResourceRequest {
+  resourceArn: string;
+  tags: { [key: string]: string | null | undefined };
+}
+
+// refs: 1 - tags: named, input
+export interface UntagResourceRequest {
+  resourceArn: string;
+  tagKeys: string[];
 }
 
 // refs: 1 - tags: named, output
@@ -267,6 +350,12 @@ export interface GetQuantumTaskResponse {
   quantumTaskArn: string;
   shots: number;
   status: QuantumTaskStatus;
+  tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListTagsForResourceResponse {
+  tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output
@@ -279,6 +368,14 @@ export interface SearchDevicesResponse {
 export interface SearchQuantumTasksResponse {
   nextToken?: string | null;
   quantumTasks: QuantumTaskSummary[];
+}
+
+// refs: 1 - tags: named, output
+export interface TagResourceResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: input, named, interface
@@ -311,24 +408,24 @@ function fromSearchQuantumTasksFilter(input?: SearchQuantumTasksFilter | null): 
 
 // refs: 1 - tags: input, named, enum
 export type SearchQuantumTasksFilterOperator =
-| "BETWEEN"
+| "LT"
+| "LTE"
 | "EQUAL"
 | "GT"
 | "GTE"
-| "LT"
-| "LTE"
+| "BETWEEN"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
 export type CancellationStatus =
-| "CANCELLED"
 | "CANCELLING"
+| "CANCELLED"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
 export type DeviceStatus =
-| "OFFLINE"
 | "ONLINE"
+| "OFFLINE"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
@@ -339,13 +436,13 @@ export type DeviceType =
 
 // refs: 2 - tags: output, named, enum
 export type QuantumTaskStatus =
-| "CANCELLED"
-| "CANCELLING"
-| "COMPLETED"
 | "CREATED"
-| "FAILED"
 | "QUEUED"
 | "RUNNING"
+| "COMPLETED"
+| "FAILED"
+| "CANCELLING"
+| "CANCELLED"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
@@ -379,6 +476,7 @@ export interface QuantumTaskSummary {
   quantumTaskArn: string;
   shots: number;
   status: QuantumTaskStatus;
+  tags?: { [key: string]: string | null | undefined } | null;
 }
 function toQuantumTaskSummary(root: jsonP.JSONValue): QuantumTaskSummary {
   return jsonP.readObj({
@@ -393,6 +491,7 @@ function toQuantumTaskSummary(root: jsonP.JSONValue): QuantumTaskSummary {
     },
     optional: {
       "endedAt": "d",
+      "tags": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }

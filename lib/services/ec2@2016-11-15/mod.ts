@@ -301,6 +301,26 @@ export default class EC2 {
     });
   }
 
+  async associateEnclaveCertificateIamRole(
+    {abortSignal, ...params}: RequestConfig & AssociateEnclaveCertificateIamRoleRequest = {},
+  ): Promise<AssociateEnclaveCertificateIamRoleResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("CertificateArn" in params) body.append(prefix+"CertificateArn", (params["CertificateArn"] ?? '').toString());
+    if ("RoleArn" in params) body.append(prefix+"RoleArn", (params["RoleArn"] ?? '').toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "AssociateEnclaveCertificateIamRole",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      CertificateS3BucketName: xml.first("certificateS3BucketName", false, x => x.content ?? ''),
+      CertificateS3ObjectKey: xml.first("certificateS3ObjectKey", false, x => x.content ?? ''),
+      EncryptionKmsKeyId: xml.first("encryptionKmsKeyId", false, x => x.content ?? ''),
+    };
+  }
+
   async associateIamInstanceProfile(
     {abortSignal, ...params}: RequestConfig & AssociateIamInstanceProfileRequest,
   ): Promise<AssociateIamInstanceProfileResult> {
@@ -458,6 +478,7 @@ export default class EC2 {
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"InstanceId", (params["InstanceId"] ?? '').toString());
     body.append(prefix+"NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
+    if ("NetworkCardIndex" in params) body.append(prefix+"NetworkCardIndex", (params["NetworkCardIndex"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AttachNetworkInterface",
@@ -465,6 +486,7 @@ export default class EC2 {
     const xml = xmlP.readXmlResult(await resp.text());
     return {
       AttachmentId: xml.first("attachmentId", false, x => x.content ?? ''),
+      NetworkCardIndex: xml.first("networkCardIndex", false, x => parseInt(x.content ?? '0')),
     };
   }
 
@@ -871,6 +893,7 @@ export default class EC2 {
     if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+"SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
     if ("VpcId" in params) body.append(prefix+"VpcId", (params["VpcId"] ?? '').toString());
+    if ("SelfServicePortal" in params) body.append(prefix+"SelfServicePortal", (params["SelfServicePortal"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateClientVpnEndpoint",
@@ -3677,6 +3700,7 @@ export default class EC2 {
       BlockDeviceMappings: xml.getList("blockDeviceMapping", "item").map(InstanceBlockDeviceMapping_Parse),
       DisableApiTermination: xml.first("disableApiTermination", false, AttributeBooleanValue_Parse),
       EnaSupport: xml.first("enaSupport", false, AttributeBooleanValue_Parse),
+      EnclaveOptions: xml.first("enclaveOptions", false, EnclaveOptions_Parse),
       EbsOptimized: xml.first("ebsOptimized", false, AttributeBooleanValue_Parse),
       InstanceId: xml.first("instanceId", false, x => x.content ?? ''),
       InstanceInitiatedShutdownBehavior: xml.first("instanceInitiatedShutdownBehavior", false, AttributeValue_Parse),
@@ -5463,6 +5487,24 @@ export default class EC2 {
     };
   }
 
+  async disassociateEnclaveCertificateIamRole(
+    {abortSignal, ...params}: RequestConfig & DisassociateEnclaveCertificateIamRoleRequest = {},
+  ): Promise<DisassociateEnclaveCertificateIamRoleResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("CertificateArn" in params) body.append(prefix+"CertificateArn", (params["CertificateArn"] ?? '').toString());
+    if ("RoleArn" in params) body.append(prefix+"RoleArn", (params["RoleArn"] ?? '').toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DisassociateEnclaveCertificateIamRole",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      Return: xml.first("return", false, x => x.content === 'true'),
+    };
+  }
+
   async disassociateIamInstanceProfile(
     {abortSignal, ...params}: RequestConfig & DisassociateIamInstanceProfileRequest,
   ): Promise<DisassociateIamInstanceProfileResult> {
@@ -5760,6 +5802,23 @@ export default class EC2 {
     const xml = xmlP.readXmlResult(await resp.text());
     return {
       S3Location: xml.first("s3Location", false, x => x.content ?? ''),
+    };
+  }
+
+  async getAssociatedEnclaveCertificateIamRoles(
+    {abortSignal, ...params}: RequestConfig & GetAssociatedEnclaveCertificateIamRolesRequest = {},
+  ): Promise<GetAssociatedEnclaveCertificateIamRolesResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("CertificateArn" in params) body.append(prefix+"CertificateArn", (params["CertificateArn"] ?? '').toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetAssociatedEnclaveCertificateIamRoles",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      AssociatedRoles: xml.getList("associatedRoleSet", "item").map(AssociatedRole_Parse),
     };
   }
 
@@ -6369,6 +6428,7 @@ export default class EC2 {
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+"SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
     if ("VpcId" in params) body.append(prefix+"VpcId", (params["VpcId"] ?? '').toString());
+    if ("SelfServicePortal" in params) body.append(prefix+"SelfServicePortal", (params["SelfServicePortal"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyClientVpnEndpoint",
@@ -7902,6 +7962,7 @@ export default class EC2 {
     if (params["HibernationOptions"] != null) HibernationOptionsRequest_Serialize(body, prefix+"HibernationOptions", params["HibernationOptions"]);
     if (params["LicenseSpecifications"]) qsP.appendList(body, prefix+"LicenseSpecification", params["LicenseSpecifications"], {"appender":LicenseConfigurationRequest_Serialize,"entryPrefix":"."})
     if (params["MetadataOptions"] != null) InstanceMetadataOptionsRequest_Serialize(body, prefix+"MetadataOptions", params["MetadataOptions"]);
+    if (params["EnclaveOptions"] != null) EnclaveOptionsRequest_Serialize(body, prefix+"EnclaveOptions", params["EnclaveOptions"]);
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RunInstances",
@@ -8824,6 +8885,13 @@ export interface AssociateDhcpOptionsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface AssociateEnclaveCertificateIamRoleRequest {
+  CertificateArn?: string | null;
+  RoleArn?: string | null;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
 export interface AssociateIamInstanceProfileRequest {
   IamInstanceProfile: IamInstanceProfileSpecification;
   InstanceId: string;
@@ -8889,6 +8957,7 @@ export interface AttachNetworkInterfaceRequest {
   DryRun?: boolean | null;
   InstanceId: string;
   NetworkInterfaceId: string;
+  NetworkCardIndex?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -9084,6 +9153,7 @@ export interface CreateClientVpnEndpointRequest {
   TagSpecifications?: TagSpecification[] | null;
   SecurityGroupIds?: string[] | null;
   VpcId?: string | null;
+  SelfServicePortal?: SelfServicePortal | null;
 }
 
 // refs: 1 - tags: named, input
@@ -11039,6 +11109,13 @@ export interface DisassociateClientVpnTargetNetworkRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DisassociateEnclaveCertificateIamRoleRequest {
+  CertificateArn?: string | null;
+  RoleArn?: string | null;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
 export interface DisassociateIamInstanceProfileRequest {
   AssociationId: string;
 }
@@ -11146,6 +11223,12 @@ export interface ExportTransitGatewayRoutesRequest {
   TransitGatewayRouteTableId: string;
   Filters?: Filter[] | null;
   S3Bucket: string;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetAssociatedEnclaveCertificateIamRolesRequest {
+  CertificateArn?: string | null;
   DryRun?: boolean | null;
 }
 
@@ -11391,6 +11474,7 @@ export interface ModifyClientVpnEndpointRequest {
   DryRun?: boolean | null;
   SecurityGroupIds?: string[] | null;
   VpcId?: string | null;
+  SelfServicePortal?: SelfServicePortal | null;
 }
 
 // refs: 1 - tags: named, input
@@ -12124,6 +12208,7 @@ export interface RunInstancesRequest {
   HibernationOptions?: HibernationOptionsRequest | null;
   LicenseSpecifications?: LicenseConfigurationRequest[] | null;
   MetadataOptions?: InstanceMetadataOptionsRequest | null;
+  EnclaveOptions?: EnclaveOptionsRequest | null;
 }
 
 // refs: 1 - tags: named, input
@@ -12318,6 +12403,13 @@ export interface AssociateClientVpnTargetNetworkResult {
 }
 
 // refs: 1 - tags: named, output
+export interface AssociateEnclaveCertificateIamRoleResult {
+  CertificateS3BucketName?: string | null;
+  CertificateS3ObjectKey?: string | null;
+  EncryptionKmsKeyId?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface AssociateIamInstanceProfileResult {
   IamInstanceProfileAssociation?: IamInstanceProfileAssociation | null;
 }
@@ -12359,6 +12451,7 @@ export interface AttachClassicLinkVpcResult {
 // refs: 1 - tags: named, output
 export interface AttachNetworkInterfaceResult {
   AttachmentId?: string | null;
+  NetworkCardIndex?: number | null;
 }
 
 // refs: 3 - tags: named, output, interface
@@ -13216,6 +13309,7 @@ export interface InstanceAttribute {
   BlockDeviceMappings: InstanceBlockDeviceMapping[];
   DisableApiTermination?: AttributeBooleanValue | null;
   EnaSupport?: AttributeBooleanValue | null;
+  EnclaveOptions?: EnclaveOptions | null;
   EbsOptimized?: AttributeBooleanValue | null;
   InstanceId?: string | null;
   InstanceInitiatedShutdownBehavior?: AttributeValue | null;
@@ -13717,6 +13811,11 @@ export interface DisassociateClientVpnTargetNetworkResult {
 }
 
 // refs: 1 - tags: named, output
+export interface DisassociateEnclaveCertificateIamRoleResult {
+  Return?: boolean | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DisassociateIamInstanceProfileResult {
   IamInstanceProfileAssociation?: IamInstanceProfileAssociation | null;
 }
@@ -13798,6 +13897,11 @@ export interface ExportImageResult {
 // refs: 1 - tags: named, output
 export interface ExportTransitGatewayRoutesResult {
   S3Location?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetAssociatedEnclaveCertificateIamRolesResult {
+  AssociatedRoles: AssociatedRole[];
 }
 
 // refs: 1 - tags: named, output
@@ -14748,9 +14852,11 @@ function CertificateAuthenticationRequest_Serialize(body: URLSearchParams, prefi
 // refs: 1 - tags: input, named, interface
 export interface FederatedAuthenticationRequest {
   SAMLProviderArn?: string | null;
+  SelfServiceSAMLProviderArn?: string | null;
 }
 function FederatedAuthenticationRequest_Serialize(body: URLSearchParams, prefix: string, params: FederatedAuthenticationRequest) {
     if ("SAMLProviderArn" in params) body.append(prefix+".SAMLProviderArn", (params["SAMLProviderArn"] ?? '').toString());
+    if ("SelfServiceSAMLProviderArn" in params) body.append(prefix+".SelfServiceSAMLProviderArn", (params["SelfServiceSAMLProviderArn"] ?? '').toString());
 }
 
 // refs: 2 - tags: input, named, interface
@@ -14769,6 +14875,12 @@ function ConnectionLogOptions_Serialize(body: URLSearchParams, prefix: string, p
 export type TransportProtocol =
 | "tcp"
 | "udp"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, enum
+export type SelfServicePortal =
+| "enabled"
+| "disabled"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, enum, output
@@ -15139,6 +15251,7 @@ export type InstanceType =
 | "p3.8xlarge"
 | "p3.16xlarge"
 | "p3dn.24xlarge"
+| "p4d.24xlarge"
 | "d2.xlarge"
 | "d2.2xlarge"
 | "d2.4xlarge"
@@ -15482,6 +15595,7 @@ export interface RequestLaunchTemplateData {
   LicenseSpecifications?: LaunchTemplateLicenseConfigurationRequest[] | null;
   HibernationOptions?: LaunchTemplateHibernationOptionsRequest | null;
   MetadataOptions?: LaunchTemplateInstanceMetadataOptionsRequest | null;
+  EnclaveOptions?: LaunchTemplateEnclaveOptionsRequest | null;
 }
 function RequestLaunchTemplateData_Serialize(body: URLSearchParams, prefix: string, params: RequestLaunchTemplateData) {
     if ("KernelId" in params) body.append(prefix+".KernelId", (params["KernelId"] ?? '').toString());
@@ -15510,6 +15624,7 @@ function RequestLaunchTemplateData_Serialize(body: URLSearchParams, prefix: stri
     if (params["LicenseSpecifications"]) qsP.appendList(body, prefix+".LicenseSpecification", params["LicenseSpecifications"], {"appender":LaunchTemplateLicenseConfigurationRequest_Serialize,"entryPrefix":"."})
     if (params["HibernationOptions"] != null) LaunchTemplateHibernationOptionsRequest_Serialize(body, prefix+".HibernationOptions", params["HibernationOptions"]);
     if (params["MetadataOptions"] != null) LaunchTemplateInstanceMetadataOptionsRequest_Serialize(body, prefix+".MetadataOptions", params["MetadataOptions"]);
+    if (params["EnclaveOptions"] != null) LaunchTemplateEnclaveOptionsRequest_Serialize(body, prefix+".EnclaveOptions", params["EnclaveOptions"]);
 }
 
 // refs: 2 - tags: input, named, interface
@@ -15572,6 +15687,7 @@ export interface LaunchTemplateInstanceNetworkInterfaceSpecificationRequest {
   PrivateIpAddresses?: PrivateIpAddressSpecification[] | null;
   SecondaryPrivateIpAddressCount?: number | null;
   SubnetId?: string | null;
+  NetworkCardIndex?: number | null;
 }
 function LaunchTemplateInstanceNetworkInterfaceSpecificationRequest_Serialize(body: URLSearchParams, prefix: string, params: LaunchTemplateInstanceNetworkInterfaceSpecificationRequest) {
     if ("AssociateCarrierIpAddress" in params) body.append(prefix+".AssociateCarrierIpAddress", (params["AssociateCarrierIpAddress"] ?? '').toString());
@@ -15588,6 +15704,7 @@ function LaunchTemplateInstanceNetworkInterfaceSpecificationRequest_Serialize(bo
     if (params["PrivateIpAddresses"]) qsP.appendList(body, prefix+".item", params["PrivateIpAddresses"], {"appender":PrivateIpAddressSpecification_Serialize,"entryPrefix":"."})
     if ("SecondaryPrivateIpAddressCount" in params) body.append(prefix+".SecondaryPrivateIpAddressCount", (params["SecondaryPrivateIpAddressCount"] ?? '').toString());
     if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
+    if ("NetworkCardIndex" in params) body.append(prefix+".NetworkCardIndex", (params["NetworkCardIndex"] ?? '').toString());
 }
 
 // refs: 2 - tags: input, named, interface
@@ -15807,6 +15924,14 @@ export type LaunchTemplateInstanceMetadataEndpointState =
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
+export interface LaunchTemplateEnclaveOptionsRequest {
+  Enabled?: boolean | null;
+}
+function LaunchTemplateEnclaveOptionsRequest_Serialize(body: URLSearchParams, prefix: string, params: LaunchTemplateEnclaveOptionsRequest) {
+    if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
+}
+
+// refs: 2 - tags: input, named, interface
 export interface AddPrefixListEntry {
   Cidr: string;
   Description?: string | null;
@@ -15999,14 +16124,22 @@ export type MulticastSupportValue =
 export interface CreateTransitGatewayVpcAttachmentRequestOptions {
   DnsSupport?: DnsSupportValue | null;
   Ipv6Support?: Ipv6SupportValue | null;
+  ApplianceModeSupport?: ApplianceModeSupportValue | null;
 }
 function CreateTransitGatewayVpcAttachmentRequestOptions_Serialize(body: URLSearchParams, prefix: string, params: CreateTransitGatewayVpcAttachmentRequestOptions) {
     if ("DnsSupport" in params) body.append(prefix+".DnsSupport", (params["DnsSupport"] ?? '').toString());
     if ("Ipv6Support" in params) body.append(prefix+".Ipv6Support", (params["Ipv6Support"] ?? '').toString());
+    if ("ApplianceModeSupport" in params) body.append(prefix+".ApplianceModeSupport", (params["ApplianceModeSupport"] ?? '').toString());
 }
 
 // refs: 8 - tags: input, named, enum, output
 export type Ipv6SupportValue =
+| "enable"
+| "disable"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 8 - tags: input, named, enum, output
+export type ApplianceModeSupportValue =
 | "enable"
 | "disable"
 | cmnP.UnexpectedEnumValue;
@@ -16211,6 +16344,7 @@ export type InstanceAttributeName =
 | "ebsOptimized"
 | "sriovNetSupport"
 | "enaSupport"
+| "enclaveOptions"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
@@ -16839,10 +16973,12 @@ function ModifyTransitGatewayOptions_Serialize(body: URLSearchParams, prefix: st
 export interface ModifyTransitGatewayVpcAttachmentRequestOptions {
   DnsSupport?: DnsSupportValue | null;
   Ipv6Support?: Ipv6SupportValue | null;
+  ApplianceModeSupport?: ApplianceModeSupportValue | null;
 }
 function ModifyTransitGatewayVpcAttachmentRequestOptions_Serialize(body: URLSearchParams, prefix: string, params: ModifyTransitGatewayVpcAttachmentRequestOptions) {
     if ("DnsSupport" in params) body.append(prefix+".DnsSupport", (params["DnsSupport"] ?? '').toString());
     if ("Ipv6Support" in params) body.append(prefix+".Ipv6Support", (params["Ipv6Support"] ?? '').toString());
+    if ("ApplianceModeSupport" in params) body.append(prefix+".ApplianceModeSupport", (params["ApplianceModeSupport"] ?? '').toString());
 }
 
 // refs: 2 - tags: input, named, interface
@@ -17164,6 +17300,7 @@ export interface InstanceNetworkInterfaceSpecification {
   SubnetId?: string | null;
   AssociateCarrierIpAddress?: boolean | null;
   InterfaceType?: string | null;
+  NetworkCardIndex?: number | null;
 }
 function InstanceNetworkInterfaceSpecification_Serialize(body: URLSearchParams, prefix: string, params: InstanceNetworkInterfaceSpecification) {
     if ("AssociatePublicIpAddress" in params) body.append(prefix+".AssociatePublicIpAddress", (params["AssociatePublicIpAddress"] ?? '').toString());
@@ -17180,6 +17317,7 @@ function InstanceNetworkInterfaceSpecification_Serialize(body: URLSearchParams, 
     if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
     if ("AssociateCarrierIpAddress" in params) body.append(prefix+".AssociateCarrierIpAddress", (params["AssociateCarrierIpAddress"] ?? '').toString());
     if ("InterfaceType" in params) body.append(prefix+".InterfaceType", (params["InterfaceType"] ?? '').toString());
+    if ("NetworkCardIndex" in params) body.append(prefix+".NetworkCardIndex", (params["NetworkCardIndex"] ?? '').toString());
 }
 function InstanceNetworkInterfaceSpecification_Parse(node: xmlP.XmlNode): InstanceNetworkInterfaceSpecification {
   return {
@@ -17199,6 +17337,7 @@ function InstanceNetworkInterfaceSpecification_Parse(node: xmlP.XmlNode): Instan
     SecondaryPrivateIpAddressCount: node.first("secondaryPrivateIpAddressCount", false, x => parseInt(x.content ?? '0')),
     SubnetId: node.first("subnetId", false, x => x.content ?? ''),
     AssociateCarrierIpAddress: node.first("AssociateCarrierIpAddress", false, x => x.content === 'true'),
+    NetworkCardIndex: node.first("NetworkCardIndex", false, x => parseInt(x.content ?? '0')),
   };
 }
 
@@ -17453,6 +17592,14 @@ function InstanceMetadataOptionsRequest_Serialize(body: URLSearchParams, prefix:
 }
 
 // refs: 1 - tags: input, named, interface
+export interface EnclaveOptionsRequest {
+  Enabled?: boolean | null;
+}
+function EnclaveOptionsRequest_Serialize(body: URLSearchParams, prefix: string, params: EnclaveOptionsRequest) {
+    if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
+}
+
+// refs: 1 - tags: input, named, interface
 export interface ScheduledInstancesLaunchSpecification {
   BlockDeviceMappings?: ScheduledInstancesBlockDeviceMapping[] | null;
   EbsOptimized?: boolean | null;
@@ -17689,11 +17836,13 @@ function TransitGatewayVpcAttachment_Parse(node: xmlP.XmlNode): TransitGatewayVp
 export interface TransitGatewayVpcAttachmentOptions {
   DnsSupport?: DnsSupportValue | null;
   Ipv6Support?: Ipv6SupportValue | null;
+  ApplianceModeSupport?: ApplianceModeSupportValue | null;
 }
 function TransitGatewayVpcAttachmentOptions_Parse(node: xmlP.XmlNode): TransitGatewayVpcAttachmentOptions {
   return {
     DnsSupport: node.first("dnsSupport", false, x => (x.content ?? '') as DnsSupportValue),
     Ipv6Support: node.first("ipv6Support", false, x => (x.content ?? '') as Ipv6SupportValue),
+    ApplianceModeSupport: node.first("applianceModeSupport", false, x => (x.content ?? '') as ApplianceModeSupportValue),
   };
 }
 
@@ -18882,6 +19031,7 @@ export interface ResponseLaunchTemplateData {
   LicenseSpecifications: LaunchTemplateLicenseConfiguration[];
   HibernationOptions?: LaunchTemplateHibernationOptions | null;
   MetadataOptions?: LaunchTemplateInstanceMetadataOptions | null;
+  EnclaveOptions?: LaunchTemplateEnclaveOptions | null;
 }
 function ResponseLaunchTemplateData_Parse(node: xmlP.XmlNode): ResponseLaunchTemplateData {
   return {
@@ -18911,6 +19061,7 @@ function ResponseLaunchTemplateData_Parse(node: xmlP.XmlNode): ResponseLaunchTem
     LicenseSpecifications: node.getList("licenseSet", "item").map(LaunchTemplateLicenseConfiguration_Parse),
     HibernationOptions: node.first("hibernationOptions", false, LaunchTemplateHibernationOptions_Parse),
     MetadataOptions: node.first("metadataOptions", false, LaunchTemplateInstanceMetadataOptions_Parse),
+    EnclaveOptions: node.first("enclaveOptions", false, LaunchTemplateEnclaveOptions_Parse),
   };
 }
 
@@ -18980,6 +19131,7 @@ export interface LaunchTemplateInstanceNetworkInterfaceSpecification {
   PrivateIpAddresses: PrivateIpAddressSpecification[];
   SecondaryPrivateIpAddressCount?: number | null;
   SubnetId?: string | null;
+  NetworkCardIndex?: number | null;
 }
 function LaunchTemplateInstanceNetworkInterfaceSpecification_Parse(node: xmlP.XmlNode): LaunchTemplateInstanceNetworkInterfaceSpecification {
   return {
@@ -18997,6 +19149,7 @@ function LaunchTemplateInstanceNetworkInterfaceSpecification_Parse(node: xmlP.Xm
     PrivateIpAddresses: node.getList("privateIpAddressesSet", "item").map(PrivateIpAddressSpecification_Parse),
     SecondaryPrivateIpAddressCount: node.first("secondaryPrivateIpAddressCount", false, x => parseInt(x.content ?? '0')),
     SubnetId: node.first("subnetId", false, x => x.content ?? ''),
+    NetworkCardIndex: node.first("networkCardIndex", false, x => parseInt(x.content ?? '0')),
   };
 }
 
@@ -19185,6 +19338,16 @@ export type LaunchTemplateInstanceMetadataOptionsState =
 | "pending"
 | "applied"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: output, named, interface
+export interface LaunchTemplateEnclaveOptions {
+  Enabled?: boolean | null;
+}
+function LaunchTemplateEnclaveOptions_Parse(node: xmlP.XmlNode): LaunchTemplateEnclaveOptions {
+  return {
+    Enabled: node.first("enabled", false, x => x.content === 'true'),
+  };
+}
 
 // refs: 3 - tags: output, named, interface
 export interface LocalGatewayRoute {
@@ -19502,6 +19665,7 @@ export interface NetworkInterfaceAttachment {
   AttachmentId?: string | null;
   DeleteOnTermination?: boolean | null;
   DeviceIndex?: number | null;
+  NetworkCardIndex?: number | null;
   InstanceId?: string | null;
   InstanceOwnerId?: string | null;
   Status?: AttachmentStatus | null;
@@ -19512,6 +19676,7 @@ function NetworkInterfaceAttachment_Parse(node: xmlP.XmlNode): NetworkInterfaceA
     AttachmentId: node.first("attachmentId", false, x => x.content ?? ''),
     DeleteOnTermination: node.first("deleteOnTermination", false, x => x.content === 'true'),
     DeviceIndex: node.first("deviceIndex", false, x => parseInt(x.content ?? '0')),
+    NetworkCardIndex: node.first("networkCardIndex", false, x => parseInt(x.content ?? '0')),
     InstanceId: node.first("instanceId", false, x => x.content ?? ''),
     InstanceOwnerId: node.first("instanceOwnerId", false, x => x.content ?? ''),
     Status: node.first("status", false, x => (x.content ?? '') as AttachmentStatus),
@@ -21012,6 +21177,7 @@ export interface ClientVpnEndpoint {
   Tags: Tag[];
   SecurityGroupIds: string[];
   VpcId?: string | null;
+  SelfServicePortalUrl?: string | null;
 }
 function ClientVpnEndpoint_Parse(node: xmlP.XmlNode): ClientVpnEndpoint {
   return {
@@ -21034,6 +21200,7 @@ function ClientVpnEndpoint_Parse(node: xmlP.XmlNode): ClientVpnEndpoint {
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
     SecurityGroupIds: node.getList("securityGroupIdSet", "item").map(x => x.content ?? ''),
     VpcId: node.first("vpcId", false, x => x.content ?? ''),
+    SelfServicePortalUrl: node.first("selfServicePortalUrl", false, x => x.content ?? ''),
   };
 }
 
@@ -21098,10 +21265,12 @@ function CertificateAuthentication_Parse(node: xmlP.XmlNode): CertificateAuthent
 // refs: 1 - tags: output, named, interface
 export interface FederatedAuthentication {
   SamlProviderArn?: string | null;
+  SelfServiceSamlProviderArn?: string | null;
 }
 function FederatedAuthentication_Parse(node: xmlP.XmlNode): FederatedAuthentication {
   return {
     SamlProviderArn: node.first("samlProviderArn", false, x => x.content ?? ''),
+    SelfServiceSamlProviderArn: node.first("selfServiceSamlProviderArn", false, x => x.content ?? ''),
   };
 }
 
@@ -22246,6 +22415,16 @@ function EbsInstanceBlockDevice_Parse(node: xmlP.XmlNode): EbsInstanceBlockDevic
   };
 }
 
+// refs: 3 - tags: output, named, interface
+export interface EnclaveOptions {
+  Enabled?: boolean | null;
+}
+function EnclaveOptions_Parse(node: xmlP.XmlNode): EnclaveOptions {
+  return {
+    Enabled: node.first("enabled", false, x => x.content === 'true'),
+  };
+}
+
 // refs: 1 - tags: output, named, interface
 export interface InstanceCreditSpecification {
   InstanceId?: string | null;
@@ -22804,6 +22983,7 @@ export interface Instance {
   HibernationOptions?: HibernationOptions | null;
   Licenses: LicenseConfiguration[];
   MetadataOptions?: InstanceMetadataOptionsResponse | null;
+  EnclaveOptions?: EnclaveOptions | null;
 }
 function Instance_Parse(node: xmlP.XmlNode): Instance {
   return {
@@ -22854,6 +23034,7 @@ function Instance_Parse(node: xmlP.XmlNode): Instance {
     HibernationOptions: node.first("hibernationOptions", false, HibernationOptions_Parse),
     Licenses: node.getList("licenseSet", "item").map(LicenseConfiguration_Parse),
     MetadataOptions: node.first("metadataOptions", false, InstanceMetadataOptionsResponse_Parse),
+    EnclaveOptions: node.first("enclaveOptions", false, EnclaveOptions_Parse),
   };
 }
 
@@ -22976,6 +23157,7 @@ export interface InstanceNetworkInterfaceAttachment {
   DeleteOnTermination?: boolean | null;
   DeviceIndex?: number | null;
   Status?: AttachmentStatus | null;
+  NetworkCardIndex?: number | null;
 }
 function InstanceNetworkInterfaceAttachment_Parse(node: xmlP.XmlNode): InstanceNetworkInterfaceAttachment {
   return {
@@ -22984,6 +23166,7 @@ function InstanceNetworkInterfaceAttachment_Parse(node: xmlP.XmlNode): InstanceN
     DeleteOnTermination: node.first("deleteOnTermination", false, x => x.content === 'true'),
     DeviceIndex: node.first("deviceIndex", false, x => parseInt(x.content ?? '0')),
     Status: node.first("status", false, x => (x.content ?? '') as AttachmentStatus),
+    NetworkCardIndex: node.first("networkCardIndex", false, x => parseInt(x.content ?? '0')),
   };
 }
 
@@ -24299,6 +24482,22 @@ export type ClientCertificateRevocationListStatusCode =
 | "pending"
 | "active"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface AssociatedRole {
+  AssociatedRoleArn?: string | null;
+  CertificateS3BucketName?: string | null;
+  CertificateS3ObjectKey?: string | null;
+  EncryptionKmsKeyId?: string | null;
+}
+function AssociatedRole_Parse(node: xmlP.XmlNode): AssociatedRole {
+  return {
+    AssociatedRoleArn: node.first("associatedRoleArn", false, x => x.content ?? ''),
+    CertificateS3BucketName: node.first("certificateS3BucketName", false, x => x.content ?? ''),
+    CertificateS3ObjectKey: node.first("certificateS3ObjectKey", false, x => x.content ?? ''),
+    EncryptionKmsKeyId: node.first("encryptionKmsKeyId", false, x => x.content ?? ''),
+  };
+}
 
 // refs: 1 - tags: output, named, interface
 export interface Ipv6CidrAssociation {

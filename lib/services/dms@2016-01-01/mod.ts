@@ -116,6 +116,7 @@ export default class DMS {
       MicrosoftSQLServerSettings: fromMicrosoftSQLServerSettings(params["MicrosoftSQLServerSettings"]),
       IBMDb2Settings: fromIBMDb2Settings(params["IBMDb2Settings"]),
       ResourceIdentifier: params["ResourceIdentifier"],
+      DocDbSettings: fromDocDbSettings(params["DocDbSettings"]),
     } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -900,6 +901,7 @@ export default class DMS {
       SybaseSettings: fromSybaseSettings(params["SybaseSettings"]),
       MicrosoftSQLServerSettings: fromMicrosoftSQLServerSettings(params["MicrosoftSQLServerSettings"]),
       IBMDb2Settings: fromIBMDb2Settings(params["IBMDb2Settings"]),
+      DocDbSettings: fromDocDbSettings(params["DocDbSettings"]),
     } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1426,6 +1428,7 @@ export interface CreateEndpointMessage {
   MicrosoftSQLServerSettings?: MicrosoftSQLServerSettings | null;
   IBMDb2Settings?: IBMDb2Settings | null;
   ResourceIdentifier?: string | null;
+  DocDbSettings?: DocDbSettings | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1722,6 +1725,7 @@ export interface ModifyEndpointMessage {
   SybaseSettings?: SybaseSettings | null;
   MicrosoftSQLServerSettings?: MicrosoftSQLServerSettings | null;
   IBMDb2Settings?: IBMDb2Settings | null;
+  DocDbSettings?: DocDbSettings | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2393,7 +2397,7 @@ export type AuthMechanismValue =
 | "scram_sha_1"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 6 - tags: input, named, enum, output
+// refs: 12 - tags: input, named, enum, output
 export type NestingLevelValue =
 | "none"
 | "one"
@@ -3005,6 +3009,49 @@ function toIBMDb2Settings(root: jsonP.JSONValue): IBMDb2Settings {
   }, root);
 }
 
+// refs: 6 - tags: input, named, interface, output
+export interface DocDbSettings {
+  Username?: string | null;
+  Password?: string | null;
+  ServerName?: string | null;
+  Port?: number | null;
+  DatabaseName?: string | null;
+  NestingLevel?: NestingLevelValue | null;
+  ExtractDocId?: boolean | null;
+  DocsToInvestigate?: number | null;
+  KmsKeyId?: string | null;
+}
+function fromDocDbSettings(input?: DocDbSettings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Username: input["Username"],
+    Password: input["Password"],
+    ServerName: input["ServerName"],
+    Port: input["Port"],
+    DatabaseName: input["DatabaseName"],
+    NestingLevel: input["NestingLevel"],
+    ExtractDocId: input["ExtractDocId"],
+    DocsToInvestigate: input["DocsToInvestigate"],
+    KmsKeyId: input["KmsKeyId"],
+  }
+}
+function toDocDbSettings(root: jsonP.JSONValue): DocDbSettings {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Username": "s",
+      "Password": "s",
+      "ServerName": "s",
+      "Port": "n",
+      "DatabaseName": "s",
+      "NestingLevel": (x: jsonP.JSONValue) => cmnP.readEnum<NestingLevelValue>(x),
+      "ExtractDocId": "b",
+      "DocsToInvestigate": "n",
+      "KmsKeyId": "s",
+    },
+  }, root);
+}
+
 // refs: 10 - tags: input, named, enum, output
 export type MigrationTypeValue =
 | "full-load"
@@ -3178,6 +3225,7 @@ export interface Endpoint {
   SybaseSettings?: SybaseSettings | null;
   MicrosoftSQLServerSettings?: MicrosoftSQLServerSettings | null;
   IBMDb2Settings?: IBMDb2Settings | null;
+  DocDbSettings?: DocDbSettings | null;
 }
 function toEndpoint(root: jsonP.JSONValue): Endpoint {
   return jsonP.readObj({
@@ -3215,6 +3263,7 @@ function toEndpoint(root: jsonP.JSONValue): Endpoint {
       "SybaseSettings": toSybaseSettings,
       "MicrosoftSQLServerSettings": toMicrosoftSQLServerSettings,
       "IBMDb2Settings": toIBMDb2Settings,
+      "DocDbSettings": toDocDbSettings,
     },
   }, root);
 }

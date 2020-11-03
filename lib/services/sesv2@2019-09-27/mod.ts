@@ -72,6 +72,50 @@ export default class SESV2 {
   };
   }
 
+  async createContact(
+    {abortSignal, ...params}: RequestConfig & CreateContactRequest,
+  ): Promise<CreateContactResponse> {
+    const body: jsonP.JSONObject = params ? {
+      EmailAddress: params["EmailAddress"],
+      TopicPreferences: params["TopicPreferences"]?.map(x => fromTopicPreference(x)),
+      UnsubscribeAll: params["UnsubscribeAll"],
+      AttributesData: params["AttributesData"],
+    } : {};
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateContact",
+      requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}/contacts`,
+    });
+  return {
+    ...jsonP.readObj({
+        required: {},
+        optional: {},
+      }, await resp.json()),
+  };
+  }
+
+  async createContactList(
+    {abortSignal, ...params}: RequestConfig & CreateContactListRequest,
+  ): Promise<CreateContactListResponse> {
+    const body: jsonP.JSONObject = params ? {
+      ContactListName: params["ContactListName"],
+      Topics: params["Topics"]?.map(x => fromTopic(x)),
+      Description: params["Description"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    } : {};
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateContactList",
+      requestUri: "/v2/email/contact-lists",
+    });
+  return {
+    ...jsonP.readObj({
+        required: {},
+        optional: {},
+      }, await resp.json()),
+  };
+  }
+
   async createCustomVerificationEmailTemplate(
     {abortSignal, ...params}: RequestConfig & CreateCustomVerificationEmailTemplateRequest,
   ): Promise<CreateCustomVerificationEmailTemplateResponse> {
@@ -254,6 +298,42 @@ export default class SESV2 {
       action: "DeleteConfigurationSetEventDestination",
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/event-destinations/${params["EventDestinationName"]}`,
+    });
+  return {
+    ...jsonP.readObj({
+        required: {},
+        optional: {},
+      }, await resp.json()),
+  };
+  }
+
+  async deleteContact(
+    {abortSignal, ...params}: RequestConfig & DeleteContactRequest,
+  ): Promise<DeleteContactResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteContact",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}/contacts/${params["EmailAddress"]}`,
+    });
+  return {
+    ...jsonP.readObj({
+        required: {},
+        optional: {},
+      }, await resp.json()),
+  };
+  }
+
+  async deleteContactList(
+    {abortSignal, ...params}: RequestConfig & DeleteContactListRequest,
+  ): Promise<DeleteContactListResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteContactList",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}`,
     });
   return {
     ...jsonP.readObj({
@@ -461,6 +541,58 @@ export default class SESV2 {
         required: {},
         optional: {
           "EventDestinations": [toEventDestination],
+        },
+      }, await resp.json()),
+  };
+  }
+
+  async getContact(
+    {abortSignal, ...params}: RequestConfig & GetContactRequest,
+  ): Promise<GetContactResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "GetContact",
+      method: "GET",
+      requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}/contacts/${params["EmailAddress"]}`,
+    });
+  return {
+    ...jsonP.readObj({
+        required: {},
+        optional: {
+          "ContactListName": "s",
+          "EmailAddress": "s",
+          "TopicPreferences": [toTopicPreference],
+          "TopicDefaultPreferences": [toTopicPreference],
+          "UnsubscribeAll": "b",
+          "AttributesData": "s",
+          "CreatedTimestamp": "d",
+          "LastUpdatedTimestamp": "d",
+        },
+      }, await resp.json()),
+  };
+  }
+
+  async getContactList(
+    {abortSignal, ...params}: RequestConfig & GetContactListRequest,
+  ): Promise<GetContactListResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "GetContactList",
+      method: "GET",
+      requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}`,
+    });
+  return {
+    ...jsonP.readObj({
+        required: {},
+        optional: {
+          "ContactListName": "s",
+          "Topics": [toTopic],
+          "Description": "s",
+          "CreatedTimestamp": "d",
+          "LastUpdatedTimestamp": "d",
+          "Tags": [toTag],
         },
       }, await resp.json()),
   };
@@ -760,6 +892,55 @@ export default class SESV2 {
         required: {},
         optional: {
           "ConfigurationSets": ["s"],
+          "NextToken": "s",
+        },
+      }, await resp.json()),
+  };
+  }
+
+  async listContactLists(
+    {abortSignal, ...params}: RequestConfig & ListContactListsRequest = {},
+  ): Promise<ListContactListsResponse> {
+    const query = new URLSearchParams;
+    if (params["PageSize"] != null) query.set("PageSize", params["PageSize"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("NextToken", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListContactLists",
+      method: "GET",
+      requestUri: "/v2/email/contact-lists",
+    });
+  return {
+    ...jsonP.readObj({
+        required: {},
+        optional: {
+          "ContactLists": [toContactList],
+          "NextToken": "s",
+        },
+      }, await resp.json()),
+  };
+  }
+
+  async listContacts(
+    {abortSignal, ...params}: RequestConfig & ListContactsRequest,
+  ): Promise<ListContactsResponse> {
+    const query = new URLSearchParams;
+    if (params["PageSize"] != null) query.set("PageSize", params["PageSize"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("NextToken", params["NextToken"]?.toString() ?? "");
+    const body: jsonP.JSONObject = params ? {
+      Filter: fromListContactsFilter(params["Filter"]),
+    } : {};
+    const resp = await this.#client.performRequest({
+      abortSignal, query, body,
+      action: "ListContacts",
+      method: "GET",
+      requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}/contacts`,
+    });
+  return {
+    ...jsonP.readObj({
+        required: {},
+        optional: {
+          "Contacts": [toContact],
           "NextToken": "s",
         },
       }, await resp.json()),
@@ -1400,6 +1581,7 @@ export default class SESV2 {
       Content: fromEmailContent(params["Content"]),
       EmailTags: params["EmailTags"]?.map(x => fromMessageTag(x)),
       ConfigurationSetName: params["ConfigurationSetName"],
+      ListManagementOptions: fromListManagementOptions(params["ListManagementOptions"]),
     } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1499,6 +1681,49 @@ export default class SESV2 {
   };
   }
 
+  async updateContact(
+    {abortSignal, ...params}: RequestConfig & UpdateContactRequest,
+  ): Promise<UpdateContactResponse> {
+    const body: jsonP.JSONObject = params ? {
+      TopicPreferences: params["TopicPreferences"]?.map(x => fromTopicPreference(x)),
+      UnsubscribeAll: params["UnsubscribeAll"],
+      AttributesData: params["AttributesData"],
+    } : {};
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateContact",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}/contacts/${params["EmailAddress"]}`,
+    });
+  return {
+    ...jsonP.readObj({
+        required: {},
+        optional: {},
+      }, await resp.json()),
+  };
+  }
+
+  async updateContactList(
+    {abortSignal, ...params}: RequestConfig & UpdateContactListRequest,
+  ): Promise<UpdateContactListResponse> {
+    const body: jsonP.JSONObject = params ? {
+      Topics: params["Topics"]?.map(x => fromTopic(x)),
+      Description: params["Description"],
+    } : {};
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateContactList",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}`,
+    });
+  return {
+    ...jsonP.readObj({
+        required: {},
+        optional: {},
+      }, await resp.json()),
+  };
+  }
+
   async updateCustomVerificationEmailTemplate(
     {abortSignal, ...params}: RequestConfig & UpdateCustomVerificationEmailTemplateRequest,
   ): Promise<UpdateCustomVerificationEmailTemplateResponse> {
@@ -1584,6 +1809,23 @@ export interface CreateConfigurationSetEventDestinationRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateContactRequest {
+  ContactListName: string;
+  EmailAddress: string;
+  TopicPreferences?: TopicPreference[] | null;
+  UnsubscribeAll?: boolean | null;
+  AttributesData?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateContactListRequest {
+  ContactListName: string;
+  Topics?: Topic[] | null;
+  Description?: string | null;
+  Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateCustomVerificationEmailTemplateRequest {
   TemplateName: string;
   FromEmailAddress: string;
@@ -1645,6 +1887,17 @@ export interface DeleteConfigurationSetEventDestinationRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteContactRequest {
+  ContactListName: string;
+  EmailAddress: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteContactListRequest {
+  ContactListName: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteCustomVerificationEmailTemplateRequest {
   TemplateName: string;
 }
@@ -1692,6 +1945,17 @@ export interface GetConfigurationSetRequest {
 // refs: 1 - tags: named, input
 export interface GetConfigurationSetEventDestinationsRequest {
   ConfigurationSetName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetContactRequest {
+  ContactListName: string;
+  EmailAddress: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetContactListRequest {
+  ContactListName: string;
 }
 
 // refs: 1 - tags: named, input
@@ -1761,6 +2025,20 @@ export interface GetSuppressedDestinationRequest {
 export interface ListConfigurationSetsRequest {
   NextToken?: string | null;
   PageSize?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListContactListsRequest {
+  PageSize?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListContactsRequest {
+  ContactListName: string;
+  Filter?: ListContactsFilter | null;
+  PageSize?: number | null;
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1960,6 +2238,7 @@ export interface SendEmailRequest {
   Content: EmailContent;
   EmailTags?: MessageTag[] | null;
   ConfigurationSetName?: string | null;
+  ListManagementOptions?: ListManagementOptions | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1985,6 +2264,22 @@ export interface UpdateConfigurationSetEventDestinationRequest {
   ConfigurationSetName: string;
   EventDestinationName: string;
   EventDestination: EventDestinationDefinition;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateContactRequest {
+  ContactListName: string;
+  EmailAddress: string;
+  TopicPreferences?: TopicPreference[] | null;
+  UnsubscribeAll?: boolean | null;
+  AttributesData?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateContactListRequest {
+  ContactListName: string;
+  Topics?: Topic[] | null;
+  Description?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2016,6 +2311,14 @@ export interface CreateConfigurationSetResponse {
 
 // refs: 1 - tags: named, output
 export interface CreateConfigurationSetEventDestinationResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface CreateContactResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface CreateContactListResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -2058,6 +2361,14 @@ export interface DeleteConfigurationSetResponse {
 
 // refs: 1 - tags: named, output
 export interface DeleteConfigurationSetEventDestinationResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteContactResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteContactListResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -2114,6 +2425,28 @@ export interface GetConfigurationSetResponse {
 // refs: 1 - tags: named, output
 export interface GetConfigurationSetEventDestinationsResponse {
   EventDestinations?: EventDestination[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetContactResponse {
+  ContactListName?: string | null;
+  EmailAddress?: string | null;
+  TopicPreferences?: TopicPreference[] | null;
+  TopicDefaultPreferences?: TopicPreference[] | null;
+  UnsubscribeAll?: boolean | null;
+  AttributesData?: string | null;
+  CreatedTimestamp?: Date | number | null;
+  LastUpdatedTimestamp?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetContactListResponse {
+  ContactListName?: string | null;
+  Topics?: Topic[] | null;
+  Description?: string | null;
+  CreatedTimestamp?: Date | number | null;
+  LastUpdatedTimestamp?: Date | number | null;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -2209,6 +2542,18 @@ export interface GetSuppressedDestinationResponse {
 // refs: 1 - tags: named, output
 export interface ListConfigurationSetsResponse {
   ConfigurationSets?: string[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListContactListsResponse {
+  ContactLists?: ContactList[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListContactsResponse {
+  Contacts?: Contact[] | null;
   NextToken?: string | null;
 }
 
@@ -2368,6 +2713,14 @@ export interface UpdateConfigurationSetEventDestinationResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface UpdateContactResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateContactListResponse {
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateCustomVerificationEmailTemplateResponse {
 }
 
@@ -2467,7 +2820,7 @@ function toSendingOptions(root: jsonP.JSONValue): SendingOptions {
   }, root);
 }
 
-// refs: 9 - tags: input, named, interface, output
+// refs: 11 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
@@ -2546,6 +2899,7 @@ export type EventType =
 | "CLICK"
 | "RENDERING_FAILURE"
 | "DELIVERY_DELAY"
+| "SUBSCRIPTION"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
@@ -2655,6 +3009,63 @@ function toPinpointDestination(root: jsonP.JSONValue): PinpointDestination {
     required: {},
     optional: {
       "ApplicationArn": "s",
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface TopicPreference {
+  TopicName: string;
+  SubscriptionStatus: SubscriptionStatus;
+}
+function fromTopicPreference(input?: TopicPreference | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    TopicName: input["TopicName"],
+    SubscriptionStatus: input["SubscriptionStatus"],
+  }
+}
+function toTopicPreference(root: jsonP.JSONValue): TopicPreference {
+  return jsonP.readObj({
+    required: {
+      "TopicName": "s",
+      "SubscriptionStatus": (x: jsonP.JSONValue) => cmnP.readEnum<SubscriptionStatus>(x),
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 10 - tags: input, named, enum, output
+export type SubscriptionStatus =
+| "OPT_IN"
+| "OPT_OUT"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface Topic {
+  TopicName: string;
+  DisplayName: string;
+  Description?: string | null;
+  DefaultSubscriptionStatus: SubscriptionStatus;
+}
+function fromTopic(input?: Topic | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    TopicName: input["TopicName"],
+    DisplayName: input["DisplayName"],
+    Description: input["Description"],
+    DefaultSubscriptionStatus: input["DefaultSubscriptionStatus"],
+  }
+}
+function toTopic(root: jsonP.JSONValue): Topic {
+  return jsonP.readObj({
+    required: {
+      "TopicName": "s",
+      "DisplayName": "s",
+      "DefaultSubscriptionStatus": (x: jsonP.JSONValue) => cmnP.readEnum<SubscriptionStatus>(x),
+    },
+    optional: {
+      "Description": "s",
     },
   }, root);
 }
@@ -2779,20 +3190,23 @@ function toEmailTemplateContent(root: jsonP.JSONValue): EmailTemplateContent {
 
 // refs: 3 - tags: input, named, interface, output
 export interface ImportDestination {
-  SuppressionListDestination: SuppressionListDestination;
+  SuppressionListDestination?: SuppressionListDestination | null;
+  ContactListDestination?: ContactListDestination | null;
 }
 function fromImportDestination(input?: ImportDestination | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     SuppressionListDestination: fromSuppressionListDestination(input["SuppressionListDestination"]),
+    ContactListDestination: fromContactListDestination(input["ContactListDestination"]),
   }
 }
 function toImportDestination(root: jsonP.JSONValue): ImportDestination {
   return jsonP.readObj({
-    required: {
+    required: {},
+    optional: {
       "SuppressionListDestination": toSuppressionListDestination,
+      "ContactListDestination": toContactListDestination,
     },
-    optional: {},
   }, root);
 }
 
@@ -2817,6 +3231,34 @@ function toSuppressionListDestination(root: jsonP.JSONValue): SuppressionListDes
 
 // refs: 3 - tags: input, named, enum, output
 export type SuppressionListImportAction =
+| "DELETE"
+| "PUT"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface ContactListDestination {
+  ContactListName: string;
+  ContactListImportAction: ContactListImportAction;
+}
+function fromContactListDestination(input?: ContactListDestination | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ContactListName: input["ContactListName"],
+    ContactListImportAction: input["ContactListImportAction"],
+  }
+}
+function toContactListDestination(root: jsonP.JSONValue): ContactListDestination {
+  return jsonP.readObj({
+    required: {
+      "ContactListName": "s",
+      "ContactListImportAction": (x: jsonP.JSONValue) => cmnP.readEnum<ContactListImportAction>(x),
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type ContactListImportAction =
 | "DELETE"
 | "PUT"
 | cmnP.UnexpectedEnumValue;
@@ -2849,9 +3291,36 @@ export type DataFormat =
 | "JSON"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 1 - tags: input, named, interface
+export interface ListContactsFilter {
+  FilteredStatus?: SubscriptionStatus | null;
+  TopicFilter?: TopicFilter | null;
+}
+function fromListContactsFilter(input?: ListContactsFilter | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    FilteredStatus: input["FilteredStatus"],
+    TopicFilter: fromTopicFilter(input["TopicFilter"]),
+  }
+}
+
+// refs: 1 - tags: input, named, interface
+export interface TopicFilter {
+  TopicName?: string | null;
+  UseDefaultIfPreferenceUnavailable?: boolean | null;
+}
+function fromTopicFilter(input?: TopicFilter | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    TopicName: input["TopicName"],
+    UseDefaultIfPreferenceUnavailable: input["UseDefaultIfPreferenceUnavailable"],
+  }
+}
+
 // refs: 1 - tags: input, named, enum
 export type ImportDestinationType =
 | "SUPPRESSION_LIST"
+| "CONTACT_LIST"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
@@ -2998,6 +3467,19 @@ function fromReplacementTemplate(input?: ReplacementTemplate | null): jsonP.JSON
   if (!input) return input;
   return {
     ReplacementTemplateData: input["ReplacementTemplateData"],
+  }
+}
+
+// refs: 1 - tags: input, named, interface
+export interface ListManagementOptions {
+  ContactListName: string;
+  TopicName?: string | null;
+}
+function fromListManagementOptions(input?: ListManagementOptions | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ContactListName: input["ContactListName"],
+    TopicName: input["TopicName"],
   }
 }
 
@@ -3445,6 +3927,42 @@ function toSuppressedDestinationAttributes(root: jsonP.JSONValue): SuppressedDes
     optional: {
       "MessageId": "s",
       "FeedbackId": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ContactList {
+  ContactListName?: string | null;
+  LastUpdatedTimestamp?: Date | number | null;
+}
+function toContactList(root: jsonP.JSONValue): ContactList {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ContactListName": "s",
+      "LastUpdatedTimestamp": "d",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface Contact {
+  EmailAddress?: string | null;
+  TopicPreferences?: TopicPreference[] | null;
+  TopicDefaultPreferences?: TopicPreference[] | null;
+  UnsubscribeAll?: boolean | null;
+  LastUpdatedTimestamp?: Date | number | null;
+}
+function toContact(root: jsonP.JSONValue): Contact {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "EmailAddress": "s",
+      "TopicPreferences": [toTopicPreference],
+      "TopicDefaultPreferences": [toTopicPreference],
+      "UnsubscribeAll": "b",
+      "LastUpdatedTimestamp": "d",
     },
   }, root);
 }

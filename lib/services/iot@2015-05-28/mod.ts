@@ -92,12 +92,14 @@ export default class Iot {
   async associateTargetsWithJob(
     {abortSignal, ...params}: RequestConfig & AssociateTargetsWithJobRequest,
   ): Promise<AssociateTargetsWithJobResponse> {
+    const query = new URLSearchParams;
+    if (params["namespaceId"] != null) query.set("namespaceId", params["namespaceId"]?.toString() ?? "");
     const body: jsonP.JSONObject = params ? {
       targets: params["targets"],
       comment: params["comment"],
     } : {};
     const resp = await this.#client.performRequest({
-      abortSignal, body,
+      abortSignal, query, body,
       action: "AssociateTargetsWithJob",
       requestUri: cmnP.encodePath`/jobs/${params["jobId"]}/targets`,
     });
@@ -502,6 +504,7 @@ export default class Iot {
       abortConfig: fromAbortConfig(params["abortConfig"]),
       timeoutConfig: fromTimeoutConfig(params["timeoutConfig"]),
       tags: params["tags"]?.map(x => fromTag(x)),
+      namespaceId: params["namespaceId"],
     } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1118,6 +1121,7 @@ export default class Iot {
   ): Promise<void> {
     const query = new URLSearchParams;
     if (params["force"] != null) query.set("force", params["force"]?.toString() ?? "");
+    if (params["namespaceId"] != null) query.set("namespaceId", params["namespaceId"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query,
       action: "DeleteJob",
@@ -1131,6 +1135,7 @@ export default class Iot {
   ): Promise<void> {
     const query = new URLSearchParams;
     if (params["force"] != null) query.set("force", params["force"]?.toString() ?? "");
+    if (params["namespaceId"] != null) query.set("namespaceId", params["namespaceId"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query,
       action: "DeleteJobExecution",
@@ -2921,6 +2926,7 @@ export default class Iot {
   ): Promise<ListJobExecutionsForThingResponse> {
     const query = new URLSearchParams;
     if (params["status"] != null) query.set("status", params["status"]?.toString() ?? "");
+    if (params["namespaceId"] != null) query.set("namespaceId", params["namespaceId"]?.toString() ?? "");
     if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
     if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
@@ -2950,6 +2956,7 @@ export default class Iot {
     if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
     if (params["thingGroupName"] != null) query.set("thingGroupName", params["thingGroupName"]?.toString() ?? "");
     if (params["thingGroupId"] != null) query.set("thingGroupId", params["thingGroupId"]?.toString() ?? "");
+    if (params["namespaceId"] != null) query.set("namespaceId", params["namespaceId"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query,
       action: "ListJobs",
@@ -4446,6 +4453,8 @@ export default class Iot {
   async updateJob(
     {abortSignal, ...params}: RequestConfig & UpdateJobRequest,
   ): Promise<void> {
+    const query = new URLSearchParams;
+    if (params["namespaceId"] != null) query.set("namespaceId", params["namespaceId"]?.toString() ?? "");
     const body: jsonP.JSONObject = params ? {
       description: params["description"],
       presignedUrlConfig: fromPresignedUrlConfig(params["presignedUrlConfig"]),
@@ -4454,7 +4463,7 @@ export default class Iot {
       timeoutConfig: fromTimeoutConfig(params["timeoutConfig"]),
     } : {};
     const resp = await this.#client.performRequest({
-      abortSignal, body,
+      abortSignal, query, body,
       action: "UpdateJob",
       method: "PATCH",
       requestUri: cmnP.encodePath`/jobs/${params["jobId"]}`,
@@ -4768,6 +4777,7 @@ export interface AssociateTargetsWithJobRequest {
   targets: string[];
   jobId: string;
   comment?: string | null;
+  namespaceId?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4912,6 +4922,7 @@ export interface CreateJobRequest {
   abortConfig?: AbortConfig | null;
   timeoutConfig?: TimeoutConfig | null;
   tags?: Tag[] | null;
+  namespaceId?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -5107,6 +5118,7 @@ export interface DeleteDynamicThingGroupRequest {
 export interface DeleteJobRequest {
   jobId: string;
   force?: boolean | null;
+  namespaceId?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -5115,6 +5127,7 @@ export interface DeleteJobExecutionRequest {
   thingName: string;
   executionNumber: number;
   force?: boolean | null;
+  namespaceId?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -5604,6 +5617,7 @@ export interface ListJobExecutionsForJobRequest {
 export interface ListJobExecutionsForThingRequest {
   thingName: string;
   status?: JobExecutionStatus | null;
+  namespaceId?: string | null;
   maxResults?: number | null;
   nextToken?: string | null;
 }
@@ -5616,6 +5630,7 @@ export interface ListJobsRequest {
   nextToken?: string | null;
   thingGroupName?: string | null;
   thingGroupId?: string | null;
+  namespaceId?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -6091,6 +6106,7 @@ export interface UpdateJobRequest {
   jobExecutionsRolloutConfig?: JobExecutionsRolloutConfig | null;
   abortConfig?: AbortConfig | null;
   timeoutConfig?: TimeoutConfig | null;
+  namespaceId?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -10419,6 +10435,7 @@ export interface Job {
   completedAt?: Date | number | null;
   jobProcessDetails?: JobProcessDetails | null;
   timeoutConfig?: TimeoutConfig | null;
+  namespaceId?: string | null;
 }
 function toJob(root: jsonP.JSONValue): Job {
   return jsonP.readObj({
@@ -10441,6 +10458,7 @@ function toJob(root: jsonP.JSONValue): Job {
       "completedAt": "d",
       "jobProcessDetails": toJobProcessDetails,
       "timeoutConfig": toTimeoutConfig,
+      "namespaceId": "s",
     },
   }, root);
 }

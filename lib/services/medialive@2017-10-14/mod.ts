@@ -5023,10 +5023,12 @@ export interface HlsGroupSettings {
   ConstantIv?: string | null;
   Destination: OutputLocationRef;
   DirectoryStructure?: HlsDirectoryStructure | null;
+  DiscontinuityTags?: HlsDiscontinuityTags | null;
   EncryptionType?: HlsEncryptionType | null;
   HlsCdnSettings?: HlsCdnSettings | null;
   HlsId3SegmentTagging?: HlsId3SegmentTaggingState | null;
   IFrameOnlyPlaylists?: IFrameOnlyPlaylistType | null;
+  IncompleteSegmentBehavior?: HlsIncompleteSegmentBehavior | null;
   IndexNSegments?: number | null;
   InputLossAction?: InputLossActionForHlsOut | null;
   IvInManifest?: HlsIvInManifest | null;
@@ -5067,10 +5069,12 @@ function fromHlsGroupSettings(input?: HlsGroupSettings | null): jsonP.JSONValue 
     constantIv: input["ConstantIv"],
     destination: fromOutputLocationRef(input["Destination"]),
     directoryStructure: input["DirectoryStructure"],
+    discontinuityTags: input["DiscontinuityTags"],
     encryptionType: input["EncryptionType"],
     hlsCdnSettings: fromHlsCdnSettings(input["HlsCdnSettings"]),
     hlsId3SegmentTagging: input["HlsId3SegmentTagging"],
     iFrameOnlyPlaylists: input["IFrameOnlyPlaylists"],
+    incompleteSegmentBehavior: input["IncompleteSegmentBehavior"],
     indexNSegments: input["IndexNSegments"],
     inputLossAction: input["InputLossAction"],
     ivInManifest: input["IvInManifest"],
@@ -5114,10 +5118,12 @@ function toHlsGroupSettings(root: jsonP.JSONValue): HlsGroupSettings {
       "CodecSpecification": (x: jsonP.JSONValue) => cmnP.readEnum<HlsCodecSpecification>(x),
       "ConstantIv": "s",
       "DirectoryStructure": (x: jsonP.JSONValue) => cmnP.readEnum<HlsDirectoryStructure>(x),
+      "DiscontinuityTags": (x: jsonP.JSONValue) => cmnP.readEnum<HlsDiscontinuityTags>(x),
       "EncryptionType": (x: jsonP.JSONValue) => cmnP.readEnum<HlsEncryptionType>(x),
       "HlsCdnSettings": toHlsCdnSettings,
       "HlsId3SegmentTagging": (x: jsonP.JSONValue) => cmnP.readEnum<HlsId3SegmentTaggingState>(x),
       "IFrameOnlyPlaylists": (x: jsonP.JSONValue) => cmnP.readEnum<IFrameOnlyPlaylistType>(x),
+      "IncompleteSegmentBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<HlsIncompleteSegmentBehavior>(x),
       "IndexNSegments": "n",
       "InputLossAction": (x: jsonP.JSONValue) => cmnP.readEnum<InputLossActionForHlsOut>(x),
       "IvInManifest": (x: jsonP.JSONValue) => cmnP.readEnum<HlsIvInManifest>(x),
@@ -5201,6 +5207,12 @@ export type HlsCodecSpecification =
 export type HlsDirectoryStructure =
 | "SINGLE_DIRECTORY"
 | "SUBDIRECTORY_PER_STREAM"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 9 - tags: input, named, enum, output
+export type HlsDiscontinuityTags =
+| "INSERT"
+| "NEVER_INSERT"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 9 - tags: input, named, enum, output
@@ -5391,6 +5403,12 @@ export type HlsId3SegmentTaggingState =
 export type IFrameOnlyPlaylistType =
 | "DISABLED"
 | "STANDARD"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 9 - tags: input, named, enum, output
+export type HlsIncompleteSegmentBehavior =
+| "AUTO"
+| "SUPPRESS"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 9 - tags: input, named, enum, output
@@ -7740,12 +7758,16 @@ function toInputAttachment(root: jsonP.JSONValue): InputAttachment {
 
 // refs: 10 - tags: input, named, interface, output
 export interface AutomaticInputFailoverSettings {
+  ErrorClearTimeMsec?: number | null;
+  FailoverConditions?: FailoverCondition[] | null;
   InputPreference?: InputPreference | null;
   SecondaryInputId: string;
 }
 function fromAutomaticInputFailoverSettings(input?: AutomaticInputFailoverSettings | null): jsonP.JSONValue {
   if (!input) return input;
   return {
+    errorClearTimeMsec: input["ErrorClearTimeMsec"],
+    failoverConditions: input["FailoverConditions"]?.map(x => fromFailoverCondition(x)),
     inputPreference: input["InputPreference"],
     secondaryInputId: input["SecondaryInputId"],
   }
@@ -7756,7 +7778,66 @@ function toAutomaticInputFailoverSettings(root: jsonP.JSONValue): AutomaticInput
       "SecondaryInputId": "s",
     },
     optional: {
+      "ErrorClearTimeMsec": "n",
+      "FailoverConditions": [toFailoverCondition],
       "InputPreference": (x: jsonP.JSONValue) => cmnP.readEnum<InputPreference>(x),
+    },
+  }, root);
+}
+
+// refs: 10 - tags: input, named, interface, output
+export interface FailoverCondition {
+  FailoverConditionSettings?: FailoverConditionSettings | null;
+}
+function fromFailoverCondition(input?: FailoverCondition | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    failoverConditionSettings: fromFailoverConditionSettings(input["FailoverConditionSettings"]),
+  }
+}
+function toFailoverCondition(root: jsonP.JSONValue): FailoverCondition {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "FailoverConditionSettings": toFailoverConditionSettings,
+    },
+  }, root);
+}
+
+// refs: 10 - tags: input, named, interface, output
+export interface FailoverConditionSettings {
+  InputLossSettings?: InputLossFailoverSettings | null;
+}
+function fromFailoverConditionSettings(input?: FailoverConditionSettings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    inputLossSettings: fromInputLossFailoverSettings(input["InputLossSettings"]),
+  }
+}
+function toFailoverConditionSettings(root: jsonP.JSONValue): FailoverConditionSettings {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "InputLossSettings": toInputLossFailoverSettings,
+    },
+  }, root);
+}
+
+// refs: 10 - tags: input, named, interface, output
+export interface InputLossFailoverSettings {
+  InputLossThresholdMsec?: number | null;
+}
+function fromInputLossFailoverSettings(input?: InputLossFailoverSettings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    inputLossThresholdMsec: input["InputLossThresholdMsec"],
+  }
+}
+function toInputLossFailoverSettings(root: jsonP.JSONValue): InputLossFailoverSettings {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "InputLossThresholdMsec": "n",
     },
   }, root);
 }

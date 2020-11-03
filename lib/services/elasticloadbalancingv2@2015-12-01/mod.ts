@@ -133,6 +133,7 @@ export default class ELBv2 {
     const prefix = '';
     body.append(prefix+"Name", (params["Name"] ?? '').toString());
     if ("Protocol" in params) body.append(prefix+"Protocol", (params["Protocol"] ?? '').toString());
+    if ("ProtocolVersion" in params) body.append(prefix+"ProtocolVersion", (params["ProtocolVersion"] ?? '').toString());
     if ("Port" in params) body.append(prefix+"Port", (params["Port"] ?? '').toString());
     if ("VpcId" in params) body.append(prefix+"VpcId", (params["VpcId"] ?? '').toString());
     if ("HealthCheckProtocol" in params) body.append(prefix+"HealthCheckProtocol", (params["HealthCheckProtocol"] ?? '').toString());
@@ -798,6 +799,7 @@ export interface CreateRuleInput {
 export interface CreateTargetGroupInput {
   Name: string;
   Protocol?: ProtocolEnum | null;
+  ProtocolVersion?: string | null;
   Port?: number | null;
   VpcId?: string | null;
   HealthCheckProtocol?: ProtocolEnum | null;
@@ -1611,14 +1613,16 @@ function SourceIpConditionConfig_Parse(node: xmlP.XmlNode): SourceIpConditionCon
 
 // refs: 5 - tags: input, named, interface, output
 export interface Matcher {
-  HttpCode: string;
+  HttpCode?: string | null;
+  GrpcCode?: string | null;
 }
 function Matcher_Serialize(body: URLSearchParams, prefix: string, params: Matcher) {
-    body.append(prefix+".HttpCode", (params["HttpCode"] ?? '').toString());
+    if ("HttpCode" in params) body.append(prefix+".HttpCode", (params["HttpCode"] ?? '').toString());
+    if ("GrpcCode" in params) body.append(prefix+".GrpcCode", (params["GrpcCode"] ?? '').toString());
 }
 function Matcher_Parse(node: xmlP.XmlNode): Matcher {
   return node.strings({
-    required: {"HttpCode":true},
+    optional: {"HttpCode":true,"GrpcCode":true},
   });
 }
 
@@ -1832,11 +1836,12 @@ export interface TargetGroup {
   Matcher?: Matcher | null;
   LoadBalancerArns: string[];
   TargetType?: TargetTypeEnum | null;
+  ProtocolVersion?: string | null;
 }
 function TargetGroup_Parse(node: xmlP.XmlNode): TargetGroup {
   return {
     ...node.strings({
-      optional: {"TargetGroupArn":true,"TargetGroupName":true,"VpcId":true,"HealthCheckPort":true,"HealthCheckPath":true},
+      optional: {"TargetGroupArn":true,"TargetGroupName":true,"VpcId":true,"HealthCheckPort":true,"HealthCheckPath":true,"ProtocolVersion":true},
     }),
     Protocol: node.first("Protocol", false, x => (x.content ?? '') as ProtocolEnum),
     Port: node.first("Port", false, x => parseInt(x.content ?? '0')),

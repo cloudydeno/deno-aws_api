@@ -257,6 +257,7 @@ export default class StorageGateway {
       Tags: params["Tags"]?.map(x => fromTag(x)),
       FileShareName: params["FileShareName"],
       CacheAttributes: fromCacheAttributes(params["CacheAttributes"]),
+      NotificationPolicy: params["NotificationPolicy"],
     } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -286,6 +287,7 @@ export default class StorageGateway {
       GuessMIMETypeEnabled: params["GuessMIMETypeEnabled"],
       RequesterPays: params["RequesterPays"],
       SMBACLEnabled: params["SMBACLEnabled"],
+      AccessBasedEnumeration: params["AccessBasedEnumeration"],
       AdminUserList: params["AdminUserList"],
       ValidUserList: params["ValidUserList"],
       InvalidUserList: params["InvalidUserList"],
@@ -295,6 +297,7 @@ export default class StorageGateway {
       Tags: params["Tags"]?.map(x => fromTag(x)),
       FileShareName: params["FileShareName"],
       CacheAttributes: fromCacheAttributes(params["CacheAttributes"]),
+      NotificationPolicy: params["NotificationPolicy"],
     } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -852,6 +855,7 @@ export default class StorageGateway {
         "ActiveDirectoryStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ActiveDirectoryStatus>(x),
         "SMBGuestPasswordSet": "b",
         "SMBSecurityStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<SMBSecurityStrategy>(x),
+        "FileSharesVisible": "b",
       },
     }, await resp.json());
   }
@@ -1638,6 +1642,7 @@ export default class StorageGateway {
       RequesterPays: params["RequesterPays"],
       FileShareName: params["FileShareName"],
       CacheAttributes: fromCacheAttributes(params["CacheAttributes"]),
+      NotificationPolicy: params["NotificationPolicy"],
     } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1664,6 +1669,7 @@ export default class StorageGateway {
       GuessMIMETypeEnabled: params["GuessMIMETypeEnabled"],
       RequesterPays: params["RequesterPays"],
       SMBACLEnabled: params["SMBACLEnabled"],
+      AccessBasedEnumeration: params["AccessBasedEnumeration"],
       AdminUserList: params["AdminUserList"],
       ValidUserList: params["ValidUserList"],
       InvalidUserList: params["InvalidUserList"],
@@ -1671,6 +1677,7 @@ export default class StorageGateway {
       CaseSensitivity: params["CaseSensitivity"],
       FileShareName: params["FileShareName"],
       CacheAttributes: fromCacheAttributes(params["CacheAttributes"]),
+      NotificationPolicy: params["NotificationPolicy"],
     } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1680,6 +1687,25 @@ export default class StorageGateway {
       required: {},
       optional: {
         "FileShareARN": "s",
+      },
+    }, await resp.json());
+  }
+
+  async updateSMBFileShareVisibility(
+    {abortSignal, ...params}: RequestConfig & UpdateSMBFileShareVisibilityInput,
+  ): Promise<UpdateSMBFileShareVisibilityOutput> {
+    const body: jsonP.JSONObject = params ? {
+      GatewayARN: params["GatewayARN"],
+      FileSharesVisible: params["FileSharesVisible"],
+    } : {};
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateSMBFileShareVisibility",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GatewayARN": "s",
       },
     }, await resp.json());
   }
@@ -1843,6 +1869,7 @@ export interface CreateNFSFileShareInput {
   Tags?: Tag[] | null;
   FileShareName?: string | null;
   CacheAttributes?: CacheAttributes | null;
+  NotificationPolicy?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1859,6 +1886,7 @@ export interface CreateSMBFileShareInput {
   GuessMIMETypeEnabled?: boolean | null;
   RequesterPays?: boolean | null;
   SMBACLEnabled?: boolean | null;
+  AccessBasedEnumeration?: boolean | null;
   AdminUserList?: string[] | null;
   ValidUserList?: string[] | null;
   InvalidUserList?: string[] | null;
@@ -1868,6 +1896,7 @@ export interface CreateSMBFileShareInput {
   Tags?: Tag[] | null;
   FileShareName?: string | null;
   CacheAttributes?: CacheAttributes | null;
+  NotificationPolicy?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2291,6 +2320,7 @@ export interface UpdateNFSFileShareInput {
   RequesterPays?: boolean | null;
   FileShareName?: string | null;
   CacheAttributes?: CacheAttributes | null;
+  NotificationPolicy?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2304,6 +2334,7 @@ export interface UpdateSMBFileShareInput {
   GuessMIMETypeEnabled?: boolean | null;
   RequesterPays?: boolean | null;
   SMBACLEnabled?: boolean | null;
+  AccessBasedEnumeration?: boolean | null;
   AdminUserList?: string[] | null;
   ValidUserList?: string[] | null;
   InvalidUserList?: string[] | null;
@@ -2311,6 +2342,13 @@ export interface UpdateSMBFileShareInput {
   CaseSensitivity?: CaseSensitivity | null;
   FileShareName?: string | null;
   CacheAttributes?: CacheAttributes | null;
+  NotificationPolicy?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateSMBFileShareVisibilityInput {
+  GatewayARN: string;
+  FileSharesVisible: boolean;
 }
 
 // refs: 1 - tags: named, input
@@ -2566,6 +2604,7 @@ export interface DescribeSMBSettingsOutput {
   ActiveDirectoryStatus?: ActiveDirectoryStatus | null;
   SMBGuestPasswordSet?: boolean | null;
   SMBSecurityStrategy?: SMBSecurityStrategy | null;
+  FileSharesVisible?: boolean | null;
 }
 
 // refs: 1 - tags: named, output
@@ -2799,6 +2838,11 @@ export interface UpdateNFSFileShareOutput {
 // refs: 1 - tags: named, output
 export interface UpdateSMBFileShareOutput {
   FileShareARN?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateSMBFileShareVisibilityOutput {
+  GatewayARN?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -3086,6 +3130,7 @@ export interface NFSFileShareInfo {
   Tags?: Tag[] | null;
   FileShareName?: string | null;
   CacheAttributes?: CacheAttributes | null;
+  NotificationPolicy?: string | null;
 }
 function toNFSFileShareInfo(root: jsonP.JSONValue): NFSFileShareInfo {
   return jsonP.readObj({
@@ -3111,6 +3156,7 @@ function toNFSFileShareInfo(root: jsonP.JSONValue): NFSFileShareInfo {
       "Tags": [toTag],
       "FileShareName": "s",
       "CacheAttributes": toCacheAttributes,
+      "NotificationPolicy": "s",
     },
   }, root);
 }
@@ -3132,6 +3178,7 @@ export interface SMBFileShareInfo {
   GuessMIMETypeEnabled?: boolean | null;
   RequesterPays?: boolean | null;
   SMBACLEnabled?: boolean | null;
+  AccessBasedEnumeration?: boolean | null;
   AdminUserList?: string[] | null;
   ValidUserList?: string[] | null;
   InvalidUserList?: string[] | null;
@@ -3141,6 +3188,7 @@ export interface SMBFileShareInfo {
   Tags?: Tag[] | null;
   FileShareName?: string | null;
   CacheAttributes?: CacheAttributes | null;
+  NotificationPolicy?: string | null;
 }
 function toSMBFileShareInfo(root: jsonP.JSONValue): SMBFileShareInfo {
   return jsonP.readObj({
@@ -3161,6 +3209,7 @@ function toSMBFileShareInfo(root: jsonP.JSONValue): SMBFileShareInfo {
       "GuessMIMETypeEnabled": "b",
       "RequesterPays": "b",
       "SMBACLEnabled": "b",
+      "AccessBasedEnumeration": "b",
       "AdminUserList": ["s"],
       "ValidUserList": ["s"],
       "InvalidUserList": ["s"],
@@ -3170,6 +3219,7 @@ function toSMBFileShareInfo(root: jsonP.JSONValue): SMBFileShareInfo {
       "Tags": [toTag],
       "FileShareName": "s",
       "CacheAttributes": toCacheAttributes,
+      "NotificationPolicy": "s",
     },
   }, root);
 }

@@ -89,6 +89,7 @@ export default class CodeArtifact {
     query.set("domain", params["domain"]?.toString() ?? "");
     const body: jsonP.JSONObject = params ? {
       encryptionKey: params["encryptionKey"],
+      tags: params["tags"]?.map(x => fromTag(x)),
     } : {};
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
@@ -115,6 +116,7 @@ export default class CodeArtifact {
     const body: jsonP.JSONObject = params ? {
       description: params["description"],
       upstreams: params["upstreams"]?.map(x => fromUpstreamRepository(x)),
+      tags: params["tags"]?.map(x => fromTag(x)),
     } : {};
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
@@ -732,6 +734,26 @@ export default class CodeArtifact {
   };
   }
 
+  async listTagsForResource(
+    {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
+  ): Promise<ListTagsForResourceResult> {
+    const query = new URLSearchParams;
+    query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListTagsForResource",
+      requestUri: "/v1/tags",
+    });
+  return {
+    ...jsonP.readObj({
+        required: {},
+        optional: {
+          "tags": [toTag],
+        },
+      }, await resp.json()),
+  };
+  }
+
   async putDomainPermissionsPolicy(
     {abortSignal, ...params}: RequestConfig & PutDomainPermissionsPolicyRequest,
   ): Promise<PutDomainPermissionsPolicyResult> {
@@ -780,6 +802,48 @@ export default class CodeArtifact {
         optional: {
           "policy": toResourcePolicy,
         },
+      }, await resp.json()),
+  };
+  }
+
+  async tagResource(
+    {abortSignal, ...params}: RequestConfig & TagResourceRequest,
+  ): Promise<TagResourceResult> {
+    const query = new URLSearchParams;
+    query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
+    const body: jsonP.JSONObject = params ? {
+      tags: params["tags"]?.map(x => fromTag(x)),
+    } : {};
+    const resp = await this.#client.performRequest({
+      abortSignal, query, body,
+      action: "TagResource",
+      requestUri: "/v1/tag",
+    });
+  return {
+    ...jsonP.readObj({
+        required: {},
+        optional: {},
+      }, await resp.json()),
+  };
+  }
+
+  async untagResource(
+    {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
+  ): Promise<UntagResourceResult> {
+    const query = new URLSearchParams;
+    query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
+    const body: jsonP.JSONObject = params ? {
+      tagKeys: params["tagKeys"],
+    } : {};
+    const resp = await this.#client.performRequest({
+      abortSignal, query, body,
+      action: "UntagResource",
+      requestUri: "/v1/untag",
+    });
+  return {
+    ...jsonP.readObj({
+        required: {},
+        optional: {},
       }, await resp.json()),
   };
   }
@@ -872,6 +936,7 @@ export interface CopyPackageVersionsRequest {
 export interface CreateDomainRequest {
   domain: string;
   encryptionKey?: string | null;
+  tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -881,6 +946,7 @@ export interface CreateRepositoryRequest {
   repository: string;
   description?: string | null;
   upstreams?: UpstreamRepository[] | null;
+  tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1095,6 +1161,11 @@ export interface ListRepositoriesInDomainRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListTagsForResourceRequest {
+  resourceArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface PutDomainPermissionsPolicyRequest {
   domain: string;
   domainOwner?: string | null;
@@ -1109,6 +1180,18 @@ export interface PutRepositoryPermissionsPolicyRequest {
   repository: string;
   policyRevision?: string | null;
   policyDocument: string;
+}
+
+// refs: 1 - tags: named, input
+export interface TagResourceRequest {
+  resourceArn: string;
+  tags: Tag[];
+}
+
+// refs: 1 - tags: named, input
+export interface UntagResourceRequest {
+  resourceArn: string;
+  tagKeys: string[];
 }
 
 // refs: 1 - tags: named, input
@@ -1303,6 +1386,11 @@ export interface ListRepositoriesInDomainResult {
 }
 
 // refs: 1 - tags: named, output
+export interface ListTagsForResourceResult {
+  tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, output
 export interface PutDomainPermissionsPolicyResult {
   policy?: ResourcePolicy | null;
 }
@@ -1310,6 +1398,14 @@ export interface PutDomainPermissionsPolicyResult {
 // refs: 1 - tags: named, output
 export interface PutRepositoryPermissionsPolicyResult {
   policy?: ResourcePolicy | null;
+}
+
+// refs: 1 - tags: named, output
+export interface TagResourceResult {
+}
+
+// refs: 1 - tags: named, output
+export interface UntagResourceResult {
 }
 
 // refs: 1 - tags: named, output
@@ -1329,6 +1425,28 @@ export type PackageFormat =
 | "pypi"
 | "maven"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, interface, output
+export interface Tag {
+  key: string;
+  value: string;
+}
+function fromTag(input?: Tag | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    key: input["key"],
+    value: input["value"],
+  }
+}
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
+    required: {
+      "key": "s",
+      "value": "s",
+    },
+    optional: {},
+  }, root);
+}
 
 // refs: 2 - tags: input, named, interface
 export interface UpstreamRepository {
@@ -1468,6 +1586,7 @@ export interface DomainDescription {
   encryptionKey?: string | null;
   repositoryCount?: number | null;
   assetSizeBytes?: number | null;
+  s3BucketArn?: string | null;
 }
 function toDomainDescription(root: jsonP.JSONValue): DomainDescription {
   return jsonP.readObj({
@@ -1481,6 +1600,7 @@ function toDomainDescription(root: jsonP.JSONValue): DomainDescription {
       "encryptionKey": "s",
       "repositoryCount": "n",
       "assetSizeBytes": "n",
+      "s3BucketArn": "s",
     },
   }, root);
 }

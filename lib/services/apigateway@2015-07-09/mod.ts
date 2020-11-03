@@ -354,6 +354,7 @@ export default class APIGateway {
       endpointConfiguration: fromEndpointConfiguration(params["endpointConfiguration"]),
       policy: params["policy"],
       tags: params["tags"],
+      disableExecuteApiEndpoint: params["disableExecuteApiEndpoint"],
     } : {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -377,6 +378,7 @@ export default class APIGateway {
           "endpointConfiguration": toEndpointConfiguration,
           "policy": "s",
           "tags": x => jsonP.readMap(String, String, x),
+          "disableExecuteApiEndpoint": "b",
         },
       }, await resp.json()),
   };
@@ -1646,6 +1648,7 @@ export default class APIGateway {
           "endpointConfiguration": toEndpointConfiguration,
           "policy": "s",
           "tags": x => jsonP.readMap(String, String, x),
+          "disableExecuteApiEndpoint": "b",
         },
       }, await resp.json()),
   };
@@ -2076,6 +2079,7 @@ export default class APIGateway {
           "endpointConfiguration": toEndpointConfiguration,
           "policy": "s",
           "tags": x => jsonP.readMap(String, String, x),
+          "disableExecuteApiEndpoint": "b",
         },
       }, await resp.json()),
   };
@@ -2288,6 +2292,7 @@ export default class APIGateway {
           "endpointConfiguration": toEndpointConfiguration,
           "policy": "s",
           "tags": x => jsonP.readMap(String, String, x),
+          "disableExecuteApiEndpoint": "b",
         },
       }, await resp.json()),
   };
@@ -2885,6 +2890,7 @@ export default class APIGateway {
           "endpointConfiguration": toEndpointConfiguration,
           "policy": "s",
           "tags": x => jsonP.readMap(String, String, x),
+          "disableExecuteApiEndpoint": "b",
         },
       }, await resp.json()),
   };
@@ -3127,6 +3133,7 @@ export interface CreateRestApiRequest {
   endpointConfiguration?: EndpointConfiguration | null;
   policy?: string | null;
   tags?: { [key: string]: string | null | undefined } | null;
+  disableExecuteApiEndpoint?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4157,6 +4164,7 @@ export interface RestApi {
   endpointConfiguration?: EndpointConfiguration | null;
   policy?: string | null;
   tags?: { [key: string]: string | null | undefined } | null;
+  disableExecuteApiEndpoint?: boolean | null;
 }
 function toRestApi(root: jsonP.JSONValue): RestApi {
   return jsonP.readObj({
@@ -4174,6 +4182,7 @@ function toRestApi(root: jsonP.JSONValue): RestApi {
       "endpointConfiguration": toEndpointConfiguration,
       "policy": "s",
       "tags": x => jsonP.readMap(String, String, x),
+      "disableExecuteApiEndpoint": "b",
     },
   }, root);
 }
