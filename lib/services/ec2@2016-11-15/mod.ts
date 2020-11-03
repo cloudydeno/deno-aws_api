@@ -8227,8 +8227,8 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeBundleTasks(params);
       const field = resp?.BundleTasks?.flatMap(x => x?.State);
-      if (field.every(x => x === "complete")) return resp;
-      if (field.some(x => x === "failed")) throw new Error(errMessage);
+      if (field?.every(x => x === "complete")) return resp;
+      if (field?.some(x => x === "failed")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8241,7 +8241,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state ConversionTaskCancelled';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeConversionTasks(params);
-      if (resp?.ConversionTasks?.flatMap(x => x?.State).every(x => x === "cancelled")) return resp;
+      if (resp?.ConversionTasks?.flatMap(x => x?.State)?.every(x => x === "cancelled")) return resp;
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8255,9 +8255,9 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeConversionTasks(params);
       const field = resp?.ConversionTasks?.flatMap(x => x?.State);
-      if (field.every(x => x === "completed")) return resp;
-      if (field.some(x => x === "cancelled")) throw new Error(errMessage);
-      if (field.some(x => x === "cancelling")) throw new Error(errMessage);
+      if (field?.every(x => x === "completed")) return resp;
+      if (field?.some(x => x === "cancelled")) throw new Error(errMessage);
+      if (field?.some(x => x === "cancelling")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8271,9 +8271,9 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeCustomerGateways(params);
       const field = resp?.CustomerGateways?.flatMap(x => x?.State);
-      if (field.every(x => x === "available")) return resp;
-      if (field.some(x => x === "deleted")) throw new Error(errMessage);
-      if (field.some(x => x === "deleting")) throw new Error(errMessage);
+      if (field?.every(x => x === "available")) return resp;
+      if (field?.some(x => x === "deleted")) throw new Error(errMessage);
+      if (field?.some(x => x === "deleting")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8286,7 +8286,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state ExportTaskCancelled';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeExportTasks(params);
-      if (resp?.ExportTasks?.flatMap(x => x?.State).every(x => x === "cancelled")) return resp;
+      if (resp?.ExportTasks?.flatMap(x => x?.State)?.every(x => x === "cancelled")) return resp;
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8299,7 +8299,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state ExportTaskCompleted';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeExportTasks(params);
-      if (resp?.ExportTasks?.flatMap(x => x?.State).every(x => x === "completed")) return resp;
+      if (resp?.ExportTasks?.flatMap(x => x?.State)?.every(x => x === "completed")) return resp;
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8330,8 +8330,8 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeImages(params);
       const field = resp?.Images?.flatMap(x => x?.State);
-      if (field.every(x => x === "available")) return resp;
-      if (field.some(x => x === "failed")) throw new Error(errMessage);
+      if (field?.every(x => x === "available")) return resp;
+      if (field?.some(x => x === "failed")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8346,10 +8346,10 @@ export default class EC2 {
       try {
         const resp = await this.describeInstances(params);
         const field = resp?.Reservations?.flatMap(x => x?.Instances)?.flatMap(x => x?.State?.Name);
-        if (field.every(x => x === "running")) return resp;
-        if (field.some(x => x === "shutting-down")) throw new Error(errMessage);
-        if (field.some(x => x === "terminated")) throw new Error(errMessage);
-        if (field.some(x => x === "stopping")) throw new Error(errMessage);
+        if (field?.every(x => x === "running")) return resp;
+        if (field?.some(x => x === "shutting-down")) throw new Error(errMessage);
+        if (field?.some(x => x === "terminated")) throw new Error(errMessage);
+        if (field?.some(x => x === "stopping")) throw new Error(errMessage);
       } catch (err) {
         if (!["InvalidInstanceID.NotFound"].includes(err.code)) throw err;
       }
@@ -8366,7 +8366,7 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeInstanceStatus(params);
-        if (resp?.InstanceStatuses?.flatMap(x => x?.InstanceStatus?.Status).every(x => x === "ok")) return resp;
+        if (resp?.InstanceStatuses?.flatMap(x => x?.InstanceStatus?.Status)?.every(x => x === "ok")) return resp;
       } catch (err) {
         if (!["InvalidInstanceID.NotFound"].includes(err.code)) throw err;
       }
@@ -8383,9 +8383,9 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeInstances(params);
       const field = resp?.Reservations?.flatMap(x => x?.Instances)?.flatMap(x => x?.State?.Name);
-      if (field.every(x => x === "stopped")) return resp;
-      if (field.some(x => x === "pending")) throw new Error(errMessage);
-      if (field.some(x => x === "terminated")) throw new Error(errMessage);
+      if (field?.every(x => x === "stopped")) return resp;
+      if (field?.some(x => x === "pending")) throw new Error(errMessage);
+      if (field?.some(x => x === "terminated")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8399,9 +8399,9 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeInstances(params);
       const field = resp?.Reservations?.flatMap(x => x?.Instances)?.flatMap(x => x?.State?.Name);
-      if (field.every(x => x === "terminated")) return resp;
-      if (field.some(x => x === "pending")) throw new Error(errMessage);
-      if (field.some(x => x === "stopping")) throw new Error(errMessage);
+      if (field?.every(x => x === "terminated")) return resp;
+      if (field?.some(x => x === "pending")) throw new Error(errMessage);
+      if (field?.some(x => x === "stopping")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8433,10 +8433,10 @@ export default class EC2 {
       try {
         const resp = await this.describeNatGateways(params);
         const field = resp?.NatGateways?.flatMap(x => x?.State);
-        if (field.every(x => x === "available")) return resp;
-        if (field.some(x => x === "failed")) throw new Error(errMessage);
-        if (field.some(x => x === "deleting")) throw new Error(errMessage);
-        if (field.some(x => x === "deleted")) throw new Error(errMessage);
+        if (field?.every(x => x === "available")) return resp;
+        if (field?.some(x => x === "failed")) throw new Error(errMessage);
+        if (field?.some(x => x === "deleting")) throw new Error(errMessage);
+        if (field?.some(x => x === "deleted")) throw new Error(errMessage);
       } catch (err) {
         if (!["NatGatewayNotFound"].includes(err.code)) throw err;
       }
@@ -8453,7 +8453,7 @@ export default class EC2 {
     for (let i = 0; i < 10; i++) {
       try {
         const resp = await this.describeNetworkInterfaces(params);
-        if (resp?.NetworkInterfaces?.flatMap(x => x?.Status).every(x => x === "available")) return resp;
+        if (resp?.NetworkInterfaces?.flatMap(x => x?.Status)?.every(x => x === "available")) return resp;
       } catch (err) {
         if (["InvalidNetworkInterfaceID.NotFound"].includes(err.code)) throw err;
         throw err;
@@ -8483,7 +8483,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state SnapshotCompleted';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeSnapshots(params);
-      if (resp?.Snapshots?.flatMap(x => x?.State).every(x => x === "completed")) return resp;
+      if (resp?.Snapshots?.flatMap(x => x?.State)?.every(x => x === "completed")) return resp;
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8515,12 +8515,12 @@ export default class EC2 {
       try {
         const resp = await this.describeSpotInstanceRequests(params);
         const field = resp?.SpotInstanceRequests?.flatMap(x => x?.Status?.Code);
-        if (field.every(x => x === "fulfilled")) return resp;
-        if (field.every(x => x === "request-canceled-and-instance-running")) return resp;
-        if (field.some(x => x === "schedule-expired")) throw new Error(errMessage);
-        if (field.some(x => x === "canceled-before-fulfillment")) throw new Error(errMessage);
-        if (field.some(x => x === "bad-parameters")) throw new Error(errMessage);
-        if (field.some(x => x === "system-error")) throw new Error(errMessage);
+        if (field?.every(x => x === "fulfilled")) return resp;
+        if (field?.every(x => x === "request-canceled-and-instance-running")) return resp;
+        if (field?.some(x => x === "schedule-expired")) throw new Error(errMessage);
+        if (field?.some(x => x === "canceled-before-fulfillment")) throw new Error(errMessage);
+        if (field?.some(x => x === "bad-parameters")) throw new Error(errMessage);
+        if (field?.some(x => x === "system-error")) throw new Error(errMessage);
       } catch (err) {
         if (!["InvalidSpotInstanceRequestID.NotFound"].includes(err.code)) throw err;
       }
@@ -8536,7 +8536,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state SubnetAvailable';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeSubnets(params);
-      if (resp?.Subnets?.flatMap(x => x?.State).every(x => x === "available")) return resp;
+      if (resp?.Subnets?.flatMap(x => x?.State)?.every(x => x === "available")) return resp;
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8549,7 +8549,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state SystemStatusOk';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeInstanceStatus(params);
-      if (resp?.InstanceStatuses?.flatMap(x => x?.SystemStatus?.Status).every(x => x === "ok")) return resp;
+      if (resp?.InstanceStatuses?.flatMap(x => x?.SystemStatus?.Status)?.every(x => x === "ok")) return resp;
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8563,8 +8563,8 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeVolumes(params);
       const field = resp?.Volumes?.flatMap(x => x?.State);
-      if (field.every(x => x === "available")) return resp;
-      if (field.some(x => x === "deleted")) throw new Error(errMessage);
+      if (field?.every(x => x === "available")) return resp;
+      if (field?.some(x => x === "deleted")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8578,7 +8578,7 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeVolumes(params);
-        if (resp?.Volumes?.flatMap(x => x?.State).every(x => x === "deleted")) return resp;
+        if (resp?.Volumes?.flatMap(x => x?.State)?.every(x => x === "deleted")) return resp;
       } catch (err) {
         if (["InvalidVolume.NotFound"].includes(err.code)) return err;
         throw err;
@@ -8596,8 +8596,8 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeVolumes(params);
       const field = resp?.Volumes?.flatMap(x => x?.State);
-      if (field.every(x => x === "in-use")) return resp;
-      if (field.some(x => x === "deleted")) throw new Error(errMessage);
+      if (field?.every(x => x === "in-use")) return resp;
+      if (field?.some(x => x === "deleted")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8610,7 +8610,7 @@ export default class EC2 {
     const errMessage = 'ResourceNotReady: Resource is not in the state VpcAvailable';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeVpcs(params);
-      if (resp?.Vpcs?.flatMap(x => x?.State).every(x => x === "available")) return resp;
+      if (resp?.Vpcs?.flatMap(x => x?.State)?.every(x => x === "available")) return resp;
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8641,9 +8641,9 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeVpnConnections(params);
       const field = resp?.VpnConnections?.flatMap(x => x?.State);
-      if (field.every(x => x === "available")) return resp;
-      if (field.some(x => x === "deleting")) throw new Error(errMessage);
-      if (field.some(x => x === "deleted")) throw new Error(errMessage);
+      if (field?.every(x => x === "available")) return resp;
+      if (field?.some(x => x === "deleting")) throw new Error(errMessage);
+      if (field?.some(x => x === "deleted")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8657,8 +8657,8 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeVpnConnections(params);
       const field = resp?.VpnConnections?.flatMap(x => x?.State);
-      if (field.every(x => x === "deleted")) return resp;
-      if (field.some(x => x === "pending")) throw new Error(errMessage);
+      if (field?.every(x => x === "deleted")) return resp;
+      if (field?.some(x => x === "pending")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -8689,7 +8689,7 @@ export default class EC2 {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeVpcPeeringConnections(params);
-        if (resp?.VpcPeeringConnections?.flatMap(x => x?.Status?.Code).every(x => x === "deleted")) return resp;
+        if (resp?.VpcPeeringConnections?.flatMap(x => x?.Status?.Code)?.every(x => x === "deleted")) return resp;
       } catch (err) {
         if (["InvalidVpcPeeringConnectionID.NotFound"].includes(err.code)) return err;
         throw err;

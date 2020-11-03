@@ -1176,7 +1176,7 @@ export default class SES {
     const errMessage = 'ResourceNotReady: Resource is not in the state IdentityExists';
     for (let i = 0; i < 20; i++) {
       const resp = await this.getIdentityVerificationAttributes(params);
-      if (Object.values(resp?.VerificationAttributes).map(x => x?.VerificationStatus).every(x => x === "Success")) return resp;
+      if (Object.values(resp?.VerificationAttributes).map(x => x?.VerificationStatus)?.every(x => x === "Success")) return resp;
       await new Promise(r => setTimeout(r, 3000));
     }
     throw new Error(errMessage);

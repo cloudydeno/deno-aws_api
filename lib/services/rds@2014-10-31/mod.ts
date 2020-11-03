@@ -2842,12 +2842,12 @@ export default class RDS {
     for (let i = 0; i < 60; i++) {
       const resp = await this.describeDBInstances(params);
       const field = resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus);
-      if (field.every(x => x === "available")) return resp;
-      if (field.some(x => x === "deleted")) throw new Error(errMessage);
-      if (field.some(x => x === "deleting")) throw new Error(errMessage);
-      if (field.some(x => x === "failed")) throw new Error(errMessage);
-      if (field.some(x => x === "incompatible-restore")) throw new Error(errMessage);
-      if (field.some(x => x === "incompatible-parameters")) throw new Error(errMessage);
+      if (field?.every(x => x === "available")) return resp;
+      if (field?.some(x => x === "deleted")) throw new Error(errMessage);
+      if (field?.some(x => x === "deleting")) throw new Error(errMessage);
+      if (field?.some(x => x === "failed")) throw new Error(errMessage);
+      if (field?.some(x => x === "incompatible-restore")) throw new Error(errMessage);
+      if (field?.some(x => x === "incompatible-parameters")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 30000));
     }
     throw new Error(errMessage);
@@ -2862,10 +2862,10 @@ export default class RDS {
       try {
         const resp = await this.describeDBInstances(params);
         if ((resp?.DBInstances || '').length == 0) return resp;
-        if (resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus).some(x => x === "creating")) throw new Error(errMessage);
-        if (resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus).some(x => x === "modifying")) throw new Error(errMessage);
-        if (resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus).some(x => x === "rebooting")) throw new Error(errMessage);
-        if (resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus).some(x => x === "resetting-master-credentials")) throw new Error(errMessage);
+        if (resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus)?.some(x => x === "creating")) throw new Error(errMessage);
+        if (resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus)?.some(x => x === "modifying")) throw new Error(errMessage);
+        if (resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus)?.some(x => x === "rebooting")) throw new Error(errMessage);
+        if (resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus)?.some(x => x === "resetting-master-credentials")) throw new Error(errMessage);
       } catch (err) {
         if (["DBInstanceNotFound"].includes(err.code)) return err;
         throw err;
@@ -2883,12 +2883,12 @@ export default class RDS {
     for (let i = 0; i < 60; i++) {
       const resp = await this.describeDBSnapshots(params);
       const field = resp?.DBSnapshots?.flatMap(x => x?.Status);
-      if (field.every(x => x === "available")) return resp;
-      if (field.some(x => x === "deleted")) throw new Error(errMessage);
-      if (field.some(x => x === "deleting")) throw new Error(errMessage);
-      if (field.some(x => x === "failed")) throw new Error(errMessage);
-      if (field.some(x => x === "incompatible-restore")) throw new Error(errMessage);
-      if (field.some(x => x === "incompatible-parameters")) throw new Error(errMessage);
+      if (field?.every(x => x === "available")) return resp;
+      if (field?.some(x => x === "deleted")) throw new Error(errMessage);
+      if (field?.some(x => x === "deleting")) throw new Error(errMessage);
+      if (field?.some(x => x === "failed")) throw new Error(errMessage);
+      if (field?.some(x => x === "incompatible-restore")) throw new Error(errMessage);
+      if (field?.some(x => x === "incompatible-parameters")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 30000));
     }
     throw new Error(errMessage);
@@ -2903,10 +2903,10 @@ export default class RDS {
       try {
         const resp = await this.describeDBSnapshots(params);
         if ((resp?.DBSnapshots || '').length == 0) return resp;
-        if (resp?.DBSnapshots?.flatMap(x => x?.Status).some(x => x === "creating")) throw new Error(errMessage);
-        if (resp?.DBSnapshots?.flatMap(x => x?.Status).some(x => x === "modifying")) throw new Error(errMessage);
-        if (resp?.DBSnapshots?.flatMap(x => x?.Status).some(x => x === "rebooting")) throw new Error(errMessage);
-        if (resp?.DBSnapshots?.flatMap(x => x?.Status).some(x => x === "resetting-master-credentials")) throw new Error(errMessage);
+        if (resp?.DBSnapshots?.flatMap(x => x?.Status)?.some(x => x === "creating")) throw new Error(errMessage);
+        if (resp?.DBSnapshots?.flatMap(x => x?.Status)?.some(x => x === "modifying")) throw new Error(errMessage);
+        if (resp?.DBSnapshots?.flatMap(x => x?.Status)?.some(x => x === "rebooting")) throw new Error(errMessage);
+        if (resp?.DBSnapshots?.flatMap(x => x?.Status)?.some(x => x === "resetting-master-credentials")) throw new Error(errMessage);
       } catch (err) {
         if (["DBSnapshotNotFound"].includes(err.code)) return err;
         throw err;
@@ -2924,12 +2924,12 @@ export default class RDS {
     for (let i = 0; i < 60; i++) {
       const resp = await this.describeDBClusterSnapshots(params);
       const field = resp?.DBClusterSnapshots?.flatMap(x => x?.Status);
-      if (field.every(x => x === "available")) return resp;
-      if (field.some(x => x === "deleted")) throw new Error(errMessage);
-      if (field.some(x => x === "deleting")) throw new Error(errMessage);
-      if (field.some(x => x === "failed")) throw new Error(errMessage);
-      if (field.some(x => x === "incompatible-restore")) throw new Error(errMessage);
-      if (field.some(x => x === "incompatible-parameters")) throw new Error(errMessage);
+      if (field?.every(x => x === "available")) return resp;
+      if (field?.some(x => x === "deleted")) throw new Error(errMessage);
+      if (field?.some(x => x === "deleting")) throw new Error(errMessage);
+      if (field?.some(x => x === "failed")) throw new Error(errMessage);
+      if (field?.some(x => x === "incompatible-restore")) throw new Error(errMessage);
+      if (field?.some(x => x === "incompatible-parameters")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 30000));
     }
     throw new Error(errMessage);
@@ -2944,10 +2944,10 @@ export default class RDS {
       try {
         const resp = await this.describeDBClusterSnapshots(params);
         if ((resp?.DBClusterSnapshots || '').length == 0) return resp;
-        if (resp?.DBClusterSnapshots?.flatMap(x => x?.Status).some(x => x === "creating")) throw new Error(errMessage);
-        if (resp?.DBClusterSnapshots?.flatMap(x => x?.Status).some(x => x === "modifying")) throw new Error(errMessage);
-        if (resp?.DBClusterSnapshots?.flatMap(x => x?.Status).some(x => x === "rebooting")) throw new Error(errMessage);
-        if (resp?.DBClusterSnapshots?.flatMap(x => x?.Status).some(x => x === "resetting-master-credentials")) throw new Error(errMessage);
+        if (resp?.DBClusterSnapshots?.flatMap(x => x?.Status)?.some(x => x === "creating")) throw new Error(errMessage);
+        if (resp?.DBClusterSnapshots?.flatMap(x => x?.Status)?.some(x => x === "modifying")) throw new Error(errMessage);
+        if (resp?.DBClusterSnapshots?.flatMap(x => x?.Status)?.some(x => x === "rebooting")) throw new Error(errMessage);
+        if (resp?.DBClusterSnapshots?.flatMap(x => x?.Status)?.some(x => x === "resetting-master-credentials")) throw new Error(errMessage);
       } catch (err) {
         if (["DBClusterSnapshotNotFoundFault"].includes(err.code)) return err;
         throw err;

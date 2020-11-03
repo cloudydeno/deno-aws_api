@@ -523,7 +523,7 @@ export default class ELB {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeInstanceHealth(params);
-        if (resp?.InstanceStates?.flatMap(x => x?.State).every(x => x === "OutOfService")) return resp;
+        if (resp?.InstanceStates?.flatMap(x => x?.State)?.every(x => x === "OutOfService")) return resp;
       } catch (err) {
         if (["InvalidInstance"].includes(err.code)) return err;
         throw err;
@@ -540,7 +540,7 @@ export default class ELB {
     const errMessage = 'ResourceNotReady: Resource is not in the state AnyInstanceInService';
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeInstanceHealth(params);
-      if (resp?.InstanceStates?.flatMap(x => x?.State).some(x => x === "InService")) return resp;
+      if (resp?.InstanceStates?.flatMap(x => x?.State)?.some(x => x === "InService")) return resp;
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -554,7 +554,7 @@ export default class ELB {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeInstanceHealth(params);
-        if (resp?.InstanceStates?.flatMap(x => x?.State).every(x => x === "InService")) return resp;
+        if (resp?.InstanceStates?.flatMap(x => x?.State)?.every(x => x === "InService")) return resp;
       } catch (err) {
         if (!["InvalidInstance"].includes(err.code)) throw err;
       }

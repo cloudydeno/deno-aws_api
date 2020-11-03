@@ -1186,12 +1186,12 @@ export default class CloudFormation {
       try {
         const resp = await this.describeStacks(params);
         const field = resp?.Stacks?.flatMap(x => x?.StackStatus);
-        if (field.every(x => x === "CREATE_COMPLETE")) return resp;
-        if (field.some(x => x === "CREATE_FAILED")) throw new Error(errMessage);
-        if (field.some(x => x === "DELETE_COMPLETE")) throw new Error(errMessage);
-        if (field.some(x => x === "DELETE_FAILED")) throw new Error(errMessage);
-        if (field.some(x => x === "ROLLBACK_FAILED")) throw new Error(errMessage);
-        if (field.some(x => x === "ROLLBACK_COMPLETE")) throw new Error(errMessage);
+        if (field?.every(x => x === "CREATE_COMPLETE")) return resp;
+        if (field?.some(x => x === "CREATE_FAILED")) throw new Error(errMessage);
+        if (field?.some(x => x === "DELETE_COMPLETE")) throw new Error(errMessage);
+        if (field?.some(x => x === "DELETE_FAILED")) throw new Error(errMessage);
+        if (field?.some(x => x === "ROLLBACK_FAILED")) throw new Error(errMessage);
+        if (field?.some(x => x === "ROLLBACK_COMPLETE")) throw new Error(errMessage);
       } catch (err) {
         if (["ValidationError"].includes(err.code)) throw err;
         throw err;
@@ -1213,13 +1213,13 @@ export default class CloudFormation {
       try {
         const resp = await this.describeStacks(params);
         const field = resp?.Stacks?.flatMap(x => x?.StackStatus);
-        if (field.every(x => x === "DELETE_COMPLETE")) return resp;
-        if (field.some(x => x === "DELETE_FAILED")) throw new Error(errMessage);
-        if (field.some(x => x === "CREATE_FAILED")) throw new Error(errMessage);
-        if (field.some(x => x === "ROLLBACK_FAILED")) throw new Error(errMessage);
-        if (field.some(x => x === "UPDATE_ROLLBACK_IN_PROGRESS")) throw new Error(errMessage);
-        if (field.some(x => x === "UPDATE_ROLLBACK_FAILED")) throw new Error(errMessage);
-        if (field.some(x => x === "UPDATE_ROLLBACK_COMPLETE")) throw new Error(errMessage);
+        if (field?.every(x => x === "DELETE_COMPLETE")) return resp;
+        if (field?.some(x => x === "DELETE_FAILED")) throw new Error(errMessage);
+        if (field?.some(x => x === "CREATE_FAILED")) throw new Error(errMessage);
+        if (field?.some(x => x === "ROLLBACK_FAILED")) throw new Error(errMessage);
+        if (field?.some(x => x === "UPDATE_ROLLBACK_IN_PROGRESS")) throw new Error(errMessage);
+        if (field?.some(x => x === "UPDATE_ROLLBACK_FAILED")) throw new Error(errMessage);
+        if (field?.some(x => x === "UPDATE_ROLLBACK_COMPLETE")) throw new Error(errMessage);
       } catch (err) {
         if (["ValidationError"].includes(err.code)) return err;
         throw err;
@@ -1241,10 +1241,10 @@ export default class CloudFormation {
       try {
         const resp = await this.describeStacks(params);
         const field = resp?.Stacks?.flatMap(x => x?.StackStatus);
-        if (field.every(x => x === "UPDATE_COMPLETE")) return resp;
-        // BROKEN: if (field.some(x => x === "UPDATE_FAILED")) throw new Error(errMessage);
-        if (field.some(x => x === "UPDATE_ROLLBACK_FAILED")) throw new Error(errMessage);
-        if (field.some(x => x === "UPDATE_ROLLBACK_COMPLETE")) throw new Error(errMessage);
+        if (field?.every(x => x === "UPDATE_COMPLETE")) return resp;
+        // BROKEN: if (field?.some(x => x === "UPDATE_FAILED")) throw new Error(errMessage);
+        if (field?.some(x => x === "UPDATE_ROLLBACK_FAILED")) throw new Error(errMessage);
+        if (field?.some(x => x === "UPDATE_ROLLBACK_COMPLETE")) throw new Error(errMessage);
       } catch (err) {
         if (["ValidationError"].includes(err.code)) throw err;
         throw err;
@@ -1266,12 +1266,12 @@ export default class CloudFormation {
       try {
         const resp = await this.describeStacks(params);
         const field = resp?.Stacks?.flatMap(x => x?.StackStatus);
-        if (field.every(x => x === "IMPORT_COMPLETE")) return resp;
-        if (field.some(x => x === "ROLLBACK_COMPLETE")) throw new Error(errMessage);
-        if (field.some(x => x === "ROLLBACK_FAILED")) throw new Error(errMessage);
-        if (field.some(x => x === "IMPORT_ROLLBACK_IN_PROGRESS")) throw new Error(errMessage);
-        if (field.some(x => x === "IMPORT_ROLLBACK_FAILED")) throw new Error(errMessage);
-        if (field.some(x => x === "IMPORT_ROLLBACK_COMPLETE")) throw new Error(errMessage);
+        if (field?.every(x => x === "IMPORT_COMPLETE")) return resp;
+        if (field?.some(x => x === "ROLLBACK_COMPLETE")) throw new Error(errMessage);
+        if (field?.some(x => x === "ROLLBACK_FAILED")) throw new Error(errMessage);
+        if (field?.some(x => x === "IMPORT_ROLLBACK_IN_PROGRESS")) throw new Error(errMessage);
+        if (field?.some(x => x === "IMPORT_ROLLBACK_FAILED")) throw new Error(errMessage);
+        if (field?.some(x => x === "IMPORT_ROLLBACK_COMPLETE")) throw new Error(errMessage);
       } catch (err) {
         if (["ValidationError"].includes(err.code)) throw err;
         throw err;
@@ -1293,10 +1293,10 @@ export default class CloudFormation {
       try {
         const resp = await this.describeStacks(params);
         const field = resp?.Stacks?.flatMap(x => x?.StackStatus);
-        if (field.every(x => x === "UPDATE_ROLLBACK_COMPLETE")) return resp;
-        // BROKEN: if (field.some(x => x === "UPDATE_FAILED")) throw new Error(errMessage);
-        if (field.some(x => x === "UPDATE_ROLLBACK_FAILED")) throw new Error(errMessage);
-        if (field.some(x => x === "DELETE_FAILED")) throw new Error(errMessage);
+        if (field?.every(x => x === "UPDATE_ROLLBACK_COMPLETE")) return resp;
+        // BROKEN: if (field?.some(x => x === "UPDATE_FAILED")) throw new Error(errMessage);
+        if (field?.some(x => x === "UPDATE_ROLLBACK_FAILED")) throw new Error(errMessage);
+        if (field?.some(x => x === "DELETE_FAILED")) throw new Error(errMessage);
       } catch (err) {
         if (["ValidationError"].includes(err.code)) throw err;
         throw err;

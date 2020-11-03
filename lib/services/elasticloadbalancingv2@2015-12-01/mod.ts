@@ -683,8 +683,8 @@ export default class ELBv2 {
       try {
         const resp = await this.describeLoadBalancers(params);
         const field = resp?.LoadBalancers?.flatMap(x => x?.State?.Code);
-        if (field.every(x => x === "active")) return resp;
-        if (field.some(x => x === "provisioning")) continue;
+        if (field?.every(x => x === "active")) return resp;
+        if (field?.some(x => x === "provisioning")) continue;
       } catch (err) {
         if (!["LoadBalancerNotFound"].includes(err.code)) throw err;
       }
@@ -701,7 +701,7 @@ export default class ELBv2 {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeLoadBalancers(params);
-        if (resp?.LoadBalancers?.flatMap(x => x?.State?.Code).every(x => x === "active")) continue;
+        if (resp?.LoadBalancers?.flatMap(x => x?.State?.Code)?.every(x => x === "active")) continue;
       } catch (err) {
         if (["LoadBalancerNotFound"].includes(err.code)) return err;
         throw err;
@@ -719,7 +719,7 @@ export default class ELBv2 {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeTargetHealth(params);
-        if (resp?.TargetHealthDescriptions?.flatMap(x => x?.TargetHealth?.State).every(x => x === "healthy")) return resp;
+        if (resp?.TargetHealthDescriptions?.flatMap(x => x?.TargetHealth?.State)?.every(x => x === "healthy")) return resp;
       } catch (err) {
         if (!["InvalidInstance"].includes(err.code)) throw err;
       }
@@ -736,7 +736,7 @@ export default class ELBv2 {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeTargetHealth(params);
-        if (resp?.TargetHealthDescriptions?.flatMap(x => x?.TargetHealth?.State).every(x => x === "unused")) return resp;
+        if (resp?.TargetHealthDescriptions?.flatMap(x => x?.TargetHealth?.State)?.every(x => x === "unused")) return resp;
       } catch (err) {
         if (["InvalidTarget"].includes(err.code)) return err;
         throw err;

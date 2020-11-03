@@ -1353,11 +1353,11 @@ export default class ElastiCache {
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeCacheClusters(params);
       const field = resp?.CacheClusters?.flatMap(x => x?.CacheClusterStatus);
-      if (field.every(x => x === "available")) return resp;
-      if (field.some(x => x === "deleted")) throw new Error(errMessage);
-      if (field.some(x => x === "deleting")) throw new Error(errMessage);
-      if (field.some(x => x === "incompatible-network")) throw new Error(errMessage);
-      if (field.some(x => x === "restore-failed")) throw new Error(errMessage);
+      if (field?.every(x => x === "available")) return resp;
+      if (field?.some(x => x === "deleted")) throw new Error(errMessage);
+      if (field?.some(x => x === "deleting")) throw new Error(errMessage);
+      if (field?.some(x => x === "incompatible-network")) throw new Error(errMessage);
+      if (field?.some(x => x === "restore-failed")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -1375,13 +1375,13 @@ export default class ElastiCache {
       try {
         const resp = await this.describeCacheClusters(params);
         const field = resp?.CacheClusters?.flatMap(x => x?.CacheClusterStatus);
-        if (field.every(x => x === "deleted")) return resp;
-        if (field.some(x => x === "available")) throw new Error(errMessage);
-        if (field.some(x => x === "creating")) throw new Error(errMessage);
-        if (field.some(x => x === "incompatible-network")) throw new Error(errMessage);
-        if (field.some(x => x === "modifying")) throw new Error(errMessage);
-        if (field.some(x => x === "restore-failed")) throw new Error(errMessage);
-        if (field.some(x => x === "snapshotting")) throw new Error(errMessage);
+        if (field?.every(x => x === "deleted")) return resp;
+        if (field?.some(x => x === "available")) throw new Error(errMessage);
+        if (field?.some(x => x === "creating")) throw new Error(errMessage);
+        if (field?.some(x => x === "incompatible-network")) throw new Error(errMessage);
+        if (field?.some(x => x === "modifying")) throw new Error(errMessage);
+        if (field?.some(x => x === "restore-failed")) throw new Error(errMessage);
+        if (field?.some(x => x === "snapshotting")) throw new Error(errMessage);
       } catch (err) {
         if (["CacheClusterNotFound"].includes(err.code)) return err;
         throw err;
@@ -1402,8 +1402,8 @@ export default class ElastiCache {
     for (let i = 0; i < 40; i++) {
       const resp = await this.describeReplicationGroups(params);
       const field = resp?.ReplicationGroups?.flatMap(x => x?.Status);
-      if (field.every(x => x === "available")) return resp;
-      if (field.some(x => x === "deleted")) throw new Error(errMessage);
+      if (field?.every(x => x === "available")) return resp;
+      if (field?.some(x => x === "deleted")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);
@@ -1421,8 +1421,8 @@ export default class ElastiCache {
       try {
         const resp = await this.describeReplicationGroups(params);
         const field = resp?.ReplicationGroups?.flatMap(x => x?.Status);
-        if (field.every(x => x === "deleted")) return resp;
-        if (field.some(x => x === "available")) throw new Error(errMessage);
+        if (field?.every(x => x === "deleted")) return resp;
+        if (field?.some(x => x === "available")) throw new Error(errMessage);
       } catch (err) {
         if (["ReplicationGroupNotFoundFault"].includes(err.code)) return err;
         throw err;

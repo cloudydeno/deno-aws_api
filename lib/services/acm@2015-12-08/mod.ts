@@ -259,8 +259,8 @@ export default class ACM {
     for (let i = 0; i < 40; i++) {
       try {
         const resp = await this.describeCertificate(params);
-        if (resp?.Certificate?.DomainValidationOptions?.flatMap(x => x?.ValidationStatus).every(x => x === "SUCCESS")) return resp;
-        if (resp?.Certificate?.DomainValidationOptions?.flatMap(x => x?.ValidationStatus).some(x => x === "PENDING_VALIDATION")) continue;
+        if (resp?.Certificate?.DomainValidationOptions?.flatMap(x => x?.ValidationStatus)?.every(x => x === "SUCCESS")) return resp;
+        if (resp?.Certificate?.DomainValidationOptions?.flatMap(x => x?.ValidationStatus)?.some(x => x === "PENDING_VALIDATION")) continue;
         if (resp?.Certificate?.Status === "FAILED") throw new Error(errMessage);
       } catch (err) {
         if (["ResourceNotFoundException"].includes(err.code)) throw err;

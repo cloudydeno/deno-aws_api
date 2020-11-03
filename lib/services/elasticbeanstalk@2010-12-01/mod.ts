@@ -898,8 +898,8 @@ export default class ElasticBeanstalk {
     for (let i = 0; i < 20; i++) {
       const resp = await this.describeEnvironments(params);
       const field = resp?.Environments?.flatMap(x => x?.Status);
-      if (field.every(x => x === "Ready")) return resp;
-      if (field.every(x => x === "Launching")) continue;
+      if (field?.every(x => x === "Ready")) return resp;
+      if (field?.every(x => x === "Launching")) continue;
       await new Promise(r => setTimeout(r, 20000));
     }
     throw new Error(errMessage);
@@ -913,8 +913,8 @@ export default class ElasticBeanstalk {
     for (let i = 0; i < 20; i++) {
       const resp = await this.describeEnvironments(params);
       const field = resp?.Environments?.flatMap(x => x?.Status);
-      if (field.every(x => x === "Ready")) return resp;
-      if (field.every(x => x === "Updating")) continue;
+      if (field?.every(x => x === "Ready")) return resp;
+      if (field?.every(x => x === "Updating")) continue;
       await new Promise(r => setTimeout(r, 20000));
     }
     throw new Error(errMessage);
@@ -928,8 +928,8 @@ export default class ElasticBeanstalk {
     for (let i = 0; i < 20; i++) {
       const resp = await this.describeEnvironments(params);
       const field = resp?.Environments?.flatMap(x => x?.Status);
-      if (field.every(x => x === "Terminated")) return resp;
-      if (field.every(x => x === "Terminating")) continue;
+      if (field?.every(x => x === "Terminated")) return resp;
+      if (field?.every(x => x === "Terminating")) continue;
       await new Promise(r => setTimeout(r, 20000));
     }
     throw new Error(errMessage);

@@ -1861,8 +1861,8 @@ export default class Redshift {
       try {
         const resp = await this.describeClusters(params);
         const field = resp?.Clusters?.flatMap(x => x?.ClusterStatus);
-        if (field.every(x => x === "available")) return resp;
-        if (field.some(x => x === "deleting")) throw new Error(errMessage);
+        if (field?.every(x => x === "available")) return resp;
+        if (field?.some(x => x === "deleting")) throw new Error(errMessage);
       } catch (err) {
         if (!["ClusterNotFound"].includes(err.code)) throw err;
       }
@@ -1880,8 +1880,8 @@ export default class Redshift {
       try {
         const resp = await this.describeClusters(params);
         const field = resp?.Clusters?.flatMap(x => x?.ClusterStatus);
-        if (field.some(x => x === "creating")) throw new Error(errMessage);
-        if (field.some(x => x === "modifying")) throw new Error(errMessage);
+        if (field?.some(x => x === "creating")) throw new Error(errMessage);
+        if (field?.some(x => x === "modifying")) throw new Error(errMessage);
       } catch (err) {
         if (["ClusterNotFound"].includes(err.code)) return err;
         throw err;
@@ -1898,8 +1898,8 @@ export default class Redshift {
     const errMessage = 'ResourceNotReady: Resource is not in the state ClusterRestored';
     for (let i = 0; i < 30; i++) {
       const resp = await this.describeClusters(params);
-      if (resp?.Clusters?.flatMap(x => x?.RestoreStatus?.Status).every(x => x === "completed")) return resp;
-      if (resp?.Clusters?.flatMap(x => x?.ClusterStatus).some(x => x === "deleting")) throw new Error(errMessage);
+      if (resp?.Clusters?.flatMap(x => x?.RestoreStatus?.Status)?.every(x => x === "completed")) return resp;
+      if (resp?.Clusters?.flatMap(x => x?.ClusterStatus)?.some(x => x === "deleting")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 60000));
     }
     throw new Error(errMessage);
@@ -1913,9 +1913,9 @@ export default class Redshift {
     for (let i = 0; i < 20; i++) {
       const resp = await this.describeClusterSnapshots(params);
       const field = resp?.Snapshots?.flatMap(x => x?.Status);
-      if (field.every(x => x === "available")) return resp;
-      if (field.some(x => x === "failed")) throw new Error(errMessage);
-      if (field.some(x => x === "deleted")) throw new Error(errMessage);
+      if (field?.every(x => x === "available")) return resp;
+      if (field?.some(x => x === "failed")) throw new Error(errMessage);
+      if (field?.some(x => x === "deleted")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 15000));
     }
     throw new Error(errMessage);

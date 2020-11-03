@@ -1114,14 +1114,14 @@ export default class RDS {
     for (let i = 0; i < 60; i++) {
       const resp = await this.describeDBInstances(params);
       const field = resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus);
-      if (field.every(x => x === "available")) return resp;
-      if (field.some(x => x === "deleted")) throw new Error(errMessage);
-      if (field.some(x => x === "deleting")) throw new Error(errMessage);
-      if (field.some(x => x === "failed")) throw new Error(errMessage);
-      if (field.some(x => x === "incompatible-restore")) throw new Error(errMessage);
-      if (field.some(x => x === "incompatible-parameters")) throw new Error(errMessage);
-      if (field.some(x => x === "incompatible-parameters")) throw new Error(errMessage);
-      if (field.some(x => x === "incompatible-restore")) throw new Error(errMessage);
+      if (field?.every(x => x === "available")) return resp;
+      if (field?.some(x => x === "deleted")) throw new Error(errMessage);
+      if (field?.some(x => x === "deleting")) throw new Error(errMessage);
+      if (field?.some(x => x === "failed")) throw new Error(errMessage);
+      if (field?.some(x => x === "incompatible-restore")) throw new Error(errMessage);
+      if (field?.some(x => x === "incompatible-parameters")) throw new Error(errMessage);
+      if (field?.some(x => x === "incompatible-parameters")) throw new Error(errMessage);
+      if (field?.some(x => x === "incompatible-restore")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 30000));
     }
     throw new Error(errMessage);
@@ -1135,11 +1135,11 @@ export default class RDS {
     for (let i = 0; i < 60; i++) {
       const resp = await this.describeDBInstances(params);
       const field = resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus);
-      if (field.every(x => x === "deleted")) return resp;
-      if (field.some(x => x === "creating")) throw new Error(errMessage);
-      if (field.some(x => x === "modifying")) throw new Error(errMessage);
-      if (field.some(x => x === "rebooting")) throw new Error(errMessage);
-      if (field.some(x => x === "resetting-master-credentials")) throw new Error(errMessage);
+      if (field?.every(x => x === "deleted")) return resp;
+      if (field?.some(x => x === "creating")) throw new Error(errMessage);
+      if (field?.some(x => x === "modifying")) throw new Error(errMessage);
+      if (field?.some(x => x === "rebooting")) throw new Error(errMessage);
+      if (field?.some(x => x === "resetting-master-credentials")) throw new Error(errMessage);
       await new Promise(r => setTimeout(r, 30000));
     }
     throw new Error(errMessage);
