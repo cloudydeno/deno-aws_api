@@ -143,7 +143,10 @@ export class BaseServiceClient implements ServiceClient {
     if (response.status == (config.responseCode ?? 200)) {
       return response;
     } else if (response.status >= 400) {
-      await handleErrorResponse(response);
+      await handleErrorResponse(response, request.method);
+    } else if (response.status >= 200 && response.status < 300) {
+      console.log(`WARN: ${config.action} response was unexpected success ${response.status}`);
+      return response;
     }
     throw new Error(`BUG: Unexpected HTTP response status ${response.status}`);
   }
@@ -164,6 +167,7 @@ export class XmlServiceClient extends BaseServiceClient {
       reqBody = config.body;
 
     } else if (typeof config.body === 'string') {
+      // console.log(config.body);
       reqBody = new TextEncoder().encode(config.body);
       headers.append('content-type', 'text/xml');
 
@@ -248,14 +252,24 @@ export class QueryServiceClient extends BaseServiceClient {
 
 export class ApiResponse extends Response {
   get requestId(): string | null {
-    return this.headers.get('x-amzn-requestid');
+    return this.headers.get('x-amzn-requestid') ?? this.headers.get('x-amz-request-id');
   }
 }
 
-async function handleErrorResponse(response: ApiResponse): Promise<never> {
+async function handleErrorResponse(response: ApiResponse, reqMethod: string): Promise<never> {
+  if (reqMethod === 'HEAD') {
+    // console.log(response);
+    // console.log(response.status, response.statusText, response.requestId);
+    throw new AwsServiceError(response, {
+      Code: `Http${response.status}`,
+      Message: `HTTP error status: ${response.statusText}`,
+    }, response.requestId);
+  }
 
   const contentType = response.headers.get('content-type');
-  if (contentType?.startsWith('text/xml') || !contentType) {
+  if (contentType?.startsWith('text/xml')
+      || contentType?.startsWith('application/xml')
+      || !contentType) {
     const xml = readXmlResult(await response.text());
     switch (xml.name) {
 
@@ -270,7 +284,7 @@ async function handleErrorResponse(response: ApiResponse): Promise<never> {
         // </ErrorResponse>
         const errNode = xml.first('Error');
         if (errNode) {
-          throw new AwsServiceError(errNode.strings({
+          throw new AwsServiceError(response, errNode.strings({
             required: { Code: true, Message: true, Type: true },
           }), xml.first('RequestId', false, x => x.content));
         }
@@ -285,12 +299,12 @@ async function handleErrorResponse(response: ApiResponse): Promise<never> {
             optional: { Type: true },
           }));
         if (errors.length > 0) {
-          throw new AwsServiceError(errors[0], xml.first('RequestID', false, x => x.content));
+          throw new AwsServiceError(response, errors[0], xml.first('RequestID', false, x => x.content));
         }
         break;
 
       case 'Error': // e.g. s3
-        throw new AwsServiceError(xml.strings({
+        throw new AwsServiceError(response, xml.strings({
           required: { Code: true, Message: true },
           optional: { 'Token-0': true, HostId: true },
         }), xml.first('RequestId', false, x => x.content));
@@ -299,17 +313,17 @@ async function handleErrorResponse(response: ApiResponse): Promise<never> {
   } else if (contentType?.startsWith('application/json')) {
     const data = await response.json();
     if (data.Error?.Code) {
-      throw new AwsServiceError(data.Error as ServiceError, data.RequestId);
+      throw new AwsServiceError(response, data.Error as ServiceError, data.RequestId);
     }
     console.log('Error from server:', response, data);
 
   } else if (contentType?.startsWith('application/x-amz-json-1.')) {
     const data = await response.json();
     if (data.__type && data.message) {
-      throw new AwsServiceError({
+      throw new AwsServiceError(response, {
         Code: data.__type,
         Message: data.message,
-      }, response.requestId ?? 'unknown');
+      }, response.requestId);
     }
     console.log('Error from server:', response, data);
 

@@ -16,8 +16,9 @@ export default class ProtocolJsonCodegen {
 
   generateOperationInputParsingTypescript(inputShape: KnownShape, meta: Schema.LocationInfo & {paramRef?: string}): { inputParsingCode: string; inputVariables: string[]; } {
     if (inputShape.spec.type !== 'structure') throw new Error(`BUG`);
+    const paramRef = meta.paramRef ?? 'params';
     return {
-      inputParsingCode: `    const body: jsonP.JSONObject = ${meta.paramRef ?? 'params'} ? ${this.generateStructureInputTypescript(inputShape.spec, meta.paramRef ?? 'params').replace(/\n/g, '\n  ')} : {};`,
+      inputParsingCode: `    const body: jsonP.JSONObject = ${paramRef !== 'params' ? `${paramRef} ? ` : ''}${this.generateStructureInputTypescript(inputShape.spec, paramRef).replace(/\n/g, '\n  ')}${paramRef !== 'params' ? ` : {}` : ''};`,
       inputVariables: ['body'],
     };
   }

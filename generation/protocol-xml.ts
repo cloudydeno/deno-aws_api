@@ -24,10 +24,10 @@ export default class ProtocolXmlCodegen {
 
     const {attrCode, childrenCode} = this.generateStructureInputTypescript(inputShape.spec, meta.paramRef ?? 'params');
 
-    chunks.push(`    const body = xmlP.stringify({`);
+    chunks.push(`    const body = ${meta.paramRef === 'inner' ? 'inner ? ' : ''}xmlP.stringify({`);
     chunks.push(`      name: ${JSON.stringify(meta.locationName ?? inputShape.spec.locationName ?? inputShape.name)},`);
     chunks.push(`      attributes: ${JSON.stringify({xmlns: meta.xmlNamespace?.uri})},`);
-    chunks.push(`      children: ${meta.paramRef === 'inner' ? 'inner ? ' : ''}[`);
+    chunks.push(`      children: [`);
     chunks.push(childrenCode.replace(/^/gm,'    '));
 
     // const paramBase = meta.paramRef ?? 'params';
@@ -56,7 +56,7 @@ export default class ProtocolXmlCodegen {
     // chunks.push(`    {name: 'VPC', children: [`);
     // chunks.push(`      {name: ''}`);
     // chunks.push(`    ]},`);
-    chunks.push(`      ]${meta.paramRef === 'inner' ? ' : []' : ''}});`);
+    chunks.push(`      ]})${meta.paramRef === 'inner' ? ' : ""' : ''};`);
 
 
     // chunks.push(`// TODO: protocol-xml input - ${meta.locationName} ${meta.xmlNamespace}`);

@@ -21,6 +21,16 @@ export const unauthenticatedApis = new Set<string>([
 export function fixupApiSpec(spec: Schema.Api) {
   switch (spec.metadata.serviceId) {
 
+    case "S3": {
+      // Seems to not specify a response code
+      // Probably other S3 operations have the same issue
+      const noRespOp = spec.operations["PutBucketTagging"];
+      if (noRespOp?.http) {
+        noRespOp.http.responseCode = 204;
+      }
+      break;
+    }
+
     case "SQS": {
       // ReceiveMessage is asking for queue attribute names, should be message system-attribute names.
       const receiveReqShape = spec.shapes["ReceiveMessageRequest"];

@@ -52,6 +52,17 @@ export default class GenWaiter {
           }
           break;
 
+        case 'status':
+          if (acceptor.expected >= 400) {
+            const errorCode = `Http${acceptor.expected}`;
+            switch (acceptor.state) {
+              case 'success': goodErrs.push(errorCode); break;
+              case 'failure': badErrs.push(errorCode); break;
+              case 'retry': retryErrs.push(errorCode); break;
+            }
+          }
+          break;
+
         case 'path':
         case 'pathAny':
         case 'pathAll':
@@ -60,7 +71,9 @@ export default class GenWaiter {
 
       }
     }
-    const handlesAnyErr = this.spec.acceptors.some(x => x.matcher === 'error');
+    const handlesAnyErr = this.spec.acceptors.some(x =>
+      x.matcher === 'error'
+      || (x.matcher === 'status' && x.expected >= 400));
     const collapsePathEval = allPaths.length > 1 && allPaths.every(x => x === allPaths[0]);
 
     const inputSignature = [
@@ -69,8 +82,8 @@ export default class GenWaiter {
     ].filter(x => x).join(' & ');
     const outputSignature = [
       goodErrs.length > 0 ? 'Error' : '',
-      outputShape?.censoredName,
-    ].filter(x => x).join(' | ') || 'void';
+      outputShape?.censoredName || 'void', // TODO: probably add heuristics on when to include this
+    ].filter(x => x).join(' | ');
 
     const innerChunks: string[] = [];
     const lowerCamelName = this.operation.name[0].toLowerCase() + this.operation.name.slice(1);
@@ -117,12 +130,8 @@ export default class GenWaiter {
         }
 
         case 'status': {
-          if (acceptor.expected < 300) {
+          if (acceptor.expected < 400) {
             innerChunks.push(`      ${statement} // for status ${acceptor.expected}`);
-          } else {
-            // TODO: 400s and 500s should throw, so can't be handled here.
-            // But how are they handled...
-            innerChunks.push(`      // TODO: if (statusCode == ${acceptor.expected}) ${statement}`);
           }
           break;
         }

@@ -48,7 +48,7 @@ export default class ProtocolRestCodegen {
       const shape = this.shapes.get(spec);
       const defaultName = (field[0].toUpperCase()+field.slice(1));
       const locationName = spec.locationName ?? shape.spec.locationName ?? defaultName;
-      const isRequired = (inputShape.spec.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
+      let isRequired = (inputShape.spec.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
       const paramRef = `params[${JSON.stringify(field)}]`;
       const fieldLocation = spec.location ?? shape.spec.location
       switch (fieldLocation) {
@@ -89,13 +89,18 @@ export default class ProtocolRestCodegen {
               formattedRef = `cmnP.serializeBlob(${formattedRef}) ?? ''`;
               break;
             case 'string':
-              if (spec.jsonvalue) {
+              // TODO: also headers that are MD5s of other headers
+              if (locationName === 'Content-MD5') {
+                this.helpers.useHelper('hashMD5');
+                formattedRef = `${formattedRef} ?? hashMD5(body ?? '')`;
+                isRequired = true;
+              } else if (spec.jsonvalue) {
                 formattedRef = `btoa(jsonP.serializeJsonValue(${formattedRef}) ?? '')`;
                 break;
               }
               break;
             }
-          chunks.push(`    ${isRequired ? '' : `if (${paramRef} != null) `}headers.append(${JSON.stringify(spec.queryName ?? locationName)}, ${formattedRef});`);
+          chunks.push(`    ${isRequired ? '' : `if (${paramRef} != null) `}headers.append(${JSON.stringify(/*spec.queryName ?? */locationName)}, ${formattedRef});`);
           break;
         case 'headers': {
           if (shape.spec.type !== 'map') throw new Error(`rest input headers not map`);
@@ -194,12 +199,12 @@ export default class ProtocolRestCodegen {
         if (bodyShape.spec.type === 'blob' || bodyShape.spec.type === 'string') {
           isFrame = false;
           frameRef = `${frameRef}[${JSON.stringify(bodyName)}]`;
-          chunks.push(`    const body = typeof ${frameRef} === 'string' ? new TextEncoder().encode(${frameRef}) : ${frameRef};`);
+          chunks.splice(0, 0, `    const body = typeof ${frameRef} === 'string' ? new TextEncoder().encode(${frameRef}) : ${frameRef};`);
           referencedInputs.add(`body`);
 
         } else if (bodyShape.spec.type === 'structure') {
           frame = bodyShape;
-          chunks.push(`    const inner = params[${JSON.stringify(bodyName)}];`)
+          chunks.splice(0, 0, `    const inner = params[${JSON.stringify(bodyName)}];`)
           frameRef = `inner`;
           locInfo = {...bodySpec, paramRef: frameRef};
 
@@ -218,7 +223,7 @@ export default class ProtocolRestCodegen {
 
       if (isFrame) {
         const innerCode = this.innerProtocol.generateOperationInputParsingTypescript(frame, locInfo);
-        chunks.push(innerCode.inputParsingCode);
+        chunks.splice(1, 0, innerCode.inputParsingCode);
         for (const varr of innerCode.inputVariables) {
           referencedInputs.add(varr);
         }

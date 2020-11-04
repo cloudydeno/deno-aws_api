@@ -115,6 +115,19 @@ export default class ServiceCodeGen {
       });
     }
 
+    this.helpers.addHelper('hashMD5', {
+      deps: {
+        HashMd5: "https://deno.land/std@0.71.0/hash/md5.ts",
+      },
+      chunks: [
+        `function hashMD5(data: HashMd5.Message): string {`,
+        `  const hasher = new HashMd5.Md5();`,
+        `  hasher.update(data);`,
+        `  return hasher.toString('base64');`,
+        `}`,
+      ],
+    });
+
     // this.helpers.addHelper('encodePath', {
     //   chunks: [
     //     `function encodePath(`,

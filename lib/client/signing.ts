@@ -130,6 +130,9 @@ export class AWSSignerV4 implements Signer {
       ? new Uint8Array(await request.arrayBuffer())
       : new Uint8Array();
     const payloadHash = sha256(body).hex();
+    if (service === 's3') {
+      headers.set("x-amz-content-sha256", payloadHash);
+    }
 
     const canonicalRequest =
       `${request.method}\n${pathname}\n${canonicalQuerystring}\n${canonicalHeaders}\n${signedHeaders}\n${payloadHash}`;

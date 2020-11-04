@@ -74,14 +74,16 @@ export interface ServiceError {
 }
 
 export class AwsServiceError extends Error {
+  origResponse: Response;
   code: string;
   originalMessage: string;
   errorType: string;
   requestId: string;
-  constructor(error: ServiceError, requestId?: string) {
+  constructor(resp: Response, error: ServiceError, requestId?: string | null) {
     requestId = requestId ?? "MISSING REQUEST ID";
     super(`${error.Code}: ${error.Message} [Type: ${error.Type}, Request ID: ${requestId}]`);
 
+    this.origResponse = resp;
     this.name = new.target.name;
     this.code = error.Code;
     this.originalMessage = error.Message;
