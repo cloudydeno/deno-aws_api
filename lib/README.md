@@ -46,7 +46,8 @@ and working directly with a Kinesis stream.
   * Using definitions from `aws-sdk-js@2.768.0`
 * `v0.1.1` on `2020-11-02`: Generation improvements, most services have been generated.
   * Using definitions from `aws-sdk-js@2.780.0`
-* `v0.2.0` (future): Completed bindings for all API services.
+* `v0.2.0` on `2020-11-07`: Completed bindings for all API services.
+  * Using definitions from `aws-sdk-js@2.784.0`
 
 ## Disclaimer
 
@@ -91,6 +92,7 @@ and should work quite well:
 * SQS
 * STS
 * EC2
+* S3
 * Kinesis
 * DynamoDB
 
